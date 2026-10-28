@@ -1,0 +1,461 @@
+---
+title: Canale de mesagerie
+description: Aduceți conversațiile de la orice furnizor în înregistrările Message și Message Thread ale Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Un **canal de mesagerie** permite aplicației dvs. să introducă conversații de la un furnizor extern — LinkedIn, WhatsApp, SMS, o căsuță de primire din aplicație — în aceleași înregistrări `Message` și `Message Thread` pe care Twenty le folosește pentru e-mail. Firele de conversație pe care le ingerați apar în înregistrările Persoană, Companie și Oportunitate ale persoanelor din acestea, în cronologie și în căutare, fără interfață personalizată.
+
+Modelul de mesaje al Twenty este intenționat neutru față de canal: un mesaj are participanți, text, un marcaj temporal și un fir de conversație; un participant are un `handle` și un link opțional către o Persoană. Nimic din acesta nu este specific e-mailului. Un canal este cel care leagă un flux al acestor mesaje de un cont de la un furnizor.
+
+<Note>
+**Beta — și este posibil să nu fie încă disponibil în instanța dvs.** Canalele de mesaje deținute de aplicație sunt noi; API-ul descris aici se poate modifica și este posibil să nu fie disponibil în versiunea de Twenty pe care o utilizați. Verificați dacă `createMessageChannel` există în SDK-ul dvs. înainte de a construi pe baza acestuia.
+</Note>
+
+## Cerințe
+
+Un canal aparține întotdeauna uneia dintre [conexiunile](/ro/developers/extend/apps/logic/connections) aplicației dvs. — acreditarea prin care comunică. Aveți nevoie de un furnizor de conexiune înainte de a putea crea un canal.
+
+## Crearea unui canal
+
+Creați canalul o dată pentru fiecare cont conectat, din hook-ul `onConnect` al furnizorului de conexiune. Astfel, durata de viață a canalului corespunde cu cea a acreditării.
+
+```ts src/logic-functions/handlers/linkedin-register-connection-handler.ts
+import { createMessageChannel, getConnection } from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+export const linkedinRegisterConnectionHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(payload.connectedAccountId);
+  const profile = await fetchLinkedinProfile(connection.accessToken);
+
+  const channel = await createMessageChannel({
+    connectedAccountId: connection.id,
+    handle: profile.memberUrn,
+    displayName: profile.name,
+    // LinkedIn DMs are personal, so other members see participants and dates
+    // but not subjects or bodies.
+    visibility: MessageChannelVisibility.METADATA,
+  });
+
+  return { channelId: channel.id };
+};
+```
+
+### `identificator`
+
+Identitatea contului **așa cum o denumește furnizorul** — un URN de membru LinkedIn, un număr de telefon E.164, un ID de utilizator limitat la spațiul de lucru. Twenty îl tratează ca opac. Este valoarea cu care comparați încărcăturile utile primite și cea care decide dacă un mesaj ingerat este de intrare sau de ieșire.
+
+Alegeți cel mai stabil identificator oferit de furnizor. Un handle care se modifică atunci când utilizatorul își schimbă numele îi va împărți istoricul între două canale.
+
+### `visibility`
+
+`visibility` este **obligatoriu**, fără valoare implicită, deoarece decide cine din spațiul de lucru poate citi aceste conversații:
+
+| Valoare            | Alți membri văd                        |
+| ------------------ | -------------------------------------- |
+| `METADATA`         | doar participanții și datele           |
+| `SUBJECT`          | cele de mai sus, plus subiectul        |
+| `SHARE_EVERYTHING` | cele de mai sus, plus corpul mesajului |
+
+Membrul care deține conexiunea de bază își poate citi întotdeauna integral propriile mesaje, indiferent de această setare.
+
+Alegeți în funcție de cât de private sunt mesajele furnizorului, nu în funcție de ceea ce este convenabil de afișat. Căsuțele de primire personale (mesajele directe LinkedIn, WhatsApp personal) necesită `METADATA`; cele partajate (o căsuță de primire pentru asistență, un număr de echipă) necesită `SHARE_EVERYTHING`.
+
+<Warning>
+`visibility` este singurul lucru care stă între conversațiile private ale unui membru și restul spațiului de lucru. Twenty vă obligă în mod intenționat să îl specificați, în loc să moșteniți o valoare implicită care ar putea partaja excesiv.
+</Warning>
+
+## Ingerarea mesajelor
+
+După ce canalul există, `ingestMessages` scrie conversațiile în acesta. Gruparea în fire, eliminarea duplicatelor, asocierea canalelor și confidențialitatea per mesaj sunt gestionate pe server — aceeași cale pe care o folosește importul de e-mail propriu al Twenty.
+
+```ts src/logic-functions/handlers/linkedin-inbound-handler.ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) => {
+  const ingested = await ingestMessages({
+    messageChannelId: payload.channelId,
+    messages: payload.events.map((event) => ({
+      externalId: event.messageUrn,
+      threadExternalId: event.conversationUrn,
+      text: event.body,
+      receivedAt: new Date(event.createdAt),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: event.sender.memberUrn,
+          displayName: event.sender.name,
+        },
+        ...event.recipients.map((recipient) => ({
+          role: MessageParticipantRole.TO,
+          handle: recipient.memberUrn,
+          displayName: recipient.name,
+        })),
+      ],
+    })),
+  });
+
+  return { ingested: ingested.length };
+};
+```
+
+### Ce face serverul pentru dvs.
+
+**Eliminarea duplicatelor.** `externalId` este cheia. Ingerarea aceleiași conversații de două ori nu creează și nu modifică nimic, astfel încât un webhook relivrat poate fi reluat în siguranță, iar o completare retroactivă se poate suprapune peste un flux în timp real. `messageId` returnat rămâne stabil între reluări. Apelurile către un singur canal sunt serializate, astfel încât o relivrare care sosește în timp ce originalul său este încă scris așteaptă în loc să intre în concurență cu acesta.
+
+**Gruparea în fire.** Mesajele care partajează un `threadExternalId` ajung într-un singur fir de mesaje, care apare apoi în înregistrările Persoană, Companie și Oportunitate ale participanților săi.
+
+**Direcție.** Derivată, nu declarată: mesajul este de ieșire atunci când identificatorul participantului `FROM` este egal cu identificatorul canalului, altfel este de intrare. Exact un participant trebuie să aibă `FROM` — direcția, coloana expeditorului firului și previzualizarea cronologiei îl folosesc toate, astfel încât un mesaj fără unul este respins în loc să fie redat ca o conversație goală.
+
+**Eliminarea duplicatelor este limitată la canal.** `externalId` trebuie să fie unic doar într-un singur canal, ceea ce este de fapt ceea ce garantează majoritatea furnizorilor — mulți numerotează mesajele per conversație sau per cont. Consecința este că doi membri din aceeași conversație a furnizorului primesc fiecare propriul Mesaj, în loc de unul partajat. Acest lucru este intenționat: fuzionarea lor ar necesita ca fiecare aplicație să garanteze un spațiu de nume global pe care nu îl controlează, iar o eroare ar atașa conținutul unui membru la canalul altui membru.
+
+**Confidențialitate.** Fiecare mesaj moștenește `visibility` al canalului său. Nimic din ceea ce ingerați nu este mai vizibil decât canalul în care îl ingerați.
+
+### Procesare în loturi
+
+Un apel reprezintă o tranzacție în cadrul unui timeout al unei funcții logice, limitată la **100 de mesaje**. Paginați o completare retroactivă a furnizorului, în loc să o trimiteți integral:
+
+```ts
+for (const page of chunk(allHistoricalMessages, 100)) {
+  await ingestMessages({ messageChannelId, messages: page });
+}
+```
+
+Un lot este totul sau nimic, iar repetarea unui `externalId` într-un singur lot este respinsă — eliminați duplicatele înainte de trimitere. Conținutul unui mesaj este limitat la 256 KB.
+
+### Asocierea participanților cu Persoane
+
+Un participant neasociat mută conversația pe pagina fără înregistrare, astfel încât fiecare participant ar trebui să ajungă asociat unei Persoane. Există două moduri de a ajunge acolo: lasă Twenty să potrivească identificatorii cu un câmp de persoană sau rezolvă tu însuți persoana.
+
+#### Potrivește după un câmp de persoană
+
+Când identificatorii furnizorului sunt valori pe care oamenii le stochează deja într-un contact — un număr de telefon, un URL de profil, un nume de utilizator — specifică acel câmp atunci când creezi canalul:
+
+```ts
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: '+33612345678',
+  visibility: MessageChannelVisibility.METADATA,
+  participantHandleFieldUniversalIdentifier:
+    STANDARD_OBJECTS.person.fields.phones.universalIdentifier,
+});
+```
+
+Funcționează orice câmp de persoană activ de tip e-mailuri, telefoane, linkuri sau text, inclusiv unul pe care aplicația ta l-a adăugat cu [`defineField`](/ro/developers/extend/apps/data/extending-objects) (de exemplu, un nume de utilizator Instagram). Așadar, Twenty:
+
+* **stochează identificatorii în forma canonică a câmpului**: numerele de telefon ca `+` și cifre (trimiteți numere E.164), linkurile cu litere mici, fără schemă, `www`, fragment sau bară oblică finală, păstrând șirul de interogare așa cum a fost trimis, deoarece poate identifica profilul (`linkedin.com/in/ada`, `facebook.com/profile.php?id=111`), iar e-mailurile și textul cu litere mici. Identificatorul propriu al canalului este stocat în același mod, iar un identificator fără valoare utilizabilă este respins.
+* **asociază fiecare participant pe care îl lăsați neasociat** cu persoana al cărei câmp conține acea valoare, mai întâi valorile principale, apoi cea mai veche persoană.
+* **realizează din nou potrivirea când se schimbă persoanele**: adăugarea valorii la o persoană îi asociază conversațiile anterioare, iar eliminarea ei le eliberează.
+
+Un `personId` pe care îl transmiteți are în continuare prioritate, inclusiv când altcineva dobândește sau pierde ulterior acea valoare. Câmpul este setat o singură dată, la creare; dacă este șters sau dezactivat, importarea datelor în canal este refuzată în loc să fie stocați identificatori pe care Twenty nu îi mai poate normaliza.
+
+Alegeți identificatori care sunt atât stabili, cât și stocați în contacte. Pentru LinkedIn, aceasta înseamnă URL-ul profilului public, nu URN-ul de membru; păstrați propria mapare dacă aveți nevoie de URN pentru a apela furnizorul.
+
+#### Rezolvați singur persoana
+
+Fără un câmp declarat, **aplicația dvs. trebuie să specifice cine este un participant**. Transmiteți `personId` împreună cu identificatorul:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+Determinați id-ul în funcție de modul în care este stocată identitatea furnizorului dvs. — folosind `Person.linkedinLink` sau un câmp de identitate pe care l-a adăugat aplicația dvs. cu [`defineField`](/ro/developers/extend/apps/data/extending-objects). ID-urile necunoscute sunt respinse de la început, în loc să fie stocate ca legături orfane.
+
+După ce un participant este asociat, Twenty construiește țintele firului, iar conversația apare pe pagina de înregistrare a acelei Persoane și pe cea a companiei sale, exact așa cum apare un fir de e-mail.
+
+Este acceptat și `workspaceMemberId`, pentru un participant care este membru al acestui spațiu de lucru, nu un contact. Este **numai pentru atribuire**: țintele firului sunt construite exclusiv din `personId` — la fel ca pentru e-mail — astfel încât un participant asociat numai unui membru al spațiului de lucru apare în fir, dar nu asociază conversația cu nicio pagină de înregistrare. Transmiteți `personId` când doriți ca firul să apară undeva.
+
+<Note>
+O corelare ulterioară nu se pierde. Reingestarea unui mesaj cu o identitate pe care ați determinat-o între timp asociază participantul deja existent — corelat după mesaj, identificator și rol, astfel încât un nume afișat care s-a modificat sau a fost omis între timp nu îl împarte în două. Un nume omis îl păstrează pe cel deja stocat; unul nou îl înlocuiește. Trimiterea unui `personId` diferit corectează o asociere anterioară, în loc să adauge o a doua asociere.
+
+Încă nu există o modalitate de a *șterge* o identitate: o valoare null este tratată ca „las-o așa”, nu ca „anulează asocierea”. Corectarea unei asocieri greșite înseamnă furnizarea celei corecte.
+</Note>
+
+Participanții pe care îi lăsați neasociați sunt în continuare stocați și afișați în fir — pur și simplu nu asociază conversația cu nicio înregistrare.
+
+## Trimiterea răspunsurilor
+
+Un furnizor de mesagerie declară modul în care o aplicație trimite mesaje pe un canal. Acesta denumește furnizorul de conexiune prin ale cărui conturi comunică și funcția logică ce livrează un răspuns, astfel încât o conexiune (de exemplu, un cont Unipile) poate susține mai multe tipuri de mesagerie, fiecare cu propriul gestionar:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+import { defineMessagingProvider } from 'twenty-sdk/define';
+
+export default defineMessagingProvider({
+  universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  name: 'linkedin-messaging',
+  displayName: 'LinkedIn Messages',
+  connectionProvider: {
+    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  },
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+});
+```
+
+Asociați un canal cu acesta atunci când creați canalul sau ulterior cu `updateMessageChannel` (transmiterea valorii `null` anulează asocierea):
+
+```ts
+await createMessageChannel({
+  connectedAccountId: connection.id,
+  handle: profile.memberUrn,
+  visibility: 'METADATA',
+  messagingProvider: {
+    universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
+  },
+});
+```
+
+Furnizorul de mesagerie trebuie să aparțină aplicației dvs. și să utilizeze furnizorul de conexiune al contului canalului; furnizorul său de conexiune nu se poate modifica după prima sincronizare. Modificarea funcției de trimitere într-o versiune ulterioară se aplică fiecărui canal asociat cu furnizorul.
+
+Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul de discuție, textul și o cheie `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează când reîncearcă trimiterea), apoi execută funcția furnizorului:
+
+```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
+
+export const linkedinSendMessageHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+  text,
+  idempotencyKey,
+}: SendAppMessagePayload) => {
+  const sent = await sendLinkedinMessage({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+    text,
+    idempotencyKey,
+  });
+
+  return { externalId: sent.messageUrn, sentAt: sent.createdAt };
+};
+```
+
+Sarcina utilă conține `messagingProviderName`, `threadExternalId` al conversației, așa cum a fost ingerat, `text`, `idempotencyKey` și `recipients`: participanții la cel mai recent mesaj al firului de discuție, în afară de identificatorul propriu al canalului, astfel încât o persoană care a participat doar la un schimb anterior de mesaje nu primește un mesaj. Preferați conversația proprie a furnizorului în locul `recipients` atunci când API-ul său trimite către un ID de conversație. returnează ID-ul furnizorului pentru mesajul trimis ca `externalId`.
+
+Twenty înregistrează apoi răspunsul în firul de discuție ca mesaj trimis de la canal, cu aceiași destinatari, astfel încât acesta apare imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
+
+Funcția rulează în cadrul cererii `sendAppChannelMessage`. Dacă generează o excepție sau nu returnează niciun `externalId`, mutația eșuează și nu se înregistrează nimic.
+
+După ce funcția dvs. returnează, Twenty păstrează livrarea timp de 24 de ore pentru membru, canal, firul de discuție și `idempotencyKey`. Dacă înregistrarea răspunsului eșuează apoi, mutația eșuează, iar reîncercarea cu aceeași cheie înregistrează răspunsul livrat fără a apela din nou funcția dvs.; o reîncercare a unui răspuns deja înregistrat îl returnează. O reîncercare în timp ce primul apel încă trimite așteaptă finalizarea acestuia. O cheie nouă reprezintă un răspuns nou. Funcția dvs. poate fi totuși apelată de două ori pentru un răspuns dacă clientul reîncearcă cu o cheie nouă sau după cele 24 de ore ori dacă funcția dvs. eșuează după ce furnizorul a acceptat mesajul, așadar transmiteți `idempotencyKey` către furnizor atunci când API-ul acestuia acceptă trimiteri idempotente. Un canal cu `isSyncEnabled: false` refuză răspunsurile fără a apela funcția dvs. Un canal fără furnizor de mesagerie sau al cărui furnizor nu are `sendMessageLogicFunction` ori nu mai există nu poate trimite mesaje; conversațiile sale rămân neschimbate. Necesită `"engines": { "twenty": ">=2.52.0" }`.
+
+## Listarea și actualizarea canalelor
+
+```ts
+import {
+  listMessageChannels,
+  updateMessageChannel,
+} from 'twenty-sdk/logic-function';
+
+// Every channel this app owns, across all its connections
+const channels = await listMessageChannels();
+
+// Just the ones on a given connection
+const forConnection = await listMessageChannels({
+  connectedAccountId: connection.id,
+});
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
+```
+
+Modificarea valorii `visibility` prin `updateMessageChannel` redefinește domeniul fiecărui mesaj deja ingerat în canal, nu doar al celor care urmează. Ingerarea într-un canal cu `isSyncEnabled: false` este respinsă, astfel încât întreruperea unui canal oprește fluxul fără a șterge nimic.
+
+Aplicația dvs. vede doar canalele create pentru propriile sale conexiuni. Canalele care aparțin altor aplicații și propriile canale de e-mail ale Twenty nu îi sunt vizibile.
+
+Un canal poate fi accesat doar de persoana prin a cărei conexiune comunică, atunci când conexiunea respectivă este privată pentru acea persoană. O execuție declanșată de un alt membru al spațiului de lucru nu îl poate vedea, modifica sau ingera în acesta; o execuție fără nicio persoană în spate — un cron, un webhook, un hook de instalare — acționează ca aplicația și accesează fiecare canal deținut de aplicație.
+
+## Foldere
+
+Unii furnizori împart un cont în subfluxuri: căsuțe de primire într-un serviciu de asistență partajat, numere într-un cont WhatsApp, canale într-un spațiu de lucru Slack. Declarați-le ca **dosare** pe canal, aceleași înregistrări pe care Twenty le utilizează pentru dosarele de căsuțe poștale și etichetele Gmail, și etichetați fiecare mesaj cu dosarele cărora le aparține.
+
+Dosarele sunt opționale. Un canal fără dosare funcționează exact cum este descris mai sus.
+
+### Declararea dosarelor la conectare
+
+`syncMessageFolders` preia lista **completă** de dosare a canalului și face ca dosarele stocate să corespundă acesteia, pe baza lui `externalId`:
+
+* un `externalId` necunoscut creează un dosar
+* unul cunoscut este redenumit dacă i s-a modificat `name`
+* un dosar stocat care lipsește din listă este eliminat, împreună cu legăturile sale către mesaje. Mesajele în sine rămân.
+
+Locul firesc pentru a-l apela este hook-ul `onConnect` al furnizorului de conexiune, imediat după crearea canalului. Iată o configurare completă pentru o aplicație de asistență, în care fiecare căsuță de primire devine un dosar:
+
+```ts src/connection-providers/helpdesk-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import {
+  HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: HELPDESK_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk',
+  displayName: 'Helpdesk',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+```ts src/logic-functions/helpdesk-on-connect.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  createMessageChannel,
+  enqueueJobs,
+  getConnection,
+  listMessageChannels,
+  syncMessageFolders,
+} from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+import {
+  HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+  HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
+  name: 'helpdesk-on-connect',
+  timeoutSeconds: 60,
+  handler: async ({ connectedAccountId }: { connectedAccountId: string }) => {
+    const connection = await getConnection(connectedAccountId);
+    const inboxes = await fetchHelpdeskInboxes(connection.accessToken);
+
+    const [existingChannel] = await listMessageChannels({ connectedAccountId });
+
+    const channel =
+      existingChannel ??
+      (await createMessageChannel({
+        connectedAccountId,
+        handle: connection.handle,
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      }));
+
+    const folders = await syncMessageFolders({
+      messageChannelId: channel.id,
+      folders: inboxes.map((inbox) => ({
+        externalId: inbox.id,
+        name: inbox.name,
+      })),
+    });
+
+    const syncedFolders = folders.filter((folder) => folder.isSynced);
+
+    if (syncedFolders.length > 0) {
+      await enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          HELPDESK_BACKFILL_FOLDER_UNIVERSAL_IDENTIFIER,
+        jobs: syncedFolders.map((folder) => ({
+          payload: {
+            messageChannelId: channel.id,
+            folderExternalId: folder.externalId,
+          },
+        })),
+      });
+    }
+  },
+});
+```
+
+Câteva aspecte pe care se bazează acest exemplu:
+
+* **Un canal per conexiune.** Hook-ul reutilizează canalul conexiunii atunci când are deja unul, deoarece `onConnect` este pus în coadă și poate rula din nou. Setările afișează dosarele acelui singur canal, deci nu împărțiți o conexiune între mai multe canale.
+* **Sincronizare repetabilă.** Retrimiterea listei complete este sigură: dosarele nemodificate sunt lăsate neatinse. Apelați din nou `syncMessageFolders` ori de câte ori este posibil ca lista furnizorului să se fi modificat, printr-un cron sau prin webhook-ul furnizorului „inbox created”.
+* **Completare retrospectivă per dosar.** Fiecare dosar sincronizat primește propriul [job de fundal](/ro/developers/extend/apps/logic/background-jobs), care parcurge paginat istoricul furnizorului și apelează `ingestMessages`.
+
+### Alegerea dosarelor de importat
+
+Fiecare dosar are un flag `isSynced`. Membrii activează și dezactivează dosarele în **Dosare** pe pagina conexiunii (**Setări → Aplicații →** aplicația dvs. **→** conexiunea), care apare odată ce canalul are dosare.
+
+Un dosar nou începe ca sincronizat, cu excepția cazului în care transmiteți `isSynced: false`. Omiterea lui `isSynced` la o sincronizare ulterioară păstrează valoarea stocată, astfel încât o reîmprospătare a furnizorului nu resetează niciodată ce a ales un membru. Aplicația dvs. poate seta în continuare flag-ul prin transmiterea acestuia către `syncMessageFolders`.
+
+<Note>
+`isSynced` este **orientativ** pentru canalele aplicației: Twenty îl stochează, dar nu filtrează ingerarea pe baza lui, iar nimic nu completează retrospectiv un dosar atunci când este activat. Aplicația dvs. îl citește cu `listMessageFolders` (filtrat după `messageChannelId` sau din toate canalele sale atunci când este apelat fără filtru), omite mesajele din dosarele nesincronizate și completează retrospectiv un dosar atunci când devine sincronizat.
+</Note>
+
+```ts
+import { listMessageFolders } from 'twenty-sdk/logic-function';
+
+const folders = await listMessageFolders({ messageChannelId: channel.id });
+
+const syncedInboxIds = new Set(
+  folders.filter((folder) => folder.isSynced).map((folder) => folder.externalId),
+);
+```
+
+### Etichetarea mesajelor
+
+Transmiteți dosarele cărora le aparține un mesaj ca `folderExternalIds` la ingerare:
+
+```ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [
+    {
+      externalId: message.id,
+      threadExternalId: conversation.id,
+      text: message.text,
+      receivedAt: new Date(message.createdAt),
+      participants,
+      folderExternalIds: [conversation.inboxId],
+    },
+  ],
+});
+```
+
+Fiecare id trebuie să aparțină unui dosar deja declarat pe canal; unul necunoscut respinge întregul lot. Legăturile se cumulează: reingerarea unui mesaj cu un alt dosar adaugă acel dosar și le păstrează pe cele anterioare, astfel încât o conversație mutată între căsuțe de primire ajunge în ambele.
+
+## Retragerea unui canal
+
+Apelați `deleteMessageChannel(id)` din hook-ul `onDisconnect` al furnizorului de conexiune, astfel încât un canal să nu depășească niciodată durata de viață a acreditării prin care comunică.
+
+```ts src/logic-functions/handlers/linkedin-disconnect-handler.ts
+import {
+  deleteMessageChannel,
+  listMessageChannels,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinDisconnectHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const channels = await listMessageChannels({
+    connectedAccountId: payload.connectedAccountId,
+  });
+
+  await Promise.all(channels.map((channel) => deleteMessageChannel(channel.id)));
+};
+```
+
+Ștergerea unui canal șterge mesajele ingerate prin acesta și orice fir de conversație rămas fără mesaje. Pentru a opri ingerarea păstrând istoricul, setați în schimb `isSyncEnabled: false`.
+
+## Ce nu face un canal
+
+* **Nu este interogat.** Conducta de import a Twenty interoghează furnizorii de căsuțe poștale printr-un cron. Canalele aplicației acceptă doar push: nimic nu preia date în numele dvs., așadar aplicația dvs. este responsabilă pentru introducerea mesajelor, printr-o rută webhook sau o funcție logică cron.
+* **Nu inițiază conversații.** Răspunsurile sunt trimise către un fir de discuție existent printr-un [furnizor de mesagerie](#sending-replies); un prim mesaj către o persoană nouă trebuie inițiat din aplicația dvs.
+* **Rezolvă contacte numai printr-un câmp declarat.** Fără unul, Twenty nu poate determina cui aparține un URN LinkedIn, așadar canalele aplicației [asociază participanții explicit la importare](#resolve-the-person-yourself).
+* **Nu creează contacte.** Crearea automată a Twenty derivă persoane și companii din domenii de e-mail, ceea ce nu are sens pentru majoritatea furnizorilor, astfel încât este dezactivată pentru canalele aplicațiilor. Creați chiar dvs. Persoana, apoi transmiteți `personId`.
+
+<PageBanner illustration="card-page-messaging-channels" />

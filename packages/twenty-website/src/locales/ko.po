@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-27 20:14\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -228,22 +228,22 @@ msgstr "≈ 첫해에는 사용자 1인당 월 300달러"
 #. js-lingui-id: QSuM4t
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 10,000 workflow steps"
-msgstr ""
+msgstr "≈ 워크플로 단계 10,000개"
 
 #. js-lingui-id: GiXLJ1
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 100"
-msgstr ""
+msgstr "약 100"
 
 #. js-lingui-id: ZSX1/c
 #: src/sections/compare/compare-data.ts
 msgid "≈ 2× less"
-msgstr ""
+msgstr "≈ 2배 더 적음"
 
 #. js-lingui-id: af5Bta
 #: src/sections/compare/compare-data.ts
 msgid "≈ 3× less"
-msgstr ""
+msgstr "≈ 3배 더 적음"
 
 #. js-lingui-id: XEcaNi
 #: src/sections/compare/compare-data.ts
@@ -253,22 +253,22 @@ msgstr "≈ 4배 더 적음"
 #. js-lingui-id: qjBGD6
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 40,000 workflow steps"
-msgstr ""
+msgstr "≈ 워크플로 단계 40,000개"
 
 #. js-lingui-id: Y/zbvK
 #: src/sections/compare/compare-data.ts
 msgid "≈ 5× less"
-msgstr ""
+msgstr "≈ 5배 더 적음"
 
 #. js-lingui-id: zn2aZh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "≈ 500"
-msgstr ""
+msgstr "약 500"
 
 #. js-lingui-id: PDkwaA
 #: src/sections/compare/compare-data.ts
 msgid "≈ 7× less"
-msgstr ""
+msgstr "≈ 7배 더 적음"
 
 #. js-lingui-id: be30i9
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -281,7 +281,7 @@ msgstr "$0"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$1 per credit, from $20/month"
-msgstr ""
+msgstr "크레딧당 $1, 월 $20부터"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -360,7 +360,7 @@ msgstr "$18,960"
 #. js-lingui-id: EkIZkY
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19"
-msgstr ""
+msgstr "$19"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -400,12 +400,12 @@ msgstr "연 $36,000"
 #. js-lingui-id: QBR8AB
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$39"
-msgstr ""
+msgstr "$39"
 
 #. js-lingui-id: kNzyu3
 #: src/sections/compare/compare-data.ts
 msgid "$39 per user per month, SSO included"
-msgstr ""
+msgstr "SSO 포함, 사용자 1인당 월 $39"
 
 #. js-lingui-id: azz07D
 #: src/sections/compare/compare-data.ts
@@ -413,7 +413,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$39 per user per month, that's it"
-msgstr ""
+msgstr "사용자 1인당 월 $39, 그게 전부입니다"
 
 #. js-lingui-id: q9R8xN
 #: src/sections/compare/compare-data.ts
@@ -459,7 +459,7 @@ msgstr "$500/사용자/월"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$50k"
-msgstr ""
+msgstr "$50k"
 
 #. js-lingui-id: rJXDlT
 #: src/sections/compare/compare-data.ts
@@ -484,14 +484,14 @@ msgstr "$79/사용자/월"
 #. js-lingui-id: 8r6DgO
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9"
-msgstr ""
+msgstr "$9"
 
 #. js-lingui-id: RbeSoe
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $39/user, everything included"
-msgstr ""
+msgstr "사용자당 $9~$39, 모든 기능 포함"
 
 #. js-lingui-id: nliPPd
 #: src/sections/compare/compare-data.ts
@@ -500,7 +500,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9,360"
-msgstr ""
+msgstr "$9,360"
 
 #. js-lingui-id: iH2efm
 #: src/sections/compare/compare-data.ts
@@ -509,7 +509,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9,360/yr"
-msgstr ""
+msgstr "연 $9,360"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -519,7 +519,7 @@ msgstr "Pro에서 사용자당 $9"
 #. js-lingui-id: K42cxp
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
@@ -575,7 +575,7 @@ msgstr "2,000+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "20 × Organization ($39)"
-msgstr ""
+msgstr "20 × Organization($39)"
 
 #. js-lingui-id: t8U4dF
 #: src/sections/compare/compare-data.ts
@@ -643,7 +643,7 @@ msgstr "30+"
 #. js-lingui-id: YqbCZi
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #. js-lingui-id: Pdl2UE
 #: src/case-studies/case-study-catalog.ts
@@ -663,7 +663,7 @@ msgstr "분당 50회"
 #. js-lingui-id: bPBd1a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "5x more personal AI usage"
-msgstr ""
+msgstr "개인 AI 사용량 5배 증가"
 
 #. js-lingui-id: tZvajW
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -735,7 +735,7 @@ msgstr "실제로 소유하는 CRM"
 #. js-lingui-id: Wy0ITC
 #: src/sections/pricing-plans/plans-data.ts
 msgid "A custom agentic CRM for one team."
-msgstr ""
+msgstr "한 팀을 위한 맞춤형 에이전틱 CRM."
 
 #. js-lingui-id: HSyZ9R
 #: src/sections/problem/Problem.tsx
@@ -868,12 +868,12 @@ msgstr "AC&T는 종료된 벤더 CRM을 셀프 호스팅 Twenty로 대체하여 
 #. js-lingui-id: Ex+PbS
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Access follows your directory"
-msgstr ""
+msgstr "디렉터리에 따라 액세스 관리"
 
 #. js-lingui-id: SWc/zk
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Access to our implementation partner network"
-msgstr ""
+msgstr "구현 파트너 네트워크 이용"
 
 #. js-lingui-id: pd81Qb
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -924,7 +924,7 @@ msgstr "활성 필터"
 #. js-lingui-id: QvulpL
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Add a credit pack to your monthly or yearly plan. Unused pack credits roll over, up to twice the pack."
-msgstr ""
+msgstr "월간 또는 연간 플랜에 크레딧 팩을 추가하세요. 사용하지 않은 팩 크레딧은 팩 크레딧의 두 배까지 이월됩니다."
 
 #. js-lingui-id: r8W+9y
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -1018,12 +1018,12 @@ msgstr "주소 필드 타입"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Admin & Member"
-msgstr ""
+msgstr "관리자 및 멤버"
 
 #. js-lingui-id: MY7fuZ
 #: src/sections/compare/compare-data.ts
 msgid "Admin & Member roles on Pro, custom permissions on Organization"
-msgstr ""
+msgstr "Pro의 관리자 및 멤버 역할, Organization의 맞춤 권한"
 
 #. js-lingui-id: g1in8j
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1104,7 +1104,7 @@ msgstr "Agentforce 정가"
 #. js-lingui-id: vFWpqb
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Agentic workflows"
-msgstr ""
+msgstr "에이전틱 워크플로"
 
 #. js-lingui-id: HrtCcp
 #: src/sections/compare/compare-data.ts
@@ -1201,7 +1201,7 @@ msgstr "이제 AI 설정에서 각 모델의 제공업체, 100만 토큰당 가�
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "AI tasks/week"
-msgstr ""
+msgstr "AI 작업/주"
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1263,7 +1263,7 @@ msgstr "Amrendra Pratap Singh"
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
 msgid "And more apps from our marketplace"
-msgstr ""
+msgstr "마켓플레이스의 더 많은 앱"
 
 #. js-lingui-id: Sbiivs
 #: src/partner-application/data/partner-country-options.ts
@@ -1278,7 +1278,7 @@ msgstr "Angola 🇦🇴"
 #. js-lingui-id: SOLXKf
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Answers from the team that builds it"
-msgstr ""
+msgstr "만든 팀이 직접 답변"
 
 #. js-lingui-id: qKANz3
 #: src/partner-application/data/partner-country-options.ts
@@ -1476,7 +1476,7 @@ msgstr "자동 갱신 약정 계약"
 #. js-lingui-id: fXf/nR
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Automate the busywork"
-msgstr ""
+msgstr "반복 업무 자동화"
 
 #. js-lingui-id: FFv0Vh
 #: src/sections/product-stepper/data/product-stepper-data.ts
@@ -1667,12 +1667,12 @@ msgstr "청구 주기"
 #. js-lingui-id: fztLkj
 #: src/sections/menu/data/menu.ts
 msgid "Blue code window illustration"
-msgstr ""
+msgstr "파란색 코드 창 일러스트"
 
 #. js-lingui-id: go4Mpk
 #: src/sections/menu/data/menu.ts
 msgid "Blue megaphone illustration"
-msgstr ""
+msgstr "파란색 메가폰 일러스트"
 
 #. js-lingui-id: TVJDFA
 #: src/partner-application/data/partner-country-options.ts
@@ -1707,7 +1707,7 @@ msgstr "Brazil 🇧🇷"
 #. js-lingui-id: ISQOxf
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Bring your own AI models"
-msgstr ""
+msgstr "자체 AI 모델 사용"
 
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -1833,7 +1833,7 @@ msgstr "동영상이 없는 통화 녹화에는 이제 오디오 플레이어가
 #. js-lingui-id: zV3oiN
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Calls recorded, leads enriched"
-msgstr ""
+msgstr "통화는 기록되고, 리드는 보강됩니다"
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -2063,7 +2063,7 @@ msgstr "클라우드 또는 셀프 호스팅?"
 #. js-lingui-id: PQn82X
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month and Organization is $39/user/month, billed yearly. Organization adds 5x more AI usage per member, custom roles with field and row-level permissions, and SSO. Self-hosting the open source core is free."
-msgstr ""
+msgstr "Cloud Pro는 사용자당 월 $9, Organization은 사용자당 월 $39이며, 연 단위로 청구됩니다. Organization은 멤버당 AI 사용량을 5배 더 제공하고, 필드 및 행 수준 권한이 있는 맞춤 역할과 SSO를 추가로 제공합니다. 오픈 소스 코어의 자체 호스팅은 무료입니다."
 
 #. js-lingui-id: WYgF8M
 #: src/platform/routing/static-website-routes.ts
@@ -2267,12 +2267,12 @@ msgstr "제어"
 #. js-lingui-id: 4XqT0A
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Control who can see what"
-msgstr ""
+msgstr "누가 무엇을 볼 수 있는지 제어"
 
 #. js-lingui-id: 85Qb5T
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Control who does what"
-msgstr ""
+msgstr "누가 무엇을 하는지 제어"
 
 #. js-lingui-id: uiJ97K
 #: src/sections/compare/compare-data.ts
@@ -2443,7 +2443,7 @@ msgstr "생성 일자"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Credit packs"
-msgstr ""
+msgstr "크레딧 팩"
 
 #. js-lingui-id: KOLvLO
 #: src/sections/compare/compare-data.ts
@@ -2453,12 +2453,12 @@ msgstr "크레딧 기반, 채팅당 요금 없음"
 #. js-lingui-id: Xv/V2C
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "credit/user/month"
-msgstr ""
+msgstr "크레딧/사용자/월"
 
 #. js-lingui-id: CVe7cK
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "credits/user/month"
-msgstr ""
+msgstr "크레딧/사용자/월"
 
 #. js-lingui-id: NLgmM4
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -2561,7 +2561,7 @@ msgstr "커스텀 앱 · 스크립트 · AI/에이전트 통합"
 #. js-lingui-id: DdD8/a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Custom data model, apps and automations"
-msgstr ""
+msgstr "맞춤 데이터 모델, 앱 및 자동화"
 
 #. js-lingui-id: onPW5H
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2632,12 +2632,12 @@ msgstr "플랫폼을 기반으로 구축된 맞춤형 객체, 워크플로 및 �
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom roles"
-msgstr ""
+msgstr "맞춤 역할"
 
 #. js-lingui-id: WN2bYG
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Custom roles, permissions and usage limits"
-msgstr ""
+msgstr "맞춤 역할, 권한 및 사용량 제한"
 
 #. js-lingui-id: y5pLQH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2787,7 +2787,7 @@ msgstr "데이터 모델들"
 #. js-lingui-id: hsPieC
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Data Processing Agreement (DPA)"
-msgstr ""
+msgstr "데이터 처리 계약(DPA)"
 
 #. js-lingui-id: dfdijQ
 #: src/sections/compare/compare-data.ts
@@ -2847,12 +2847,12 @@ msgstr "레코드를 사이드 패널에서 열지 전체 페이지로 열지 �
 #. js-lingui-id: GOEUlt
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Dedicated compute and custom API rates"
-msgstr ""
+msgstr "전용 컴퓨팅 및 맞춤 API 요금"
 
 #. js-lingui-id: 7f0JvT
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Dedicated scale for large companies."
-msgstr ""
+msgstr "대기업을 위한 전용 확장성."
 
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
@@ -2865,7 +2865,7 @@ msgstr "전담 지원 및 SLA"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Dedicated, with SLA"
-msgstr ""
+msgstr "전용, SLA 포함"
 
 #. js-lingui-id: 46Erl4
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -2875,12 +2875,12 @@ msgstr "필드의 기본 위치/가시성…"
 #. js-lingui-id: s0LyBg
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Delegate 5x more to AI"
-msgstr ""
+msgstr "AI에 5배 더 많은 업무 위임"
 
 #. js-lingui-id: cL6BYo
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Delegate the CRM chores to AI"
-msgstr ""
+msgstr "CRM 업무를 AI에 위임"
 
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3060,13 +3060,13 @@ msgstr "완료"
 #. js-lingui-id: SBTQRZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "down to fields"
-msgstr ""
+msgstr "필드 수준까지"
 
 #. js-lingui-id: 6ujaBZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "down to fields and rows"
-msgstr ""
+msgstr "필드 및 행 수준까지"
 
 #. js-lingui-id: HDR0en
 #: src/partner-application/data/partner-country-options.ts
@@ -3157,7 +3157,7 @@ msgstr "예: n8n, Shopify, 부동산…"
 #. js-lingui-id: x7z+7U
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off."
-msgstr ""
+msgstr "각 멤버에게 매주 월요일 갱신되는 자체 AI 할당량이 제공됩니다. AI 작업은 기본 모델을 기준으로 추정한 하나의 채팅 요청이며, 더 고성능인 모델은 더 많은 할당량을 사용합니다. 할당량이 소진되면 관리자가 비활성화하지 않는 한 워크스페이스 크레딧으로 채팅이 계속됩니다."
 
 #. js-lingui-id: a35sCN
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3252,7 +3252,7 @@ msgstr "이메일 및 캘린더 차단 목록"
 #. js-lingui-id: yX/pF3
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Email and chat"
-msgstr ""
+msgstr "이메일 및 채팅"
 
 #. js-lingui-id: AoN898
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3303,7 +3303,7 @@ msgstr "CRM 레코드에 연결된 이메일과 이벤트"
 #. js-lingui-id: a9uuza
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Emails and meetings log themselves"
-msgstr ""
+msgstr "이메일과 미팅이 자동으로 기록됩니다"
 
 #. js-lingui-id: gqv5ZL
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -3420,7 +3420,7 @@ msgstr "Enterprise 한정"
 #. js-lingui-id: g3FvX+
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Enterprise procurement support"
-msgstr ""
+msgstr "엔터프라이즈 구매 지원"
 
 #. js-lingui-id: /BbcE4
 #: src/sections/compare/compare-data.ts
@@ -3490,12 +3490,12 @@ msgstr "모든 스레드를, 올바른 레코드에."
 #. js-lingui-id: Gy9kTe
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization, plus"
-msgstr ""
+msgstr "Organization 플랜의 모든 기능 포함, 추가 제공"
 
 #. js-lingui-id: 4Tqp8y
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Pro, plus"
-msgstr ""
+msgstr "Pro 플랜의 모든 기능 포함, 추가 제공"
 
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -3578,7 +3578,7 @@ msgstr "상영 연장!"
 #. js-lingui-id: 07Wl2A
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Extra credits"
-msgstr ""
+msgstr "추가 크레딧"
 
 #. js-lingui-id: D5e0U+
 #: src/sections/compare/compare-data.ts
@@ -3613,7 +3613,7 @@ msgstr "행동으로 가는 가장 빠른 길"
 #. js-lingui-id: 9MAcr1
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Faster answers from our team"
-msgstr ""
+msgstr "팀의 더 빠른 응답"
 
 #. js-lingui-id: /irOkZ
 #: src/sections/compare/compare-data.ts
@@ -3783,7 +3783,7 @@ msgstr "마켓플레이스에서 People Data Labs, Last Contact, Call Recorder �
 #. js-lingui-id: o/pt/x
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Find experts to roll it out"
-msgstr ""
+msgstr "도입을 지원할 전문가 찾기"
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -3872,17 +3872,17 @@ msgstr "한때 메모지 위에서 돌아가던 회사에게, 이것은 단순 �
 #. js-lingui-id: Suco2Z
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For one team, on your servers."
-msgstr ""
+msgstr "한 팀을 위해, 자체 서버에서."
 
 #. js-lingui-id: jCGEo0
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For several teams, in production."
-msgstr ""
+msgstr "여러 팀을 위해, 프로덕션 환경에서."
 
 #. js-lingui-id: 761I8E
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For strict compliance, at scale."
-msgstr ""
+msgstr "엄격한 규정 준수와 대규모 운영을 위해."
 
 #. js-lingui-id: yAJC9c
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -3931,13 +3931,13 @@ msgstr "프랑스어"
 #. js-lingui-id: GtmO8/
 #: src/sections/pricing-plans/plans-data.ts
 msgid "from"
-msgstr ""
+msgstr "부터"
 
 #. js-lingui-id: ejVYRQ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "From"
-msgstr ""
+msgstr "부터"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3996,7 +3996,7 @@ msgstr "한곳에 모인 전체 커뮤니케이션 히스토리"
 #. js-lingui-id: 90Xsa/
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Full customization and custom apps"
-msgstr ""
+msgstr "완전한 맞춤화 및 맞춤 앱"
 
 #. js-lingui-id: bKjaLJ
 #: src/sections/compare/compare-data.ts
@@ -4136,7 +4136,7 @@ msgstr "좋은 선택입니다!"
 #. js-lingui-id: 2Gfu3a
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Google and Microsoft email and calendar sync"
-msgstr ""
+msgstr "Google 및 Microsoft 이메일과 캘린더 동기화"
 
 #. js-lingui-id: opD7oA
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4232,7 +4232,7 @@ msgstr "헬프 센터"
 #. js-lingui-id: WorXzH
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Help from the community"
-msgstr ""
+msgstr "커뮤니티의 도움"
 
 #. js-lingui-id: xJnMnj
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
@@ -4484,7 +4484,7 @@ msgstr "구축 프로젝트(일반적인 첫해 기준)"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "구현/마이그레이션 예산 범위"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4608,7 +4608,7 @@ msgstr "포함!"
 #. js-lingui-id: 11h9eK
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Includes"
-msgstr ""
+msgstr "포함 사항"
 
 #. js-lingui-id: /c4yUr
 #: src/partner-application/data/partner-country-options.ts
@@ -5073,7 +5073,7 @@ msgstr "일반 객체와 마찬가지로, 작업과 회사에 사용자 지정 �
 #. js-lingui-id: qfiYod
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Limited personal AI usage"
-msgstr ""
+msgstr "제한된 개인 AI 사용량"
 
 #. js-lingui-id: kvxPie
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5451,7 +5451,7 @@ msgstr "월별"
 #. js-lingui-id: b2GPvZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps."
-msgstr ""
+msgstr "워크플로, AI 에이전트 및 앱을 위해 워크스페이스가 공유하는 월간 크레딧입니다. 크레딧 1개로 워크플로 단계 10,000개를 처리할 수 있습니다."
 
 #. js-lingui-id: Ggmdbf
 #: src/sections/compare/compare-data.ts
@@ -5461,7 +5461,7 @@ msgstr "월간 또는 연간 요금, 언제든 해지 가능"
 #. js-lingui-id: W87SCX
 #: src/sections/pricing-plans/plans-data.ts
 msgid "More AI and control for several teams."
-msgstr ""
+msgstr "여러 팀을 위한 더 많은 AI와 제어 기능."
 
 #. js-lingui-id: paxFAm
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5481,7 +5481,7 @@ msgstr "더 유연한 레코드 페이지"
 #. js-lingui-id: kjrq/8
 #: src/sections/pricing-plan-table/PlanTableInfoTooltip.tsx
 msgid "More information"
-msgstr ""
+msgstr "자세한 정보"
 
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -6027,7 +6027,7 @@ msgstr "조직 활성화 | Twenty"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Organization, $39/user"
-msgstr ""
+msgstr "Organization, 사용자당 $39"
 
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6187,7 +6187,7 @@ msgstr "사람들"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "per member"
-msgstr ""
+msgstr "멤버당"
 
 #. js-lingui-id: cSBVtF
 #: src/sections/compare/compare-data.ts
@@ -6216,7 +6216,7 @@ msgstr "성능 개선"
 #. js-lingui-id: 9cDpsw
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Permissions"
-msgstr ""
+msgstr "권한"
 
 #. js-lingui-id: JjOHl8
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6236,7 +6236,7 @@ msgstr "사람"
 #. js-lingui-id: Lz7jRL
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Personal AI usage"
-msgstr ""
+msgstr "개인 AI 사용량"
 
 #. js-lingui-id: OzAIDr
 #: src/partner-application/data/partner-country-options.ts
@@ -6291,7 +6291,7 @@ msgstr "파이프라인, 커스텀 오브젝트, AI 도우미, Postgres 위의 �
 #. js-lingui-id: h4k6l4
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Plan essentials"
-msgstr ""
+msgstr "플랜 핵심 사항"
 
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6413,7 +6413,7 @@ msgstr "프린시펄 & 설립자, Alternative Partners"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Priority"
-msgstr ""
+msgstr "우선순위"
 
 #. js-lingui-id: k62X/2
 #: src/sections/pricing-plans/plans-data.ts
@@ -6582,7 +6582,7 @@ msgstr "읽기/편집/삭제 권한"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Ready for your security review"
-msgstr ""
+msgstr "보안 검토 준비 완료"
 
 #. js-lingui-id: LNWY6D
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
@@ -6793,7 +6793,7 @@ msgstr "리소스"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Response times you can count on"
-msgstr ""
+msgstr "신뢰할 수 있는 응답 시간"
 
 #. js-lingui-id: oC2l7f
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6889,12 +6889,12 @@ msgstr "루마니아어"
 #. js-lingui-id: muOXax
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Room for several teams"
-msgstr ""
+msgstr "여러 팀을 위한 여유"
 
 #. js-lingui-id: WRJqac
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Room to grow, at any scale"
-msgstr ""
+msgstr "어떤 규모에서든 성장할 여유"
 
 #. js-lingui-id: Wdh41P
 #: src/sections/pricing-plans/plans-data.ts
@@ -6915,7 +6915,7 @@ msgstr "수백 명의 학생을 대상으로 모의 면접 프로그램을 운�
 #. js-lingui-id: /wDNXh
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Runs fully offline"
-msgstr ""
+msgstr "완전한 오프라인 실행"
 
 #. js-lingui-id: T1ut28
 #: src/partner-application/data/partner-country-options.ts
@@ -7036,12 +7036,12 @@ msgstr "SAML SSO 및 보안 규칙"
 #. js-lingui-id: pPyTOz
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SAML/OIDC"
-msgstr ""
+msgstr "SAML/OIDC"
 
 #. js-lingui-id: oL+5Cq
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SAML/OIDC + SCIM"
-msgstr ""
+msgstr "SAML/OIDC + SCIM"
 
 #. js-lingui-id: w9QWxz
 #: src/sections/pricing-plans/plans-data.ts
@@ -7051,7 +7051,7 @@ msgstr "SAML/OIDC SSO"
 #. js-lingui-id: 7RCVaA
 #: src/sections/pricing-plans/plans-data.ts
 msgid "SAML/OIDC SSO and audit logs"
-msgstr ""
+msgstr "SAML/OIDC SSO 및 감사 로그"
 
 #. js-lingui-id: R38ZPo
 #: src/partner-application/data/partner-country-options.ts
@@ -7162,17 +7162,17 @@ msgstr "보안"
 #. js-lingui-id: y3s3Ok
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Security reviews & custom contracts"
-msgstr ""
+msgstr "보안 검토 및 맞춤 계약"
 
 #. js-lingui-id: hONkro
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Security reviews and custom contracts"
-msgstr ""
+msgstr "보안 검토 및 맞춤 계약"
 
 #. js-lingui-id: yGMbZ5
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Security tailored to your IT"
-msgstr ""
+msgstr "IT 환경에 맞춘 보안"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
@@ -7382,7 +7382,7 @@ msgstr "비즈니스에 맞게 레코드 구조화"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Shaped around how you sell"
-msgstr ""
+msgstr "판매 방식에 맞춰 설계"
 
 #. js-lingui-id: 3PvOYS
 #: src/sections/faq/partner-faq.data.ts
@@ -8771,7 +8771,7 @@ msgstr "사전 컨설팅, 범위 정의, 전략 수립."
 #. js-lingui-id: 5DSuOT
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Upgrade on your schedule"
-msgstr ""
+msgstr "원하는 일정에 업그레이드"
 
 #. js-lingui-id: WLb3m4
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8925,7 +8925,7 @@ msgstr "엔지니어링 담당 부사장(VP of Engineering), W3villa Technologie
 #. js-lingui-id: cLpH4u
 #: src/sections/pricing-plans/plans-data.ts
 msgid "VPN, your own AI providers and more"
-msgstr ""
+msgstr "VPN, 자체 AI 제공업체 등"
 
 #. js-lingui-id: s0tU5h
 #: src/case-studies/case-study-stories.ts
@@ -9404,7 +9404,7 @@ msgstr "워크스페이스"
 #. js-lingui-id: Rg6QK1
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Workspace credits"
-msgstr ""
+msgstr "워크스페이스 크레딧"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/data/menu.ts
@@ -9484,7 +9484,7 @@ msgstr "예"
 #. js-lingui-id: DLTd8S
 #: src/sections/faq/faq.data.ts
 msgid "Yes, with our Apps framework. Scaffold an extension with `npx twenty@latest app init my-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr ""
+msgstr "예, Apps 프레임워크로 가능합니다. `npx twenty@latest app init my-app`을 사용해 확장 기능의 기본 구조를 만들고, 맞춤 객체, 서버 측 로직 함수, Twenty UI 내에 렌더링되는 React 컴포넌트, AI 스킬 및 에이전트, 뷰와 내비게이션을 모두 TypeScript로 제공하여 모든 워크스페이스에 배포할 수 있습니다."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts
@@ -9639,7 +9639,7 @@ msgstr "결제가 완료되었습니다. 아래 단계에 따라 라이선스 �
 #. js-lingui-id: rcT2v7
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Your data, fully isolated"
-msgstr ""
+msgstr "완전히 격리된 데이터"
 
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts

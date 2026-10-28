@@ -3,7 +3,10 @@ title: Макет
 description: Как ориентироваться, просматривать и открывать записи в Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Основная компоновка
 
@@ -11,7 +14,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <img src="/images/user-guide/home/main-layout.png" style={{width:'100%'}} />
 
-## Панель навигации
+<span id="navigation-bar" />
+
+## Боковая панель
 
 Левая боковая панель содержит:
 
@@ -23,6 +28,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 * **Рабочие процессы** — создавайте автоматизации
 
 Перетаскивайте элементы, чтобы изменить порядок; создавайте папки для группировки связанных объектов; скрывайте то, чем не пользуетесь.
+
+Используйте кнопку сворачивания в верхней части боковой панели или выберите **Свернуть боковую панель** в меню команд (`Cmd+K` на Mac или `Ctrl+K` в Windows). В свёрнутом состоянии используйте **Развернуть боковую панель**, чтобы снова её показать.
 
 <img src="/images/user-guide/home/navigation-bar.png" style={{width:'100%'}} />
 
@@ -40,7 +47,7 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Поиск
 
-Доступно через меню команд, в верхней части панели навигации или по нажатию `/`. Поиск работает по всем объектам.
+Доступно через меню команд, в верхней части боковой панели или по нажатию `/`. Поиск работает по всем объектам.
 
 <img src="/images/user-guide/home/search-bar.png" style={{width:'100%'}} />
 
@@ -66,8 +73,13 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Когда вы открываете запись, страница сведений формируется из настраиваемых **вкладок** и **виджетов**. Добавляйте, удаляйте, меняйте порядок и изменяйте размер виджетов в сетке — поля, связанные записи, электронные письма, ленту активности, задачи, заметки, файлы, диаграммы, iframes и многое другое. У каждого типа объекта есть собственная компоновка.
 
-<Card title="Полное руководство по компоновке" icon="arrow-right" href="/ru/user-guide/layout/overview">
-  Навигация, представления, страницы записей — подробная справка и практические инструкции.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>Полное руководство по макету</CardTitle>
+  Боковая панель, представления, страницы записей — подробная справка и практические инструкции.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Макет" />
+
+<PageBanner illustration="getting-started-layout" />

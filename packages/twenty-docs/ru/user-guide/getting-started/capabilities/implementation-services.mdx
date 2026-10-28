@@ -3,15 +3,23 @@ title: Услуги по внедрению
 description: Нужна ли вам помощь в начале работы или в создании сложных настроек, у нас есть решение.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Партнеры по внедрению
 
 Работайте с сертифицированными партнерами Twenty для расширенных настроек, интеграций и выделенной поддержки внедрения.
 
-<CardGroup cols={2}>
-  <Card title="Просмотреть сертифицированных партнеров" icon="search" href="https://twenty.com/partners/list?ref=docs-implementation-services">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>Просмотрите сертифицированных партнеров</CardTitle>
     Найдите партнера и свяжитесь с ним напрямую — отфильтруйте по региону, языку и области экспертизы.
   </Card>
-  <Card title="Получить рекомендации от Twenty" icon="mail" href="mailto:contact@twenty.com">
-    Расскажите нам, что вам нужно, и мы свяжем вас с подходящим партнером.
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>Соответствует двадцать</CardTitle>
+    Расскажите нам, что вам нужно, и мы свяжемся с правильным партнером.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

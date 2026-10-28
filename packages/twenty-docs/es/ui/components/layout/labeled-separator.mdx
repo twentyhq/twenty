@@ -1,0 +1,87 @@
+---
+title: Separador etiquetado
+description: Separe el contenido con una etiqueta de texto centrada o alineada al final.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## Resumen
+
+`LabeledSeparator` combina [Separador](/es/ui/primitives/layout/separator) y [Texto](/es/ui/primitives/typography/text) en un divisor horizontal con nombre. La aplicación proporciona la etiqueta y el espaciado circundante.
+
+<StoryEmbed storyId="ui-layout-labeledseparator--display" title="Separador etiquetado entre opciones de importación" height={180} />
+
+## "Uso"
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## Ubicación y tono de la etiqueta
+
+`labelPosition` tiene como valor predeterminado `center`, con una línea a cada lado de la etiqueta. Use `end` para colocar la etiqueta después de la línea inicial. La etiqueta acepta una cadena proporcionada y localizada por la aplicación.
+
+`tone` tiene como valor predeterminado `neutral`. Use `danger` para un marcador rojo con una etiqueta de grosor medio y una línea más gruesa. Establezca `hasStartMarker` para añadir un pequeño remate decorativo al principio de la línea.
+
+El remate opcional sigue el [diseño compartido de líneas de calendario y chat](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed storyId="ui-layout-labeledseparator--unread-marker" title="Marcador de no leído con una etiqueta alineada al final" height={100} />
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## Espaciado y estado de la aplicación
+
+El componente llena su contenedor y no añade margen exterior. Use el espaciado del diseño principal o `style` y `className` nativos para los márgenes y la alineación. Mantenga los desplazamientos para avatares adyacentes o posiciones de calendario en la aplicación.
+
+El componente presenta la etiqueta proporcionada. La aplicación decide dónde corresponde un límite de no leído o un marcador de calendario y cuándo es visible.
+
+## Accesibilidad y composición
+
+La raíz expone un separador horizontal con el nombre de su etiqueta. Los segmentos de línea y el marcador inicial opcional son decorativos, por lo que la tecnología de asistencia no anuncia separadores adicionales. Los atributos accesibles nativos pueden proporcionar un nombre o una descripción diferentes cuando sea necesario.
+
+Los atributos nativos, los estilos, los nombres de clase y `ref` se aplican al `div` exterior. Use `render` para componer otro elemento no interactivo mientras reenvía las props y la referencia proporcionadas. `LabeledSeparatorProps` se exporta desde `twenty-ui/components/layout`.
+
+## Migración
+
+Reemplace el `LabeledDivider` del frontend por `LabeledSeparator`. Cambie el nombre de `textPosition` a `labelPosition` y use `tone="danger"` para la apariencia roja del marcador de no leído. Elimine `noMargin`, ya que los márgenes exteriores tienen un valor predeterminado de cero. Conserve el espaciado predeterminado anterior con `style={{ marginBlock: 'var(--t-spacing-3)' }}` donde sea necesario.
+
+## "Props"
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

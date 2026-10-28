@@ -1,0 +1,75 @@
+---
+title: Sección
+description: Agrupa contenido con un encabezado, una descripción complementaria y una acción opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Resumen
+
+`Section.Root` agrupa contenido relacionado. `Section.Header` combina [Heading](/es/ui/primitives/typography/heading) con una descripción y contenido `actions` opcional. Las descripciones son texto normal asociado al encabezado, por lo que no añaden niveles al esquema del documento.
+
+<StoryEmbed storyId="ui-components-section--display" title="Ejemplo de sección" height={150} />
+
+## "Uso"
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+## Añade una descripción y una acción
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      actions={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+`Section.Root` usa de forma predeterminada un `div` de ancho completo con alineación a la izquierda y el color de texto principal. Usa `align`, `color` y `fullWidth` para ajustar el contenedor de contenido.
+
+`Section.Header` también puede usarse por sí solo. Sus `level`, `size` y `color` configuran el encabezado y, de forma predeterminada, son `2`, `md` y `primary`. El encabezado tiene un margen de espaciado 4 después de él. Usa `style` o `className` nativos para ajustar ese espaciado.
+
+## Desbordamiento de la descripción
+
+Las descripciones de cadenas muestran hasta cinco líneas. Establece `descriptionLineClamp` en un entero positivo para elegir otro límite, o en `false` para mostrar la descripción completa sin una información sobre herramientas de desbordamiento. Al pasar el cursor se muestra el texto desbordado. Las descripciones no añaden una parada de tabulación de forma predeterminada; establece `isDescriptionFocusable` para habilitar el acceso mediante el foco a la información sobre herramientas. Escape descarta la información sobre herramientas.
+
+El encabezado acepta contenido de nodo. Elija `level` para el esquema del documento independientemente de `size` y `color` visuales. Componga explícitamente enlaces y otro contenido enriquecido en una descripción de nodo.
+
+Pasa un nodo de React para obtener contenido complementario más enriquecido. Las descripciones enriquecidas se representan tal como se proporcionan, sin truncamiento automático ni información sobre herramientas.
+
+## Composición
+
+Ambas partes reenvían atributos nativos, refs, nombres de clase, estilos y `render` a su elemento externo. Por ejemplo, `Section.Root render={<section aria-label="Workspace settings" />}` proporciona una sección con nombre, y `Section.Header render={<header />}` usa un contenedor de encabezado.
+
+Al migrar, reemplace `adornment` por `actions`. Active el enfoque de la descripción con `isDescriptionFocusable` cuando sea necesario. `SectionRootProps` y `SectionHeaderProps` se exportan desde `twenty-ui/components/layout`.
+
+## "Props"
+
+<SectionReference />
+
+<PageBanner illustration="layout" />

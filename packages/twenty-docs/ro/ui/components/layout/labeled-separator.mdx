@@ -1,0 +1,87 @@
+---
+title: LabeledSeparator
+description: Separați conținutul cu o etichetă de text centrată sau aliniată la final.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## Prezentare generală
+
+`LabeledSeparator` combină [Separator](/ro/ui/primitives/layout/separator) și [Text](/ro/ui/primitives/typography/text) într-un separator orizontal denumit. Aplicația dvs. furnizează eticheta și spațierea din jur.
+
+<StoryEmbed storyId="ui-layout-labeledseparator--display" title="Separator etichetat între opțiunile de import" height={180} />
+
+## Utilizare
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## Poziționarea și tonul etichetei
+
+`labelPosition` este implicit `center`, cu o linie pe fiecare parte a etichetei. Folosiți `end` pentru a poziționa eticheta după linia de început. Eticheta acceptă un șir furnizat și localizat de aplicația dvs.
+
+`tone` este implicit `neutral`. Folosiți `danger` pentru un marcator roșu cu o etichetă de grosime medie și o linie mai groasă. Setați `hasStartMarker` pentru a adăuga un mic capăt decorativ la începutul liniei.
+
+Capătul opțional urmează [designul comun pentru liniile de calendar și chat](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed storyId="ui-layout-labeledseparator--unread-marker" title="Marcator de necitit cu o etichetă aliniată la final" height={100} />
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## Spațierea și starea aplicației
+
+Componenta umple containerul și nu adaugă nicio margine exterioară. Folosiți spațierea aspectului părinte sau `style` și `className` native pentru margini și aliniere. Păstrați în aplicația dvs. decalajele pentru avatarele adiacente sau pozițiile din calendar.
+
+Componenta afișează eticheta furnizată. Aplicația dvs. decide unde aparține o limită de necitit sau un marcator de calendar și când este vizibilă.
+
+## Accesibilitate și compunere
+
+Rădăcina expune un separator orizontal denumit după eticheta sa. Segmentele liniei și marcatorul opțional de început sunt decorative, astfel încât tehnologia asistivă să nu anunțe separatoare suplimentare. Atributele native de accesibilitate pot furniza un nume sau o descriere diferită atunci când este necesar.
+
+Atributele native, stilurile, numele de clase și `ref` vizează elementul `div` exterior. Folosiți `render` pentru a compune un alt element neinteractiv, transmițând în același timp proprietățile și ref-ul furnizate. `LabeledSeparatorProps` este exportat din `twenty-ui/components/layout`.
+
+## Migrare
+
+Înlocuiți `LabeledDivider` din frontend cu `LabeledSeparator`. Redenumiți `textPosition` în `labelPosition` și folosiți `tone="danger"` pentru aspectul roșu al marcatorului de necitit. Eliminați `noMargin`, deoarece marginile exterioare sunt implicit zero. Păstrați fosta spațiere implicită cu `style={{ marginBlock: 'var(--t-spacing-3)' }}` acolo unde este necesar.
+
+## Proprietăți
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

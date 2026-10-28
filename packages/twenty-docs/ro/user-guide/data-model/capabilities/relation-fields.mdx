@@ -3,6 +3,8 @@ title: Câmpuri de relație
 description: Conectați înregistrări din obiecte diferite folosind câmpuri de relație.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Tipuri de relații
 
 ### Unu-la-mulți
@@ -41,9 +43,9 @@ Multe înregistrări din Obiectul A pot fi legate de multe înregistrări din Ob
 
 Relațiile de tip multe-la-multe folosesc un model de tip **obiect de legătură**: un obiect intermediar care conectează ambele părți. Cu funcția de relație cu obiect de legătură, Twenty afișează direct înregistrările finale asociate, ascunzând obiectul intermediar din UI.
 
-<Warning>
-**Funcția Beta**: Relațiile de Junction trebuie activate la **Setări → Comunitate → Caracteristici** înainte de utilizare.
-</Warning>
+<Note>
+Comutatorul **Aceasta este o relație către un obiect de joncțiune** apare într-un câmp de relație unu-la-mai-multe cu un singur obiect țintă, atunci când acel obiect țintă pare a fi un obiect de joncțiune (propriile sale relații, ignorându-le pe cele de sistem, sunt toate de tip mai-multe-la-unu) și are o altă relație prin care să indice.
+</Note>
 
 Consultați [Cum să creați relații de tip multe-la-multe](/ro/user-guide/data-model/how-tos/create-many-to-many-relations) pentru un ghid complet, pas cu pas.
 
@@ -92,3 +94,5 @@ Twenty include relații predefinite între obiectele standard:
 
 * **Ștergerea relațiilor** elimină legătura, dar nu și înregistrările asociate
 * **Relațiile circulare** ar trebui evitate pentru integritatea datelor
+
+<PageBanner illustration="card-page-relations" />

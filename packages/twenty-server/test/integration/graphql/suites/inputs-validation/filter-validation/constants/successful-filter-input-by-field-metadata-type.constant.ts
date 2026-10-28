@@ -420,11 +420,11 @@ export const successfulFilterInputByFieldMetadataType: {
   [FieldMetadataType.PHONES]: [
     {
       gqlFilterInput: {
-        phonesField: { primaryPhoneNumber: { eq: '1234567890' } },
+        phonesField: { primaryPhoneNumber: { eq: '123456789' } },
       },
-      restFilterInput: 'phonesField.primaryPhoneNumber[eq]:"1234567890"',
+      restFilterInput: 'phonesField.primaryPhoneNumber[eq]:"123456789"',
       validateFilter: (record: Record<string, any>) => {
-        return record.phonesField.primaryPhoneNumber === '1234567890';
+        return record.phonesField.primaryPhoneNumber === '123456789';
       },
     },
     {

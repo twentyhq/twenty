@@ -1,6 +1,11 @@
 ---
 title: Coda di messaggi
+description: Esegue attività in background attraverso le code dei messaggi.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
 
 Le code facilitano l'esecuzione di operazioni asincrone. Possono essere usate per eseguire attività in background come l'invio di un'email di benvenuto alla registrazione.
 Ogni caso d'uso avrà la propria classe di coda estesa da `MessageQueueServiceBase`.
@@ -39,3 +44,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="card-page-background-jobs" />

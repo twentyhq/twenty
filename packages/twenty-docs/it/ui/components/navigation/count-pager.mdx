@@ -1,0 +1,89 @@
+---
+title: Paginatore conteggio
+description: Naviga in una raccolta finita con controlli precedente e successivo e testo di posizione formattato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## Panoramica
+
+`CountPager` combina i pulsanti precedente e successivo con testo di posizione formattato dal chiamante. Usalo per spostarti in una piccola raccolta, ad esempio elementi da rivedere o richieste.
+
+<StoryEmbed storyId="ui-components-countpager--display" title="Esempio di pager di conteggio" height={100} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## Navigazione controllata
+
+Fornisci un `index` con base zero, il `count` della raccolta e `onIndexChange`. L'attivazione di un pulsante disponibile richiede l'indice adiacente. L'applicazione aggiorna l'indice ed esegue il rendering del contenuto corrispondente.
+
+Precedente è disabilitato sul primo elemento e Successivo è disabilitato sull'ultimo elemento. Entrambi i pulsanti sono disabilitati per una raccolta vuota o con un solo elemento, quando `disabled` è impostato o quando l'indice o il conteggio forniti non sono validi. I conteggi devono essere numeri interi non negativi e l'indice deve essere un numero intero entro i limiti della raccolta.
+
+La modifica delle props non chiama mai `onIndexChange`. Quando gli elementi scompaiono o la raccolta cambia, l'applicazione sceglie il successivo elemento attivo. Il caricamento dei dati, le identità stabili degli elementi, la conservazione delle bozze e l'esecuzione dell'elemento visualizzato rimangono di competenza dell'applicazione.
+
+## Testo di posizione e posizionamento
+
+`positionText` è obbligatorio e rimane sotto il controllo dell'applicazione. Formatta numeri, unità e traduzioni prima di passarli al pager. Per una raccolta vuota, fornisci un valore significativo come `No items`; il componente non crea un'etichetta per lo stato vuoto.
+
+Il valore predefinito `positionPlacement="between"` mostra Precedente, testo di posizione e Successivo. Imposta `positionPlacement="start"` per posizionare il testo prima di entrambi i pulsanti. Il testo riempie quindi la larghezza disponibile affinché le azioni siano allineate alla fine della riga.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## Accessibilità e composizione
+
+L'elemento radice è per impostazione predefinita un gruppo. Fornisci un nome accessibile contestuale con `aria-label` o `aria-labelledby`, oltre a `previousLabel` e `nextLabel` per i due pulsanti con icona. Il testo di posizione usa un'area live con priorità bassa affinché le modifiche possano essere annunciate senza spostare lo stato attivo.
+
+I controlli usano pulsanti nativi con la presentazione condivisa [LightIconButton](/it/ui/components/input/light-icon-button). Tab si sposta tra i controlli abilitati, mentre Invio o Spazio attivano il pulsante selezionato. I controlli disabilitati non possono navigare. I clic sul pager non inviano un modulo circostante.
+
+Gli attributi nativi, `className`, `style` e `ref` hanno come destinazione l'elemento radice. Usa `render` per comporre un elemento radice diverso mantenendo le props e il ref forniti. Mantieni intatti i pulsanti e la relativa semantica di interazione.
+
+## Props
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />

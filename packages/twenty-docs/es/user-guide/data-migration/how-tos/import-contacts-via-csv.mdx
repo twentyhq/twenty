@@ -3,6 +3,8 @@ title: Importar contactos mediante CSV
 description: Guía completa paso a paso para importar personas/contactos en Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Resumen
 
 Esta guía le llevará paso a paso por el proceso de importar sus contactos (Personas) en Twenty.
@@ -159,7 +161,7 @@ Si tienes campos Select o Multi-Select (como Fuente del lead):
 3. O crea opciones nuevas si es necesario
 
 <Note>
-Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Ve a **Settings → Data Model** → Activa el **Advanced mode** para ver los nombres de API.
+Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Para verlos, abra el campo en **Configuración → Modelo de datos** y luego elija **Mostrar valores de API** en el menú **⋮** junto a **Opciones**.
 </Note>
 
 ## Paso 6: Revisa y corrige errores
@@ -240,3 +242,5 @@ Consulta [Cómo actualizar registros existentes](/es/user-guide/data-migration/h
 * [Cómo corregir errores de importación](/es/user-guide/data-migration/how-tos/fix-import-errors)
 * [Cómo importar relaciones](/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 * [Referencia de mapeo de campos](/es/user-guide/data-migration/capabilities/field-mapping)
+
+<PageBanner illustration="data-migration" />

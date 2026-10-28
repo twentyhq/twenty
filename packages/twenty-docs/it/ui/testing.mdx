@@ -1,0 +1,157 @@
+---
+title: Helper di Storybook.
+description: Presenta anteprime dei componenti e cataloghi di varianti con twenty-ui/testing.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## Panoramica
+
+`twenty-ui/testing` espone decoratori Storybook, helper di layout dell'anteprima e override delle media query. Configura gli stili e un [ThemeProvider](/it/ui/theming) nell'anteprima di Storybook prima di eseguire il rendering dei componenti con tema.
+
+## Ruoli delle story
+
+Inizia ogni guida dei componenti con una story `Display` che mostri un esempio rappresentativo e utilizzabile. Falla seguire da codice di utilizzo che riproduca l'anteprima usando importazioni pubbliche. I componenti composti mostrano insieme le loro parti. I provider e gli helper di accessibilità mostrano il loro effetto nel contesto.
+
+Aggiungi un `Catalog` quando un confronto con etichette aiuta i lettori a scegliere tra opzioni visive. Raggruppa separatamente varianti, dimensioni, colori e stati; usa una matrice solo quando è utile confrontare insieme due dimensioni. Un componente semplice può usare un esempio alternativo. Le finestre di dialogo, i menu e altri componenti interattivi di solito necessitano di esempi mirati per ogni workflow.
+
+Mantieni una copertura completa degli screenshot in story `VisualRegression` separate, inclusi temi scuri e matrici di varianti. Contrassegna tali story con `!autodocs` e tienile fuori dalle guide dei componenti.
+
+Dai alle altre story il nome di ciò che mostrano, ad esempio `Controlled`, `WithValidation` o `MultipleSelection`. Mantieni i controlli di interazione in story separate con funzioni `play`. La visualizzazione e le altre anteprime della documentazione rimangono utilizzabili dal lettore senza azioni automatizzate.
+
+## ComponentDecorator
+
+`ComponentDecorator` racchiude una storia in `ComponentStorybookLayout`. Imposta `parameters.container.width` e `parameters.container.height` in pixel. Legge inoltre gli argomenti `inverted` e `accent` della storia per scegliere uno sfondo facoltativo.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Display = { args: { children: 'Save changes' } };
+```
+
+## Catalogo raggruppato
+
+`GroupedCatalog` fornisce ai cataloghi curati un layout condiviso per intestazioni, righe a capo e spaziatura. Ogni gruppo ha un `label` e un array `examples`. Ogni esempio necessita di un `label` univoco all'interno del proprio gruppo; può contenere qualsiasi altro dato utilizzato da `renderExample`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { GroupedCatalog } from 'twenty-ui/testing';
+
+const groups = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', variant: 'solid' as const },
+      { label: 'Outline', variant: 'outline' as const },
+    ],
+  },
+];
+
+export const ButtonCatalog = () => (
+  <GroupedCatalog
+    groups={groups}
+    renderExample={({ label, variant }) => (
+      <>
+        <Text>{label}</Text>
+        <Button variant={variant}>Save changes</Button>
+      </>
+    )}
+  />
+);
+```
+
+<GroupedCatalogReference />
+
+## CatalogDecorator
+
+`CatalogDecorator` esegue il rendering di combinazioni di fino a quattro dimensioni da `parameters.catalog.dimensions`. Ogni dimensione ha un `name`, `values`, un mapper `props(value)` e un formattatore facoltativo `labels(value)`. Il mapper restituisce le props per quella cella. `parameters.catalog.options.elementContainer` accetta `width`, `style` e `className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const VisualRegression = {
+  tags: ['!autodocs'],
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+Usa il layout direttamente quando componi un'anteprima al di fuori di un decorator. Accetta un elemento figlio.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## Override delle media query
+
+Usa `overrideMediaQueryMatches` nel `beforeEach` di una story per forzare i risultati degli hook responsive. Restituisci la relativa funzione di pulizia per ripristinare `window.matchMedia` dopo la story:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+Le query omesse dall'override mantengono il loro comportamento nativo. Esegui l'override di `TOUCH_DEVICE_MEDIA_QUERY` separatamente quando un esempio dipende dall'input touch. Questi override controllano i risultati di `matchMedia`; usa una viewport Storybook per modificare le media query CSS e la larghezza dell'anteprima.
+
+## Anteprime della documentazione
+
+Le storie incorporate nella documentazione devono essere solo di presentazione e non avere una funzione `play`. Mantieni i test di interazione in storie separate. Condividi `args`, `render`, `decorators` e `parameters` espliciti quando necessario, anziché espandere una storia di interazione in un'anteprima. Il controllo degli elementi incorporati nella documentazione rifiuta le storie contrassegnate con il tag `play-fn` di Storybook, incluse le funzioni play ereditate.
+
+Il primo incorporamento di ogni guida dei componenti deve fare riferimento a una story esportata come `Display`. Assegna a ogni incorporamento un titolo descrittivo per il relativo iframe e un'altezza sufficiente per mostrare l'esempio. L'anteprima condivisa fornisce schede chiare e scure e un link a Storybook, dove i lettori possono usare i controlli per esplorare le props.
+
+Esegui `npx nx check:ui-stories twenty-docs` per controllare la visualizzazione richiesta, i titoli delle anteprime, i riferimenti e le regole di presentazione. Esegui `npx nx check:ui twenty-docs` per convalidare i riferimenti API generati e verificare i tipi degli esempi copiabili.
+
+<PageBanner illustration="card-page-testing" />

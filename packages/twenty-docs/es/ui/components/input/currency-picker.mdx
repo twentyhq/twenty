@@ -1,0 +1,153 @@
+---
+title: Selector de moneda
+description: Elija una moneda con un selector completo o componga sus partes en un menú desplegable.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CurrencyPickerReference from '/snippets/ui/generated/components/input/currency-picker.mdx';
+
+## Resumen
+
+`CurrencyPicker` combina un activador de moneda compacto, opciones con búsqueda y un [Dropdown](/es/ui/components/navigation/dropdown). Proporcione un catálogo de monedas y use un componente para la selección habitual. Componga `Root`, `Trigger` y `Options` con Dropdown cuando la ventana emergente necesite otro contenido o páginas.
+
+<StoryEmbed storyId="ui-input-currencypicker--display" title="Selector de moneda" height={420} />
+
+## Uso
+
+Cada moneda tiene un `code` único, un `name` y propiedades opcionales `symbol` y `disabled`. El código es el identificador estable de la selección. El selector no incluye un catálogo de monedas ni elige un valor predeterminado de la aplicación.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+];
+
+export const InvoiceCurrency = () => (
+  <CurrencyPicker
+    currencies={CURRENCIES}
+    defaultValue="USD"
+    aria-label="Invoice currency"
+    optionsProps={{
+      searchLabel: 'Search currencies',
+      emptyLabel: 'No currencies found',
+    }}
+    contentProps={{ width: 280 }}
+  />
+);
+```
+
+Use `defaultValue` para la selección no controlada. Para la selección controlada, pase `value` y actualícelo desde `onValueChange`. La devolución de llamada recibe el siguiente código o `null` y detalles de selección de Dropdown que contienen `event`, `reason`, `trigger`, `cancel` e `isCanceled`. Llame a `details.cancel()` para conservar la selección actual y mantener abierta la ventana emergente. Seleccionar el código actual no emite otro cambio.
+
+`null` borra la selección. Una cadena vacía sigue siendo un código válido y no lo borra. Un valor desconocido permanece sin cambios y aparece como su código sin procesar en el activador; no agrega una opción al catálogo. Una actualización controlada posterior o un cambio en el catálogo actualiza el activador y la fila seleccionada.
+
+```tsx
+import { useState } from 'react';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ClearableCurrency = () => {
+  const [value, setValue] = useState<string | null>('USD');
+
+  return (
+    <>
+      <CurrencyPicker
+        currencies={CURRENCIES}
+        value={value}
+        onValueChange={setValue}
+        aria-label="Invoice currency"
+        triggerProps={{ placeholder: 'Choose a currency' }}
+      />
+      <Button onClick={() => setValue(null)}>Clear currency</Button>
+    </>
+  );
+};
+```
+
+## Composición avanzada
+
+`CurrencyPicker.Root` prepara el catálogo y gestiona la selección de ambas partes. No agrega ningún elemento DOM y debe estar dentro de `Dropdown.Root`. Mantenga `Trigger` y `Options` bajo la misma raíz del selector, incluso cuando las opciones estén en otra página del menú desplegable. Los elementos secundarios de la función de renderizado de la raíz exponen `value`, `selectedCurrency` y `disabled` para etiquetas y contenido complementario gestionados por quien realiza la llamada.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ComposedCurrency = () => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      closeOnSelect={false}
+    >
+      {({ value }) => (
+        <>
+          <CurrencyPicker.Trigger
+            aria-label={`Invoice currency: ${value ?? 'none'}`}
+            placeholder="Choose a currency"
+          />
+          <Dropdown.Content aria-label="Invoice currency" width={280}>
+            <Dropdown.Title>Invoice currency</Dropdown.Title>
+            <CurrencyPicker.Options
+              searchLabel="Search currencies"
+              emptyLabel="No currencies found"
+            />
+          </Dropdown.Content>
+        </>
+      )}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
+```
+
+Dropdown gestiona la apertura, la ubicación de la ventana emergente, las páginas, la navegación de búsqueda y el foco. El selector usa un grupo de selección de Dropdown para valores seleccionados persistentes y la política de cierre. `Root.closeOnSelect` tiene como valor predeterminado `true`; use `false` para mantener abierta la ventana emergente después de elegir una moneda. Las teclas de flecha, Inicio y Fin mueven el foco sin cambiar el valor. Intro, Espacio o la activación mediante puntero seleccionan una opción habilitada. Las monedas deshabilitadas permanecen visibles y no se pueden seleccionar.
+
+## Búsqueda y ordenación
+
+Las opciones permiten búsquedas de forma predeterminada. La búsqueda ignora los espacios en blanco circundantes y coincide con códigos, nombres, símbolos y la etiqueta predeterminada `Name (CODE)` sin distinguir mayúsculas de minúsculas, usando las mismas reglas en todas las configuraciones regionales del navegador. `getSearchText` en la raíz reemplaza el texto de búsqueda de cada moneda. La personalización de la presentación y el texto de búsqueda son independientes.
+
+Los resultados conservan el orden del catálogo. Establezca `selectedFirst` en la abreviatura o la raíz para mover la moneda seleccionada antes de las demás coincidencias. Una consulta que la excluye también elimina su fila. Un valor desconocido no crea un resultado seleccionado. Los resultados vacíos muestran `emptyLabel` en una región de estado.
+
+Establezca `Options.searchable={false}` para omitir el campo de búsqueda. `Options.searchProps` se dirige a la entrada de búsqueda nativa, incluidos su `ref`, `render`, atributos accesibles y `value` controlado o `defaultValue` no controlado. `searchProps.onValueChange` recibe la consulta. En el uso abreviado, pase estas opciones mediante `optionsProps`.
+
+El campo de búsqueda recibe el foco cuando se abre un selector con búsqueda. Intro con una consulta no vacía activa el primer resultado habilitado. Con una consulta vacía, mueva el foco a una opción antes de seleccionarla. La activación de la búsqueda durante la composición con IME y una nueva búsqueda al volver a abrir siguen sujetas a los contratos compartidos de búsqueda y sesión de página de Dropdown.
+
+## Presentación y destinos nativos
+
+El activador muestra el código seleccionado de forma predeterminada. `renderValue` recibe `{ value, selectedCurrency, disabled }` para personalizar esa presentación sin volver a buscar la moneda. `Trigger.children` anula la presentación del valor y `Trigger.placeholder` proporciona la presentación vacía. `getOptionLabel` personaliza el contenido de cada opción, con la etiqueta predeterminada `Name (CODE)`. Los nombres, símbolos y etiquetas de monedas, así como el contenido de las opciones, pertenecen a quien realiza la llamada.
+
+Los atributos de botón nativo de la abreviatura, los controladores de eventos, `className`, `style`, `ref` y `render` se dirigen a su activador. `triggerProps` personaliza ese mismo botón. Use `optionsProps` para el div contenedor de las opciones y su `searchProps` anidado para la entrada. `contentProps` personaliza la ventana emergente de Dropdown. `open`, `defaultOpen` y `onOpenChange` coordinan el estado abierto de la abreviatura.
+
+En el uso compuesto, los atributos nativos, `ref` y `render` en `Trigger` se dirigen a su botón, mientras que los de `Options` se dirigen a su div contenedor. `Options.listLabel` nombra únicamente el cuadro de lista de selección interno. Reenvíe las props y la referencia proporcionadas desde un componente `render` personalizado. El estilo del contenedor no cambia el destino nativo de la entrada.
+
+Establezca `disabled` en la abreviatura o la raíz para deshabilitar la apertura, la búsqueda y la selección. La prop `disabled` de una parte también puede deshabilitar esa parte. La selección es un valor del selector; el envío nativo de formularios, el restablecimiento, la validación obligatoria y la integración con Field permanecen fuera de esta API.
+
+## Etiquetas e integración de la aplicación
+
+`searchLabel` tiene como valor predeterminado `Search` y proporciona el marcador de posición y el nombre accesible de la búsqueda. `emptyLabel` tiene como valor predeterminado `No results` y acepta contenido. Proporcione desde su aplicación etiquetas de origen localizadas, un nombre accesible para el activador y cualquier marcador de posición. El contenido de Dropdown toma el nombre del activador, salvo que lo nombre un `Dropdown.Title` o una etiqueta de contenido explícita. El cuadro de lista de selección toma de forma predeterminada el título registrado de Dropdown o el nombre del activador. Establezca `Options.listLabel` para dar solo a ese cuadro de lista su propio nombre accesible, o pase `optionsProps.listLabel` en el uso abreviado. `aria-label` y `aria-labelledby` nativos en `Options` etiquetan únicamente su contenedor. El activador conserva su propio nombre accesible.
+
+La aplicación gestiona la edición de importes, el almacenamiento de monedas, el formato, la carga del catálogo y su valor inicial. Un adaptador debe asignar los códigos de moneda almacenados y el comportamiento de borrado a `value` y `onValueChange`, conservando las reglas de formato y alternativas de la aplicación. Mantenga los nombres y las etiquetas de monedas traducidos en la aplicación.
+
+## Renderizador de componentes front-end
+
+Las configuraciones de pruebas aisladas de React y Preact cubren la búsqueda y selección abreviadas y compuestas, controles y opciones deshabilitados, referencias de activadores, borrado con valores nulos, actualizaciones controladas externas, reapertura y restauración del foco con Escape. También verifican que borrar una consulta anterior y escribir `$` conserva la consulta del símbolo.
+
+La visibilidad, la geometría, el desplazamiento y el cierre de la ventana emergente dependen de la compatibilidad compartida del renderizador con Dropdown y el portal. El selector usa esa implementación compartida.
+
+## "Props"
+
+<CurrencyPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

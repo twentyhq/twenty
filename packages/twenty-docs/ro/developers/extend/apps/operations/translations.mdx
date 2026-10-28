@@ -3,8 +3,12 @@ title: Traduceri
 description: Lansează-ți aplicația în mai multe limbi — tradu etichetele din manifest și șirurile UI printr-un singur catalog de locale.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Aplicațiile Twenty sunt create în **engleză**: șirurile din sursă și din manifest
-sunt textul sursă în engleză, `en` este localizarea sursă din care traduci, iar
+sunt textul sursă în engleză, `en` este localizarea sursă din care traduci *din*, iar
 orice localizare lăsată netradusă revine implicit la aceasta.
 
 Aplicația ta are două tipuri de text traducibil și ambele trec prin același
@@ -12,14 +16,15 @@ catalog `locales/`:
 
 * **Etichete de manifest** — nume de obiecte și câmpuri, titluri de vizualizări, elemente de meniu și
   alte șiruri declarate în metadatele aplicației tale.
-* **Șiruri componentă-față** - textul UI al componentelor dvs. React din față.
+* **Șiruri de caractere ale componentelor front-end** — textul din interfața utilizator pe care îl redau componentele React front-end.
 
-Marchează șirurile traduse, le extrag în cataloage per-localizare,
-traduce acele cataloage, iar clădirea servește limba corectă pentru utilizatorul curent* fără cableri suplimentare.
+Marcați șirurile de caractere traductibile, le extrageți în cataloage pentru fiecare localizare,
+traduceți aceste cataloage, iar compilarea servește limba potrivită pentru
+utilizatorul curent — fără configurare suplimentară.
 
-## Marcarea sirurilor componentei frontale
+## Marcarea șirurilor din componentele front-end
 
-Importă ajutătoarele de traducere din `douăzeci de aplicații/front-componente`:
+Importă ajutătoarele de traducere din `twenty-sdk/front-component`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -45,33 +50,37 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+      <ul>
+        {STATUSES.map((s) => (
+          <li key={s.id}>{t(s.label)}</li>
+        ))}
+      </ul>
     </section>
   );
 };
 ```
 
-### Când să utilizaţi care
+### Când să utilizați ce
 
 * **`Trans`** — text static în JSX. Folosește proprietățile `message` și `values` pentru
   interpolare, ca în `Trans message="Hi {name}" values={{ name }}`;
   interpolarea direct în elementele copil nu poate fi extrasă static.
-* **`useTranslate().t`** - șiruri dinamice în interiorul unei componente. Re-randează atunci când utilizatorul
-  schimbă limba. Preferă acest lucru în redare.
-* **`t(...)`** (importat direct) - traducerea mai ușoară **oriunde**,
-  inclusiv manipulatorii de evenimente, ajutoarele și domeniul de aplicare al modulului - nu numai în randare.
-* **`msg(...)`** — un descriptor leneș pentru șiruri declarate ca date (constante,
-  config). Rezolvați-l mai târziu cu `t(descriptor)`.
+* **`useTranslate().t`** — șiruri dinamice în interiorul unei componente. Se rerandează când
+  utilizatorul schimbă limba. Preferați această opțiune în interiorul funcției render.
+* **`t(...)`** (importat direct) — traducere imediată utilizabilă **oriunde**,
+  inclusiv în gestionarele de evenimente, funcțiile utilitare și domeniul modulului — nu doar în interiorul funcției render.
+* **`msg(...)`** — un descriptor cu evaluare întârziată pentru șiruri declarate ca date (constante,
+  configurare). Rezolvați-l mai târziu cu `t(descriptor)`.
 
 ### Context
 
-Treceți `context` pentru a disambigua șirurile sursă identice care traduc
+Transmiteți `context` pentru a dezambigua șirurile sursă identice care se traduc
 în mod diferit:
 
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>
+<Trans context="card-title">Untitled</Trans>;
 ```
 
 Șirurile contextuale apar în cataloagele de localizare ca un grup indexat după
@@ -82,16 +91,16 @@ același cuvânt poate fi tradus diferit ca nume de obiect și ca nume de vizual
 
 ## Extragerea și traducerea
 
-Rulează comanda de extragere din directorul aplicației:
+Rulați comanda de extragere din directorul aplicației dvs.:
 
 ```bash
-twenty dev:translations-extract                  # collect strings into locales/en.json
-twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+twenty app translations extract                  # collect strings into locales/en.json
+twenty app translations extract --locale fr-FR   # also scaffold a target locale
 ```
 
 Procesul de extragere colectează atât etichetele manifestului, cât și șirurile `t()`/`msg()`/`Trans`
 din sursa front-component în `locales/\<locale>.json`, indexate după
-șirul sursă. Completează traducerile:
+șirul sursă. Completați traducerile:
 
 ```json
 // locales/fr-FR.json
@@ -110,24 +119,42 @@ din sursa front-component în `locales/\<locale>.json`, indexate după
 
 Șirurile fără context sunt intrări simple; șirurile contextuale — inclusiv fiecare etichetă din manifest — sunt îmbricate sub cheia lor de context.
 
-Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
-. Orice şir rămas gol se întoarce la textul sursă.
+Substituenți precum `{name}` sunt înlocuiți în timpul execuției — păstrați-i în
+traducere. Orice șir lăsat gol revine la textul sursă.
 
 ## Cum rulează
 
-`douăzeci de dev:build` compilează cataloagele şi serveşte limba corectă pentru utilizatorul curent
-: etichetele manifest sunt rezolvate pe server, iar cataloagele de tip front-component
-sunt copite în fiecare pachet de componente. La runtime, o componentă citește localizarea
-din contextul de execuție (limba curentă a gazdei) și rezolvă
-fiecare șir din catalog, revenind la sursă atunci când lipsește o traducere
-. Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
+`twenty app build` compilează cataloagele și servește limba potrivită pentru
+utilizatorul curent: etichetele manifestului sunt rezolvate pe partea de server, iar
+cataloagele componentelor front-end sunt incluse în fiecare pachet de componente. În timpul execuției, o componentă citește
+setarea regională din contextul său de execuție (limba curentă a gazdei) și rezolvă
+fiecare șir în raport cu catalogul său, revenind la sursă atunci când lipsește o traducere. Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
 `useTranslate().t`.
 
-Etichetele manifestului sunt compilate la fiecare sincronizare — `twenty dev:build`, `twenty apply`
-și monitorizarea continuă `twenty dev` — astfel că editarea unui fișier de localizare și
-sincronizarea sunt suficiente pentru a vedea textul nou. Cataloagele componentelor Front sunt integrate în
-fiecare pachet de componente la momentul compilării, astfel că modificarea unuia dintre ele înseamnă totuși
-rularea din nou a `twenty dev:build` (și redistribuirea).
+Etichetele manifestului sunt compilate la fiecare sincronizare — `twenty app build`, `twenty app apply`
+și monitorizarea continuă `twenty app dev` deopotrivă — astfel încât editarea unui fișier de localizare și
+sincronizarea sunt suficiente pentru a vedea textul nou. Cataloagele componentelor front-end sunt incluse în
+fiecare pachet de componente la momentul compilării, astfel încât modificarea unuia dintre acestea înseamnă totuși
+rerularea `twenty app build` (și redeployarea).
+
+## Preluarea traducerilor
+
+`twenty app pull` scrie traducerile publicate ale unei aplicații înapoi în
+`locales/`. Un catalog publicat este indexat după ID-ul mesajului, astfel încât preluarea recuperează
+forma lizibilă numai pentru șirurile a căror sursă o poate vedea: etichetele
+metadatelor pe care le-a preluat și șirurile `t()`/`msg()`/`Trans` ale componentelor front-end
+prezente în proiect. Toate celelalte sunt păstrate ca atare în
+`locales/compiled/\<locale>.json`, indexate după ID-ul mesajului. Procesul de build îmbină acele
+fișiere în catalog (o intrare din `locales/\<locale>.json` are prioritate față de una
+compilată cu același id), `twenty app translations extract` le lasă neatinse,
+iar fiecare pull le rescrie, astfel încât se micșorează pe măsură ce mai mult din codul sursă al aplicației ajunge
+în arbore. Nu le editați manual; traduceți în `locales/\<locale>.json`.
+
+Un proiect fără un folder `locales/` nu indică nimic despre traduceri, astfel încât o
+sincronizare din acesta lasă neatinse toate traducerile deja publicate de aplicație. Pentru a elimina intenționat
+traducerile publicate, păstrați folderul și ștergeți fișierele de setări regionale
+din el: un folder `locales/` care nu compilează într-o setare regională este o declarație
+explicită, iar sincronizarea elimină corespunzător.
 
 Elementele text copil ale `Trans` pot acoperi mai multe linii — spațiile albe sunt comprimate în
 același mod în care JSX le comprimă, astfel încât ambele variante sunt extrase cu cheia `Welcome back`:
@@ -139,3 +166,5 @@ același mod în care JSX le comprimă, astfel încât ambele variante sunt extr
   back
 </Trans>
 ```
+
+<PageBanner illustration="card-page-translations" />

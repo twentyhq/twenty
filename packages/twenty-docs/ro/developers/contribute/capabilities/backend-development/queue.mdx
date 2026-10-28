@@ -1,6 +1,11 @@
 ---
 title: Coada de mesaje
+description: Rulează sarcinile de fundal prin listele de mesaje.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
 
 Cozile facilitează desfășurarea operațiunilor asincrone. Acestea pot fi folosite pentru a efectua sarcini de fundal precum trimiterea unui e-mail de bun venit la înregistrare.
 Fiecare caz de utilizare va avea propria clasă de coadă extinsă din `MessageQueueServiceBase`.
@@ -39,3 +44,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="card-page-background-jobs" />

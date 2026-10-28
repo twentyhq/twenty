@@ -3,6 +3,8 @@ title: Câmpuri
 description: Înțelegeți rolul câmpurilor și cum să le gestionați.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Despre câmpuri
@@ -99,7 +101,7 @@ Dacă primiți o eroare când setați unicitatea, verificați prezența valorilo
 
 ## Indexuri (Avansat)
 
-Indexurile bazei de date sunt gestionate automat — adăugarea unor indexuri proprii este rareori necesară și se greșește ușor. Cu modul Avansat activat, fiecare obiect are o secțiune **Indexuri** sub `Settings → Data Model → <object>` pentru cazurile în care știi că ai nevoie de unul.
+Indexurile bazei de date sunt gestionate automat — adăugarea unor indexuri proprii este rareori necesară și se greșește ușor. Pentru cazurile în care știți că aveți nevoie de unul, deschideți `Settings → Data Model → <object>`, accesați fila **Settings** și faceți clic pe **Manage indexes** în secțiunea **Advanced**.
 
 ## Cele mai bune practici pentru configurarea câmpurilor
 
@@ -120,3 +122,5 @@ Indexurile bazei de date sunt gestionate automat — adăugarea unor indexuri pr
 ### Câmpuri de text pentru înregistrări
 
 * **Fiecare obiect are un câmp principal de afișare**: Acest câmp apare în coloana din stânga și reprezintă înregistrarea atunci când este legată de alte obiecte. Trebuie să fie un câmp text. De exemplu, Persoane utilizează `Nume` ca câmp principal, astfel încât atunci când legați o persoană de o companie, veți vedea numele ei în vizualizarea companiei.
+
+<PageBanner illustration="section-apps-data" />

@@ -1,0 +1,57 @@
+---
+title: AnimatedIconCrossfade
+description: Dissolvenza incrociata tra due icone quando cambia lo stato dell'applicazione.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
+
+## Panoramica
+
+`AnimatedIconCrossfade` esegue una dissolvenza incrociata tra il contenuto dei nodi `activeIcon` e `inactiveIcon` in base a `isActive`. Non gestisce l'azione né lo stato. Componilo all'interno di un [Pulsante](/it/ui/primitives/input/button) con etichetta.
+
+<StoryEmbed storyId="ui-components-layout-animatediconcrossfade--display" title="Esempio di AnimatedIconCrossfade" height={100} />
+
+## Utilizzo
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Entrambi i nodi rimangono montati quando `isActive` cambia, preservando il loro stato locale. I livelli animano l'opacità e la scala e disabilitano le transizioni per il movimento ridotto. Entrambi i livelli sono decorativi; mantieni il nome accessibile dell'azione nel controllo circostante. Per un'immagine autonoma con etichetta, imposta `role="img"` e `aria-label` sull'elemento radice.
+
+Gli attributi nativi, gli eventi, `className`, `style` e `ref` si applicano a uno span inline, che può trovarsi all'interno di un pulsante. `render` sostituisce tale destinazione tramite la composizione di Base UI. Le dimensioni dell'elemento radice usano per impostazione predefinita il token del tema dell'icona piccola. Imposta esplicitamente le dimensioni di ciascun nodo icona e usa gli stili di larghezza e altezza dell'elemento radice per grafiche più grandi.
+
+Sostituisci i costruttori `ActiveIcon` e `InactiveIcon` con i nodi in minuscolo `activeIcon` e `inactiveIcon`. Sposta la precedente opzione `size` nelle dimensioni del nodo e negli stili dell'elemento radice.
+
+## Props
+
+<AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />
