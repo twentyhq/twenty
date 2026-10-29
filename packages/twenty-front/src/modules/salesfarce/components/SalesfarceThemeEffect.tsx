@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { SALESFARCE_CLASS_NAME } from '@/salesfarce/constants/SalesfarceClassName';
 import { SALESFARCE_FAVICON_IMAGE } from '@/salesfarce/constants/SalesfarceFaviconImage';
@@ -14,7 +14,7 @@ export const SalesfarceThemeEffect = ({
     document.documentElement.classList.toggle(SALESFARCE_CLASS_NAME, isActive);
   }, [isActive]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isActive) {
       return;
     }
