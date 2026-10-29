@@ -3389,6 +3389,12 @@ msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Kích thước cuộc trò chuyện"
 
+#. js-lingui-id: mjQZyl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversation type"
+msgstr ""
+
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutTab.title"
@@ -4359,6 +4365,12 @@ msgstr "Hủy"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
 msgstr "Lập trình viên"
+
+#. js-lingui-id: Kggq11
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Direct message"
+msgstr ""
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10917,6 +10929,12 @@ msgstr "Không tìm thấy mã thông báo làm mới."
 msgid "Registered by another workspace."
 msgstr "Đã được đăng ký bởi một không gian làm việc khác."
 
+#. js-lingui-id: jLE5Bj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Regular chat"
+msgstr ""
+
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -16302,6 +16320,12 @@ msgstr "Liệu trợ lý có tham gia vào cuộc trò chuyện này hay không"
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
 msgstr "Liệu handle bị chặn đối với một thành viên không gian làm việc hay toàn bộ không gian làm việc"
+
+#. js-lingui-id: zsdmbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether this is a regular chat or a canonical direct message"
+msgstr ""
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
