@@ -12,8 +12,6 @@ type SdkSystemPermissionFlag = Omit<
   readonly APPLICATIONS: typeof SharedSystemPermissionFlag.APPLICATIONS;
 };
 
-// Only the SDK names change; the API keeps the CONNECTED_ACCOUNTS and APPLICATIONS keys.
-// The new names come first so app pull, which takes the first matching name, writes them.
 export const SystemPermissionFlag: SdkSystemPermissionFlag = {
   USER_APPS: SharedSystemPermissionFlag.CONNECTED_ACCOUNTS,
   WORKSPACE_APPS: SharedSystemPermissionFlag.APPLICATIONS,
