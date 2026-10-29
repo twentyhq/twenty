@@ -486,7 +486,7 @@
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/translations",
                       "developers/extend/apps/operations/publishing",
-                      "developers/extend/apps/operations/marketplace-vetting",
+                      "developers/extend/apps/operations/marketplace-review",
                       "developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -1597,7 +1597,7 @@
                       "ar/developers/extend/apps/operations/testing",
                       "ar/developers/extend/apps/operations/translations",
                       "ar/developers/extend/apps/operations/publishing",
-                      "ar/developers/extend/apps/operations/marketplace-vetting",
+                      "ar/developers/extend/apps/operations/marketplace-review",
                       "ar/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -3160,7 +3160,7 @@
                       "es/developers/extend/apps/operations/testing",
                       "es/developers/extend/apps/operations/translations",
                       "es/developers/extend/apps/operations/publishing",
-                      "es/developers/extend/apps/operations/marketplace-vetting",
+                      "es/developers/extend/apps/operations/marketplace-review",
                       "es/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -3819,7 +3819,7 @@
                       "it/developers/extend/apps/operations/testing",
                       "it/developers/extend/apps/operations/translations",
                       "it/developers/extend/apps/operations/publishing",
-                      "it/developers/extend/apps/operations/marketplace-vetting",
+                      "it/developers/extend/apps/operations/marketplace-review",
                       "it/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -5834,7 +5834,7 @@
                       "ro/developers/extend/apps/operations/testing",
                       "ro/developers/extend/apps/operations/translations",
                       "ro/developers/extend/apps/operations/publishing",
-                      "ro/developers/extend/apps/operations/marketplace-vetting",
+                      "ro/developers/extend/apps/operations/marketplace-review",
                       "ro/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -6493,7 +6493,7 @@
                       "ru/developers/extend/apps/operations/testing",
                       "ru/developers/extend/apps/operations/translations",
                       "ru/developers/extend/apps/operations/publishing",
-                      "ru/developers/extend/apps/operations/marketplace-vetting",
+                      "ru/developers/extend/apps/operations/marketplace-review",
                       "ru/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -7632,6 +7632,30 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ar/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ar/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/es/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/es/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/it/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/it/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ro/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ro/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ru/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ru/developers/extend/apps/operations/marketplace-review"
+    },
     {
       "source": "/ui/components/info",
       "destination": "/ui/components/feedback/inline-banner"

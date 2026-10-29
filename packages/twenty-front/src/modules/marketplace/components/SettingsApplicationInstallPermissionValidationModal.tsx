@@ -33,7 +33,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   appObjects?: MarketplaceAppObject[];
   requestedCapabilities?: string[];
   billsCredits?: boolean;
-  isVetted?: boolean;
+  isListed?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
@@ -78,7 +78,7 @@ const StyledTitle = styled.div`
   text-align: center;
 `;
 
-const StyledNotVettedBannerContainer = styled.div`
+const StyledNotListedBannerContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
@@ -138,7 +138,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   appObjects,
   requestedCapabilities = [],
   billsCredits = false,
-  isVetted = false,
+  isListed = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
@@ -228,14 +228,14 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                 {t`Install ${appDisplayName} on your workspace`}
               </StyledTitle>
 
-              {!isVetted && (
-                <StyledNotVettedBannerContainer>
+              {!isListed && (
+                <StyledNotListedBannerContainer>
                   <InlineBanner
                     status="warning"
                     layout="compact"
                     icon={<IconAlertTriangle aria-hidden="true" />}
-                  >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
-                </StyledNotVettedBannerContainer>
+                  >{t`This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
+                </StyledNotListedBannerContainer>
               )}
 
               {permissionItems.length > 0 && (

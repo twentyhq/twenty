@@ -22,11 +22,6 @@ export class AdminUpdateApplicationRegistrationPayload extends UpdateApplication
   @IsBoolean()
   @IsOptional()
   isPreInstalled?: boolean;
-
-  @Field(() => Boolean, { nullable: true })
-  @IsBoolean()
-  @IsOptional()
-  isVetted?: boolean;
 }
 
 @InputType()
