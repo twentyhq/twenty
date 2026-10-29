@@ -133,8 +133,16 @@ describe('createHostFetchEnforcingPolicy', () => {
   });
 
   it.each([
-    ['a non-API path such as the auth proxy identity endpoint', '/cdn-cgi/access/get-identity', []],
-    ['a redirectable file storage URL', '/rest/front-components/component-id', ['/rest/front-components/component-id']],
+    [
+      'a non-API path such as the auth proxy identity endpoint',
+      '/cdn-cgi/access/get-identity',
+      [],
+    ],
+    [
+      'a redirectable file storage URL',
+      '/rest/front-components/component-id',
+      ['/rest/front-components/component-id'],
+    ],
   ])(
     'should not send page cookies for %s',
     async (_description, path, redirectablePaths) => {

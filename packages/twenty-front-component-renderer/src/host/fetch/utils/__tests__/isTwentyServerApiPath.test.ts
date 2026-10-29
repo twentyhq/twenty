@@ -1,12 +1,15 @@
 import { isTwentyServerApiPath } from '../isTwentyServerApiPath';
 
 describe('isTwentyServerApiPath', () => {
-  it.each(['/graphql', '/metadata', '/rest/companies', '/s/webhook', '/file/x'])(
-    'should accept the server path %s',
-    (pathname) => {
-      expect(isTwentyServerApiPath(pathname)).toBe(true);
-    },
-  );
+  it.each([
+    '/graphql',
+    '/metadata',
+    '/rest/companies',
+    '/s/webhook',
+    '/file/x',
+  ])('should accept the server path %s', (pathname) => {
+    expect(isTwentyServerApiPath(pathname)).toBe(true);
+  });
 
   it.each([
     '/',
