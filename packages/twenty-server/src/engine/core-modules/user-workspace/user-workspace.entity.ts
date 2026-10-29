@@ -28,6 +28,16 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 
 registerEnumType(PermissionFlagType, {
   name: 'PermissionFlagType',
+  valuesMap: {
+    APPLICATIONS: {
+      description:
+        'Workspace Apps: install and manage workspace apps. Named WORKSPACE_APPS in twenty-sdk.',
+    },
+    CONNECTED_ACCOUNTS: {
+      description:
+        'User Apps: manage own app preferences and accounts. Named USER_APPS in twenty-sdk.',
+    },
+  },
 });
 
 registerEnumType(PermissionsOnAllObjectRecords, {
