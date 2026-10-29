@@ -320,7 +320,7 @@ export class AgentChatResolver {
     mentionedWorkspaceMemberIds: string[];
     recipientWorkspaceMemberIds: string[];
   }): Promise<SendChatMessageResultDTO> {
-    const { thread, isInitialMessage } =
+    const { thread, assistantPolicy } =
       await this.threadService.applyAssistantParticipation({
         threadId,
         workspaceMemberId,
@@ -330,18 +330,13 @@ export class AgentChatResolver {
         recipientWorkspaceMemberIds,
         mentionedWorkspaceMemberIds,
       });
-    const candidateWorkspaceMemberIds = [
-      ...mentionedWorkspaceMemberIds,
-      ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
-    ];
     const isAssistantReplying = await this.replyPolicyService.shouldReply({
       isAiChatInboxEnabled,
       shouldAssistantReply,
       thread,
+      assistantPolicy,
       workspaceId: workspace.id,
-      workspaceMemberId,
       userWorkspaceId,
-      candidateWorkspaceMemberIds,
       isAssistantMentioned,
       text,
     });
