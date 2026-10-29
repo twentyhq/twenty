@@ -28,6 +28,7 @@
         "src/database/clickhouse/migrations/run-migrations.ts",
         "src/database/clickhouse/seeds/run-seeds.ts",
         "src/instrument.ts",
+        "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
         "lingui.config.ts",
         "scripts/**/*.ts",
         "**/*.spec.ts",
@@ -52,7 +53,7 @@
         "src/engine/metadata-modules/*/constants/standard-*-names.ts",
         "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
       ],
-      "ignoreDependencies": ["@types/psl"]
+      "ignoreDependencies": ["@types/psl", "twenty-ui"]
     },
     "packages/twenty-front": {
       "entry": [
