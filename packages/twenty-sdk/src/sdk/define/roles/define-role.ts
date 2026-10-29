@@ -4,6 +4,16 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
+const keepEachPermissionFlagOnce = (config: RoleConfig): RoleConfig =>
+  isDefined(config.permissionFlagUniversalIdentifiers)
+    ? {
+        ...config,
+        permissionFlagUniversalIdentifiers: [
+          ...new Set(config.permissionFlagUniversalIdentifiers),
+        ],
+      }
+    : config;
+
 export const defineRole: DefineEntity<RoleConfig> = (config) => {
   const errors = [];
 
@@ -115,14 +125,7 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
   }
 
   return createValidationResult({
-    config: isDefined(config.permissionFlagUniversalIdentifiers)
-      ? {
-          ...config,
-          permissionFlagUniversalIdentifiers: [
-            ...new Set(config.permissionFlagUniversalIdentifiers),
-          ],
-        }
-      : config,
+    config: keepEachPermissionFlagOnce(config),
     errors,
   });
 };
