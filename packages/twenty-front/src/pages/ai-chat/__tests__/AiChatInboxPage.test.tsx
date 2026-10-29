@@ -131,6 +131,17 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
 }));
 
+jest.mock('@/ai/hooks/useAgentChatOpenThreadsSummary', () => ({
+  useAgentChatOpenThreadsSummary: () => ({
+    openThreadCount: 0,
+    unreadOpenThreadCount: 0,
+    needsInputThreadCount: 0,
+    hasUnreadOpenThread: false,
+    hasUnreadMentionThread: false,
+    hasUnreadAssignedThread: false,
+  }),
+}));
+
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
