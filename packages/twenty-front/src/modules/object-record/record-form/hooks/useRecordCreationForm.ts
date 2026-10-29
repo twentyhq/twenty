@@ -32,8 +32,6 @@ export const useRecordCreationForm = () => {
   );
 
   return {
-    isRecordCreationFormEnabled,
-    requestRecordCreation,
     createRecordWithOptionalForm,
   };
 };

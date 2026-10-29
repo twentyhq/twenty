@@ -46,8 +46,7 @@ export const useCreateNewRecord = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { isRecordCreationFormEnabled, requestRecordCreation } =
-    useRecordCreationForm();
+  const { createRecordWithOptionalForm } = useRecordCreationForm();
 
   const navigate = useNavigateApp();
 
@@ -94,20 +93,18 @@ export const useCreateNewRecord = ({
     async (recordInput?: Partial<ObjectRecord>) => {
       let submittedRecordInput = recordInput;
 
-      const createdRecord = isRecordCreationFormEnabled
-        ? await requestRecordCreation({
-            objectMetadataItem,
-            initialDraftRecord: {
-              ...buildRecordInputFromRLSPredicates(),
-              ...buildRecordInput?.(),
-              ...recordInput,
-            },
-            createRecord: (draftRecord) => {
-              submittedRecordInput = { ...recordInput, ...draftRecord };
-              return createAndStoreRecord(submittedRecordInput);
-            },
-          })
-        : await createAndStoreRecord(recordInput);
+      const createdRecord = await createRecordWithOptionalForm({
+        objectMetadataItem,
+        initialDraftRecord: {
+          ...buildRecordInputFromRLSPredicates(),
+          ...buildRecordInput?.(),
+          ...recordInput,
+        },
+        createRecord: (draftRecord) => {
+          submittedRecordInput = { ...recordInput, ...draftRecord };
+          return createAndStoreRecord(submittedRecordInput);
+        },
+      });
 
       if (!isDefined(createdRecord)) {
         return;
@@ -170,8 +167,7 @@ export const useCreateNewRecord = ({
       openRecordIn,
       closeSidePanelMenu,
       workspaceSurface.type,
-      isRecordCreationFormEnabled,
-      requestRecordCreation,
+      createRecordWithOptionalForm,
     ],
   );
 
