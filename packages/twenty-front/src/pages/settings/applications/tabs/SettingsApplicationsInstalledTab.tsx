@@ -27,7 +27,7 @@ export const SettingsApplicationsInstalledTab = () => {
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusById({
     applications: installedApplications,
-    skip: !isAppPreferencesEnabled,
+    shouldSkip: !isAppPreferencesEnabled,
   });
 
   if (installedApplications.length === 0) {
