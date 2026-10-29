@@ -11,14 +11,13 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  REPLACEMENT_CURRENCY_CODE,
-  WITHDRAWN_CURRENCY_CODE,
-  replaceWithdrawnCurrencyCodeInChartConfiguration,
-  replaceWithdrawnCurrencyCodeInDefaultValue,
-  replaceWithdrawnCurrencyCodeInFindRecordsSteps,
-  replaceWithdrawnCurrencyCodeInFilterValue,
-} from 'src/database/commands/upgrade-version-command/2-50/utils/replace-withdrawn-currency-code.util';
+import { REPLACEMENT_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-53/constants/replacement-currency-code.constant';
+import { WITHDRAWN_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-53/constants/withdrawn-currency-code.constant';
+import { WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE } from 'src/database/commands/upgrade-version-command/2-53/constants/workflow-step-types-with-currency-code.constant';
+import { replaceWithdrawnCurrencyCodeInChartConfiguration } from 'src/database/commands/upgrade-version-command/2-53/utils/replace-withdrawn-currency-code-in-chart-configuration.util';
+import { replaceWithdrawnCurrencyCodeInDefaultValue } from 'src/database/commands/upgrade-version-command/2-53/utils/replace-withdrawn-currency-code-in-default-value.util';
+import { replaceWithdrawnCurrencyCodeInFilterValue } from 'src/database/commands/upgrade-version-command/2-53/utils/replace-withdrawn-currency-code-in-filter-value.util';
+import { replaceWithdrawnCurrencyCodeInWorkflowSteps } from 'src/database/commands/upgrade-version-command/2-53/utils/replace-withdrawn-currency-code-in-workflow-steps.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -45,10 +44,10 @@ type RewriteRowsArgs<TRow extends StoredJsonbRow> = {
   mapRow: (row: TRow) => { value: unknown; hasChanged: boolean };
 };
 
-@RegisteredWorkspaceCommand('2.50.0', 1792488571000)
+@RegisteredWorkspaceCommand('2.53.0', 1793243638902)
 @Command({
-  name: 'upgrade:2-50:replace-withdrawn-currency-code',
-  description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow Find Records steps`,
+  name: 'upgrade:2-53:replace-withdrawn-currency-code',
+  description: `Replace the withdrawn ${WITHDRAWN_CURRENCY_CODE} currency code with ${REPLACEMENT_CURRENCY_CODE} in currency records, field default values, view filters, row level permission predicates, chart widgets and workflow steps`,
 })
 export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -91,6 +90,32 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     const currencyFieldMetadataIds = new Set(
       currencyFlatFieldMetadatas.map((field) => field.id),
     );
+
+    const currencyFieldNamesByObjectNameSingular = new Map<
+      string,
+      Set<string>
+    >();
+
+    for (const field of currencyFlatFieldMetadatas) {
+      const objectNameSingular =
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          field.objectMetadataUniversalIdentifier
+        ]?.nameSingular;
+
+      if (!isDefined(objectNameSingular)) {
+        continue;
+      }
+
+      const currencyFieldNames =
+        currencyFieldNamesByObjectNameSingular.get(objectNameSingular) ??
+        new Set<string>();
+
+      currencyFieldNames.add(field.name);
+      currencyFieldNamesByObjectNameSingular.set(
+        objectNameSingular,
+        currencyFieldNames,
+      );
+    }
 
     const fieldDefaultValueCount = await this.replaceInFieldDefaultValues({
       workspaceId,
@@ -150,18 +175,24 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
     });
 
     const mapWorkflowVersionStepsRow = ({ value }: StoredJsonbRow) =>
-      replaceWithdrawnCurrencyCodeInFindRecordsSteps({
+      replaceWithdrawnCurrencyCodeInWorkflowSteps({
         steps: value,
         currencyFieldMetadataIds,
+        currencyFieldNamesByObjectNameSingular,
       });
+
+    const workflowStepTypeContainments =
+      WORKFLOW_STEP_TYPES_WITH_CURRENCY_CODE.map((type) =>
+        JSON.stringify([{ type }]),
+      );
 
     const coreWorkflowVersionCount = await this.rewriteRows({
       dataSource,
       isDryRun,
       tableName: 'core."workflowVersion"',
       columnName: 'steps',
-      whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"FIND_RECORDS"}]'`,
-      whereParameters: [workspaceId],
+      whereClause: `"workspaceId" = $1 AND steps @> ANY($2::jsonb[])`,
+      whereParameters: [workspaceId, workflowStepTypeContainments],
       mapRow: mapWorkflowVersionStepsRow,
     });
 
@@ -180,8 +211,8 @@ export class ReplaceWithdrawnCurrencyCodeCommand extends ProvisionedWorkspaceCom
           isDryRun,
           tableName: `"${getWorkspaceSchemaName(workspaceId)}"."workflowVersion"`,
           columnName: 'steps',
-          whereClause: `steps @> '[{"type":"FIND_RECORDS"}]'`,
-          whereParameters: [],
+          whereClause: `steps @> ANY($1::jsonb[])`,
+          whereParameters: [workflowStepTypeContainments],
           mapRow: mapWorkflowVersionStepsRow,
         })
       : 0;

@@ -96,3 +96,4 @@ export { VALIDATION_RULE_NOW_VARIABLE_NAME } from './ValidationRuleNowVariableNa
 export { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from './ViewGroupLoadLimitOptions';
 export { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from './ViewGroupVisibleOptionsMax';
 export { VIEW_TYPE_DEFAULT_ICONS } from './ViewTypeDefaultIcons';
+export { WITHDRAWN_CURRENCY_CODE_REPLACEMENTS } from './WithdrawnCurrencyCodeReplacements';
