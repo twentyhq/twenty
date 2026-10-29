@@ -12,14 +12,14 @@ type RecordGroupChipProps = {
   recordGroupDefinition: RecordGroupDefinition;
   fieldMetadataItem?: FieldMetadataItem | null;
   valueTagWeight?: 'regular' | 'medium';
-  truncate?: boolean;
+  shouldTruncate?: boolean;
 };
 
 export const RecordGroupChip = ({
   recordGroupDefinition,
   fieldMetadataItem,
   valueTagWeight = 'regular',
-  truncate = true,
+  shouldTruncate = true,
 }: RecordGroupChipProps) => {
   const isValueGroup =
     recordGroupDefinition.type === RecordGroupDefinitionType.Value;
@@ -44,7 +44,7 @@ export const RecordGroupChip = ({
       borderStyle="dashed"
       color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
       weight={isValueGroup ? valueTagWeight : 'medium'}
-      truncate={truncate}
+      truncate={shouldTruncate}
     >
       {recordGroupDefinition.title}
     </Tag>

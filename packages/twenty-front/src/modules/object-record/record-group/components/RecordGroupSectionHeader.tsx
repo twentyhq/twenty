@@ -69,7 +69,7 @@ export const RecordGroupSectionHeader = ({
         recordGroupDefinition={recordGroupDefinition}
         fieldMetadataItem={fieldMetadataItem}
         valueTagWeight="medium"
-        truncate={false}
+        shouldTruncate={false}
       />
     </StyledSectionToggle>
   );
