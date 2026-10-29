@@ -268,7 +268,9 @@ export class UserApplicationVariableValueService {
 
     return Object.fromEntries(
       toUserApplicationVariableValues({
-        flatUserApplicationVariables,
+        flatUserApplicationVariables: flatUserApplicationVariables.filter(
+          ({ key }) => !isReservedEnvVariableName(key),
+        ),
         userApplicationVariableValueMaps,
         userWorkspaceId,
         shouldMaskSecret: false,
@@ -278,9 +280,7 @@ export class UserApplicationVariableValueService {
             workspaceId,
             isSecret,
           }),
-      })
-        .filter(({ key }) => !isReservedEnvVariableName(key))
-        .map(({ key, value }) => [key, value]),
+      }).map(({ key, value }) => [key, value]),
     );
   }
 

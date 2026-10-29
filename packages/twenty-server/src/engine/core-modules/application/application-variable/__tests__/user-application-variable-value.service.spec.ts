@@ -12,6 +12,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const WORKSPACE_ID = 'workspace-id';
 const APPLICATION_ID = 'application-id';
 const USER_WORKSPACE_ID = 'user-workspace-id';
+const UNDECRYPTABLE_VALUE = 'enc:undecryptable';
 
 const buildFlatApplicationVariable = (
   overrides: Pick<FlatApplicationVariable, 'id' | 'key' | 'scope'> &
@@ -86,7 +87,13 @@ describe('UserApplicationVariableValueService', () => {
             }: {
               value: string;
               isSecret: boolean;
-            }) => (isSecret ? '********' : `plaintext of ${value}`),
+            }) => {
+              if (value === UNDECRYPTABLE_VALUE) {
+                throw new Error('Cannot decrypt');
+              }
+
+              return isSecret ? '********' : `plaintext of ${value}`;
+            },
           },
         },
         {
@@ -98,7 +105,9 @@ describe('UserApplicationVariableValueService', () => {
                   'record-my-meetings-id': { [USER_WORKSPACE_ID]: 'enc:on' },
                   'personal-api-key-id': { [USER_WORKSPACE_ID]: 'enc:key' },
                   'language-id': { 'other-user-workspace-id': 'enc:fr' },
-                  'legacy-setting-id': { [USER_WORKSPACE_ID]: 'enc:legacy' },
+                  'legacy-setting-id': {
+                    [USER_WORKSPACE_ID]: UNDECRYPTABLE_VALUE,
+                  },
                 },
               },
             }),
@@ -112,7 +121,7 @@ describe('UserApplicationVariableValueService', () => {
   });
 
   describe('getServerEnvVariables', () => {
-    it('should give a run the values of the member behind it, secrets unmasked, and the defaults they did not set', async () => {
+    it('should give a run the values of the member behind it, secrets unmasked, the defaults they did not set, and nothing stored under a reserved name', async () => {
       const envVariables = await service.getServerEnvVariables({
         workspaceId: WORKSPACE_ID,
         applicationId: APPLICATION_ID,
@@ -134,16 +143,6 @@ describe('UserApplicationVariableValueService', () => {
       });
 
       expect(envVariables).toEqual({});
-    });
-
-    it('should leave out a value stored under a reserved name', async () => {
-      const envVariables = await service.getServerEnvVariables({
-        workspaceId: WORKSPACE_ID,
-        applicationId: APPLICATION_ID,
-        userWorkspaceId: USER_WORKSPACE_ID,
-      });
-
-      expect(envVariables).not.toHaveProperty('TWENTY_LEGACY_SETTING');
     });
   });
 
