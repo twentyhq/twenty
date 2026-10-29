@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
@@ -36,6 +36,7 @@ import {
   WorkspaceMigrationOrchestratorFailedResult,
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
@@ -88,7 +89,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     twentyConfigService: TwentyConfigService,
   ) {
@@ -98,7 +99,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   public async validateBuildAndRunWorkspaceMigrationFromTo(
-    args: WorkspaceMigrationOrchestratorBuildArgs & {
+    args: Omit<WorkspaceMigrationOrchestratorBuildArgs, 'buildOptions'> & {
+      buildOptions: WorkspaceMigrationBuilderOptions;
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
       dryRun?: boolean;
       shouldDeferActions?: boolean;
@@ -116,9 +118,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       ...buildArgs
     } = args;
 
-    const workspaceCustomApplicationUniversalIdentifier =
-      await this.findWorkspaceCustomApplicationUniversalIdentifier(
-        buildArgs.workspaceId,
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: buildArgs.workspaceId },
       );
 
     const buildStart = performance.now();
@@ -128,7 +130,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
           ...buildArgs,
           buildOptions: {
             ...buildArgs.buildOptions,
-            workspaceCustomApplicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
           },
         })
         .catch((error) => {
@@ -446,26 +449,5 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       dryRun,
       shouldDeferActions,
     });
-  }
-
-  private async findWorkspaceCustomApplicationUniversalIdentifier(
-    workspaceId: string,
-  ): Promise<string | undefined> {
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceId,
-    );
-
-    if (!isDefined(workspace?.workspaceCustomApplicationId)) {
-      return undefined;
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    return flatApplicationMaps.byId[workspace.workspaceCustomApplicationId]
-      ?.universalIdentifier;
   }
 }

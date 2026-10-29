@@ -15,11 +15,10 @@ export const validateLogicFunctionServerRouteApplication = ({
     'applicationUniversalIdentifier' | 'serverRouteTriggerSettings'
   >
 > & {
-  workspaceCustomApplicationUniversalIdentifier: string | undefined;
+  workspaceCustomApplicationUniversalIdentifier: string;
 }): FlatEntityValidationError<LogicFunctionExceptionCode>[] => {
   if (
     !isDefined(serverRouteTriggerSettings) ||
-    !isDefined(workspaceCustomApplicationUniversalIdentifier) ||
     applicationUniversalIdentifier !==
       workspaceCustomApplicationUniversalIdentifier
   ) {

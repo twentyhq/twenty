@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetadataSideEffectModule } from 'src/engine/metadata-modules/metadata-side-effect/metadata-side-effect.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -17,7 +17,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceCacheModule,
     MetadataSideEffectModule,
     MetricsModule,
-    CoreEntityCacheModule,
+    ApplicationModule,
   ],
   providers: [
     WorkspaceMigrationValidateBuildAndRunService,

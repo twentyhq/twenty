@@ -5,5 +5,10 @@ export type WorkspaceMigrationBuilderOptions = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
-  workspaceCustomApplicationUniversalIdentifier?: string;
 };
+
+// The migration runner resolves the workspace Custom application for every build.
+export type WorkspaceMigrationValidationBuildOptions =
+  WorkspaceMigrationBuilderOptions & {
+    workspaceCustomApplicationUniversalIdentifier: string;
+  };
