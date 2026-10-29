@@ -852,3 +852,30 @@
   border-radius: 0;
   box-shadow: 0 0 0 1px #b5b5b5;
 }
+
+.salesfarce [role='radio'] > span[aria-hidden]:first-child:not(:has(svg)) {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e3e3dc 70%, #c9c9c0);
+  block-size: 13px;
+  border: 1px solid #1c5180;
+  border-radius: 50%;
+  inline-size: 13px;
+  outline: none;
+  transform: none;
+}
+
+.salesfarce
+  [role='radio']:not([data-disabled]):hover
+  > span[aria-hidden]:first-child:not(:has(svg)) {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e3e3dc 70%, #c9c9c0);
+  box-shadow: inset 0 0 0 1px #f8b636;
+  outline: none;
+}
+
+.salesfarce
+  [role='radio']
+  > span[aria-hidden]:first-child:not(:has(svg))
+  > span {
+  background: radial-gradient(circle at 35% 30%, #a6f0a0, #21a121 60%, #127312);
+  block-size: 5px;
+  inline-size: 5px;
+}

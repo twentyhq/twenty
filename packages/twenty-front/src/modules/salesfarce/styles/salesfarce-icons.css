@@ -86,6 +86,46 @@
   --sf-icon-heart-off: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22heart%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a9a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d0203a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%2014.2%20C3.6%2011%201.4%208.6%201.4%205.8%20C1.4%203.6%203%202%205%202%20C6.3%202%207.4%202.7%208%203.8%20C8.6%202.7%209.7%202%2011%202%20C13%202%2014.6%203.6%2014.6%205.8%20C14.6%208.6%2012.4%2011%208%2014.2Z%22%20fill%3D%22url%28%23heart%29%22%20stroke%3D%22%238c1028%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.5%2014%20L13.5%202%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.5%2014%20L13.5%202%22%20stroke%3D%22%235e6a76%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E');
   --sf-icon-tool: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%3E%3Crect%20x%3D%226.9%22%20y%3D%227.2%22%20width%3D%222.2%22%20height%3D%227.8%22%20rx%3D%221.1%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M6.8%201.2%20V4.4%20H9.2%20V1.2%20A3.6%203.6%200%201%201%206.8%201.2Z%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%227.4%22%20y%3D%228%22%20width%3D%220.7%22%20height%3D%226.2%22%20rx%3D%220.35%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
   --sf-icon-lifebuoy: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ring%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9e1e8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%226.6%22%20fill%3D%22url%28%23ring%29%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%224.6%22%20fill%3D%22none%22%20stroke%3D%22%23d9251c%22%20stroke-width%3D%223.6%22%20stroke-dasharray%3D%223.61%203.61%22%20stroke-dashoffset%3D%221.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222.6%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M3.2%206.4%20C4%204.2%206%202.9%208.3%202.9%20C6.2%203.6%204.5%204.8%203.2%206.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-text: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22key%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd08a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e98a12%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221%22%20y%3D%223.5%22%20width%3D%2214%22%20height%3D%229%22%20rx%3D%221.5%22%20fill%3D%22url%28%23key%29%22%20stroke%3D%22%23a65a07%22%2F%3E%3Crect%20x%3D%221.6%22%20y%3D%224.1%22%20width%3D%2212.8%22%20height%3D%221.6%22%20rx%3D%220.8%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.45%22%2F%3E%3Ctext%20x%3D%228%22%20y%3D%2211%22%20font-family%3D%22Arial%2C%20Helvetica%2C%20sans-serif%22%20font-size%3D%226.6%22%20font-weight%3D%22bold%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffffff%22%3EAbc%3C%2Ftext%3E%3C%2Fsvg%3E');
+  --sf-icon-id: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22page%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dfe7ee%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22skin%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe3c8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6a676%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22shirt%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23a898db%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2356458c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221%22%20y%3D%223%22%20width%3D%2214%22%20height%3D%2210%22%20rx%3D%221.2%22%20fill%3D%22url%28%23page%29%22%20stroke%3D%22%233e6b9e%22%2F%3E%3Crect%20x%3D%222.4%22%20y%3D%224.6%22%20width%3D%224.6%22%20height%3D%225.8%22%20fill%3D%22%23cfe3f5%22%20stroke%3D%22%233e6b9e%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M2.9%2010.4%20C3%208.9%203.8%208.4%204.7%208.4%20C5.6%208.4%206.4%208.9%206.5%2010.4Z%22%20fill%3D%22url%28%23shirt%29%22%2F%3E%3Ccircle%20cx%3D%224.7%22%20cy%3D%226.8%22%20r%3D%221.3%22%20fill%3D%22url%28%23skin%29%22%20stroke%3D%22%23a86e45%22%20stroke-width%3D%220.4%22%2F%3E%3Cg%20stroke%3D%22%237b8ea2%22%20stroke-width%3D%220.8%22%3E%3Cpath%20d%3D%22M8.4%205.6%20H13.4%20M8.4%207.6%20H13.4%20M8.4%209.6%20H11.6%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M1.4%2011.6%20H14.6%20V11.8%20A1%201%200%200%201%2013.6%2012.6%20H2.4%20A1%201%200%200%201%201.4%2011.8Z%22%20fill%3D%22%231797c0%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-relation: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238be884%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232c9a2c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M6%208%20H8%20M8%204.6%20V11.4%20M8%204.6%20H10%20M8%2011.4%20H10%22%20fill%3D%22none%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%224.8%22%20width%3D%225%22%20height%3D%226.4%22%20rx%3D%221%22%20fill%3D%22url%28%23a%29%22%20stroke%3D%22%231d5f99%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%221.8%22%20width%3D%225%22%20height%3D%225.2%22%20rx%3D%221%22%20fill%3D%22url%28%23b%29%22%20stroke%3D%22%231d6b1d%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%229%22%20width%3D%225%22%20height%3D%225.2%22%20rx%3D%221%22%20fill%3D%22url%28%23b%29%22%20stroke%3D%22%231d6b1d%22%2F%3E%3Cg%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22%3E%3Crect%20x%3D%221.6%22%20y%3D%225.4%22%20width%3D%223.8%22%20height%3D%221.2%22%2F%3E%3Crect%20x%3D%2210.6%22%20y%3D%222.4%22%20width%3D%223.8%22%20height%3D%221%22%2F%3E%3Crect%20x%3D%2210.6%22%20y%3D%229.6%22%20width%3D%223.8%22%20height%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-lego: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22brick%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff6a50%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c0281a%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22stud%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9301e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%223%22%20y%3D%223.6%22%20width%3D%224%22%20height%3D%223%22%20rx%3D%220.8%22%20fill%3D%22url%28%23stud%29%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.7%22%2F%3E%3Crect%20x%3D%229%22%20y%3D%223.6%22%20width%3D%224%22%20height%3D%223%22%20rx%3D%220.8%22%20fill%3D%22url%28%23stud%29%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.7%22%2F%3E%3Crect%20x%3D%221.5%22%20y%3D%226%22%20width%3D%2213%22%20height%3D%227.6%22%20rx%3D%221%22%20fill%3D%22url%28%23brick%29%22%20stroke%3D%22%238c1a10%22%2F%3E%3Crect%20x%3D%222.2%22%20y%3D%226.7%22%20width%3D%2211.6%22%20height%3D%221.4%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.4%22%2F%3E%3Cg%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%3E%3Crect%20x%3D%223.6%22%20y%3D%224.1%22%20width%3D%222.8%22%20height%3D%220.8%22%20rx%3D%220.4%22%2F%3E%3Crect%20x%3D%229.6%22%20y%3D%224.1%22%20width%3D%222.8%22%20height%3D%220.8%22%20rx%3D%220.4%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-map-pin: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22pin%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a63%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%2015%20C8%2015%203%209.6%203%206.2%20C3%203.4%205.2%201.2%208%201.2%20C10.8%201.2%2013%203.4%2013%206.2%20C13%209.6%208%2015%208%2015Z%22%20fill%3D%22url%28%23pin%29%22%20stroke%3D%22%238c1a10%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%226.2%22%20r%3D%222%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M4.4%205.2%20C4.8%203.6%206%202.5%207.6%202.3%20C6.4%203.1%205.4%204%204.4%205.2Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-file: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22page%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dfe7ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3.5%201.5%20H9.5%20L13.5%205.5%20V14.5%20H3.5Z%22%20fill%3D%22url%28%23page%29%22%20stroke%3D%22%235e7286%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M9.5%201.5%20V5.5%20H13.5%22%20fill%3D%22%23dfe7ee%22%20stroke%3D%22%235e7286%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cg%20stroke%3D%22%237fa3c7%22%20stroke-width%3D%220.8%22%3E%3Cpath%20d%3D%22M5.5%207.5%20H11.5%20M5.5%209.5%20H11.5%20M5.5%2011.5%20H9.5%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-robot: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22eye%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23bff3ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232bb3d9%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%201.8%20V4%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%221.8%22%20r%3D%221.2%22%20fill%3D%22%23ff3b30%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.5%22%2F%3E%3Crect%20x%3D%220.6%22%20y%3D%227%22%20width%3D%221.6%22%20height%3D%223.6%22%20rx%3D%220.6%22%20fill%3D%22%237f8b98%22%2F%3E%3Crect%20x%3D%2213.8%22%20y%3D%227%22%20width%3D%221.6%22%20height%3D%223.6%22%20rx%3D%220.6%22%20fill%3D%22%237f8b98%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%2212%22%20height%3D%229.6%22%20rx%3D%222.2%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%2F%3E%3Ccircle%20cx%3D%225.6%22%20cy%3D%228%22%20r%3D%221.6%22%20fill%3D%22url%28%23eye%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%2210.4%22%20cy%3D%228%22%20r%3D%221.6%22%20fill%3D%22url%28%23eye%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.5%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%2210.6%22%20width%3D%226%22%20height%3D%221.6%22%20rx%3D%220.5%22%20fill%3D%22%233b444d%22%2F%3E%3Cpath%20d%3D%22M7%2010.6%20V12.2%20M9%2010.6%20V12.2%22%20stroke%3D%22%23c9d1d9%22%20stroke-width%3D%220.5%22%2F%3E%3Crect%20x%3D%222.8%22%20y%3D%224.7%22%20width%3D%2210.4%22%20height%3D%221.2%22%20rx%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-smile: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22face%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3a8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2b712%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%226.8%22%20fill%3D%22url%28%23face%29%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.8%22%2F%3E%3Cellipse%20cx%3D%225.8%22%20cy%3D%226.4%22%20rx%3D%220.9%22%20ry%3D%221.3%22%20fill%3D%22%233b2a00%22%2F%3E%3Cellipse%20cx%3D%2210.2%22%20cy%3D%226.4%22%20rx%3D%220.9%22%20ry%3D%221.3%22%20fill%3D%22%233b2a00%22%2F%3E%3Cpath%20d%3D%22M4.6%209.2%20C5.6%2011.8%2010.4%2011.8%2011.4%209.2%22%20fill%3D%22none%22%20stroke%3D%22%233b2a00%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.2%206.4%20C4%204.2%206%202.9%208.3%202.9%20C6.2%203.6%204.5%204.8%203.2%206.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-rocket: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22hull%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b8c3cf%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22window%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23bff3ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22flame%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3a8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f28a1c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%3E%3Cpath%20d%3D%22M6.3%2011.6%20L8%2015.4%20L9.7%2011.6Z%22%20fill%3D%22url%28%23flame%29%22%2F%3E%3Cpath%20d%3D%22M5.2%209.2%20L3%2012.6%20L5.2%2012Z%22%20fill%3D%22%23d9251c%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M10.8%209.2%20L13%2012.6%20L10.8%2012Z%22%20fill%3D%22%23d9251c%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8%200.6%20C10.2%202.4%2010.8%205.2%2010.8%208%20V12%20H5.2%20V8%20C5.2%205.2%205.8%202.4%208%200.6Z%22%20fill%3D%22url%28%23hull%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%226%22%20r%3D%221.5%22%20fill%3D%22url%28%23window%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.5%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%224%22%20width%3D%220.8%22%20height%3D%227%22%20rx%3D%220.4%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-tag: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tag%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe680%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0a412%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1.5%202.5%20V7.2%20L8.6%2014.3%20C9%2014.7%209.6%2014.7%2010%2014.3%20L14.3%2010%20C14.7%209.6%2014.7%209%2014.3%208.6%20L7.2%201.5%20H2.5%20C1.9%201.5%201.5%201.9%201.5%202.5Z%22%20fill%3D%22url%28%23tag%29%22%20stroke%3D%22%239c6b07%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%224.6%22%20cy%3D%224.6%22%20r%3D%221.2%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M7.6%203%20L12.6%208%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.8%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-bolt: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bolt%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff3a8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2a812%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M9.8%200.8%20L3%209.2%20H7.4%20L6%2015.2%20L13%206.6%20H8.6Z%22%20fill%3D%22url%28%23bolt%29%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8.6%202.6%20L4.6%208.2%20H6.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-eye: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22iris%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237cc0f0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1%208%20C2.8%204.8%205.2%203.4%208%203.4%20C10.8%203.4%2013.2%204.8%2015%208%20C13.2%2011.2%2010.8%2012.6%208%2012.6%20C5.2%2012.6%202.8%2011.2%201%208Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%233b4a5a%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222.6%22%20fill%3D%22url%28%23iris%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.6%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%221.1%22%20fill%3D%22%231b1b1b%22%2F%3E%3Ccircle%20cx%3D%227.1%22%20cy%3D%227.1%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-alert-triangle: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22warn%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe680%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2b712%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%201.4%20L15.2%2014.2%20H0.8Z%22%20fill%3D%22url%28%23warn%29%22%20stroke%3D%22%239c6b07%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%227.2%22%20y%3D%225.4%22%20width%3D%221.6%22%20height%3D%225%22%20rx%3D%220.8%22%20fill%3D%22%233b2a00%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%2212.2%22%20r%3D%220.95%22%20fill%3D%22%233b2a00%22%2F%3E%3Cpath%20d%3D%22M8%203.4%20L4.2%2010.2%20L5%2010.2%20L8%204.8Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-paperclip: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M9.5%205%20V11%20A1.5%201.5%200%200%201%206.5%2011%20V3.8%20A2.4%202.4%200%200%201%2011.3%203.8%20V11.6%20A3.3%203.3%200%200%201%204.7%2011.6%20V5.4%22%20fill%3D%22none%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M9.5%205%20V11%20A1.5%201.5%200%200%201%206.5%2011%20V3.8%20A2.4%202.4%200%200%201%2011.3%203.8%20V11.6%20A3.3%203.3%200%200%201%204.7%2011.6%20V5.4%22%20fill%3D%22none%22%20stroke%3D%22%23eef3f8%22%20stroke-width%3D%220.8%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-database: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22db%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22top%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23e6f4fd%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2.5%203.5%20V12.5%20C2.5%2013.9%205%2015%208%2015%20C11%2015%2013.5%2013.9%2013.5%2012.5%20V3.5%22%20fill%3D%22url%28%23db%29%22%20stroke%3D%22%231d5f99%22%2F%3E%3Cpath%20d%3D%22M2.5%207%20C2.5%208.4%205%209.5%208%209.5%20C11%209.5%2013.5%208.4%2013.5%207%20M2.5%2010.2%20C2.5%2011.6%205%2012.7%208%2012.7%20C11%2012.7%2013.5%2011.6%2013.5%2010.2%22%20fill%3D%22none%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.7%22%2F%3E%3Cellipse%20cx%3D%228%22%20cy%3D%223.5%22%20rx%3D%225.5%22%20ry%3D%222%22%20fill%3D%22url%28%23top%29%22%20stroke%3D%22%231d5f99%22%2F%3E%3Crect%20x%3D%223.4%22%20y%3D%225.4%22%20width%3D%221%22%20height%3D%227%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-flag: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22flag%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a63%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3%201.5%20V15%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221.4%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.6%202%20C6%201%207.8%203%2010%202.4%20C11.6%202%2012.8%201.6%2014%202%20V9%20C12.8%208.6%2011.6%209%2010%209.4%20C7.8%2010%206%208%203.6%209Z%22%20fill%3D%22url%28%23flag%29%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M4.4%203.2%20C6.4%202.6%207.8%204%209.8%203.6%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.7%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-trophy: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gold%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe680%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0a412%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22base%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c5a2b%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234a2c10%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M4%203%20H2.2%20V4.6%20C2.2%206%203%206.8%204.4%207%20M12%203%20H13.8%20V4.6%20C13.8%206%2013%206.8%2011.6%207%22%20fill%3D%22none%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%221%22%2F%3E%3Cpath%20d%3D%22M4%201.8%20H12%20V5.6%20C12%208%2010.2%209.6%208%209.6%20C5.8%209.6%204%208%204%205.6Z%22%20fill%3D%22url%28%23gold%29%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.8%22%2F%3E%3Crect%20x%3D%227.1%22%20y%3D%229.4%22%20width%3D%221.8%22%20height%3D%222.8%22%20fill%3D%22%23d9a417%22%2F%3E%3Crect%20x%3D%224.6%22%20y%3D%2212%22%20width%3D%226.8%22%20height%3D%222.6%22%20rx%3D%220.5%22%20fill%3D%22url%28%23base%29%22%20stroke%3D%22%232e1a08%22%20stroke-width%3D%220.7%22%2F%3E%3Cpath%20d%3D%22M5.4%202.6%20V5.6%20C5.4%206.8%206%207.8%206.8%208.2%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.8%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-gift: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22lid%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23cfeef8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%235fbde3%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%222%22%20y%3D%227%22%20width%3D%2212%22%20height%3D%227.5%22%20fill%3D%22url%28%23a%29%22%20stroke%3D%22%231d5f99%22%2F%3E%3Crect%20x%3D%221.2%22%20y%3D%224.6%22%20width%3D%2213.6%22%20height%3D%222.8%22%20fill%3D%22url%28%23lid%29%22%20stroke%3D%22%231d5f99%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%224.6%22%20width%3D%222%22%20height%3D%229.9%22%20fill%3D%22%23d9251c%22%2F%3E%3Cpath%20d%3D%22M8%204.6%20C6.4%202.2%203.8%202.4%204.4%203.8%20C4.8%204.6%206.6%204.6%208%204.6%20C9.4%204.6%2011.2%204.6%2011.6%203.8%20C12.2%202.4%209.6%202.2%208%204.6Z%22%20fill%3D%22%23d9251c%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-bulb: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22glass%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff8c4%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23f2c12e%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%201.2%20C11.2%201.2%2013%203.6%2013%206%20C13%208%2011.8%209%2010.8%2010.2%20C10.2%2010.9%2010%2011.4%2010%2012%20H6%20C6%2011.4%205.8%2010.9%205.2%2010.2%20C4.2%209%203%208%203%206%20C3%203.6%204.8%201.2%208%201.2Z%22%20fill%3D%22url%28%23glass%29%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M6.6%209.4%20L8%206.6%20L9.4%209.4%22%20fill%3D%22none%22%20stroke%3D%22%23c97a0a%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2212%22%20width%3D%224%22%20height%3D%222.8%22%20rx%3D%220.6%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M6.2%2013%20H9.8%20M6.2%2013.9%20H9.8%22%20stroke%3D%22%237f8b98%22%20stroke-width%3D%220.4%22%2F%3E%3Cpath%20d%3D%22M4.6%205.4%20C4.8%203.8%206%202.6%207.6%202.4%20C6.4%203.2%205.4%204.2%204.6%205.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-book: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22cover%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237cc0f0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3.5%2013.4%20H13%20V15%20H3.5%20C2.7%2015%202.2%2014.4%202.2%2013.8%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%235e7286%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M3.5%201.5%20H13.5%20V13.4%20H3.5%20C2.7%2013.4%202.2%2014%202.2%2014.6%20V2.8%20C2.2%202.1%202.8%201.5%203.5%201.5Z%22%20fill%3D%22url%28%23cover%29%22%20stroke%3D%22%2316467d%22%2F%3E%3Crect%20x%3D%223.4%22%20y%3D%222%22%20width%3D%221%22%20height%3D%2211%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.4%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%224%22%20width%3D%225%22%20height%3D%222%22%20fill%3D%22%23ffd34d%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.4%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-chart-bar: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238be884%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232c9a2c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd08a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e98a12%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%222%22%20y%3D%228%22%20width%3D%223%22%20height%3D%226%22%20fill%3D%22url%28%23a%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%226.5%22%20y%3D%223.5%22%20width%3D%223%22%20height%3D%2210.5%22%20fill%3D%22url%28%23b%29%22%20stroke%3D%22%231d6b1d%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%2211%22%20y%3D%226%22%20width%3D%223%22%20height%3D%228%22%20fill%3D%22url%28%23c%29%22%20stroke%3D%22%23a65a07%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M1%2014.5%20H15%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221%22%2F%3E%3Cg%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22%3E%3Crect%20x%3D%222.5%22%20y%3D%228.5%22%20width%3D%220.7%22%20height%3D%225%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%224%22%20width%3D%220.7%22%20height%3D%229.5%22%2F%3E%3Crect%20x%3D%2211.5%22%20y%3D%226.5%22%20width%3D%220.7%22%20height%3D%227%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-chart-pie: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238be884%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232c9a2c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd08a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e98a12%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228.4%22%20r%3D%226.4%22%20fill%3D%22url%28%23a%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M8%208.4%20V2%20A6.4%206.4%200%200%201%2014.2%2010Z%22%20fill%3D%22url%28%23c%29%22%20stroke%3D%22%23a65a07%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8%208.4%20L14.2%2010%20A6.4%206.4%200%200%201%2010.6%2014.2Z%22%20fill%3D%22url%28%23b%29%22%20stroke%3D%22%231d6b1d%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3%206.8%20C3.8%204.6%205.6%203%207.6%202.6%20C6%203.8%204.4%205.2%203%206.8Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-shopping-cart: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22basket%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23bfe3fb%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1%202%20H3.2%20L5%2010.6%20H13%22%20fill%3D%22none%22%20stroke%3D%22%233b444d%22%20stroke-width%3D%221.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.6%203.8%20H14.6%20L13.2%208.8%20H4.6Z%22%20fill%3D%22url%28%23basket%29%22%20stroke%3D%22%233b444d%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M7%203.8%20L7.4%208.8%20M10.3%203.8%20L10.1%208.8%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.6%22%20opacity%3D%220.7%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2213.2%22%20r%3D%221.4%22%20fill%3D%22%233b444d%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2213.2%22%20r%3D%221.4%22%20fill%3D%22%233b444d%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-package: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22side%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23d9a35a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a86e2a%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22front%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23e8bd7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c08547%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22top%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f3d39a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dcae66%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2%205%20L8%207.6%20V15%20L2%2012.4Z%22%20fill%3D%22url%28%23side%29%22%20stroke%3D%22%237a4a24%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M14%205%20L8%207.6%20V15%20L14%2012.4Z%22%20fill%3D%22url%28%23front%29%22%20stroke%3D%22%237a4a24%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2%205%20L8%202.4%20L14%205%20L8%207.6Z%22%20fill%3D%22url%28%23top%29%22%20stroke%3D%22%237a4a24%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5%203.7%20L11%206.3%22%20stroke%3D%22%23fff3d6%22%20stroke-width%3D%221.2%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-truck: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22page%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dfe7ee%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22cab%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237cc0f0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%220.8%22%20y%3D%223.5%22%20width%3D%229%22%20height%3D%227.5%22%20rx%3D%220.6%22%20fill%3D%22url%28%23page%29%22%20stroke%3D%22%235e7286%22%2F%3E%3Cpath%20d%3D%22M10%206%20H13%20L15.2%208.6%20V11%20H10Z%22%20fill%3D%22url%28%23cab%29%22%20stroke%3D%22%2316467d%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M11%206.8%20H12.6%20L14%208.6%20H11Z%22%20fill%3D%22%23cfeef8%22%2F%3E%3Ccircle%20cx%3D%223.6%22%20cy%3D%2212%22%20r%3D%221.6%22%20fill%3D%22%233b444d%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%2212.4%22%20cy%3D%2212%22%20r%3D%221.6%22%20fill%3D%22%233b444d%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%223.6%22%20cy%3D%2212%22%20r%3D%220.6%22%20fill%3D%22%23c9d1d9%22%2F%3E%3Ccircle%20cx%3D%2212.4%22%20cy%3D%2212%22%20r%3D%220.6%22%20fill%3D%22%23c9d1d9%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-ticket: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ticket%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffd08a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e98a12%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1.5%204%20H14.5%20V6.4%20C13.6%206.4%2013%207.1%2013%208%20C13%208.9%2013.6%209.6%2014.5%209.6%20V12%20H1.5%20V9.6%20C2.4%209.6%203%208.9%203%208%20C3%207.1%202.4%206.4%201.5%206.4Z%22%20fill%3D%22url%28%23ticket%29%22%20stroke%3D%22%23a65a07%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M10.5%204.6%20V11.4%22%20stroke%3D%22%23a65a07%22%20stroke-width%3D%220.7%22%20stroke-dasharray%3D%221%201%22%2F%3E%3Cpath%20d%3D%22M4.5%206.8%20H8.5%20M4.5%209.2%20H8%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.9%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-receipt: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22page%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dfe7ee%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3%201.5%20H13%20V14.5%20L11.4%2013.4%20L9.8%2014.5%20L8%2013.4%20L6.2%2014.5%20L4.6%2013.4%20L3%2014.5Z%22%20fill%3D%22url%28%23page%29%22%20stroke%3D%22%235e7286%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5%204.5%20H11%20M5%206.8%20H11%20M5%209.1%20H9%22%20stroke%3D%22%239fb0c2%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M9.4%2011%20H11.2%22%20stroke%3D%22%232c9a2c%22%20stroke-width%3D%221.3%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-headset: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22cup%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236f7a86%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231b1b1b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2.6%209%20V7.6%20C2.6%204.4%205%202%208%202%20C11%202%2013.4%204.4%2013.4%207.6%20V9%22%20fill%3D%22none%22%20stroke%3D%22%233b444d%22%20stroke-width%3D%221.4%22%2F%3E%3Cpath%20d%3D%22M12.8%2012.6%20C12.8%2014%2011.6%2014.6%209.8%2014.6%22%20fill%3D%22none%22%20stroke%3D%22%233b444d%22%20stroke-width%3D%221%22%2F%3E%3Crect%20x%3D%221.4%22%20y%3D%228%22%20width%3D%223%22%20height%3D%225%22%20rx%3D%221.2%22%20fill%3D%22url%28%23cup%29%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%2211.6%22%20y%3D%228%22%20width%3D%223%22%20height%3D%225%22%20rx%3D%221.2%22%20fill%3D%22url%28%23cup%29%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%227.4%22%20y%3D%2213.8%22%20width%3D%222.6%22%20height%3D%221.6%22%20rx%3D%220.8%22%20fill%3D%22%23d9251c%22%2F%3E%3Cg%20fill%3D%22%23ffffff%22%20opacity%3D%220.4%22%3E%3Crect%20x%3D%221.9%22%20y%3D%228.6%22%20width%3D%220.8%22%20height%3D%223.6%22%20rx%3D%220.4%22%2F%3E%3Crect%20x%3D%2212.1%22%20y%3D%228.6%22%20width%3D%220.8%22%20height%3D%223.6%22%20rx%3D%220.4%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-bug: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22shell%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a63%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3%206%20L1.2%204.8%20M3%209%20H1%20M3.4%2012%20L1.6%2013.4%20M13%206%20L14.8%204.8%20M13%209%20H15%20M12.6%2012%20L14.4%2013.4%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.9%22%20stroke-linecap%3D%22round%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%223.8%22%20r%3D%222.2%22%20fill%3D%22%231b1b1b%22%2F%3E%3Cellipse%20cx%3D%228%22%20cy%3D%229.4%22%20rx%3D%225%22%20ry%3D%225.4%22%20fill%3D%22url%28%23shell%29%22%20stroke%3D%22%235a0a05%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M8%204.4%20V14.8%22%20stroke%3D%22%231b1b1b%22%20stroke-width%3D%220.8%22%2F%3E%3Cg%20fill%3D%22%231b1b1b%22%3E%3Ccircle%20cx%3D%225.6%22%20cy%3D%228.4%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%2210.4%22%20cy%3D%228.4%22%20r%3D%221%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2211.8%22%20r%3D%220.9%22%2F%3E%3Ccircle%20cx%3D%2210%22%20cy%3D%2211.8%22%20r%3D%220.9%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M4.4%207%20C4.8%205.6%205.8%204.8%207%204.6%20C6%205.4%205.2%206.2%204.4%207Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-building-store: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22wall%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fffdf0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6d29a%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22door%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23c08550%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237a4a24%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%222%22%20y%3D%227%22%20width%3D%2212%22%20height%3D%227.5%22%20fill%3D%22url%28%23wall%29%22%20stroke%3D%22%237a4a24%22%2F%3E%3Crect%20x%3D%226.4%22%20y%3D%229.6%22%20width%3D%223.2%22%20height%3D%224.9%22%20fill%3D%22url%28%23door%29%22%20stroke%3D%22%235a3a1a%22%20stroke-width%3D%220.6%22%2F%3E%3Crect%20x%3D%222.8%22%20y%3D%229%22%20width%3D%222.8%22%20height%3D%222.6%22%20fill%3D%22%239fd3f7%22%20stroke%3D%22%235e7286%22%20stroke-width%3D%220.5%22%2F%3E%3Crect%20x%3D%2210.4%22%20y%3D%229%22%20width%3D%222.8%22%20height%3D%222.6%22%20fill%3D%22%239fd3f7%22%20stroke%3D%22%235e7286%22%20stroke-width%3D%220.5%22%2F%3E%3Cpath%20d%3D%22M1%207%20L2.4%203%20H13.6%20L15%207Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%238c1a10%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.8%203%20L3%207%20M6.6%203%20L6.2%207%20M9.4%203%20L9.8%207%20M12.2%203%20L13%207%22%20stroke%3D%22%23d9251c%22%20stroke-width%3D%221.4%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-presentation: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%2010.5%20V13%20M8%2013%20L5.6%2015.2%20M8%2013%20L10.4%2015.2%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%221%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%221.5%22%20y%3D%222.2%22%20width%3D%2213%22%20height%3D%228.4%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%234f5a66%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%221.4%22%20width%3D%2214%22%20height%3D%221.6%22%20rx%3D%220.4%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M3.5%208.6%20L6%206.2%20L8.4%207.6%20L12.4%203.8%22%20fill%3D%22none%22%20stroke%3D%22%23d9251c%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-brand-x: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tile%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%234a4a4a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23000000%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%2213%22%20height%3D%2213%22%20rx%3D%222.4%22%20fill%3D%22url%28%23tile%29%22%20stroke%3D%22%23000000%22%2F%3E%3Cpath%20d%3D%22M4.6%204%20L11.4%2012%20M11.4%204%20L4.6%2012%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%222.3%22%20y%3D%222.2%22%20width%3D%2211.4%22%20height%3D%222.2%22%20rx%3D%221.1%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.25%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-brand-facebook: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tile%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236d8ad0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233b5998%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%2213%22%20height%3D%2213%22%20rx%3D%222.4%22%20fill%3D%22url%28%23tile%29%22%20stroke%3D%22%232d4373%22%2F%3E%3Cpath%20d%3D%22M9%2014.5%20V9%20H11%20L11.3%207%20H9%20V5.8%20C9%205.2%209.3%204.8%2010%204.8%20H11.4%20V3%20C11%202.9%2010.4%202.8%209.7%202.8%20C8.1%202.8%207%203.8%207%205.5%20V7%20H5.2%20V9%20H7%20V14.5Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Crect%20x%3D%222.3%22%20y%3D%222.2%22%20width%3D%2211.4%22%20height%3D%222.2%22%20rx%3D%221.1%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.25%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-brand-instagram: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22body%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23a0714f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%236b4226%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22lens%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%235a6a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23101820%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%2213%22%20height%3D%2213%22%20rx%3D%222.4%22%20fill%3D%22url%28%23body%29%22%20stroke%3D%22%234a2c10%22%2F%3E%3Cpath%20d%3D%22M1.5%203.9%20A2.4%202.4%200%200%201%203.9%201.5%20H12.1%20A2.4%202.4%200%200%201%2014.5%203.9%20V5.6%20H1.5Z%22%20fill%3D%22%23e8d8b8%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%221.5%22%20width%3D%220.8%22%20height%3D%224.1%22%20fill%3D%22%23d9251c%22%2F%3E%3Crect%20x%3D%223.8%22%20y%3D%221.5%22%20width%3D%220.8%22%20height%3D%224.1%22%20fill%3D%22%23f2c12e%22%2F%3E%3Crect%20x%3D%224.6%22%20y%3D%221.5%22%20width%3D%220.8%22%20height%3D%224.1%22%20fill%3D%22%233cae3c%22%2F%3E%3Crect%20x%3D%225.4%22%20y%3D%221.5%22%20width%3D%220.8%22%20height%3D%224.1%22%20fill%3D%22%232b7fc6%22%2F%3E%3Crect%20x%3D%2211%22%20y%3D%222.6%22%20width%3D%222%22%20height%3D%221.6%22%20rx%3D%220.3%22%20fill%3D%22%232b2b2b%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%229.4%22%20r%3D%223%22%20fill%3D%22url%28%23lens%29%22%20stroke%3D%22%232b2b2b%22%20stroke-width%3D%221%22%2F%3E%3Ccircle%20cx%3D%227.1%22%20cy%3D%228.5%22%20r%3D%220.8%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-brand-youtube: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22red%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a63%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221%22%20y%3D%223.5%22%20width%3D%2214%22%20height%3D%229%22%20rx%3D%222.6%22%20fill%3D%22url%28%23red%29%22%20stroke%3D%22%238c1a10%22%2F%3E%3Cpath%20d%3D%22M6.6%205.8%20L10.8%208%20L6.6%2010.2Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%224.2%22%20width%3D%2212%22%20height%3D%221.6%22%20rx%3D%220.8%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.3%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-car: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22paint%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff7a63%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1.2%2010.6%20V8.8%20C1.2%208%201.8%207.4%202.6%207.2%20L4.6%206.8%20L6.4%204.4%20C6.8%203.9%207.4%203.6%208%203.6%20H10.8%20C11.4%203.6%2012%203.9%2012.4%204.4%20L13.8%206.6%20C14.4%206.8%2014.8%207.4%2014.8%208.2%20V10.6Z%22%20fill%3D%22url%28%23paint%29%22%20stroke%3D%22%238c1a10%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M6.6%206.8%20L7.8%205%20H10.6%20L11.8%206.8Z%22%20fill%3D%22%23cfeef8%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%224.4%22%20cy%3D%2211%22%20r%3D%221.8%22%20fill%3D%22%232b2b2b%22%20stroke%3D%22%23000000%22%20stroke-width%3D%220.4%22%2F%3E%3Ccircle%20cx%3D%224.4%22%20cy%3D%2211%22%20r%3D%220.7%22%20fill%3D%22%23c9d1d9%22%2F%3E%3Ccircle%20cx%3D%2211.6%22%20cy%3D%2211%22%20r%3D%221.8%22%20fill%3D%22%232b2b2b%22%20stroke%3D%22%23000000%22%20stroke-width%3D%220.4%22%2F%3E%3Ccircle%20cx%3D%2211.6%22%20cy%3D%2211%22%20r%3D%220.7%22%20fill%3D%22%23c9d1d9%22%2F%3E%3Cpath%20d%3D%22M2.2%208.2%20H13.6%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.6%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-plane: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22hull%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23b8c3cf%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22wing%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%3E%3Cpath%20d%3D%22M8%205.6%20L15%209.4%20V10.6%20L8%208.8%20L1%2010.6%20V9.4Z%22%20fill%3D%22url%28%23wing%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8%2012.4%20L11%2014.4%20V15.2%20L8%2014.4%20L5%2015.2%20V14.4Z%22%20fill%3D%22url%28%23wing%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.5%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%227%22%20y%3D%220.8%22%20width%3D%222%22%20height%3D%2214%22%20rx%3D%221%22%20fill%3D%22url%28%23hull%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.6%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  --sf-icon-school: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22cap%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%235a6570%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231b1f24%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M4%207.6%20V11%20C4%2012.4%206%2013.4%208%2013.4%20C10%2013.4%2012%2012.4%2012%2011%20V7.6%20L8%209.4Z%22%20fill%3D%22url%28%23cap%29%22%20stroke%3D%22%23000000%22%20stroke-width%3D%220.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8%202.6%20L15%206%20L8%209.4%20L1%206Z%22%20fill%3D%22url%28%23cap%29%22%20stroke%3D%22%23000000%22%20stroke-width%3D%220.7%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M8%206%20L13.4%207.2%20V11.2%22%20fill%3D%22none%22%20stroke%3D%22%23f2c12e%22%20stroke-width%3D%220.9%22%2F%3E%3Ccircle%20cx%3D%2213.4%22%20cy%3D%2211.8%22%20r%3D%220.9%22%20fill%3D%22%23f2c12e%22%2F%3E%3Cpath%20d%3D%22M3.4%205.8%20L8%203.6%20L10.4%204.8%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.6%22%20opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-crown: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gold%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe680%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0a412%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M1.8%205%20L4.6%208.4%20L8%203%20L11.4%208.4%20L14.2%205%20L13%2012.4%20H3Z%22%20fill%3D%22url%28%23gold%29%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%2212%22%20width%3D%2210%22%20height%3D%222%22%20rx%3D%220.4%22%20fill%3D%22%23d9a417%22%20stroke%3D%22%239c6b07%22%20stroke-width%3D%220.6%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%229.4%22%20r%3D%221.1%22%20fill%3D%22%23d9251c%22%2F%3E%3Ccircle%20cx%3D%225.2%22%20cy%3D%2210.2%22%20r%3D%220.8%22%20fill%3D%22%231d5f99%22%2F%3E%3Ccircle%20cx%3D%2210.8%22%20cy%3D%2210.2%22%20r%3D%220.8%22%20fill%3D%22%232c9a2c%22%2F%3E%3C%2Fsvg%3E');
+  --sf-icon-diamond: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22gem%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23bfe8ff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M4%202.4%20H12%20L15%206%20L8%2014.4%20L1%206Z%22%20fill%3D%22url%28%23gem%29%22%20stroke%3D%22%2316467d%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M1%206%20H15%20M5.4%206%20L8%2014.4%20L10.6%206%20M4%202.4%20L5.4%206%20L8%202.4%20L10.6%206%20L12%202.4%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%220.6%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
 }
 
 .salesfarce .tabler-icon {
@@ -458,14 +498,6 @@
 
 .salesfarce
   :is(
-    [data-click-outside-id='workflow-diagram-step-node-base']
-      .tabler-icon-database
-  ) {
-  --salesfarce-icon: var(--sf-icon-server);
-}
-
-.salesfarce
-  :is(
     .tabler-icon-chevron-down,
     [data-table-header='true'] .tabler-icon-arrow-down
   ) {
@@ -564,6 +596,244 @@
 
 .salesfarce :is(.tabler-icon-settings-2) {
   --salesfarce-icon: var(--sf-icon-settings);
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-text,
+    .tabler-icon-abc,
+    .tabler-icon-text-size,
+    .tabler-icon-typography
+  ) {
+  --salesfarce-icon: var(--sf-icon-text);
+}
+
+.salesfarce :is(.tabler-icon-number, .tabler-icon-hash, .tabler-icon-numbers) {
+  --salesfarce-icon: var(--sf-icon-number);
+}
+
+.salesfarce
+  :is(.tabler-icon-id, .tabler-icon-id-badge, .tabler-icon-id-badge-2) {
+  --salesfarce-icon: var(--sf-icon-id);
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-relation-one-to-many,
+    .tabler-icon-relation-many-to-one,
+    .tabler-icon-relation-one-to-one,
+    .tabler-icon-relation-many-to-many
+  ) {
+  --salesfarce-icon: var(--sf-icon-relation);
+}
+
+.salesfarce :is(.tabler-icon-lego) {
+  --salesfarce-icon: var(--sf-icon-lego);
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-map-pin,
+    .tabler-icon-map,
+    .tabler-icon-map-2,
+    .tabler-icon-location
+  ) {
+  --salesfarce-icon: var(--sf-icon-map-pin);
+}
+
+.salesfarce :is(.tabler-icon-file, .tabler-icon-file-text) {
+  --salesfarce-icon: var(--sf-icon-file);
+}
+
+.salesfarce :is(.tabler-icon-robot) {
+  --salesfarce-icon: var(--sf-icon-robot);
+}
+
+.salesfarce :is(.tabler-icon-mood-smile, .tabler-icon-mood-happy) {
+  --salesfarce-icon: var(--sf-icon-smile);
+}
+
+.salesfarce :is(.tabler-icon-rocket) {
+  --salesfarce-icon: var(--sf-icon-rocket);
+}
+
+.salesfarce :is(.tabler-icon-tag, .tabler-icon-tags) {
+  --salesfarce-icon: var(--sf-icon-tag);
+}
+
+.salesfarce :is(.tabler-icon-bolt) {
+  --salesfarce-icon: var(--sf-icon-bolt);
+}
+
+.salesfarce :is(.tabler-icon-eye) {
+  --salesfarce-icon: var(--sf-icon-eye);
+}
+
+.salesfarce :is(.tabler-icon-alert-triangle, .tabler-icon-alert-circle) {
+  --salesfarce-icon: var(--sf-icon-alert-triangle);
+}
+
+.salesfarce :is(.tabler-icon-paperclip) {
+  --salesfarce-icon: var(--sf-icon-paperclip);
+}
+
+.salesfarce :is(.tabler-icon-database) {
+  --salesfarce-icon: var(--sf-icon-database);
+}
+
+.salesfarce :is(.tabler-icon-flag) {
+  --salesfarce-icon: var(--sf-icon-flag);
+}
+
+.salesfarce :is(.tabler-icon-trophy) {
+  --salesfarce-icon: var(--sf-icon-trophy);
+}
+
+.salesfarce :is(.tabler-icon-gift) {
+  --salesfarce-icon: var(--sf-icon-gift);
+}
+
+.salesfarce :is(.tabler-icon-bulb) {
+  --salesfarce-icon: var(--sf-icon-bulb);
+}
+
+.salesfarce :is(.tabler-icon-book, .tabler-icon-book-2) {
+  --salesfarce-icon: var(--sf-icon-book);
+}
+
+.salesfarce :is(.tabler-icon-chart-bar, .tabler-icon-chart-histogram) {
+  --salesfarce-icon: var(--sf-icon-chart-bar);
+}
+
+.salesfarce :is(.tabler-icon-chart-pie) {
+  --salesfarce-icon: var(--sf-icon-chart-pie);
+}
+
+.salesfarce :is(.tabler-icon-shopping-cart) {
+  --salesfarce-icon: var(--sf-icon-shopping-cart);
+}
+
+.salesfarce :is(.tabler-icon-package, .tabler-icon-box) {
+  --salesfarce-icon: var(--sf-icon-package);
+}
+
+.salesfarce :is(.tabler-icon-truck, .tabler-icon-truck-delivery) {
+  --salesfarce-icon: var(--sf-icon-truck);
+}
+
+.salesfarce :is(.tabler-icon-ticket) {
+  --salesfarce-icon: var(--sf-icon-ticket);
+}
+
+.salesfarce :is(.tabler-icon-receipt, .tabler-icon-file-invoice) {
+  --salesfarce-icon: var(--sf-icon-receipt);
+}
+
+.salesfarce :is(.tabler-icon-headset, .tabler-icon-headphones) {
+  --salesfarce-icon: var(--sf-icon-headset);
+}
+
+.salesfarce :is(.tabler-icon-bug) {
+  --salesfarce-icon: var(--sf-icon-bug);
+}
+
+.salesfarce :is(.tabler-icon-building-store) {
+  --salesfarce-icon: var(--sf-icon-building-store);
+}
+
+.salesfarce
+  :is(.tabler-icon-presentation, .tabler-icon-presentation-analytics) {
+  --salesfarce-icon: var(--sf-icon-presentation);
+}
+
+.salesfarce :is(.tabler-icon-brand-x, .tabler-icon-brand-twitter) {
+  --salesfarce-icon: var(--sf-icon-brand-x);
+}
+
+.salesfarce :is(.tabler-icon-brand-facebook) {
+  --salesfarce-icon: var(--sf-icon-brand-facebook);
+}
+
+.salesfarce :is(.tabler-icon-brand-instagram) {
+  --salesfarce-icon: var(--sf-icon-brand-instagram);
+}
+
+.salesfarce :is(.tabler-icon-brand-youtube) {
+  --salesfarce-icon: var(--sf-icon-brand-youtube);
+}
+
+.salesfarce :is(.tabler-icon-car) {
+  --salesfarce-icon: var(--sf-icon-car);
+}
+
+.salesfarce :is(.tabler-icon-plane, .tabler-icon-plane-departure) {
+  --salesfarce-icon: var(--sf-icon-plane);
+}
+
+.salesfarce :is(.tabler-icon-school) {
+  --salesfarce-icon: var(--sf-icon-school);
+}
+
+.salesfarce :is(.tabler-icon-crown) {
+  --salesfarce-icon: var(--sf-icon-crown);
+}
+
+.salesfarce :is(.tabler-icon-diamond) {
+  --salesfarce-icon: var(--sf-icon-diamond);
+}
+
+.salesfarce :is(.tabler-icon-building, .tabler-icon-building-community) {
+  --salesfarce-icon: var(--sf-icon-building-skyscraper);
+}
+
+.salesfarce :is(.tabler-icon-versions, .tabler-icon-copy-plus) {
+  --salesfarce-icon: var(--sf-icon-copy);
+}
+
+.salesfarce :is(.tabler-icon-pet) {
+  --salesfarce-icon: var(--sf-icon-paw);
+}
+
+.salesfarce :is(.tabler-icon-coin, .tabler-icon-coins, .tabler-icon-cash) {
+  --salesfarce-icon: var(--sf-icon-currency-dollar);
+}
+
+.salesfarce :is(.tabler-icon-edit, .tabler-icon-edit-circle) {
+  --salesfarce-icon: var(--sf-icon-pencil);
+}
+
+.salesfarce :is(.tabler-icon-restore) {
+  --salesfarce-icon: var(--sf-icon-recycle);
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-mail-off,
+    .tabler-icon-mail-x,
+    .tabler-icon-mail-check,
+    .tabler-icon-mail-opened
+  ) {
+  --salesfarce-icon: var(--sf-icon-mail);
+}
+
+.salesfarce :is(.tabler-icon-users-plus) {
+  --salesfarce-icon: var(--sf-icon-user-plus);
+}
+
+.salesfarce :is(.tabler-icon-phone-call, .tabler-icon-device-mobile) {
+  --salesfarce-icon: var(--sf-icon-phone);
+}
+
+.salesfarce :is(.tabler-icon-world-www) {
+  --salesfarce-icon: var(--sf-icon-world);
+}
+
+.salesfarce :is(.tabler-icon-briefcase-2) {
+  --salesfarce-icon: var(--sf-icon-briefcase);
+}
+
+.salesfarce :is(.tabler-icon-hierarchy-2, .tabler-icon-hierarchy) {
+  --salesfarce-icon: var(--sf-icon-hierarchy);
 }
 
 .salesfarce
@@ -677,8 +947,6 @@
     [data-click-outside-id='workflow-diagram-step-node-base'] .tabler-icon-code,
     [data-click-outside-id='workflow-diagram-step-node-base']
       .tabler-icon-sparkles,
-    [data-click-outside-id='workflow-diagram-step-node-base']
-      .tabler-icon-database,
     .tabler-icon-chevron-down,
     [data-table-header='true'] .tabler-icon-arrow-down,
     .tabler-icon-chevron-up,
@@ -706,7 +974,96 @@
     .tabler-icon-password,
     .tabler-icon-list,
     .tabler-icon-user-pin,
-    .tabler-icon-settings-2
+    .tabler-icon-settings-2,
+    .tabler-icon-text,
+    .tabler-icon-abc,
+    .tabler-icon-text-size,
+    .tabler-icon-typography,
+    .tabler-icon-number,
+    .tabler-icon-hash,
+    .tabler-icon-numbers,
+    .tabler-icon-id,
+    .tabler-icon-id-badge,
+    .tabler-icon-id-badge-2,
+    .tabler-icon-relation-one-to-many,
+    .tabler-icon-relation-many-to-one,
+    .tabler-icon-relation-one-to-one,
+    .tabler-icon-relation-many-to-many,
+    .tabler-icon-lego,
+    .tabler-icon-map-pin,
+    .tabler-icon-map,
+    .tabler-icon-map-2,
+    .tabler-icon-location,
+    .tabler-icon-file,
+    .tabler-icon-file-text,
+    .tabler-icon-robot,
+    .tabler-icon-mood-smile,
+    .tabler-icon-mood-happy,
+    .tabler-icon-rocket,
+    .tabler-icon-tag,
+    .tabler-icon-tags,
+    .tabler-icon-bolt,
+    .tabler-icon-eye,
+    .tabler-icon-alert-triangle,
+    .tabler-icon-alert-circle,
+    .tabler-icon-paperclip,
+    .tabler-icon-database,
+    .tabler-icon-flag,
+    .tabler-icon-trophy,
+    .tabler-icon-gift,
+    .tabler-icon-bulb,
+    .tabler-icon-book,
+    .tabler-icon-book-2,
+    .tabler-icon-chart-bar,
+    .tabler-icon-chart-histogram,
+    .tabler-icon-chart-pie,
+    .tabler-icon-shopping-cart,
+    .tabler-icon-package,
+    .tabler-icon-box,
+    .tabler-icon-truck,
+    .tabler-icon-truck-delivery,
+    .tabler-icon-ticket,
+    .tabler-icon-receipt,
+    .tabler-icon-file-invoice,
+    .tabler-icon-headset,
+    .tabler-icon-headphones,
+    .tabler-icon-bug,
+    .tabler-icon-building-store,
+    .tabler-icon-presentation,
+    .tabler-icon-presentation-analytics,
+    .tabler-icon-brand-x,
+    .tabler-icon-brand-twitter,
+    .tabler-icon-brand-facebook,
+    .tabler-icon-brand-instagram,
+    .tabler-icon-brand-youtube,
+    .tabler-icon-car,
+    .tabler-icon-plane,
+    .tabler-icon-plane-departure,
+    .tabler-icon-school,
+    .tabler-icon-crown,
+    .tabler-icon-diamond,
+    .tabler-icon-building,
+    .tabler-icon-building-community,
+    .tabler-icon-versions,
+    .tabler-icon-copy-plus,
+    .tabler-icon-pet,
+    .tabler-icon-coin,
+    .tabler-icon-coins,
+    .tabler-icon-cash,
+    .tabler-icon-edit,
+    .tabler-icon-edit-circle,
+    .tabler-icon-restore,
+    .tabler-icon-mail-off,
+    .tabler-icon-mail-x,
+    .tabler-icon-mail-check,
+    .tabler-icon-mail-opened,
+    .tabler-icon-users-plus,
+    .tabler-icon-phone-call,
+    .tabler-icon-device-mobile,
+    .tabler-icon-world-www,
+    .tabler-icon-briefcase-2,
+    .tabler-icon-hierarchy-2,
+    .tabler-icon-hierarchy
   )
   > :is(path, rect, circle, line, polyline, polygon, ellipse, g) {
   opacity: 0;
