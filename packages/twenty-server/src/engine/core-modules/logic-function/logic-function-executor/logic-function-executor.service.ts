@@ -15,7 +15,6 @@ import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,
 } from 'twenty-shared/logic-function';
-import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -45,6 +44,7 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
+import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ThrottlerException,
@@ -494,7 +494,7 @@ export class LogicFunctionExecutorService {
       [DEFAULT_SERVER_ROUTES_URL_NAME]: isDefined(
         flatApplication.applicationRegistrationId,
       )
-        ? `${baseUrl ?? ''}/${ApiPath.Webhooks}/server/${flatApplication.applicationRegistrationId}`
+        ? `${baseUrl ?? ''}/${SERVER_ROUTE_PATH}/${flatApplication.applicationRegistrationId}`
         : '',
       APPLICATION_ID: flatApplication.id,
     };

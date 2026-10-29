@@ -241,22 +241,25 @@ export class ServerRouteTriggerService {
     applicationRegistrationId: string;
     logicFunctionUniversalIdentifier: string;
   }): Promise<ResolvedServerRouteResolver> {
-    const resolver =
-      isValidUuid(applicationRegistrationId) &&
-      isValidUuid(logicFunctionUniversalIdentifier)
-        ? await this.createResolverQueryBuilder()
-            .andWhere(
-              'applicationRegistration.id = :applicationRegistrationId',
-              {
-                applicationRegistrationId,
-              },
-            )
-            .andWhere(
-              'logicFunction.universalIdentifier = :logicFunctionUniversalIdentifier',
-              { logicFunctionUniversalIdentifier },
-            )
-            .getOne()
-        : null;
+    if (
+      !isValidUuid(applicationRegistrationId) ||
+      !isValidUuid(logicFunctionUniversalIdentifier)
+    ) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const resolver = await this.createResolverQueryBuilder()
+      .andWhere('applicationRegistration.id = :applicationRegistrationId', {
+        applicationRegistrationId,
+      })
+      .andWhere(
+        'logicFunction.universalIdentifier = :logicFunctionUniversalIdentifier',
+        { logicFunctionUniversalIdentifier },
+      )
+      .getOne();
 
     if (!isDefined(resolver)) {
       throw new ServerRouteTriggerException(
