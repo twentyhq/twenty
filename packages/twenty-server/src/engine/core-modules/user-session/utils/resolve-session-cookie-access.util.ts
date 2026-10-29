@@ -5,11 +5,7 @@ import {
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-export type SessionCookieAccess =
-  | 'opted-in'
-  | 'navigation'
-  | 'legacy'
-  | 'denied';
+import { type SessionCookieAccess } from 'src/engine/core-modules/user-session/types/session-cookie-access.type';
 
 // Opt-in so a new channel that makes the browser send cookies (e.g. front component host fetch) gets no session by default.
 // Sec-Fetch-Mode is set by the browser and cannot be forged by page scripts; a navigation's response is never readable by them.
