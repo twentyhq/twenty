@@ -22,7 +22,9 @@ export const mapCallRecordingMediaState = (
     fathomRecordingImportId: isNonEmptyString(recordingImport?.id)
       ? recordingImport.id
       : undefined,
-    fathomRecordingImportUpdatedAt: isNonEmptyString(recordingImport?.updatedAt)
+    fathomRecordingImportUpdatedAt: isNonEmptyString(
+      recordingImport?.updatedAt,
+    )
       ? recordingImport.updatedAt
       : undefined,
     recordingId: isNonEmptyString(recordingImport?.recordingId)

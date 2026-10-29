@@ -3,7 +3,7 @@ title: Application Config
 description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
 ---
 
-import { PageBanner } from '/snippets/page-banner.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Overview
 
@@ -11,10 +11,10 @@ Every app must have exactly one `defineApplication` call. It declares:
 
 - **Identity** — universal identifier, display name, description.
 - **Permissions** — which role its logic functions and front components run under.
-- **Media capabilities** _(optional)_: microphone or camera access requested by front components, approved separately from role permissions.
-- **Variables** _(optional)_ — key–value pairs exposed to your code as environment variables.
-- **Pre-install / post-install / uninstall hooks** _(optional)_ — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
-- **Billing** _(optional)_ — `billing.recurring` for subscription fees the platform raises automatically, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
+- **Media capabilities** *(optional)*: microphone or camera access requested by front components, approved separately from role permissions.
+- **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
+- **Pre-install / post-install / uninstall hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
+- **Billing** *(optional)* — `billing.recurring` for subscription fees the platform raises automatically, `billing.operations` for what your app charges credits for, and `billing.description` for the marketplace; see [Charging Credits](/developers/extend/apps/logic/credits).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -43,7 +43,6 @@ export default defineApplication({
 ```
 
 Notes:
-
 - `universalIdentifier` fields are UUIDs you generate once and own. Keep them stable across syncs. The application's own `universalIdentifier` must be a valid UUID: the server rejects a manifest whose identifier is not one. It is unique across the whole instance and is bound to the workspace that owns its registration, so only that workspace can sync the app — see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - `applicationVariables` accept an optional `label` — a user-friendly name displayed in the app's settings page instead of the raw variable key.
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables. A variable with `scope: 'USER'` holds the value of the member the code runs for: see [Workspace and user variables](#workspace-and-user-variables).
@@ -113,13 +112,13 @@ The `type` only affects **presentation and validation** — it selects the match
 
 Values are **always injected as strings** — this is inherent to environment variables (`process.env.*` is string-only). When your logic function runs, the executor serializes each value by its declared `type` while building `process.env`, so the string format is consistent no matter how the value was set (manifest default, settings UI, or a previous version):
 
-| Type                                  | `process.env` string                   |
-| ------------------------------------- | -------------------------------------- |
+| Type | `process.env` string |
+|------|----------------------|
 | `TEXT`, `SELECT`, `DATE`, `DATE_TIME` | the raw value (`"eu"`, `"2026-01-01"`) |
-| `BOOLEAN`                             | `"true"` / `"false"`                   |
-| `NUMBER`, `NUMERIC`                   | decimal string (`"10"`, `"2.5"`)       |
-| `MULTI_SELECT`, `ARRAY`               | JSON array (`'["email","postcard"]'`)  |
-| `RAW_JSON`, `RICH_TEXT`               | JSON object (`'{"retries":3}'`)        |
+| `BOOLEAN` | `"true"` / `"false"` |
+| `NUMBER`, `NUMERIC` | decimal string (`"10"`, `"2.5"`) |
+| `MULTI_SELECT`, `ARRAY` | JSON array (`'["email","postcard"]'`) |
+| `RAW_JSON`, `RICH_TEXT` | JSON object (`'{"retries":3}'`) |
 
 Parse the string back into the type you expect:
 
@@ -207,24 +206,21 @@ When you scaffold a new app, the CLI creates a starter role file at `src/roles/d
 
 If you plan to [publish your app](/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
 
-| Field                 | Description                                                                                                                                                                                 |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `author`              | Author or company name                                                                                                                                                                      |
-| `category`            | App category for marketplace filtering                                                                                                                                                      |
-| `logo`                | Path to your app logo bundled in `public/` (e.g., `public/logo.png`)                                                                                                                        |
-| `galleryImages`       | Array of gallery image paths bundled in `public/` (e.g., `public/screenshot-1.png`)                                                                                                         |
-| `aboutDescription`    | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm. Images do not render, and raw HTML shows as plain text                |
+| Field | Description |
+|-------|-------------|
+| `author` | Author or company name |
+| `category` | App category for marketplace filtering |
+| `logo` | Path to your app logo bundled in `public/` (e.g., `public/logo.png`) |
+| `galleryImages` | Array of gallery image paths bundled in `public/` (e.g., `public/screenshot-1.png`) |
+| `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm. Images do not render, and raw HTML shows as plain text |
 | `billing.description` | What the app costs, in one short friendly line for your marketplace listing (e.g. `$0.02 per minute recorded`). Set it if your app [charges credits](/developers/extend/apps/logic/credits) |
-| `websiteUrl`          | Link to your website                                                                                                                                                                        |
-| `termsUrl`            | Link to terms of service                                                                                                                                                                    |
-| `emailSupport`        | Support email address                                                                                                                                                                       |
-| `issueReportUrl`      | Link to issue tracker                                                                                                                                                                       |
+| `websiteUrl` | Link to your website |
+| `termsUrl` | Link to terms of service |
+| `emailSupport` | Support email address |
+| `issueReportUrl` | Link to issue tracker |
 
 <Note>
-  `logoUrl` and `screenshots` are deprecated aliases of `logo` and
-  `galleryImages`. External absolute URLs (`http://` or `https://`) are not
-  supported for these fields: they are dropped with a warning at build time.
-  Bundle the images in your app's `public/` folder instead.
+`logoUrl` and `screenshots` are deprecated aliases of `logo` and `galleryImages`. External absolute URLs (`http://` or `https://`) are not supported for these fields: they are dropped with a warning at build time. Bundle the images in your app's `public/` folder instead.
 </Note>
 
 <PageBanner illustration="card-page-application-config" />

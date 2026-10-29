@@ -50,7 +50,8 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'connectedAccountId',
       label: 'Connected Account ID',
-      description: 'Connected account that owns the private Fathom download.',
+      description:
+        'Connected account that owns the private Fathom download.',
       icon: 'IconLink',
       isNullable: true,
     },
@@ -80,7 +81,8 @@ export default defineObject({
       type: FieldType.DATE_TIME,
       name: 'mediaImportClaimedAt',
       label: 'Media Import Claimed At',
-      description: 'Expiring lease held by the worker importing Fathom media.',
+      description:
+        'Expiring lease held by the worker importing Fathom media.',
       icon: 'IconLock',
       isNullable: true,
     },
@@ -90,8 +92,7 @@ export default defineObject({
       type: FieldType.RAW_JSON,
       name: 'mediaUploadCheckpoint',
       label: 'Media Upload Checkpoint',
-      description:
-        'Completed upload awaiting attachment to the call recording.',
+      description: 'Completed upload awaiting attachment to the call recording.',
       icon: 'IconUpload',
       isNullable: true,
     },
@@ -105,7 +106,8 @@ export default defineObject({
       icon: 'IconMicrophone',
       isNullable: true,
       relationTargetObjectMetadataUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording
+          .universalIdentifier,
       relationTargetFieldMetadataUniversalIdentifier:
         FATHOM_RECORDING_IMPORTS_ON_CALL_RECORDING_FIELD_UNIVERSAL_IDENTIFIER,
       universalSettings: {

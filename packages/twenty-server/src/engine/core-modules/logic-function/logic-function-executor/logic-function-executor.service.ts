@@ -501,7 +501,6 @@ export class LogicFunctionExecutorService {
     };
   }
 
-  // Ids come from the registration owner's workspace, where routes resolve.
   private async buildServerRouteIdByUniversalIdentifier(
     flatApplication: Pick<
       FlatApplication,
