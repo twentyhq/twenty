@@ -49,7 +49,7 @@ const buildFollowedParticipant = (threadId: string) => ({
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
   updatedAt: '2026-09-20T00:00:00.000Z',
 });
 

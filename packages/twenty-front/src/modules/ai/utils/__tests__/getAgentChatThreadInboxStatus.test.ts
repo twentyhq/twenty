@@ -10,7 +10,7 @@ const getStatus = ({
   snoozedUntil = null,
   isSubscribed = true,
   lastMentionedAt = null,
-  lastResolvedMentionAt = null,
+  mentionsResolvedAt = null,
 }: {
   lastActivityAt?: string | null;
   lastReadAt?: string | null;
@@ -18,7 +18,7 @@ const getStatus = ({
   snoozedUntil?: string | null;
   isSubscribed?: boolean;
   lastMentionedAt?: string | null;
-  lastResolvedMentionAt?: string | null;
+  mentionsResolvedAt?: string | null;
 } = {}) =>
   getAgentChatThreadInboxStatus({
     lastActivityAt,
@@ -30,7 +30,7 @@ const getStatus = ({
       snoozedUntil,
       isSubscribed,
       lastMentionedAt,
-      lastResolvedMentionAt,
+      mentionsResolvedAt,
       updatedAt: ARCHIVED_AT,
       __typename: 'AgentChatThreadParticipant',
     },
@@ -184,7 +184,7 @@ describe('getAgentChatThreadInboxStatus', () => {
     expect(
       getStatus({
         lastMentionedAt: '2026-10-01T09:00:00.000Z',
-        lastResolvedMentionAt: '2026-10-01T09:00:00.000Z',
+        mentionsResolvedAt: '2026-10-01T09:00:00.000Z',
         archivedAt: ARCHIVED_AT,
         lastActivityAt: '2026-10-01T11:00:00.000Z',
       }),
@@ -195,7 +195,7 @@ describe('getAgentChatThreadInboxStatus', () => {
     expect(
       getStatus({
         lastMentionedAt: '2026-10-01T11:00:00.000Z',
-        lastResolvedMentionAt: '2026-10-01T09:00:00.000Z',
+        mentionsResolvedAt: '2026-10-01T09:00:00.000Z',
       }).isMentioned,
     ).toBe(true);
   });

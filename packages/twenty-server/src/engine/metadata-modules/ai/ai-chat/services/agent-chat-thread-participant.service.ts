@@ -45,9 +45,9 @@ type BuildParticipantWriteQuery = (tables: {
 
 const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."updatedAt" + interval '1 millisecond')`;
 
-const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."lastResolvedMentionAt", participant."lastMentionedAt")`;
+const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
 
-const HAS_UNRESOLVED_MENTION = `(participant."lastMentionedAt" IS NOT NULL AND (participant."lastResolvedMentionAt" IS NULL OR participant."lastMentionedAt" > participant."lastResolvedMentionAt"))`;
+const HAS_UNRESOLVED_MENTION = `(participant."lastMentionedAt" IS NOT NULL AND (participant."mentionsResolvedAt" IS NULL OR participant."lastMentionedAt" > participant."mentionsResolvedAt"))`;
 
 const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
 
@@ -74,7 +74,7 @@ const INBOX_ACTION_QUERIES: Record<
      SELECT thread.id, $2, thread."lastActivityAt", false FROM ${threadTable} thread WHERE thread.id = $1
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
-       "lastResolvedMentionAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
   [AgentChatInboxAction.UNREAD]: ({ participantTable }) =>
@@ -91,7 +91,7 @@ const INBOX_ACTION_QUERIES: Record<
        "archivedAt" = EXCLUDED."archivedAt",
        "snoozedUntil" = NULL,
        "isSubscribed" = true,
-       "lastResolvedMentionAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
   [AgentChatInboxAction.SNOOZE]: buildSnoozeQuery,
@@ -120,7 +120,7 @@ const INBOX_ACTION_QUERIES: Record<
        "isSubscribed" = false,
        "archivedAt" = EXCLUDED."archivedAt",
        "snoozedUntil" = NULL,
-       "lastResolvedMentionAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
 };
@@ -134,7 +134,7 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "lastResolvedMentionAt", "updatedAt"`;
+const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -240,7 +240,7 @@ export class AgentChatThreadParticipantService {
            "lastMentionedAt" = GREATEST(
              EXCLUDED."lastMentionedAt",
              participant."lastMentionedAt" + interval '1 millisecond',
-             participant."lastResolvedMentionAt" + interval '1 millisecond'
+             participant."mentionsResolvedAt" + interval '1 millisecond'
            ),
            "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,

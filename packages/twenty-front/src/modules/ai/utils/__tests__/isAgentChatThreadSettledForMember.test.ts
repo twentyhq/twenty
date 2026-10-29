@@ -24,7 +24,7 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
   updatedAt: LAST_ACTIVITY_AT,
   __typename: 'AgentChatThreadParticipant',
 };

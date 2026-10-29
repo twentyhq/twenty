@@ -43,7 +43,7 @@ describe('agentChatRecentThreadsSelector', () => {
         snoozedUntil: null,
         isSubscribed: true,
         lastMentionedAt: null,
-        lastResolvedMentionAt: null,
+        mentionsResolvedAt: null,
         updatedAt: LAST_ACTIVITY_AT,
       },
     });

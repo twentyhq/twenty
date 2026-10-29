@@ -26,7 +26,7 @@ export class AgentChatThreadParticipantDTO {
   lastMentionedAt: Date | null;
 
   @Field(() => Date, { nullable: true })
-  lastResolvedMentionAt: Date | null;
+  mentionsResolvedAt: Date | null;
 
   // Orders the copies a member's apps receive, so an older one never wins
   @Field(() => Date)

@@ -301,7 +301,7 @@ const meta = {
             archivedAt: null,
             snoozedUntil: null,
             lastMentionedAt: null,
-            lastResolvedMentionAt: null,
+            mentionsResolvedAt: null,
             updatedAt: THREAD_ACTIVITY_AT,
           },
         ]),

@@ -316,21 +316,21 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
-  lastResolvedMentionAt: {
+  mentionsResolvedAt: {
     ...createStandardFieldFlatMetadata({
       ...args,
       context: {
-        fieldName: 'lastResolvedMentionAt',
+        fieldName: 'mentionsResolvedAt',
         type: FieldMetadataType.DATE_TIME,
         label: i18nLabel(
           msg({
-            message: 'Last resolved mention at',
+            message: 'Mentions resolved at',
             context: 'fieldMetadata.label',
           }),
         ),
         description: i18nLabel(
           msg({
-            message: 'The latest mention resolved by the member',
+            message: 'Mentions up to this time are resolved for the member',
             context: 'fieldMetadata.description',
           }),
         ),

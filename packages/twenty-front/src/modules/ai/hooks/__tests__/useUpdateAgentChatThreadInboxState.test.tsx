@@ -19,7 +19,7 @@ const READ_PARTICIPANT = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
@@ -81,7 +81,7 @@ describe('useUpdateAgentChatThreadInboxState', () => {
       snoozedUntil: null,
       isSubscribed: false,
       lastMentionedAt: null,
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
   });
 

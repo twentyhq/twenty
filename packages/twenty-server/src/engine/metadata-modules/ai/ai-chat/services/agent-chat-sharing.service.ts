@@ -107,8 +107,8 @@ export class AgentChatSharingService {
     if (
       !isDefined(
         flatFieldMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThreadParticipant.fields
-            .lastResolvedMentionAt.universalIdentifier
+          STANDARD_OBJECTS.agentChatThreadParticipant.fields.mentionsResolvedAt
+            .universalIdentifier
         ],
       )
     ) {

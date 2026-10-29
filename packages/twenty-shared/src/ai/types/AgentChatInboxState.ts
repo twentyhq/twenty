@@ -4,5 +4,5 @@ export type AgentChatInboxState = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
-  lastResolvedMentionAt: string | null;
+  mentionsResolvedAt: string | null;
 };

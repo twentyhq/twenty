@@ -12,7 +12,7 @@ const READ: AgentChatInboxState = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
 };
 const SNOOZED_UNSUBSCRIBED: AgentChatInboxState = {
   ...READ,
@@ -107,7 +107,7 @@ describe('applyAgentChatInboxAction', () => {
         }),
       ).toMatchObject({
         lastMentionedAt: EARLIER,
-        lastResolvedMentionAt: EARLIER,
+        mentionsResolvedAt: EARLIER,
       });
     },
   );
@@ -118,11 +118,11 @@ describe('applyAgentChatInboxAction', () => {
         participant: {
           ...READ,
           lastMentionedAt: EARLIER,
-          lastResolvedMentionAt: LATER,
+          mentionsResolvedAt: LATER,
         },
         action: 'ARCHIVE',
         now: NOW,
-      }).lastResolvedMentionAt,
+      }).mentionsResolvedAt,
     ).toBe(LATER);
   });
 
@@ -141,7 +141,7 @@ describe('applyAgentChatInboxAction', () => {
       }),
     ).toMatchObject({
       lastMentionedAt: EARLIER,
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
   });
 });

@@ -13,6 +13,6 @@ export const getAgentChatThreadParticipantFromRecord = (
   snoozedUntil: record.snoozedUntil ?? null,
   isSubscribed: record.isSubscribed ?? true,
   lastMentionedAt: record.lastMentionedAt ?? null,
-  lastResolvedMentionAt: record.lastResolvedMentionAt ?? null,
+  mentionsResolvedAt: record.mentionsResolvedAt ?? null,
   updatedAt: record.updatedAt,
 });

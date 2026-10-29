@@ -17,8 +17,8 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-const RESOLVED_MENTION_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.agentChatThreadParticipant.fields.lastResolvedMentionAt
+const MENTIONS_RESOLVED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.mentionsResolvedAt
     .universalIdentifier;
 
 describe('2-54 workspace command - add chat mention resolution (integration)', () => {
@@ -35,14 +35,14 @@ describe('2-54 workspace command - add chat mention resolution (integration)', (
       await global.testDataSource.query(
         `SELECT column_name FROM information_schema.columns
          WHERE table_schema = $1 AND table_name = 'agentChatThreadParticipant'
-           AND column_name = 'lastResolvedMentionAt'`,
+           AND column_name = 'mentionsResolvedAt'`,
         [SCHEMA],
       );
 
     return {
       hasField: isDefined(
         flatFieldMetadataMaps.byUniversalIdentifier[
-          RESOLVED_MENTION_FIELD_UNIVERSAL_IDENTIFIER
+          MENTIONS_RESOLVED_AT_FIELD_UNIVERSAL_IDENTIFIER
         ],
       ),
       hasColumn: columns.length === 1,

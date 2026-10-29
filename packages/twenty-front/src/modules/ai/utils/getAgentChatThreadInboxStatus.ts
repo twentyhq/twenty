@@ -28,7 +28,7 @@ export const getAgentChatThreadInboxStatus = ({
   const isSubscribed = participant?.isSubscribed ?? false;
   const isMentioned = isAgentChatMentionUnresolved({
     lastMentionedAt: participant?.lastMentionedAt,
-    lastResolvedMentionAt: participant?.lastResolvedMentionAt,
+    mentionsResolvedAt: participant?.mentionsResolvedAt,
   });
   const archivedAt = participant?.archivedAt;
   const snoozedUntil = participant?.snoozedUntil;

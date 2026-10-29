@@ -16,8 +16,8 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const RESOLVED_MENTION_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.agentChatThreadParticipant.fields.lastResolvedMentionAt
+const MENTIONS_RESOLVED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.agentChatThreadParticipant.fields.mentionsResolvedAt
     .universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.54.0', 1793286392541)
@@ -80,7 +80,7 @@ export class AddChatMentionResolutionCommand extends ProvisionedWorkspaceCommand
             twentyStandardApplicationId: twentyStandardFlatApplication.id,
           }).allFlatEntityMaps.flatFieldMetadataMaps,
         existingFlatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifiers: [RESOLVED_MENTION_FIELD_UNIVERSAL_IDENTIFIER],
+        universalIdentifiers: [MENTIONS_RESOLVED_AT_FIELD_UNIVERSAL_IDENTIFIER],
       });
 
     if (isNonEmptyArray(fieldsToCreate)) {
@@ -102,7 +102,7 @@ export class AddChatMentionResolutionCommand extends ProvisionedWorkspaceCommand
       ]);
     const field = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
       flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier: RESOLVED_MENTION_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: MENTIONS_RESOLVED_AT_FIELD_UNIVERSAL_IDENTIFIER,
     });
 
     if (!isDefined(field) || options.dryRun) {

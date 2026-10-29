@@ -2,11 +2,11 @@ import { isDefined } from '@/utils/validation/isDefined';
 
 export const isAgentChatMentionUnresolved = ({
   lastMentionedAt,
-  lastResolvedMentionAt,
+  mentionsResolvedAt,
 }: {
   lastMentionedAt?: string | null;
-  lastResolvedMentionAt?: string | null;
+  mentionsResolvedAt?: string | null;
 }): boolean =>
   isDefined(lastMentionedAt) &&
-  (!isDefined(lastResolvedMentionAt) ||
-    new Date(lastMentionedAt) > new Date(lastResolvedMentionAt));
+  (!isDefined(mentionsResolvedAt) ||
+    new Date(lastMentionedAt) > new Date(mentionsResolvedAt));

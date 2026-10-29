@@ -390,7 +390,7 @@ export default {
             "lastReadAt": [
                 209
             ],
-            "lastResolvedMentionAt": [
+            "mentionsResolvedAt": [
                 209
             ],
             "snoozedUntil": [

@@ -127,7 +127,7 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       "lastReadAt": {
         "id": "00000000-0000-0000-0000-000000001084",
       },
-      "lastResolvedMentionAt": {
+      "mentionsResolvedAt": {
         "id": "00000000-0000-0000-0000-000000001089",
       },
       "snoozedUntil": {

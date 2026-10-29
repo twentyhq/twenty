@@ -9,7 +9,7 @@ const RESOLVED_PARTICIPANT = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: '2026-10-01T10:00:00.000Z',
-  lastResolvedMentionAt: '2026-10-01T10:00:00.000Z',
+  mentionsResolvedAt: '2026-10-01T10:00:00.000Z',
   updatedAt: '2026-10-01T10:01:00.000Z',
 };
 
@@ -33,7 +33,7 @@ describe('getAgentChatThreadParticipantFromRecord', () => {
       }),
     ).toMatchObject({
       lastMentionedAt: '2026-10-01T10:00:00.000Z',
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
   });
 });

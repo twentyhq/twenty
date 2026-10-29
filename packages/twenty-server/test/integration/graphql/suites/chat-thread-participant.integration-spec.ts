@@ -31,7 +31,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt lastResolvedMentionAt updatedAt';
+  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt mentionsResolvedAt updatedAt';
 
 const UPDATE_INBOX_STATE = parse(
   `mutation UpdateInboxState($threadIds: [UUID!]!, $action: AgentChatInboxAction!, $snoozedUntil: DateTime) { updateAgentChatThreadInboxState(threadIds: $threadIds, action: $action, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
@@ -87,7 +87,7 @@ type Participant = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
-  lastResolvedMentionAt: string | null;
+  mentionsResolvedAt: string | null;
 };
 
 const OPEN_THREADS_SUMMARY = parse(
@@ -1234,9 +1234,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       const participant = response.body.data.updateAgentChatThreadInboxState[0];
 
       expect(response.body.errors).toBeUndefined();
-      expect(participant.lastResolvedMentionAt).toBe(
-        participant.lastMentionedAt,
-      );
+      expect(participant.mentionsResolvedAt).toBe(participant.lastMentionedAt);
     }
   });
 
@@ -1257,7 +1255,7 @@ describe('Chat thread participant state through the authenticated API', () => {
         response.body.data.updateAgentChatThreadInboxState[0],
       ).toMatchObject({
         lastMentionedAt: expect.any(String),
-        lastResolvedMentionAt: null,
+        mentionsResolvedAt: null,
       });
     }
   });
@@ -1275,7 +1273,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(doneParticipant!.lastResolvedMentionAt).toBe(
+    expect(doneParticipant!.mentionsResolvedAt).toBe(
       doneParticipant!.lastMentionedAt,
     );
 
@@ -1294,7 +1292,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({
       lastMentionedAt: doneParticipant!.lastMentionedAt,
-      lastResolvedMentionAt: doneParticipant!.lastResolvedMentionAt,
+      mentionsResolvedAt: doneParticipant!.mentionsResolvedAt,
     });
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -1306,9 +1304,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(
       new Date(mentionedAgain!.lastMentionedAt!).getTime(),
-    ).toBeGreaterThan(
-      new Date(mentionedAgain!.lastResolvedMentionAt!).getTime(),
-    );
+    ).toBeGreaterThan(new Date(mentionedAgain!.mentionsResolvedAt!).getTime());
   });
 
   it('resolves a mention when the member unsubscribes', async () => {
@@ -1326,7 +1322,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(unsubscribedParticipant).toMatchObject({
       isSubscribed: false,
-      lastResolvedMentionAt: unsubscribedParticipant!.lastMentionedAt,
+      mentionsResolvedAt: unsubscribedParticipant!.lastMentionedAt,
     });
   });
 
@@ -1350,7 +1346,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       isSubscribed: true,
       lastReadAt: null,
       lastMentionedAt: null,
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -1366,7 +1362,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({
       lastMentionedAt: mentionedParticipant!.lastMentionedAt,
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
   });
 
@@ -1377,7 +1373,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."agentChatThreadParticipant"
-       SET "lastMentionedAt" = $3, "lastResolvedMentionAt" = $3
+       SET "lastMentionedAt" = $3, "mentionsResolvedAt" = $3
        WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
       [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],
     );

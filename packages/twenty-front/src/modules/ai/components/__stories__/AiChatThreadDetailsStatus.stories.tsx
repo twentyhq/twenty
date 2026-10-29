@@ -67,7 +67,7 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
   updatedAt: ACTIVITY_AT,
 };
 

@@ -1,6 +1,6 @@
 import { type AgentChatInboxAction } from '@/ai/types/AgentChatInboxAction';
 import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
-import { getAgentChatResolvedMentionAt } from '@/ai/utils/get-agent-chat-resolved-mention-at.util';
+import { getAgentChatMentionsResolvedAt } from '@/ai/utils/get-agent-chat-mentions-resolved-at.util';
 import { isDefined } from '@/utils/validation/isDefined';
 
 // What a chat without the member's row reads as: one they can open but do
@@ -11,7 +11,7 @@ const DEFAULT_AGENT_CHAT_INBOX_STATE: AgentChatInboxState = {
   snoozedUntil: null,
   isSubscribed: false,
   lastMentionedAt: null,
-  lastResolvedMentionAt: null,
+  mentionsResolvedAt: null,
 };
 
 // Optimistic copy of AgentChatThreadParticipantService's write
@@ -41,7 +41,7 @@ export const applyAgentChatInboxAction = ({
             new Date(state.lastReadAt) > new Date(threadLastActivityAt))
             ? state.lastReadAt
             : threadLastActivityAt,
-        lastResolvedMentionAt: getAgentChatResolvedMentionAt(state),
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
       };
     case 'UNREAD':
       return { ...state, lastReadAt: null };
@@ -49,7 +49,7 @@ export const applyAgentChatInboxAction = ({
     case 'ARCHIVE':
       return {
         ...state,
-        lastResolvedMentionAt: getAgentChatResolvedMentionAt(state),
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
         archivedAt: now.toISOString(),
         snoozedUntil: null,
         isSubscribed: true,
@@ -79,7 +79,7 @@ export const applyAgentChatInboxAction = ({
     case 'UNSUBSCRIBE':
       return {
         ...state,
-        lastResolvedMentionAt: getAgentChatResolvedMentionAt(state),
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
         isSubscribed: false,
         archivedAt: now.toISOString(),
         snoozedUntil: null,
