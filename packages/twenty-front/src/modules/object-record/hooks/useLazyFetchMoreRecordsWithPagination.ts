@@ -4,7 +4,7 @@ import {
   type ObservableQuery,
   type OperationVariables,
 } from '@apollo/client';
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -73,19 +73,10 @@ export const useLazyFetchMoreRecordsWithPagination = <
   // TODO: put this into a util inspired from https://github.com/apollographql/apollo-client/blob/master/src/utilities/policies/pagination.ts
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecordsLazy = useCallback(
-    async (
-      options:
-        | number
-        | (LazyRecordQueryOptions & {
-            limit?: number;
-          }) = DEFAULT_SEARCH_REQUEST_LIMIT,
-    ) => {
-      const queryOptions: LazyRecordQueryOptions & { limit?: number } =
-        isNumber(options) ? { limit: options } : options;
-      const {
-        limit: pageLimit = DEFAULT_SEARCH_REQUEST_LIMIT,
-        filter: queryFilter = filter,
-      } = queryOptions;
+    async ({
+      limit: pageLimit = DEFAULT_SEARCH_REQUEST_LIMIT,
+      filter: queryFilter = filter,
+    }: LazyRecordQueryOptions & { limit?: number } = {}) => {
       const requestQueryIdentifier = getQueryIdentifier({
         objectNameSingular,
         filter: queryFilter,

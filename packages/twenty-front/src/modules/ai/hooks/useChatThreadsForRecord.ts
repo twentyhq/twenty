@@ -1,4 +1,3 @@
-import { useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
@@ -67,7 +66,6 @@ export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
-  const store = useStore();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -135,10 +133,6 @@ export const useChatThreadsForRecord = ({
   );
 
   const fetchMoreThreads = useCallback(() => {
-    const isFetchingMoreRecords = store.get(
-      isFetchingMoreRecordsFamilyState.atomFamily(queryIdentifier),
-    );
-
     if (!isRecordLinkable || !hasNextPage || loading || isFetchingMoreRecords) {
       return;
     }
@@ -147,10 +141,9 @@ export const useChatThreadsForRecord = ({
   }, [
     fetchMoreRecords,
     hasNextPage,
+    isFetchingMoreRecords,
     isRecordLinkable,
     loading,
-    queryIdentifier,
-    store,
   ]);
 
   const operationSignature = useMemo(
@@ -220,6 +213,5 @@ export const useChatThreadsForRecord = ({
     fetchMoreThreads,
     hasNextPage,
     isFetchingMoreThreads: isFetchingMoreRecords,
-    queryIdentifier,
   };
 };

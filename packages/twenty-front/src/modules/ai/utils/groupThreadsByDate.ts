@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { differenceInCalendarDays, startOfWeek } from 'date-fns';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadDateGroup } from '@/ai/types/AgentChatThreadDateGroup';
@@ -8,7 +9,6 @@ import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 
 const RECENT_THREAD_DAY_COUNT = 7;
-const COMPACT_WEEK_START_DAY = 1;
 const COMPACT_DATE_GROUP_IDS = ['today', 'this-week', 'earlier'];
 
 const getMonthGroupId = (date: Date) =>
@@ -20,18 +20,30 @@ const formatMonthGroupTitle = (date: Date) =>
     year: 'numeric',
   }).format(date);
 
-const getCompactPastThreadDateGroup = ({
-  daysSinceActivity,
+const getDaysSinceWeekStart = ({
   today,
+  calendarStartDay,
 }: {
-  daysSinceActivity: number;
   today: Date;
-}): Omit<AgentChatThreadDateGroup, 'threads'> => {
-  const daysSinceWeekStart = differenceInCalendarDays(
+  calendarStartDay: CalendarStartDay;
+}) =>
+  differenceInCalendarDays(
     today,
-    startOfWeek(today, { weekStartsOn: COMPACT_WEEK_START_DAY }),
+    startOfWeek(today, {
+      weekStartsOn:
+        calendarStartDay === CalendarStartDay.SYSTEM
+          ? CalendarStartDay.MONDAY
+          : calendarStartDay,
+    }),
   );
 
+const getCompactPastThreadDateGroup = ({
+  daysSinceActivity,
+  daysSinceWeekStart,
+}: {
+  daysSinceActivity: number;
+  daysSinceWeekStart: number;
+}): Omit<AgentChatThreadDateGroup, 'threads'> => {
   if (daysSinceActivity <= daysSinceWeekStart) {
     return {
       id: 'this-week',
@@ -49,10 +61,12 @@ const getThreadDateGroup = ({
   threadActivityAt,
   today,
   variant,
+  daysSinceWeekStart,
 }: {
   threadActivityAt: Date;
   today: Date;
   variant: AiChatThreadListVariant;
+  daysSinceWeekStart: number;
 }): Omit<AgentChatThreadDateGroup, 'threads'> => {
   const daysSinceActivity = differenceInCalendarDays(today, threadActivityAt);
   const isToday = daysSinceActivity === 0;
@@ -67,7 +81,10 @@ const getThreadDateGroup = ({
   }
 
   if (variant === 'compact') {
-    return getCompactPastThreadDateGroup({ daysSinceActivity, today });
+    return getCompactPastThreadDateGroup({
+      daysSinceActivity,
+      daysSinceWeekStart,
+    });
   }
 
   if (daysSinceActivity === 1) {
@@ -94,18 +111,22 @@ export const groupThreadsByDate = ({
   threads,
   today = new Date(),
   variant = 'default',
+  calendarStartDay = CalendarStartDay.MONDAY,
 }: {
   threads: AgentChatThreadRecord[];
   today?: Date;
   variant?: AiChatThreadListVariant;
+  calendarStartDay?: CalendarStartDay;
 }): AgentChatThreadDateGroup[] => {
   const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
+  const daysSinceWeekStart = getDaysSinceWeekStart({ today, calendarStartDay });
 
   for (const thread of threads) {
     const threadDateGroup = getThreadDateGroup({
       threadActivityAt: new Date(getAgentChatThreadLastActivityAt(thread)),
       today,
       variant,
+      daysSinceWeekStart,
     });
     const existingThreadDateGroup = groupedThreadsByDate.get(
       threadDateGroup.id,

@@ -1,3 +1,5 @@
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
@@ -73,6 +75,22 @@ describe('getChatThreadsForRecordPage', () => {
 
     expect(page.threads).toEqual([thread]);
     expect(page.refetchLimit).toBe(40);
+  });
+
+  it('caps the refresh at the maximum records per query', () => {
+    const links = Array.from({ length: QUERY_MAX_RECORDS + 20 }, (_, index) =>
+      buildLink({
+        id: `link-${index}`,
+        thread: buildThread({
+          id: `thread-${index}`,
+          updatedAt: '2026-09-28T10:00:00.000Z',
+        }),
+      }),
+    );
+
+    const page = getChatThreadsForRecordPage({ links, pageSize: PAGE_SIZE });
+
+    expect(page.refetchLimit).toBe(QUERY_MAX_RECORDS);
   });
 
   it('requests a full first page when no links are loaded', () => {

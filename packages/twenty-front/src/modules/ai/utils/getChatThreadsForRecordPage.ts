@@ -1,4 +1,5 @@
 import uniqBy from 'lodash.uniqby';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
@@ -14,5 +15,5 @@ export const getChatThreadsForRecordPage = ({
   threads: sortChatThreadsByLastActivityDesc(
     uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
   ),
-  refetchLimit: Math.max(links.length, pageSize),
+  refetchLimit: Math.min(Math.max(links.length, pageSize), QUERY_MAX_RECORDS),
 });

@@ -1,3 +1,5 @@
+import { CalendarStartDay } from 'twenty-shared/constants';
+
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
@@ -130,6 +132,34 @@ describe('groupThreadsByDate', () => {
         { id: 'today', threadIds: ['today'] },
         { id: 'this-week', threadIds: ['yesterday', 'monday'] },
         { id: 'earlier', threadIds: ['sunday', 'september'] },
+      ]);
+    });
+
+    it('starts the compact week on the calendar start day', () => {
+      const groups = groupThreadsByDate({
+        threads: [
+          buildThread({
+            id: 'sunday',
+            updatedAt: new Date('2026-10-25T10:00:00Z'),
+          }),
+          buildThread({
+            id: 'saturday',
+            updatedAt: new Date('2026-10-24T10:00:00Z'),
+          }),
+        ],
+        today: compactToday,
+        variant: 'compact',
+        calendarStartDay: CalendarStartDay.SUNDAY,
+      });
+
+      expect(
+        groups.map(({ id, threads: groupedThreads }) => ({
+          id,
+          threadIds: groupedThreads.map(({ id: threadId }) => threadId),
+        })),
+      ).toEqual([
+        { id: 'this-week', threadIds: ['sunday'] },
+        { id: 'earlier', threadIds: ['saturday'] },
       ]);
     });
 

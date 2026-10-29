@@ -6,6 +6,7 @@ import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
@@ -37,6 +38,7 @@ export const AiChatThreadList = ({
   onThreadContextMenu,
   onDetachThread,
 }: AiChatThreadListProps) => {
+  const { calendarStartDay } = useDateTimeFormat();
   const selectedThreadIdSet = new Set(selectedThreadIds);
   const checkedThreadIdSet = new Set(checkedThreadIds);
 
@@ -58,15 +60,17 @@ export const AiChatThreadList = ({
 
   return (
     <>
-      {groupThreadsByDate({ threads, variant }).map((dateGroup) => (
-        <AiChatThreadListGroup
-          key={dateGroup.id}
-          title={dateGroup.title}
-          variant={variant}
-        >
-          {dateGroup.threads.map(renderThread)}
-        </AiChatThreadListGroup>
-      ))}
+      {groupThreadsByDate({ threads, variant, calendarStartDay }).map(
+        (dateGroup) => (
+          <AiChatThreadListGroup
+            key={dateGroup.id}
+            title={dateGroup.title}
+            variant={variant}
+          >
+            {dateGroup.threads.map(renderThread)}
+          </AiChatThreadListGroup>
+        ),
+      )}
     </>
   );
 };

@@ -12,6 +12,7 @@ import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
@@ -81,6 +82,9 @@ export const AiChatThreadListItem = ({
     agentChatIsStreamingFamilyState,
     { threadId: thread.id },
   );
+  const { hasContent: hasSubtitleContent } =
+    useAgentChatThreadSubtitleContent(thread);
+  const isCompact = variant === 'compact';
   const shouldShowMore =
     isDefined(onDetach) ||
     isDefined(thread.deletedAt) ||
@@ -109,10 +113,7 @@ export const AiChatThreadListItem = ({
           : undefined
       }
       avatar={
-        <AiChatThreadAvatar
-          thread={thread}
-          size={variant === 'compact' ? 'md' : 'lg'}
-        />
+        <AiChatThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
       }
       title={
         isRenaming ? (
@@ -154,10 +155,12 @@ export const AiChatThreadListItem = ({
         )
       }
       subtitle={
-        <AiChatThreadSubtitle
-          thread={thread}
-          size={variant === 'compact' ? 'md' : 'sm'}
-        />
+        !isCompact || hasSubtitleContent ? (
+          <AiChatThreadSubtitle
+            thread={thread}
+            size={isCompact ? 'md' : 'sm'}
+          />
+        ) : undefined
       }
       actions={
         <AiChatThreadActionsDropdown
@@ -165,7 +168,7 @@ export const AiChatThreadListItem = ({
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
-          shouldShowTriageActions={variant !== 'compact'}
+          shouldShowTriageActions={!isCompact}
           shouldShowMore={shouldShowMore}
         />
       }
