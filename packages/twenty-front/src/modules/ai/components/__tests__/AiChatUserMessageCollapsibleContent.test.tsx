@@ -10,15 +10,13 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const COLLAPSED_HEIGHT = 240;
-
 const mockRenderedContentHeight = (contentHeight: number) => {
   jest
-    .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
-    .mockReturnValue(contentHeight);
+    .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
+    .mockReturnValue('24px');
   jest
-    .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
-    .mockReturnValue(Math.min(contentHeight, COLLAPSED_HEIGHT));
+    .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+    .mockReturnValue(contentHeight);
 };
 
 const renderContent = (text: string) =>
@@ -35,8 +33,8 @@ describe('AiChatUserMessageCollapsibleContent', () => {
     jest.restoreAllMocks();
   });
 
-  it('shows a short message without a toggle', () => {
-    mockRenderedContentHeight(48);
+  it('shows a message that fits in ten lines without a toggle', () => {
+    mockRenderedContentHeight(240);
 
     renderContent('Which deals close this week?');
 
@@ -48,7 +46,7 @@ describe('AiChatUserMessageCollapsibleContent', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('collapses a long message and toggles it open and closed', async () => {
+  it('collapses a taller message and toggles it open and closed', async () => {
     mockRenderedContentHeight(960);
 
     renderContent('Set up my workspace with these detailed instructions');

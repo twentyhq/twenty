@@ -265,11 +265,11 @@ describe('AiChatMessage', () => {
 
   it('collapses a long member message but never an assistant reply', () => {
     jest
-      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
-      .mockReturnValue(960);
+      .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
+      .mockReturnValue('24px');
     jest
-      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
-      .mockReturnValue(240);
+      .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+      .mockReturnValue(960);
 
     const { unmount } = renderMessage({
       messageId: USER_MESSAGE.id,

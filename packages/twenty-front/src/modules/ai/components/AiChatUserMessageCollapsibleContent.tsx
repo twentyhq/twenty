@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -37,37 +37,28 @@ export const AiChatUserMessageCollapsibleContent = ({
   const { t } = useLingui();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
-  const clampedContentRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const clampedContentElement = clampedContentRef.current;
-    const contentElement = contentRef.current;
-
-    // Expanded content is not clamped, so overflow can only be measured while collapsed.
-    if (
-      isExpanded ||
-      !isDefined(clampedContentElement) ||
-      !isDefined(contentElement)
-    ) {
+  const contentRef = useCallback((contentElement: HTMLDivElement | null) => {
+    if (!isDefined(contentElement)) {
       return;
     }
 
     const updateIsOverflowing = () => {
-      setIsOverflowing(
-        clampedContentElement.scrollHeight > clampedContentElement.clientHeight,
-      );
+      const collapsedMaxHeight =
+        parseFloat(getComputedStyle(contentElement).lineHeight) *
+        AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT;
+
+      setIsOverflowing(contentElement.offsetHeight > collapsedMaxHeight);
     };
 
     updateIsOverflowing();
 
     const resizeObserver = new ResizeObserver(updateIsOverflowing);
 
-    resizeObserver.observe(clampedContentElement);
     resizeObserver.observe(contentElement);
 
     return () => resizeObserver.disconnect();
-  }, [isExpanded]);
+  }, []);
 
   const handleToggleClick = () => {
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -76,7 +67,6 @@ export const AiChatUserMessageCollapsibleContent = ({
   return (
     <>
       <StyledClampedContent
-        ref={clampedContentRef}
         isCollapsed={!isExpanded}
         hasFade={!isExpanded && isOverflowing}
       >
