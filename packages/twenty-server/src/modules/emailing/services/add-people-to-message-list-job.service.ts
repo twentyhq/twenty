@@ -65,17 +65,18 @@ export class AddPeopleToMessageListJobService {
 
     return this.cacheLockService.withLock(
       () =>
-        this.enqueueAddPeopleToMessageListJob(
-          {
+        this.enqueueAddPeopleToMessageListJob({
+          data: {
             workspaceId,
             userWorkspaceId: authContext.userWorkspaceId,
             applicationId: authContext.application?.id,
             messageListId,
             personFilter,
           },
-          authContext.application?.universalIdentifier ??
+          applicationUniversalIdentifier:
+            authContext.application?.universalIdentifier ??
             TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        ),
+        }),
       buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
   }
@@ -106,10 +107,13 @@ export class AddPeopleToMessageListJobService {
     }
   }
 
-  private async enqueueAddPeopleToMessageListJob(
-    data: AddPeopleToMessageListJobData,
-    applicationUniversalIdentifier: string,
-  ): Promise<{ jobId: string }> {
+  private async enqueueAddPeopleToMessageListJob({
+    data,
+    applicationUniversalIdentifier,
+  }: {
+    data: AddPeopleToMessageListJobData;
+    applicationUniversalIdentifier: string;
+  }): Promise<{ jobId: string }> {
     const jobIdPrefix = buildAddPeopleToMessageListJobId(data);
     const inFlightJobId = findInFlightQueueJobIdByPrefix({
       inFlightJobs: await this.campaignQueueService.getInFlightJobs(),
