@@ -3,6 +3,7 @@ import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { PageLayoutType } from 'twenty-shared/types';
+import { ZodError } from 'zod';
 
 import { handler } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -157,24 +158,98 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
       NODE_OPTIONS: '--require=/missing-server-loader.cjs',
     });
     const assets = join(directory, 'large-response');
+    const workingDirectoryFile = join(directory, 'large-response-directory');
 
     await mkdir(assets);
     await writeFile(
       join(assets, 'local.js'),
       `process.once('message', () => {
-  process.send({ cwd: process.cwd(), source: 'x'.repeat(2 * 1024 * 1024) }, () => process.exit(0));
+  require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
+  process.send({ success: true, source: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {} }, () => process.exit(0));
 });`,
     );
-    const result = (await invokeFrontComponentBuilderLocally({
-      input: { action: 'buildDependencies', packageJson: '', yarnLock: '' },
-      buildAssetsDirectory: assets,
-      yarnEngineDirectory,
-      timeoutMs: 5000,
-    })) as { cwd: string; source: string };
+    const result = frontComponentVendorResultSchema.parse(
+      await invokeFrontComponentBuilderLocally({
+        input: { action: 'buildDependencies', packageJson: '', yarnLock: '' },
+        buildAssetsDirectory: assets,
+        yarnEngineDirectory,
+        timeoutMs: 5000,
+      }),
+    );
+
+    if (!result.success) {
+      throw new Error(result.error);
+    }
 
     expect(result.source).toHaveLength(2 * 1024 * 1024);
-    await expect(access(result.cwd)).rejects.toThrow();
+    const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
+
+    await expect(access(workingDirectory)).rejects.toThrow();
   });
+
+  it.each([
+    {
+      description: 'an invalid failure code',
+      action: 'buildDependencies',
+      response: { success: false, error: 'Build failed', code: 'UNKNOWN' },
+    },
+    {
+      description: 'a component response to a dependency build',
+      action: 'buildDependencies',
+      response: {
+        success: true,
+        compiledSource: 'compiled component',
+        checksum: 'a'.repeat(64),
+        sharedDependenciesChecksum: 'b'.repeat(64),
+      },
+    },
+    {
+      description: 'a dependency response to a component build',
+      action: 'buildComponent',
+      response: {
+        success: true,
+        source: 'compiled dependencies',
+        checksum: 'a'.repeat(64),
+        exports: {},
+      },
+    },
+  ] as const)(
+    'rejects $description and removes the working directory',
+    async ({ description, action, response }) => {
+      const assets = join(directory, description);
+      const workingDirectoryFile = join(assets, 'working-directory');
+      const input: FrontComponentBuilderRequest =
+        action === 'buildDependencies'
+          ? { action, packageJson: PACKAGE_JSON, yarnLock: YARN_LOCK }
+          : {
+              action,
+              input: INPUT,
+              manifest: { checksum: 'a'.repeat(64), exports: {} },
+            };
+
+      await mkdir(assets);
+      await writeFile(
+        join(assets, 'local.js'),
+        `process.once('message', () => {
+  require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
+  process.send(${JSON.stringify(response)});
+  setInterval(() => {}, 1000);
+});`,
+      );
+
+      await expect(
+        invokeFrontComponentBuilderLocally({
+          input,
+          buildAssetsDirectory: assets,
+          yarnEngineDirectory,
+          timeoutMs: 5000,
+        }),
+      ).rejects.toBeInstanceOf(ZodError);
+      const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
+
+      await expect(access(workingDirectory)).rejects.toThrow();
+    },
+  );
 
   it('surfaces builder failures instead of waiting for the timeout', async () => {
     await expect(
@@ -199,7 +274,9 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     await writeFile(
       join(assets, 'local.js'),
       `require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
-if (process.platform !== 'win32') require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);
+if (process.platform !== 'win32') {
+  require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);
+}
 setInterval(() => {}, 1000);`,
     );
     await expect(

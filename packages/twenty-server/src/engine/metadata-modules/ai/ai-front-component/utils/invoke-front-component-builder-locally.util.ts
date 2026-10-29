@@ -3,6 +3,8 @@ import { mkdtemp, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
+import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 
 export const invokeFrontComponentBuilderLocally = async ({
@@ -15,7 +17,7 @@ export const invokeFrontComponentBuilderLocally = async ({
   buildAssetsDirectory: string;
   yarnEngineDirectory: string;
   timeoutMs: number;
-}): Promise<unknown> => {
+}) => {
   const directory = await mkdtemp(join(tmpdir(), 'front-component-builder-'));
 
   try {
@@ -44,7 +46,7 @@ export const invokeFrontComponentBuilderLocally = async ({
     });
 
     try {
-      return await new Promise<unknown>((resolve, reject) => {
+      const result = await new Promise<unknown>((resolve, reject) => {
         child.once('message', resolve);
         child.once('error', reject);
         child.once('exit', (code, signal) =>
@@ -64,6 +66,10 @@ export const invokeFrontComponentBuilderLocally = async ({
           }
         });
       });
+
+      return input.action === 'buildDependencies'
+        ? frontComponentVendorResultSchema.parse(result)
+        : frontComponentBuildResultSchema.parse(result);
     } finally {
       clearTimeout(timeout);
       if (child.pid) {
