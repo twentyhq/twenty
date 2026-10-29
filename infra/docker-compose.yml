@@ -25,6 +25,7 @@ services:
       SERVER_URL: https://${DOMAIN}
       REDIS_URL: redis://redis:6379
       APP_SECRET: ${APP_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       STORAGE_TYPE: local
       EMAIL_DRIVER: ${EMAIL_DRIVER:-LOGGER}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST}
@@ -43,6 +44,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+      start_period: 15m
     restart: always
 
   worker:
@@ -57,6 +59,7 @@ services:
       DISABLE_DB_MIGRATIONS: "true"
       DISABLE_CRON_JOBS_REGISTRATION: "true"
       APP_SECRET: ${APP_SECRET}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       STORAGE_TYPE: local
       EMAIL_DRIVER: ${EMAIL_DRIVER:-LOGGER}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST}

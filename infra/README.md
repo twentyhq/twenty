@@ -45,14 +45,12 @@ The deploy script will:
 ```bash
 cd infra
 
-# Update to a specific version
-sed -i 's/TAG=.*/TAG=v0.40.0/' .env
-./deploy.sh
-
-# Or pull latest
-sed -i 's/TAG=.*/TAG=latest/' .env
+# Pin an exact version (never `latest`): back up first, then go one minor at a time
+sed -i 's/TAG=.*/TAG=v2.52.0/' .env
 ./deploy.sh
 ```
+
+Read the release's upgrade notes before moving `TAG`; some versions must be crossed in steps.
 
 ## API Access (Claude Code Integration)
 
