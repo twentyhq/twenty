@@ -15,6 +15,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -353,6 +354,59 @@ describe('Records shared beyond the role that can access their object', () => {
       expect(
         (await renameAsJony('Edited under a row filter')).body.errors,
       ).toBeUndefined();
+    } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
+    }
+  });
+
+  it('should refuse a merge that would leave a shared record the role cannot delete', async () => {
+    await setMemberObjectAccess(true);
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Visible',
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
+
+    try {
+      await setShare({
+        principal: JONY,
+        accessLevel: RecordShareAccessLevel.FULL,
+      });
+
+      const merged = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: OBJECT_PLURAL,
+          gqlFields: 'id',
+          ids: [OTHER_RECORD_ID, SHARED_RECORD_ID],
+          conflictPriorityIndex: 0,
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(merged.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
+        'Your role cannot delete some of these records, so they cannot be merged.',
+      );
+      expect((await findIdsAsJony()).ids.sort()).toEqual(
+        [SHARED_RECORD_ID, OTHER_RECORD_ID].sort(),
+      );
     } finally {
       await upsertRowLevelPermissionPredicates({
         expectToFail: false,
