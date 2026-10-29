@@ -456,6 +456,26 @@
   --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%3E%3Crect%20x%3D%226.9%22%20y%3D%227.2%22%20width%3D%222.2%22%20height%3D%227.8%22%20rx%3D%221.1%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M6.8%201.2%20V4.4%20H9.2%20V1.2%20A3.6%203.6%200%201%201%206.8%201.2Z%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%227.4%22%20y%3D%228%22%20width%3D%220.7%22%20height%3D%226.2%22%20rx%3D%220.35%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
 }
 
+.salesfarce :is(.tabler-icon-lifebuoy) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ring%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9e1e8%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%226.6%22%20fill%3D%22url%28%23ring%29%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%224.6%22%20fill%3D%22none%22%20stroke%3D%22%23d9251c%22%20stroke-width%3D%223.6%22%20stroke-dasharray%3D%223.61%203.61%22%20stroke-dashoffset%3D%221.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222.6%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%238c1a10%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M3.2%206.4%20C4%204.2%206%202.9%208.3%202.9%20C6.2%203.6%204.5%204.8%203.2%206.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-password) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22key%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe680%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9a417%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%20stroke%3D%22%238a5d05%22%3E%3Cpath%20d%3D%22M7%207%20H15%20V9%20H14.4%20V10.8%20H13.2%20V9%20H12.4%20V10.4%20H11.2%20V9%20H7Z%22%20fill%3D%22url%28%23key%29%22%20stroke-width%3D%220.6%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%224.4%22%20cy%3D%228%22%20r%3D%223.6%22%20fill%3D%22url%28%23key%29%22%20stroke-width%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%223.5%22%20cy%3D%228%22%20r%3D%221.2%22%20fill%3D%22%23ffffff%22%20stroke-width%3D%220.5%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M3.4%204.6%20C4%203.6%205%203%206%203%20C5.2%203.6%204.4%204.2%203.4%204.6Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-list) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22page%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffffff%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23dfe7ee%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22dot%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237cc0f0%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%222.5%22%20width%3D%2213%22%20height%3D%2211%22%20rx%3D%221%22%20fill%3D%22url%28%23page%29%22%20stroke%3D%22%235e7286%22%2F%3E%3Cg%20fill%3D%22url%28%23dot%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.4%22%3E%3Ccircle%20cx%3D%224%22%20cy%3D%225.5%22%20r%3D%221.1%22%2F%3E%3Ccircle%20cx%3D%224%22%20cy%3D%228%22%20r%3D%221.1%22%2F%3E%3Ccircle%20cx%3D%224%22%20cy%3D%2210.5%22%20r%3D%221.1%22%2F%3E%3C%2Fg%3E%3Cg%20stroke%3D%22%237b8ea2%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M6.2%205.5%20H12.5%22%2F%3E%3Cpath%20d%3D%22M6.2%208%20H12.5%22%2F%3E%3Cpath%20d%3D%22M6.2%2010.5%20H11%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-user-pin) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22skin%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ffe3c8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e6a676%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22shirt%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23a898db%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2356458c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2%2015.5%20C2%2011.3%204.6%209.6%208%209.6%20C11.4%209.6%2014%2011.3%2014%2015.5Z%22%20fill%3D%22url%28%23shirt%29%22%20stroke%3D%22%233d2f6b%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M6.6%209.8%20L8%2012%20L9.4%209.8Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Cpath%20d%3D%22M3.4%2014.5%20C3.7%2011.9%205.4%2010.7%208%2010.6%20C6%2011.5%204.7%2012.7%203.4%2014.5Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.35%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%225.4%22%20r%3D%223.4%22%20fill%3D%22url%28%23skin%29%22%20stroke%3D%22%23a86e45%22%2F%3E%3Cpath%20d%3D%22M4.7%205%20C4.6%202.4%206.2%201.6%208%201.6%20C9.8%201.6%2011.5%202.4%2011.3%205%20C10.4%203.9%209.3%203.6%208%203.6%20C6.7%203.6%205.6%203.9%204.7%205Z%22%20fill%3D%22%236b4226%22%2F%3E%3Cellipse%20cx%3D%226.9%22%20cy%3D%224.6%22%20rx%3D%221.2%22%20ry%3D%220.7%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-settings-2) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M6.83%201.00%20L9.17%201.00%20L9.22%202.74%20L10.86%203.42%20L12.13%202.22%20L13.78%203.87%20L12.58%205.14%20L13.26%206.78%20L15.00%206.83%20L15.00%209.17%20L13.26%209.22%20L12.58%2010.86%20L13.78%2012.13%20L12.13%2013.78%20L10.86%2012.58%20L9.22%2013.26%20L9.17%2015.00%20L6.83%2015.00%20L6.78%2013.26%20L5.14%2012.58%20L3.87%2013.78%20L2.22%2012.13%20L3.42%2010.86%20L2.74%209.22%20L1.00%209.17%20L1.00%206.83%20L2.74%206.78%20L3.42%205.14%20L2.22%203.87%20L3.87%202.22%20L5.14%203.42%20L6.78%202.74Z%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222.4%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M3.6%206.2%20C4.6%203.9%206.8%203%208.9%203.3%20C7%203.9%205.2%204.8%203.6%206.2Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+}
+
 .salesfarce
   :is(
     .tabler-icon-home,
@@ -591,7 +611,12 @@
     .tabler-icon-plus,
     .tabler-icon-circle-plus,
     .tabler-icon-heart-off,
-    .tabler-icon-tool
+    .tabler-icon-tool,
+    .tabler-icon-lifebuoy,
+    .tabler-icon-password,
+    .tabler-icon-list,
+    .tabler-icon-user-pin,
+    .tabler-icon-settings-2
   )
   > :is(path, rect, circle, line, polyline, polygon, ellipse, g) {
   opacity: 0;

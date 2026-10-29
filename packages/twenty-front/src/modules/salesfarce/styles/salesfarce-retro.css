@@ -763,12 +763,12 @@
   display: none;
 }
 
-.salesfarce [data-align][data-color] > div > div:first-child:has(> h2) {
+.salesfarce [data-align][data-color] div:has(> h2:first-child) {
   background: var(--sf-object);
   padding: 3px 6px;
 }
 
-.salesfarce [data-align][data-color] > div > div:first-child > h2 {
+.salesfarce [data-align][data-color] div > h2:first-child {
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
