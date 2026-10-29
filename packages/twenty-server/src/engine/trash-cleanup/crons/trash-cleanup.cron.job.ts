@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -57,8 +56,7 @@ export class TrashCleanupCronJob {
           },
           {
             workspaceId: workspace.id,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
       } catch (error) {

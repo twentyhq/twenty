@@ -1,4 +1,3 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
@@ -86,8 +85,7 @@ describe('CreateEventLogFromInternalEvent', () => {
       expect.objectContaining({ transientErrorRetryCount: 1 }),
       {
         workspaceId: 'workspace-1',
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   });

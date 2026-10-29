@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { DataSource, type QueryRunner } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -166,8 +165,7 @@ export class DeferredWorkspaceMigrationActionRunnerService {
           backoff: DEFERRED_WORKSPACE_MIGRATION_ACTION_RETRY_BACKOFF,
           priority: DEFERRED_WORKSPACE_MIGRATION_ACTION_JOB_PRIORITY,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     } catch (error) {

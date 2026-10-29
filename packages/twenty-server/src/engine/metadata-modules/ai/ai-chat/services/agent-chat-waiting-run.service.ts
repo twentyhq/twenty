@@ -1,7 +1,6 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
@@ -143,8 +142,7 @@ export class AgentChatWaitingRunService
     try {
       await this.messageQueueService.add(run.jobName, run.jobData, {
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       });
     } catch (error) {
       await this.wait({ workspaceId, threadId, run });

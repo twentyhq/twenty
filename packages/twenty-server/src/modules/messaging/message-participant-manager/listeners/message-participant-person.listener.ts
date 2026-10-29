@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
@@ -124,8 +123,7 @@ export class MessageParticipantPersonListener {
       data,
       {
         workspaceId: data.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

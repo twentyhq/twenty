@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
@@ -43,8 +42,7 @@ export class AgentChatChannelGrantService {
       {
         ...AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS,
         workspaceId: data.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

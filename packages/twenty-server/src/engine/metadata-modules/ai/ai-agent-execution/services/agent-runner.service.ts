@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { generateId } from 'ai';
 import { type AgentRunSummary } from 'twenty-shared/ai';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -94,8 +93,7 @@ export class AgentRunnerService {
       input,
       {
         workspaceId: input.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

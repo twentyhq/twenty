@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -83,8 +82,7 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
           },
           {
             workspaceId: messageChannel.workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
       } catch (error) {

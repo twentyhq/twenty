@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
@@ -41,8 +40,7 @@ export class CalendarBlocklistListener {
       payload,
       {
         workspaceId: payload.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -58,8 +56,7 @@ export class CalendarBlocklistListener {
       payload,
       {
         workspaceId: payload.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -75,8 +72,7 @@ export class CalendarBlocklistListener {
       payload,
       {
         workspaceId: payload.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
 
@@ -85,8 +81,7 @@ export class CalendarBlocklistListener {
       payload,
       {
         workspaceId: payload.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

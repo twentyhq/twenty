@@ -1,6 +1,7 @@
 import { type Job, Worker } from 'bullmq';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
+import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -57,10 +58,11 @@ const WAITING_JOB_ID = 'sync-catalog-ws-1-5c98b035-5b09-4550-a4fb-b52056c494d1';
 
 const SYSTEM_JOB = { isSystemJob: true } as const;
 
-const buildCoreJobScope = (workspaceId: string) => ({
+const buildWorkspaceJobScope = (
+  workspaceId: string,
+): WorkspaceQueueJobScope => ({
   workspaceId,
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  isWorkspaceJob: true,
 });
 
 describe('BullMQDriver deduplication', () => {
@@ -569,7 +571,7 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      buildCoreJobScope('ws-1'),
+      buildWorkspaceJobScope('ws-1'),
     );
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
@@ -607,6 +609,37 @@ describe('BullMQDriver fair tickets', () => {
     });
   });
 
+  it('adds the application group key for a job of the standard application', async () => {
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [{ tag: 0, weight: 1 }],
+    });
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      {},
+      {
+        workspaceId: 'ws-1',
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+    );
+
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
+      queueName: MessageQueue.workspaceQueue,
+      requests: [
+        {
+          groupKeys: [
+            'workspace:ws-1',
+            `application:${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+          ],
+          jobCount: 1,
+        },
+      ],
+    });
+  });
+
   it('ranks a system job on the system group', async () => {
     mockAllocateTickets.mockResolvedValue({
       base: 0,
@@ -631,7 +664,7 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      { ...buildCoreJobScope('ws-1'), groupKeys: ['integration:slack'] },
+      { ...buildWorkspaceJobScope('ws-1'), groupKeys: ['integration:slack'] },
     );
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
@@ -652,9 +685,9 @@ describe('BullMQDriver fair tickets', () => {
     });
 
     await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
-      { data: {}, ...buildCoreJobScope('ws-1') },
-      { data: {}, ...buildCoreJobScope('ws-2') },
-      { data: {}, ...buildCoreJobScope('ws-1') },
+      { data: {}, ...buildWorkspaceJobScope('ws-1') },
+      { data: {}, ...buildWorkspaceJobScope('ws-2') },
+      { data: {}, ...buildWorkspaceJobScope('ws-1') },
     ]);
 
     expect(mockAllocateTickets).toHaveBeenCalledWith({
@@ -685,7 +718,7 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       { workspaceId: 'ws-1' },
-      { ...buildCoreJobScope('ws-1'), priority: URGENT_FAIR_PRIORITY },
+      { ...buildWorkspaceJobScope('ws-1'), priority: URGENT_FAIR_PRIORITY },
     );
 
     expect(mockAllocateTickets).toHaveBeenCalledTimes(1);
@@ -703,7 +736,7 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      { ...buildCoreJobScope('ws-1'), priority: 4 },
+      { ...buildWorkspaceJobScope('ws-1'), priority: 4 },
     );
 
     expect(mockAdd).toHaveBeenCalledWith(
@@ -721,7 +754,7 @@ describe('BullMQDriver fair tickets', () => {
       MessageQueue.workspaceQueue,
       'job',
       {},
-      { ...buildCoreJobScope('ws-1'), delay: 1_000, priority: 4 },
+      { ...buildWorkspaceJobScope('ws-1'), delay: 1_000, priority: 4 },
     );
 
     expect(mockAllocateTickets).not.toHaveBeenCalled();

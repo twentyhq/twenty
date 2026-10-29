@@ -1,6 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -81,8 +80,7 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
           },
           {
             workspaceId: calendarChannel.workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
       } catch (error) {

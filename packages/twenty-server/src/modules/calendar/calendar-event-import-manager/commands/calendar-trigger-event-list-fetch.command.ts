@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -96,8 +95,7 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
             },
             {
               workspaceId,
-              applicationUniversalIdentifier:
-                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+              isWorkspaceJob: true,
             },
           );
 

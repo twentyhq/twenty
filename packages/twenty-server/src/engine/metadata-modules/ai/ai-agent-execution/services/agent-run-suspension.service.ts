@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type AgentRunSummary } from 'twenty-shared/ai';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
@@ -150,8 +149,7 @@ export class AgentRunSuspensionService {
       {
         deduplication: { id: `continue-agent-run-${jobData.wakeUpId}` },
         workspaceId: jobData.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -229,8 +227,7 @@ export class AgentRunSuspensionService {
       {
         delay: computePendingWakeUpRetryDelayMs(attempt),
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

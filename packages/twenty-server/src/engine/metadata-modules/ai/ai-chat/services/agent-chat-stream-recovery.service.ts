@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { type FindOptionsWhere, IsNull } from 'typeorm';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -208,8 +207,7 @@ export class AgentChatStreamRecoveryService {
           { workspaceId, threadId },
           {
             workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
       } else if (isDefined(nextRun)) {

@@ -14,7 +14,6 @@ import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
@@ -482,8 +481,7 @@ export class AgentChatStreamingService {
       },
       {
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

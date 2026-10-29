@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
@@ -533,8 +532,7 @@ export class AgentChatThreadParticipantService {
         delay,
         ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS,
         workspaceId: data.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

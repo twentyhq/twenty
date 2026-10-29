@@ -294,8 +294,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -436,8 +435,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -487,8 +485,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           {
             retryLimit: 3,
             workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
 
@@ -615,8 +612,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -659,8 +655,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -754,8 +749,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -804,8 +798,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
       expect(messageQueueService.add).toHaveBeenNthCalledWith(
@@ -821,8 +814,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });
@@ -866,8 +858,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           retryLimit: 3,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     });

@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -98,8 +97,7 @@ export class CreateEventLogFromInternalEvent {
       { ...batch, transientErrorRetryCount: transientErrorRetryCount + 1 },
       {
         workspaceId: batch.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

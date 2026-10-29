@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -221,8 +220,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
       },
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   });
@@ -242,8 +240,7 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
       },
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
     expect(await readThread(chatThread)).toEqual({

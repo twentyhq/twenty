@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -76,8 +75,7 @@ describe('Channel deletion cleanup (integration)', () => {
       data: { workspaceId, messageChannelId: channel.channelId },
       scope: {
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     });
 
@@ -95,8 +93,7 @@ describe('Channel deletion cleanup (integration)', () => {
       data: { workspaceId, calendarChannelId: channel.calendarChannelId },
       scope: {
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     });
 

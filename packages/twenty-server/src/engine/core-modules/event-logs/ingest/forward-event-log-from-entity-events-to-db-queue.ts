@@ -1,5 +1,3 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
 import {
   CreateEventLogFromInternalEvent,
   type CreateEventLogFromInternalEventData,
@@ -25,8 +23,7 @@ export class ForwardEventLogFromEntityEventsToDbQueue {
       {
         retryLimit: 1,
         workspaceId: batch.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

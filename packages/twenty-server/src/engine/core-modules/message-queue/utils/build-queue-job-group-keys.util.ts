@@ -1,5 +1,3 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
 import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
 import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
@@ -11,18 +9,13 @@ const buildScopeGroupKeys = (scope: QueueJobScope): string[] => {
     return [SYSTEM_GROUP_KEY];
   }
 
-  const { workspaceId, applicationUniversalIdentifier } = scope;
-
-  if (
-    applicationUniversalIdentifier ===
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-  ) {
-    return [buildWorkspaceGroupKey(workspaceId)];
+  if (scope.isWorkspaceJob) {
+    return [buildWorkspaceGroupKey(scope.workspaceId)];
   }
 
   return [
-    buildWorkspaceGroupKey(workspaceId),
-    buildApplicationGroupKey(applicationUniversalIdentifier),
+    buildWorkspaceGroupKey(scope.workspaceId),
+    buildApplicationGroupKey(scope.applicationUniversalIdentifier),
   ];
 };
 

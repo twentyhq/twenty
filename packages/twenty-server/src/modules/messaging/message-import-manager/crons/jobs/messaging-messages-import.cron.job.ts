@@ -2,7 +2,6 @@ import groupBy from 'lodash.groupby';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -124,8 +123,7 @@ export class MessagingMessagesImportCronJob {
             },
             {
               workspaceId,
-              applicationUniversalIdentifier:
-                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+              isWorkspaceJob: true,
             },
           );
         }

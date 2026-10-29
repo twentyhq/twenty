@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldActorSource } from 'twenty-shared/types';
 import { Any, In } from 'typeorm';
 
@@ -139,8 +138,7 @@ export class CalendarEventParticipantService {
             },
             {
               workspaceId,
-              applicationUniversalIdentifier:
-                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+              isWorkspaceJob: true,
             },
           );
         }

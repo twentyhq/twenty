@@ -1,4 +1,3 @@
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type Repository } from 'typeorm';
 
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -44,8 +43,7 @@ describe('CalendarOngoingStaleCronJob', () => {
       },
       {
         workspaceId: 'workspace-1',
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
     expect(messageQueueService.add).toHaveBeenNthCalledWith(
@@ -56,8 +54,7 @@ describe('CalendarOngoingStaleCronJob', () => {
       },
       {
         workspaceId: 'workspace-2',
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   });

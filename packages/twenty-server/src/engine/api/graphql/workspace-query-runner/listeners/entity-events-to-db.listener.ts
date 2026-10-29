@@ -10,7 +10,6 @@ import {
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -139,8 +138,7 @@ export class EntityEventsToDbListener {
           {
             retryLimit: 1,
             workspaceId: batchEvent.workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         ),
       );
@@ -154,8 +152,7 @@ export class EntityEventsToDbListener {
           {
             retryLimit: 1,
             workspaceId: batchEvent.workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         ),
       );
@@ -188,8 +185,7 @@ export class EntityEventsToDbListener {
       {
         retryLimit: 3,
         workspaceId: batchEventForWebhook.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -218,8 +214,7 @@ export class EntityEventsToDbListener {
       {
         retryLimit: 3,
         workspaceId: batchEvent.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -248,8 +243,7 @@ export class EntityEventsToDbListener {
       {
         retryLimit: 3,
         workspaceId: batchEvent.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

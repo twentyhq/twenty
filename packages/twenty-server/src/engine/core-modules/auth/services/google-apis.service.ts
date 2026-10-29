@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   CalendarChannelSyncStage,
   type CalendarChannelVisibility,
@@ -353,8 +352,7 @@ export class GoogleAPIsService {
                 { workspaceId, messageChannelId: messageChannel.id },
                 {
                   workspaceId,
-                  applicationUniversalIdentifier:
-                    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                  isWorkspaceJob: true,
                 },
               );
               await this.enqueueWebhookSubscriptionCreation({
@@ -404,8 +402,7 @@ export class GoogleAPIsService {
                 { workspaceId, calendarChannelId: calendarChannel.id },
                 {
                   workspaceId,
-                  applicationUniversalIdentifier:
-                    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                  isWorkspaceJob: true,
                 },
               );
               await this.enqueueWebhookSubscriptionCreation({
@@ -450,8 +447,7 @@ export class GoogleAPIsService {
         {
           retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     } catch (error) {

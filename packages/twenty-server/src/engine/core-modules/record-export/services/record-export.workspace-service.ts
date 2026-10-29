@@ -230,8 +230,7 @@ export class RecordExportWorkspaceService {
       {
         id: recordExport.id,
         workspaceId: recordExport.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
     if (!isDefined(jobId)) {

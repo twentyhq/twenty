@@ -4,7 +4,6 @@ import { randomUUID } from 'node:crypto';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 import request from 'supertest';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -446,8 +445,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       },
       {
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
     for (let attempt = 0; attempt < 100; attempt++) {
@@ -2144,8 +2142,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         { workspaceId, isCacheMode: false },
         {
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     await waitForRun(runId, 'COMPLETED');

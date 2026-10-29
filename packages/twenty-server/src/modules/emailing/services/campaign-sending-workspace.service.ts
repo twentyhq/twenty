@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, Repository } from 'typeorm';
 
@@ -37,8 +36,7 @@ export class CampaignSendingWorkspaceService {
           workspaceIdsBatch.map((workspaceId) => ({
             data: { workspaceId },
             workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           })),
           { retryLimit: CAMPAIGN_JOB_RETRY_LIMIT },
         )

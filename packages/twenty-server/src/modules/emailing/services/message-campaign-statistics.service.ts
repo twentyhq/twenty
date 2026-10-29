@@ -2,7 +2,6 @@ import { CampaignDeliveryWorkspaceEntity } from 'src/modules/emailing/standard-o
 import { CAMPAIGN_JOB_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-job-retry-limit.constant';
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { MoreThanOrEqual } from 'typeorm';
@@ -55,8 +54,7 @@ export class MessageCampaignStatisticsService {
           keepLastIfActive: true,
         },
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

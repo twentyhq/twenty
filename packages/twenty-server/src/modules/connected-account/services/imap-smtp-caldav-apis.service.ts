@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
@@ -230,8 +229,7 @@ export class ImapSmtpCalDavApiService {
         { workspaceId, messageChannelId: existingMessageChannel.id },
         {
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }
@@ -252,8 +250,7 @@ export class ImapSmtpCalDavApiService {
         { workspaceId, calendarChannelId: existingCalendarChannel.id },
         {
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }

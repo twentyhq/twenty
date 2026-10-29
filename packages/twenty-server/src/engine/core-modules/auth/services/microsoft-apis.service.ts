@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   CalendarChannelSyncStage,
   type CalendarChannelVisibility,
@@ -313,8 +312,7 @@ export class MicrosoftAPIsService {
               },
               {
                 workspaceId,
-                applicationUniversalIdentifier:
-                  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                isWorkspaceJob: true,
               },
             );
             await this.enqueueWebhookSubscriptionCreation({
@@ -356,8 +354,7 @@ export class MicrosoftAPIsService {
             },
             {
               workspaceId,
-              applicationUniversalIdentifier:
-                TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+              isWorkspaceJob: true,
             },
           );
           await this.enqueueWebhookSubscriptionCreation({
@@ -400,8 +397,7 @@ export class MicrosoftAPIsService {
         {
           retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     } catch (error) {

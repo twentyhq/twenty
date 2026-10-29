@@ -1,10 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import {
-  type AgentTrigger,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-} from 'twenty-shared/application';
+import { type AgentTrigger } from 'twenty-shared/application';
 
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -125,8 +122,7 @@ describe('AgentCronTriggerCronJob', () => {
       }),
       {
         workspaceId: WORKSPACE_ID,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   });

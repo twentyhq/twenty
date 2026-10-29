@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -178,8 +177,7 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
         { workspaceId, wakeUpId: wakeUp.id, answer: { result: {} } },
         {
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }

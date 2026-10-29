@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -8,6 +7,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findInFlightQueueJobIdByPrefix } from 'src/engine/core-modules/message-queue/utils/find-in-flight-queue-job-id-by-prefix.util';
@@ -73,9 +73,13 @@ export class AddPeopleToMessageListJobService {
             messageListId,
             personFilter,
           },
-          applicationUniversalIdentifier:
-            authContext.application?.universalIdentifier ??
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          scope: isDefined(authContext.application)
+            ? {
+                workspaceId,
+                applicationUniversalIdentifier:
+                  authContext.application.universalIdentifier,
+              }
+            : { workspaceId, isWorkspaceJob: true },
         }),
       buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
@@ -109,10 +113,10 @@ export class AddPeopleToMessageListJobService {
 
   private async enqueueAddPeopleToMessageListJob({
     data,
-    applicationUniversalIdentifier,
+    scope,
   }: {
     data: AddPeopleToMessageListJobData;
-    applicationUniversalIdentifier: string;
+    scope: QueueJobScope;
   }): Promise<{ jobId: string }> {
     const jobIdPrefix = buildAddPeopleToMessageListJobId(data);
     const inFlightJobId = findInFlightQueueJobIdByPrefix({
@@ -135,8 +139,7 @@ export class AddPeopleToMessageListJobService {
           id: jobIdPrefix,
           delay: ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS,
           broadcastTo: { workspaceId: data.workspaceId },
-          workspaceId: data.workspaceId,
-          applicationUniversalIdentifier,
+          ...scope,
         },
       );
 

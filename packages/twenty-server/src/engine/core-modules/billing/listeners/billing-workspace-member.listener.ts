@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -47,8 +46,7 @@ export class BillingWorkspaceMemberListener {
       {
         delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
         workspaceId: payload.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

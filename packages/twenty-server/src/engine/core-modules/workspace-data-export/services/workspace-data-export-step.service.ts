@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -54,8 +53,7 @@ export class WorkspaceDataExportStepService {
         id: `${exportId}:${cursor.stepIndex}:${cursor.attempt}`,
         delay,
         workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isWorkspaceJob: true,
       },
     );
   }

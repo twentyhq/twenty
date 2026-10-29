@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { type Job, PRIORITY_LIMIT } from 'bullmq';
 import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -328,12 +327,11 @@ const buildScenarioJobScope = ({
     return { isSystemJob: true };
   }
 
-  return {
-    workspaceId,
-    applicationUniversalIdentifier:
-      applicationUniversalIdentifier ??
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-  };
+  if (!isDefined(applicationUniversalIdentifier)) {
+    return { workspaceId, isWorkspaceJob: true };
+  }
+
+  return { workspaceId, applicationUniversalIdentifier };
 };
 
 export const createFairnessHarness = async ({

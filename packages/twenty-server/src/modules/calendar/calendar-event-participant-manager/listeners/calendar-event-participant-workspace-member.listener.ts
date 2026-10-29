@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordUpdateEvent,
@@ -48,8 +47,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         },
         {
           workspaceId: payload.workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }
@@ -79,8 +77,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
           },
           {
             workspaceId: payload.workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            isWorkspaceJob: true,
           },
         );
       }

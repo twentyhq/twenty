@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -360,8 +359,7 @@ export class MessageCampaignService {
           retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
           backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       )
       .catch(async (error) => {

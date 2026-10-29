@@ -1,5 +1,4 @@
 import chunk from 'lodash.chunk';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -79,8 +78,7 @@ export class CallWebhookJobsForMetadataJob {
         {
           retryLimit: 3,
           workspaceId: metadataEventBatch.workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }

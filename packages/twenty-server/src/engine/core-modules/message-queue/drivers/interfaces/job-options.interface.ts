@@ -14,19 +14,31 @@ export type QueueJobRecipient = {
   userWorkspaceId?: string;
 };
 
-export type WorkspaceQueueJobScope = {
-  isSystemJob?: never;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
-};
-
 export type SystemQueueJobScope = {
   isSystemJob: true;
+  isWorkspaceJob?: never;
   workspaceId?: never;
   applicationUniversalIdentifier?: never;
 };
 
-export type QueueJobScope = WorkspaceQueueJobScope | SystemQueueJobScope;
+export type WorkspaceQueueJobScope = {
+  isSystemJob?: never;
+  isWorkspaceJob: true;
+  workspaceId: string;
+  applicationUniversalIdentifier?: never;
+};
+
+export type ApplicationQueueJobScope = {
+  isSystemJob?: never;
+  isWorkspaceJob?: never;
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+};
+
+export type QueueJobScope =
+  | SystemQueueJobScope
+  | WorkspaceQueueJobScope
+  | ApplicationQueueJobScope;
 
 export type QueueJobSettings = {
   id?: string;

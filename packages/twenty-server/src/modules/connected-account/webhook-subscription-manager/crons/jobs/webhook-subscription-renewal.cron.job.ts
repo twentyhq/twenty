@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
@@ -281,8 +280,7 @@ export class WebhookSubscriptionRenewalCronJob {
           retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
           delay: Math.round(index * spacingMs),
           workspaceId: channel.workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          isWorkspaceJob: true,
         },
       );
     }
