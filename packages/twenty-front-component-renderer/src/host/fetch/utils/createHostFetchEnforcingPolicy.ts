@@ -1,7 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from 'twenty-shared/constants';
+import {
+  FRONT_COMPONENT_HOST_FETCH_HEADER_NAME,
+  SESSION_COOKIE_OPT_IN_HEADER_NAME,
+} from 'twenty-shared/constants';
 import { CustomError, getUrlSafely, isDefined } from 'twenty-shared/utils';
 
+import { isTwentyServerApiPath } from '@/host/fetch/utils/isTwentyServerApiPath';
 import { resolveHostFetchRedirectMode } from '@/host/fetch/utils/resolveHostFetchRedirectMode';
 import { serializeResponseToHostFetchResult } from '@/host/fetch/utils/serializeResponseToHostFetchResult';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
@@ -18,9 +22,9 @@ export const createHostFetchEnforcingPolicy = (
   );
 
   return async (input: HostFetchInput): Promise<HostFetchResult> => {
-    const requestOrigin = getUrlSafely(input.url)?.origin;
+    const requestUrl = getUrlSafely(input.url);
 
-    if (!isDefined(requestOrigin) || !allowedOriginSet.has(requestOrigin)) {
+    if (!isDefined(requestUrl) || !allowedOriginSet.has(requestUrl.origin)) {
       throw new CustomError(
         `Front component host fetch blocked for disallowed origin: ${input.url}`,
         'FRONT_COMPONENT_HOST_FETCH_BLOCKED_ORIGIN',
@@ -31,13 +35,24 @@ export const createHostFetchEnforcingPolicy = (
       ? input.method.toUpperCase()
       : 'GET';
 
-    // Page-origin requests carry the page's cookies so cookie-authenticating proxies
-    // (Cloudflare Access, IAP, oauth2-proxy) let them through. The marker header makes
-    // the server ignore the user session cookie, so app code still acts only with its own token.
-    const isPageOriginRequest = requestOrigin === window.location.origin;
+    const redirectMode = resolveHostFetchRedirectMode(
+      requestMethod,
+      input.url,
+      fileStorageRedirectableUrlSet,
+    );
+
+    // Cookies let auth proxies (Cloudflare Access, IAP, oauth2-proxy) through; the marker denies them the session.
+    // Not on followed redirects: the marker would trigger a CORS preflight the storage bucket rejects.
+    const shouldSendPageCookies =
+      requestUrl.origin === window.location.origin &&
+      isTwentyServerApiPath(requestUrl.pathname) &&
+      redirectMode !== 'follow';
     const headers = new Headers(input.headers);
 
-    if (isPageOriginRequest) {
+    headers.delete(SESSION_COOKIE_OPT_IN_HEADER_NAME);
+    headers.delete(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME);
+
+    if (shouldSendPageCookies) {
       headers.set(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME, '1');
     }
 
@@ -45,12 +60,8 @@ export const createHostFetchEnforcingPolicy = (
       method: requestMethod,
       headers,
       body: input.body,
-      credentials: isPageOriginRequest ? 'same-origin' : 'omit',
-      redirect: resolveHostFetchRedirectMode(
-        requestMethod,
-        input.url,
-        fileStorageRedirectableUrlSet,
-      ),
+      credentials: shouldSendPageCookies ? 'same-origin' : 'omit',
+      redirect: redirectMode,
     });
 
     return serializeResponseToHostFetchResult(response);

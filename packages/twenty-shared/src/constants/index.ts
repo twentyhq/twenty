@@ -81,6 +81,7 @@ export { RATING_VALUES } from './RatingValues';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from './RichTextBlocknoteDeprecationReason';
+export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderName';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';

@@ -1,5 +1,4 @@
 import { type Request } from 'express';
-import { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from 'twenty-shared/constants';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
@@ -59,23 +58,6 @@ describe('extractUserSessionTokenFromRequestCookie', () => {
     expect(extractOnHttpDeployment('twenty-session=not-a-session-token')).toBe(
       undefined,
     );
-  });
-
-  it('should ignore the session cookie on requests forwarded for a front component', () => {
-    const request = {
-      headers: {
-        cookie: '__Host-twenty-session=sess_abc',
-        [FRONT_COMPONENT_HOST_FETCH_HEADER_NAME]: '1',
-      },
-    } as unknown as Request;
-
-    expect(
-      extractUserSessionTokenFromRequestCookie(request, {
-        secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
-        insecureCookieName: USER_SESSION_COOKIE_NAME,
-        allowInsecureCookieName: true,
-      }),
-    ).toBe(undefined);
   });
 
   it('should ignore lookalike cookie names', () => {

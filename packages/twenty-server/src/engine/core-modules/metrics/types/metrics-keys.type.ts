@@ -100,4 +100,5 @@ export enum MetricsKeys {
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
   CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
   CampaignEngagementCaptureThrottled = 'campaign-engagement/capture-throttled',
+  UserSessionCookieLegacyAccess = 'user-session/cookie-legacy-access',
 }

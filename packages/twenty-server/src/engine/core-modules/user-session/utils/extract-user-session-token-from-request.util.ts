@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 
-import { isFrontComponentHostFetchRequest } from 'src/engine/core-modules/user-session/utils/is-front-component-host-fetch-request.util';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 
 const readCookieValue = (
@@ -44,10 +43,7 @@ export const extractUserSessionTokenFromRequestCookie = (
 ): string | undefined => {
   const cookieHeader = request.headers.cookie;
 
-  if (
-    !isNonEmptyString(cookieHeader) ||
-    isFrontComponentHostFetchRequest(request)
-  ) {
+  if (!isNonEmptyString(cookieHeader)) {
     return undefined;
   }
 
