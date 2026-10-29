@@ -2,7 +2,15 @@ import { createChatParticipationTestContext } from 'test/integration/ai/utils/cr
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  type ObjectRecordCreateEvent,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Record API chat creation initializes personal inbox state', () => {
@@ -14,7 +22,52 @@ describe('Record API chat creation initializes personal inbox state', () => {
 
   afterEach(async () => {
     await context.cleanup();
+    jest.restoreAllMocks();
   });
+
+  const observeCreationEvents = () => {
+    const emit = jest.spyOn(
+      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
+      'emitDatabaseBatchEvent',
+    );
+
+    return (threadId: string) =>
+      emit.mock.calls.flatMap(([batchEvent]) =>
+        isDefined(batchEvent)
+          ? (
+              batchEvent.events as (
+                | ObjectRecordCreateEvent<{ threadId?: string }>
+                | ObjectRecordUpdateEvent<{ threadId?: string }>
+              )[]
+            )
+              .filter(
+                ({ recordId, properties }) =>
+                  recordId === threadId ||
+                  properties.after?.threadId === threadId,
+              )
+              .map(
+                () =>
+                  `${batchEvent.objectMetadataNameSingular} ${batchEvent.action}`,
+              )
+          : [],
+      );
+  };
+  const expectParticipantCreatedBefore = ({
+    events,
+    threadAction,
+  }: {
+    events: string[];
+    threadAction: DatabaseEventAction;
+  }) => {
+    const participantCreatedIndex = events.indexOf(
+      `agentChatThreadParticipant ${DatabaseEventAction.CREATED}`,
+    );
+
+    expect(participantCreatedIndex).toBeGreaterThanOrEqual(0);
+    expect(participantCreatedIndex).toBeLessThan(
+      events.lastIndexOf(`agentChatThread ${threadAction}`),
+    );
+  };
 
   const expectCreatorInboxState = async (threadId: string) => {
     const thread = await context.readThread(threadId);
@@ -33,6 +86,7 @@ describe('Record API chat creation initializes personal inbox state', () => {
   };
 
   it('creates a read personal inbox copy with the same activity boundary', async () => {
+    const readCreationEvents = observeCreationEvents();
     const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'agentChatThread',
@@ -42,9 +96,15 @@ describe('Record API chat creation initializes personal inbox state', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    await expectCreatorInboxState(
-      context.registerThread(response.body.data.createAgentChatThread.id),
+    const threadId = context.registerThread(
+      response.body.data.createAgentChatThread.id,
     );
+
+    await expectCreatorInboxState(threadId);
+    expectParticipantCreatedBefore({
+      events: readCreationEvents(threadId),
+      threadAction: DatabaseEventAction.UPDATED,
+    });
   });
 
   it('initializes each conversation returned by createMany', async () => {
@@ -97,6 +157,13 @@ describe('Record API chat creation initializes personal inbox state', () => {
   });
 
   it('initializes the same creator inbox state through createChatThread', async () => {
-    await expectCreatorInboxState(await context.createThread());
+    const readCreationEvents = observeCreationEvents();
+    const threadId = await context.createThread();
+
+    await expectCreatorInboxState(threadId);
+    expectParticipantCreatedBefore({
+      events: readCreationEvents(threadId),
+      threadAction: DatabaseEventAction.CREATED,
+    });
   });
 });

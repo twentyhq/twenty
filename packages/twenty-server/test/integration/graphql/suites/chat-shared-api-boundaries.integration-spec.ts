@@ -10,7 +10,7 @@ import { sendChatParticipationMessage } from 'test/integration/graphql/utils/sen
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -84,6 +84,26 @@ describe('Shared conversation API boundaries', () => {
           event.action === DatabaseEventAction.RESTORED &&
           event.events.some(({ recordId }) => recordId === threadId),
       );
+  };
+
+  const readTurnCount = async (threadId: string) => {
+    const [{ count }]: { count: number }[] = await global.testDataSource.query(
+      `SELECT count(*)::int AS count FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
+      [threadId],
+    );
+
+    return count;
+  };
+  const createSharedThread = async () => {
+    const threadId = await context.createThread();
+
+    await context.share({
+      threadId,
+      recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      accessLevel: RecordShareAccessLevel.READ,
+    });
+
+    return threadId;
   };
 
   it('reads messages and catchup for a viewer without changing ownership and rejects every read after revocation', async () => {
@@ -476,5 +496,82 @@ describe('Shared conversation API boundaries', () => {
       await runner.release();
       await sending;
     }
+  });
+
+  it('creates the thread of a new chat on its first message', async () => {
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect((await context.readThread(threadId)).workspaceMemberId).toBe(
+      context.workspaceMemberId,
+    );
+    expect(
+      await context.chatService.getMessagesForThread({
+        threadId,
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+      }),
+    ).toContainEqual(expect.objectContaining({ id: messageId }));
+  });
+
+  it('saves a message without starting a turn when the assistant is off', async () => {
+    const threadId = await createSharedThread();
+    const messageId = randomUUID();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+      shouldAssistantReply: false,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: null,
+    });
+    expect(
+      await context.chatService.getMessagesForThread({
+        threadId,
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+      }),
+    ).toContainEqual(expect.objectContaining({ id: messageId }));
+    expect(await readTurnCount(threadId)).toBe(0);
+  });
+
+  it('still replies when the assistant is off but the inbox is not enabled', async () => {
+    const threadId = await createSharedThread();
+
+    await context.featureFlagService.upsertWorkspaceFeatureFlag({
+      workspaceId: context.workspaceId,
+      featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+      value: false,
+    });
+    const response = await sendChatParticipationMessage({
+      threadId,
+      shouldAssistantReply: false,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendChatMessage.streamId).toEqual(
+      expect.any(String),
+    );
+  });
+
+  it('allows an authorized stop to be a no-op when the thread is idle', async () => {
+    const threadId = await context.createThread();
+    const response = await makeMetadataApiRequest({
+      query: STOP_STREAM,
+      variables: { threadId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.stopAgentChatStream).toBe(true);
+    expect((await context.readThread(threadId)).activeStreamId).toBeNull();
   });
 });
