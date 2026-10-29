@@ -423,6 +423,41 @@ describe('manifestValidate', () => {
       expect(result.errors).toHaveLength(0);
     });
 
+    it('should not flag an MCP server referencing its connection provider as a duplicate', () => {
+      const connectionProviderId = '550e8400-e29b-41d4-a716-446655440048';
+
+      const result = manifestValidate({
+        ...validManifest,
+        connectionProviders: [
+          {
+            universalIdentifier: connectionProviderId,
+            name: 'github',
+            displayName: 'GitHub',
+            type: 'oauth',
+            oauth: {
+              authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+              tokenEndpoint: 'https://github.com/login/oauth/access_token',
+              scopes: ['repo'],
+              clientIdVariable: 'GITHUB_CLIENT_ID',
+              clientSecretVariable: 'GITHUB_CLIENT_SECRET',
+            },
+          },
+        ],
+        mcpServers: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440049',
+            name: 'github',
+            label: 'GitHub',
+            url: 'https://api.githubcopilot.com/mcp/',
+            connectionProvider: { universalIdentifier: connectionProviderId },
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
     it('should not flag a custom connection provider referencing its authorize and callback logic functions as duplicates', () => {
       const authorizeLogicFunctionId = '550e8400-e29b-41d4-a716-446655440042';
       const callbackLogicFunctionId = '550e8400-e29b-41d4-a716-446655440043';

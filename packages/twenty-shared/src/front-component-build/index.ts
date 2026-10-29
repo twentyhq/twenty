@@ -12,6 +12,7 @@ export {
   createCssInjectionPlugin,
   cssInjectionPlugin,
 } from './css-injection-plugin';
+export { enumerateSharedDependenciesExportNames } from './enumerate-shared-dependencies-export-names';
 export { getCommonFrontComponentBuildOptions } from './get-common-front-component-build-options';
 export { getSharedDependenciesEntrySource } from './get-shared-dependencies-entry-source';
 export { getSharedDependenciesShimSource } from './get-shared-dependencies-shim-source';

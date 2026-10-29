@@ -72,6 +72,10 @@
       {
         "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/application/application-package/constants/yarn-engine/*.cjs",
+        "outDir": "dist"
       }
     ]
   },
