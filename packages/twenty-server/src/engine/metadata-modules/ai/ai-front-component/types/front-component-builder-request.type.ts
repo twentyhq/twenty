@@ -5,7 +5,7 @@ import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai
 export type FrontComponentBuilderRequest =
   | { action: 'buildDependencies'; packageJson: string; yarnLock: string }
   | {
-      action: 'buildComponent';
+      action: 'transpile';
       input: FrontComponentBuildInput;
       manifest: z.infer<typeof frontComponentSharedDependenciesManifestSchema>;
     };

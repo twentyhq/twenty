@@ -5,7 +5,7 @@ import { frontComponentBuildFailureSchema } from 'src/engine/metadata-modules/ai
 export const frontComponentBuildResultSchema = z.discriminatedUnion('success', [
   z.object({
     success: z.literal(true),
-    compiledSource: z.string(),
+    builtCode: z.string(),
     checksum: z.string().regex(/^[a-f0-9]{64}$/),
     sharedDependenciesChecksum: z.string().regex(/^[a-f0-9]{64}$/),
   }),

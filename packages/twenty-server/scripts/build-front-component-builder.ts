@@ -2,7 +2,7 @@ import { mkdir, rm } from 'fs/promises';
 import { resolve } from 'path';
 import { build } from 'esbuild';
 
-const buildAssets = async () => {
+const buildFrontComponentBuilder = async () => {
   const directory = resolve(
     __dirname,
     '../src/engine/metadata-modules/ai/ai-front-component/generated',
@@ -15,10 +15,6 @@ const buildAssets = async () => {
         __dirname,
         '../src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler.ts',
       ),
-      local: resolve(
-        __dirname,
-        '../src/engine/metadata-modules/ai/ai-front-component/front-component-builder.local.ts',
-      ),
     },
     outdir: directory,
     bundle: true,
@@ -30,7 +26,7 @@ const buildAssets = async () => {
   });
 };
 
-buildAssets().catch((error: unknown) => {
+buildFrontComponentBuilder().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });

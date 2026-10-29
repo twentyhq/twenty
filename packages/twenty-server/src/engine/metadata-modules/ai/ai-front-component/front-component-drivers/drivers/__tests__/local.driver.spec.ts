@@ -7,9 +7,68 @@ import { ZodError } from 'zod';
 
 import { handler } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
-import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
+import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
-import { invokeFrontComponentBuilderLocally } from 'src/engine/metadata-modules/ai/ai-front-component/utils/invoke-front-component-builder-locally.util';
+import { LocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/local.driver';
+const mockBuilderOptions = {
+  buildAssetsDirectory: '',
+  yarnEngineDirectory: '',
+  timeoutMs: 30000,
+};
+
+jest.mock(
+  'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-directory.constant',
+  () => ({
+    get FRONT_COMPONENT_BUILDER_DIRECTORY() {
+      return mockBuilderOptions.buildAssetsDirectory;
+    },
+  }),
+);
+jest.mock(
+  'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname',
+  () => ({
+    get YARN_ENGINE_DIRNAME() {
+      return mockBuilderOptions.yarnEngineDirectory;
+    },
+  }),
+);
+jest.mock(
+  'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant',
+  () => ({
+    ...jest.requireActual(
+      'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant',
+    ),
+    get BUILDER_LAMBDA_TIMEOUT_SECONDS() {
+      return mockBuilderOptions.timeoutMs / 1000;
+    },
+    get YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS() {
+      return mockBuilderOptions.timeoutMs / 1000;
+    },
+  }),
+);
+
+const invokeFrontComponentBuilderLocally = async ({
+  input,
+  buildAssetsDirectory,
+  yarnEngineDirectory,
+  timeoutMs,
+}: {
+  input: FrontComponentBuilderRequest;
+  buildAssetsDirectory: string;
+  yarnEngineDirectory: string;
+  timeoutMs: number;
+}) => {
+  Object.assign(mockBuilderOptions, {
+    buildAssetsDirectory,
+    yarnEngineDirectory,
+    timeoutMs,
+  });
+  const driver = new LocalDriver();
+  const request = { ...input, workspaceId: 'workspace' };
+  return request.action === 'buildDependencies'
+    ? driver.buildDependencies(request)
+    : driver.transpile(request);
+};
 
 const charMap: Record<string, string> = {
   '<': '\\u003C',
@@ -41,7 +100,7 @@ const INPUT = {
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 
-describe('invokeFrontComponentBuilderLocally', () => {
+describe('LocalDriver', () => {
   let directory: string;
   let buildAssetsDirectory: string;
   let yarnEngineDirectory: string;
@@ -63,13 +122,13 @@ describe('invokeFrontComponentBuilderLocally', () => {
     });
     await build({
       entryPoints: [
-        resolve(__dirname, '../../front-component-builder.local.ts'),
+        resolve(__dirname, '../../../front-component-builder.handler.ts'),
       ],
-      outfile: join(buildAssetsDirectory, 'local.js'),
+      outfile: join(buildAssetsDirectory, 'index.js'),
       bundle: true,
       platform: 'node',
       format: 'cjs',
-      tsconfig: resolve(__dirname, '../../../../../../../tsconfig.json'),
+      tsconfig: resolve(process.cwd(), 'tsconfig.json'),
       plugins: [
         {
           name: 'installed-esbuild',
@@ -103,7 +162,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
   });
 
   it('builds the stored dependency pair and matches the Lambda component output', async () => {
-    const vendor = frontComponentVendorResultSchema.parse(
+    const vendor = frontComponentDependenciesBuildResultSchema.parse(
       await invoke({
         action: 'buildDependencies',
         packageJson: PACKAGE_JSON,
@@ -115,7 +174,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
       throw new Error(vendor.error);
     }
     const request: FrontComponentBuilderRequest = {
-      action: 'buildComponent',
+      action: 'transpile',
       input: INPUT,
       manifest: { checksum: vendor.checksum, exports: vendor.exports },
     };
@@ -125,7 +184,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     expect(result).toMatchObject({
       success: true,
       sharedDependenciesChecksum: vendor.checksum,
-      compiledSource: expect.stringContaining('Built locally'),
+      builtCode: expect.stringContaining('Built locally'),
     });
     const installDirectory = await readFile(
       join(directory, 'install-directory'),
@@ -138,7 +197,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
   it('returns the same invalid-input diagnostics as Lambda', async () => {
     const request: FrontComponentBuilderRequest = {
-      action: 'buildComponent',
+      action: 'transpile',
       input: { ...INPUT, source: 'export default () => <div />;' },
       manifest: { checksum: 'a'.repeat(64), exports: {} },
     };
@@ -162,13 +221,13 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
     await mkdir(assets);
     await writeFile(
-      join(assets, 'local.js'),
-      `process.once('message', () => {
+      join(assets, 'index.js'),
+      `exports.handler = () => {
   require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
-  process.send({ success: true, source: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {} }, () => process.exit(0));
-});`,
+  return { success: true, builtCode: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {} };
+};`,
     );
-    const result = frontComponentVendorResultSchema.parse(
+    const result = frontComponentDependenciesBuildResultSchema.parse(
       await invokeFrontComponentBuilderLocally({
         input: { action: 'buildDependencies', packageJson: '', yarnLock: '' },
         buildAssetsDirectory: assets,
@@ -181,7 +240,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
       throw new Error(result.error);
     }
 
-    expect(result.source).toHaveLength(2 * 1024 * 1024);
+    expect(result.builtCode).toHaveLength(2 * 1024 * 1024);
     const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
 
     await expect(access(workingDirectory)).rejects.toThrow();
@@ -198,17 +257,17 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
       action: 'buildDependencies',
       response: {
         success: true,
-        compiledSource: 'compiled component',
+        builtCode: 'compiled component',
         checksum: 'a'.repeat(64),
         sharedDependenciesChecksum: 'b'.repeat(64),
       },
     },
     {
       description: 'a dependency response to a component build',
-      action: 'buildComponent',
+      action: 'transpile',
       response: {
         success: true,
-        source: 'compiled dependencies',
+        builtCode: 'compiled dependencies',
         checksum: 'a'.repeat(64),
         exports: {},
       },
@@ -229,12 +288,11 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
       await mkdir(assets);
       await writeFile(
-        join(assets, 'local.js'),
-        `process.once('message', () => {
+        join(assets, 'index.js'),
+        `exports.handler = () => {
   require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
-  process.send(${JSON.stringify(response)});
-  setInterval(() => {}, 1000);
-});`,
+  return ${JSON.stringify(response)};
+};`,
       );
 
       await expect(
@@ -272,12 +330,14 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
     await mkdir(assets);
     await writeFile(
-      join(assets, 'local.js'),
-      `require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
+      join(assets, 'index.js'),
+      `exports.handler = () => new Promise(() => {
+require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
 if (process.platform !== 'win32') {
   require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);
 }
-setInterval(() => {}, 1000);`,
+setInterval(() => {}, 1000);
+});`,
     );
     await expect(
       invokeFrontComponentBuilderLocally({
@@ -286,7 +346,7 @@ setInterval(() => {}, 1000);`,
         yarnEngineDirectory,
         timeoutMs: 1000,
       }),
-    ).rejects.toThrow('timed out');
+    ).rejects.toThrow('Timed out');
     const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
 
     await expect(access(workingDirectory)).rejects.toThrow();
