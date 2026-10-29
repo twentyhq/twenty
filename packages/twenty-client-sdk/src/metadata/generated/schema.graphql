@@ -2609,6 +2609,12 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+input InboxThreadRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
+  threadId: UUID!
+}
+
 type Index {
   applicationId: UUID!
   createdAt: DateTime!
@@ -3203,6 +3209,7 @@ type Mutation {
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
@@ -3319,6 +3326,7 @@ type Mutation {
   destroyViewFilterGroup(id: String!): Boolean!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
