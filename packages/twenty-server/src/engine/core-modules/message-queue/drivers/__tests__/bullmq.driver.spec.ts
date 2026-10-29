@@ -621,6 +621,27 @@ describe('BullMQDriver fair tickets', () => {
     });
   });
 
+  it('appends the additional group keys to the keys of the scope', async () => {
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [{ tag: 0, weight: 1 }],
+    });
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      {},
+      { ...buildCoreJobScope('ws-1'), groupKeys: ['integration:slack'] },
+    );
+
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
+      queueName: MessageQueue.workspaceQueue,
+      requests: [
+        { groupKeys: ['workspace:ws-1', 'integration:slack'], jobCount: 1 },
+      ],
+    });
+  });
+
   it('allocates one ticket per group of a bulk and spaces its jobs by the weight', async () => {
     mockAllocateTickets.mockResolvedValue({
       base: 0,

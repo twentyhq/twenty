@@ -17,7 +17,6 @@ export type QueueJobRecipient = {
 export type WorkspaceQueueJobScope = {
   isSystemJob?: never;
   workspaceId: string;
-  // Core jobs pass TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
   applicationUniversalIdentifier: string;
 };
 
@@ -38,6 +37,7 @@ export type QueueJobSettings = {
   delay?: number;
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
+  groupKeys?: string[];
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

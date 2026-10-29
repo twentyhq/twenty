@@ -6,7 +6,6 @@ import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/ut
 
 const SYSTEM_GROUP_KEY = 'system';
 
-// No key for the standard application: one clock for every workspace's core jobs would make them FIFO
 export const buildQueueJobGroupKeys = (scope: QueueJobScope): string[] => {
   if (scope.isSystemJob) {
     return [SYSTEM_GROUP_KEY];

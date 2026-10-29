@@ -540,6 +540,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
+      additionalGroupKeys: options.groupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
     });
@@ -601,6 +602,7 @@ export class BullMQDriver
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
+      additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,
       staticPriority: queueOptions.priority,
     });
