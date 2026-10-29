@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WORKFLOW_CHANGED_IN_BUILDER_REASON } from 'src/engine/core-modules/application/application-manifest/constants/workflow-changed-in-builder-reason.constant';
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
-import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { buildWorkflowManifestExportReferences } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-export-references.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
@@ -96,7 +96,7 @@ export const reconstructWorkflowsManifest = ({
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
   isWorkspaceCustomApplication: boolean;
-  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
+  connectedAccounts: readonly ConnectedAccountForWorkflowStepResolution[];
 }): {
   workflows: WorkflowManifest[];
   coverage: ApplicationExportCoverageEntry[];
