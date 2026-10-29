@@ -369,6 +369,7 @@ describe('FairTicketAllocator', () => {
         priority: 4,
         counter: 2,
         state: 'prioritized',
+        base: 'none',
       });
       await seedJob({
         jobId: 'A2',
@@ -490,7 +491,7 @@ describe('FairTicketAllocator', () => {
       ]);
     });
 
-    it('shifts a delayed retry that sits below the old virtual time and leaves an overdue one alone', async () => {
+    it('shifts a delayed retry that sits below the old virtual time and floors an overdue one at zero, keeping their order', async () => {
       const { redis, allocator, seedJob, readPriority, readStampedBase } =
         await createAllocator();
 
@@ -519,8 +520,8 @@ describe('FairTicketAllocator', () => {
 
       expect(await readPriority('retrying')).toBe(ticketOf(100));
       expect(await readStampedBase('retrying')).toBe(FAIR_REBASE_STEP);
-      expect(await readPriority('overdue')).toBe(ticketOf(100));
-      expect(await readStampedBase('overdue')).toBeUndefined();
+      expect(await readPriority('overdue')).toBe(ticketOf(0));
+      expect(await readStampedBase('overdue')).toBe(FAIR_REBASE_STEP);
     });
 
     it('leaves a job already on the new scale and a ticket allocated before the base existed alone', async () => {

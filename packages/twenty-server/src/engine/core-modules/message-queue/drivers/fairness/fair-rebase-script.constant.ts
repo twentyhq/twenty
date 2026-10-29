@@ -26,7 +26,7 @@ local function rebaseJob(jobId)
   local job = redis.call('HMGET', jobKey, 'priority', 'fairBase', 'opts')
   local priority = tonumber(job[1])
 
-  if priority == nil then
+  if priority == nil or priority < ticketOffset then
     return 0
   end
 
@@ -34,13 +34,16 @@ local function rebaseJob(jobId)
   local jobBase = tonumber(job[2]) or tonumber(string.match(rawOptions, '"fairBase":(%d+)') or '') or base
   local shift = base - jobBase
 
-  if shift <= 0 or priority - ticketOffset < shift then
+  if shift <= 0 then
     return 0
   end
 
-  redis.call('HSET', jobKey, 'priority', priority - shift, 'fairBase', base)
+  local ticket = priority - ticketOffset
+  local rebasedTicket = math.max(ticket - shift, 0)
 
-  return shift
+  redis.call('HSET', jobKey, 'priority', rebasedTicket + ticketOffset, 'fairBase', base)
+
+  return ticket - rebasedTicket
 end
 
 if phase == 'g' then
@@ -60,10 +63,10 @@ if phase == 'p' or phase == 'f' then
 
   for i = 1, #members, 2 do
     local score = tonumber(members[i + 1])
-    local shift = rebaseJob(members[i])
+    local priorityDrop = rebaseJob(members[i])
 
-    if shift > 0 then
-      redis.call('ZADD', KEYS[2], formatScore(score - shift * scoreBase), members[i])
+    if priorityDrop > 0 then
+      redis.call('ZADD', KEYS[2], formatScore(score - priorityDrop * scoreBase), members[i])
     end
 
     cursor = score

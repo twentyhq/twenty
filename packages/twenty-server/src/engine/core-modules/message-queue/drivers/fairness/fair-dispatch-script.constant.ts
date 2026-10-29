@@ -17,8 +17,8 @@ local jobBase = tonumber(job[2]) or tonumber(string.match(rawOptions, '"fairBase
 local shift = base - jobBase
 local ticket = priority - ticketOffset
 
-if shift > 0 and ticket >= shift then
-  ticket = ticket - shift
+if shift > 0 then
+  ticket = math.max(ticket - shift, 0)
   redis.call('HSET', KEYS[4], 'priority', ticket + ticketOffset, 'fairBase', base)
 end
 
