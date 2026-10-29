@@ -67,8 +67,6 @@ export const LogConsoleTableHeaderCell = ({
   const { t } = useLingui();
   const [width, setWidth] = useState(0);
 
-  // The handle reads its start value on pointer down, so the rendered width
-  // must be known before the gesture begins.
   const measureHeaderWidth = (handleElement: HTMLElement) => {
     const headerElement = handleElement.closest<HTMLElement>(
       '[data-table-header]',
@@ -87,7 +85,6 @@ export const LogConsoleTableHeaderCell = ({
     const handleElement = event.currentTarget;
 
     onWidthReset();
-    // The reset width only exists once the grid re-lays out.
     requestAnimationFrame(() => measureHeaderWidth(handleElement));
   };
 

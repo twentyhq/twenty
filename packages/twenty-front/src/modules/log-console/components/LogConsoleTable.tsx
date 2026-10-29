@@ -128,7 +128,6 @@ export const LogConsoleTable = ({
 
   const columns = source.columns;
 
-  // Drag previews go through a CSS variable so rows don't re-render per frame.
   const gridTemplateColumns = columns
     .map((column) => {
       const storedWidth = columnWidths[column.id];
