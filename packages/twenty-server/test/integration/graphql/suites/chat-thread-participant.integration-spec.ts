@@ -1634,7 +1634,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       expect(await findMyParticipant(threadId)).toMatchObject({
         archivedAt: null,
         lastMentionedAt: expect.any(String),
-        lastResolvedMentionAt: null,
+        mentionsResolvedAt: null,
       });
     });
   });
