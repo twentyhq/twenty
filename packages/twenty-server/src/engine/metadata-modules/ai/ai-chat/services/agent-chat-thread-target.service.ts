@@ -36,7 +36,7 @@ export class AgentChatThreadTargetService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // chat turns run in a queue worker, so the sender's context is passed to check the record as them
+  // chat turns run in a queue worker, so the sender's context is passed to write the link as them
   async attachThreadToRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
@@ -87,9 +87,8 @@ export class AgentChatThreadTargetService {
   }
 
   private getThreadTargetRepository() {
-    return this.workspaceOrmManager.getRepository(
+    return this.workspaceOrmManager.getRepositoryWithContextPermissions(
       AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-      { shouldBypassPermissionChecks: true },
     );
   }
 
