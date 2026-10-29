@@ -96,7 +96,7 @@ const SILENT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:10.000Z' },
 };
 
-const LONG_TEXT = 'Set up my workspace. '.repeat(60);
+const LONG_TEXT = 'Set up my workspace. '.repeat(80);
 
 const LONG_USER_MESSAGE: ExtendedUIMessage = {
   ...USER_MESSAGE,

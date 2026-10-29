@@ -14,8 +14,8 @@ describe('isAiChatUserMessageLong', () => {
     expect(isAiChatUserMessageLong(shortLines)).toBe(false);
   });
 
-  it('flags a message of 1000 characters or more', () => {
-    expect(isAiChatUserMessageLong('a'.repeat(999))).toBe(false);
-    expect(isAiChatUserMessageLong('a'.repeat(1000))).toBe(true);
+  it('flags a message of 1500 characters or more', () => {
+    expect(isAiChatUserMessageLong('a'.repeat(1499))).toBe(false);
+    expect(isAiChatUserMessageLong('a'.repeat(1500))).toBe(true);
   });
 });

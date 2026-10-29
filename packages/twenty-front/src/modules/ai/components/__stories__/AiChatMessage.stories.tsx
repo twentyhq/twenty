@@ -341,6 +341,11 @@ const mockLongUserMessage: ExtendedUIMessage = {
 8. Create a weekly view of deals closing this month for the Monday sales meeting.
 9. Tag the companies that have no open opportunity so we can plan outreach.
 10. Set up a reminder task for each owner to update their deal amounts every Friday.
+11. Merge duplicate companies that share the same domain and keep the most recent owner.
+12. Create a Renewal Date field on Companies and a view of renewals coming up in the next 90 days.
+13. Build a workflow that notifies the account owner when a renewal is 30 days away and no opportunity exists yet.
+14. Add a dashboard chart with the conversion rate from Qualified to Won per month for the last two quarters.
+15. Import last year's closed deals from the second sheet so the dashboard has history from day one.
 
 Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match. Follow the [pipeline guide](https://twenty.com/user-guide) for naming.`,
     },
