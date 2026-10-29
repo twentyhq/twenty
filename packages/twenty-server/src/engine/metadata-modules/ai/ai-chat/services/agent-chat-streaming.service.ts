@@ -479,6 +479,10 @@ export class AgentChatStreamingService {
         hasTitle: isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
       },
+      {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

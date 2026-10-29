@@ -33,6 +33,7 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
@@ -44,6 +45,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
 
   async resume({
@@ -62,7 +64,14 @@ export class WorkflowRunnerWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      buildRunWorkflowJobOptions({
+        workflowRunId,
+        scope:
+          await this.workflowRunJobScopeWorkspaceService.resolveForWorkflowRun({
+            workspaceId,
+            workflowRunId,
+          }),
+      }),
     );
   }
 
@@ -335,6 +344,12 @@ export class WorkflowRunnerWorkspaceService {
       };
     }
 
+    const jobScope =
+      await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
+        workspaceId,
+        coreWorkflowId: workflowRun.coreWorkflowId,
+      });
+
     await this.workflowRunWorkspaceService.updateWorkflowRun({
       workflowRunId,
       workspaceId,
@@ -357,7 +372,7 @@ export class WorkflowRunnerWorkspaceService {
           workflowRunId,
           stepIdsToRetry: stepIdsToRun,
         },
-        buildRunWorkflowJobOptions(workflowRunId),
+        buildRunWorkflowJobOptions({ workflowRunId, scope: jobScope }),
       );
     } catch (error) {
       // Revert so the run isn't left RUNNING without a worker job
