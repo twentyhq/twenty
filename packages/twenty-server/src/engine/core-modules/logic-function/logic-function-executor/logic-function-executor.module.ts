@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -32,7 +31,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationModule,
     ApplicationVariableEntityModule,
     UsageLimitModule,
-    CoreEntityCacheModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
       WorkspaceEntity,

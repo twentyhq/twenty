@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
@@ -73,12 +73,20 @@ export class ServerRouteTriggerService {
   async handle({
     request,
     resolverLogicFunctionIdentifier,
+    resolverApplicationRegistrationId,
   }: {
     request: Request;
     resolverLogicFunctionIdentifier: string;
+    resolverApplicationRegistrationId?: string;
   }): Promise<ServerRouteTriggerResult> {
-    const { resolver, isResolvedThroughLegacyIdentifier } =
-      await this.findResolverOrThrow(resolverLogicFunctionIdentifier);
+    const { resolver, isResolvedThroughLegacyIdentifier } = isDefined(
+      resolverApplicationRegistrationId,
+    )
+      ? await this.findRegistrationResolverOrThrow({
+          applicationRegistrationId: resolverApplicationRegistrationId,
+          logicFunctionUniversalIdentifier: resolverLogicFunctionIdentifier,
+        })
+      : await this.findResolverOrThrow(resolverLogicFunctionIdentifier);
 
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
@@ -226,6 +234,40 @@ export class ServerRouteTriggerService {
       );
   }
 
+  private async findRegistrationResolverOrThrow({
+    applicationRegistrationId,
+    logicFunctionUniversalIdentifier,
+  }: {
+    applicationRegistrationId: string;
+    logicFunctionUniversalIdentifier: string;
+  }): Promise<ResolvedServerRouteResolver> {
+    const resolver =
+      isValidUuid(applicationRegistrationId) &&
+      isValidUuid(logicFunctionUniversalIdentifier)
+        ? await this.createResolverQueryBuilder()
+            .andWhere(
+              'applicationRegistration.id = :applicationRegistrationId',
+              {
+                applicationRegistrationId,
+              },
+            )
+            .andWhere(
+              'logicFunction.universalIdentifier = :logicFunctionUniversalIdentifier',
+              { logicFunctionUniversalIdentifier },
+            )
+            .getOne()
+        : null;
+
+    if (!isDefined(resolver)) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    return { resolver, isResolvedThroughLegacyIdentifier: false };
+  }
+
   private async findResolverOrThrow(
     identifier: string,
   ): Promise<ResolvedServerRouteResolver> {
@@ -266,7 +308,7 @@ export class ServerRouteTriggerService {
     }
 
     this.logger.warn(
-      `Server route ${identifier} resolved through the deprecated universalIdentifier form (application registration ${legacyResolver.application?.applicationRegistration?.universalIdentifier}, owner workspace ${legacyResolver.workspaceId}); the registered URL should move to /webhooks/server/${legacyResolver.id}`,
+      `Server route ${identifier} resolved through the deprecated universalIdentifier form (application registration ${legacyResolver.application?.applicationRegistration?.universalIdentifier}, owner workspace ${legacyResolver.workspaceId}); the registered URL should move to /webhooks/server/${legacyResolver.application?.applicationRegistration?.id}/${legacyResolver.universalIdentifier}`,
     );
 
     return {

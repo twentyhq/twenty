@@ -13,7 +13,7 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
-export { DEFAULT_SERVER_ROUTE_IDS_NAME } from './constants/DefaultServerRouteIdsName';
+export { DEFAULT_SERVER_ROUTES_URL_NAME } from './constants/DefaultServerRoutesUrlName';
 export { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from './constants/LegacyConnectionVisibilityByScope';
 export type {
   CreditUnavailableReason,

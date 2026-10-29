@@ -9,12 +9,13 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-  DEFAULT_SERVER_ROUTE_IDS_NAME,
+  DEFAULT_SERVER_ROUTES_URL_NAME,
 } from 'twenty-shared/application-runtime';
 import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,
 } from 'twenty-shared/logic-function';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -26,7 +27,6 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
@@ -107,7 +107,6 @@ export class LogicFunctionExecutorService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
@@ -463,8 +462,6 @@ export class LogicFunctionExecutorService {
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
     );
-    const serverRouteIdByUniversalIdentifier =
-      await this.buildServerRouteIdByUniversalIdentifier(flatApplication);
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -494,70 +491,13 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
-      [DEFAULT_SERVER_ROUTE_IDS_NAME]: JSON.stringify(
-        serverRouteIdByUniversalIdentifier,
-      ),
+      [DEFAULT_SERVER_ROUTES_URL_NAME]: isDefined(
+        flatApplication.applicationRegistrationId,
+      )
+        ? `${baseUrl ?? ''}/${ApiPath.Webhooks}/server/${flatApplication.applicationRegistrationId}`
+        : '',
       APPLICATION_ID: flatApplication.id,
     };
-  }
-
-  private async buildServerRouteIdByUniversalIdentifier(
-    flatApplication: Pick<
-      FlatApplication,
-      'universalIdentifier' | 'applicationRegistrationId'
-    >,
-  ): Promise<Record<string, string>> {
-    if (!isDefined(flatApplication.applicationRegistrationId)) {
-      return {};
-    }
-
-    const ownerWorkspaceId = await this.coreEntityCacheService.get(
-      'applicationRegistrationOwnerWorkspaceId',
-      flatApplication.applicationRegistrationId,
-    );
-
-    if (!isDefined(ownerWorkspaceId)) {
-      return {};
-    }
-
-    const {
-      flatApplicationMaps: ownerFlatApplicationMaps,
-      flatLogicFunctionMaps: ownerFlatLogicFunctionMaps,
-    } = await this.workspaceCacheService.getOrRecompute(ownerWorkspaceId, [
-      'flatApplicationMaps',
-      'flatLogicFunctionMaps',
-    ]);
-
-    const ownerFlatApplicationId =
-      ownerFlatApplicationMaps.idByUniversalIdentifier[
-        flatApplication.universalIdentifier
-      ];
-    const ownerFlatApplication = isDefined(ownerFlatApplicationId)
-      ? ownerFlatApplicationMaps.byId[ownerFlatApplicationId]
-      : undefined;
-
-    if (
-      ownerFlatApplication?.applicationRegistrationId !==
-      flatApplication.applicationRegistrationId
-    ) {
-      return {};
-    }
-
-    return Object.fromEntries(
-      (
-        ownerFlatLogicFunctionMaps.universalIdentifiersByApplicationId[
-          ownerFlatApplication.id
-        ] ?? []
-      ).flatMap((universalIdentifier) => {
-        const ownerFlatLogicFunction =
-          ownerFlatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier];
-
-        return isDefined(ownerFlatLogicFunction?.serverRouteTriggerSettings) &&
-          !isDefined(ownerFlatLogicFunction.deletedAt)
-          ? [[universalIdentifier, ownerFlatLogicFunction.id]]
-          : [];
-      }),
-    );
   }
 
   private async buildFunctionsBaseUrl({

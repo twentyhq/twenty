@@ -33,15 +33,22 @@ export class ServerRouteTriggerController {
     private readonly serverRouteTriggerService: ServerRouteTriggerService,
   ) {}
 
-  private async handleRequest(
-    resolverLogicFunctionIdentifier: string,
-    request: Request,
-    response: Response,
-  ) {
+  private async handleRequest({
+    resolverLogicFunctionIdentifier,
+    resolverApplicationRegistrationId,
+    request,
+    response,
+  }: {
+    resolverLogicFunctionIdentifier: string;
+    resolverApplicationRegistrationId?: string;
+    request: Request;
+    response: Response;
+  }) {
     const { response: triggerResponse, isResolvedThroughLegacyIdentifier } =
       await this.serverRouteTriggerService.handle({
         request,
         resolverLogicFunctionIdentifier,
+        resolverApplicationRegistrationId,
       });
 
     if (isResolvedThroughLegacyIdentifier) {
@@ -54,6 +61,40 @@ export class ServerRouteTriggerController {
     sendRouteTriggerResponse(response, triggerResponse);
   }
 
+  @Get(':resolverApplicationRegistrationId/:resolverLogicFunctionIdentifier')
+  async getInApplicationRegistration(
+    @Param('resolverApplicationRegistrationId')
+    resolverApplicationRegistrationId: string,
+    @Param('resolverLogicFunctionIdentifier')
+    resolverLogicFunctionIdentifier: string,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    await this.handleRequest({
+      resolverLogicFunctionIdentifier,
+      resolverApplicationRegistrationId,
+      request,
+      response,
+    });
+  }
+
+  @Post(':resolverApplicationRegistrationId/:resolverLogicFunctionIdentifier')
+  async postInApplicationRegistration(
+    @Param('resolverApplicationRegistrationId')
+    resolverApplicationRegistrationId: string,
+    @Param('resolverLogicFunctionIdentifier')
+    resolverLogicFunctionIdentifier: string,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    await this.handleRequest({
+      resolverLogicFunctionIdentifier,
+      resolverApplicationRegistrationId,
+      request,
+      response,
+    });
+  }
+
   @Get(':resolverLogicFunctionIdentifier')
   async get(
     @Param('resolverLogicFunctionIdentifier')
@@ -61,11 +102,11 @@ export class ServerRouteTriggerController {
     @Req() request: Request,
     @Res() response: Response,
   ) {
-    await this.handleRequest(
+    await this.handleRequest({
       resolverLogicFunctionIdentifier,
       request,
       response,
-    );
+    });
   }
 
   @Post(':resolverLogicFunctionIdentifier')
@@ -75,10 +116,10 @@ export class ServerRouteTriggerController {
     @Req() request: Request,
     @Res() response: Response,
   ) {
-    await this.handleRequest(
+    await this.handleRequest({
       resolverLogicFunctionIdentifier,
       request,
       response,
-    );
+    });
   }
 }

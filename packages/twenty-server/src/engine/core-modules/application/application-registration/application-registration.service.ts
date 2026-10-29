@@ -245,15 +245,6 @@ export class ApplicationRegistrationService {
     }
   }
 
-  private async invalidateOwnerWorkspaceIdCache(
-    applicationRegistrationId: string,
-  ): Promise<void> {
-    await this.coreEntityCacheService.invalidate(
-      'applicationRegistrationOwnerWorkspaceId',
-      applicationRegistrationId,
-    );
-  }
-
   private async invalidateMarketplaceAppsCache(): Promise<void> {
     try {
       await this.coreEntityCacheService.invalidate(
@@ -845,7 +836,6 @@ export class ApplicationRegistrationService {
     );
 
     await this.invalidateMarketplaceAppsCache();
-    await this.invalidateOwnerWorkspaceIdCache(applicationRegistrationId);
 
     await this.broadcastApplicationRegistrationEvent({
       type: 'deleted',
@@ -1498,7 +1488,6 @@ export class ApplicationRegistrationService {
     }
 
     await this.invalidateMarketplaceAppsCache();
-    await this.invalidateOwnerWorkspaceIdCache(registration.id);
 
     const claimedRegistration =
       await this.applicationRegistrationRepository.findOneOrFail({
@@ -1547,7 +1536,6 @@ export class ApplicationRegistrationService {
     });
 
     await this.invalidateMarketplaceAppsCache();
-    await this.invalidateOwnerWorkspaceIdCache(registration.id);
 
     const transferredRegistration =
       await this.applicationRegistrationRepository.findOneOrFail({

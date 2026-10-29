@@ -37,8 +37,20 @@ const GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '6f6f983f-5c1a-4c60-a3c8-7d0e2a4a66f6';
 const AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
   '7a7f983f-5c1a-4c60-a3c8-7d0e2a4a77a7';
-const ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
+const ROUTES_URL_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
   '8b8f983f-5c1a-4c60-a3c8-7d0e2a4a88b8';
+
+const OTHER_APPLICATION_REGISTRATION_ID =
+  '9c9f983f-5c1a-4c60-a3c8-7d0e2a4a99c9';
+
+const findApplicationRegistrationId = async (): Promise<string> => {
+  const [{ id }]: { id: string }[] = await globalThis.testDataSource.query(
+    `SELECT id FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+    [APP_UNIVERSAL_IDENTIFIER],
+  );
+
+  return id;
+};
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -74,10 +86,10 @@ const AUTHORIZATION_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = asyn
 });
 `;
 
-const ROUTE_IDS_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
+const ROUTES_URL_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
   ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
   status: 200,
-  body: { serverRouteIds: JSON.parse(process.env.TWENTY_SERVER_ROUTE_IDS) },
+  body: { serverRoutesUrl: process.env.TWENTY_SERVER_ROUTES_URL },
 });
 `;
 
@@ -180,8 +192,8 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
-      builtHandlerPath: 'dist/route-ids-echo-resolver.mjs',
-      builtHandlerCode: ROUTE_IDS_ECHO_RESOLVER_BUILT_HANDLER_CODE,
+      builtHandlerPath: 'dist/routes-url-echo-resolver.mjs',
+      builtHandlerCode: ROUTES_URL_ECHO_RESOLVER_BUILT_HANDLER_CODE,
     });
 
     await uploadBuiltHandlerFile({
@@ -235,8 +247,9 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               forwardedRequestHeaders: ['authorization'],
             }),
             buildLogicFunctionManifest({
-              universalIdentifier: ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER,
-              name: 'route-ids-echo-resolver',
+              universalIdentifier:
+                ROUTES_URL_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'routes-url-echo-resolver',
               serverRouteExposed: true,
               authRequired: false,
             }),
@@ -290,37 +303,55 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       expect(response.body).toEqual({ challenge: 'abc123' });
     }, 60000);
 
-    it("gives the resolver the ids of its own app's server routes in the owner workspace", async () => {
-      const serverRouteRows: { id: string; universalIdentifier: string }[] =
-        await globalThis.testDataSource.query(
-          `SELECT lf.id, lf."universalIdentifier"
-           FROM core."logicFunction" lf
-           JOIN core."application" a ON a.id = lf."applicationId"
-           WHERE a."universalIdentifier" = $1
-             AND lf."workspaceId" = $2
-             AND lf."serverRouteTriggerSettings" IS NOT NULL`,
-          [APP_UNIVERSAL_IDENTIFIER, OWNER_WORKSPACE_ID],
-        );
+    it('gives the resolver the server routes URL of its application registration', async () => {
+      const applicationRegistrationId = await findApplicationRegistrationId();
 
       const response = await request(baseUrl)
         .post(
-          `/webhooks/server/${ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+          `/webhooks/server/${applicationRegistrationId}/${ROUTES_URL_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         )
         .send({});
 
       expect(response.status).toBe(200);
-      expect(response.body.serverRouteIds).toEqual(
-        Object.fromEntries(
-          serverRouteRows.map((row) => [row.universalIdentifier, row.id]),
-        ),
-      );
-      expect(response.body.serverRouteIds).not.toHaveProperty(
-        NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER,
-      );
-      expect(response.body.serverRouteIds).not.toHaveProperty(
-        TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
+      expect(response.body.serverRoutesUrl).toMatch(
+        new RegExp(`/webhooks/server/${applicationRegistrationId}$`),
       );
     }, 60000);
+
+    it('answers through the application registration scoped route', async () => {
+      const applicationRegistrationId = await findApplicationRegistrationId();
+
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${applicationRegistrationId}/${HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({ type: 'url_verification', challenge: 'abc123' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ challenge: 'abc123' });
+    }, 60000);
+
+    it('does not find a resolver under another application registration', async () => {
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${OTHER_APPLICATION_REGISTRATION_ID}/${HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({ type: 'url_verification', challenge: 'abc123' });
+
+      expect(response.status).toBe(404);
+    });
+
+    it('does not expose a function without server route settings through the scoped route', async () => {
+      const applicationRegistrationId = await findApplicationRegistrationId();
+
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${applicationRegistrationId}/${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({});
+
+      expect(response.status).toBe(404);
+    });
 
     it('forwards a third-party JWT to a resolver that asked for it', async () => {
       const thirdPartyToken = jwt.sign(
