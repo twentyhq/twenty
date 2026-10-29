@@ -1956,12 +1956,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           workflowRunId: runId,
           lastExecutedStepId: parallelBranch.id,
         },
-        {
-          ...buildRunWorkflowJobOptions(runId),
-          workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        buildRunWorkflowJobOptions({ workflowRunId: runId, workspaceId }),
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
 

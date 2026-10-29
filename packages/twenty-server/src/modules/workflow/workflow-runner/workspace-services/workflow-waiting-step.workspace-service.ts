@@ -1,6 +1,5 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
@@ -27,7 +26,10 @@ import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/
 import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-execution-context.util';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import {
+  buildRunWorkflowJobOptions,
+  buildRunWorkflowJobSettings,
+} from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
@@ -169,12 +171,7 @@ export class WorkflowWaitingStepWorkspaceService
           workflowRunId,
           awaitedStepOutput: { stepId, actionOutput },
         },
-        {
-          ...buildRunWorkflowJobOptions(workflowRunId),
-          workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        buildRunWorkflowJobOptions({ workflowRunId, workspaceId }),
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
@@ -189,7 +186,7 @@ export class WorkflowWaitingStepWorkspaceService
   }
 
   buildResumeJobOptions(workflowRunId: string): QueueJobSettings {
-    return buildRunWorkflowJobOptions(workflowRunId);
+    return buildRunWorkflowJobSettings(workflowRunId);
   }
 
   // the wake-up's own run and step are all the step needs to resume
@@ -255,12 +252,7 @@ export class WorkflowWaitingStepWorkspaceService
                 : { result: buildDefaultWaitResult(outcome) },
           },
         },
-        {
-          ...buildRunWorkflowJobOptions(workflowRunId),
-          workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        buildRunWorkflowJobOptions({ workflowRunId, workspaceId }),
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({

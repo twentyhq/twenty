@@ -152,12 +152,10 @@ export class CoreWorkflowRunnerService {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
         { workspaceId, workflowRunId: createdWorkflowRunId },
-        {
-          ...buildRunWorkflowJobOptions(createdWorkflowRunId),
+        buildRunWorkflowJobOptions({
+          workflowRunId: createdWorkflowRunId,
           workspaceId,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        },
+        }),
       );
     } else {
       await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(

@@ -323,15 +323,18 @@ type EnqueueInput = { label: string } & ScenarioJobScope &
 const buildScenarioJobScope = ({
   workspaceId,
   applicationUniversalIdentifier,
-}: ScenarioJobScope): QueueJobScope =>
-  isDefined(workspaceId)
-    ? {
-        workspaceId,
-        applicationUniversalIdentifier:
-          applicationUniversalIdentifier ??
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      }
-    : { isSystemJob: true };
+}: ScenarioJobScope): QueueJobScope => {
+  if (!isDefined(workspaceId)) {
+    return { isSystemJob: true };
+  }
+
+  return {
+    workspaceId,
+    applicationUniversalIdentifier:
+      applicationUniversalIdentifier ??
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  };
+};
 
 export const createFairnessHarness = async ({
   isFairnessEnabled: initialFairnessEnabled,

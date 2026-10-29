@@ -1,6 +1,5 @@
 import { Scope } from '@nestjs/common';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 
@@ -103,12 +102,7 @@ export class ResumeDelayedWorkflowJob {
             workflowRunId,
             lastExecutedStepId: stepId,
           },
-          {
-            ...buildRunWorkflowJobOptions(workflowRunId),
-            workspaceId,
-            applicationUniversalIdentifier:
-              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          },
+          buildRunWorkflowJobOptions({ workflowRunId, workspaceId }),
         );
       } catch (error) {
         if (isWorkflowRunNotFoundError(error)) {
