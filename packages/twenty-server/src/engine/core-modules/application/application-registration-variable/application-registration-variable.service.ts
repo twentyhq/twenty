@@ -68,6 +68,36 @@ export class ApplicationRegistrationVariableService {
     return variables.map((variable) => this.toObfuscatedDTO(variable));
   }
 
+  async getServerEnvVariables({
+    applicationRegistrationId,
+  }: {
+    applicationRegistrationId: string | null;
+  }): Promise<Record<string, string>> {
+    if (!isDefined(applicationRegistrationId)) {
+      return {};
+    }
+
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    const envVariables: Record<string, string> = {};
+
+    for (const variable of variables) {
+      if (isReservedEnvVariableName(variable.key)) {
+        continue;
+      }
+
+      const plaintextValue = this.decryptValue(variable);
+
+      if (plaintextValue !== '') {
+        envVariables[variable.key] = plaintextValue;
+      }
+    }
+
+    return envVariables;
+  }
+
   async updateVariable({
     input,
     workspaceId,
