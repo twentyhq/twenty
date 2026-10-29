@@ -2737,6 +2737,26 @@ export type GettingStartedWorkflow = {
   workflowId: Scalars['String']['output'];
 };
 
+export type GettingStartedWorkflowPreview = {
+  __typename?: 'GettingStartedWorkflowPreview';
+  actions: Array<GettingStartedWorkflowPreviewAction>;
+  step: GettingStartedStep;
+  trigger: GettingStartedWorkflowPreviewTrigger;
+};
+
+export type GettingStartedWorkflowPreviewAction = {
+  __typename?: 'GettingStartedWorkflowPreviewAction';
+  title: Scalars['String']['output'];
+  type: WorkflowActionType;
+};
+
+export type GettingStartedWorkflowPreviewTrigger = {
+  __typename?: 'GettingStartedWorkflowPreviewTrigger';
+  databaseEventAction?: Maybe<Scalars['String']['output']>;
+  title: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+};
+
 export type GrantApplicationCapabilitiesInput = {
   applicationId: Scalars['UUID']['input'];
   capabilities: Array<Scalars['String']['input']>;
@@ -5848,6 +5868,7 @@ export type Query = {
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
   gettingStartedProgress: GettingStartedProgress;
+  gettingStartedWorkflowPreviews: Array<GettingStartedWorkflowPreview>;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
@@ -8465,6 +8486,31 @@ export enum WidgetType {
   WORKFLOW = 'WORKFLOW',
   WORKFLOW_RUN = 'WORKFLOW_RUN',
   WORKFLOW_VERSION = 'WORKFLOW_VERSION'
+}
+
+export enum WorkflowActionType {
+  AI_AGENT = 'AI_AGENT',
+  CLASSIFY = 'CLASSIFY',
+  CODE = 'CODE',
+  CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
+  CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
+  DELETE_RECORD = 'DELETE_RECORD',
+  DRAFT_EMAIL = 'DRAFT_EMAIL',
+  EMPTY = 'EMPTY',
+  FILTER = 'FILTER',
+  FIND_RECORDS = 'FIND_RECORDS',
+  FORM = 'FORM',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  IF_ELSE = 'IF_ELSE',
+  ITERATOR = 'ITERATOR',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  PICK_RECORD = 'PICK_RECORD',
+  SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
+  SEND_EMAIL = 'SEND_EMAIL',
+  UPDATE_RECORD = 'UPDATE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD',
+  WAIT_FOR_EVENT = 'WAIT_FOR_EVENT'
 }
 
 export type WorkflowConfiguration = {

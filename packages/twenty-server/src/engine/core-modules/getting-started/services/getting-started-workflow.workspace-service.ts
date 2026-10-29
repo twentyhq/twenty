@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { GETTING_STARTED_WORKFLOW_BUILDERS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflow-builders.constant';
+import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
 import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
 import { type GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import {
@@ -17,7 +17,8 @@ import {
   GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { type GettingStartedWorkflowBuilder } from 'src/engine/core-modules/getting-started/types/getting-started-workflow-builder.type';
+import { type GettingStartedWorkflow } from 'src/engine/core-modules/getting-started/types/getting-started-workflow.type';
+import { buildGettingStartedWorkflowContent } from 'src/engine/core-modules/getting-started/utils/build-getting-started-workflow-content.util';
 import { getWorkflowStepConnectedAccountIds } from 'src/engine/core-modules/getting-started/utils/get-workflow-step-connected-account-ids.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -59,9 +60,9 @@ export class GettingStartedWorkflowWorkspaceService {
     step: GettingStartedStep;
     activate: boolean;
   }): Promise<GettingStartedWorkflowDTO> {
-    const buildWorkflow = GETTING_STARTED_WORKFLOW_BUILDERS[step];
+    const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[step];
 
-    if (!isDefined(buildWorkflow)) {
+    if (!isDefined(gettingStartedWorkflow)) {
       throw new GettingStartedException(
         `Step ${step} has no workflow`,
         GettingStartedExceptionCode.INVALID_STEP,
@@ -89,7 +90,7 @@ export class GettingStartedWorkflowWorkspaceService {
               workspaceId,
               userWorkspaceId,
               step,
-              buildWorkflow,
+              gettingStartedWorkflow,
             });
 
         if (!activate) {
@@ -249,18 +250,18 @@ export class GettingStartedWorkflowWorkspaceService {
     workspaceId,
     userWorkspaceId,
     step,
-    buildWorkflow,
+    gettingStartedWorkflow,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     step: GettingStartedStep;
-    buildWorkflow: GettingStartedWorkflowBuilder;
+    gettingStartedWorkflow: GettingStartedWorkflow;
   }): Promise<GettingStartedWorkflowDTO> {
-    const { flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -269,7 +270,12 @@ export class GettingStartedWorkflowWorkspaceService {
         {
           workspaceId,
           userWorkspaceId,
-          ...buildWorkflow({ flatFieldMetadataMaps }),
+          ...buildGettingStartedWorkflowContent({
+            gettingStartedWorkflow,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
+          edges: [],
         },
       );
 

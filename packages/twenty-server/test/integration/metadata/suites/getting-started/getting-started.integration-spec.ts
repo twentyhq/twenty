@@ -43,6 +43,23 @@ const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
   }
 `;
 
+const GETTING_STARTED_WORKFLOW_PREVIEWS_QUERY = gql`
+  query GettingStartedWorkflowPreviews {
+    gettingStartedWorkflowPreviews {
+      step
+      trigger {
+        type
+        databaseEventAction
+        title
+      }
+      actions {
+        type
+        title
+      }
+    }
+  }
+`;
+
 const deleteGettingStartedUserVars = () =>
   globalThis.testDataSource.query(
     `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND ("userId" = $2 OR "userId" IS NULL) AND "key" LIKE 'GETTING_STARTED_%'`,
@@ -185,6 +202,30 @@ describe('gettingStarted (e2e)', () => {
       expect(
         await findJaneUserVar('GETTING_STARTED_STEP_FOLLOW_UP_DEALS'),
       ).toEqual(firstCompletion);
+    });
+  });
+
+  describe('gettingStartedWorkflowPreviews', () => {
+    it('lists the handover trigger and its visible steps', async () => {
+      const response = await makeMetadataApiRequest({
+        query: GETTING_STARTED_WORKFLOW_PREVIEWS_QUERY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.gettingStartedWorkflowPreviews).toEqual([
+        {
+          step: 'HANDOVER_DEALS',
+          trigger: {
+            type: 'DATABASE_EVENT',
+            databaseEventAction: 'updated',
+            title: 'A deal is won',
+          },
+          actions: [
+            { type: 'CREATE_RECORD', title: 'Create a kickoff task' },
+            { type: 'SEND_EMAIL', title: 'Email the account owner' },
+          ],
+        },
+      ]);
     });
   });
 

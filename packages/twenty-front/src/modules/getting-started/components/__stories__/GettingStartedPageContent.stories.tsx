@@ -16,10 +16,12 @@ import {
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
   GettingStartedStep,
+  GettingStartedWorkflowPreviewsDocument,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
   type UpdateGettingStartedMutationVariables,
   UserCreditsFallback,
+  WorkflowActionType,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -68,6 +70,39 @@ const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
   isHidden: false,
 };
 
+const WORKFLOW_PREVIEWS_MOCK: MockedResponse = {
+  request: { query: GettingStartedWorkflowPreviewsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      gettingStartedWorkflowPreviews: [
+        {
+          __typename: 'GettingStartedWorkflowPreview',
+          step: GettingStartedStep.HANDOVER_DEALS,
+          trigger: {
+            __typename: 'GettingStartedWorkflowPreviewTrigger',
+            type: 'DATABASE_EVENT',
+            databaseEventAction: 'updated',
+            title: 'A deal is won',
+          },
+          actions: [
+            {
+              __typename: 'GettingStartedWorkflowPreviewAction',
+              type: WorkflowActionType.CREATE_RECORD,
+              title: 'Create a kickoff task',
+            },
+            {
+              __typename: 'GettingStartedWorkflowPreviewAction',
+              type: WorkflowActionType.SEND_EMAIL,
+              title: 'Email the account owner',
+            },
+          ],
+        },
+      ],
+    },
+  },
+};
+
 const meta: Meta<typeof GettingStartedPageContent> = {
   title: 'Modules/GettingStarted/GettingStartedPageContent',
   component: GettingStartedPageContent,
@@ -98,6 +133,7 @@ type Story = StoryObj<typeof GettingStartedPageContent>;
 export const Trial: Story = {
   parameters: {
     apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
       {
         request: { query: GettingStartedProgressDocument },
         maxUsageCount: Infinity,
@@ -146,6 +182,7 @@ export const Trial: Story = {
 export const AllDone: Story = {
   parameters: {
     apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
       {
         request: { query: GettingStartedProgressDocument },
         maxUsageCount: Infinity,
@@ -279,6 +316,7 @@ export const StepAnimations: Story = {
   },
   parameters: {
     apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
       {
         request: { query: GettingStartedProgressDocument },
         maxUsageCount: Infinity,

@@ -1,22 +1,25 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { GETTING_STARTED_WORKFLOW_NODES } from '@/getting-started/constants/GettingStartedWorkflowNodes';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
-import { useMutation } from '@apollo/client/react';
+import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { getTriggerTypeIcon } from '@/workflow/workflow-trigger/utils/getTriggerTypeIcon';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
   type GettingStartedStep,
+  GettingStartedWorkflowPreviewsDocument,
   PrepareGettingStartedWorkflowDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -58,13 +61,42 @@ export const GettingStartedWorkflowAction = ({
 }: GettingStartedWorkflowActionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
   const { progress, refetch } = useGettingStartedProgress();
   const [prepareGettingStartedWorkflow, { loading }] = useMutation(
     PrepareGettingStartedWorkflowDocument,
   );
+  const { data: workflowPreviewsData } = useQuery(
+    GettingStartedWorkflowPreviewsDocument,
+  );
   const isWorkflowEnabled = progress?.completedSteps.includes(step) ?? false;
+
+  const workflowPreview =
+    workflowPreviewsData?.gettingStartedWorkflowPreviews.find(
+      (preview) => preview.step === step,
+    );
+
+  const previewNodes = isDefined(workflowPreview)
+    ? [
+        {
+          label: t`Trigger`,
+          title: workflowPreview.trigger.title,
+          Icon: getIcon(
+            getTriggerTypeIcon({
+              type: workflowPreview.trigger.type,
+              databaseEvent: workflowPreview.trigger.databaseEventAction,
+            }),
+          ),
+        },
+        ...workflowPreview.actions.map((action) => ({
+          label: t`Action`,
+          title: action.title,
+          Icon: getIcon(getActionIcon(action.type)),
+        })),
+      ]
+    : [];
 
   const prepareWorkflow = async ({ activate }: { activate: boolean }) => {
     try {
@@ -93,26 +125,22 @@ export const GettingStartedWorkflowAction = ({
   return (
     <StyledColumn>
       <StyledWorkflowPreview>
-        {(GETTING_STARTED_WORKFLOW_NODES[step] ?? []).map(
-          ({ label, title, Icon }, index) => (
-            <Fragment key={index}>
-              {index > 0 && <StyledConnector />}
-              <WorkflowNodeContainer selected={false}>
-                <WorkflowNodeIconContainer>
-                  <Icon size={theme.icon.size.md} />
-                </WorkflowNodeIconContainer>
-                <WorkflowNodeRightPart>
-                  <WorkflowNodeLabel selected={false}>
-                    {t(label)}
-                  </WorkflowNodeLabel>
-                  <WorkflowNodeTitle selected={false} highlight>
-                    {t(title)}
-                  </WorkflowNodeTitle>
-                </WorkflowNodeRightPart>
-              </WorkflowNodeContainer>
-            </Fragment>
-          ),
-        )}
+        {previewNodes.map(({ label, title, Icon }, index) => (
+          <Fragment key={index}>
+            {index > 0 && <StyledConnector />}
+            <WorkflowNodeContainer selected={false}>
+              <WorkflowNodeIconContainer>
+                <Icon size={theme.icon.size.md} />
+              </WorkflowNodeIconContainer>
+              <WorkflowNodeRightPart>
+                <WorkflowNodeLabel selected={false}>{label}</WorkflowNodeLabel>
+                <WorkflowNodeTitle selected={false} highlight>
+                  {title}
+                </WorkflowNodeTitle>
+              </WorkflowNodeRightPart>
+            </WorkflowNodeContainer>
+          </Fragment>
+        ))}
       </StyledWorkflowPreview>
       <StyledRow>
         <Button

@@ -13,6 +13,8 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -23,7 +25,11 @@ import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  GettingStartedWorkflowPreviewsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledScroll = styled.div`
   flex: 1;
@@ -119,6 +125,14 @@ export const GettingStartedPageContent = () => {
     useGettingStartedTrial();
   const { justCompletedStep, clearJustCompletedStep } =
     useGettingStartedJustCompletedStep({ progress });
+  const hasWorkflowsPermission = useHasPermissionFlag(
+    PermissionFlagType.WORKFLOWS,
+  );
+
+  // Fetched with the page so a workflow card does not resize while it animates in
+  useQuery(GettingStartedWorkflowPreviewsDocument, {
+    skip: !hasWorkflowsPermission,
+  });
 
   const steps = progress?.steps ?? [];
   const completedSteps = progress?.completedSteps ?? [];
