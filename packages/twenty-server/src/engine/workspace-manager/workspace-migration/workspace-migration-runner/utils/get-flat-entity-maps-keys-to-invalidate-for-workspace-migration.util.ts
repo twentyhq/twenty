@@ -13,11 +13,15 @@ type ManyToOneRelation = {
   universalForeignKey: string | null;
 };
 
-// Updating these deletes and recreates the row with a new id, relinking the
-// parent aggregators even when no foreign key is in the update payload.
-const METADATA_NAMES_WITH_ID_REGENERATING_UPDATE = new Set<AllMetadataName>([
-  'index',
-]);
+// Maps that read an entity's rows outside the many-to-one/one-to-many graph,
+// so any change to that entity must refresh them. flatObjectMetadataMaps and
+// flatFieldMetadataMaps both read index rows (object indexMetadataIds, field
+// isUnique), and an index update re-keys the row with a new id.
+const EXTRA_AFFECTED_METADATA_NAMES: Partial<
+  Record<AllMetadataName, AllMetadataName[]>
+> = {
+  index: ['objectMetadata', 'fieldMetadata'],
+};
 
 const getUpdateAffectedMetadataNames = ({
   metadataName,
@@ -30,15 +34,11 @@ const getUpdateAffectedMetadataNames = ({
     metadataName
   ] as Record<string, ManyToOneRelation | null>;
 
-  const regeneratesId =
-    METADATA_NAMES_WITH_ID_REGENERATING_UPDATE.has(metadataName);
-
   return Object.values(manyToOneRelations)
     .filter(
       (relation): relation is ManyToOneRelation =>
         isDefined(relation) &&
-        (regeneratesId ||
-          changedProperties.has(relation.foreignKey) ||
+        (changedProperties.has(relation.foreignKey) ||
           (isDefined(relation.universalForeignKey) &&
             changedProperties.has(relation.universalForeignKey))),
     )
@@ -53,13 +53,15 @@ export const getFlatEntityMapsKeysToInvalidateForWorkspaceMigration = (
   for (const action of actions) {
     metadataNamesToInvalidate.add(action.metadataName);
 
-    const affectedMetadataNames =
-      action.type === 'update'
+    const affectedMetadataNames = [
+      ...(action.type === 'update'
         ? getUpdateAffectedMetadataNames({
             metadataName: action.metadataName,
             changedProperties: new Set(Object.keys(action.update)),
           })
-        : getMetadataRelatedMetadataNames(action.metadataName);
+        : getMetadataRelatedMetadataNames(action.metadataName)),
+      ...(EXTRA_AFFECTED_METADATA_NAMES[action.metadataName] ?? []),
+    ];
 
     for (const metadataName of affectedMetadataNames) {
       metadataNamesToInvalidate.add(metadataName);

@@ -107,7 +107,7 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).toContain('flatFieldPermissionMaps');
   });
 
-  it('invalidates the object metadata map on an index update, which regenerates the index id', () => {
+  it('invalidates object and field metadata maps on an index update (id re-key and isUnique derivation)', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({
         type: 'update',
@@ -118,8 +118,25 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     ]);
 
     expect(result.sort()).toEqual(
-      ['flatIndexMaps', 'flatObjectMetadataMaps'].sort(),
+      [
+        'flatFieldMetadataMaps',
+        'flatIndexMaps',
+        'flatObjectMetadataMaps',
+      ].sort(),
     );
+  });
+
+  it('invalidates the field metadata map when a unique index is created (isUnique derives from index rows)', () => {
+    const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+      buildAction({
+        type: 'create',
+        metadataName: 'index',
+      }),
+    ]);
+
+    expect(result).toContain('flatFieldMetadataMaps');
+    expect(result).toContain('flatObjectMetadataMaps');
+    expect(result).toContain('flatIndexMaps');
   });
 
   it('invalidates the cascade-exposed child maps when a view is deleted', () => {
