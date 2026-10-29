@@ -58,7 +58,6 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -173,15 +172,11 @@ export class LogicFunctionExecutorService {
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
-    const {
-      flatApplication,
-      flatLogicFunction,
-      flatApplicationVariableMaps,
-      flatLogicFunctionMaps,
-    } = await this.getFlatEntitiesOrThrow({
-      workspaceId,
-      logicFunctionId,
-    });
+    const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
+      await this.getFlatEntitiesOrThrow({
+        workspaceId,
+        logicFunctionId,
+      });
 
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
@@ -200,7 +195,6 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariableMaps,
-      flatLogicFunctionMaps,
       userId,
       userWorkspaceId,
       workspaceDeletionRequestTimestamp,
@@ -380,12 +374,7 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    return {
-      flatApplication,
-      flatLogicFunction,
-      flatApplicationVariableMaps,
-      flatLogicFunctionMaps,
-    };
+    return { flatApplication, flatLogicFunction, flatApplicationVariableMaps };
   }
 
   private async buildExecutionContext({
@@ -428,7 +417,6 @@ export class LogicFunctionExecutorService {
     workspaceId,
     flatApplication,
     flatApplicationVariableMaps,
-    flatLogicFunctionMaps,
     userId,
     userWorkspaceId,
     workspaceDeletionRequestTimestamp,
@@ -436,7 +424,6 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatApplicationVariableMaps: FlatApplicationVariableMaps;
-    flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
     userId?: string;
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
@@ -477,10 +464,7 @@ export class LogicFunctionExecutorService {
       flatApplication.applicationRegistrationId,
     );
     const serverRouteIdByUniversalIdentifier =
-      await this.buildServerRouteIdByUniversalIdentifier({
-        flatApplication,
-        flatLogicFunctionMaps,
-      });
+      await this.buildServerRouteIdByUniversalIdentifier(flatApplication);
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -518,31 +502,13 @@ export class LogicFunctionExecutorService {
   }
 
   // Ids come from the registration owner's workspace, where routes resolve.
-  private async buildServerRouteIdByUniversalIdentifier({
-    flatApplication,
-    flatLogicFunctionMaps,
-  }: {
+  private async buildServerRouteIdByUniversalIdentifier(
     flatApplication: Pick<
       FlatApplication,
-      'id' | 'universalIdentifier' | 'applicationRegistrationId'
-    >;
-    flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
-  }): Promise<Record<string, string>> {
-    const doesApplicationDeclareServerRoutes = (
-      flatLogicFunctionMaps.universalIdentifiersByApplicationId[
-        flatApplication.id
-      ] ?? []
-    ).some((universalIdentifier) =>
-      isDefined(
-        flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier]
-          ?.serverRouteTriggerSettings,
-      ),
-    );
-
-    if (
-      !doesApplicationDeclareServerRoutes ||
-      !isDefined(flatApplication.applicationRegistrationId)
-    ) {
+      'universalIdentifier' | 'applicationRegistrationId'
+    >,
+  ): Promise<Record<string, string>> {
+    if (!isDefined(flatApplication.applicationRegistrationId)) {
       return {};
     }
 
