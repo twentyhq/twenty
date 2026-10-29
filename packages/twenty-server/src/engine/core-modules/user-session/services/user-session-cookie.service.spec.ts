@@ -65,7 +65,8 @@ describe('UserSessionCookieService', () => {
   it('should still read the session cookie on legacy requests and count them by API path', () => {
     const request = {
       ...buildRequest({ 'sec-fetch-mode': 'cors' }),
-      path: '/file-upload/upload-id',
+      path: '/',
+      originalUrl: '/file-upload/upload-id?token=abc',
     } as Request;
 
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');

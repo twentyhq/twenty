@@ -19,8 +19,9 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 const API_PATHS = new Set<string>(Object.values(ApiPath));
 
 // Bounded so the metric can show which callers still rely on legacy access.
+// originalUrl, not path: inside mounted middleware (the CSRF check) Express rewrites path to "/".
 const getApiPathLabel = (request: Request): string => {
-  const firstSegment = request.path?.split('/')[1] ?? '';
+  const firstSegment = request.originalUrl?.split(/[/?#]/)[1] ?? '';
 
   return API_PATHS.has(firstSegment) ? firstSegment : 'other';
 };
