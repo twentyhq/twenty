@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
@@ -16,7 +16,10 @@ const SYNC_ERROR_MAX_LENGTH = 500;
 type McpServerToSync = Pick<
   FlatMcpServer,
   'id' | 'workspaceId' | 'url' | 'connectionProviderId'
-> & { userWorkspaceId?: string | null };
+> & {
+  userWorkspaceId?: string;
+  shouldDiscardToolsOnFailure?: boolean;
+};
 
 @Injectable()
 export class McpServerToolSyncService {
@@ -31,7 +34,7 @@ export class McpServerToolSyncService {
 
   // Never throws: an unreachable server must not block saving its settings, the reason lands in toolsSyncError.
   async syncTools(mcpServer: McpServerToSync): Promise<void> {
-    const { id, workspaceId } = mcpServer;
+    const { id, workspaceId, shouldDiscardToolsOnFailure = false } = mcpServer;
 
     try {
       const tools = await this.fetchSanitizedTools(mcpServer);
@@ -52,7 +55,13 @@ export class McpServerToolSyncService {
       await this.mcpServerRepository.update(
         workspaceId,
         { id },
-        { toolsSyncError: message.slice(0, SYNC_ERROR_MAX_LENGTH) },
+        {
+          toolsSyncError: message.slice(0, SYNC_ERROR_MAX_LENGTH),
+          ...(shouldDiscardToolsOnFailure && {
+            tools: [],
+            toolsSyncedAt: null,
+          }),
+        },
       );
     }
 
@@ -65,7 +74,17 @@ export class McpServerToolSyncService {
     mcpServer: McpServerToSync,
   ): Promise<McpServerTool[]> {
     const remoteTools = await this.mcpServerClientService.listTools(mcpServer);
+    const sanitizedTools = remoteTools.map(sanitizeMcpServerTool);
+    const droppedToolNames = remoteTools
+      .filter((_remoteTool, index) => !isDefined(sanitizedTools[index]))
+      .map(({ name }) => name);
 
-    return remoteTools.map(sanitizeMcpServerTool).filter(isDefined);
+    if (isNonEmptyArray(droppedToolNames)) {
+      this.logger.warn(
+        `Dropped ${droppedToolNames.length} invalid tool(s) of MCP server ${mcpServer.id}: ${JSON.stringify(droppedToolNames)}`,
+      );
+    }
+
+    return sanitizedTools.filter(isDefined);
   }
 }

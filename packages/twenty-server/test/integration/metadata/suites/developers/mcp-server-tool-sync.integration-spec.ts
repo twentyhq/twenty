@@ -184,6 +184,23 @@ describe('mcpServer tool sync (e2e)', () => {
     expect(created.toolsSyncError).toEqual(expect.any(String));
   });
 
+  it('drops the cached tools when the url changes to an unreachable server', async () => {
+    const created = await createAndTrack({ url: fakeMcpServer.url });
+
+    expect(created.tools).toHaveLength(1);
+
+    const updated = await updateMcpServer({
+      id: created.id,
+      update: { url: UNREACHABLE_URL },
+    });
+
+    expect(updated.body.data.updateMcpServer.tools).toEqual([]);
+    expect(updated.body.data.updateMcpServer.toolsSyncedAt).toBeNull();
+    expect(updated.body.data.updateMcpServer.toolsSyncError).toEqual(
+      expect.any(String),
+    );
+  });
+
   it('re-syncs when the url changes and keeps the last good list on a failed re-sync', async () => {
     const created = await createAndTrack({ url: UNREACHABLE_URL });
 

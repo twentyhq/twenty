@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.53.0', 1793160000000)
+@RegisteredInstanceCommand('2.53.0', 1793186214994)
 export class AddToolsToMcpServerFastInstanceCommand
   implements FastInstanceCommand
 {

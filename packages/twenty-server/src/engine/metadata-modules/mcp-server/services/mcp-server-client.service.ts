@@ -11,9 +11,8 @@ import { IsNull, Repository } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import {
   McpServerException,
@@ -28,7 +27,7 @@ const LIST_TOOLS_MAX_PAGES = 10;
 type McpServerTarget = Pick<
   FlatMcpServer,
   'url' | 'connectionProviderId' | 'workspaceId'
-> & { userWorkspaceId?: string | null };
+> & { userWorkspaceId?: string };
 
 @Injectable()
 export class McpServerClientService {
@@ -38,13 +37,12 @@ export class McpServerClientService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   // One deadline spans the handshake and every page: the sync runs inside a mutation.
   async listTools(target: McpServerTarget): Promise<Tool[]> {
-    const signal = AbortSignal.timeout(LIST_TOOLS_TIMEOUT_MS);
     const accessToken = await this.resolveAccessToken(target);
+    const signal = AbortSignal.timeout(LIST_TOOLS_TIMEOUT_MS);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
       fetch: this.buildFetch(target.workspaceId),
@@ -108,8 +106,6 @@ export class McpServerClientService {
     return (url, init) => axiosFetch(url.toString(), init);
   }
 
-  // The account is picked at call time from the provider's scope: the
-  // workspace's shared account, or the caller's own, never the other one.
   private async resolveAccessToken({
     connectionProviderId,
     workspaceId,
@@ -119,46 +115,25 @@ export class McpServerClientService {
       return null;
     }
 
-    const { flatConnectionProviderMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatConnectionProviderMaps'] },
-      );
-    const connectionProvider = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: connectionProviderId,
-      flatEntityMaps: flatConnectionProviderMaps,
-    });
-
-    if (!isDefined(connectionProvider)) {
-      throw new McpServerException(
-        `Connection provider ${connectionProviderId} not found in workspace ${workspaceId}`,
-        McpServerExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
-      );
-    }
-
-    if (connectionProvider.scope === 'USER' && !isDefined(userWorkspaceId)) {
-      throw new McpServerException(
-        `MCP server with a user-scoped provider needs a caller to pick the account`,
-        McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-      );
-    }
-
+    const baseWhere = {
+      workspaceId,
+      connectionProviderId,
+      archivedAt: IsNull(),
+      authFailedAt: IsNull(),
+    };
     const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: {
-        workspaceId,
-        connectionProviderId,
-        scope: connectionProvider.scope,
-        archivedAt: IsNull(),
-        authFailedAt: IsNull(),
-        ...(connectionProvider.scope === 'USER' && {
-          userWorkspaceId: userWorkspaceId ?? undefined,
-        }),
-      },
+      where: isDefined(userWorkspaceId)
+        ? buildConnectedAccountUsableByCallerWhere({
+            baseWhere,
+            userWorkspaceId,
+          })
+        : { ...baseWhere, scope: 'WORKSPACE' },
       order: { createdAt: 'ASC' },
     });
 
     if (!isDefined(connectedAccount)) {
       throw new McpServerException(
-        `No connected account for provider ${connectionProviderId} in workspace ${workspaceId}`,
+        `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
         McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
       );
     }

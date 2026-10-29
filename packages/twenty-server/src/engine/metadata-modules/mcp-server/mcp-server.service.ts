@@ -87,11 +87,11 @@ export class McpServerService {
         'Multiple validation errors occurred while creating MCP server',
     });
 
-    return this.syncTools(
-      flatMcpServerToCreate.id,
+    return this.syncTools({
+      id: flatMcpServerToCreate.id,
       workspaceId,
       userWorkspaceId,
-    );
+    });
   }
 
   async update(
@@ -117,14 +117,15 @@ export class McpServerService {
             }),
         };
 
+    const flatMcpServerMaps = await this.getFlatMcpServerMaps(workspaceId);
     const existingFlatMcpServer = findFlatMcpServerByIdOrThrow({
-      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      flatMcpServerMaps,
       mcpServerId: input.id,
     });
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
-        flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+        flatMcpServerMaps,
         mcpServerId: input.id,
         update: {
           ...(isDefined(name) && { name }),
@@ -148,7 +149,12 @@ export class McpServerService {
         existingFlatMcpServer.connectionProviderId;
 
     if (hasConnectionChanged) {
-      return this.syncTools(input.id, workspaceId, userWorkspaceId);
+      return this.syncTools({
+        id: input.id,
+        workspaceId,
+        userWorkspaceId,
+        shouldDiscardToolsOnFailure: true,
+      });
     }
 
     return fromFlatMcpServerToMcpServerDto(
@@ -159,17 +165,24 @@ export class McpServerService {
     );
   }
 
-  async syncTools(
-    id: string,
-    workspaceId: string,
-    userWorkspaceId?: string,
-  ): Promise<McpServerDTO> {
+  async syncTools({
+    id,
+    workspaceId,
+    userWorkspaceId,
+    shouldDiscardToolsOnFailure,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+    shouldDiscardToolsOnFailure?: boolean;
+  }): Promise<McpServerDTO> {
     await this.mcpServerToolSyncService.syncTools({
       ...findFlatMcpServerByIdOrThrow({
         flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
         mcpServerId: id,
       }),
       userWorkspaceId,
+      shouldDiscardToolsOnFailure,
     });
 
     return fromFlatMcpServerToMcpServerDto(
