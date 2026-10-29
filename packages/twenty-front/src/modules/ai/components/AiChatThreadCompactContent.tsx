@@ -35,22 +35,6 @@ const StyledPreview = styled.div`
   white-space: nowrap;
 `;
 
-const StyledStreamingPreview = styled.div`
-  min-width: 0;
-  overflow: hidden;
-
-  @media (prefers-reduced-motion: reduce) {
-    & * {
-      animation: none;
-    }
-
-    > * {
-      -webkit-text-fill-color: currentColor;
-      background: none;
-    }
-  }
-`;
-
 type AiChatThreadCompactContentProps = {
   title: ReactNode;
   subtitle: ReactNode;
@@ -68,13 +52,7 @@ export const AiChatThreadCompactContent = ({
       <>
         <StyledSeparator aria-hidden>·</StyledSeparator>
         <StyledPreview>
-          {isStreaming ? (
-            <StyledStreamingPreview>
-              <ShimmeringText>{subtitle}</ShimmeringText>
-            </StyledStreamingPreview>
-          ) : (
-            subtitle
-          )}
+          {isStreaming ? <ShimmeringText>{subtitle}</ShimmeringText> : subtitle}
         </StyledPreview>
       </>
     )}

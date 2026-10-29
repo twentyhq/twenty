@@ -9,13 +9,15 @@ import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant
 const StyledGroup = styled.section<{ $isCompact: boolean }>`
   display: ${({ $isCompact }) => ($isCompact ? 'flex' : 'block')};
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 const StyledHeader = styled.div<{ $isCompact: boolean }>`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  margin-bottom: ${({ $isCompact }) =>
+    $isCompact ? themeCssVariables.spacing[1.5] : '0'};
   padding: ${({ $isCompact }) =>
     $isCompact
       ? `0 ${themeCssVariables.spacing[1]}`
@@ -26,12 +28,6 @@ const StyledTitle = styled.h3<{ $isCompact: boolean }>`
   margin: 0;
   padding: ${({ $isCompact }) =>
     $isCompact ? '0' : `${themeCssVariables.spacing[1]} 0`};
-`;
-
-const StyledThreads = styled.div<{ $isCompact: boolean }>`
-  display: ${({ $isCompact }) => ($isCompact ? 'flex' : 'contents')};
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[0.5]};
 `;
 
 type AiChatThreadListGroupProps = {
@@ -68,7 +64,7 @@ export const AiChatThreadListGroup = ({
           </Text>
         )}
       </StyledHeader>
-      <StyledThreads $isCompact={isCompact}>{children}</StyledThreads>
+      {children}
     </StyledGroup>
   );
 };

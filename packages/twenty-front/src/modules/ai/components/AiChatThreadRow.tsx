@@ -8,7 +8,7 @@ import { Checkbox } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadCompactContent } from '@/ai/components/AiChatThreadCompactContent';
+import { AiChatThreadRowContent } from '@/ai/components/AiChatThreadRowContent';
 import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 
 const StyledRow = styled.div<{ $isCompact: boolean }>`
@@ -66,20 +66,6 @@ const StyledAvatar = styled.div<{ $isCheckable: boolean; $isChecked: boolean }>`
         $isCheckable || $isChecked ? 'none' : 'flex'};
     }
   }
-`;
-
-const StyledHeading = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  line-height: ${themeCssVariables.spacing[4]};
-  min-width: 0;
-`;
-
-const StyledTitle = styled.div`
-  display: flex;
-  flex: 1;
-  min-width: 0;
 `;
 
 const StyledTime = styled.div<{
@@ -220,6 +206,16 @@ export const AiChatThreadRow = ({
       {actions}
     </StyledActions>
   );
+  let rowActions = actionButtons;
+
+  if (isCompact) {
+    rowActions = (
+      <StyledCompactTrailing>
+        {time}
+        {actionButtons}
+      </StyledCompactTrailing>
+    );
+  }
 
   return (
     <ListItem
@@ -301,29 +297,15 @@ export const AiChatThreadRow = ({
           </>
         )
       }
-      actions={
-        isCompact ? (
-          <StyledCompactTrailing>
-            {time}
-            {actionButtons}
-          </StyledCompactTrailing>
-        ) : (
-          actionButtons
-        )
-      }
+      actions={rowActions}
     >
-      {isCompact ? (
-        <AiChatThreadCompactContent
-          title={title}
-          subtitle={subtitle}
-          isStreaming={isStreaming}
-        />
-      ) : (
-        <StyledHeading>
-          <StyledTitle>{title}</StyledTitle>
-          {time}
-        </StyledHeading>
-      )}
+      <AiChatThreadRowContent
+        variant={variant}
+        title={title}
+        subtitle={subtitle}
+        activityTime={time}
+        isStreaming={isStreaming}
+      />
     </ListItem>
   );
 };
