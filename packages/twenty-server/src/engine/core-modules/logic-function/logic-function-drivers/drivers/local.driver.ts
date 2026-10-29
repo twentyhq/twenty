@@ -41,10 +41,7 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import {
-  LogicFunctionExecutionMode,
-  LogicFunctionRuntime,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -93,7 +90,7 @@ export class LocalDriver implements LogicFunctionDriver {
         await this.invokeBrowserBuilder({ ...input, action: 'transpile' }),
       );
     }
-    const { sourceCode, sourceFileName, builtFileName, targetRuntime } = params;
+    const { sourceCode, sourceFileName, builtFileName } = params;
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir } = await temporaryDirManager.init();
 
@@ -110,8 +107,7 @@ export class LocalDriver implements LogicFunctionDriver {
         outfile: builtBundleFilePath,
         platform: 'node',
         format: 'esm',
-        target:
-          targetRuntime === LogicFunctionRuntime.NODE18 ? 'node18' : 'node22',
+        target: 'esnext',
         bundle: true,
         sourcemap: true,
         packages: 'external',
