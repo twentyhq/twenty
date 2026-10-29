@@ -9,6 +9,7 @@ import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOp
 import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
+import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -69,6 +70,7 @@ export const AiChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
+          <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={currentAiChatThread} />
