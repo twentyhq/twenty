@@ -76,7 +76,7 @@ export const buildPullEntities = (
     string,
     ScannedSourceFile
   > = new Map(),
-  systemPermissionFlag: Record<string, unknown> = SystemPermissionFlag,
+  systemPermissionFlag: Record<string, string> = SystemPermissionFlag,
 ): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;

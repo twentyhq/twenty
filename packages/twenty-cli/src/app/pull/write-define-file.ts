@@ -35,7 +35,7 @@ const MAX_IMPORT_LINE_LENGTH = 80;
 export type EnumBinding = {
   path: string[];
   symbol: string;
-  members: Record<string, unknown>;
+  members: Record<string, string>;
 };
 
 const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
@@ -92,7 +92,7 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
 ];
 
 export const buildRoleEnumBindings = (
-  systemPermissionFlag: Record<string, unknown>,
+  systemPermissionFlag: Record<string, string>,
 ): EnumBinding[] => [
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],

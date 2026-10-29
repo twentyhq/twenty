@@ -1,12 +1,6 @@
 import { SystemPermissionFlag as SharedSystemPermissionFlag } from 'twenty-shared/constants';
 
-const {
-  CONNECTED_ACCOUNTS: USER_APPS,
-  APPLICATIONS: WORKSPACE_APPS,
-  ...otherSystemPermissionFlags
-} = SharedSystemPermissionFlag;
-
-type SystemPermissionFlagWithDeprecatedAliases = Omit<
+type SdkSystemPermissionFlag = Omit<
   typeof SharedSystemPermissionFlag,
   'CONNECTED_ACCOUNTS' | 'APPLICATIONS'
 > & {
@@ -18,12 +12,10 @@ type SystemPermissionFlagWithDeprecatedAliases = Omit<
   readonly APPLICATIONS: typeof SharedSystemPermissionFlag.APPLICATIONS;
 };
 
-// The server keys stay CONNECTED_ACCOUNTS and APPLICATIONS; only the SDK names change.
-// Non-enumerable so Object.keys, Object.values and app pull list each flag once.
-export const SystemPermissionFlag = Object.defineProperties(
-  { ...otherSystemPermissionFlags, USER_APPS, WORKSPACE_APPS },
-  {
-    CONNECTED_ACCOUNTS: { value: USER_APPS },
-    APPLICATIONS: { value: WORKSPACE_APPS },
-  },
-) as SystemPermissionFlagWithDeprecatedAliases;
+// Only the SDK names change; the API keeps the CONNECTED_ACCOUNTS and APPLICATIONS keys.
+// The new names come first so app pull, which takes the first matching name, writes them.
+export const SystemPermissionFlag: SdkSystemPermissionFlag = {
+  USER_APPS: SharedSystemPermissionFlag.CONNECTED_ACCOUNTS,
+  WORKSPACE_APPS: SharedSystemPermissionFlag.APPLICATIONS,
+  ...SharedSystemPermissionFlag,
+};

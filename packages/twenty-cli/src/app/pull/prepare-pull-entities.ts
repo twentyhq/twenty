@@ -16,7 +16,7 @@ export const preparePullEntities = ({
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
-  systemPermissionFlag?: Record<string, unknown>;
+  systemPermissionFlag?: Record<string, string>;
 }) => {
   const sourceFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
 

@@ -1,6 +1,7 @@
+import { createRequire } from 'node:module';
+import { join } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
-import { loadAppSdkDefineExports } from '@/app/pull/load-app-sdk-define-exports';
 import { type PullWrite } from '@/app/pull/plan-pull-writes';
 import { PULL_MINIMUM_SDK_VERSION } from '@/app/pull/pull-minimum-sdk-version.constant';
 import { CliError } from '@/output/cli-error';
@@ -20,7 +21,9 @@ export const assertPullSdkExports = ({
     return;
   }
 
-  const defineExports = loadAppSdkDefineExports(appPath);
+  const defineExports: Record<string, unknown> = createRequire(
+    join(appPath, 'package.json'),
+  )('twenty-sdk/define');
 
   const missingNames = [...requiredNames]
     .filter((name) => !isDefined(defineExports[name]))

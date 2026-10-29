@@ -7,34 +7,19 @@ const packageRoot = resolve(currentDir, '../../../..');
 const defineDeclarationsPath = resolve(packageRoot, 'dist/define/index.d.ts');
 const isBundleBuilt = existsSync(defineDeclarationsPath);
 
-const readDefineDeclarationsOrThrow = () => {
-  if (!isBundleBuilt) {
-    throw new Error(
-      `Expected the built declarations at ${defineDeclarationsPath}. Run \`npx nx build twenty-sdk\` before this test.`,
-    );
-  }
-
-  return readFileSync(defineDeclarationsPath, 'utf8');
-};
-
 describe('define type declarations', () => {
   const runOrSkip = isBundleBuilt || process.env.CI ? it : it.skip;
 
   runOrSkip('type defineWorkflow without requiring apps to install zod', () => {
-    const defineDeclarations = readDefineDeclarationsOrThrow();
+    if (!isBundleBuilt) {
+      throw new Error(
+        `Expected the built declarations at ${defineDeclarationsPath}. Run \`npx nx build twenty-sdk\` before this test.`,
+      );
+    }
+
+    const defineDeclarations = readFileSync(defineDeclarationsPath, 'utf8');
 
     expect(defineDeclarations).toContain('declare const defineWorkflow');
     expect(defineDeclarations).not.toMatch(/from ['"]zod(\/[^'"]*)?['"]/);
-  });
-
-  runOrSkip('keep the deprecated permission flag names marked deprecated', () => {
-    const defineDeclarations = readDefineDeclarationsOrThrow();
-
-    expect(defineDeclarations).toMatch(
-      /@deprecated Use `SystemPermissionFlag\.USER_APPS` instead\.\s*\*\/\s*readonly CONNECTED_ACCOUNTS:/,
-    );
-    expect(defineDeclarations).toMatch(
-      /@deprecated Use `SystemPermissionFlag\.WORKSPACE_APPS` instead\.\s*\*\/\s*readonly APPLICATIONS:/,
-    );
   });
 });

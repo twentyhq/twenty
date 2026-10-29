@@ -21,12 +21,12 @@ afterEach(async () => {
   );
 });
 
-const createApp = async (sdkDefineSource?: string) => {
+const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
   const appPath = await mkdtemp(join(tmpdir(), 'twenty-pull-flags-'));
   appPaths.push(appPath);
   await writeFile(join(appPath, 'package.json'), '{}');
 
-  if (sdkDefineSource !== undefined) {
+  if (appSystemPermissionFlag !== undefined) {
     const sdkPath = join(appPath, 'node_modules/twenty-sdk');
     await mkdir(sdkPath, { recursive: true });
     await writeFile(
@@ -36,7 +36,10 @@ const createApp = async (sdkDefineSource?: string) => {
         exports: { './define': './define.cjs' },
       }),
     );
-    await writeFile(join(sdkPath, 'define.cjs'), sdkDefineSource);
+    await writeFile(
+      join(sdkPath, 'define.cjs'),
+      `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`,
+    );
   }
 
   return appPath;
@@ -58,35 +61,27 @@ const writeRoleFile = (appPath: string) =>
   }).content;
 
 describe('resolvePullSystemPermissionFlag', () => {
-  it('uses the new names when the app SDK exposes them', async () => {
-    const appPath = await createApp(
-      `exports.SystemPermissionFlag = Object.defineProperties(
-        ${JSON.stringify({
-          USER_APPS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-          WORKSPACE_APPS: SystemPermissionFlag.APPLICATIONS,
-        })},
-        {
-          CONNECTED_ACCOUNTS: { value: '${SystemPermissionFlag.CONNECTED_ACCOUNTS}' },
-          APPLICATIONS: { value: '${SystemPermissionFlag.APPLICATIONS}' },
-        },
-      );`,
-    );
+  it('writes the new names when the app SDK lists them first', async () => {
+    const appPath = await createApp({
+      USER_APPS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+      WORKSPACE_APPS: SystemPermissionFlag.APPLICATIONS,
+      ...SystemPermissionFlag,
+    });
 
     const content = writeRoleFile(appPath);
 
     expect(content).toContain('SystemPermissionFlag.USER_APPS');
     expect(content).toContain('SystemPermissionFlag.WORKSPACE_APPS');
+    expect(content).toContain('SystemPermissionFlag.WORKFLOWS');
     expect(content).not.toContain('SystemPermissionFlag.CONNECTED_ACCOUNTS');
     expect(content).not.toContain('SystemPermissionFlag.APPLICATIONS');
   });
 
-  it('keeps the names an older app SDK exposes and writes missing flags as identifiers', async () => {
-    const appPath = await createApp(
-      `exports.SystemPermissionFlag = ${JSON.stringify({
-        CONNECTED_ACCOUNTS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-        APPLICATIONS: SystemPermissionFlag.APPLICATIONS,
-      })};`,
-    );
+  it('keeps the names of an older app SDK and writes flags it lacks as identifiers', async () => {
+    const appPath = await createApp({
+      CONNECTED_ACCOUNTS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+      APPLICATIONS: SystemPermissionFlag.APPLICATIONS,
+    });
 
     const content = writeRoleFile(appPath);
 
