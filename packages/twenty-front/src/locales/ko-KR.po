@@ -907,11 +907,6 @@ msgstr "객체 {morphRelationCount}개"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, other {무료 크레딧 {formattedNewlyEarnedCredits}개를 받았습니다}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, other {검증된 애플리케이션과 일치하는 항목이 없습니다. 검증되지 않은 애플리케이션 #개를 사용할 수 있습니다.}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1214,6 +1209,11 @@ msgstr "{unitCount, plural, one {주} other {주}}"
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {년} other {년}}"
+
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr ""
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -3330,11 +3330,6 @@ msgstr "SSO 우회 권한을 가진 사용자를 위한 Google 기반 로그인 
 msgid "Allow importing data from CSV files"
 msgstr "CSV 파일에서 데이터를 가져오기 허용"
 
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "설치 허용"
-
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Google's single sign-on functionality."
@@ -3800,11 +3795,6 @@ msgstr "응용 프로그램이 성공적으로 설치되었습니다."
 msgid "Application Logs"
 msgstr "응용 프로그램 로그"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "이 앱은 마켓플레이스에 등재되어 있지 않습니다. 직접 링크로 공유되었습니다"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3844,10 +3834,10 @@ msgstr "애플리케이션 변수"
 msgid "Applications"
 msgstr "응용 프로그램"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "아래의 애플리케이션은 검증되지 않았습니다. 사용에 따른 책임은 사용자 본인에게 있습니다."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr ""
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -9707,11 +9697,6 @@ msgstr "모델의 표시 이름"
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
 msgid "Display text on multiple lines"
 msgstr "여러 줄에 텍스트 표시"
-
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "이 앱을 NPM 패키지 목록에 표시"
 
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -16278,8 +16263,14 @@ msgstr "체크박스가 있는 목록"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "등재됨"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr ""
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16909,10 +16900,10 @@ msgstr "모두 완료로 표시"
 msgid "Mark as favourite"
 msgstr "즐겨찾기로 표시"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "이 앱을 검토 및 승인된 것으로 표시"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr ""
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -25230,6 +25221,11 @@ msgstr "레코드 타임라인에 이 활동 유형 표시"
 msgid "Show this object's records in the command menu ({0})."
 msgstr "이 객체의 레코드를 명령 메뉴({0})에 표시합니다."
 
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr ""
+
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Show value in center"
@@ -27320,11 +27316,11 @@ msgstr "이 애플리케이션은 마켓플레이스에서 사용할 수 없습�
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "이 애플리케이션은 이 워크스페이스에 설치되어 있지 않습니다. 제거되었거나 링크가 올바르지 않을 수 있습니다."
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "이 애플리케이션은 Twenty에서 검증하지 않았습니다. 사용은 본인 책임하에 하십시오."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr ""
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -29946,17 +29942,6 @@ msgstr ""
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Very High"
 msgstr "매우 높음"
-
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "검증 완료됨"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "검증된 앱만"
 
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
