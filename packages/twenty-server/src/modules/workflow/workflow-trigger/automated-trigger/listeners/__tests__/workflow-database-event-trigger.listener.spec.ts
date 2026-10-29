@@ -10,6 +10,7 @@ import {
   RecordShareRowCause,
   RelationType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -31,6 +32,18 @@ import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/w
 
 const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
 const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+const STANDARD_APPLICATION_ROLE_ID = 'standard-application-role-id';
+const FULL_ACCESS_TO_TEST_OBJECT = {
+  'test-object-metadata': {
+    canReadObjectRecords: true,
+    canUpdateObjectRecords: true,
+    canSoftDeleteObjectRecords: true,
+    canDestroyObjectRecords: true,
+    restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
+  },
+};
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
@@ -71,34 +84,34 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             version: applicationVersion,
             defaultRoleId: applicationRole ? 'application-role-id' : null,
           },
+          [TWENTY_STANDARD_APPLICATION_ID]: {
+            id: TWENTY_STANDARD_APPLICATION_ID,
+            defaultRoleId: STANDARD_APPLICATION_ROLE_ID,
+          },
         },
-        idByUniversalIdentifier: {},
+        idByUniversalIdentifier: {
+          [TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER]:
+            TWENTY_STANDARD_APPLICATION_ID,
+        },
       },
-      ...(isApplicationWorkflow
-        ? {
-            rolesPermissions: applicationRole
-              ? {
-                  'application-role-id': {
-                    'test-object-metadata': {
-                      canReadObjectRecords:
-                        applicationRole.canReadObjectRecords,
-                      canUpdateObjectRecords: false,
-                      canSoftDeleteObjectRecords: false,
-                      canDestroyObjectRecords: false,
-                      restrictedFields: {},
-                      rowLevelPermissionPredicates: [],
-                      rowLevelPermissionPredicateGroups: [],
-                    },
-                  },
-                }
-              : {},
-            roleIdsWithAllRecordsAccess: [],
-            flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-            flatRowLevelPermissionPredicateGroupMaps:
-              createEmptyFlatEntityMaps(),
-            flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-          }
-        : {}),
+      rolesPermissions: {
+        [STANDARD_APPLICATION_ROLE_ID]: FULL_ACCESS_TO_TEST_OBJECT,
+        ...(isDefined(applicationRole) && {
+          'application-role-id': {
+            'test-object-metadata': {
+              ...FULL_ACCESS_TO_TEST_OBJECT['test-object-metadata'],
+              canReadObjectRecords: applicationRole.canReadObjectRecords,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          },
+        }),
+      },
+      roleIdsWithAllRecordsAccess: [STANDARD_APPLICATION_ROLE_ID],
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
         byWorkflowId: Object.fromEntries(
@@ -677,7 +690,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   },
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
-                rolesPermissions: {},
+                rolesPermissions: {
+                  [applicationRoleId]: FULL_ACCESS_TO_TEST_OBJECT,
+                },
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),

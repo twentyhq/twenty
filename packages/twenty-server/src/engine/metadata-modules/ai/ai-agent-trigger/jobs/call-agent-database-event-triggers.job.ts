@@ -11,15 +11,13 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/find-agent-database-event-triggers-matching-event.util';
 import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
@@ -46,6 +44,7 @@ export class CallAgentDatabaseEventTriggersJob {
 
     const {
       flatAgentMaps,
+      flatApplicationMaps,
       flatRoleTargetByAgentIdMaps,
       rolesPermissions,
       roleIdsWithAllRecordsAccess,
@@ -55,6 +54,7 @@ export class CallAgentDatabaseEventTriggersJob {
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
+      'flatApplicationMaps',
       'flatRoleTargetByAgentIdMaps',
       'rolesPermissions',
       'roleIdsWithAllRecordsAccess',
@@ -80,48 +80,32 @@ export class CallAgentDatabaseEventTriggersJob {
 
     for (const { flatAgent, trigger } of matchingAgentTriggers) {
       const agentRoleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
-      const agentObjectsPermissions = isDefined(agentRoleId)
-        ? rolesPermissions[agentRoleId]
-        : undefined;
 
-      // An agent receives what its role lets it read: without a role it reads nothing
-      if (!isDefined(agentRoleId) || !isDefined(agentObjectsPermissions)) {
+      const readableEvents = await resolveEventsReadableByRole({
+        intersectionOf: { agentRoleId: agentRoleId ?? null },
+        owningApplicationId: flatAgent.applicationId,
+        workspaceEventBatch,
+        eventRecordAccessGate,
+        rolesPermissions,
+        roleIdsWithAllRecordsAccess,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        flatApplicationMaps,
+      });
+      const admittedEvents = readableEvents.filter(
+        (event) =>
+          !isDatabaseEventCausedByAgent({
+            event,
+            eventName,
+            agentId: flatAgent.id,
+          }),
+      );
+
+      if (!isDefined(agentRoleId) || admittedEvents.length === 0) {
         continue;
       }
-
-      const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRoleRowAccessPolicySubject({
-            roleId: agentRoleId,
-            owningApplicationId: flatAgent.applicationId,
-            rolesPermissions,
-            roleIdsWithAllRecordsAccess,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-            flatObjectMetadataMaps,
-          }),
-        );
-      const admittedEvents = workspaceEventBatch.events
-        .filter((event) => admittedRecordIds.has(event.recordId))
-        .filter(
-          (event) =>
-            !isDatabaseEventCausedByAgent({
-              event,
-              eventName,
-              agentId: flatAgent.id,
-            }),
-        )
-        .map((event) =>
-          omitRestrictedFieldsFromEvent({
-            event,
-            objectMetadata,
-            objectsPermissions: agentObjectsPermissions,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          }),
-        )
-        .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
 
       const eventsToRunOn = filterEventsByUpdatedFields({
         events: admittedEvents,

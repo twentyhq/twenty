@@ -304,7 +304,8 @@ export class AgentChatSharingService {
             canManageSharing: shouldConsiderNewShares && canManageSharing,
             subject: buildWorkspaceMemberRowAccessPolicySubject({
               ...permissionMaps,
-              roleId,
+              roleIds: [roleId],
+              objectsPermissions: permissionMaps.rolesPermissions[roleId],
               owningApplicationId: undefined,
               workspaceMemberId: member.id,
               workspaceMember: member,

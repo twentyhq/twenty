@@ -114,7 +114,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const admittedEvents = await resolveEventsReadableByRole({
-        roleId: application.defaultRoleId,
+        intersectionOf: { applicationRoleId: application.defaultRoleId },
         owningApplicationId: application.id,
         workspaceEventBatch,
         eventRecordAccessGate,
@@ -124,6 +124,7 @@ export class CallDatabaseEventTriggerJobsJob {
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        flatApplicationMaps,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,

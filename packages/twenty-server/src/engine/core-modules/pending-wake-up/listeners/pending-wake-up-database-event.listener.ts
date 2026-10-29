@@ -10,7 +10,7 @@ import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/se
 import { buildPendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/utils/build-pending-wake-up-event.util';
 import { doesEventMatchPendingWakeUp } from 'src/engine/core-modules/pending-wake-up/utils/does-event-match-pending-wake-up.util';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
+import { resolveAutomationReadableEvents } from 'src/engine/core-modules/record-share/utils/resolve-automation-readable-events.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -68,7 +68,7 @@ export class PendingWakeUpDatabaseEventListener {
       return;
     }
 
-    const admittedRecordIds = await resolveAutomationAdmittedRecordIds({
+    const readableEvents = await resolveAutomationReadableEvents({
       payload,
       workspaceCacheService: this.workspaceCacheService,
       recordAccessPolicyService: this.recordAccessPolicyService,
@@ -85,13 +85,11 @@ export class PendingWakeUpDatabaseEventListener {
         continue;
       }
 
-      const matchingEvent = payload.events.find(
-        (event) =>
-          admittedRecordIds.has(event.recordId) &&
-          doesEventMatchPendingWakeUp({
-            condition: eventWakeUp.condition,
-            event,
-          }),
+      const matchingEvent = readableEvents.find((event) =>
+        doesEventMatchPendingWakeUp({
+          condition: eventWakeUp.condition,
+          event,
+        }),
       );
 
       if (!isDefined(matchingEvent)) {

@@ -6,6 +6,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
+import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
 const OWNING_APPLICATION_ID = 'stripe-application-id';
@@ -57,28 +58,37 @@ const FULL_ACCESS: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const updateEvent: ObjectRecordUpdateEvent = {
+const buildUpdateEvent = (
+  updatedFields: string[],
+): ObjectRecordUpdateEvent => ({
   recordId: 'record-1',
   properties: {
-    updatedFields: ['name', 'secret'],
+    updatedFields,
     before: { id: 'record-1', name: 'Old', secret: 'old' },
     after: { id: 'record-1', name: 'New', secret: 'new' },
-    diff: {
-      name: { before: 'Old', after: 'New' },
-      secret: { before: 'old', after: 'new' },
-    },
+    diff: Object.fromEntries(
+      updatedFields.map((field) => [field, { before: 'old', after: 'new' }]),
+    ),
   },
-};
+});
 
-const resolveForApplication = (owningApplicationId: string) =>
+const resolveEvents = ({
+  intersectionOf,
+  applicationIdOfRole = OWNING_APPLICATION_ID,
+  events = [buildUpdateEvent(['name', 'secret'])],
+}: {
+  intersectionOf: RoleIdsBySource;
+  applicationIdOfRole?: string;
+  events?: ObjectRecordUpdateEvent[];
+}) =>
   resolveEventsReadableByRole({
-    roleId: ROLE_ID,
-    owningApplicationId,
+    intersectionOf,
+    owningApplicationId: OWNING_APPLICATION_ID,
     workspaceEventBatch: {
       name: 'invoice.updated',
       workspaceId: 'workspace-id',
       objectMetadata: invoice,
-      events: [updateEvent],
+      events,
     },
     eventRecordAccessGate: {
       resolveAdmittedRecordIds: async () => new Set(['record-1']),
@@ -89,23 +99,62 @@ const resolveForApplication = (owningApplicationId: string) =>
     flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatApplicationMaps: {
+      byId: {
+        [applicationIdOfRole]: {
+          id: applicationIdOfRole,
+          defaultRoleId: ROLE_ID,
+          deletedAt: null,
+        },
+      },
+    },
   });
 
 describe('resolveEventsReadableByRole', () => {
-  it('should omit a field whose read is disabled from another application event', async () => {
-    const [event] = await resolveForApplication(OTHER_APPLICATION_ID);
+  it('should omit a field whose read is disabled from another application', async () => {
+    const [event] = await resolveEvents({
+      intersectionOf: { applicationRoleId: ROLE_ID },
+      applicationIdOfRole: OTHER_APPLICATION_ID,
+    });
 
     expect(event.properties.after).toEqual({ id: 'record-1', name: 'New' });
     expect(event.properties.updatedFields).toEqual(['name']);
   });
 
   it('should keep the field for the application that owns it', async () => {
-    const [event] = await resolveForApplication(OWNING_APPLICATION_ID);
+    const [event] = await resolveEvents({
+      intersectionOf: { applicationRoleId: ROLE_ID },
+    });
 
     expect(event.properties.after).toEqual({
       id: 'record-1',
       name: 'New',
       secret: 'new',
     });
+  });
+
+  it('should omit the field for an agent, even of the owning application', async () => {
+    const [event] = await resolveEvents({
+      intersectionOf: { agentRoleId: ROLE_ID },
+    });
+
+    expect(event.properties.after).toEqual({ id: 'record-1', name: 'New' });
+  });
+
+  it('should drop an update that only touches a read-disabled field', async () => {
+    const events = await resolveEvents({
+      intersectionOf: { agentRoleId: ROLE_ID },
+      events: [buildUpdateEvent(['secret'])],
+    });
+
+    expect(events).toEqual([]);
+  });
+
+  it('should return nothing without a role', async () => {
+    const events = await resolveEvents({
+      intersectionOf: { applicationRoleId: null },
+    });
+
+    expect(events).toEqual([]);
   });
 });

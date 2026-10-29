@@ -163,9 +163,9 @@ export class RecordSharePrincipalService {
         .findOne({ where: { id: principal.principalId } });
       const policy = repository.buildRowAccessPolicy({
         subject: buildWorkspaceMemberRowAccessPolicySubject({
-          roleId,
+          roleIds: [roleId],
+          objectsPermissions: roleObjectsPermissions,
           owningApplicationId: undefined,
-          rolesPermissions,
           roleIdsWithAllRecordsAccess,
           flatRowLevelPermissionPredicateMaps,
           flatRowLevelPermissionPredicateGroupMaps,

@@ -43,7 +43,7 @@ import {
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
-import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
+import { resolveAutomationReadableEvents } from 'src/engine/core-modules/record-share/utils/resolve-automation-readable-events.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -491,15 +491,11 @@ export class WorkflowDatabaseEventTriggerListener {
     standardAndCustomApplicationIds: Set<string>;
   }): Promise<ObjectRecordEvent[]> {
     if (standardAndCustomApplicationIds.has(applicationId)) {
-      const admittedRecordIds = await resolveAutomationAdmittedRecordIds({
+      return resolveAutomationReadableEvents({
         payload: enrichedPayload,
         workspaceCacheService: this.workspaceCacheService,
         recordAccessPolicyService: this.recordAccessPolicyService,
       });
-
-      return enrichedPayload.events.filter((event) =>
-        admittedRecordIds.has(event.recordId),
-      );
     }
 
     const {
@@ -521,9 +517,11 @@ export class WorkflowDatabaseEventTriggerListener {
     ]);
 
     return resolveEventsReadableByRole({
-      roleId:
-        findActiveFlatApplicationById(flatApplicationMaps, applicationId)
-          ?.defaultRoleId ?? null,
+      intersectionOf: {
+        applicationRoleId:
+          findActiveFlatApplicationById(flatApplicationMaps, applicationId)
+            ?.defaultRoleId ?? null,
+      },
       owningApplicationId: applicationId,
       workspaceEventBatch: payload,
       eventRecordAccessGate:
@@ -534,6 +532,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
+      flatApplicationMaps,
     });
   }
 

@@ -160,6 +160,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     cacheData = {
       featureFlagsMap: {},
       flatAgentMaps: buildFlatAgentMaps([buildTrigger()]),
+      flatApplicationMaps: { byId: {} },
       flatRoleTargetByAgentIdMaps: {
         [AGENT_ID]: { agentId: AGENT_ID, roleId: AGENT_ROLE_ID },
       },
