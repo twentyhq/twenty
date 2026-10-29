@@ -37,7 +37,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { buildApplicationQueueJobScope } from 'src/engine/core-modules/message-queue/utils/build-application-queue-job-scope.util';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import {
   RECORD_EXPORT_CONNECTION_TTL_MS,
   RECORD_EXPORT_DOWNLOAD_TOKEN_TTL_SECONDS,
