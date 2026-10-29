@@ -29,7 +29,10 @@ export const postBackendGraphQL = <TData>({
     const response = await fetch(`${serverBaseUrl}/graphql`, {
       method: 'POST',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-twenty-session-cookie': '1',
+      },
       body: JSON.stringify(requestBody),
     });
 
