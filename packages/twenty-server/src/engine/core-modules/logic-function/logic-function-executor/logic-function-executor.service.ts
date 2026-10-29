@@ -44,7 +44,6 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
-import { createServerRouteResolverQueryBuilder } from 'src/engine/core-modules/server-route-trigger/utils/create-server-route-resolver-query-builder.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ThrottlerException,
@@ -482,10 +481,11 @@ export class LogicFunctionExecutorService {
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
     );
-    const serverRouteIds = await this.buildServerRouteIdsByUniversalIdentifier({
-      flatApplication,
-      flatLogicFunctionMaps,
-    });
+    const serverRouteIdByUniversalIdentifier =
+      await this.buildServerRouteIdByUniversalIdentifier({
+        flatApplication,
+        flatLogicFunctionMaps,
+      });
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -515,13 +515,15 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
-      [DEFAULT_SERVER_ROUTE_IDS_NAME]: JSON.stringify(serverRouteIds),
+      [DEFAULT_SERVER_ROUTE_IDS_NAME]: JSON.stringify(
+        serverRouteIdByUniversalIdentifier,
+      ),
       APPLICATION_ID: flatApplication.id,
     };
   }
 
   // Ids come from the registration owner's workspace, where routes resolve.
-  private async buildServerRouteIdsByUniversalIdentifier({
+  private async buildServerRouteIdByUniversalIdentifier({
     flatApplication,
     flatLogicFunctionMaps,
   }: {
@@ -546,14 +548,23 @@ export class LogicFunctionExecutorService {
       return {};
     }
 
-    const resolvers = await createServerRouteResolverQueryBuilder(
-      this.logicFunctionRepository,
-    )
-      .andWhere(
+    const resolvers = await this.logicFunctionRepository
+      .createQueryBuilder('logicFunction')
+      .select(['logicFunction.id', 'logicFunction.universalIdentifier'])
+      .innerJoin('logicFunction.application', 'application')
+      .innerJoin(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .where(
         'application.applicationRegistrationId = :applicationRegistrationId',
         {
           applicationRegistrationId: flatApplication.applicationRegistrationId,
         },
+      )
+      .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+      .andWhere(
+        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
       )
       .getMany();
 
