@@ -87,7 +87,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 
-- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases for the same universal identifiers and keep working for now, so `Object.values(SystemPermissionFlag)` lists those two identifiers twice.
+- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names are aliases for the same universal identifiers and keep working for now. `Object.values(SystemPermissionFlag)` lists those two identifiers twice, and `defineRole` keeps each one once.
 
 ### Changed
 
@@ -106,7 +106,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   `twenty build` now also emits a warning when `twenty-client-sdk` is still listed under `dependencies`.
 
-- **`defineRole` and `defineApplicationRole` reject a permission flag listed twice in `permissionFlagUniversalIdentifiers`.** Syncing such a role already failed on the server. A deprecated `SystemPermissionFlag` name and its replacement are the same flag.
+- **`defineRole` and `defineApplicationRole` keep each permission flag once in `permissionFlagUniversalIdentifiers`.** A flag listed twice, for example under its deprecated and new `SystemPermissionFlag` names or through `Object.values(SystemPermissionFlag)`, is sent once. Syncing a role with a repeated flag used to fail on the server.
 
 - **`twenty app pull` names permission flags after the app's installed `twenty-sdk`.** Role files get `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` with `twenty-sdk` 2.54 or later, and `CONNECTED_ACCOUNTS` and `APPLICATIONS` with earlier versions. A flag the installed `SystemPermissionFlag` lacks is written as its universal identifier string.
 

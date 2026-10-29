@@ -58,7 +58,7 @@ export default defineRole({
   `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`
   are available from `twenty-sdk` 2.54 onward; earlier versions name them
   `CONNECTED_ACCOUNTS` and `APPLICATIONS`. The old names are deprecated aliases
-  for the same flags, so list each flag under one name only. The API still
+  for the same flags, and a role keeps each flag once. The API still
   reports these flags under their old keys, for example in
   `currentUserWorkspace.permissionFlags`.
 </Note>

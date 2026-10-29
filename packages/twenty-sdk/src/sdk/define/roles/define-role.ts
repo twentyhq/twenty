@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
@@ -31,26 +33,6 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
         errors.push('Field permission must have a fieldUniversalIdentifier');
       }
     }
-  }
-
-  const permissionFlagUniversalIdentifiers =
-    config.permissionFlagUniversalIdentifiers ?? [];
-  const seenPermissionFlagUniversalIdentifiers = new Set<string>();
-
-  for (const permissionFlagUniversalIdentifier of permissionFlagUniversalIdentifiers) {
-    if (
-      seenPermissionFlagUniversalIdentifiers.has(
-        permissionFlagUniversalIdentifier,
-      )
-    ) {
-      errors.push(
-        `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}"`,
-      );
-    }
-
-    seenPermissionFlagUniversalIdentifiers.add(
-      permissionFlagUniversalIdentifier,
-    );
   }
 
   const predicateGroupUniversalIdentifiers = new Set<string>();
@@ -132,5 +114,15 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({
+    config: isDefined(config.permissionFlagUniversalIdentifiers)
+      ? {
+          ...config,
+          permissionFlagUniversalIdentifiers: [
+            ...new Set(config.permissionFlagUniversalIdentifiers),
+          ],
+        }
+      : config,
+    errors,
+  });
 };
