@@ -3772,6 +3772,8 @@ export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
+    city?: Scalars['String']
+    country?: Scalars['String']
     createdAt: Scalars['DateTime']
     expiresAt: Scalars['DateTime']
     id: Scalars['UUID']
@@ -3779,6 +3781,7 @@ export interface UserSession {
     isCurrent: Scalars['Boolean']
     isImpersonating: Scalars['Boolean']
     lastActiveAt: Scalars['DateTime']
+    region?: Scalars['String']
     userAgent?: Scalars['String']
     workspaceId?: Scalars['UUID']
     __typename: 'UserSession'
@@ -8633,6 +8636,8 @@ export interface UserApplicationVariableValueGenqlSelection{
 
 export interface UserSessionGenqlSelection{
     authProvider?: boolean | number
+    city?: boolean | number
+    country?: boolean | number
     createdAt?: boolean | number
     expiresAt?: boolean | number
     id?: boolean | number
@@ -8640,6 +8645,7 @@ export interface UserSessionGenqlSelection{
     isCurrent?: boolean | number
     isImpersonating?: boolean | number
     lastActiveAt?: boolean | number
+    region?: boolean | number
     userAgent?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
