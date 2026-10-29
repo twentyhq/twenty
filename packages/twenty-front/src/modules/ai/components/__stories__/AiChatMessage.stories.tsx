@@ -337,6 +337,10 @@ const mockLongUserMessage: ExtendedUIMessage = {
 4. Add a dashboard with won revenue per month and the number of open deals per owner.
 5. Create a workflow that assigns a follow-up task to the owner when a deal has had no activity for seven days.
 6. Draft a short welcome email I can send to the team explaining the new pipeline.
+7. Add a Lost Reason select field on Opportunities and make it required when a deal moves to Lost.
+8. Create a weekly view of deals closing this month for the Monday sales meeting.
+9. Tag the companies that have no open opportunity so we can plan outreach.
+10. Set up a reminder task for each owner to update their deal amounts every Friday.
 
 Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match.`,
     },

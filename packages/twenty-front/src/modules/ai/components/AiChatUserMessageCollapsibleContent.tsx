@@ -1,16 +1,11 @@
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import {
-  type PointerEvent,
-  type ReactNode,
-  useCallback,
-  useState,
-} from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type ReactNode, useState } from 'react';
 import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapsedLineCount';
+import { isAiChatUserMessageLong } from '@/ai/utils/isAiChatUserMessageLong';
 
 const StyledContent = styled.div<{ isCollapsed: boolean }>`
   mask-image: ${({ isCollapsed }) =>
@@ -29,32 +24,21 @@ const StyledToggleContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const isTallerThanCollapsedHeight = (element: HTMLElement) =>
-  element.scrollHeight >
-  parseFloat(getComputedStyle(element).lineHeight) *
-    AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT;
-
 type AiChatUserMessageCollapsibleContentProps = {
+  text: string;
   children: ReactNode;
 };
 
 export const AiChatUserMessageCollapsibleContent = ({
+  text,
   children,
 }: AiChatUserMessageCollapsibleContentProps) => {
   const { t } = useLingui();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isOverflowing, setIsOverflowing] = useState(false);
 
-  const contentRef = useCallback((contentElement: HTMLDivElement | null) => {
-    if (isDefined(contentElement)) {
-      setIsOverflowing(isTallerThanCollapsedHeight(contentElement));
-    }
-  }, []);
-
-  // Re-measured on hover so a chat resized after mount still gets the right toggle.
-  const handlePointerEnter = (event: PointerEvent<HTMLDivElement>) => {
-    setIsOverflowing(isTallerThanCollapsedHeight(event.currentTarget));
-  };
+  if (!isAiChatUserMessageLong(text)) {
+    return children;
+  }
 
   const handleToggleClick = () => {
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
@@ -62,20 +46,12 @@ export const AiChatUserMessageCollapsibleContent = ({
 
   return (
     <>
-      <StyledContent
-        ref={contentRef}
-        isCollapsed={isOverflowing && !isExpanded}
-        onPointerEnter={handlePointerEnter}
-      >
-        {children}
-      </StyledContent>
-      {isOverflowing && (
-        <StyledToggleContainer>
-          <LightButton aria-expanded={isExpanded} onClick={handleToggleClick}>
-            {isExpanded ? t`Show less` : t`Show more`}
-          </LightButton>
-        </StyledToggleContainer>
-      )}
+      <StyledContent isCollapsed={!isExpanded}>{children}</StyledContent>
+      <StyledToggleContainer>
+        <LightButton aria-expanded={isExpanded} onClick={handleToggleClick}>
+          {isExpanded ? t`Show less` : t`Show more`}
+        </LightButton>
+      </StyledToggleContainer>
     </>
   );
 };

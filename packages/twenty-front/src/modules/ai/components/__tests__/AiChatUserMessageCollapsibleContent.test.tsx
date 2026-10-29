@@ -10,32 +10,17 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const mockRenderedContentHeight = (contentHeight: number) => {
-  jest
-    .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
-    .mockReturnValue('24px');
-  jest
-    .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
-    .mockReturnValue(contentHeight);
-};
-
 const renderContent = (text: string) =>
   render(
     <I18nProvider i18n={i18n}>
-      <AiChatUserMessageCollapsibleContent>
+      <AiChatUserMessageCollapsibleContent text={text}>
         {text}
       </AiChatUserMessageCollapsibleContent>
     </I18nProvider>,
   );
 
 describe('AiChatUserMessageCollapsibleContent', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('shows a message that fits in ten lines without a toggle', () => {
-    mockRenderedContentHeight(240);
-
+  it('shows a short message without a toggle', () => {
     renderContent('Which deals close this week?');
 
     expect(
@@ -46,26 +31,8 @@ describe('AiChatUserMessageCollapsibleContent', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('offers the toggle once a narrower chat makes the message overflow', async () => {
-    mockRenderedContentHeight(240);
-
-    renderContent('Review every open opportunity and flag the risks');
-
-    mockRenderedContentHeight(480);
-
-    await userEvent.hover(
-      screen.getByText('Review every open opportunity and flag the risks'),
-    );
-
-    expect(
-      screen.getByRole('button', { name: 'Show more' }),
-    ).toBeInTheDocument();
-  });
-
-  it('collapses a taller message and toggles it open and closed', async () => {
-    mockRenderedContentHeight(960);
-
-    renderContent('Set up my workspace with these detailed instructions');
+  it('collapses a long message and toggles it open and closed', async () => {
+    renderContent('Set up my workspace. '.repeat(60));
 
     const showMoreButton = screen.getByRole('button', { name: 'Show more' });
 

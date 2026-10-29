@@ -96,6 +96,20 @@ const SILENT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:10.000Z' },
 };
 
+const LONG_TEXT = 'Set up my workspace. '.repeat(60);
+
+const LONG_USER_MESSAGE: ExtendedUIMessage = {
+  ...USER_MESSAGE,
+  id: 'long-user-message',
+  parts: [{ type: 'text', text: LONG_TEXT }],
+};
+
+const LONG_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  ...ASSISTANT_MESSAGE,
+  id: 'long-assistant-message',
+  parts: [{ type: 'text', text: LONG_TEXT }],
+};
+
 const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
   id: 'message-without-sender',
   role: 'user',
@@ -149,6 +163,8 @@ const renderMessage = ({
       NAMED_ASSISTANT_MESSAGE,
       SILENT_MESSAGE,
       MESSAGE_WITHOUT_SENDER,
+      LONG_USER_MESSAGE,
+      LONG_ASSISTANT_MESSAGE,
     ],
   );
 
@@ -165,10 +181,6 @@ describe('AiChatMessage', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceMemberState.atom, null);
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   it('heads a member message with their name', () => {
@@ -264,15 +276,8 @@ describe('AiChatMessage', () => {
   });
 
   it('collapses a long member message but never an assistant reply', () => {
-    jest
-      .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
-      .mockReturnValue('24px');
-    jest
-      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
-      .mockReturnValue(960);
-
     const { unmount } = renderMessage({
-      messageId: USER_MESSAGE.id,
+      messageId: LONG_USER_MESSAGE.id,
       isAiChatInboxEnabled: false,
     });
 
@@ -282,7 +287,7 @@ describe('AiChatMessage', () => {
 
     unmount();
     renderMessage({
-      messageId: ASSISTANT_MESSAGE.id,
+      messageId: LONG_ASSISTANT_MESSAGE.id,
       isAiChatInboxEnabled: false,
     });
 

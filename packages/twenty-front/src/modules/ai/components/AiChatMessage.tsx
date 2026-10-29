@@ -190,12 +190,14 @@ const StyledFilesContainer = styled.div`
 
 type AiChatUserMessageTextProps = {
   messageId: string;
+  text: string;
   children: ReactNode;
   isOtherMember: boolean;
 };
 
 const AiChatUserMessageText = ({
   messageId,
+  text,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -207,7 +209,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent>
+      <AiChatUserMessageCollapsibleContent text={text}>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledMessageText>
@@ -279,6 +281,8 @@ export const AiChatMessage = ({
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
+  const messageText =
+    agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (
     <AiChatAssistantMessageRenderer
       isUserMessage={isUser}
@@ -332,6 +336,7 @@ export const AiChatMessage = ({
           {isUser ? (
             <AiChatUserMessageText
               messageId={messageId}
+              text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}
@@ -368,12 +373,7 @@ export const AiChatMessage = ({
               {isAiChatInboxEnabled && !isLastMessageStreaming && (
                 <AiChatMessageReactionPicker messageId={messageId} />
               )}
-              <LightCopyIconButton
-                copyText={
-                  agentChatMessage.parts.find((part) => part.type === 'text')
-                    ?.text ?? ''
-                }
-              />
+              <LightCopyIconButton copyText={messageText} />
             </StyledMessageActions>
           </StyledMessageFooter>
         )}
