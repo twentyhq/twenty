@@ -247,10 +247,8 @@ export class ViewController {
           })
         : undefined;
 
-      const { overrides: _overrides, ...viewWithoutOverrides } = view;
-
       return {
-        ...viewWithoutOverrides,
+        ...view,
         name: resolveViewName({
           view,
           objectLabelPlaceholderValues,
