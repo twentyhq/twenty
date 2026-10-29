@@ -296,6 +296,7 @@ enum AllMetadataName {
   pageLayoutTab
   pageLayoutWidget
   permissionFlag
+  relatedRecordPath
   role
   rolePermissionFlag
   roleTarget
@@ -1684,6 +1685,11 @@ input CreateRecordExportInput {
   filter: JSON
   objectMetadataId: UUID!
   orderBy: JSON
+}
+
+input CreateRelatedRecordPathInput {
+  fieldMetadataIds: [UUID!]!
+  sourceObjectMetadataId: UUID!
 }
 
 input CreateRoleInput {
@@ -3261,6 +3267,7 @@ type Mutation {
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
+  createRelatedRecordPath(input: CreateRelatedRecordPathInput!): RelatedRecordPath!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
   createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
@@ -3299,6 +3306,7 @@ type Mutation {
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  deleteRelatedRecordPath(id: UUID!): RelatedRecordPath!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   deleteSkill(id: UUID!): Skill!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -4166,6 +4174,7 @@ type Query {
   publicMarketplaceApps: [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  relatedRecordPaths: [RelatedRecordPath!]!
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -4285,6 +4294,13 @@ type RecordTableConfiguration {
 input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
+}
+
+type RelatedRecordPath {
+  fieldMetadataIds: [UUID!]!
+  id: UUID!
+  sourceObjectMetadataId: UUID!
+  targetObjectMetadataId: UUID!
 }
 
 type Relation {

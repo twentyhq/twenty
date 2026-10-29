@@ -332,6 +332,7 @@ export enum AllMetadataName {
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
   permissionFlag = 'permissionFlag',
+  relatedRecordPath = 'relatedRecordPath',
   role = 'role',
   rolePermissionFlag = 'rolePermissionFlag',
   roleTarget = 'roleTarget',
@@ -1806,6 +1807,11 @@ export type CreateRecordExportInput = {
   filter?: InputMaybe<Scalars['JSON']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
   orderBy?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type CreateRelatedRecordPathInput = {
+  fieldMetadataIds: Array<Scalars['UUID']['input']>;
+  sourceObjectMetadataId: Scalars['UUID']['input'];
 };
 
 export type CreateRoleInput = {
@@ -3439,6 +3445,7 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
+  createRelatedRecordPath: RelatedRecordPath;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
@@ -3477,6 +3484,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String']['output'];
   deletePublicDomain: Scalars['Boolean']['output'];
   deleteQueuedChatMessage: Scalars['Boolean']['output'];
+  deleteRelatedRecordPath: RelatedRecordPath;
   deleteSSOIdentityProvider: DeleteSso;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
@@ -3979,6 +3987,11 @@ export type MutationCreatePublicDomainArgs = {
 };
 
 
+export type MutationCreateRelatedRecordPathArgs = {
+  input: CreateRelatedRecordPathInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -4167,6 +4180,11 @@ export type MutationDeletePublicDomainArgs = {
 
 export type MutationDeleteQueuedChatMessageArgs = {
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteRelatedRecordPathArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -5845,6 +5863,7 @@ export type Query = {
   publicMarketplaceApps: Array<MarketplaceApp>;
   recordPermissions: Array<RecordPermissionsResult>;
   recordSharing: RecordSharingDto;
+  relatedRecordPaths: Array<RelatedRecordPath>;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
@@ -6507,6 +6526,14 @@ export type RecordTableConfiguration = {
 export type RecordTargetInput = {
   objectMetadataId: Scalars['UUID']['input'];
   recordId: Scalars['UUID']['input'];
+};
+
+export type RelatedRecordPath = {
+  __typename?: 'RelatedRecordPath';
+  fieldMetadataIds: Array<Scalars['UUID']['output']>;
+  id: Scalars['UUID']['output'];
+  sourceObjectMetadataId: Scalars['UUID']['output'];
+  targetObjectMetadataId: Scalars['UUID']['output'];
 };
 
 export type Relation = {

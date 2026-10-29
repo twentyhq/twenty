@@ -1,0 +1,22 @@
+/* @license Enterprise */
+
+import { Module } from '@nestjs/common';
+
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RelatedRecordPathResolver } from 'src/engine/metadata-modules/related-record-path/related-record-path.resolver';
+import { RelatedRecordPathService } from 'src/engine/metadata-modules/related-record-path/related-record-path.service';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+
+@Module({
+  imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationModule,
+    PermissionsModule,
+    WorkspaceMigrationModule,
+  ],
+  providers: [RelatedRecordPathService, RelatedRecordPathResolver],
+  exports: [RelatedRecordPathService],
+})
+export class RelatedRecordPathModule {}
