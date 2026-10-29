@@ -20,6 +20,26 @@ import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/a
 import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
+const driverOptions: LocalDriverOptions = {
+  logicFunctionResourceService: jest.createMockFromModule<
+    typeof import('src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service')
+  >(
+    'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service',
+  ).LogicFunctionResourceService.prototype,
+  sdkClientArchiveService: jest.createMockFromModule<
+    typeof import('src/engine/core-modules/sdk-client/sdk-client-archive.service')
+  >('src/engine/core-modules/sdk-client/sdk-client-archive.service')
+    .SdkClientArchiveService.prototype,
+  workspaceCacheService: jest.createMockFromModule<
+    typeof import('src/engine/workspace-cache/services/workspace-cache.service')
+  >('src/engine/workspace-cache/services/workspace-cache.service')
+    .WorkspaceCacheService.prototype,
+  cacheLockService: jest.createMockFromModule<
+    typeof import('src/engine/core-modules/cache-lock/cache-lock.service')
+  >('src/engine/core-modules/cache-lock/cache-lock.service').CacheLockService
+    .prototype,
+};
+
 const mockBuilderOptions = {
   buildAssetsDirectory: '',
   yarnEngineDirectory: '',
@@ -73,7 +93,7 @@ const invokeFrontComponentBuilderLocally = async ({
     yarnEngineDirectory,
     timeoutMs,
   });
-  const driver = new LocalDriver({} as LocalDriverOptions);
+  const driver = new LocalDriver(driverOptions);
   const request = {
     ...input,
     workspaceId: 'workspace',
@@ -118,7 +138,7 @@ describe('LocalDriver', () => {
   it.each([LogicFunctionRuntime.NODE18, LogicFunctionRuntime.NODE22])(
     'builds Node code for %s with package imports external',
     async (targetRuntime) => {
-      const driver = new LocalDriver({} as LocalDriverOptions);
+      const driver = new LocalDriver(driverOptions);
       const result = await driver.transpile({
         targetRuntime,
         sourceCode:
@@ -267,11 +287,10 @@ export const handler = () => {
       }),
     );
 
-    if (!result.success) {
-      throw new Error(result.error);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.builtCode).toHaveLength(2 * 1024 * 1024);
     }
-
-    expect(result.builtCode).toHaveLength(2 * 1024 * 1024);
     const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
 
     await expect(access(workingDirectory)).rejects.toThrow();
