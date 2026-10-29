@@ -118,7 +118,10 @@ export class LambdaLayerManagerService {
     const dependencies = await this.getVerifiedDependencies(flatApplication);
 
     if (!isDefined(dependencies.yarnLock)) {
-      return this.ensureApplicationDepsLayer(flatApplication);
+      throw new ApplicationException(
+        `Workspace custom application ${flatApplication.universalIdentifier} has no stored yarn.lock`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
     }
 
     return this.buildDepsLayer({ layerName, dependencies });
