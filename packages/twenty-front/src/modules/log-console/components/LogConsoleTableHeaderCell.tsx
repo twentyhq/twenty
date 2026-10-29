@@ -39,7 +39,7 @@ const StyledResizeHandleContainer = styled.div`
   }
 
   > [role='separator']:is(:hover, :focus-visible, [data-resizing])
-    > ${StyledResizeHandleBar} {
+  > ${StyledResizeHandleBar} {
     background-color: ${themeCssVariables.border.color.strong};
   }
 `;
