@@ -159,8 +159,6 @@ const buildRecordFilterForRole = ({
 
     const operand = predicate.operand as unknown as RecordFilter['operand'];
 
-    // A field converted to an incompatible type leaves the stored operand uncompilable;
-    // dropping the predicate would lift the restriction, so it becomes a never-matching branch
     if (
       !isFilterOperandAvailableForFieldType({
         fieldType: fieldMetadata.type,
