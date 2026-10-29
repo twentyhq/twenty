@@ -10416,11 +10416,6 @@ msgstr "E-mail i czat"
 msgid "Email and password are required"
 msgstr "Adres e-mail i hasło są wymagane"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Kampanie e-mailowe"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10690,6 @@ msgstr "Włącz"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Włącz opcje obejścia"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Włącz kampanie e-mailowe, listy i zarządzanie rezygnacjami z subskrypcji."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -17158,6 +17148,11 @@ msgstr "Scal rekordy"
 msgid "Merge review tabs"
 msgstr "Karty przeglądu scalania"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr ""
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -22870,6 +22865,11 @@ msgstr "Resetuj do wartości statycznej"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Reset variable"
 msgstr "Zresetuj zmienną"
+
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr ""
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx

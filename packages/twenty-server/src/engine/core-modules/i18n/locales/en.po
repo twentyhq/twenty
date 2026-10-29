@@ -2380,6 +2380,12 @@ msgctxt "fieldMetadata.label"
 msgid "Campaigns"
 msgstr "Campaigns"
 
+#. js-lingui-id: ig79t+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Campaigns"
+msgstr "Campaigns"
+
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -8178,6 +8184,7 @@ msgstr "Merge"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
 msgstr "Merge"
@@ -8187,6 +8194,12 @@ msgstr "Merge"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Merge {objectLabelPlural}"
+
+#. js-lingui-id: pp414+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Merge with Another {objectLabelSingular}"
+msgstr "Merge with Another {objectLabelSingular}"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -12012,6 +12025,11 @@ msgstr "Short link"
 msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Short links"
+
+#. js-lingui-id: XcRf2D
+#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
+msgid "Sign in as a workspace member or use an application token to change this conversation."
+msgstr "Sign in as a workspace member or use an application token to change this conversation."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -17371,6 +17389,11 @@ msgstr "Your payment method was declined. Please update it and try again."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Your purchased credits could not be added. Please contact support."
+
+#. js-lingui-id: vAscP2
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Your role cannot delete some of these records, so they cannot be merged."
+msgstr "Your role cannot delete some of these records, so they cannot be merged."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

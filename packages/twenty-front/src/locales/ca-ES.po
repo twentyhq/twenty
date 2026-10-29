@@ -10416,11 +10416,6 @@ msgstr "Correu electrònic i xat"
 msgid "Email and password are required"
 msgstr "El correu electrònic i la contrasenya són obligatoris"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Campanyes de correu electrònic"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10690,6 @@ msgstr "Activa"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Habilita opcions per a saltar"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Activa les campanyes de correu electrònic, les llistes i la gestió de cancel·lacions de subscripció."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -17158,6 +17148,11 @@ msgstr "Fusionar registres"
 msgid "Merge review tabs"
 msgstr "Fusiona les pestanyes de revisió"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr ""
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -22870,6 +22865,11 @@ msgstr "Restableix al valor estàtic"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Reset variable"
 msgstr "Restablir variable"
+
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr ""
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx

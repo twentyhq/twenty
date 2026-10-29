@@ -10416,11 +10416,6 @@ msgstr "Имејл и чет"
 msgid "Email and password are required"
 msgstr "Имејл и лозинка су обавезни"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Кампање путем е-поште"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10690,6 @@ msgstr "Омогући"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Активирајте опције заобилажења"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Омогућите кампање е-поштом, листе и управљање одјављивањем."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -17158,6 +17148,11 @@ msgstr "Споји записе"
 msgid "Merge review tabs"
 msgstr "Картице за преглед спајања"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr ""
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -22870,6 +22865,11 @@ msgstr "Ресетуј на статичну вредност"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Reset variable"
 msgstr "Ресетуј променљиву"
+
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr ""
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx

@@ -10416,11 +10416,6 @@ msgstr "E-mail e chat"
 msgid "Email and password are required"
 msgstr "E-mail e senha são obrigatórios"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Campanhas de e-mail"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10690,6 @@ msgstr "Ativar"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Ativar opções de contorno"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Ative campanhas de e-mail, listas e gerenciamento de cancelamento de inscrição."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -17158,6 +17148,11 @@ msgstr "Mesclar registros"
 msgid "Merge review tabs"
 msgstr "Abas de revisão de mesclagem"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr ""
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -22870,6 +22865,11 @@ msgstr "Redefinir para valor estático"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Reset variable"
 msgstr "Redefinir variável"
+
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr ""
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
