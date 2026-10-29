@@ -47,13 +47,13 @@ describe('sortApplicationRegistrationsForAdmin', () => {
     );
   });
 
-  it('puts listed registrations last', () => {
+  it('puts listed registrations first', () => {
     const registrations = [
-      buildRegistration({ id: 'listed', isListed: true }),
       buildRegistration({ id: 'not-listed' }),
+      buildRegistration({ id: 'listed', isListed: true }),
     ];
 
-    expect(sortedIds(registrations)).toEqual(['not-listed', 'listed']);
+    expect(sortedIds(registrations)).toEqual(['listed', 'not-listed']);
   });
 
   it('puts packages published by Twenty before community ones', () => {
@@ -91,7 +91,7 @@ describe('sortApplicationRegistrationsForAdmin', () => {
     );
   });
 
-  it('applies configuration, listed, provenance, then installs', () => {
+  it('applies listed, configuration, provenance, then installs', () => {
     const registrations = [
       buildRegistration({ id: 'community-configured-listed', isListed: true }),
       buildRegistration({ id: 'community-configured-unlisted' }),
@@ -116,9 +116,9 @@ describe('sortApplicationRegistrationsForAdmin', () => {
       }),
     ).toEqual([
       'community-not-configured',
+      'community-configured-listed',
       'twenty-configured-unlisted',
       'community-configured-unlisted',
-      'community-configured-listed',
     ]);
   });
 

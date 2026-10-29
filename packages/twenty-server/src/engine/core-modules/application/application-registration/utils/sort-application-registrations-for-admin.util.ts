@@ -18,16 +18,16 @@ export const sortApplicationRegistrationsForAdmin = <
   installCountByRegistrationId: Map<string, number>;
 }): TRegistration[] => {
   return [...registrations].sort((left, right) => {
+    if (left.isListed !== right.isListed) {
+      return left.isListed ? -1 : 1;
+    }
+
     const isLeftConfigured = isConfiguredByRegistrationId.get(left.id) ?? false;
     const isRightConfigured =
       isConfiguredByRegistrationId.get(right.id) ?? false;
 
     if (isLeftConfigured !== isRightConfigured) {
       return isLeftConfigured ? 1 : -1;
-    }
-
-    if (left.isListed !== right.isListed) {
-      return left.isListed ? 1 : -1;
     }
 
     const isLeftFromTwenty = isTwentyApplicationPackage(left.sourcePackage);

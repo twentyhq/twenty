@@ -62,17 +62,27 @@ const SERVER_ROUTE_MANIFEST = {
 
 const REGISTRATION_SEEDS: RegistrationSeed[] = [
   {
+    suffix: 'community-not-configured-listed',
+    isListed: true,
+    hasUnfilledRequiredVariable: true,
+  },
+  {
+    suffix: 'community-configured-listed-installed',
+    isListed: true,
+    author: INSTALLED_AUTHOR,
+    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
+  },
+  {
+    suffix: 'community-configured-listed',
+    isListed: true,
+  },
+  {
     suffix: 'community-not-configured',
     hasUnfilledRequiredVariable: true,
   },
   {
     suffix: 'community-server-route-unclaimed',
     exposesServerRoute: true,
-  },
-  {
-    suffix: 'community-not-configured-listed',
-    isListed: true,
-    hasUnfilledRequiredVariable: true,
   },
   {
     suffix: 'community-configured-twenty-package',
@@ -92,16 +102,6 @@ const REGISTRATION_SEEDS: RegistrationSeed[] = [
   },
   {
     suffix: 'community-configured-unlisted',
-  },
-  {
-    suffix: 'community-configured-listed-installed',
-    isListed: true,
-    author: INSTALLED_AUTHOR,
-    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
-  },
-  {
-    suffix: 'community-configured-listed',
-    isListed: true,
   },
 ];
 
@@ -234,7 +234,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
     );
   };
 
-  it('orders not configured, unlisted, Twenty packages, most installed, then by name', async () => {
+  it('orders listed, not configured, Twenty packages, most installed, then by name', async () => {
     const response = await makeAdminPanelApiRequest({
       query: FIND_ALL_REGISTRATIONS,
       variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
