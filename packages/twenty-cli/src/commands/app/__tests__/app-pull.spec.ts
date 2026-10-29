@@ -12,7 +12,7 @@ import {
 } from 'node:fs/promises';
 import { createStandardInputStub } from '@/__tests__/utils/create-standard-input-stub';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
-import { installAppDependencies } from '@/app/install-app-dependencies';
+import { installAppDependenciesOrThrow } from '@/app/install-app-dependencies-or-throw';
 import { promptInTerminal } from '@/input/prompt-in-terminal';
 import { CliError } from '@/output/cli-error';
 import { MetadataWritability } from 'twenty-shared/types';
@@ -49,8 +49,8 @@ vi.mock('@/app/get-app-worker-launch', () => ({
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: vi.fn(),
 }));
-vi.mock('@/app/install-app-dependencies', () => ({
-  installAppDependencies: vi.fn(),
+vi.mock('@/app/install-app-dependencies-or-throw', () => ({
+  installAppDependenciesOrThrow: vi.fn(),
 }));
 vi.mock('@/input/prompt-in-terminal', () => ({ promptInTerminal: vi.fn() }));
 const TEMPLATE_DIRECTORY = fileURLToPath(
@@ -134,7 +134,7 @@ describe('app pull command with the packaged worker', () => {
   beforeEach(async () => {
     vi.mocked(getAppTemplateDirectory).mockReturnValue(TEMPLATE_DIRECTORY);
     vi.mocked(promptInTerminal).mockReset();
-    vi.mocked(installAppDependencies)
+    vi.mocked(installAppDependenciesOrThrow)
       .mockReset()
       .mockImplementation(async ({ appPath }) => {
         const packageJson = await readFile(
@@ -446,6 +446,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     );
     expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
       universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+      shouldIncludeDependencies: true,
     });
     expect(
       await readFile(join(appPath, 'src/application.config.ts'), 'utf8'),
@@ -464,8 +465,9 @@ export default defineObject({ nameSingular: 'invalid' });`,
       );
       expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
         universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        shouldIncludeDependencies: true,
       });
-      expect(installAppDependencies).not.toHaveBeenCalled();
+      expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
       expect(promptInTerminal).not.toHaveBeenCalled();
     },
   );
@@ -481,7 +483,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     });
     expect(server.requests).toHaveLength(1);
     await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
-    expect(installAppDependencies).not.toHaveBeenCalled();
+    expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
   });
 
   it('rejects a malformed workspace custom application identifier before export', async () => {
@@ -506,7 +508,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
 
     expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
     expect(result.envelope.data.pulled).toBe(true);
-    expect(installAppDependencies).toHaveBeenCalledOnce();
+    expect(installAppDependenciesOrThrow).toHaveBeenCalledOnce();
     expect(promptInTerminal).not.toHaveBeenCalled();
     expect(await readdir(join(appPath, 'src'))).toEqual([
       'application.config.ts',
@@ -526,7 +528,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     const second = await runJson();
     expect(second.exitCode, JSON.stringify(second.envelope)).toBe(0);
     expect(second.envelope.data.base.status).toBe('used');
-    expect(installAppDependencies).toHaveBeenCalledOnce();
+    expect(installAppDependenciesOrThrow).toHaveBeenCalledOnce();
   });
 
   it('asks for the directory and confirmation outside an app', async () => {
@@ -568,7 +570,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     const result = await run();
 
     expect(result.exitCode).toBe(2);
-    expect(installAppDependencies).not.toHaveBeenCalled();
+    expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
     await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
@@ -578,7 +580,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
 
     expect(result.envelope.error.code).toBe('CONFIRMATION_REQUIRED');
     expect(promptInTerminal).not.toHaveBeenCalled();
-    expect(installAppDependencies).not.toHaveBeenCalled();
+    expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
     await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
@@ -593,7 +595,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
       'APP_PATH_REQUIRED',
     );
     expect(await readdir(appPath)).toEqual([]);
-    expect(installAppDependencies).not.toHaveBeenCalled();
+    expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
   });
 
   it('preserves files in an unrelated nonempty directory', async () => {
@@ -605,12 +607,12 @@ export default defineObject({ nameSingular: 'invalid' });`,
     expect(result.envelope.error.code).toBe('APP_PATH_UNAVAILABLE');
     expect(await readdir(appPath)).toEqual(['notes.txt']);
     expect(await readFile(join(appPath, 'notes.txt'), 'utf8')).toBe('keep me');
-    expect(installAppDependencies).not.toHaveBeenCalled();
+    expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
   });
 
   it('does not write pulled definitions after an installation failure', async () => {
     await rm(appPath, { recursive: true });
-    vi.mocked(installAppDependencies).mockRejectedValue(
+    vi.mocked(installAppDependenciesOrThrow).mockRejectedValue(
       new CliError({ code: 'APP_INIT_FAILED', message: 'Yarn failed' }),
     );
     const result = await runJson('--yes');

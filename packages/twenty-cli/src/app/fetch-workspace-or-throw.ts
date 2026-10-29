@@ -6,7 +6,7 @@ import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { createMetadataClient } from '@/transport/metadata/create-metadata-client';
 
-export const fetchWorkspace = async ({
+export const fetchWorkspaceOrThrow = async ({
   target,
   signal,
   shouldIncludeCustomApplication = false,

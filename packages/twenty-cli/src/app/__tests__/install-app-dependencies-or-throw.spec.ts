@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { installAppDependencies } from '@/app/install-app-dependencies';
+import { installAppDependenciesOrThrow } from '@/app/install-app-dependencies-or-throw';
 
 const output = {
   event: vi.fn(),
@@ -44,7 +44,7 @@ describe('installing a new pull project', () => {
       console.log('package manager output');
     `);
 
-    await installAppDependencies({
+    await installAppDependenciesOrThrow({
       appPath,
       output,
       signal: new AbortController().signal,
@@ -65,7 +65,7 @@ describe('installing a new pull project', () => {
     );
 
     await expect(
-      installAppDependencies({
+      installAppDependenciesOrThrow({
         appPath,
         output,
         signal: new AbortController().signal,
@@ -86,7 +86,7 @@ describe('installing a new pull project', () => {
       `require('node:fs').writeFileSync('started', 'yes'); setInterval(() => {}, 1000);`,
     );
     const cancellation = new AbortController();
-    const installation = installAppDependencies({
+    const installation = installAppDependenciesOrThrow({
       appPath,
       output,
       signal: cancellation.signal,

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { fetchAppExport } from '@/app/fetch-app-export';
-import { fetchWorkspace } from '@/app/fetch-workspace';
+import { fetchWorkspaceOrThrow } from '@/app/fetch-workspace-or-throw';
 import { createPullProject } from '@/app/pull/create-pull-project';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { parseToolingResult } from '@/app/parse-tooling-result';
@@ -46,7 +46,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async (
         warn: output.warn,
       })
     : { application: null, diagnostics: [] };
-  const workspace = await fetchWorkspace({
+  const workspace = await fetchWorkspaceOrThrow({
     target,
     signal,
     shouldIncludeCustomApplication: !isDefined(identity.application),

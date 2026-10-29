@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { cp, readFile, rename, writeFile } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { join } from 'node:path';
 
 import semver from 'semver';
 
@@ -24,22 +24,19 @@ export const renderAppTemplate = async ({
   shouldIncludeExample?: boolean;
 }) => {
   const templateDirectory = getAppTemplateDirectory();
-  const projectFiles = new Set([
-    '.nvmrc',
-    '.oxlintrc.json',
-    'gitignore',
-    'package.json',
-    'tsconfig.json',
-    'yarnrc.yml',
-  ]);
+  const exampleDirectory = join(templateDirectory, 'example');
 
   await cp(templateDirectory, appDirectory, {
     recursive: true,
-    filter: (source) =>
-      shouldIncludeExample ||
-      source === templateDirectory ||
-      projectFiles.has(relative(templateDirectory, source)),
+    filter: (source) => source !== exampleDirectory,
   });
+
+  if (shouldIncludeExample) {
+    await cp(join(exampleDirectory, 'files'), appDirectory, {
+      recursive: true,
+    });
+  }
+
   await writeFile(join(appDirectory, 'yarn.lock'), '', { flag: 'a' });
 
   // npm excludes these dotfiles when packing the template.
@@ -102,13 +99,12 @@ export const renderAppTemplate = async ({
     packageJson.devDependencies[packageName] = APP_TEMPLATE_PACKAGE_VERSION;
   }
 
-  if (!shouldIncludeExample) {
-    packageJson.scripts = {
-      twenty: packageJson.scripts.twenty,
-      lint: packageJson.scripts.lint,
-      'lint:fix': packageJson.scripts['lint:fix'],
-      typecheck: 'tsgo --noEmit -p tsconfig.json',
-    };
+  if (shouldIncludeExample) {
+    const exampleScripts: Record<string, string> = JSON.parse(
+      await readFile(join(exampleDirectory, 'scripts.json'), 'utf8'),
+    );
+
+    packageJson.scripts = { ...packageJson.scripts, ...exampleScripts };
   }
 
   await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));

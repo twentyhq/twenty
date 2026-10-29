@@ -6,7 +6,7 @@ import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
 import { type Output } from '@/output/types/output.type';
 
-export const installAppDependencies = async ({
+export const installAppDependenciesOrThrow = async ({
   appPath,
   signal,
   output,

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createAppProject } from '@/app/create-app-project';
 import { requireApproval } from '@/app/deployment/require-approval';
-import { installAppDependencies } from '@/app/install-app-dependencies';
+import { installAppDependenciesOrThrow } from '@/app/install-app-dependencies-or-throw';
 import { isValidPackageName } from '@/app/is-valid-package-name';
 import { kebabCase } from '@/app/pull/kebab-case';
 import {
@@ -84,7 +84,11 @@ export const createPullProject = async ({
     shouldIncludeExample: false,
     signal,
   });
-  await installAppDependencies({ appPath: appDirectory, signal, output });
+  await installAppDependenciesOrThrow({
+    appPath: appDirectory,
+    signal,
+    output,
+  });
 
   return { path: appDirectory, name: appName };
 };

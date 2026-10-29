@@ -101,7 +101,7 @@ jobs:
             | Logic functions, triggers, connections, agents/skills | `logic/*.mdx` |
             | Views, navigation, page layouts, front components, command menu | `layout/*.mdx` |
             | Publish/install/deploy, versioning, engines | `operations/publishing.mdx`, `operations/sync-and-recovery.mdx` |
-            | App test helpers (`twenty-cli/app-template/src/__tests__`) | `operations/testing.mdx` |
+            | App test helpers (`twenty-cli/app-template/example/files/src/__tests__`) | `operations/testing.mdx` |
             | Scaffold template | `getting-started/project-structure.mdx`, `getting-started/quick-start.mdx`, `operations/testing.mdx`, `operations/publishing.mdx` |
             | client SDK (`core`/`metadata`/`rest`/`generate`) | `logic/logic-functions.mdx`, `layout/front-components.mdx`, `operations/cli.mdx` |
             | Enum value sets (FieldType, ViewType, availabilityType, NavigationMenuItemType, ...) | the page documenting that value set (search for the enum name) |

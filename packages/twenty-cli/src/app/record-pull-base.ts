@@ -1,5 +1,5 @@
 import { fetchAppExport } from '@/app/fetch-app-export';
-import { fetchWorkspace } from '@/app/fetch-workspace';
+import { fetchWorkspaceOrThrow } from '@/app/fetch-workspace-or-throw';
 import { writePullBase } from '@/app/pull/write-pull-base';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
 import { createCancelledError } from '@/output/create-cancelled-error';
@@ -21,7 +21,7 @@ export const recordPullBase = async ({
   output.progress({ message: 'Recording the pull base…' });
 
   try {
-    const { id: workspaceId } = await fetchWorkspace({ target, signal });
+    const { id: workspaceId } = await fetchWorkspaceOrThrow({ target, signal });
     const applicationExport = await fetchAppExport({
       universalIdentifier,
       target,
