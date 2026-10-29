@@ -4,9 +4,8 @@ import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
-import { resolvePullSystemPermissionFlag } from '@/app/pull/resolve-pull-system-permission-flag';
+import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import {
   buildRoleEnumBindings,
   writeDefineFile,
@@ -22,7 +21,7 @@ afterEach(async () => {
   );
 });
 
-const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
+const createApp = async (sdkDefineSource = '') => {
   const appPath = await mkdtemp(join(tmpdir(), 'twenty-pull-flags-'));
   appPaths.push(appPath);
   await writeFile(join(appPath, 'package.json'), '{}');
@@ -36,12 +35,7 @@ const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
       exports: { './define': './define.cjs' },
     }),
   );
-  await writeFile(
-    join(sdkPath, 'define.cjs'),
-    isDefined(appSystemPermissionFlag)
-      ? `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`
-      : '',
-  );
+  await writeFile(join(sdkPath, 'define.cjs'), sdkDefineSource);
 
   return appPath;
 };
@@ -57,17 +51,21 @@ const buildRoleFileContent = (appPath: string) =>
       ],
     },
     enumBindings: buildRoleEnumBindings(
-      resolvePullSystemPermissionFlag(appPath),
+      resolveAppSystemPermissionFlag(appPath),
     ),
   }).content;
 
-describe('resolvePullSystemPermissionFlag', () => {
-  it('writes the new names when the app SDK lists them first', async () => {
-    const appPath = await createApp({
-      USER_APPS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-      WORKSPACE_APPS: SystemPermissionFlag.APPLICATIONS,
-      ...SystemPermissionFlag,
-    });
+describe('resolveAppSystemPermissionFlag', () => {
+  it('writes the new names an app SDK defines as non-enumerable aliases', async () => {
+    const appPath = await createApp(
+      `exports.SystemPermissionFlag = Object.assign(
+        Object.defineProperties({}, {
+          USER_APPS: { value: '${SystemPermissionFlag.CONNECTED_ACCOUNTS}' },
+          WORKSPACE_APPS: { value: '${SystemPermissionFlag.APPLICATIONS}' },
+        }),
+        ${JSON.stringify(SystemPermissionFlag)},
+      );`,
+    );
 
     const content = buildRoleFileContent(appPath);
 
@@ -79,10 +77,12 @@ describe('resolvePullSystemPermissionFlag', () => {
   });
 
   it('keeps the names of an older app SDK and writes flags it lacks as identifiers', async () => {
-    const appPath = await createApp({
-      CONNECTED_ACCOUNTS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
-      APPLICATIONS: SystemPermissionFlag.APPLICATIONS,
-    });
+    const appPath = await createApp(
+      `exports.SystemPermissionFlag = ${JSON.stringify({
+        CONNECTED_ACCOUNTS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+        APPLICATIONS: SystemPermissionFlag.APPLICATIONS,
+      })};`,
+    );
 
     const content = buildRoleFileContent(appPath);
 
@@ -92,7 +92,7 @@ describe('resolvePullSystemPermissionFlag', () => {
   });
 
   it('uses the shared flags when the app SDK does not export SystemPermissionFlag', async () => {
-    expect(resolvePullSystemPermissionFlag(await createApp())).toBe(
+    expect(resolveAppSystemPermissionFlag(await createApp())).toBe(
       SystemPermissionFlag,
     );
   });

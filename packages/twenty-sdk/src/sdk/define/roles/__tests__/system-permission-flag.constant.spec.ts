@@ -18,20 +18,23 @@ describe('SystemPermissionFlag', () => {
     );
   });
 
-  it('should keep every shared flag', () => {
-    expect(SystemPermissionFlag).toEqual(
-      expect.objectContaining(SharedSystemPermissionFlag),
+  it('should enumerate exactly the shared flags, as before the new names', () => {
+    expect(Object.entries(SystemPermissionFlag)).toEqual(
+      Object.entries(SharedSystemPermissionFlag),
     );
   });
 
-  it('should list the new names before the deprecated ones', () => {
-    const names = Object.keys(SystemPermissionFlag);
+  it('should still exclude a flag filtered out by its deprecated name', () => {
+    const allButUserApps = Object.entries(SystemPermissionFlag)
+      .filter(([name]) => name !== 'CONNECTED_ACCOUNTS')
+      .map(([, universalIdentifier]) => universalIdentifier);
 
-    expect(names.indexOf('USER_APPS')).toBeLessThan(
-      names.indexOf('CONNECTED_ACCOUNTS'),
-    );
-    expect(names.indexOf('WORKSPACE_APPS')).toBeLessThan(
-      names.indexOf('APPLICATIONS'),
-    );
+    expect(allButUserApps).not.toContain(SystemPermissionFlag.USER_APPS);
+  });
+
+  it('should list the new names first among all own property names', () => {
+    expect(
+      Object.getOwnPropertyNames(SystemPermissionFlag).slice(0, 2),
+    ).toEqual(['USER_APPS', 'WORKSPACE_APPS']);
   });
 });

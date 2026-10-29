@@ -12,8 +12,13 @@ type SdkSystemPermissionFlag = Omit<
   readonly APPLICATIONS: typeof SharedSystemPermissionFlag.APPLICATIONS;
 };
 
-export const SystemPermissionFlag: SdkSystemPermissionFlag = {
-  USER_APPS: SharedSystemPermissionFlag.CONNECTED_ACCOUNTS,
-  WORKSPACE_APPS: SharedSystemPermissionFlag.APPLICATIONS,
-  ...SharedSystemPermissionFlag,
-};
+export const SystemPermissionFlag = Object.assign(
+  Object.defineProperties(
+    {},
+    {
+      USER_APPS: { value: SharedSystemPermissionFlag.CONNECTED_ACCOUNTS },
+      WORKSPACE_APPS: { value: SharedSystemPermissionFlag.APPLICATIONS },
+    },
+  ),
+  SharedSystemPermissionFlag,
+) as SdkSystemPermissionFlag;

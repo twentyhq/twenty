@@ -1036,6 +1036,51 @@ export default defineField({
     expect(role).toContain('SystemPermissionFlag.WORKSPACE_APPS');
   });
 
+  it('does not report a role file an older pull wrote with the former flag names', async () => {
+    const exported = createExport();
+    const exportWithRole = (label: string) => ({
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        roles: [
+          {
+            universalIdentifier: OTHER_IDENTIFIER,
+            label,
+            permissionFlagUniversalIdentifiers: [
+              SystemPermissionFlag.CONNECTED_ACCOUNTS,
+            ],
+          },
+        ],
+      },
+    });
+    const pulled = requireSuccess(await pull(exportWithRole('Reader')));
+    const rolePath =
+      pulled.writes.find(
+        (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+      )?.relativePath ?? '';
+    await writeFile(
+      join(appPath, rolePath),
+      (await read(rolePath)).replace(
+        'SystemPermissionFlag.USER_APPS',
+        'SystemPermissionFlag.CONNECTED_ACCOUNTS',
+      ),
+    );
+    await writePullBase({
+      appPath,
+      manifest: parseAppExport({
+        value: exportWithRole('Reader'),
+        universalIdentifier: APPLICATION_IDENTIFIER,
+      }).manifest,
+      target: TARGET,
+      signal: new AbortController().signal,
+    });
+
+    const changed = requireSuccess(await pull(exportWithRole('Remote reader')));
+
+    expect(changed.overwrittenLocalChanges).toEqual([]);
+    expect(await read(rolePath)).toContain("label: 'Remote reader'");
+  });
+
   it('deletes a remotely removed base entity and preserves a local-only definition', async () => {
     requireSuccess(await pull());
     const local = (await read(OBJECT_PATH))

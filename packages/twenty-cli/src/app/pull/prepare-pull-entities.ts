@@ -39,7 +39,6 @@ export const preparePullEntities = ({
       ? buildPullEntities({
           manifest: baseManifest,
           sourceFileByUniversalIdentifier,
-          systemPermissionFlag,
         }).entities
       : [],
     unreconciledUniversalIdentifiers,

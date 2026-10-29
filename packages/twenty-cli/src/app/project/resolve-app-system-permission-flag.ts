@@ -5,7 +5,7 @@ import { isString } from '@sniptt/guards';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isPlainObject } from 'twenty-shared/utils';
 
-export const resolvePullSystemPermissionFlag = (
+export const resolveAppSystemPermissionFlag = (
   appPath: string,
 ): Record<string, string> => {
   const { SystemPermissionFlag: appSystemPermissionFlag } = createRequire(
@@ -14,9 +14,9 @@ export const resolvePullSystemPermissionFlag = (
 
   return isPlainObject(appSystemPermissionFlag)
     ? Object.fromEntries(
-        Object.entries(appSystemPermissionFlag).filter(
-          (entry): entry is [string, string] => isString(entry[1]),
-        ),
+        Object.getOwnPropertyNames(appSystemPermissionFlag)
+          .map((name) => [name, appSystemPermissionFlag[name]])
+          .filter((entry): entry is [string, string] => isString(entry[1])),
       )
     : SystemPermissionFlag;
 };
