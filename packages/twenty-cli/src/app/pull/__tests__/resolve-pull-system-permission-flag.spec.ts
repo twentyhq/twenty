@@ -26,21 +26,21 @@ const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
   appPaths.push(appPath);
   await writeFile(join(appPath, 'package.json'), '{}');
 
-  if (appSystemPermissionFlag !== undefined) {
-    const sdkPath = join(appPath, 'node_modules/twenty-sdk');
-    await mkdir(sdkPath, { recursive: true });
-    await writeFile(
-      join(sdkPath, 'package.json'),
-      JSON.stringify({
-        name: 'twenty-sdk',
-        exports: { './define': './define.cjs' },
-      }),
-    );
-    await writeFile(
-      join(sdkPath, 'define.cjs'),
-      `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`,
-    );
-  }
+  const sdkPath = join(appPath, 'node_modules/twenty-sdk');
+  await mkdir(sdkPath, { recursive: true });
+  await writeFile(
+    join(sdkPath, 'package.json'),
+    JSON.stringify({
+      name: 'twenty-sdk',
+      exports: { './define': './define.cjs' },
+    }),
+  );
+  await writeFile(
+    join(sdkPath, 'define.cjs'),
+    appSystemPermissionFlag === undefined
+      ? ''
+      : `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`,
+  );
 
   return appPath;
 };
@@ -90,7 +90,7 @@ describe('resolvePullSystemPermissionFlag', () => {
     expect(content).toContain(`'${SystemPermissionFlag.WORKFLOWS}'`);
   });
 
-  it('falls back to the shared flags when the app SDK cannot be loaded', async () => {
+  it('uses the shared flags when the app SDK does not export SystemPermissionFlag', async () => {
     expect(resolvePullSystemPermissionFlag(await createApp())).toBe(
       SystemPermissionFlag,
     );
