@@ -123,14 +123,10 @@ export const useChatThreadsForRecord = ({
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
 
-  const { threads, refetchLimit } = useMemo(
-    () =>
-      getChatThreadsForRecordPage({
-        links,
-        pageSize: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
-      }),
-    [links],
-  );
+  const { threads, refetchLimit } = getChatThreadsForRecordPage({
+    links,
+    pageSize: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
+  });
 
   const isFetchingMoreRecords = useAtomFamilyStateValue(
     isFetchingMoreRecordsFamilyState,
