@@ -3038,12 +3038,12 @@ msgstr "Voltooid"
 #. js-lingui-id: 3/Bvdi
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeded the {timeoutSeconds} second time limit."
-msgstr ""
+msgstr "Het bouwen van de component heeft de tijdslimiet van {timeoutSeconds} seconden overschreden."
 
 #. js-lingui-id: PfwSQo
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
-msgstr ""
+msgstr "Het bouwen van de component overschrijdt de uitvoerlimiet van {maximumOutputMegabytes} MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4563,7 +4563,7 @@ msgstr "Elke agenttrigger moet een object zijn"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Each related record path field must belong to the object reached by the previous relation"
-msgstr ""
+msgstr "Elk veld in het pad voor gerelateerde records moet behoren tot het object dat via de vorige relatie wordt bereikt"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5164,7 +5164,7 @@ msgstr "Kan personen niet aan de lijst toevoegen."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Kon frontcomponent niet bouwen."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6812,12 +6812,12 @@ msgstr "Ongeldige invoer voor de frontcomponent."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Ongeldige instellingen voor de frontcomponent."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Ongeldige bron voor de frontcomponent."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -7064,7 +7064,7 @@ msgstr "Ongeldig refresh-token."
 #. js-lingui-id: gKBOwI
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Invalid related record path input."
-msgstr ""
+msgstr "Ongeldige invoer voor pad voor gerelateerde records."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -10973,48 +10973,48 @@ msgstr "Gerelateerd record niet gevonden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot skip its second relation"
-msgstr ""
+msgstr "Het pad voor gerelateerde records mag de tweede relatie niet overslaan"
 
 #. js-lingui-id: 4sEoVQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot visit the same object twice"
-msgstr ""
+msgstr "Het pad voor gerelateerde records mag niet tweemaal hetzelfde object bezoeken"
 
 #. js-lingui-id: fXYaod
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path field not found"
-msgstr ""
+msgstr "Veld in pad voor gerelateerde records niet gevonden"
 
 #. js-lingui-id: ZyTgMJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be active"
-msgstr ""
+msgstr "Velden in het pad voor gerelateerde records moeten actief zijn"
 
 #. js-lingui-id: mpKEGh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be relations"
-msgstr ""
+msgstr "Velden in het pad voor gerelateerde records moeten relaties zijn"
 
 #. js-lingui-id: pHqQra
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path not found"
-msgstr ""
+msgstr "Pad voor gerelateerde records niet gevonden"
 
 #. js-lingui-id: JUo4rP
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record path not found."
-msgstr ""
+msgstr "Pad voor gerelateerde records niet gevonden."
 
 #. js-lingui-id: YYg7qq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
-msgstr ""
+msgstr "Object in pad voor gerelateerde records niet gevonden"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -14331,7 +14331,7 @@ msgstr "Dit record bestaat niet of is verwijderd."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "This related record path already exists"
-msgstr ""
+msgstr "Dit pad voor gerelateerde records bestaat al"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts

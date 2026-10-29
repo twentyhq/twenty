@@ -10109,7 +10109,7 @@ msgstr "Cada porción representa"
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Earlier"
-msgstr ""
+msgstr "Anterior"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -16335,7 +16335,7 @@ msgstr "Cargar más chats"
 #. js-lingui-id: dW52Ic
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 msgid "Load more conversations"
-msgstr ""
+msgstr "Cargar más conversaciones"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -22358,7 +22358,7 @@ msgstr "Rechazado"
 #. js-lingui-id: bFZR4R
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
-msgstr ""
+msgstr "ruta de registro relacionado"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts

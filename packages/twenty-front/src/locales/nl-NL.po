@@ -10109,7 +10109,7 @@ msgstr "Elke schijf vertegenwoordigt"
 #. js-lingui-id: 5oD9f/
 #: src/modules/ai/utils/groupThreadsByDate.ts
 msgid "Earlier"
-msgstr ""
+msgstr "Eerder"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -16335,7 +16335,7 @@ msgstr "Meer chats laden"
 #. js-lingui-id: dW52Ic
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 msgid "Load more conversations"
-msgstr ""
+msgstr "Meer gesprekken laden"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -22358,7 +22358,7 @@ msgstr "Afgewezen"
 #. js-lingui-id: bFZR4R
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
-msgstr ""
+msgstr "pad van gerelateerd record"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts

@@ -3038,12 +3038,12 @@ msgstr "Kész"
 #. js-lingui-id: 3/Bvdi
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeded the {timeoutSeconds} second time limit."
-msgstr ""
+msgstr "A komponens összeállítása túllépte a(z) {timeoutSeconds} másodperces időkorlátot."
 
 #. js-lingui-id: PfwSQo
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
-msgstr ""
+msgstr "A komponens összeállítása túllépi a(z) {maximumOutputMegabytes} MB-os kimeneti korlátot."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4563,7 +4563,7 @@ msgstr "Minden ügynökindítónak objektumnak kell lennie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Each related record path field must belong to the object reached by the previous relation"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonalának minden mezőjének az előző kapcsolaton keresztül elért objektumhoz kell tartoznia."
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5164,7 +5164,7 @@ msgstr "Nem sikerült személyeket hozzáadni a listához."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Nem sikerült összeállítani a front komponenst."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6812,12 +6812,12 @@ msgstr "Érvénytelen a front komponens bemenete."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Érvénytelenek a front komponens beállításai."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Érvénytelen front komponensforrás."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -7064,7 +7064,7 @@ msgstr "Érvénytelen frissítő token."
 #. js-lingui-id: gKBOwI
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Invalid related record path input."
-msgstr ""
+msgstr "Érvénytelen kapcsolódó rekord útvonalbemenete."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -10973,48 +10973,48 @@ msgstr "Kapcsolódó rekord nem található."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot skip its second relation"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonala nem hagyhatja ki a második kapcsolatát"
 
 #. js-lingui-id: 4sEoVQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot visit the same object twice"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonala nem érintheti kétszer ugyanazt az objektumot"
 
 #. js-lingui-id: fXYaod
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path field not found"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonalának mezője nem található"
 
 #. js-lingui-id: ZyTgMJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be active"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonalának mezőinek aktívnak kell lenniük"
 
 #. js-lingui-id: mpKEGh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be relations"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonalának mezőinek kapcsolatoknak kell lenniük"
 
 #. js-lingui-id: pHqQra
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path not found"
-msgstr ""
+msgstr "Kapcsolódó rekord útvonala nem található"
 
 #. js-lingui-id: JUo4rP
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record path not found."
-msgstr ""
+msgstr "Kapcsolódó rekord útvonala nem található."
 
 #. js-lingui-id: YYg7qq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
-msgstr ""
+msgstr "A kapcsolódó rekord útvonalának objektuma nem található"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -14331,7 +14331,7 @@ msgstr "Ez a rekord nem létezik, vagy törölve lett."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "This related record path already exists"
-msgstr ""
+msgstr "Ez a kapcsolódó rekord útvonal már létezik"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts

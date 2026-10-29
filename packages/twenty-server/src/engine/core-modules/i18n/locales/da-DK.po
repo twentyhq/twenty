@@ -3038,12 +3038,12 @@ msgstr "Fuldført"
 #. js-lingui-id: 3/Bvdi
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeded the {timeoutSeconds} second time limit."
-msgstr ""
+msgstr "Komponentbuild overskred tidsgrænsen på {timeoutSeconds} sekunder."
 
 #. js-lingui-id: PfwSQo
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
-msgstr ""
+msgstr "Komponentbuild overstiger outputgrænsen på {maximumOutputMegabytes} MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4563,7 +4563,7 @@ msgstr "Hver agentudløser skal være et objekt"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Each related record path field must belong to the object reached by the previous relation"
-msgstr ""
+msgstr "Hvert felt i stien for relaterede poster skal tilhøre det objekt, der nås via den foregående relation"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5164,7 +5164,7 @@ msgstr "Kunne ikke føje personer til listen."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Kunne ikke bygge frontkomponent."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6812,12 +6812,12 @@ msgstr "Ugyldigt input til frontkomponent."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Ugyldige indstillinger for frontkomponent."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Ugyldig kilde til frontkomponent."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -7064,7 +7064,7 @@ msgstr "Ugyldigt refresh-token."
 #. js-lingui-id: gKBOwI
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Invalid related record path input."
-msgstr ""
+msgstr "Ugyldigt input til sti for relaterede poster."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -10973,48 +10973,48 @@ msgstr "Relateret post ikke fundet."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot skip its second relation"
-msgstr ""
+msgstr "Stien for relaterede poster kan ikke springe sin anden relation over"
 
 #. js-lingui-id: 4sEoVQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path cannot visit the same object twice"
-msgstr ""
+msgstr "Stien for relaterede poster kan ikke besøge det samme objekt to gange"
 
 #. js-lingui-id: fXYaod
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path field not found"
-msgstr ""
+msgstr "Felt i sti for relaterede poster ikke fundet"
 
 #. js-lingui-id: ZyTgMJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be active"
-msgstr ""
+msgstr "Felter i sti for relaterede poster skal være aktive"
 
 #. js-lingui-id: mpKEGh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path fields must be relations"
-msgstr ""
+msgstr "Felter i sti for relaterede poster skal være relationer"
 
 #. js-lingui-id: pHqQra
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path not found"
-msgstr ""
+msgstr "Sti for relaterede poster ikke fundet"
 
 #. js-lingui-id: JUo4rP
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record path not found."
-msgstr ""
+msgstr "Sti for relaterede poster ikke fundet."
 
 #. js-lingui-id: YYg7qq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
-msgstr ""
+msgstr "Objekt i sti for relaterede poster ikke fundet"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -14331,7 +14331,7 @@ msgstr "Denne post findes ikke eller er blevet slettet."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "This related record path already exists"
-msgstr ""
+msgstr "Denne sti for relaterede poster findes allerede"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
