@@ -10,6 +10,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -18,6 +19,8 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadStatus,
   FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
   type GetAgentChatOpenThreadsSummaryQuery,
@@ -114,24 +117,46 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     ).toBeVisible();
   });
 
-  it('marks the status the inbox shows as current', () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
+  it('keeps Open, Snoozed and Done in navigation', () => {
+    renderTriage();
 
-    renderTriage({ path: '/inbox' });
+    expect(screen.getByRole('button', { name: 'Open' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Needs input' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Assigned' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Mentions' }),
+    ).not.toBeInTheDocument();
+  });
 
-    expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
+  it.each([
+    AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
+    AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+  ])('keeps Open current for the %s filter', (filterStatus) => {
+    jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);
+
+    renderTriage();
+
+    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute(
       'aria-current',
       'true',
+    );
+    expect(screen.getByRole('button', { name: 'Snoozed' })).not.toHaveAttribute(
+      'aria-current',
     );
     expect(screen.getByRole('button', { name: 'Done' })).not.toHaveAttribute(
       'aria-current',
     );
   });
 
-  it('hides the statuses narrowing Open while another status is shown', () => {
+  it('marks Snoozed as current while its conversations are shown', () => {
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
@@ -139,28 +164,35 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     renderTriage();
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
-  });
-
-  it('keeps the statuses narrowing Open while one of them is shown', () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
-    );
-
-    renderTriage();
-
-    expect(screen.getByRole('button', { name: 'Mentions' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
       'aria-current',
       'true',
     );
-    expect(screen.getByRole('button', { name: 'Assigned' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Open' })).not.toHaveAttribute(
+      'aria-current',
+    );
   });
 
-  it('hides the statuses narrowing Open outside the inbox', () => {
+  it('marks no status current outside the inbox', () => {
     renderTriage({ path: '/objects/companies' });
 
-    expect(screen.queryByRole('button', { name: 'Mentions' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { current: true }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('marks no status current while a channel is shown', () => {
+    jotaiStore.set(agentChatChannelViewState.atom, {
+      channelId: 'sales',
+      channelStatus: AgentChatChannelThreadStatus.OPEN,
+      assignment: AgentChatChannelAssignmentFilter.ANY,
+    });
+
+    renderTriage();
+
+    expect(
+      screen.queryByRole('button', { current: true }),
+    ).not.toBeInTheDocument();
   });
 
   it('opens the inbox on the chosen status', async () => {
@@ -176,41 +208,18 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     });
   });
 
-  it('counts the open chats waiting on an answer under Needs input', async () => {
-    renderTriage({ summary: { ...READ_SUMMARY, needsInputThreadCount: 1 } });
+  it('restores every open chat when Open is chosen from a narrower view', async () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+    );
 
-    expect(
-      await screen.findByRole('button', { name: 'Needs input · 1' }),
-    ).toBeVisible();
-  });
-
-  it('flags Mentions when a chat the member was mentioned in is unread', async () => {
-    renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadMentionThread: true },
-    });
-
-    expect(
-      await screen.findByRole('button', { name: /^Mentions\s*, unread$/ }),
-    ).toBeVisible();
-  });
-
-  it('opens the inbox on the chats the member was mentioned in', async () => {
     renderTriage();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Mentions' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Open' }));
 
     expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     );
-  });
-
-  it('flags Assigned when a chat assigned to the member is unread', async () => {
-    renderTriage({
-      summary: { ...READ_SUMMARY, hasUnreadAssignedThread: true },
-    });
-
-    expect(
-      await screen.findByRole('button', { name: /^Assigned\s*, unread$/ }),
-    ).toBeVisible();
   });
 });

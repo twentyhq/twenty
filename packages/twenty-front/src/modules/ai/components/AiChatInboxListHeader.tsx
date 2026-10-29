@@ -8,7 +8,10 @@ import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChann
 import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { AiChatInboxViewDropdown } from '@/ai/components/AiChatInboxViewDropdown';
+import { AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES } from '@/ai/constants/AgentChatOpenThreadFilterStatuses';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -31,6 +34,14 @@ export const AiChatInboxListHeader = ({
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const isPersonalOpenView =
+    !isDefined(agentChatShownChannelView) &&
+    AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES.includes(
+      agentChatThreadFilterStatus,
+    );
   const isMobile = useIsMobile();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
@@ -49,7 +60,11 @@ export const AiChatInboxListHeader = ({
   return (
     <PageCardHeader
       title={
-        <AiChatInboxViewHeading selectedThreadCount={selectedThreadCount} />
+        isPersonalOpenView ? (
+          <AiChatInboxViewDropdown selectedThreadCount={selectedThreadCount} />
+        ) : (
+          <AiChatInboxViewHeading selectedThreadCount={selectedThreadCount} />
+        )
       }
       actionButton={
         selectedThreadCount > 0 ? (
