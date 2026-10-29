@@ -70,14 +70,15 @@ export type SkippedPullEntity = {
   reason: string;
 };
 
-export const buildPullEntities = (
-  manifest: Manifest,
-  sourceFileByUniversalIdentifier: ReadonlyMap<
-    string,
-    ScannedSourceFile
-  > = new Map(),
-  systemPermissionFlag: Record<string, string> = SystemPermissionFlag,
-): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
+export const buildPullEntities = ({
+  manifest,
+  sourceFileByUniversalIdentifier = new Map(),
+  systemPermissionFlag = SystemPermissionFlag,
+}: {
+  manifest: Manifest;
+  sourceFileByUniversalIdentifier?: ReadonlyMap<string, ScannedSourceFile>;
+  systemPermissionFlag?: Record<string, string>;
+}): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
   const entities: PullEntity[] = [];

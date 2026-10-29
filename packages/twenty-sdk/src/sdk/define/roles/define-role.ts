@@ -33,24 +33,24 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  const permissionFlagUniversalIdentifiers = new Set<string>();
+  const permissionFlagUniversalIdentifiers =
+    config.permissionFlagUniversalIdentifiers ?? [];
+  const seenPermissionFlagUniversalIdentifiers = new Set<string>();
 
-  if (config.permissionFlagUniversalIdentifiers) {
-    for (const permissionFlagUniversalIdentifier of config.permissionFlagUniversalIdentifiers) {
-      if (
-        permissionFlagUniversalIdentifiers.has(
-          permissionFlagUniversalIdentifier,
-        )
-      ) {
-        errors.push(
-          `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}"`,
-        );
-      } else {
-        permissionFlagUniversalIdentifiers.add(
-          permissionFlagUniversalIdentifier,
-        );
-      }
+  for (const permissionFlagUniversalIdentifier of permissionFlagUniversalIdentifiers) {
+    if (
+      seenPermissionFlagUniversalIdentifiers.has(
+        permissionFlagUniversalIdentifier,
+      )
+    ) {
+      errors.push(
+        `Duplicate permission flag universalIdentifier "${permissionFlagUniversalIdentifier}"`,
+      );
     }
+
+    seenPermissionFlagUniversalIdentifiers.add(
+      permissionFlagUniversalIdentifier,
+    );
   }
 
   const predicateGroupUniversalIdentifiers = new Set<string>();

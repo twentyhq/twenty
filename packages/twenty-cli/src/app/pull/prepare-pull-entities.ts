@@ -29,18 +29,18 @@ export const preparePullEntities = ({
     }
   }
 
-  const { entities, skipped } = buildPullEntities(
+  const { entities, skipped } = buildPullEntities({
     manifest,
     sourceFileByUniversalIdentifier,
     systemPermissionFlag,
-  );
+  });
   const baseEntities = buildPullBaseEntities({
     entities: isDefined(baseManifest)
-      ? buildPullEntities(
-          baseManifest,
+      ? buildPullEntities({
+          manifest: baseManifest,
           sourceFileByUniversalIdentifier,
           systemPermissionFlag,
-        ).entities
+        }).entities
       : [],
     unreconciledUniversalIdentifiers,
   });
