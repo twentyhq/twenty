@@ -1,27 +1,23 @@
-import { type MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { CustomError } from 'twenty-shared/utils';
 
-import { CustomException } from 'src/utils/custom-exception';
+type FrontComponentBuildExceptionCode =
+  | 'INVALID_INPUT'
+  | 'INVALID_SETTINGS'
+  | 'BUILD_FAILED'
+  | 'BUILD_TIMEOUT'
+  | 'OUTPUT_TOO_LARGE';
 
-type FrontComponentBuildExceptionCode = 'INVALID_INPUT' | 'BUILD_FAILED';
+export class FrontComponentBuildException extends CustomError {
+  declare code: FrontComponentBuildExceptionCode;
 
-export class FrontComponentBuildException extends CustomException<FrontComponentBuildExceptionCode> {
   constructor({
     message,
     code,
-    userFriendlyMessage,
   }: {
     message: string;
     code: FrontComponentBuildExceptionCode;
-    userFriendlyMessage?: MessageDescriptor;
   }) {
-    super(message, code, {
-      userFriendlyMessage:
-        userFriendlyMessage ??
-        (code === 'INVALID_INPUT'
-          ? msg`Invalid front component source.`
-          : msg`Failed to build front component.`),
-    });
+    super(message, code);
     this.name = 'FrontComponentBuildException';
   }
 }

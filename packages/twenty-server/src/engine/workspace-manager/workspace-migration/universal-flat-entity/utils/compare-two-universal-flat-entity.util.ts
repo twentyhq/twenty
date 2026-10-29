@@ -8,7 +8,11 @@ import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/fl
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { diffUniversalFlatEntityProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/diff-universal-flat-entity-properties.util';
 
-const SERVER_MANAGED_PROPERTIES = new Set(['createdAt', 'updatedAt']);
+const SERVER_MANAGED_PROPERTIES = new Set([
+  'createdAt',
+  'updatedAt',
+  'isSystemSideEffect',
+]);
 
 type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
   MetadataUniversalFlatEntity<T>,

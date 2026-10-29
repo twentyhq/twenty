@@ -287,6 +287,8 @@ export class MessageCampaignBatchDeliveryService {
           recipients: chunk,
           rateLimitedAttemptCount: requeuedAttemptCount,
         },
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
       })),
       {
         delay,

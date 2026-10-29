@@ -252,7 +252,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -574,7 +574,6 @@ export interface ApplicationRegistration {
     isConfigured: Scalars['Boolean']
     isListed: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -1956,7 +1955,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
-    isVetted: Scalars['Boolean']
+    isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     sourcePackage?: Scalars['String']
@@ -1975,7 +1974,6 @@ export interface MarketplaceAppDetail {
     id: Scalars['String']
     installCount: Scalars['Int']
     isListed: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
     issueReportUrl?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
@@ -3772,6 +3770,8 @@ export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
+    city?: Scalars['String']
+    country?: Scalars['String']
     createdAt: Scalars['DateTime']
     expiresAt: Scalars['DateTime']
     id: Scalars['UUID']
@@ -3779,6 +3779,7 @@ export interface UserSession {
     isCurrent: Scalars['Boolean']
     isImpersonating: Scalars['Boolean']
     lastActiveAt: Scalars['DateTime']
+    region?: Scalars['String']
     userAgent?: Scalars['String']
     workspaceId?: Scalars['UUID']
     __typename: 'UserSession'
@@ -4810,7 +4811,6 @@ export interface ApplicationRegistrationGenqlSelection{
     isConfigured?: boolean | number
     isListed?: boolean | number
     isPreInstalled?: boolean | number
-    isVetted?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
@@ -6459,7 +6459,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     description?: boolean | number
     id?: boolean | number
-    isVetted?: boolean | number
+    isListed?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     sourcePackage?: boolean | number
@@ -6479,7 +6479,6 @@ export interface MarketplaceAppDetailGenqlSelection{
     id?: boolean | number
     installCount?: boolean | number
     isListed?: boolean | number
-    isVetted?: boolean | number
     issueReportUrl?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
@@ -7512,7 +7511,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -7620,7 +7619,7 @@ export interface QueryGenqlSelection{
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    publicMarketplaceApps?: MarketplaceAppGenqlSelection
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -8378,7 +8377,7 @@ export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID']
 
 export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewSortInput {
 /** The id of the view sort to update */
@@ -8633,6 +8632,8 @@ export interface UserApplicationVariableValueGenqlSelection{
 
 export interface UserSessionGenqlSelection{
     authProvider?: boolean | number
+    city?: boolean | number
+    country?: boolean | number
     createdAt?: boolean | number
     expiresAt?: boolean | number
     id?: boolean | number
@@ -8640,6 +8641,7 @@ export interface UserSessionGenqlSelection{
     isCurrent?: boolean | number
     isImpersonating?: boolean | number
     lastActiveAt?: boolean | number
+    region?: boolean | number
     userAgent?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
@@ -11958,6 +11960,7 @@ export const enumAllMetadataName = {
    pageLayoutTab: 'pageLayoutTab' as const,
    pageLayoutWidget: 'pageLayoutWidget' as const,
    permissionFlag: 'permissionFlag' as const,
+   relatedRecordPath: 'relatedRecordPath' as const,
    role: 'role' as const,
    rolePermissionFlag: 'rolePermissionFlag' as const,
    roleTarget: 'roleTarget' as const,

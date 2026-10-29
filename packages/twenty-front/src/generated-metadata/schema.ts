@@ -332,6 +332,7 @@ export enum AllMetadataName {
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
   permissionFlag = 'permissionFlag',
+  relatedRecordPath = 'relatedRecordPath',
   role = 'role',
   rolePermissionFlag = 'rolePermissionFlag',
   roleTarget = 'roleTarget',
@@ -724,7 +725,6 @@ export type ApplicationRegistration = {
   isConfigured: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -3036,7 +3036,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  isVetted: Scalars['Boolean']['output'];
+  isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   sourcePackage?: Maybe<Scalars['String']['output']>;
@@ -3055,7 +3055,6 @@ export type MarketplaceAppDetail = {
   id: Scalars['String']['output'];
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   issueReportUrl?: Maybe<Scalars['String']['output']>;
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -6002,6 +6001,7 @@ export type QueryEventLogsArgs = {
 
 
 export type QueryExportApplicationArgs = {
+  shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
 
@@ -6355,11 +6355,6 @@ export type QueryPreviewMessageCampaignSendArgs = {
 
 export type QueryPublicMarketplaceAppDetailArgs = {
   universalIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryPublicMarketplaceAppsArgs = {
-  isVetted?: Scalars['Boolean']['input'];
 };
 
 
@@ -7663,6 +7658,7 @@ export type UpdateViewInput = {
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
@@ -8072,6 +8068,8 @@ export enum UserCreditsFallback {
 export type UserSession = {
   __typename?: 'UserSession';
   authProvider: Scalars['String']['output'];
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   expiresAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
@@ -8079,6 +8077,7 @@ export type UserSession = {
   isCurrent: Scalars['Boolean']['output'];
   isImpersonating: Scalars['Boolean']['output'];
   lastActiveAt: Scalars['DateTime']['output'];
+  region?: Maybe<Scalars['String']['output']>;
   userAgent?: Maybe<Scalars['String']['output']>;
   workspaceId?: Maybe<Scalars['UUID']['output']>;
 };

@@ -58,20 +58,23 @@ describe('BullMQDriver group rate limit (integration)', () => {
       await driver.bulkAdd(
         QUEUE,
         'herd-job',
-        ['H1', 'H2', 'H3'].map((label) => ({ data: { label } })),
-        { groupKeys: ['workspace:A', 'application:H'] },
+        ['H1', 'H2', 'H3'].map((label) => ({
+          data: { label },
+          workspaceId: 'A',
+          applicationUniversalIdentifier: 'H',
+        })),
       );
       await driver.add(
         QUEUE,
         'herd-job',
         { label: 'H4' },
-        { groupKeys: ['workspace:B', 'application:H'] },
+        { workspaceId: 'B', applicationUniversalIdentifier: 'H' },
       );
       await driver.add(
         QUEUE,
         'other-job',
         { label: 'Q1' },
-        { groupKeys: ['workspace:A', 'application:Q'] },
+        { workspaceId: 'A', applicationUniversalIdentifier: 'Q' },
       );
 
       const jobs: Job[] = await inspectionQueue.getJobs([

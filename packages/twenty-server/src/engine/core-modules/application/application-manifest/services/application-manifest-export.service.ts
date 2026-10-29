@@ -18,6 +18,7 @@ import { reconstructRolesManifest } from 'src/engine/core-modules/application/ap
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -47,6 +48,7 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationService: ApplicationService,
@@ -56,9 +58,11 @@ export class ApplicationManifestExportService {
   async exportApplication({
     workspaceId,
     applicationUniversalIdentifier,
+    shouldIncludeDependencies = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -241,7 +245,14 @@ export class ApplicationManifestExportService {
           ...skillsCoverage,
         ],
       }),
-      files: [],
+      files: shouldIncludeDependencies
+        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+            {
+              workspaceId,
+              applicationUniversalIdentifier,
+            },
+          )
+        : [],
     };
   }
 }

@@ -29,8 +29,6 @@ jest.mock(
   },
 );
 
-const HERD_GROUP_KEYS = ['workspace:A', 'application:H'];
-
 describe('BullMQDriver group rate limit', () => {
   beforeAll(silenceDriverLogs);
 
@@ -44,7 +42,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueueBulk({
       labels,
       workspaceId: 'A',
-      groupKeys: HERD_GROUP_KEYS,
+      applicationUniversalIdentifier: 'H',
     });
 
     expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
@@ -74,7 +72,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'H', count: 4 }),
       workspaceId: 'A',
-      groupKeys: HERD_GROUP_KEYS,
+      applicationUniversalIdentifier: 'H',
     });
 
     expect(harness.readPriority({ label: 'H3' })).toBe(ticketOf(2));
@@ -85,7 +83,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueue({
       label: 'Q1',
       workspaceId: 'B',
-      groupKeys: ['workspace:B', 'application:Q'],
+      applicationUniversalIdentifier: 'Q',
     });
 
     expect(harness.readPriority({ label: 'Q1' })).toBe(ticketOf(1));
@@ -116,7 +114,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueueBulk({
       labels,
       workspaceId: 'A',
-      groupKeys: HERD_GROUP_KEYS,
+      applicationUniversalIdentifier: 'H',
       delay: 700,
     });
 
@@ -134,7 +132,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueueMany({
       labels: buildLabels({ prefix: 'U', count: 4 }),
       workspaceId: 'A',
-      groupKeys: HERD_GROUP_KEYS,
+      applicationUniversalIdentifier: 'H',
       priority: URGENT_FAIR_PRIORITY,
     });
 
@@ -147,7 +145,7 @@ describe('BullMQDriver group rate limit', () => {
     await harness.enqueueBulk({
       labels: buildLabels({ prefix: 'H', count: 4 }),
       workspaceId: 'A',
-      groupKeys: HERD_GROUP_KEYS,
+      applicationUniversalIdentifier: 'H',
     });
 
     expect(await harness.processAll()).toEqual(['H1', 'H2', 'H3', 'H4']);

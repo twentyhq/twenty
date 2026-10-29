@@ -102,7 +102,11 @@ export class WebhookSubscriptionWorkspaceSyncService {
   ): Promise<void> {
     await this.webhookQueueService.bulkAdd(
       jobName,
-      channels.map((data) => ({ data })),
+      channels.map((data) => ({
+        data,
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
+      })),
       { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
     );
   }

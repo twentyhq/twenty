@@ -11,6 +11,7 @@ export const insertCatalogApplicationRegistration = async ({
   latestAvailableVersion = '1.0.0',
   manifest = null,
   category = null,
+  isListed = true,
   workspaceId = SEED_APPLE_WORKSPACE_ID,
 }: {
   universalIdentifier: string;
@@ -20,6 +21,7 @@ export const insertCatalogApplicationRegistration = async ({
   latestAvailableVersion?: string | null;
   manifest?: Record<string, unknown> | null;
   category?: string | null;
+  isListed?: boolean;
   workspaceId?: string | null;
 }): Promise<string> => {
   const id = crypto.randomUUID();
@@ -44,7 +46,7 @@ export const insertCatalogApplicationRegistration = async ({
       sourcePackage,
       latestAvailableVersion,
       manifest ? JSON.stringify(manifest) : null,
-      true,
+      isListed,
       category,
     ],
   );

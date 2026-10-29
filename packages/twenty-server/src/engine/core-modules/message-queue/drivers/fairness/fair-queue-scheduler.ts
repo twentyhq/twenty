@@ -1,5 +1,5 @@
 import { PRIORITY_LIMIT, type RedisClient } from 'bullmq';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FAIR_TICKET_OFFSET,
@@ -7,10 +7,10 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
-import { getDefaultGroupKeys } from 'src/engine/core-modules/message-queue/utils/get-default-group-keys.util';
+import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -53,24 +53,26 @@ export class FairQueueScheduler {
 
   async computeJobOptions({
     queueName,
-    jobsData,
-    options,
+    scopes,
+    additionalGroupKeys,
+    delay,
     staticPriority,
   }: {
     queueName: MessageQueue;
-    jobsData: unknown[];
-    options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
+    scopes: QueueJobScope[];
+    additionalGroupKeys?: string[];
+    delay: number | undefined;
     staticPriority: number | undefined;
   }): Promise<FairJobOptions[]> {
     const requests = this.groupJobsByGroupKeys({
-      jobsData,
-      groupKeys: options?.groupKeys,
+      scopes,
+      additionalGroupKeys,
     });
-    const callerDelayMs = options?.delay ?? 0;
+    const callerDelayMs = delay ?? 0;
     const [fairJobOptions, pacedDelays] = await Promise.all([
       this.computeFairJobOptions({
         queueName,
-        jobCount: jobsData.length,
+        jobCount: scopes.length,
         requests,
         callerDelayMs,
         staticPriority,
@@ -79,7 +81,7 @@ export class FairQueueScheduler {
         ? undefined
         : this.computePacedDelays({
             queueName,
-            jobCount: jobsData.length,
+            jobCount: scopes.length,
             requests,
           }),
     ]);
@@ -94,21 +96,19 @@ export class FairQueueScheduler {
   }
 
   private groupJobsByGroupKeys({
-    jobsData,
-    groupKeys,
+    scopes,
+    additionalGroupKeys,
   }: {
-    jobsData: unknown[];
-    groupKeys: string[] | undefined;
+    scopes: QueueJobScope[];
+    additionalGroupKeys: string[] | undefined;
   }): GroupKeysRequest[] {
     const requestByGroupKeys = new Map<string, GroupKeysRequest>();
 
-    jobsData.forEach((jobData, jobIndex) => {
-      const jobGroupKeys = isNonEmptyArray(groupKeys)
-        ? [...new Set(groupKeys)]
-        : getDefaultGroupKeys(jobData);
-      const signature = JSON.stringify(jobGroupKeys);
+    scopes.forEach((scope, jobIndex) => {
+      const groupKeys = buildQueueJobGroupKeys({ scope, additionalGroupKeys });
+      const signature = JSON.stringify(groupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
-        groupKeys: jobGroupKeys,
+        groupKeys,
         jobIndexes: [],
       };
 
