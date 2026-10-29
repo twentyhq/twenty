@@ -2200,6 +2200,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   relatedRecordPath: {
+    objectMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
     firstFieldMetadataId: {
       toCompare: true,
       toStringify: false,

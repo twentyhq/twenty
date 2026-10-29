@@ -15,6 +15,7 @@ import {
 import { ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-related-record-path-table-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'relatedRecordPath', schema: 'core' })
@@ -41,6 +42,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   { unique: true, where: '"thirdFieldMetadataId" IS NOT NULL' },
 )
 @Index('IDX_RELATED_RECORD_PATH_APPLICATION_ID', ['applicationId'])
+@Index('IDX_RELATED_RECORD_PATH_OBJECT_METADATA_ID', ['objectMetadataId'])
 @Index('IDX_RELATED_RECORD_PATH_FIRST_FIELD_METADATA_ID', [
   'firstFieldMetadataId',
 ])
@@ -56,6 +58,13 @@ export class RelatedRecordPathEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  objectMetadataId: string;
+
+  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'objectMetadataId' })
+  objectMetadata: Relation<ObjectMetadataEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   firstFieldMetadataId: string;

@@ -355,6 +355,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   relatedRecordPath: {
     workspace: null,
     application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
     firstFieldMetadata: {
       foreignKey: 'firstFieldMetadataId',
     },

@@ -15,6 +15,7 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 const FLAT_RELATED_RECORD_PATH_ROWS_REQUIREMENT = {
   relatedRecordPath: true,
   application: ['id', 'universalIdentifier'],
+  objectMetadata: ['id', 'universalIdentifier'],
   fieldMetadata: ['id', 'universalIdentifier'],
 } as const;
 
@@ -31,11 +32,14 @@ export class WorkspaceFlatRelatedRecordPathMapCacheService extends MetadataFlatE
     const {
       relatedRecordPath: relatedRecordPaths,
       application: applications,
+      objectMetadata: objectMetadatas,
       fieldMetadata: fieldMetadatas,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
+    const objectMetadataIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(objectMetadatas);
     const fieldMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(fieldMetadatas);
 
@@ -46,6 +50,7 @@ export class WorkspaceFlatRelatedRecordPathMapCacheService extends MetadataFlatE
         fromRelatedRecordPathEntityToFlatRelatedRecordPath({
           entity: relatedRecordPathEntity,
           applicationIdToUniversalIdentifierMap,
+          objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataIdToUniversalIdentifierMap,
         });
 
