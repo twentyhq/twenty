@@ -88,6 +88,7 @@ const buildFlatAgentMaps = (triggers: AgentTrigger[]) =>
       applicationId: APPLICATION_ID,
       triggers,
       isActive: true,
+      deletedAt: null,
     },
   ]);
 

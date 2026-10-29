@@ -94,7 +94,7 @@ export class AgentEntity
   updatedAt: Date;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt: WasRemovedInUpgrade<Date | null>;
+  deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
   modelConfiguration: JsonbProperty<ModelConfiguration> | null;
