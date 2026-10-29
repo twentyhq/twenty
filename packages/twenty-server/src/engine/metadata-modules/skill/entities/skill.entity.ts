@@ -9,6 +9,7 @@ import {
 
 import { ADD_IS_SYSTEM_TO_SKILL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-is-system-to-skill-upgrade-command-name.constant';
 import { AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/agent-and-skill-overridable-entity-upgrade-command-name.constant';
+import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
@@ -50,6 +51,10 @@ export class SkillEntity
   @Column({ nullable: false, type: 'text' })
   content: string;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
+  })
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;
 
