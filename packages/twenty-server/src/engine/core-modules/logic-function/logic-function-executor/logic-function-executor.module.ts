@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -14,9 +15,7 @@ import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryptio
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -33,16 +32,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationModule,
     ApplicationVariableEntityModule,
     UsageLimitModule,
+    CoreEntityCacheModule,
     TypeOrmModule.forFeature([
       ApplicationRegistrationVariableEntity,
-      LogicFunctionEntity,
       WorkspaceEntity,
     ]),
   ],
-  providers: [
-    provideWorkspaceScopedRepository(LogicFunctionEntity),
-    LogicFunctionExecutorService,
-  ],
+  providers: [LogicFunctionExecutorService],
   exports: [LogicFunctionExecutorService],
 })
 export class LogicFunctionExecutorModule {}

@@ -9,6 +9,7 @@ export type CoreEntityCacheDataMap = {
   userWorkspaceEntity: FlatUserWorkspace;
   signingKeyPublicKey: string;
   marketplaceCatalog: Record<string, MarketplaceAppDTO>;
+  applicationRegistrationOwnerWorkspaceId: string;
 };
 
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;
@@ -19,4 +20,6 @@ export const CORE_ENTITY_CACHE_KEYS: Record<CoreEntityCacheKeyName, string> = {
   userWorkspaceEntity: 'user-workspace',
   signingKeyPublicKey: 'signing-key-public-key',
   marketplaceCatalog: 'marketplace-catalog',
+  applicationRegistrationOwnerWorkspaceId:
+    'application-registration-owner-workspace-id',
 };

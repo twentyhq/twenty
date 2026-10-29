@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
@@ -59,17 +60,12 @@ import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/ut
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import {
-  LogicFunctionEntity,
-  LogicFunctionExecutionMode,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -112,6 +108,7 @@ export class LogicFunctionExecutorService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
@@ -128,8 +125,6 @@ export class LogicFunctionExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
-    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
   async executeOrThrow({
@@ -548,28 +543,49 @@ export class LogicFunctionExecutorService {
       return {};
     }
 
-    const resolvers = await this.logicFunctionRepository
-      .createQueryBuilder('logicFunction')
-      .select(['logicFunction.id', 'logicFunction.universalIdentifier'])
-      .innerJoin('logicFunction.application', 'application')
-      .innerJoin(
-        'application.applicationRegistration',
-        'applicationRegistration',
-      )
-      .where(
-        'application.applicationRegistrationId = :applicationRegistrationId',
-        {
-          applicationRegistrationId: flatApplication.applicationRegistrationId,
-        },
-      )
-      .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
-      .andWhere(
-        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
-      )
-      .getMany();
+    const ownerWorkspaceId = await this.coreEntityCacheService.get(
+      'applicationRegistrationOwnerWorkspaceId',
+      flatApplication.applicationRegistrationId,
+    );
+
+    if (!isDefined(ownerWorkspaceId)) {
+      return {};
+    }
+
+    const {
+      flatApplicationMaps: ownerFlatApplicationMaps,
+      flatLogicFunctionMaps: ownerFlatLogicFunctionMaps,
+    } = await this.workspaceCacheService.getOrRecompute(ownerWorkspaceId, [
+      'flatApplicationMaps',
+      'flatLogicFunctionMaps',
+    ]);
+
+    const ownerFlatApplication = Object.values(
+      ownerFlatApplicationMaps.byId,
+    ).find(
+      (ownerApplication) =>
+        ownerApplication?.applicationRegistrationId ===
+        flatApplication.applicationRegistrationId,
+    );
+
+    if (!isDefined(ownerFlatApplication)) {
+      return {};
+    }
 
     return Object.fromEntries(
-      resolvers.map((resolver) => [resolver.universalIdentifier, resolver.id]),
+      (
+        ownerFlatLogicFunctionMaps.universalIdentifiersByApplicationId[
+          ownerFlatApplication.id
+        ] ?? []
+      ).flatMap((universalIdentifier) => {
+        const ownerFlatLogicFunction =
+          ownerFlatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier];
+
+        return isDefined(ownerFlatLogicFunction?.serverRouteTriggerSettings) &&
+          !isDefined(ownerFlatLogicFunction.deletedAt)
+          ? [[universalIdentifier, ownerFlatLogicFunction.id]]
+          : [];
+      }),
     );
   }
 
