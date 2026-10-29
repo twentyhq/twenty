@@ -32,28 +32,10 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { getDerivedCacheTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-derived-cache-triggers.util';
 import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-flat-entity-maps-keys-to-invalidate-for-workspace-migration.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
-
-const getDerivedCacheTriggers = (
-  flatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
-) => ({
-  hasRolesPermissionsChanged: flatEntityMapsKeys.some(
-    (flatEntityMapsKey) =>
-      flatEntityMapsKey === 'flatRoleMaps' ||
-      flatEntityMapsKey === 'flatRoleTargetMaps' ||
-      flatEntityMapsKey === 'flatObjectPermissionMaps' ||
-      flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-      flatEntityMapsKey === 'flatRolePermissionFlagMaps',
-  ),
-  hasWorkflowVersionsChanged: flatEntityMapsKeys.includes(
-    'flatWorkflowVersionMaps',
-  ),
-  hasApplicationVariablesChanged: flatEntityMapsKeys.includes(
-    'flatApplicationVariableMaps',
-  ),
-});
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
