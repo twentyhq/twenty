@@ -19,17 +19,17 @@ export const replaceAgentChatChannelRuleGrants = async ({
   const isThreadScope = 'threadIds' in scope;
   const threadScopeCondition = isThreadScope
     ? 'thread.id = ANY($3::uuid[])'
-    : 'thread."channelId" = $3::uuid';
+    : 'thread."channelId" = ANY($3::uuid[])';
   const recordShareScopeCondition = isThreadScope
     ? 'record_share."recordId" = ANY($3::uuid[])'
-    : 'record_share."sourceId" = $3::uuid';
+    : 'record_share."sourceId" = ANY($3::uuid[])';
   const channelAccessQuery = buildAgentChatChannelAccessQuery({
     workspaceIdParameter: '$1',
   });
   const parameters = [
     workspaceId,
     STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-    isThreadScope ? scope.threadIds : scope.channelId,
+    isThreadScope ? scope.threadIds : scope.channelIds,
   ];
 
   await manager.query(

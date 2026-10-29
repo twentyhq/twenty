@@ -358,13 +358,11 @@ export class AgentChatChannelMetadataService {
           ],
         );
 
-        for (const channelId of channelIds) {
-          await replaceAgentChatChannelRuleGrants({
-            manager,
-            workspaceId,
-            scope: { channelId },
-          });
-        }
+        await replaceAgentChatChannelRuleGrants({
+          manager,
+          workspaceId,
+          scope: { channelIds },
+        });
 
         return channelIds;
       },

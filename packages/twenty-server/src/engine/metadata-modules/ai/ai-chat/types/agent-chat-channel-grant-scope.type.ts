@@ -1,3 +1,3 @@
 export type AgentChatChannelGrantScope =
   | { threadIds: string[] }
-  | { channelId: string };
+  | { channelIds: string[] };
