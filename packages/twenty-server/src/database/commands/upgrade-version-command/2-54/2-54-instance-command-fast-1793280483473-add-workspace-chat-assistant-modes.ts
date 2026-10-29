@@ -7,7 +7,7 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class AddWorkspaceChatAssistantModesFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" ADD "aiChatDmAssistantMode" character varying NOT NULL DEFAULT \'MENTION_ONLY\'',
+      'ALTER TABLE "core"."workspace" ADD "aiChatDirectMessageAssistantMode" character varying NOT NULL DEFAULT \'MENTION_ONLY\'',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."workspace" ADD "aiChatInboxAssistantMode" character varying NOT NULL DEFAULT \'PROACTIVE\'',
@@ -19,7 +19,7 @@ export class AddWorkspaceChatAssistantModesFastInstanceCommand implements FastIn
       'ALTER TABLE "core"."workspace" DROP COLUMN "aiChatInboxAssistantMode"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" DROP COLUMN "aiChatDmAssistantMode"',
+      'ALTER TABLE "core"."workspace" DROP COLUMN "aiChatDirectMessageAssistantMode"',
     );
   }
 }

@@ -381,7 +381,7 @@ export class WorkspaceEntity {
     nullable: false,
     default: AiChatAssistantMode.MENTION_ONLY,
   })
-  aiChatDmAssistantMode: AiChatAssistantMode;
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME,
