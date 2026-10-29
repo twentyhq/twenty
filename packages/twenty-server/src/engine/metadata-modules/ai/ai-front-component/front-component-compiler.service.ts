@@ -84,7 +84,7 @@ export class FrontComponentCompilerService implements OnModuleDestroy {
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
     const builtDependencies =
-      await this.dependencyManager.getSharedDependencies({
+      await this.dependencyManager.getSharedDependenciesOrThrow({
         workspaceId,
         dependencies,
         driver,

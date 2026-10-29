@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
+import { FRONT_COMPONENT_BUILD_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-timeout-ms.constant';
+import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { type FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import {
   FrontComponentException,
@@ -31,10 +33,17 @@ const getUserFriendlyMessage = (
       return msg`Invalid front component settings.`;
     case 'BUILD_FAILED':
       return msg`Failed to build front component.`;
-    case 'BUILD_TIMEOUT':
-      return msg`Component build exceeded the 10 second time limit.`;
-    case 'OUTPUT_TOO_LARGE':
-      return msg`Component build exceeds the 5 MB output limit.`;
+    case 'BUILD_TIMEOUT': {
+      const timeoutSeconds = FRONT_COMPONENT_BUILD_TIMEOUT_MS / 1000;
+
+      return msg`Component build exceeded the ${timeoutSeconds} second time limit.`;
+    }
+    case 'OUTPUT_TOO_LARGE': {
+      const maximumOutputMegabytes =
+        FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES / (1024 * 1024);
+
+      return msg`Component build exceeds the ${maximumOutputMegabytes} MB output limit.`;
+    }
     default:
       return undefined;
   }

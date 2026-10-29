@@ -4,6 +4,15 @@ import { frontComponentBuildFailureSchema } from 'src/engine/metadata-modules/ai
 import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
+jest.mock(
+  'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-timeout-ms.constant',
+  () => ({ FRONT_COMPONENT_BUILD_TIMEOUT_MS: 17000 }),
+);
+jest.mock(
+  'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant',
+  () => ({ FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES: 9 * 1024 * 1024 }),
+);
+
 describe('convertFrontComponentBuildFailureToException', () => {
   it.each([
     [
@@ -26,13 +35,13 @@ describe('convertFrontComponentBuildFailureToException', () => {
     ],
     [
       'BUILD_TIMEOUT',
-      'Component build exceeded the 10 second time limit.',
+      'Component build exceeded the {timeoutSeconds} second time limit.',
       'Délai de compilation dépassé.',
       true,
     ],
     [
       'OUTPUT_TOO_LARGE',
-      'Component build exceeds the 5 MB output limit.',
+      'Component build exceeds the {maximumOutputMegabytes} MB output limit.',
       'Composant trop volumineux.',
       false,
     ],
@@ -62,6 +71,31 @@ describe('convertFrontComponentBuildFailureToException', () => {
       );
       expect(exception.userFriendlyMessage.message).toBe(message);
       expect(i18n._(exception.userFriendlyMessage)).toBe(translation);
+    },
+  );
+
+  it.each([
+    ['BUILD_TIMEOUT', 'timeoutSeconds', 17],
+    ['OUTPUT_TOO_LARGE', 'maximumOutputMegabytes', 9],
+  ] as const)(
+    'interpolates the configured limit for %s',
+    (code, placeholder, expectedLimit) => {
+      const exception = convertFrontComponentBuildFailureToException({
+        code,
+        error: 'Build limit exceeded',
+      });
+      const i18n = setupI18n({
+        locale: 'fr',
+        messages: {
+          fr: {
+            [exception.userFriendlyMessage.id]: ['Limite : ', [placeholder]],
+          },
+        },
+      });
+
+      expect(i18n._(exception.userFriendlyMessage)).toBe(
+        `Limite : ${expectedLimit}`,
+      );
     },
   );
 

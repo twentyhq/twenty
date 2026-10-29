@@ -23,7 +23,7 @@ export class FrontComponentDependencyManagerService {
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  async getSharedDependencies({
+  async getSharedDependenciesOrThrow({
     workspaceId,
     dependencies,
     driver,
