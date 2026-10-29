@@ -69,6 +69,7 @@ describe('UserSessionCookieService', () => {
     } as Request;
 
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
+    expect(incrementCounterBy).toHaveBeenCalledTimes(1);
     expect(incrementCounterBy).toHaveBeenCalledWith({
       key: MetricsKeys.UserSessionCookieLegacyAccess,
       amount: 1,
@@ -118,6 +119,7 @@ describe('UserSessionCookieService', () => {
       new Date(Date.now() + 60_000),
     );
 
+    expect(response.cookie).toHaveBeenCalledTimes(1);
     expect(response.cookie).toHaveBeenCalledWith(
       '__Host-twenty-session',
       'sess_new',
