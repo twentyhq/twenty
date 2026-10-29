@@ -17,6 +17,7 @@ import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-mod
 import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { toUserApplicationVariableValues } from 'src/engine/core-modules/application/application-variable/utils/to-user-application-variable-values.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { isReservedEnvVariableName } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-reserved-env-variable-name.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -277,7 +278,9 @@ export class UserApplicationVariableValueService {
             workspaceId,
             isSecret,
           }),
-      }).map(({ key, value }) => [key, value]),
+      })
+        .filter(({ key }) => !isReservedEnvVariableName(key))
+        .map(({ key, value }) => [key, value]),
     );
   }
 

@@ -43,6 +43,7 @@ import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-functi
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
+import { isReservedEnvVariableName } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-reserved-env-variable-name.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -543,6 +544,10 @@ export class LogicFunctionExecutorService {
     const envMap: Record<string, string> = {};
 
     for (const variable of serverVariables) {
+      if (isReservedEnvVariableName(variable.key)) {
+        continue;
+      }
+
       const plaintextValue =
         this.secretEncryptionService.decryptVersionedOrThrow(
           variable.encryptedValue,

@@ -50,6 +50,11 @@ const FLAT_APPLICATION_VARIABLES = [
     scope: 'USER',
     defaultValue: 'en',
   }),
+  buildFlatApplicationVariable({
+    id: 'legacy-setting-id',
+    key: 'TWENTY_LEGACY_SETTING',
+    scope: 'USER',
+  }),
 ];
 
 describe('UserApplicationVariableValueService', () => {
@@ -93,6 +98,7 @@ describe('UserApplicationVariableValueService', () => {
                   'record-my-meetings-id': { [USER_WORKSPACE_ID]: 'enc:on' },
                   'personal-api-key-id': { [USER_WORKSPACE_ID]: 'enc:key' },
                   'language-id': { 'other-user-workspace-id': 'enc:fr' },
+                  'legacy-setting-id': { [USER_WORKSPACE_ID]: 'enc:legacy' },
                 },
               },
             }),
@@ -128,6 +134,31 @@ describe('UserApplicationVariableValueService', () => {
       });
 
       expect(envVariables).toEqual({});
+    });
+
+    it('should leave out a value stored under a reserved name', async () => {
+      const envVariables = await service.getServerEnvVariables({
+        workspaceId: WORKSPACE_ID,
+        applicationId: APPLICATION_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+      });
+
+      expect(envVariables).not.toHaveProperty('TWENTY_LEGACY_SETTING');
+    });
+  });
+
+  describe('getPublicEnvVariables', () => {
+    it('should give front components the non-secret values of the member, without reserved names', async () => {
+      const envVariables = await service.getPublicEnvVariables({
+        workspaceId: WORKSPACE_ID,
+        applicationId: APPLICATION_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+      });
+
+      expect(envVariables).toEqual({
+        RECORD_MY_MEETINGS: 'plaintext of enc:on',
+        LANGUAGE: 'en',
+      });
     });
   });
 });
