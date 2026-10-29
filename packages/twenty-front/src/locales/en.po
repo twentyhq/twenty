@@ -11111,6 +11111,11 @@ msgstr "Enter your text"
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Enter your two-factor authentication code to confirm."
 
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr "Enterprise only"
+
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -23405,6 +23410,11 @@ msgstr "Russian"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Sales"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr "Salesfarce"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx

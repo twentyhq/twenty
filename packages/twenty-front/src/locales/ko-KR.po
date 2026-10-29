@@ -11116,6 +11116,11 @@ msgstr "텍스트를 입력하세요"
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "확인을 위해 2단계 인증 코드를 입력하세요."
 
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr ""
+
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -23410,6 +23415,11 @@ msgstr "러시아어"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "영업"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr ""
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx

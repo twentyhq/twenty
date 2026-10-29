@@ -11116,6 +11116,11 @@ msgstr "Nhập văn bản của bạn"
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Nhập mã xác thực hai yếu tố của bạn để xác nhận."
 
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr ""
+
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -23410,6 +23415,11 @@ msgstr "Tiếng Nga"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Bộ phận bán hàng"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr ""
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
