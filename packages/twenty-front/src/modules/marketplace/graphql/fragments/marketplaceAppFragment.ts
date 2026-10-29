@@ -9,5 +9,6 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     category
     logoUrl
     sourcePackage
+    isListed
   }
 `;

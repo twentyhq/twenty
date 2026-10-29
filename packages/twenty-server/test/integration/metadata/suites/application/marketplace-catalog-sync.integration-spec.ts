@@ -36,6 +36,16 @@ const MARKETPLACE_QUERY = `
       sourcePackage
       category
       logoUrl
+      isListed
+    }
+  }
+`;
+
+const PUBLIC_MARKETPLACE_QUERY = `
+  query {
+    publicMarketplaceApps {
+      id
+      isListed
     }
   }
 `;
@@ -87,6 +97,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('findManyMarketplaceApps', () => {
     const npmUid = crypto.randomUUID();
+    const unlistedNpmUid = crypto.randomUUID();
     const tarballUid = crypto.randomUUID();
     const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
     const serverCompatibleUid = crypto.randomUUID();
@@ -101,6 +112,13 @@ describe('Marketplace Catalog Sync (integration)', () => {
         universalIdentifier: npmUid,
         name: 'Test Catalog App',
         sourcePackage: '@test/catalog-app',
+      });
+
+      await insertCatalogRegistration({
+        universalIdentifier: unlistedNpmUid,
+        name: 'Unlisted Catalog App',
+        sourcePackage: '@test/unlisted-catalog-app',
+        isListed: false,
       });
 
       const tarballId = crypto.randomUUID();
@@ -184,6 +202,31 @@ describe('Marketplace Catalog Sync (integration)', () => {
       expect(testApp).toBeDefined();
       expect(testApp.name).toBe('Test Catalog App');
       expect(testApp.sourcePackage).toBe('@test/catalog-app');
+    });
+
+    it('should return unlisted npm registrations flagged as unlisted', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const apps = res.body.data.findManyMarketplaceApps;
+
+      expect(
+        apps.find((app: { id: string }) => app.id === npmUid),
+      ).toMatchObject({ isListed: true });
+      expect(
+        apps.find((app: { id: string }) => app.id === unlistedNpmUid),
+      ).toMatchObject({ isListed: false });
+    });
+
+    it('should only return listed registrations publicly', async () => {
+      const res = await request(baseUrl)
+        .post('/metadata')
+        .send({ query: PUBLIC_MARKETPLACE_QUERY })
+        .expect(200);
+      const appIds = res.body.data.publicMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(appIds).toContain(npmUid);
+      expect(appIds).not.toContain(unlistedNpmUid);
     });
 
     it('should not return tarball-sourced registrations', async () => {

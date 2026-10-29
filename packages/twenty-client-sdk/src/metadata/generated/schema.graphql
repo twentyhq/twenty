@@ -2870,6 +2870,7 @@ type MarketplaceApp {
   category: String!
   description: String!
   id: String!
+  isListed: Boolean!
   logoUrl: String
   name: String!
   sourcePackage: String

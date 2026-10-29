@@ -1955,6 +1955,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
+    isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     sourcePackage?: Scalars['String']
@@ -6451,6 +6452,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     description?: boolean | number
     id?: boolean | number
+    isListed?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     sourcePackage?: boolean | number

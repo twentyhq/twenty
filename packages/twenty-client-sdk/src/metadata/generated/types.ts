@@ -5928,6 +5928,9 @@ export default {
             "id": [
                 1
             ],
+            "isListed": [
+                4
+            ],
             "logoUrl": [
                 1
             ],

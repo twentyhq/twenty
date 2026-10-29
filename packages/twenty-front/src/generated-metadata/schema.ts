@@ -3029,6 +3029,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
+  isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   sourcePackage?: Maybe<Scalars['String']['output']>;

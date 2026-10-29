@@ -53,7 +53,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
 
   async computeForCache(): Promise<Record<string, MarketplaceAppDTO>> {
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards();
+      await this.applicationRegistrationService.findManyCatalogCards();
 
     if (registrations.length === 0) {
       return {};
@@ -101,6 +101,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       category: catalogCard.category ?? '',
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
+      isListed: catalogCard.isListed,
     };
   }
 }

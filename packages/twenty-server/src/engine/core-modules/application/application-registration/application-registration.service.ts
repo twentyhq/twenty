@@ -111,6 +111,7 @@ export type ApplicationRegistrationCatalogCard = {
   universalIdentifier: string;
   name: string;
   sourcePackage: string | null;
+  isListed: boolean;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -1105,9 +1106,7 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findManyListedCatalogCards(): Promise<
-    ApplicationRegistrationCatalogCard[]
-  > {
+  async findManyCatalogCards(): Promise<ApplicationRegistrationCatalogCard[]> {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
@@ -1116,6 +1115,7 @@ export class ApplicationRegistrationService {
         'sourceType',
         'sourcePackage',
         'latestAvailableVersion',
+        'isListed',
         'logo',
         'logoFileId',
         'description',
@@ -1124,7 +1124,6 @@ export class ApplicationRegistrationService {
         'manifest',
       ],
       where: {
-        isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
       },
     });
@@ -1134,6 +1133,7 @@ export class ApplicationRegistrationService {
       universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourcePackage: registration.sourcePackage,
+      isListed: registration.isListed,
       description: registration.description,
       author: getApplicationAuthorDisplayName(registration.author),
       category: registration.category,
