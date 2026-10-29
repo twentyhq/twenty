@@ -1,6 +1,12 @@
+import { useMemo } from 'react';
+import { styled } from '@linaria/react';
+
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
-import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutEditModeProvider } from '@/page-layout/components/PageLayoutEditModeProvider';
@@ -13,131 +19,62 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
-import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
+import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
-import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledRecordIdentifierBar = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  flex-direction: row;
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
   justify-content: space-between;
+  padding: 0 ${themeCssVariables.spacing[6]};
+  width: 100%;
+`;
+
+const StyledRecordIdentifierBarLeft = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  padding: 0 ${themeCssVariables.spacing[3]};
+`;
+
+const StyledRecordIdentifierBarRight = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 type PageLayoutSingleTabRendererProps = {
   pageLayoutId: string;
 };
 
-const PageLayoutSingleTabRendererContent = () => {
-  const pageLayoutIsInitialized = useAtomComponentStateValue(
-    pageLayoutIsInitializedComponentState,
-  );
-
-  if (!pageLayoutIsInitialized) {
-    return null;
-  }
-
-  return <PageLayoutSingleTabRendererInner />;
-};
-
-const PageLayoutSingleTabRendererInner = () => {
-  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const targetRecordIdentifier = useTargetRecord();
-
-  const sortedActiveTabs = sortTabsByPosition(
-    currentPageLayout.tabs.filter((tab) => tab.isActive),
-  );
-  const firstTab = sortedActiveTabs.at(0);
-
-  return (
-    <>
-      <StyledRecordIdentifierBar>
-        <RecordIdentifierBarTitle
-          objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
-          objectRecordId={targetRecordIdentifier.id}
-        />
-        <RecordIdentifierBarCreatedAt
-          objectRecordId={targetRecordIdentifier.id}
-        />
-      </StyledRecordIdentifierBar>
-
-      {isDefined(firstTab) && (
-        <PageLayoutSingleTabRendererTabContent firstTabId={firstTab.id} />
-      )}
-    </>
-  );
-};
-
-type PageLayoutSingleTabRendererTabContentProps = {
-  firstTabId: string;
-};
-
-const PageLayoutSingleTabRendererTabContent = ({
-  firstTabId,
-}: PageLayoutSingleTabRendererTabContentProps) => {
-  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-
-  const firstTabWithVisibleWidgets =
-    usePageLayoutTabWithVisibleWidgetsOrThrow(firstTabId);
-
-  const layoutMode = getTabLayoutMode({
-    tab: firstTabWithVisibleWidgets,
-    pageLayoutType: currentPageLayout.type,
-  });
-
-  const presentation = getTabPresentation({
-    widgets: firstTabWithVisibleWidgets.widgets,
-    layoutMode,
-    isInEditMode: isPageLayoutInEditMode,
-  });
-
-  return (
-    <PageLayoutContentProvider
-      value={{
-        tabId: firstTabId,
-        layoutMode,
-        presentation,
-      }}
-    >
-      <PageLayoutWidgetDndProvider>
-        <PageLayoutContent />
-      </PageLayoutWidgetDndProvider>
-    </PageLayoutContentProvider>
-  );
-};
-
 export const PageLayoutSingleTabRenderer = ({
   pageLayoutId,
 }: PageLayoutSingleTabRendererProps) => {
-  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
+  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
 
-  const pageLayoutComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
+  const pageLayoutComponentInstanceId = pageLayoutId;
 
   const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId,
-      layoutType,
+      pageLayoutId: pageLayoutComponentInstanceId,
       targetRecordIdentifier,
     }),
   );
@@ -190,5 +127,57 @@ export const PageLayoutSingleTabRenderer = ({
         </TabListComponentInstanceContext.Provider>
       </PageLayoutComponentInstanceContext.Provider>
     </RecordFilterValueDependenciesContext.Provider>
+  );
+};
+
+const PageLayoutSingleTabRendererContent = () => {
+  const { layoutType } = useLayoutRenderingContext();
+  const targetRecord = useTargetRecord();
+
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const pageLayout = useCurrentPageLayoutOrThrow();
+
+  const sortedTabs = useMemo(
+    () => sortTabsByPosition(pageLayout.tabs),
+    [pageLayout.tabs],
+  );
+
+  const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(
+    sortedTabs?.[0]?.id,
+  );
+
+  const tabLayoutMode = getTabLayoutMode(activeTab.layoutMode);
+  const tabPresentation = getTabPresentation(activeTab.presentation);
+
+  const isPageLayoutInitialized = useAtomComponentStateValue(
+    pageLayoutIsInitializedComponentState,
+  );
+
+  const showRecordIdentifierBar =
+    layoutType === PageLayoutType.RECORD_PAGE &&
+    !isPageLayoutInEditMode &&
+    isDefined(targetRecord);
+
+  return (
+    <PageLayoutWidgetDndProvider>
+      <PageLayoutContentProvider
+        layoutMode={tabLayoutMode}
+        presentation={tabPresentation}
+      >
+        {showRecordIdentifierBar && (
+          <StyledRecordIdentifierBar>
+            <StyledRecordIdentifierBarLeft>
+              <RecordIdentifierBarTitle />
+            </StyledRecordIdentifierBarLeft>
+            <StyledRecordIdentifierBarRight>
+              <RecordIdentifierBarCreatedAt />
+            </StyledRecordIdentifierBarRight>
+          </StyledRecordIdentifierBar>
+        )}
+        {isPageLayoutInitialized && (
+          <PageLayoutContent pageLayoutTab={activeTab} />
+        )}
+      </PageLayoutContentProvider>
+    </PageLayoutWidgetDndProvider>
   );
 };
