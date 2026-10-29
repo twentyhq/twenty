@@ -1,12 +1,14 @@
 import { access, mkdir, writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
-import { Open } from 'unzipper';
-
-import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+
+jest.useRealTimers();
 
 describe('TemporaryDirManager', () => {
   it('packages source files without including its output and cleans both', async () => {
+    const { createZipFile } =
+      await import('src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file');
+    const { Open } = await import('unzipper');
     const manager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } = await manager.init();
 
