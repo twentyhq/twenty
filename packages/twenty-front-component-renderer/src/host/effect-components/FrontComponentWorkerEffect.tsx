@@ -30,11 +30,16 @@ import { containsSharedDependenciesImportSpecifier } from '@/utils/module-import
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
+  componentSource?: string;
+  componentProps?: Record<string, unknown>;
+  sharedDependenciesSource?: string;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
+  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -51,11 +56,16 @@ export const FrontComponentWorkerEffect = ({
   hostFocusController,
   hostScrollController,
   componentUrl,
+  componentSource: providedComponentSource,
+  componentProps,
+  sharedDependenciesSource: providedSharedDependenciesSource,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
   sharedDependenciesUrl,
+  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -119,10 +129,12 @@ export const FrontComponentWorkerEffect = ({
           applicationAccessToken,
         );
 
-        const componentSource = await fetchComponentSource({
-          url: componentUrl,
-          headers: authorizationHeaders,
-        });
+        const componentSource =
+          providedComponentSource ??
+          (await fetchComponentSource({
+            url: componentUrl,
+            headers: authorizationHeaders,
+          }));
 
         if (isCancelled) {
           return;
@@ -136,13 +148,16 @@ export const FrontComponentWorkerEffect = ({
                 headers: authorizationHeaders,
               })
             : undefined,
-          isDefined(sharedDependenciesUrl) &&
-          containsSharedDependenciesImportSpecifier(componentSource)
-            ? fetchComponentSource({
-                url: sharedDependenciesUrl,
-                headers: authorizationHeaders,
-              })
-            : undefined,
+          isDefined(providedSharedDependenciesSource)
+            ? providedSharedDependenciesSource
+            : isDefined(sharedDependenciesUrl) &&
+                containsSharedDependenciesImportSpecifier(componentSource)
+              ? fetchComponentSource({
+                  url: sharedDependenciesUrl,
+                  credentials: sharedDependenciesCredentials,
+                  headers: authorizationHeaders,
+                })
+              : undefined,
         ]);
 
         if (isCancelled) {
@@ -164,6 +179,7 @@ export const FrontComponentWorkerEffect = ({
           {
             componentUrl,
             componentSource,
+            componentProps,
             applicationAccessToken,
             apiUrl,
             functionsBaseUrl,
@@ -181,6 +197,7 @@ export const FrontComponentWorkerEffect = ({
 
         if (!isCancelled) {
           setReceiver(newReceiver);
+          onReady?.();
         }
       } catch (error) {
         if (!isCancelled) {
@@ -207,11 +224,16 @@ export const FrontComponentWorkerEffect = ({
     };
   }, [
     componentUrl,
+    providedComponentSource,
+    componentProps,
+    providedSharedDependenciesSource,
+    onReady,
     applicationAccessToken,
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
+    sharedDependenciesCredentials,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,

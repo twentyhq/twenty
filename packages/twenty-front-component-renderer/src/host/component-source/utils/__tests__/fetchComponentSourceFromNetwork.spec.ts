@@ -59,6 +59,24 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
   });
 
+  it('can include the user session for an AI shared-dependency asset', async () => {
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValue(
+        createFakeResponse({ body: 'export const shared = true;' }),
+      );
+    globalThis.fetch = fetchMock;
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      credentials: 'include',
+    });
+    expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
+      headers: undefined,
+      credentials: 'include',
+    });
+  });
+
   it('follows the JSON handoff and fetches the presigned URL header-less', async () => {
     const fetchMock = jest
       .fn()

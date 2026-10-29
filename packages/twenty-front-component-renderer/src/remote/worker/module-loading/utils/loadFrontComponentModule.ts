@@ -15,7 +15,10 @@ type LoadFrontComponentModuleInput = {
 };
 
 type FrontComponentModule = {
-  default: (container: Element) => void;
+  default: (
+    container: Element,
+    props?: Record<string, unknown>,
+  ) => void | Promise<void>;
 };
 
 export const loadFrontComponentModule = async ({
