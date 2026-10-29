@@ -104,13 +104,13 @@ Notas sobre el esquema:
 * `additionalProperties: false` (opcional) prohíbe cualquier propiedad que no esté declarada en `properties`.
 
 </Accordion>
-<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI (beta)">
+<Accordion title="defineMcpServer" description="Expón un servidor MCP externo a la IA del espacio de trabajo (beta)">
 
 <Warning>
-  MCP servers are in beta and not live yet: you can declare them, but workspaces cannot use their tools until the feature ships.
+  Los servidores MCP están en beta y aún no están disponibles: puedes declararlos, pero los espacios de trabajo no pueden usar sus herramientas hasta que se lance la función.
 </Warning>
 
-Use `defineMcpServer()` to ship a remote MCP server (Streamable HTTP) with your app, so the workspace's AI can use its tools without syncing that data into Twenty:
+Usa `defineMcpServer()` para incluir un servidor MCP remoto (HTTP transmisible) con tu aplicación, para que la IA del espacio de trabajo pueda usar sus herramientas sin sincronizar esos datos con Twenty:
 
 ```ts src/mcp-servers/github.ts
 import { defineMcpServer } from 'twenty-sdk/define';
@@ -129,12 +129,12 @@ export default defineMcpServer({
 ```
 
 Puntos clave:
-* `name` is snake_case (lowercase letters, digits and underscores, starting with a letter, at most 32 characters) and unique in the workspace. It prefixes the server's tool names.
-* `url` must be an HTTP or HTTPS URL.
-* `connectionProvider` (optional) references a [connection provider](/es/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server.
-* The URL cannot change in a later version while a connection provider is linked, so tokens are never sent to another host.
-* Workspaces can deactivate the server; a later app version keeps that choice.
-* Requires `"engines": { "twenty": ">=2.53.0" }`.
+* `name` está en snake_case (letras minúsculas, dígitos y guiones bajos, comienza con una letra y tiene como máximo 32 caracteres) y es único en el espacio de trabajo. Sirve de prefijo para los nombres de las herramientas del servidor.
+* `url` debe ser una URL HTTP o HTTPS.
+* `connectionProvider` (opcional) hace referencia a un [proveedor de conexión](/es/developers/extend/apps/logic/connections) declarado por la misma aplicación. Las llamadas envían el token de acceso de esa conexión como un token Bearer. Omítelo para un servidor público.
+* La URL no puede cambiar en una versión posterior mientras haya un proveedor de conexión vinculado, por lo que los tokens nunca se envían a otro host.
+* Los espacios de trabajo pueden desactivar el servidor; una versión posterior de la aplicación conserva esa elección.
+* Requiere `"engines": { "twenty": ">=2.53.0" }`.
 
 </Accordion>
 <Accordion title="runAgent" description="Ejecutar un agente desde una función de lógica">

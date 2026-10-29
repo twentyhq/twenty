@@ -104,13 +104,13 @@ export default defineAgent({
 * `additionalProperties: false` (اختياري) يمنع أي خاصية غير معرّفة في `properties`.
 
 </Accordion>
-<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI (beta)">
+<Accordion title="defineMcpServer" description="إتاحة خادم MCP خارجي لذكاء اصطناعي مساحة العمل (بيتا)">
 
 <Warning>
-  MCP servers are in beta and not live yet: you can declare them, but workspaces cannot use their tools until the feature ships.
+  خوادم MCP في مرحلة بيتا وليست متاحة بعد: يمكنك تعريفها، لكن لا يمكن لمساحات العمل استخدام أدواتها حتى يتم إصدار الميزة.
 </Warning>
 
-Use `defineMcpServer()` to ship a remote MCP server (Streamable HTTP) with your app, so the workspace's AI can use its tools without syncing that data into Twenty:
+استخدم `defineMcpServer()` لإصدار خادم MCP بعيد (HTTP قابل للبث) مع تطبيقك، بحيث يتمكن ذكاء اصطناعي مساحة العمل من استخدام أدواته دون مزامنة تلك البيانات مع Twenty:
 
 ```ts src/mcp-servers/github.ts
 import { defineMcpServer } from 'twenty-sdk/define';
@@ -129,12 +129,12 @@ export default defineMcpServer({
 ```
 
 النقاط الرئيسية:
-* `name` is snake_case (lowercase letters, digits and underscores, starting with a letter, at most 32 characters) and unique in the workspace. It prefixes the server's tool names.
-* `url` must be an HTTP or HTTPS URL.
-* `connectionProvider` (optional) references a [connection provider](/ar/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server.
-* The URL cannot change in a later version while a connection provider is linked, so tokens are never sent to another host.
-* Workspaces can deactivate the server; a later app version keeps that choice.
-* Requires `"engines": { "twenty": ">=2.53.0" }`.
+* `name` بصيغة snake_case (أحرف صغيرة وأرقام وشرطات سفلية، يبدأ بحرف، وبحد أقصى 32 حرفًا) وفريد في مساحة العمل. يُضاف كبادئة إلى أسماء أدوات الخادم.
+* يجب أن يكون `url` عنوان URL من نوع HTTP أو HTTPS.
+* يشير `connectionProvider` (اختياري) إلى [موفر اتصال](/ar/developers/extend/apps/logic/connections) معلن بواسطة التطبيق نفسه. ترسل الاستدعاءات رمز الوصول الخاص بذلك الاتصال كرمز Bearer. احذفه لخادم عام.
+* لا يمكن أن يتغير عنوان URL في إصدار لاحق أثناء ربط موفر اتصال، لذلك لا تُرسل الرموز أبدًا إلى مضيف آخر.
+* يمكن لمساحات العمل إلغاء تنشيط الخادم؛ ويحافظ إصدار لاحق من التطبيق على هذا الخيار.
+* يتطلب `"engines": { "twenty": ">=2.53.0" }`.
 
 </Accordion>
 <Accordion title="runAgent" description="تشغيل وكيل من دالة منطقية">
