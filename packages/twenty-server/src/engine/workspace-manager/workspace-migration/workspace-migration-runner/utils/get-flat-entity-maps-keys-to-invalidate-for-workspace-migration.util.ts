@@ -24,8 +24,6 @@ const getUpdateAffectedMetadataNames = ({
     metadataName
   ] as Record<string, ManyToOneRelation | null>;
 
-  // An update replaces the entity in its own map only. A many-to-one related
-  // map is relinked solely when the update changes that relation's foreign key.
   return Object.values(manyToOneRelations)
     .filter(
       (relation): relation is ManyToOneRelation =>
@@ -37,11 +35,6 @@ const getUpdateAffectedMetadataNames = ({
     .map((relation) => relation.metadataName);
 };
 
-// A migration's load set is broad (relations + validation deps), but
-// invalidation must cover only the maps an action mutates, or a lone viewField
-// reorder needlessly recomputes flatObjectMetadataMaps/flatFieldMetadataMaps.
-// Create and delete may co-write or cascade any related entity; an update only
-// relinks a many-to-one map when its foreign key changes.
 export const getFlatEntityMapsKeysToInvalidateForWorkspaceMigration = (
   actions: AllUniversalWorkspaceMigrationAction[],
 ): (keyof AllFlatEntityMaps)[] => {

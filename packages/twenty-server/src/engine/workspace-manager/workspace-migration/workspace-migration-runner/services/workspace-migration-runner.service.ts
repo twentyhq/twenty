@@ -299,10 +299,6 @@ export class WorkspaceMigrationRunnerService {
       getMetadataFlatEntityMapsKey,
     );
 
-    // Flat-map invalidation covers only the maps actions mutate (not the broad
-    // load set), so a lone viewField reorder no longer recomputes the object
-    // and field metadata maps. Derived caches still key off the broad set to
-    // keep their refresh scope.
     const flatEntityMapsKeysToInvalidate =
       getFlatEntityMapsKeysToInvalidateForWorkspaceMigration(actions);
 
