@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { PULL_BASE_FILE_PATH } from '@/app/constants/pull-base-file-path.constant';
+import { parsePullDependencyFiles } from '@/app/pull/parse-pull-dependency-files';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
 import { normalizePullTarget } from '@/app/pull/normalize-pull-target';
 import { type PullAppOptions } from '@/app/pull/types';
@@ -18,7 +19,15 @@ export const prepareAppPull = async ({
 
   const normalizedTarget = normalizePullTarget(target);
 
-  await assertPullPaths({ appPath, relativePaths: [PULL_BASE_FILE_PATH] });
+  const dependencyFiles = parsePullDependencyFiles(applicationExport.files);
+
+  await assertPullPaths({
+    appPath,
+    relativePaths: [
+      PULL_BASE_FILE_PATH,
+      ...dependencyFiles.map((file) => file.path),
+    ],
+  });
 
   const packageJson: unknown = JSON.parse(
     await readFile(join(appPath, 'package.json'), 'utf8'),
@@ -26,12 +35,6 @@ export const prepareAppPull = async ({
 
   if (!isPlainObject(packageJson)) {
     throw new Error('Pull requires a project with a package.json object.');
-  }
-
-  if (applicationExport.files.length > 0) {
-    throw new Error(
-      'This CLI cannot reconcile exported source or dependency files.',
-    );
   }
 
   const identity = await readApplicationIdentity({ appPath, signal });

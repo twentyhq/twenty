@@ -3670,20 +3670,20 @@ msgstr "고객 사례 더 보기"
 msgid "Extend beyond the CRM screens"
 msgstr "CRM 화면을 넘어 확장"
 
-#. js-lingui-id: qu9kGK
+#. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
-msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr "검증된 앱으로 Twenty를 확장하세요 — 통화 녹음, 데이터 보강, Slack, Discord, Linear 등 다양한 앱을 사용할 수 있습니다. 오픈 소스 CRM 워크스페이스에 어떤 앱이든 한 번의 클릭만으로 설치하세요."
+msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr ""
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
 msgid "Extend your CRM"
 msgstr "CRM 확장하기"
 
-#. js-lingui-id: wmJ4p4
+#. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
-msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
-msgstr "Twenty가 제작하고 유지 관리하는 앱으로 CRM을 확장하세요. 여기 있는 모든 앱은 저희 팀이 검증했으며, 클릭 한 번이면 워크스페이스에서 바로 사용할 수 있습니다."
+msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
+msgstr ""
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4796,10 +4796,10 @@ msgstr "워크플로 실행의 각 단계에 대한 AI 호출, 코드 출력, HT
 msgid "Install"
 msgstr "설치"
 
-#. js-lingui-id: qq1x6K
+#. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
-msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
-msgstr "통화 녹음, 데이터 보강, Slack, Linear 등 다양한 앱을 설치하세요 — 모든 앱은 Twenty가 제작하고 유지 관리합니다."
+msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
+msgstr ""
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7051,6 +7051,11 @@ msgstr "매출"
 msgid "Revenue (YTD)"
 msgstr "매출 (연초 이후 누적)"
 
+#. js-lingui-id: mO7Tm0
+#: src/sections/menu/data/menu.ts
+msgid "Reviewed apps for your workspace"
+msgstr ""
+
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rich notes attached to records"
@@ -8730,10 +8735,10 @@ msgstr "투발루 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | 오픈 소스 CRM 1위"
 
-#. js-lingui-id: XxKVz4
+#. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
-msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
-msgstr "Twenty 앱 — 오픈 소스 CRM을 위한 검증된 앱"
+msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
+msgstr ""
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
@@ -9125,16 +9130,6 @@ msgstr "베네수엘라 🇻🇪"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Version control"
 msgstr "버전 관리"
-
-#. js-lingui-id: vNIHYX
-#: src/sections/menu/data/menu.ts
-msgid "Vetted apps for your workspace"
-msgstr "워크스페이스를 위한 검증된 앱"
-
-#. js-lingui-id: k5HTQK
-#: src/apps-marketplace/AppDetail.tsx
-msgid "Vetted by Twenty"
-msgstr "Twenty가 검증함"
 
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
