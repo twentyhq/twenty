@@ -4,7 +4,11 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
-const keepEachPermissionFlagOnce = (config: RoleConfig): RoleConfig =>
+const keepEachPermissionFlagOnce = <
+  TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
+>(
+  config: TConfig,
+): TConfig =>
   isDefined(config.permissionFlagUniversalIdentifiers)
     ? {
         ...config,
