@@ -12,12 +12,8 @@ import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 
 const StyledTableHeader = styled(TableHeader)`
   min-width: 0;
-  position: relative;
-`;
-
-const StyledLabel = styled.span`
   overflow: hidden;
-  text-overflow: ellipsis;
+  position: relative;
   white-space: nowrap;
 `;
 
@@ -84,7 +80,7 @@ export const LogConsoleTableHeaderCell = ({
 
   return (
     <StyledTableHeader ref={headerRef} align={column.align}>
-      <StyledLabel>{label}</StyledLabel>
+      {label}
       <StyledResizeHandleContainer>
         <ResizeHandle
           axis="x"
