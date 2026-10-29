@@ -9,6 +9,9 @@ export const CURRENT_USER_SESSIONS = gql`
       isImpersonating
       userAgent
       ipAddress
+      country
+      region
+      city
       createdAt
       lastActiveAt
       expiresAt
