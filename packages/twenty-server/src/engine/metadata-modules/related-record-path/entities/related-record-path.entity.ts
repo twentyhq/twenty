@@ -53,6 +53,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   ],
   { unique: true, where: '"thirdFieldMetadataId" IS NOT NULL' },
 )
+@Index('IDX_RELATED_RECORD_PATH_APPLICATION_ID', ['applicationId'])
+@Index('IDX_RELATED_RECORD_PATH_SOURCE_OBJECT_METADATA_ID', [
+  'sourceObjectMetadataId',
+])
 @Index('IDX_RELATED_RECORD_PATH_TARGET_OBJECT_METADATA_ID', [
   'targetObjectMetadataId',
 ])

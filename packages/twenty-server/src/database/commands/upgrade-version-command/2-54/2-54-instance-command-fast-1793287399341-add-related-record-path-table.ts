@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.54.0', 1793285110242)
+@RegisteredInstanceCommand('2.54.0', 1793287399341)
 export class AddRelatedRecordPathTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."relatedRecordPath" ("workspaceId" uuid NOT NULL, "universalIdentifier" uuid NOT NULL, "applicationId" uuid NOT NULL, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "sourceObjectMetadataId" uuid NOT NULL, "targetObjectMetadataId" uuid NOT NULL, "firstFieldMetadataId" uuid NOT NULL, "secondFieldMetadataId" uuid, "thirdFieldMetadataId" uuid, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_5105d98eee85b6a1e674109ba3d" PRIMARY KEY ("id"))');
@@ -12,6 +12,8 @@ export class AddRelatedRecordPathTableFastInstanceCommand implements FastInstanc
     await queryRunner.query('CREATE INDEX "IDX_RELATED_RECORD_PATH_SECOND_FIELD_METADATA_ID" ON "core"."relatedRecordPath" ("secondFieldMetadataId") ');
     await queryRunner.query('CREATE INDEX "IDX_RELATED_RECORD_PATH_FIRST_FIELD_METADATA_ID" ON "core"."relatedRecordPath" ("firstFieldMetadataId") ');
     await queryRunner.query('CREATE INDEX "IDX_RELATED_RECORD_PATH_TARGET_OBJECT_METADATA_ID" ON "core"."relatedRecordPath" ("targetObjectMetadataId") ');
+    await queryRunner.query('CREATE INDEX "IDX_RELATED_RECORD_PATH_SOURCE_OBJECT_METADATA_ID" ON "core"."relatedRecordPath" ("sourceObjectMetadataId") ');
+    await queryRunner.query('CREATE INDEX "IDX_RELATED_RECORD_PATH_APPLICATION_ID" ON "core"."relatedRecordPath" ("applicationId") ');
     await queryRunner.query('CREATE UNIQUE INDEX "IDX_RELATED_RECORD_PATH_UNIQUE_THREE_HOPS" ON "core"."relatedRecordPath" ("workspaceId", "sourceObjectMetadataId", "firstFieldMetadataId", "secondFieldMetadataId", "thirdFieldMetadataId") WHERE "thirdFieldMetadataId" IS NOT NULL');
     await queryRunner.query('CREATE UNIQUE INDEX "IDX_RELATED_RECORD_PATH_UNIQUE_TWO_HOPS" ON "core"."relatedRecordPath" ("workspaceId", "sourceObjectMetadataId", "firstFieldMetadataId", "secondFieldMetadataId") WHERE "secondFieldMetadataId" IS NOT NULL AND "thirdFieldMetadataId" IS NULL');
     await queryRunner.query('CREATE UNIQUE INDEX "IDX_RELATED_RECORD_PATH_UNIQUE_ONE_HOP" ON "core"."relatedRecordPath" ("workspaceId", "sourceObjectMetadataId", "firstFieldMetadataId") WHERE "secondFieldMetadataId" IS NULL');
@@ -35,6 +37,8 @@ export class AddRelatedRecordPathTableFastInstanceCommand implements FastInstanc
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_UNIQUE_ONE_HOP"');
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_UNIQUE_TWO_HOPS"');
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_UNIQUE_THREE_HOPS"');
+    await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_APPLICATION_ID"');
+    await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_SOURCE_OBJECT_METADATA_ID"');
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_TARGET_OBJECT_METADATA_ID"');
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_FIRST_FIELD_METADATA_ID"');
     await queryRunner.query('DROP INDEX "core"."IDX_RELATED_RECORD_PATH_SECOND_FIELD_METADATA_ID"');
