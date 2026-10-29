@@ -91,9 +91,12 @@ describe('resolveAppSystemPermissionFlag', () => {
     expect(content).toContain(`'${SystemPermissionFlag.WORKFLOWS}'`);
   });
 
-  it('uses the shared flags when the app SDK does not export SystemPermissionFlag', async () => {
-    expect(resolveAppSystemPermissionFlag(await createApp())).toBe(
-      SystemPermissionFlag,
+  it('writes every flag as its identifier when the app SDK does not export SystemPermissionFlag', async () => {
+    const appPath = await createApp();
+
+    expect(resolveAppSystemPermissionFlag(appPath)).toEqual({});
+    expect(buildRoleFileContent(appPath)).toContain(
+      `'${SystemPermissionFlag.CONNECTED_ACCOUNTS}'`,
     );
   });
 });

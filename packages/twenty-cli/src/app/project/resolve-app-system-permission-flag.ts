@@ -2,7 +2,6 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
 import { isString } from '@sniptt/guards';
-import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isPlainObject } from 'twenty-shared/utils';
 
 export const resolveAppSystemPermissionFlag = (
@@ -18,5 +17,5 @@ export const resolveAppSystemPermissionFlag = (
           .map((name) => [name, appSystemPermissionFlag[name]])
           .filter((entry): entry is [string, string] => isString(entry[1])),
       )
-    : SystemPermissionFlag;
+    : {};
 };
