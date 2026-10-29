@@ -5,13 +5,9 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const SENDABLE_BODY_TEMPLATE = JSON.stringify({
@@ -63,7 +59,6 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
   const campaignId = v4();
   const suppressedEmailAddress = `mcp-suppressed-${v4()}@example.com`;
   let suppressionId: string;
-  let wasMessageCampaignEnabled: boolean;
 
   const readCampaignStatus = async (): Promise<string> => {
     const { data } = await findOneOperation({
@@ -76,20 +71,6 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
   };
 
   beforeAll(async () => {
-    wasMessageCampaignEnabled =
-      await getAppProviderByClassName<FeatureFlagService>(
-        'FeatureFlagService',
-      ).isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-        SEED_APPLE_WORKSPACE_ID,
-      );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await testDataSource.query(
       `INSERT INTO "core"."emailingDomain"
          ("workspaceId", "domain", "status", "verifiedAt", "unsubscribeHostname", "unsubscribeHostnameStatus")
@@ -134,12 +115,6 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
       `DELETE FROM "core"."emailingDomain" WHERE "domain" = $1`,
       [domain],
     );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: wasMessageCampaignEnabled,
-      expectToFail: false,
-    });
   });
 
   it('should preview the audience of a ready campaign', async () => {

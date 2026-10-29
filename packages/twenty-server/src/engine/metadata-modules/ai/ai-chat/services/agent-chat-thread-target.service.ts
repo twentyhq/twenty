@@ -23,6 +23,12 @@ type RecordReference = {
   recordId: string;
 };
 
+type ThreadRecordLinkArgs = RecordReference & {
+  workspaceId: string;
+  threadId: string;
+  authContext: WorkspaceAuthContext;
+};
+
 @Injectable()
 export class AgentChatThreadTargetService {
   constructor(
@@ -31,16 +37,38 @@ export class AgentChatThreadTargetService {
   ) {}
 
   // chat turns run in a queue worker, so the sender's context is passed to write the link as them
-  async attachThreadToRecord({
+  async attachThreadToRecord(args: ThreadRecordLinkArgs): Promise<void> {
+    await this.writeLinkToReadableRecord({
+      ...args,
+      writeLink: async (link) => {
+        const repository = this.getThreadTargetRepository();
+
+        // only standard legs have a unique index, so custom-object links are deduplicated by lookup
+        if (await repository.existsBy(link)) {
+          return;
+        }
+
+        await repository.insert(link, { onConflictDoNothing: true });
+      },
+    });
+  }
+
+  async detachThreadFromRecord(args: ThreadRecordLinkArgs): Promise<void> {
+    await this.writeLinkToReadableRecord({
+      ...args,
+      writeLink: (link) => this.getThreadTargetRepository().softDelete(link),
+    });
+  }
+
+  private async writeLinkToReadableRecord({
     workspaceId,
     threadId,
     objectNameSingular,
     recordId,
     authContext,
-  }: RecordReference & {
-    workspaceId: string;
-    threadId: string;
-    authContext: WorkspaceAuthContext;
+    writeLink,
+  }: ThreadRecordLinkArgs & {
+    writeLink: (link: Record<string, string>) => Promise<unknown>;
   }): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
@@ -54,19 +82,14 @@ export class AgentChatThreadTargetService {
         recordId,
       });
 
-      const link = { threadId, [joinColumnName]: recordId };
-      const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-        );
-
-      // only standard legs have a unique index, so custom-object links are deduplicated by lookup
-      if (await repository.existsBy(link)) {
-        return;
-      }
-
-      await repository.insert(link, { onConflictDoNothing: true });
+      await writeLink({ threadId, [joinColumnName]: recordId });
     }, authContext);
+  }
+
+  private getThreadTargetRepository() {
+    return this.workspaceOrmManager.getRepositoryWithContextPermissions(
+      AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+    );
   }
 
   private async assertRecordIsReadableOrThrow({

@@ -8,24 +8,29 @@ import { useTheme } from 'twenty-ui/theme';
 type ApplicationStackIconProps = {
   Icon?: IconComponent;
   applicationId?: string | null;
+  showFirstPartyApplication?: boolean;
 };
 
 export const ApplicationStackIcon = ({
   Icon,
   applicationId,
+  showFirstPartyApplication = false,
 }: ApplicationStackIconProps) => {
   const theme = useTheme();
   const isThirdPartyApplication = useIsThirdPartyApplication(applicationId);
+  const shouldShowApplication =
+    isDefined(applicationId) &&
+    (showFirstPartyApplication || isThirdPartyApplication);
 
   if (!isDefined(Icon)) {
-    return isThirdPartyApplication ? (
+    return shouldShowApplication ? (
       <AppChip applicationId={applicationId} size="md" chipOnly />
     ) : null;
   }
 
   const icon = <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
 
-  if (!isThirdPartyApplication) {
+  if (!shouldShowApplication) {
     return icon;
   }
 
