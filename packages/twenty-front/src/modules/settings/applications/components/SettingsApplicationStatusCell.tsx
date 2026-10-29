@@ -1,16 +1,18 @@
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
+import { getHighestPrioritySettingsApplicationStatus } from '@/settings/applications/utils/getHighestPrioritySettingsApplicationStatus';
 import { useLingui } from '@lingui/react/macro';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 type SettingsApplicationStatusCellProps = {
-  status?: SettingsApplicationStatus;
+  statuses?: SettingsApplicationStatus[];
 };
 
 export const SettingsApplicationStatusCell = ({
-  status,
+  statuses = [],
 }: SettingsApplicationStatusCellProps) => {
   const { t } = useLingui();
+  const status = getHighestPrioritySettingsApplicationStatus(statuses);
 
   switch (status?.type) {
     case 'accountSyncIssue':

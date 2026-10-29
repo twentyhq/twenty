@@ -1,4 +1,4 @@
-import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
+import { type SettingsWorkspaceApplicationStatus } from '@/settings/applications/types/SettingsWorkspaceApplicationStatus';
 import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
@@ -29,13 +29,13 @@ type WorkspaceApplicationStatusApplicationWithVariables = Pick<
   >[];
 };
 
-export const getWorkspaceApplicationStatusById = ({
+export const getWorkspaceApplicationStatusesById = ({
   applications,
   applicationsWithVariables,
 }: {
   applications: WorkspaceApplicationStatusApplication[];
   applicationsWithVariables?: WorkspaceApplicationStatusApplicationWithVariables[];
-}): Record<string, SettingsApplicationStatus> => {
+}): Record<string, SettingsWorkspaceApplicationStatus[]> => {
   const applicationVariablesByApplicationId = new Map(
     (applicationsWithVariables ?? []).map(({ id, applicationVariables }) => [
       id,
@@ -43,9 +43,11 @@ export const getWorkspaceApplicationStatusById = ({
     ]),
   );
 
-  const statusById: Record<string, SettingsApplicationStatus> = {};
+  const statusesById: Record<string, SettingsWorkspaceApplicationStatus[]> = {};
 
   for (const application of applications) {
+    const statuses: SettingsWorkspaceApplicationStatus[] = [];
+
     const missingRequiredApplicationVariables =
       getMissingRequiredApplicationVariables(
         getDisplayedWorkspaceApplicationVariables(
@@ -54,8 +56,7 @@ export const getWorkspaceApplicationStatusById = ({
       );
 
     if (isNonEmptyArray(missingRequiredApplicationVariables)) {
-      statusById[application.id] = { type: 'missingConfiguration' };
-      continue;
+      statuses.push({ type: 'missingConfiguration' });
     }
 
     if (
@@ -66,9 +67,13 @@ export const getWorkspaceApplicationStatusById = ({
           application.applicationRegistration?.latestAvailableVersion,
       })
     ) {
-      statusById[application.id] = { type: 'updateAvailable' };
+      statuses.push({ type: 'updateAvailable' });
+    }
+
+    if (isNonEmptyArray(statuses)) {
+      statusesById[application.id] = statuses;
     }
   }
 
-  return statusById;
+  return statusesById;
 };

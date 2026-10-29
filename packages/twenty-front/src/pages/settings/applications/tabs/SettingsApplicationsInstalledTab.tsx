@@ -2,7 +2,7 @@ import { useInstalledApplications } from '@/applications/hooks/useInstalledAppli
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
-import { useWorkspaceApplicationStatusById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusById';
+import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -22,10 +22,10 @@ export const SettingsApplicationsInstalledTab = () => {
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
   const {
-    statusById,
+    statusesById,
     error: statusError,
     refetch: refetchStatuses,
-  } = useWorkspaceApplicationStatusById({
+  } = useWorkspaceApplicationStatusesById({
     applications: installedApplications,
     shouldSkip: !isAppPreferencesEnabled,
   });
@@ -50,9 +50,9 @@ export const SettingsApplicationsInstalledTab = () => {
       }
       applications={installedApplications}
       builtInAccountApps={installedBuiltInAccountApps}
-      variant="workspace"
+      linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}
-      statusById={statusById}
+      statusesById={statusesById}
     />
   );
 };

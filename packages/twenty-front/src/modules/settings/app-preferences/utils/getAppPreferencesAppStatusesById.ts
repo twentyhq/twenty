@@ -2,12 +2,12 @@ import { type AppPreferencesAppStatusAccount } from '@/settings/app-preferences/
 import { type AppPreferencesAppStatusApplication } from '@/settings/app-preferences/types/AppPreferencesAppStatusApplication';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
-import { getBuiltInAccountAppStatus } from '@/settings/app-preferences/utils/getBuiltInAccountAppStatus';
-import { getInstalledApplicationStatus } from '@/settings/app-preferences/utils/getInstalledApplicationStatus';
-import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
-import { isDefined } from 'twenty-shared/utils';
+import { getBuiltInAccountAppStatuses } from '@/settings/app-preferences/utils/getBuiltInAccountAppStatuses';
+import { getInstalledApplicationStatuses } from '@/settings/app-preferences/utils/getInstalledApplicationStatuses';
+import { type SettingsMemberApplicationStatus } from '@/settings/applications/types/SettingsMemberApplicationStatus';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-export const getAppPreferencesAppStatusById = <
+export const getAppPreferencesAppStatusesById = <
   TConnectedAccount extends AppPreferencesAppStatusAccount,
 >({
   groups,
@@ -17,7 +17,7 @@ export const getAppPreferencesAppStatusById = <
   groups: ConnectedAccountGroup<TConnectedAccount>[];
   builtInAccountApps: Pick<BuiltInAccountApp, 'id'>[];
   applicationsWithPreferences: AppPreferencesAppStatusApplication[];
-}): Record<string, SettingsApplicationStatus<TConnectedAccount>> => {
+}): Record<string, SettingsMemberApplicationStatus<TConnectedAccount>[]> => {
   const activeBuiltInAccounts = groups
     .map((group) => group.builtInAccount)
     .filter(isDefined)
@@ -26,32 +26,32 @@ export const getAppPreferencesAppStatusById = <
     .flatMap((group) => group.appAccounts)
     .filter((account) => !isDefined(account.archivedAt));
 
-  const statusById: Record<
+  const statusesById: Record<
     string,
-    SettingsApplicationStatus<TConnectedAccount>
+    SettingsMemberApplicationStatus<TConnectedAccount>[]
   > = {};
 
   for (const { id } of builtInAccountApps) {
-    const status = getBuiltInAccountAppStatus({
+    const statuses = getBuiltInAccountAppStatuses({
       builtInAccountAppId: id,
       activeBuiltInAccounts,
     });
 
-    if (isDefined(status)) {
-      statusById[id] = status;
+    if (isNonEmptyArray(statuses)) {
+      statusesById[id] = statuses;
     }
   }
 
   for (const applicationWithPreferences of applicationsWithPreferences) {
-    const status = getInstalledApplicationStatus({
+    const statuses = getInstalledApplicationStatuses({
       applicationWithPreferences,
       activeAppAccounts,
     });
 
-    if (isDefined(status)) {
-      statusById[applicationWithPreferences.application.id] = status;
+    if (isNonEmptyArray(statuses)) {
+      statusesById[applicationWithPreferences.application.id] = statuses;
     }
   }
 
-  return statusById;
+  return statusesById;
 };

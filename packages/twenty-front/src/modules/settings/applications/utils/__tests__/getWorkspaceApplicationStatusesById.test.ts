@@ -1,4 +1,4 @@
-import { getWorkspaceApplicationStatusById } from '@/settings/applications/utils/getWorkspaceApplicationStatusById';
+import { getWorkspaceApplicationStatusesById } from '@/settings/applications/utils/getWorkspaceApplicationStatusesById';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
@@ -24,9 +24,21 @@ const buildVariable = (
   ...overrides,
 });
 
-const getStatusById = ({
+const buildApplication = ({
   sourceType = ApplicationRegistrationSourceType.NPM,
   latestAvailableVersion = '1.0.0',
+}: {
+  sourceType?: ApplicationRegistrationSourceType;
+  latestAvailableVersion?: string;
+} = {}) => ({
+  id: APPLICATION_ID,
+  version: '1.0.0',
+  applicationRegistration: { sourceType, latestAvailableVersion },
+});
+
+const getStatusesById = ({
+  sourceType,
+  latestAvailableVersion,
   applicationVariables = [],
   applicationVariablesApplicationId = APPLICATION_ID,
 }: {
@@ -35,29 +47,25 @@ const getStatusById = ({
   applicationVariables?: ReturnType<typeof buildVariable>[];
   applicationVariablesApplicationId?: string;
 } = {}) =>
-  getWorkspaceApplicationStatusById({
-    applications: [
-      {
-        id: APPLICATION_ID,
-        version: '1.0.0',
-        applicationRegistration: { sourceType, latestAvailableVersion },
-      },
-    ],
+  getWorkspaceApplicationStatusesById({
+    applications: [buildApplication({ sourceType, latestAvailableVersion })],
     applicationsWithVariables: [
       { id: applicationVariablesApplicationId, applicationVariables },
     ],
   });
 
-describe('getWorkspaceApplicationStatusById', () => {
+describe('getWorkspaceApplicationStatusesById', () => {
   it('flags an app with a required workspace variable left empty', () => {
-    expect(getStatusById({ applicationVariables: [buildVariable()] })).toEqual({
-      [APPLICATION_ID]: { type: 'missingConfiguration' },
+    expect(
+      getStatusesById({ applicationVariables: [buildVariable()] }),
+    ).toEqual({
+      [APPLICATION_ID]: [{ type: 'missingConfiguration' }],
     });
   });
 
   it('counts a masked secret as filled', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         applicationVariables: [buildVariable({ value: '********' })],
       }),
     ).toEqual({});
@@ -65,7 +73,7 @@ describe('getWorkspaceApplicationStatusById', () => {
 
   it('ignores required variables each member fills in', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         applicationVariables: [
           buildVariable({ scope: ApplicationVariableScope.USER }),
         ],
@@ -75,7 +83,7 @@ describe('getWorkspaceApplicationStatusById', () => {
 
   it('ignores deprecated variables left empty', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         applicationVariables: [buildVariable({ isDeprecated: true })],
       }),
     ).toEqual({});
@@ -83,7 +91,7 @@ describe('getWorkspaceApplicationStatusById', () => {
 
   it('ignores variables that belong to another app', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         applicationVariables: [buildVariable()],
         applicationVariablesApplicationId: 'other-application-id',
       }),
@@ -91,43 +99,39 @@ describe('getWorkspaceApplicationStatusById', () => {
   });
 
   it('flags an app behind its latest version', () => {
-    expect(getStatusById({ latestAvailableVersion: '1.1.0' })).toEqual({
-      [APPLICATION_ID]: { type: 'updateAvailable' },
+    expect(getStatusesById({ latestAvailableVersion: '1.1.0' })).toEqual({
+      [APPLICATION_ID]: [{ type: 'updateAvailable' }],
     });
   });
 
   it('never flags an update for an app that cannot be upgraded', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         sourceType: ApplicationRegistrationSourceType.LOCAL,
         latestAvailableVersion: '1.1.0',
       }),
     ).toEqual({});
   });
 
-  it('still flags an update while variables are unavailable', () => {
+  it('still flags an update while variables are not loaded', () => {
     expect(
-      getWorkspaceApplicationStatusById({
-        applications: [
-          {
-            id: APPLICATION_ID,
-            version: '1.0.0',
-            applicationRegistration: {
-              sourceType: ApplicationRegistrationSourceType.NPM,
-              latestAvailableVersion: '1.1.0',
-            },
-          },
-        ],
+      getWorkspaceApplicationStatusesById({
+        applications: [buildApplication({ latestAvailableVersion: '1.1.0' })],
       }),
-    ).toEqual({ [APPLICATION_ID]: { type: 'updateAvailable' } });
+    ).toEqual({ [APPLICATION_ID]: [{ type: 'updateAvailable' }] });
   });
 
-  it('shows missing configuration before an available update', () => {
+  it('reports both missing configuration and an available update', () => {
     expect(
-      getStatusById({
+      getStatusesById({
         latestAvailableVersion: '1.1.0',
         applicationVariables: [buildVariable()],
       }),
-    ).toEqual({ [APPLICATION_ID]: { type: 'missingConfiguration' } });
+    ).toEqual({
+      [APPLICATION_ID]: [
+        { type: 'missingConfiguration' },
+        { type: 'updateAvailable' },
+      ],
+    });
   });
 });

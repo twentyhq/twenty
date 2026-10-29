@@ -29,7 +29,7 @@ export type SettingsApplicationTableRowProps = {
   link?: string;
   middleColumn?: SettingsApplicationTableRowMiddleColumn;
   sourceType?: ApplicationRegistrationSourceType;
-  status?: SettingsApplicationStatus;
+  statuses?: SettingsApplicationStatus[];
 };
 
 const SOURCE_TYPE_LABELS: Record<
@@ -52,7 +52,7 @@ export const SettingsApplicationTableRow = ({
   link,
   middleColumn = 'type',
   sourceType,
-  status,
+  statuses,
 }: SettingsApplicationTableRowProps) => {
   const isMobile = useIsMobile();
   const resolvedDescription = useResolvedApplicationDescription(application);
@@ -73,7 +73,7 @@ export const SettingsApplicationTableRow = ({
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
         {middleColumn === 'status' ? (
-          <SettingsApplicationStatusCell status={status} />
+          <SettingsApplicationStatusCell statuses={statuses} />
         ) : (
           getSourceTypeLabel(sourceType)
         )}

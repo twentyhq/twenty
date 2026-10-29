@@ -1,18 +1,18 @@
-import { getWorkspaceApplicationStatusById } from '@/settings/applications/utils/getWorkspaceApplicationStatusById';
+import { getWorkspaceApplicationStatusesById } from '@/settings/applications/utils/getWorkspaceApplicationStatusesById';
 import { useQuery } from '@apollo/client/react';
 import { FindManyApplicationsForStatusDocument } from '~/generated-metadata/graphql';
 
-type UseWorkspaceApplicationStatusByIdArgs = {
+type UseWorkspaceApplicationStatusesByIdArgs = {
   applications: Parameters<
-    typeof getWorkspaceApplicationStatusById
+    typeof getWorkspaceApplicationStatusesById
   >[0]['applications'];
   shouldSkip: boolean;
 };
 
-export const useWorkspaceApplicationStatusById = ({
+export const useWorkspaceApplicationStatusesById = ({
   applications,
   shouldSkip,
-}: UseWorkspaceApplicationStatusByIdArgs) => {
+}: UseWorkspaceApplicationStatusesByIdArgs) => {
   const { data, error, refetch } = useQuery(
     FindManyApplicationsForStatusDocument,
     {
@@ -22,7 +22,7 @@ export const useWorkspaceApplicationStatusById = ({
   );
 
   return {
-    statusById: getWorkspaceApplicationStatusById({
+    statusesById: getWorkspaceApplicationStatusesById({
       applications,
       applicationsWithVariables: data?.findManyApplications,
     }),

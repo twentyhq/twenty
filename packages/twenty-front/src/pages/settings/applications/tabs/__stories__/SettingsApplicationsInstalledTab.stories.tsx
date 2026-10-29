@@ -226,6 +226,11 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
 
     expect(await within(acmeRow).findByText('Update')).toBeVisible();
     expect(acmeRow).toHaveTextContent('NPM');
+
+    const recorderRow = canvas.getByRole('link', { name: /Recorder/ });
+
+    expect(within(recorderRow).getByText('Update')).toBeVisible();
+    expect(recorderRow).toHaveTextContent('NPM');
     expect(canvas.getByText('Type')).toBeVisible();
     expect(canvas.queryByText('Status')).not.toBeInTheDocument();
     expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
