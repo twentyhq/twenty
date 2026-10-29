@@ -20,7 +20,6 @@ const StyledScrollWrapper = styled.div<{ autoHeight?: boolean }>`
   overflow-x: hidden;
   overflow-y: hidden;
   width: 100%;
-  -webkit-overflow-scrolling: touch;
 `;
 
 export type ScrollWrapperProps = {
