@@ -1,7 +1,10 @@
 import { PRIORITY_LIMIT, type RedisClient } from 'bullmq';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import {
+  FAIR_TICKET_OFFSET,
+  URGENT_FAIR_PRIORITY,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -71,6 +74,10 @@ export class FairQueueScheduler {
         jobCount: jobIndexes.length,
       })),
     });
+
+    if (staticPriority === URGENT_FAIR_PRIORITY) {
+      return staticPriorities;
+    }
 
     if (!isDefined(tickets)) {
       void this.options.metricsService.incrementCounterForEvent({

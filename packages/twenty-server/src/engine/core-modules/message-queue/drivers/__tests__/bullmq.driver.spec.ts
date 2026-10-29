@@ -3,7 +3,10 @@ import { type Job, Worker } from 'bullmq';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
-import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import {
+  FAIR_TICKET_OFFSET,
+  URGENT_FAIR_PRIORITY,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -582,6 +585,24 @@ describe('BullMQDriver fair tickets', () => {
       FAIR_TICKET_OFFSET,
       FAIR_TICKET_OFFSET + 12,
     ]);
+  });
+
+  it('keeps priority 1 ahead of the fair tickets while still charging its group keys', async () => {
+    mockAllocateTickets.mockResolvedValue([{ tag: 7, weight: 1 }]);
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      { workspaceId: 'ws-1' },
+      { priority: URGENT_FAIR_PRIORITY },
+    );
+
+    expect(mockAllocateTickets).toHaveBeenCalledTimes(1);
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      { workspaceId: 'ws-1' },
+      expect.objectContaining({ priority: URGENT_FAIR_PRIORITY }),
+    );
   });
 
   it('keeps the static priority and counts a fallback when no ticket comes back', async () => {
