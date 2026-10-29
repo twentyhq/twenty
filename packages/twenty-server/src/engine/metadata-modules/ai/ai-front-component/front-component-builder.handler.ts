@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { resolve } from 'path';
 
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
@@ -6,5 +6,5 @@ import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules
 export const handler = (input: FrontComponentBuilderRequest) =>
   executeFrontComponentBuilderRequest({
     input,
-    yarnEngineDirectory: join(__dirname, 'yarn-engine'),
+    yarnEngineDirectory: resolve('yarn-engine'),
   });

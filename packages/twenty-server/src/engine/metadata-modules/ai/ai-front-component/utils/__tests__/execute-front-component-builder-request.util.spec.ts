@@ -2,7 +2,7 @@ import { PageLayoutType } from 'twenty-shared/types';
 
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
-import { frontComponentVendorResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-vendor-result.schema';
+import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
@@ -16,7 +16,7 @@ jest.mock(
 );
 
 const REQUEST: FrontComponentBuilderRequest = {
-  action: 'buildComponent',
+  action: 'transpile',
   input: {
     componentId: 'component-id',
     name: 'Preview',
@@ -29,11 +29,11 @@ const REQUEST: FrontComponentBuilderRequest = {
 
 describe('executeFrontComponentBuilderRequest', () => {
   it.each([
-    ['buildComponent', 'INVALID_INPUT'],
-    ['buildComponent', 'BUILD_FAILED'],
-    ['buildComponent', 'INVALID_SETTINGS'],
-    ['buildComponent', 'BUILD_TIMEOUT'],
-    ['buildComponent', 'OUTPUT_TOO_LARGE'],
+    ['transpile', 'INVALID_INPUT'],
+    ['transpile', 'BUILD_FAILED'],
+    ['transpile', 'INVALID_SETTINGS'],
+    ['transpile', 'BUILD_TIMEOUT'],
+    ['transpile', 'OUTPUT_TOO_LARGE'],
     ['buildDependencies', 'INVALID_INPUT'],
     ['buildDependencies', 'BUILD_FAILED'],
     ['buildDependencies', 'BUILD_TIMEOUT'],
@@ -46,22 +46,22 @@ describe('executeFrontComponentBuilderRequest', () => {
         code,
       });
       const build =
-        action === 'buildComponent'
+        action === 'transpile'
           ? buildFrontComponent
           : installAndBuildFrontComponentSharedDependencies;
       jest.mocked(build).mockRejectedValueOnce(error);
 
       const response = await executeFrontComponentBuilderRequest({
         input:
-          action === 'buildComponent'
+          action === 'transpile'
             ? REQUEST
             : { action, packageJson: '{}', yarnLock: '# locked' },
         yarnEngineDirectory: '/unused',
       });
       const schema =
-        action === 'buildComponent'
+        action === 'transpile'
           ? frontComponentBuildResultSchema
-          : frontComponentVendorResultSchema;
+          : frontComponentDependenciesBuildResultSchema;
       const result = schema.parse(JSON.parse(JSON.stringify(response)));
 
       expect(response).toEqual({

@@ -13,16 +13,17 @@ export const executeFrontComponentBuilderRequest = async ({
 }) => {
   try {
     if (input.action === 'buildDependencies') {
-      const vendor = await installAndBuildFrontComponentSharedDependencies({
-        packageJson: input.packageJson,
-        yarnLock: input.yarnLock,
-        yarnEngineDirectory,
-      });
+      const dependencies =
+        await installAndBuildFrontComponentSharedDependencies({
+          packageJson: input.packageJson,
+          yarnLock: input.yarnLock,
+          yarnEngineDirectory,
+        });
       return checkResponseSizeOrThrow({
         success: true as const,
-        source: vendor.source,
-        checksum: vendor.checksum,
-        exports: Object.fromEntries(vendor.exportNamesBySpecifier),
+        builtCode: dependencies.source,
+        checksum: dependencies.checksum,
+        exports: Object.fromEntries(dependencies.exportNamesBySpecifier),
       });
     }
     const manifest = frontComponentSharedDependenciesManifestSchema.parse(
@@ -38,7 +39,7 @@ export const executeFrontComponentBuilderRequest = async ({
     const { compiledSource, checksum, sharedDependenciesChecksum } = built;
     const result = {
       success: true as const,
-      compiledSource,
+      builtCode: compiledSource,
       checksum,
       sharedDependenciesChecksum,
     };
