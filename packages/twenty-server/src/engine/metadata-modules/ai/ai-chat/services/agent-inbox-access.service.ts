@@ -16,7 +16,7 @@ import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-h
 export class AgentInboxAccessService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly agentMessageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
     private readonly sharingService: AgentChatSharingService,
   ) {}
@@ -68,7 +68,7 @@ export class AgentInboxAccessService {
     applicationId: string;
     threadId: string;
   }): Promise<boolean> {
-    return this.messageRepository.existsBy(workspaceId, {
+    return this.agentMessageRepository.existsBy(workspaceId, {
       threadId,
       senderApplicationId: applicationId,
       senderWorkspaceMemberId: IsNull(),
