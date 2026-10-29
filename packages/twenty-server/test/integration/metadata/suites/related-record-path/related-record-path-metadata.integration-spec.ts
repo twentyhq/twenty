@@ -1,0 +1,324 @@
+/* @license Enterprise */
+
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import {
+  createRelatedRecordPath,
+  deleteRelatedRecordPath,
+  findRelatedRecordPaths,
+} from 'test/integration/metadata/suites/related-record-path/utils/related-record-path-api.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+const createObject = async ({
+  nameSingular,
+  labelSingular,
+}: {
+  nameSingular: string;
+  labelSingular: string;
+}): Promise<string> => {
+  const {
+    data: {
+      createOneObject: { id },
+    },
+  } = await createOneObjectMetadata({
+    expectToFail: false,
+    input: {
+      nameSingular,
+      namePlural: `${nameSingular}s`,
+      labelSingular,
+      labelPlural: `${labelSingular}s`,
+      icon: 'IconBox',
+      isLabelSyncedWithName: false,
+    },
+  });
+
+  return id;
+};
+
+const deleteObject = async (objectMetadataId: string) => {
+  await updateOneObjectMetadata({
+    expectToFail: false,
+    input: {
+      idToUpdate: objectMetadataId,
+      updatePayload: { isActive: false },
+    },
+  });
+  await deleteOneObjectMetadata({
+    expectToFail: false,
+    input: { idToDelete: objectMetadataId },
+  });
+};
+
+const deleteField = async (fieldMetadataId: string) => {
+  await updateOneFieldMetadata({
+    expectToFail: false,
+    input: {
+      idToUpdate: fieldMetadataId,
+      updatePayload: { isActive: false },
+    },
+    gqlFields: 'id',
+  });
+  await deleteOneFieldMetadata({
+    expectToFail: false,
+    input: { idToDelete: fieldMetadataId },
+  });
+};
+
+const findPathIds = async () =>
+  (await findRelatedRecordPaths()).map(({ id }) => id);
+
+describe('Related record path metadata', () => {
+  let projectObjectMetadataId: string;
+  let taskObjectMetadataId: string;
+  let personObjectMetadataId: string;
+  let projectTasksFieldMetadataId: string;
+  let taskProjectFieldMetadataId: string;
+  let taskAssigneeFieldMetadataId: string;
+  let projectCodeFieldMetadataId: string;
+  const createdPathIds: string[] = [];
+
+  const createPath = async (fieldMetadataIds: string[]) => {
+    const response = await createRelatedRecordPath({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataIds,
+    });
+    const createdPath = response.body.data?.createRelatedRecordPath;
+
+    if (isDefined(createdPath)) {
+      createdPathIds.push(createdPath.id);
+    }
+
+    return response;
+  };
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        nameSingular
+      `,
+    });
+
+    const personObject = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObject);
+    personObjectMetadataId = personObject.id;
+
+    projectObjectMetadataId = await createObject({
+      nameSingular: 'relatedPathProject',
+      labelSingular: 'Related path project',
+    });
+    taskObjectMetadataId = await createObject({
+      nameSingular: 'relatedPathTask',
+      labelSingular: 'Related path task',
+    });
+
+    const projectTasksField = await createRelationBetweenObjects({
+      objectMetadataId: projectObjectMetadataId,
+      targetObjectMetadataId: taskObjectMetadataId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.ONE_TO_MANY,
+      name: 'tasks',
+      label: 'Tasks',
+      targetFieldLabel: 'Project',
+      targetFieldIcon: 'IconBox',
+    });
+
+    projectTasksFieldMetadataId = projectTasksField.id;
+    taskProjectFieldMetadataId =
+      projectTasksField.relation.targetFieldMetadata.id;
+
+    const taskAssigneeField = await createRelationBetweenObjects({
+      objectMetadataId: taskObjectMetadataId,
+      targetObjectMetadataId: personObjectMetadataId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.MANY_TO_ONE,
+      name: 'assignee',
+      label: 'Assignee',
+      targetFieldLabel: 'Related path tasks',
+      targetFieldIcon: 'IconBox',
+    });
+
+    taskAssigneeFieldMetadataId = taskAssigneeField.id;
+
+    const {
+      data: {
+        createOneField: { id: projectCodeFieldId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId: projectObjectMetadataId,
+        name: 'code',
+        label: 'Code',
+        type: FieldMetadataType.TEXT,
+      },
+      gqlFields: 'id',
+    });
+
+    projectCodeFieldMetadataId = projectCodeFieldId;
+  });
+
+  afterAll(async () => {
+    const remainingPathIds = await findPathIds();
+
+    for (const pathId of createdPathIds) {
+      if (remainingPathIds.includes(pathId)) {
+        await deleteRelatedRecordPath(pathId);
+      }
+    }
+
+    await deleteObject(projectObjectMetadataId);
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id',
+    });
+
+    if (
+      objects.some(
+        (object: { id: string }) => object.id === taskObjectMetadataId,
+      )
+    ) {
+      await deleteObject(taskObjectMetadataId);
+    }
+  });
+
+  it('should create, list and delete a two hop path', async () => {
+    const response = await createPath([
+      projectTasksFieldMetadataId,
+      taskAssigneeFieldMetadataId,
+    ]);
+
+    expect(response.body.errors).toBeUndefined();
+
+    const createdPath = response.body.data.createRelatedRecordPath;
+
+    expect(createdPath).toMatchObject({
+      objectMetadataId: projectObjectMetadataId,
+      fieldMetadataIds: [
+        projectTasksFieldMetadataId,
+        taskAssigneeFieldMetadataId,
+      ],
+    });
+    expect(await findPathIds()).toContain(createdPath.id);
+
+    const deleteResponse = await deleteRelatedRecordPath(createdPath.id);
+
+    expect(deleteResponse.body.data.deleteRelatedRecordPath.id).toBe(
+      createdPath.id,
+    );
+    expect(await findPathIds()).not.toContain(createdPath.id);
+  });
+
+  it('should reject a path that already exists', async () => {
+    const firstResponse = await createPath([projectTasksFieldMetadataId]);
+
+    expect(firstResponse.body.errors).toBeUndefined();
+
+    const secondResponse = await createPath([projectTasksFieldMetadataId]);
+
+    expect(JSON.stringify(secondResponse.body.errors)).toContain(
+      'This related record path already exists',
+    );
+  });
+
+  it('should save only one of two identical paths created at the same time', async () => {
+    const responses = await Promise.all([
+      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
+      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
+    ]);
+
+    expect(
+      responses.filter((response) =>
+        isDefined(response.body.data?.createRelatedRecordPath),
+      ),
+    ).toHaveLength(1);
+
+    const createdPath = responses.find((response) =>
+      isDefined(response.body.data?.createRelatedRecordPath),
+    )?.body.data.createRelatedRecordPath;
+
+    jestExpectToBeDefined(createdPath);
+    await deleteRelatedRecordPath(createdPath.id);
+  });
+
+  it('should reject a path that comes back to an object it already visited', async () => {
+    const response = await createPath([
+      projectTasksFieldMetadataId,
+      taskProjectFieldMetadataId,
+    ]);
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'Related record path cannot visit the same object twice',
+    );
+  });
+
+  it('should reject a field that does not belong to the object reached so far', async () => {
+    const response = await createPath([taskAssigneeFieldMetadataId]);
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'Each related record path field must belong to the object reached by the previous relation',
+    );
+  });
+
+  it('should reject a field that is not a relation', async () => {
+    const response = await createPath([projectCodeFieldMetadataId]);
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'Related record path fields must be relations',
+    );
+  });
+
+  it('should delete the path when one of its fields is deleted', async () => {
+    const response = await createPath([
+      projectTasksFieldMetadataId,
+      taskAssigneeFieldMetadataId,
+    ]);
+    const createdPath = response.body.data.createRelatedRecordPath;
+
+    jestExpectToBeDefined(createdPath);
+
+    await deleteField(taskAssigneeFieldMetadataId);
+
+    expect(await findPathIds()).not.toContain(createdPath.id);
+  });
+
+  it('should delete the paths that reach a deleted object', async () => {
+    const createdPathIdsBefore = await findPathIds();
+
+    expect(
+      createdPathIds.filter((pathId) => createdPathIdsBefore.includes(pathId)),
+    ).not.toHaveLength(0);
+
+    await deleteObject(taskObjectMetadataId);
+
+    const remainingPathIds = await findPathIds();
+
+    expect(
+      createdPathIds.filter((pathId) => remainingPathIds.includes(pathId)),
+    ).toHaveLength(0);
+  });
+});
