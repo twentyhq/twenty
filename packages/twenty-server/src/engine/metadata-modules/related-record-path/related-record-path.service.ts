@@ -41,7 +41,7 @@ export class RelatedRecordPathService {
     );
   }
 
-  private async runRelatedRecordPathMigration({
+  private async runRelatedRecordPathMigrationOrThrow({
     workspaceId,
     flatEntityToCreate,
     flatEntityToDelete,
@@ -122,7 +122,7 @@ export class RelatedRecordPathService {
         flatFieldMetadataMaps,
       });
 
-    await this.runRelatedRecordPathMigration({
+    await this.runRelatedRecordPathMigrationOrThrow({
       workspaceId,
       flatEntityToCreate: [flatRelatedRecordPathToCreate],
       flatEntityToDelete: [],
@@ -161,7 +161,7 @@ export class RelatedRecordPathService {
       );
     }
 
-    await this.runRelatedRecordPathMigration({
+    await this.runRelatedRecordPathMigrationOrThrow({
       workspaceId,
       flatEntityToCreate: [],
       flatEntityToDelete: [existingFlatRelatedRecordPath],
