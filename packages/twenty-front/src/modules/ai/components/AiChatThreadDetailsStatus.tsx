@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
 import { useAiChatThreadDetailsStatus } from '@/ai/hooks/useAiChatThreadDetailsStatus';
+import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 type AiChatThreadDetailsStatusProps = {
@@ -17,6 +18,18 @@ export const AiChatThreadDetailsStatus = ({
     useAiChatThreadDetailsStatus(threadId);
   const { closeDropdown } = useCloseDropdown();
 
+  const handleStatusChange = ({
+    status: nextStatus,
+  }: {
+    status: AiChatThreadTriageStatus;
+  }) => {
+    if (nextStatus === 'snoozed') {
+      closeDropdown(dropdownId);
+    }
+
+    changeStatus(nextStatus);
+  };
+
   if (!isDefined(status) || !isDefined(scope)) {
     return null;
   }
@@ -26,17 +39,7 @@ export const AiChatThreadDetailsStatus = ({
       status={status}
       scope={scope}
       isSaving={isPending}
-      onStatusChange={
-        canChangeStatus
-          ? ({ status: nextStatus }) => {
-              if (nextStatus === 'snoozed') {
-                closeDropdown(dropdownId);
-              }
-
-              changeStatus(nextStatus);
-            }
-          : undefined
-      }
+      onStatusChange={canChangeStatus ? handleStatusChange : undefined}
     />
   );
 };

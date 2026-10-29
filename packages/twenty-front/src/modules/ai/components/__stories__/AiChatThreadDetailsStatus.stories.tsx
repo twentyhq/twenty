@@ -1,8 +1,6 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useAtomValue, useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
-import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -92,6 +90,7 @@ type StatusScenario = {
   areParticipantsLoading?: boolean;
   isNotInPersonalInbox?: boolean;
   areChannelsLoading?: boolean;
+  isChannelInaccessible?: boolean;
   isDeleted?: boolean;
   isMissing?: boolean;
   hasReadAccess?: boolean;
@@ -155,7 +154,6 @@ const checkSnoozeScope = async ({
     ),
   ).toEqual([THREAD_ID]);
 
-  jotaiStore.set(agentChatChannelViewState.atom, null);
   await expect(
     jotaiStore.get(
       isSnoozeAiChatForChannelComponentState.atomFamily({
@@ -169,79 +167,79 @@ const checkSnoozeScope = async ({
 
 const DEFAULT_SCENARIO: StatusScenario = {};
 
-const DetailsStatusStateEffect = ({
-  scenario,
-}: {
-  scenario: StatusScenario;
-}) => {
-  const store = useStore();
+const getScenarioParticipants = (
+  scenario: StatusScenario,
+): Record<string, AgentChatThreadParticipantFieldsFragment> | null => {
+  if (scenario.areParticipantsLoading === true) {
+    return null;
+  }
 
-  useAtomValue(currentUserWorkspaceState.atom);
+  if (scenario.isNotInPersonalInbox === true) {
+    return {};
+  }
 
-  useEffect(() => {
-    store.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-          value: scenario.isInboxEnabled ?? true,
+  return { [THREAD_ID]: PARTICIPANT };
+};
+
+const seedStatusScenario = (scenario: StatusScenario) => {
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      {
+        key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        value: scenario.isInboxEnabled ?? true,
+      },
+    ],
+  });
+  jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+  jotaiStore.set(currentUserWorkspaceState.atom, {
+    ...mockedUserData.currentUserWorkspace,
+    permissionFlags:
+      scenario.hasAiPermission === false ? [] : [PermissionFlagType.AI],
+  });
+  setAgentChatThreadPermissions(jotaiStore, THREAD_ID, {
+    canRead: scenario.hasReadAccess ?? true,
+    canUpdate: !scenario.isReadOnly,
+    canDelete: false,
+    canSoftDelete: false,
+  });
+  jotaiStore.set(
+    recordStoreFamilyState.atomFamily(THREAD_ID),
+    scenario.isMissing
+      ? null
+      : {
+          __typename: 'AgentChatThread',
+          id: THREAD_ID,
+          title: 'Pricing questions',
+          createdAt: ACTIVITY_AT,
+          updatedAt: ACTIVITY_AT,
+          lastActivityAt: ACTIVITY_AT,
+          deletedAt: scenario.isDeleted ? FILED_AT : null,
+          channelId: scenario.hasChannel === false ? null : CHANNEL_ID,
+          channelArchivedAt: FILED_AT,
+          channelSnoozedUntil: null,
         },
-      ],
-    });
-    store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
-    store.set(currentUserWorkspaceState.atom, {
-      ...mockedUserData.currentUserWorkspace,
-      permissionFlags:
-        scenario.hasAiPermission === false ? [] : [PermissionFlagType.AI],
-    });
-    setAgentChatThreadPermissions(store, THREAD_ID, {
-      canRead: scenario.hasReadAccess ?? true,
-      canUpdate: !scenario.isReadOnly,
-      canDelete: false,
-      canSoftDelete: false,
-    });
-    store.set(
-      recordStoreFamilyState.atomFamily(THREAD_ID),
-      scenario.isMissing
-        ? null
-        : {
-            __typename: 'AgentChatThread',
-            id: THREAD_ID,
-            title: 'Pricing questions',
-            createdAt: ACTIVITY_AT,
-            updatedAt: ACTIVITY_AT,
-            lastActivityAt: ACTIVITY_AT,
-            deletedAt: scenario.isDeleted ? FILED_AT : null,
-            channelId: scenario.hasChannel === false ? null : CHANNEL_ID,
-            channelArchivedAt: FILED_AT,
-            channelSnoozedUntil: null,
-          },
-    );
-    store.set(
-      agentChatChannelsState.atom,
-      scenario.areChannelsLoading ? null : [CHANNEL],
-    );
-    store.set(
-      agentChatThreadParticipantsState.atom,
-      scenario.areParticipantsLoading
-        ? null
-        : scenario.isNotInPersonalInbox
-          ? {}
-          : { [THREAD_ID]: PARTICIPANT },
-    );
-    store.set(
-      agentChatChannelViewState.atom,
-      scenario.isChannelView
-        ? {
-            channelId: CHANNEL_ID,
-            channelStatus: AgentChatChannelThreadStatus.OPEN,
-            assignment: AgentChatChannelAssignmentFilter.ANY,
-          }
-        : null,
-    );
-  }, [scenario, store]);
-
-  return null;
+  );
+  jotaiStore.set(
+    agentChatChannelsState.atom,
+    scenario.areChannelsLoading
+      ? null
+      : [{ ...CHANNEL, isAccessible: scenario.isChannelInaccessible !== true }],
+  );
+  jotaiStore.set(
+    agentChatThreadParticipantsState.atom,
+    getScenarioParticipants(scenario),
+  );
+  jotaiStore.set(
+    agentChatChannelViewState.atom,
+    scenario.isChannelView
+      ? {
+          channelId: CHANNEL_ID,
+          channelStatus: AgentChatChannelThreadStatus.OPEN,
+          assignment: AgentChatChannelAssignmentFilter.ANY,
+        }
+      : null,
+  );
 };
 
 const meta = {
@@ -254,9 +252,6 @@ const meta = {
           <StyledDetails>
             <Story />
           </StyledDetails>
-          <DetailsStatusStateEffect
-            scenario={parameters.statusScenario ?? DEFAULT_SCENARIO}
-          />
         </MemoryRouterAppNavigatorProvider>
       </MemoryRouter>
     ),
@@ -265,10 +260,18 @@ const meta = {
     ComponentDecorator,
   ],
   args: { threadId: THREAD_ID, dropdownId: 'details-status-story' },
-  beforeEach: () => {
+  beforeEach: ({ parameters }) => {
+    const unsubscribeFromCurrentUserWorkspace = jotaiStore.sub(
+      currentUserWorkspaceState.atom,
+      () => undefined,
+    );
+
+    seedStatusScenario(parameters.statusScenario ?? DEFAULT_SCENARIO);
     onPersonalAction.mockClear();
     onChannelDone.mockClear();
     onChannelReopen.mockClear();
+
+    return unsubscribeFromCurrentUserWorkspace;
   },
   parameters: {
     container: { width: 400, height: 240 },
@@ -317,30 +320,33 @@ export const PersonalInbox: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('Open')).toBeVisible();
+    await expect(await canvas.findByText('Open')).toBeVisible();
+    await changeStatus({
+      canvasElement,
+      label: PERSONAL_STATUS_LABEL,
+      status: 'Open',
+    });
     await changeStatus({
       canvasElement,
       label: PERSONAL_STATUS_LABEL,
       status: 'Done',
     });
-    await waitFor(() =>
-      expect(onPersonalAction).toHaveBeenLastCalledWith({
-        threadIds: [THREAD_ID],
-        action: AgentChatInboxAction.ARCHIVE,
-      }),
-    );
+    await waitFor(() => expect(onPersonalAction).toHaveBeenCalledTimes(1));
+    await expect(onPersonalAction).toHaveBeenLastCalledWith({
+      threadIds: [THREAD_ID],
+      action: AgentChatInboxAction.ARCHIVE,
+    });
     await expect(canvas.getByText('Done')).toBeVisible();
     await changeStatus({
       canvasElement,
       label: PERSONAL_STATUS_LABEL,
       status: 'Open',
     });
-    await waitFor(() =>
-      expect(onPersonalAction).toHaveBeenLastCalledWith({
-        threadIds: [THREAD_ID],
-        action: AgentChatInboxAction.MOVE_TO_INBOX,
-      }),
-    );
+    await waitFor(() => expect(onPersonalAction).toHaveBeenCalledTimes(2));
+    await expect(onPersonalAction).toHaveBeenLastCalledWith({
+      threadIds: [THREAD_ID],
+      action: AgentChatInboxAction.MOVE_TO_INBOX,
+    });
     await expect(canvas.getByText('Open')).toBeVisible();
     await expect(
       jotaiStore.get(recordStoreFamilyState.atomFamily(THREAD_ID))
@@ -356,24 +362,28 @@ export const ChannelInbox: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('Done')).toBeVisible();
+    await expect(await canvas.findByText('Done')).toBeVisible();
+    await changeStatus({
+      canvasElement,
+      label: CHANNEL_STATUS_LABEL,
+      status: 'Done',
+    });
     await changeStatus({
       canvasElement,
       label: CHANNEL_STATUS_LABEL,
       status: 'Open',
     });
-    await waitFor(() =>
-      expect(onChannelReopen).toHaveBeenCalledWith({ threadId: THREAD_ID }),
-    );
+    await waitFor(() => expect(onChannelReopen).toHaveBeenCalledTimes(1));
+    await expect(onChannelReopen).toHaveBeenCalledWith({ threadId: THREAD_ID });
+    await expect(onChannelDone).not.toHaveBeenCalled();
     await expect(canvas.getByText('Open')).toBeVisible();
     await changeStatus({
       canvasElement,
       label: CHANNEL_STATUS_LABEL,
       status: 'Done',
     });
-    await waitFor(() =>
-      expect(onChannelDone).toHaveBeenCalledWith({ threadId: THREAD_ID }),
-    );
+    await waitFor(() => expect(onChannelDone).toHaveBeenCalledTimes(1));
+    await expect(onChannelDone).toHaveBeenCalledWith({ threadId: THREAD_ID });
     await expect(canvas.getByText('Done')).toBeVisible();
     await expect(onPersonalAction).not.toHaveBeenCalled();
   },
@@ -396,7 +406,7 @@ export const ReadOnlyChannel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('Done')).toBeVisible();
+    await expect(await canvas.findByText('Done')).toBeVisible();
     await expect(canvas.getByText('Sales')).toBeVisible();
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
   },
@@ -407,7 +417,7 @@ export const ReadOnlyPersonal: Story = {
   parameters: { statusScenario: { isReadOnly: true } },
 };
 
-export const ChannelWithoutPersonalParticipant: Story = {
+export const ChannelWhileParticipantsLoad: Story = {
   parameters: {
     path: '/chat',
     statusScenario: { areParticipantsLoading: true },
@@ -415,10 +425,26 @@ export const ChannelWithoutPersonalParticipant: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByText('Done')).toBeVisible();
+    await expect(await canvas.findByText('Done')).toBeVisible();
     await expect(
       canvas.getByRole('button', { name: CHANNEL_STATUS_LABEL }),
     ).toBeEnabled();
+  },
+};
+
+export const InaccessibleChannel: Story = {
+  parameters: {
+    path: '/chat',
+    statusScenario: { isChannelInaccessible: true },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: PERSONAL_STATUS_LABEL }),
+    ).toBeEnabled();
+    await expect(canvas.getByText('Open')).toBeVisible();
+    await expect(canvas.queryByText('Sales')).not.toBeInTheDocument();
   },
 };
 
