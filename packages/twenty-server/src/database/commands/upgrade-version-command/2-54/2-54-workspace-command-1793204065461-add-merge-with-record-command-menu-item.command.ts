@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -8,7 +7,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -27,22 +25,10 @@ export class AddMergeWithRecordCommandMenuItemCommand extends ProvisionedWorkspa
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, 'up');
-  }
-
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, 'down');
-  }
-
-  private async apply(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
-  ): Promise<void> {
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
@@ -50,34 +36,21 @@ export class AddMergeWithRecordCommandMenuItemCommand extends ProvisionedWorkspa
       ]);
 
     const commandMenuItemsToCreate =
-      direction === 'up'
-        ? buildMissingStandardCommandMenuItemsToCreate({
-            commandMenuItemNames: ['mergeWithRecord'],
-            flatCommandMenuItemByUniversalIdentifier:
-              flatCommandMenuItemMaps.byUniversalIdentifier,
-            flatObjectMetadataMaps,
-            workspaceId,
-            now: new Date().toISOString(),
-          })
-        : [];
-    const commandMenuItemsToDelete =
-      direction === 'down'
-        ? [
-            flatCommandMenuItemMaps.byUniversalIdentifier[
-              STANDARD_COMMAND_MENU_ITEMS.mergeWithRecord.universalIdentifier
-            ],
-          ].filter(isDefined)
-        : [];
+      buildMissingStandardCommandMenuItemsToCreate({
+        commandMenuItemNames: ['mergeWithRecord'],
+        flatCommandMenuItemByUniversalIdentifier:
+          flatCommandMenuItemMaps.byUniversalIdentifier,
+        flatObjectMetadataMaps,
+        workspaceId,
+        now: new Date().toISOString(),
+      });
 
-    if (
-      commandMenuItemsToCreate.length + commandMenuItemsToDelete.length ===
-      0
-    ) {
+    if (commandMenuItemsToCreate.length === 0) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): creating ${commandMenuItemsToCreate.length} and deleting ${commandMenuItemsToDelete.length} Merge with command menu item(s)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: creating the Merge with command menu item`,
     );
 
     if (options.dryRun) {
@@ -95,7 +68,7 @@ export class AddMergeWithRecordCommandMenuItemCommand extends ProvisionedWorkspa
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,
-              flatEntityToDelete: commandMenuItemsToDelete,
+              flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
           },
