@@ -1,24 +1,22 @@
 ---
-title: Marketplace vetting (WIP)
-description: Proposed requirements for third-party apps to receive a Vetted badge.
+title: Marketplace review
+description: Security and quality requirements every app must meet to be listed in the marketplace.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-## How vetting works
+## How the review works
 
-<Warning>
-  **Work in progress.** This page and its requirements may evolve. Third-party
-  vetting is not available yet. See
-  [Publishing](/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
-  for current marketplace behavior.
-</Warning>
+Every app listed in the marketplace has passed Twenty's security and quality
+review. Publishing to npm does not list an app on its own: it stays unlisted
+until the review is complete. See
+[Publishing](/developers/extend/apps/operations/publishing#marketplace-visibility-and-review)
+for how listing works.
 
-Vetting applies to an exact app version and package. Each update needs review and
-approval from Twenty. Vetted apps may be reassessed as dependencies or services
-evolve.
+Listed apps may be reassessed as they, their dependencies, or the services they
+rely on evolve, and can be unlisted if they stop meeting the checklist.
 
-## Vetting checklist
+## Review checklist
 
 All applicable items must pass. We recommend using an agent to self-evaluate
 each criterion with evidence and required fixes before submitting.
@@ -59,4 +57,4 @@ each criterion with evidence and required fixes before submitting.
   [setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
   and verify events reach the correct workspace.
 
-<PageBanner illustration="card-page-marketplace-vetting" />
+<PageBanner illustration="card-page-marketplace-review" />

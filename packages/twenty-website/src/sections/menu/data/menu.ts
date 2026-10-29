@@ -84,7 +84,7 @@ export const MENU: {
             imageAlt: msg`Twenty apps marketplace`,
             imagePosition: 'center',
             imageScale: PREVIEW_DRAWING_SCALE,
-            title: msg`Vetted apps for your workspace`,
+            title: msg`Reviewed apps for your workspace`,
             description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
           },
         },

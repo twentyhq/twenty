@@ -1496,9 +1496,6 @@ export default {
             "isPreInstalled": [
                 4
             ],
-            "isVetted": [
-                4
-            ],
             "latestAvailableVersion": [
                 1
             ],
@@ -5931,9 +5928,6 @@ export default {
             "id": [
                 1
             ],
-            "isVetted": [
-                4
-            ],
             "logoUrl": [
                 1
             ],
@@ -5979,9 +5973,6 @@ export default {
                 10
             ],
             "isListed": [
-                4
-            ],
-            "isVetted": [
                 4
             ],
             "issueReportUrl": [
@@ -11457,13 +11448,7 @@ export default {
                 }
             ],
             "publicMarketplaceApps": [
-                332,
-                {
-                    "isVetted": [
-                        4,
-                        "Boolean!"
-                    ]
-                }
+                332
             ],
             "recordPermissions": [
                 429,

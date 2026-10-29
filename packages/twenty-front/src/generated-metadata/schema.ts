@@ -724,7 +724,6 @@ export type ApplicationRegistration = {
   isConfigured: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -3030,7 +3029,6 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  isVetted: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   sourcePackage?: Maybe<Scalars['String']['output']>;
@@ -3049,7 +3047,6 @@ export type MarketplaceAppDetail = {
   id: Scalars['String']['output'];
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   issueReportUrl?: Maybe<Scalars['String']['output']>;
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -6337,11 +6334,6 @@ export type QueryPreviewMessageCampaignSendArgs = {
 
 export type QueryPublicMarketplaceAppDetailArgs = {
   universalIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryPublicMarketplaceAppsArgs = {
-  isVetted?: Scalars['Boolean']['input'];
 };
 
 

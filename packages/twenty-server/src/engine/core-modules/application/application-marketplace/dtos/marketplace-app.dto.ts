@@ -1,12 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 @ObjectType('MarketplaceApp')
 export class MarketplaceAppDTO {
@@ -42,8 +36,4 @@ export class MarketplaceAppDTO {
   @IsString()
   @Field({ nullable: true })
   sourcePackage?: string;
-
-  @IsBoolean()
-  @Field(() => Boolean)
-  isVetted: boolean;
 }

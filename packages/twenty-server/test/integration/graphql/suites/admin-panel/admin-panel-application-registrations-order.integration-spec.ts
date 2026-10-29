@@ -37,7 +37,6 @@ const INSTALLED_AUTHOR = 'Admin panel order integration author';
 
 type RegistrationSeed = {
   suffix: string;
-  isVetted?: boolean;
   isListed?: boolean;
   sourcePackage?: string;
   hasUnfilledRequiredVariable?: boolean;
@@ -63,25 +62,12 @@ const SERVER_ROUTE_MANIFEST = {
 
 const REGISTRATION_SEEDS: RegistrationSeed[] = [
   {
-    suffix: 'vetted-not-configured',
-    isVetted: true,
+    suffix: 'community-not-configured',
     hasUnfilledRequiredVariable: true,
   },
   {
-    suffix: 'vetted-server-route-unclaimed',
-    isVetted: true,
+    suffix: 'community-server-route-unclaimed',
     exposesServerRoute: true,
-  },
-  {
-    suffix: 'vetted-configured-unlisted',
-    isVetted: true,
-  },
-  {
-    suffix: 'vetted-configured-listed',
-    isVetted: true,
-    isListed: true,
-    author: INSTALLED_AUTHOR,
-    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
   },
   {
     suffix: 'community-not-configured-listed',
@@ -103,6 +89,15 @@ const REGISTRATION_SEEDS: RegistrationSeed[] = [
   },
   {
     suffix: 'community-configured-beta',
+  },
+  {
+    suffix: 'community-configured-unlisted',
+  },
+  {
+    suffix: 'community-configured-listed-installed',
+    isListed: true,
+    author: INSTALLED_AUTHOR,
+    installedOnWorkspaceIds: [SEED_APPLE_WORKSPACE_ID],
   },
   {
     suffix: 'community-configured-listed',
@@ -156,8 +151,8 @@ describe('Admin panel application registrations ordering (integration)', () => {
         `INSERT INTO core."applicationRegistration"
           (id, "universalIdentifier", name, "oAuthClientId",
            "oAuthRedirectUris", "oAuthScopes", "sourceType", "sourcePackage",
-           "isVetted", "isListed", author, "workspaceId", manifest)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+           "isListed", author, "workspaceId", manifest)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
         [
           id,
           randomUUID(),
@@ -167,7 +162,6 @@ describe('Admin panel application registrations ordering (integration)', () => {
           [],
           'local',
           seed.sourcePackage ?? null,
-          seed.isVetted ?? false,
           seed.isListed ?? false,
           seed.author ?? null,
           seed.ownerWorkspaceId ?? null,
@@ -240,7 +234,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
     );
   };
 
-  it('orders vetted, not configured, unlisted, Twenty packages, most installed, then by name', async () => {
+  it('orders not configured, unlisted, Twenty packages, most installed, then by name', async () => {
     const response = await makeAdminPanelApiRequest({
       query: FIND_ALL_REGISTRATIONS,
       variables: { limit: 25, offset: 0, searchTerm: NAME_PREFIX },
@@ -284,14 +278,14 @@ describe('Admin panel application registrations ordering (integration)', () => {
     const registrationsByName = await findRegistrationsByName();
 
     const installedRegistration =
-      registrationsByName[buildName('vetted-configured-listed')];
+      registrationsByName[buildName('community-configured-listed-installed')];
 
     expect(installedRegistration.installCount).toBe(1);
     expect(installedRegistration.author).toBe(INSTALLED_AUTHOR);
     expect(installedRegistration.isConfigured).toBe(true);
 
     const notConfiguredRegistration =
-      registrationsByName[buildName('vetted-not-configured')];
+      registrationsByName[buildName('community-not-configured')];
 
     expect(notConfiguredRegistration.installCount).toBe(0);
     expect(notConfiguredRegistration.author).toBeNull();
@@ -302,7 +296,7 @@ describe('Admin panel application registrations ordering (integration)', () => {
     const registrationsByName = await findRegistrationsByName();
 
     const unclaimedRegistration =
-      registrationsByName[buildName('vetted-server-route-unclaimed')];
+      registrationsByName[buildName('community-server-route-unclaimed')];
 
     expect(unclaimedRegistration.installCount).toBe(0);
     expect(unclaimedRegistration.isConfigured).toBe(false);
