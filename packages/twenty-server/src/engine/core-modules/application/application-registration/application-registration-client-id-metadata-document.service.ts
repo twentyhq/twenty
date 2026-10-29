@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
+  CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX,
+  CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_WINDOW_MS,
   CLIENT_ID_METADATA_DOCUMENT_FETCH_TIMEOUT_MS,
   CLIENT_ID_METADATA_DOCUMENT_MAX_SIZE_BYTES,
   CLIENT_ID_METADATA_DOCUMENT_REFRESH_INTERVAL_MS,
@@ -16,6 +18,8 @@ import {
   parseClientIdMetadataDocument,
 } from 'src/engine/core-modules/application/application-registration/utils/parse-client-id-metadata-document.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 // Client ID Metadata Documents (draft-ietf-oauth-client-id-metadata-document): the client_id is an
 // HTTPS URL serving the client metadata, so a client keeps one registration across reconnects
@@ -29,6 +33,7 @@ export class ApplicationRegistrationClientIdMetadataDocumentService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   async findOrRefreshRegistration(
@@ -45,6 +50,11 @@ export class ApplicationRegistrationClientIdMetadataDocumentService {
         CLIENT_ID_METADATA_DOCUMENT_REFRESH_INTERVAL_MS;
 
     if (isFresh) {
+      return existingRegistration;
+    }
+
+    // The lookup is public, so cap how often anyone can make us fetch a given URL
+    if (!(await this.tryConsumeFetchToken(clientId))) {
       return existingRegistration;
     }
 
@@ -86,6 +96,25 @@ export class ApplicationRegistrationClientIdMetadataDocumentService {
     }
 
     return this.createRegistration(clientId, parseResult.metadata);
+  }
+
+  private async tryConsumeFetchToken(clientId: string): Promise<boolean> {
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        `oauth-client-id-metadata-document:${clientId}`,
+        1,
+        CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX,
+        CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_WINDOW_MS,
+      );
+
+      return true;
+    } catch (error) {
+      if (error instanceof ThrottlerException) {
+        return false;
+      }
+
+      throw error;
+    }
   }
 
   private async fetchDocument(clientId: string): Promise<unknown> {

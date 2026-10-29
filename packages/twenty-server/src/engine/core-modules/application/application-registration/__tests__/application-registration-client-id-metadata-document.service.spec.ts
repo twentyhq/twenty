@@ -5,6 +5,11 @@ import { ApplicationRegistrationClientIdMetadataDocumentService } from 'src/engi
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 const CLIENT_ID = 'https://app.example.com/oauth/client.json';
 
@@ -23,6 +28,7 @@ describe('ApplicationRegistrationClientIdMetadataDocumentService', () => {
     update: jest.Mock;
   };
   let httpGet: jest.Mock;
+  let tokenBucketThrottleOrThrow: jest.Mock;
 
   beforeEach(async () => {
     applicationRegistrationRepository = {
@@ -32,6 +38,7 @@ describe('ApplicationRegistrationClientIdMetadataDocumentService', () => {
       update: jest.fn(),
     };
     httpGet = jest.fn().mockResolvedValue({ data: VALID_DOCUMENT });
+    tokenBucketThrottleOrThrow = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -43,6 +50,10 @@ describe('ApplicationRegistrationClientIdMetadataDocumentService', () => {
         {
           provide: SecureHttpClientService,
           useValue: { getHttpClient: () => ({ get: httpGet }) },
+        },
+        {
+          provide: ThrottlerService,
+          useValue: { tokenBucketThrottleOrThrow },
         },
       ],
     }).compile();
@@ -117,5 +128,18 @@ describe('ApplicationRegistrationClientIdMetadataDocumentService', () => {
 
     expect(await service.findOrRefreshRegistration(CLIENT_ID)).toBeNull();
     expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
+  });
+
+  it('should not fetch a document whose URL is rate limited', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+    tokenBucketThrottleOrThrow.mockRejectedValue(
+      new ThrottlerException(
+        'Limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      ),
+    );
+
+    expect(await service.findOrRefreshRegistration(CLIENT_ID)).toBeNull();
+    expect(httpGet).not.toHaveBeenCalled();
   });
 });
