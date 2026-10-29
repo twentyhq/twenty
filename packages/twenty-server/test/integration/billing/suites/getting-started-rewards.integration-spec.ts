@@ -29,10 +29,15 @@ const GETTING_STARTED_REWARDS_QUERY = gql`
   }
 `;
 
-const INVITED_EMAILS = [
-  'getting-started-reward-first@apple.dev',
-  'getting-started-reward-second@apple.dev',
-];
+const GETTING_STARTED_COMPLETED_STEPS_QUERY = gql`
+  query GettingStartedCompletedSteps {
+    gettingStartedProgress {
+      completedSteps
+    }
+  }
+`;
+
+const INVITED_EMAILS = ['getting-started-reward-first@apple.dev'];
 
 const query = (sql: string, parameters: unknown[] = []) =>
   globalThis.testDataSource.query(sql, parameters);
@@ -110,71 +115,39 @@ describe('Getting Started rewards (integration)', () => {
     await quitBillingFixtureRedis();
   });
 
-  describe('invite team reward', () => {
-    it('lists the invites the workspace can still be rewarded for', async () => {
-      const maxInvites = twentyConfigService.get(
-        'ONBOARDING_INVITE_TEAM_MAX_INVITES',
-      );
-
-      expect(await fetchStepRewards()).toContainEqual({
-        step: 'INVITE_TEAM',
-        creditsEach: toDisplayCredits(
-          twentyConfigService.get(
-            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-          ),
-        ),
-        remainingCount: maxInvites,
-      });
-
+  describe('invite team step', () => {
+    it('carries no reward, and its invites stay out of the credits earned', async () => {
       await insertInviteTeamGrants(workspaceId, 2);
 
       const { creditsEarned, stepRewards } = await fetchRewards();
 
-      expect(creditsEarned).toBe(toDisplayCredits(2));
-      expect(stepRewards).toContainEqual(
-        expect.objectContaining({
-          step: 'INVITE_TEAM',
-          remainingCount: maxInvites - 2,
-        }),
-      );
-
-      await insertInviteTeamGrants(workspaceId, maxInvites);
-
-      expect(await fetchStepRewards()).not.toContainEqual(
+      expect(creditsEarned).toBe(0);
+      expect(stepRewards).not.toContainEqual(
         expect.objectContaining({ step: 'INVITE_TEAM' }),
       );
     });
 
-    it('rewards the invitations sent while the invite step is open, not the next ones', async () => {
-      const sendInvitation = (email: string) =>
-        makeMetadataApiRequest(
-          sendInvitationsOperationFactory({ emails: [email] }),
-        );
-      const findInvitationTokenType = async (email: string) => {
-        const [appToken]: { type: string }[] = await query(
-          `SELECT "type" FROM core."appToken" WHERE "workspaceId" = $1 AND "context"->>'email' = $2`,
-          [workspaceId, email],
-        );
-
-        return appToken?.type;
-      };
-
-      const firstResponse = await sendInvitation(INVITED_EMAILS[0]);
-
-      expect(firstResponse.body.errors).toBeUndefined();
-      expect(await findInvitationTokenType(INVITED_EMAILS[0])).toBe(
-        'ONBOARDING_INVITATION_TOKEN',
-      );
-      expect(await fetchStepRewards()).not.toContainEqual(
-        expect.objectContaining({ step: 'INVITE_TEAM' }),
+    it('sends regular invitations once onboarding is over, and completes the step', async () => {
+      const response = await makeMetadataApiRequest(
+        sendInvitationsOperationFactory({ emails: [INVITED_EMAILS[0]] }),
       );
 
-      const secondResponse = await sendInvitation(INVITED_EMAILS[1]);
+      expect(response.body.errors).toBeUndefined();
 
-      expect(secondResponse.body.errors).toBeUndefined();
-      expect(await findInvitationTokenType(INVITED_EMAILS[1])).toBe(
-        'INVITATION_TOKEN',
+      const [appToken]: { type: string }[] = await query(
+        `SELECT "type" FROM core."appToken" WHERE "workspaceId" = $1 AND "context"->>'email' = $2`,
+        [workspaceId, INVITED_EMAILS[0]],
       );
+
+      expect(appToken?.type).toBe('INVITATION_TOKEN');
+
+      const progressResponse = await makeMetadataApiRequest({
+        query: GETTING_STARTED_COMPLETED_STEPS_QUERY,
+      });
+
+      expect(
+        progressResponse.body.data.gettingStartedProgress.completedSteps,
+      ).toContain('INVITE_TEAM');
     });
   });
 
@@ -182,7 +155,6 @@ describe('Getting Started rewards (integration)', () => {
     let activeMailboxIds: string[] = [];
     let janeUserWorkspaceCreatedAt: string;
 
-    // Seeded members share one createdAt, so the creator is chosen by moving Jane's
     const setJaneUserWorkspaceCreatedAt = (createdAt: string) =>
       query(
         `UPDATE core."userWorkspace" SET "createdAt" = $2::timestamptz WHERE "id" = $1`,
@@ -202,7 +174,6 @@ describe('Getting Started rewards (integration)', () => {
         [activeMailboxIds],
       );
 
-      // Read as text, since a JS Date would drop the microseconds the seeded members tie on
       const [janeUserWorkspace]: { createdAt: string }[] = await query(
         `SELECT "createdAt"::text AS "createdAt" FROM core."userWorkspace" WHERE "id" = $1`,
         [USER_WORKSPACE_DATA_SEED_IDS.JANE],

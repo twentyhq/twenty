@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
-import { EmailOperation, FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { EmailOperation } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GETTING_STARTED_STEP_REWARDS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-rewards.constant';
 import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type GettingStartedStepRewardDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-step-reward.dto';
@@ -18,17 +17,21 @@ import {
   GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
   GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
   GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX,
+  GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { getGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/get-getting-started-steps.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import {
+  WorkflowVersionEntity,
+  WorkflowVersionStatus,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 type GettingStartedScope = {
   userId: string;
@@ -37,16 +40,21 @@ type GettingStartedScope = {
   userWorkspaceId: string;
 };
 
+type GettingStartedUserVars = Awaited<
+  ReturnType<UserVarsService<GettingStartedKeyValueTypeMap>['getAll']>
+>;
+
 @Injectable()
 export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
     private readonly onboardingService: OnboardingService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly permissionsService: PermissionsService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
+    private readonly workflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
   ) {}
 
   async getProgress({
@@ -88,6 +96,7 @@ export class GettingStartedService {
       workspaceId,
       userWorkspaceId,
       steps: steps.filter((step) => !isSavedAsCompleted(step)),
+      userVars,
     });
 
     await Promise.all(
@@ -193,35 +202,6 @@ export class GettingStartedService {
     });
   }
 
-  async isInviteTeamStepOpen({
-    userId,
-    userEmail,
-    workspaceId,
-  }: {
-    userId: string;
-    userEmail: string;
-    workspaceId: string;
-  }): Promise<boolean> {
-    const isGettingStartedEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
-        workspaceId,
-      );
-
-    // Senders already hold the members permission the invite step needs
-    if (!isGettingStartedEnabled || !isWorkEmail(userEmail)) {
-      return false;
-    }
-
-    const completion = await this.userVarsService.get({
-      userId,
-      workspaceId,
-      key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${GettingStartedStep.INVITE_TEAM}`,
-    });
-
-    return !isDefined(completion);
-  }
-
   private async findStepRewards({
     userId,
     workspaceId,
@@ -265,18 +245,25 @@ export class GettingStartedService {
     workspaceId,
     userWorkspaceId,
     steps,
+    userVars,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     steps: GettingStartedStep[];
+    userVars: GettingStartedUserVars;
   }): Promise<GettingStartedStep[]> {
-    const [hasConnectedMailbox, hasInstalledFeaturedApp] = await Promise.all([
+    const [
+      hasConnectedMailbox,
+      hasInstalledFeaturedApp,
+      stepsWithActiveWorkflow,
+    ] = await Promise.all([
       steps.includes(GettingStartedStep.CONNECT_MAILBOX)
         ? this.hasOwnDraftingMailbox({ workspaceId, userWorkspaceId })
         : false,
       steps.includes(GettingStartedStep.INSTALL_APP)
         ? this.hasInstalledFeaturedApp(workspaceId)
         : false,
+      this.findStepsWithActiveWorkflow({ workspaceId, steps, userVars }),
     ]);
 
     return steps.filter((step) => {
@@ -286,12 +273,57 @@ export class GettingStartedService {
         case GettingStartedStep.INSTALL_APP:
           return hasInstalledFeaturedApp;
         default:
-          return false;
+          return stepsWithActiveWorkflow.includes(step);
       }
     });
   }
 
-  async findOwnSendingMailbox({
+  private async findStepsWithActiveWorkflow({
+    workspaceId,
+    steps,
+    userVars,
+  }: {
+    workspaceId: string;
+    steps: GettingStartedStep[];
+    userVars: GettingStartedUserVars;
+  }): Promise<GettingStartedStep[]> {
+    const savedWorkflows = steps.flatMap((step) => {
+      const savedWorkflow = userVars.get(
+        `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}`,
+      );
+
+      return isDefined(savedWorkflow)
+        ? [{ step, workflowId: savedWorkflow.workflowId }]
+        : [];
+    });
+
+    if (!isNonEmptyArray(savedWorkflows)) {
+      return [];
+    }
+
+    const activeVersions = await this.workflowVersionRepository.find(
+      workspaceId,
+      {
+        select: { coreWorkflowId: true },
+        where: {
+          coreWorkflowId: In(
+            savedWorkflows.map(({ workflowId }) => workflowId),
+          ),
+          status: WorkflowVersionStatus.ACTIVE,
+        },
+      },
+    );
+
+    const activeWorkflowIds = activeVersions.map(
+      (activeVersion) => activeVersion.coreWorkflowId,
+    );
+
+    return savedWorkflows
+      .filter(({ workflowId }) => activeWorkflowIds.includes(workflowId))
+      .map(({ step }) => step);
+  }
+
+  private async findOwnSendingMailbox({
     workspaceId,
     userWorkspaceId,
   }: {
@@ -305,7 +337,6 @@ export class GettingStartedService {
         operation: EmailOperation.SEND,
       });
 
-    // A usable USER-scope mailbox is always the caller's own
     return mailboxes.find((mailbox) => mailbox.scope === 'USER');
   }
 

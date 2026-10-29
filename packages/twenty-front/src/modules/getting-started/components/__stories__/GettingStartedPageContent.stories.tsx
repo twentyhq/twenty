@@ -56,12 +56,6 @@ const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
       creditsEach: 1,
       remainingCount: 1,
     },
-    {
-      __typename: 'GettingStartedStepReward',
-      step: GettingStartedStep.INVITE_TEAM,
-      creditsEach: 0.5,
-      remainingCount: 5,
-    },
   ],
   steps: mockGettingStartedSteps,
   completedSteps: [],
@@ -175,7 +169,7 @@ export const Trial: Story = {
     });
 
     await waitFor(() => expect(inviteStepCard).toBeVisible());
-    await expect(within(inviteStepCard).getByText(/each$/)).toBeVisible();
+    await expect(within(inviteStepCard).queryByText(/each$/)).toBeNull();
   },
 };
 

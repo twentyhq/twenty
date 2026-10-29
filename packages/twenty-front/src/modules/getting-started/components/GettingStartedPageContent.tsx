@@ -129,7 +129,6 @@ export const GettingStartedPageContent = () => {
     PermissionFlagType.WORKFLOWS,
   );
 
-  // Fetched with the page so a workflow card does not resize while it animates in
   useQuery(GettingStartedWorkflowPreviewsDocument, {
     skip: !hasWorkflowsPermission,
   });

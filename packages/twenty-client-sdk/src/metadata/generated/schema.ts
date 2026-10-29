@@ -6965,7 +6965,7 @@ export interface MutationGenqlSelection{
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
-    prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {activate: Scalars['Boolean'], step: GettingStartedStep} })
+    prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {step: GettingStartedStep} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })

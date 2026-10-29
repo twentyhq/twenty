@@ -1,7 +1,9 @@
 import { gql } from 'graphql-tag';
 import {
+  activateCoreWorkflowVersion,
   deleteCoreWorkflows,
   findCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined } from 'twenty-shared/utils';
@@ -32,11 +34,8 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
 `;
 
 const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
-  mutation PrepareGettingStartedWorkflow(
-    $step: GettingStartedStep!
-    $activate: Boolean!
-  ) {
-    prepareGettingStartedWorkflow(step: $step, activate: $activate) {
+  mutation PrepareGettingStartedWorkflow($step: GettingStartedStep!) {
+    prepareGettingStartedWorkflow(step: $step) {
       workflowId
       versionId
     }
@@ -90,14 +89,21 @@ const updateGettingStarted = (input: Record<string, unknown>) =>
     variables: { input },
   });
 
-const prepareGettingStartedWorkflow = (step: string, activate: boolean) =>
+const prepareGettingStartedWorkflow = (step: string) =>
   makeMetadataApiRequest({
     query: PREPARE_GETTING_STARTED_WORKFLOW_MUTATION,
-    variables: { step, activate },
+    variables: { step },
   });
 
-const prepareHandoverWorkflow = (activate: boolean) =>
-  prepareGettingStartedWorkflow('HANDOVER_DEALS', activate);
+const findCompletedSteps = async (): Promise<string[]> => {
+  const response = await makeMetadataApiRequest({
+    query: GETTING_STARTED_PROGRESS_QUERY,
+  });
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.gettingStartedProgress.completedSteps;
+};
 
 describe('gettingStarted (e2e)', () => {
   beforeAll(deleteGettingStartedUserVars);
@@ -239,10 +245,7 @@ describe('gettingStarted (e2e)', () => {
     });
 
     it('refuses a step that has no workflow', async () => {
-      const response = await prepareGettingStartedWorkflow(
-        'FOLLOW_UP_DEALS',
-        false,
-      );
+      const response = await prepareGettingStartedWorkflow('FOLLOW_UP_DEALS');
 
       expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
         'INVALID_STEP',
@@ -252,63 +255,9 @@ describe('gettingStarted (e2e)', () => {
       ).toBeUndefined();
     });
 
-    it("refuses to turn on a draft that sends from another member's mailbox", async () => {
-      const draftResponse = await prepareHandoverWorkflow(false);
-
-      expect(draftResponse.body.errors).toBeUndefined();
-
-      const draft = draftResponse.body.data.prepareGettingStartedWorkflow;
-
-      try {
-        const [draftVersion]: {
-          steps: {
-            type: string;
-            settings: { input: Record<string, unknown> };
-          }[];
-        }[] = await globalThis.testDataSource.query(
-          `SELECT "steps" FROM core."workflowVersion" WHERE "id" = $1`,
-          [draft.versionId],
-        );
-
-        const stepsSendingFromTimMailbox = draftVersion.steps.map((step) =>
-          step.type === 'SEND_EMAIL'
-            ? {
-                ...step,
-                settings: {
-                  ...step.settings,
-                  input: {
-                    ...step.settings.input,
-                    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
-                  },
-                },
-              }
-            : step,
-        );
-
-        await globalThis.testDataSource.query(
-          `UPDATE core."workflowVersion" SET "steps" = $2::jsonb WHERE "id" = $1`,
-          [draft.versionId, JSON.stringify(stepsSendingFromTimMailbox)],
-        );
-
-        const activationResponse = await prepareHandoverWorkflow(true);
-
-        expect(activationResponse.body.errors?.[0]?.extensions?.subCode).toBe(
-          'MAILBOX_NOT_USABLE',
-        );
-        expect(
-          (
-            await findCoreWorkflowVersion({
-              coreWorkflowVersionId: draft.versionId,
-            })
-          ).status,
-        ).toBe('DRAFT');
-      } finally {
-        await deleteCoreWorkflows({ coreWorkflowIds: [draft.workflowId] });
-      }
-    });
-
-    it('reuses the draft, then activates it and completes the handover step', async () => {
-      const firstResponse = await prepareHandoverWorkflow(false);
+    it('reuses the draft, then completes the handover step once the workflow is turned on', async () => {
+      const firstResponse =
+        await prepareGettingStartedWorkflow('HANDOVER_DEALS');
 
       expect(firstResponse.body.errors).toBeUndefined();
 
@@ -320,47 +269,49 @@ describe('gettingStarted (e2e)', () => {
         await findWorkspaceUserVar('GETTING_STARTED_WORKFLOW_HANDOVER_DEALS'),
       ).toEqual(handover);
 
-      const secondResponse = await prepareHandoverWorkflow(false);
+      const secondResponse =
+        await prepareGettingStartedWorkflow('HANDOVER_DEALS');
 
       expect(secondResponse.body.data.prepareGettingStartedWorkflow).toEqual(
         handover,
       );
 
-      const activationResponse = await prepareHandoverWorkflow(true);
-
-      expect(activationResponse.body.errors).toBeUndefined();
-      expect(
-        activationResponse.body.data.prepareGettingStartedWorkflow,
-      ).toEqual(handover);
-
-      const reactivationResponse = await prepareHandoverWorkflow(true);
-
-      expect(reactivationResponse.body.errors).toBeUndefined();
-
-      const version = await findCoreWorkflowVersion({
+      const draftVersion = await findCoreWorkflowVersion({
         coreWorkflowVersionId: handover.versionId,
       });
 
-      expect(version.status).toBe('ACTIVE');
+      expect(draftVersion.status).toBe('DRAFT');
+      expect(await findCompletedSteps()).not.toContain('HANDOVER_DEALS');
 
-      const emailStep = version.steps?.find(
+      const emailStep = draftVersion.steps?.find(
         (step) => step.type === 'SEND_EMAIL',
       );
-      const [sender]: { userWorkspaceId: string }[] =
-        await globalThis.testDataSource.query(
-          `SELECT "userWorkspaceId" FROM core."connectedAccount" WHERE "id" = $1`,
-          [emailStep?.settings.input.connectedAccountId],
-        );
 
-      expect(sender?.userWorkspaceId).toBe(USER_WORKSPACE_DATA_SEED_IDS.JANE);
+      if (!isDefined(emailStep)) {
+        throw new Error('The handover draft has no email step');
+      }
 
-      const progressResponse = await makeMetadataApiRequest({
-        query: GETTING_STARTED_PROGRESS_QUERY,
+      await updateCoreWorkflowVersionStep({
+        coreWorkflowVersionId: handover.versionId,
+        step: {
+          ...emailStep,
+          settings: {
+            ...emailStep.settings,
+            input: {
+              ...emailStep.settings.input,
+              connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
+            },
+          },
+        },
+      });
+      await activateCoreWorkflowVersion({
+        coreWorkflowVersionId: handover.versionId,
       });
 
+      expect(await findCompletedSteps()).toContain('HANDOVER_DEALS');
       expect(
-        progressResponse.body.data.gettingStartedProgress.completedSteps,
-      ).toContain('HANDOVER_DEALS');
+        await findJaneUserVar('GETTING_STARTED_STEP_HANDOVER_DEALS'),
+      ).toEqual({ completedAt: expect.any(String) });
     });
   });
 });

@@ -12,8 +12,6 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 export class GettingStartedGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: GettingStartedException) {
     switch (exception.code) {
-      case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
-      case GettingStartedExceptionCode.MAILBOX_NOT_USABLE:
       case GettingStartedExceptionCode.INVALID_STEP:
         throw new UserInputError(exception);
       default: {

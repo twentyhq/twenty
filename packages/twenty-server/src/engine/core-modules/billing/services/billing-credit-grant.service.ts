@@ -244,7 +244,6 @@ export class BillingCreditGrantService {
     type: BillingCreditGrantType;
     idempotencyKeyPrefixes: string[];
   }): Promise<number> {
-    // An empty where array drops the WHERE clause and would sum every workspace
     if (!isNonEmptyArray(idempotencyKeyPrefixes)) {
       return 0;
     }

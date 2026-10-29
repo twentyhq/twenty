@@ -740,8 +740,6 @@ export class OnboardingService {
     );
   }
 
-  // Mirrors the claim in completeOnboardingConnectAccountStep and the checks in
-  // creditImportContactsRewardForWorkspaceCreator
   private async findGrantableImportContactsReward({
     userId,
     workspaceId,

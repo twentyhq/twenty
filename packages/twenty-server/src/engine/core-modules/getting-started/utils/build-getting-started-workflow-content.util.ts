@@ -21,7 +21,6 @@ export const buildGettingStartedWorkflowContent = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): { name: string; trigger: WorkflowTrigger; steps: WorkflowAction[] } => {
-  // Parsing applies the step defaults and the graph and variable checks
   const { name, version } = workflowManifestSchema.parse(manifest);
 
   const references: WorkflowManifestReferences = {

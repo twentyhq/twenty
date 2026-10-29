@@ -5,5 +5,4 @@ export const GETTING_STARTED_STEP_REWARDS: Partial<
   Record<GettingStartedStep, OnboardingStepReward>
 > = {
   [GettingStartedStep.CONNECT_MAILBOX]: 'importContacts',
-  [GettingStartedStep.INVITE_TEAM]: 'inviteTeam',
 };

@@ -45,13 +45,6 @@ const StyledConnector = styled.div`
   width: 1px;
 `;
 
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 type GettingStartedWorkflowActionProps = {
   step: GettingStartedStep;
 };
@@ -64,14 +57,14 @@ export const GettingStartedWorkflowAction = ({
   const { getIcon } = useIcons();
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
-  const { progress, refetch } = useGettingStartedProgress();
+  const { progress } = useGettingStartedProgress();
   const [prepareGettingStartedWorkflow, { loading }] = useMutation(
     PrepareGettingStartedWorkflowDocument,
   );
   const { data: workflowPreviewsData } = useQuery(
     GettingStartedWorkflowPreviewsDocument,
   );
-  const isWorkflowEnabled = progress?.completedSteps.includes(step) ?? false;
+  const isWorkflowOn = progress?.completedSteps.includes(step) ?? false;
 
   const workflowPreview =
     workflowPreviewsData?.gettingStartedWorkflowPreviews.find(
@@ -98,19 +91,13 @@ export const GettingStartedWorkflowAction = ({
       ]
     : [];
 
-  const prepareWorkflow = async ({ activate }: { activate: boolean }) => {
+  const openWorkflow = async () => {
     try {
       const { data } = await prepareGettingStartedWorkflow({
-        variables: { step, activate },
+        variables: { step },
       });
 
       if (!isDefined(data)) {
-        return;
-      }
-
-      if (activate) {
-        await refetch();
-
         return;
       }
 
@@ -142,22 +129,15 @@ export const GettingStartedWorkflowAction = ({
           </Fragment>
         ))}
       </StyledWorkflowPreview>
-      <StyledRow>
-        <Button
-          size="sm"
-          variant="solid"
-          color="accent"
-          loading={loading}
-          disabled={isWorkflowEnabled}
-          onClick={() => void prepareWorkflow({ activate: true })}
-        >{t`Turn on the workflow`}</Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          disabled={loading}
-          onClick={() => void prepareWorkflow({ activate: false })}
-        >{t`Edit the draft`}</Button>
-      </StyledRow>
+      <Button
+        size="sm"
+        variant="solid"
+        color="accent"
+        loading={loading}
+        onClick={() => void openWorkflow()}
+      >
+        {isWorkflowOn ? t`Open the workflow` : t`Set up the workflow`}
+      </Button>
     </StyledColumn>
   );
 };

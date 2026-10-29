@@ -54,7 +54,6 @@ export const useOpenAskAiPageWithPreprompt = () => {
 
     const uploadedFiles = await uploadFiles(files);
 
-    // A prompt about attachments must not go out without them
     stageAiChatPreprompt({
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',

@@ -6,7 +6,6 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
 import { GettingStartedWorkflowPreviewDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow-preview.dto';
 import { GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
@@ -22,7 +21,6 @@ import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-module
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
@@ -82,18 +80,14 @@ export class GettingStartedWorkflowResolver {
 
   @Mutation(() => GettingStartedWorkflowDTO)
   async prepareGettingStartedWorkflow(
-    @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('step', { type: () => GettingStartedStep }) step: GettingStartedStep,
-    @Args('activate', { type: () => Boolean }) activate: boolean,
   ): Promise<GettingStartedWorkflowDTO> {
     return this.gettingStartedWorkflowWorkspaceService.prepareWorkflow({
-      userId: user.id,
       workspaceId: workspace.id,
       userWorkspaceId,
       step,
-      activate,
     });
   }
 }

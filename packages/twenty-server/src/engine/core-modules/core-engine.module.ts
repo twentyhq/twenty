@@ -41,6 +41,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { GettingStartedWorkflowModule } from 'src/engine/core-modules/getting-started/getting-started-workflow.module';
+import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
@@ -122,6 +123,7 @@ import { FileApiModule } from './file/file-api.module';
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
+    GettingStartedModule,
     GettingStartedWorkflowModule,
     AiToolCallAnswerModule,
     WorkspaceEventEmitterModule,

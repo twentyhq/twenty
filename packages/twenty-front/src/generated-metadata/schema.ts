@@ -4510,7 +4510,6 @@ export type MutationMoveAgentChatThreadToChannelArgs = {
 
 
 export type MutationPrepareGettingStartedWorkflowArgs = {
-  activate: Scalars['Boolean']['input'];
   step: GettingStartedStep;
 };
 

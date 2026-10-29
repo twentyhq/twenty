@@ -8133,10 +8133,6 @@ export default {
             "prepareGettingStartedWorkflow": [
                 294,
                 {
-                    "activate": [
-                        4,
-                        "Boolean!"
-                    ],
                     "step": [
                         292,
                         "GettingStartedStep!"
