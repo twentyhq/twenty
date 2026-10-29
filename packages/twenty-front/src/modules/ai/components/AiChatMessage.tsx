@@ -14,6 +14,7 @@ import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { AiChatUserMessageCollapsibleContent } from '@/ai/components/AiChatUserMessageCollapsibleContent';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
@@ -206,7 +207,9 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {children}
+      <AiChatUserMessageCollapsibleContent>
+        {children}
+      </AiChatUserMessageCollapsibleContent>
     </StyledMessageText>
   );
 };

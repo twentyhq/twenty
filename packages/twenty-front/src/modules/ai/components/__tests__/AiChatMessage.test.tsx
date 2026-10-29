@@ -167,6 +167,10 @@ describe('AiChatMessage', () => {
     jotaiStore.set(currentWorkspaceMemberState.atom, null);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('heads a member message with their name', () => {
     renderMessage({ messageId: USER_MESSAGE.id, isAiChatInboxEnabled: true });
 
@@ -257,6 +261,34 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Unknown sender')).toBeInTheDocument();
     expect(screen.getByText(/ago$/)).toBeInTheDocument();
+  });
+
+  it('collapses a long member message but never an assistant reply', () => {
+    jest
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
+      .mockReturnValue(960);
+    jest
+      .spyOn(HTMLElement.prototype, 'clientHeight', 'get')
+      .mockReturnValue(240);
+
+    const { unmount } = renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: false,
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Show more' }),
+    ).toBeInTheDocument();
+
+    unmount();
+    renderMessage({
+      messageId: ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: false,
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'Show more' }),
+    ).not.toBeInTheDocument();
   });
 
   it('hides a reply Ada chose not to send', () => {

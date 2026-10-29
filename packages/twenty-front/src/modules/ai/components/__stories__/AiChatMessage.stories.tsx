@@ -323,8 +323,29 @@ const mockNamedAssistantMessage: ExtendedUIMessage = {
   parts: [{ type: 'text', text: 'The recorded sender remains visible.' }],
 };
 
+const mockLongUserMessage: ExtendedUIMessage = {
+  ...mockUserMessage,
+  id: 'msg-user-long',
+  parts: [
+    {
+      type: 'text',
+      text: `Help me set up my workspace for our sales team.
+
+1. Create a Deal Stage field on Opportunities with the values Lead, Qualified, Proposal, Negotiation, Won and Lost.
+2. Import the companies from the spreadsheet I attached and link each one to its account owner.
+3. Build a Pipeline view grouped by Deal Stage, sorted by close date, showing amount and owner.
+4. Add a dashboard with won revenue per month and the number of open deals per owner.
+5. Create a workflow that assigns a follow-up task to the owner when a deal has had no activity for seven days.
+6. Draft a short welcome email I can send to the team explaining the new pipeline.
+
+Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match.`,
+    },
+  ],
+};
+
 const allMockMessages = [
   mockUserMessage,
+  mockLongUserMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -449,6 +470,31 @@ export const ConversationWithCodeExecution: Story = {
 
 export const UserMessage: Story = {
   render: () => <AiChatMessage messageId={mockUserMessage.id} />,
+};
+
+export const LongUserMessage: Story = {
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockLongUserMessage.id} />
+      <AiChatMessage messageId={mockUserMessage.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const showMoreButton = await canvas.findByRole('button', {
+      name: 'Show more',
+    });
+
+    await expect(
+      canvas.getAllByRole('button', { name: 'Show more' }),
+    ).toHaveLength(1);
+
+    await userEvent.click(showMoreButton);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show less' }),
+    ).toHaveAttribute('aria-expanded', 'true');
+  },
 };
 
 export const AssistantTextResponse: Story = {
