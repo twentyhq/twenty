@@ -15,7 +15,6 @@ import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.m
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -79,7 +78,6 @@ import { SendCampaignTool } from 'src/modules/emailing/tools/send-campaign.tool'
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
-    FeatureFlagModule,
     FileUrlModule,
     PermissionsModule,
     UserRoleModule,

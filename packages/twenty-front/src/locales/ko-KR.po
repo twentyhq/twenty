@@ -860,7 +860,7 @@ msgstr "{label}, 상태: {statusLabel}"
 #. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
 msgid "{label}, {unreadOpenThreadCount} unread"
-msgstr ""
+msgstr "{label}, 읽지 않은 항목 {unreadOpenThreadCount}개"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -17161,12 +17161,12 @@ msgstr "병합 검토 탭"
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
-msgstr ""
+msgstr "{objectLabel} 병합됨"
 
 #. js-lingui-id: v4CzQ/
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merging {objectLabel}"
-msgstr ""
+msgstr "{objectLabel} 병합 중"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -19360,7 +19360,7 @@ msgstr "구성되지 않음"
 #. js-lingui-id: S33tz3
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Not connected"
-msgstr ""
+msgstr "연결되지 않음"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts

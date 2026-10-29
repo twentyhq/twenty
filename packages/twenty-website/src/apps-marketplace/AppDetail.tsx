@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
@@ -14,6 +15,7 @@ import {
 import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
 import { AppLogo } from './AppLogo';
+import { AppReadme } from './AppReadme';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppDetail } from './marketplace-app';
 
@@ -205,6 +207,9 @@ export function AppDetail({ app }: AppDetailProps) {
                   />
                 ))}
               </ScreenshotList>
+            )}
+            {isDefined(app.aboutDescription) && (
+              <AppReadme markdown={app.aboutDescription} />
             )}
           </MainColumn>
 
