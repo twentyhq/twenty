@@ -37,7 +37,7 @@ export class FairQueueScheduler {
   async computeJobOptions({
     queueName,
     scopes,
-    additionalGroupKeys = [],
+    additionalGroupKeys,
     delay,
     staticPriority,
   }: {
@@ -61,9 +61,7 @@ export class FairQueueScheduler {
     >();
 
     scopes.forEach((scope, jobIndex) => {
-      const groupKeys = [
-        ...new Set([...buildQueueJobGroupKeys(scope), ...additionalGroupKeys]),
-      ];
+      const groupKeys = buildQueueJobGroupKeys({ scope, additionalGroupKeys });
       const signature = JSON.stringify(groupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
         groupKeys,

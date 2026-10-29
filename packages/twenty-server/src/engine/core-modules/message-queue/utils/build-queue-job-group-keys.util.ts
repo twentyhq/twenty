@@ -6,7 +6,7 @@ import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/ut
 
 const SYSTEM_GROUP_KEY = 'system';
 
-export const buildQueueJobGroupKeys = (scope: QueueJobScope): string[] => {
+const buildScopeGroupKeys = (scope: QueueJobScope): string[] => {
   if (scope.isSystemJob) {
     return [SYSTEM_GROUP_KEY];
   }
@@ -25,3 +25,13 @@ export const buildQueueJobGroupKeys = (scope: QueueJobScope): string[] => {
     buildApplicationGroupKey(applicationUniversalIdentifier),
   ];
 };
+
+export const buildQueueJobGroupKeys = ({
+  scope,
+  additionalGroupKeys = [],
+}: {
+  scope: QueueJobScope;
+  additionalGroupKeys?: string[];
+}): string[] => [
+  ...new Set([...buildScopeGroupKeys(scope), ...additionalGroupKeys]),
+];
