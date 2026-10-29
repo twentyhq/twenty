@@ -139,8 +139,8 @@ describe('createHostFetchEnforcingPolicy', () => {
       [],
     ],
     [
-      'a server route, whose handler forwards headers to app code',
-      '/webhooks/server/my-route',
+      'a logic function route, whose handler forwards headers to app code',
+      '/s/my-route',
       [],
     ],
     [
