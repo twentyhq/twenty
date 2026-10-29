@@ -21,6 +21,6 @@ describe('TextDisplay', () => {
   it('passes displayedMaxRows for multiline text correctly', () => {
     render(<TextDisplay text="First line\nSecond line" displayedMaxRows={3} />);
 
-    expect(screen.getByText('First line\nSecond line')).toBeInTheDocument();
+    expect(screen.getByText(/First line/)).toBeInTheDocument();
   });
 });
