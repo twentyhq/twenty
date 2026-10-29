@@ -108,6 +108,34 @@ describe('useUpdateAgentChatThreadInboxState', () => {
     expect(mutate).toHaveBeenCalledTimes(1);
   });
 
+  it('applies the rows the server returns for a filing it checks itself', async () => {
+    const filedParticipant = {
+      ...READ_PARTICIPANT,
+      archivedAt: '2026-10-01T10:00:00.001Z',
+      updatedAt: '2026-10-01T12:00:00.000Z',
+    };
+
+    mutate.mockResolvedValue({
+      data: { updateAgentChatThreadInboxState: [filedParticipant] },
+    });
+    const { result, store } = renderUpdateInboxState();
+
+    store.set(agentChatThreadParticipantsState.atom, {
+      [THREAD_ID]: READ_PARTICIPANT,
+    });
+
+    await act(async () => {
+      await result.current.updateAgentChatThreadInboxState({
+        threadIds: [THREAD_ID],
+        action: AgentChatInboxAction.ARCHIVE_IF_SETTLED,
+      });
+    });
+
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
+    ).toEqual(filedParticipant);
+  });
+
   it('puts the member state back and reports a refused snooze', async () => {
     mutate.mockRejectedValue(new Error('Snooze time must be in the future'));
     const { result, store } = renderUpdateInboxState();
