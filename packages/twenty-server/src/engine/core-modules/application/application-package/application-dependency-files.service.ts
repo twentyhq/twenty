@@ -2,16 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 
-import {
-  assertMatchingDependencyChecksumsOrThrow,
-  type DependencyChecksums,
-} from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
+import { assertMatchingDependencyChecksumsOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
+import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
+import { computeLegacyApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-legacy-application-package-checksums.util';
+import { type DependencyChecksums } from 'src/engine/core-modules/application/application-package/utils/is-matching-dependency-checksums.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ApplicationIdentifier = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
+};
+
+type StoredDependencyFiles = {
+  packageJsonContent: string;
+  yarnLockContent: string | null;
+  storedFilesChecksums: {
+    packageJsonChecksum: string;
+    yarnLockChecksum: string | null;
+  };
 };
 
 @Injectable()
@@ -24,25 +33,21 @@ export class ApplicationDependencyFilesService {
     declaredChecksums,
   }: ApplicationIdentifier & {
     declaredChecksums: DependencyChecksums;
-  }): Promise<{
-    packageJsonContent: string;
-    yarnLockContent: string | null;
-    storedFilesChecksums: {
-      packageJsonChecksum: string;
-      yarnLockChecksum: string | null;
-    };
-  }> {
-    const { packageJsonContent, yarnLockContent } =
+  }): Promise<StoredDependencyFiles> {
+    const { packageJsonContent, yarnLockContent, storedFilesChecksums } =
       await this.getDependencyContents({
         workspaceId,
         applicationUniversalIdentifier,
       });
 
-    const storedFilesChecksums = assertMatchingDependencyChecksumsOrThrow({
+    assertMatchingDependencyChecksumsOrThrow({
       applicationUniversalIdentifier,
       declaredChecksums,
-      packageJsonContent,
-      yarnLockContent,
+      storedFilesChecksums,
+      legacyStoredFilesChecksums: computeLegacyApplicationPackageChecksums({
+        packageJsonContent,
+        yarnLockContent,
+      }),
     });
 
     return { packageJsonContent, yarnLockContent, storedFilesChecksums };
@@ -51,10 +56,7 @@ export class ApplicationDependencyFilesService {
   private async getDependencyContents({
     workspaceId,
     applicationUniversalIdentifier,
-  }: ApplicationIdentifier): Promise<{
-    packageJsonContent: string;
-    yarnLockContent: string | null;
-  }> {
+  }: ApplicationIdentifier): Promise<StoredDependencyFiles> {
     const readDependencyFile = async (resourcePath: string) =>
       (
         await streamToBuffer(
@@ -79,6 +81,13 @@ export class ApplicationDependencyFilesService {
       isYarnLockStored ? readDependencyFile('yarn.lock') : null,
     ]);
 
-    return { packageJsonContent, yarnLockContent };
+    return {
+      packageJsonContent,
+      yarnLockContent,
+      storedFilesChecksums: computeApplicationPackageChecksums({
+        packageJsonContent,
+        yarnLockContent,
+      }),
+    };
   }
 }
