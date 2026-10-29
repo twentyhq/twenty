@@ -93,6 +93,10 @@ export class CalendarTriggerEventListFetchCommand extends CommandRunner {
               calendarChannelId: calendarChannel.id,
               workspaceId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
 
           this.logger.log(

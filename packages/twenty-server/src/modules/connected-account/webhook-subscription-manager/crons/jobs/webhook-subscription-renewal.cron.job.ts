@@ -279,6 +279,8 @@ export class WebhookSubscriptionRenewalCronJob {
         {
           retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
           delay: Math.round(index * spacingMs),
+          workspaceId: channel.workspaceId,
+          isWorkspaceJob: true,
         },
       );
     }

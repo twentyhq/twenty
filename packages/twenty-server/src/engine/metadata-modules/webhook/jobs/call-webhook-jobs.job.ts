@@ -97,7 +97,11 @@ export class CallWebhookJobsJob {
       await this.messageQueueService.add<CallWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: workspaceEventBatch.workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
   }
