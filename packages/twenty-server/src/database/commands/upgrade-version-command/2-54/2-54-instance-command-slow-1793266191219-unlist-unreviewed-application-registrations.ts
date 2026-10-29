@@ -1,5 +1,7 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
@@ -8,12 +10,21 @@ import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand
   implements SlowInstanceCommand
 {
+  constructor(
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+  ) {}
+
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `UPDATE "core"."applicationRegistration"
        SET "isListed" = false
        WHERE "isListed" = true
          AND "isVetted" = false`,
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'marketplaceCatalog',
+      MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
     );
   }
 
