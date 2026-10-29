@@ -128,6 +128,7 @@ export class AddChatMentionResolutionCommand extends ProvisionedWorkspaceCommand
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
