@@ -42,20 +42,13 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
 
   expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
   await waitForSandboxRoundTrip();
-  await user.hover(trigger);
-  await expectTooltipOpen();
-  await user.unhover(trigger);
-  await expectTooltipClosed();
 
-  await user.hover(icon);
-  await expectTooltipOpen();
-  await user.unhover(icon);
-  await expectTooltipClosed();
-
-  await user.hover(icon);
-  await expectTooltipOpen();
-  await user.unhover(icon);
-  await expectTooltipClosed();
+  for (const hoverTarget of [trigger, icon, icon]) {
+    await user.hover(hoverTarget);
+    await expectTooltipOpen();
+    await user.unhover(hoverTarget);
+    await expectTooltipClosed();
+  }
 
   expect(errorHandler).not.toHaveBeenCalled();
 };

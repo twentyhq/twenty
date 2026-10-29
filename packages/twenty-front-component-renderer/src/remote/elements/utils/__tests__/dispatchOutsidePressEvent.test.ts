@@ -70,7 +70,8 @@ describe('dispatchOutsidePressEvent', () => {
       globalScope: toGlobalScopeRecord(polyfillWindow),
     });
     const documentTarget = polyfillWindow.document as unknown as Document;
-    const receivedPresses: { event: Event; windowEvent: unknown }[] = [];
+    const receivedPresses: { event: Event; windowEvent: Event | undefined }[] =
+      [];
 
     documentTarget.addEventListener('mousedown', (event) => {
       receivedPresses.push({

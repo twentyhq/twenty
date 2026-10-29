@@ -34,7 +34,8 @@ describe('dispatchOwnedPressEvent', () => {
       backdrop,
       backdropRemoteElementId,
     } = createOwnedPressFixture();
-    const receivedPresses: { event: Event; windowEvent: unknown }[] = [];
+    const receivedPresses: { event: Event; windowEvent: Event | undefined }[] =
+      [];
 
     documentTarget.addEventListener(
       'pointerdown',
