@@ -1,6 +1,3 @@
-import * as fs from 'fs/promises';
-import { join } from 'path';
-
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
@@ -10,11 +7,12 @@ import {
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
+import * as fs from 'fs/promises';
+import { join } from 'path';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import {
   BUILD_LOCK_MAX_RETRIES,
@@ -31,6 +29,7 @@ import {
   YARN_INSTALL_LAMBDA_MEMORY_MB,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import {
   type BuilderLambdaPayload,
   type BuilderLambdaResult,
@@ -40,12 +39,31 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
-import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import {
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import {
+  type BrowserTranspileParams,
+  type BrowserTranspileResult,
+  type BrowserDependenciesBuildParams,
+  type TranspileParams,
+  type TranspileResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
+import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
+import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
+import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/utils/copy-front-component-builder.util';
+import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util';
+import {
+  FrontComponentException,
+  FrontComponentExceptionCode,
+} from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -67,8 +85,19 @@ export class LambdaToolFunctionsService {
   ) {}
 
   async transpile(
-    params: Omit<BuilderLambdaPayload, 'action'>,
-  ): Promise<BuilderLambdaResult> {
+    params: LogicFunctionTranspileParams,
+  ): Promise<LogicFunctionTranspileResult>;
+  async transpile(
+    params: BrowserTranspileParams,
+  ): Promise<BrowserTranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult> {
+    if (params.targetRuntime === 'browser') {
+      const { targetRuntime: _targetRuntime, ...request } = params;
+      return frontComponentBuildResultSchema.parse(
+        await this.invokeBrowserBuilder({ ...request, action: 'transpile' }),
+      );
+    }
     await this.ensureBuilderLambdaExists();
 
     const lambdaClient = await this.awsClient.getLambdaClient();
@@ -131,6 +160,74 @@ export class LambdaToolFunctionsService {
     }
 
     return { builtCode: parsedResult.builtCode };
+  }
+
+  async getDependenciesBuildCacheKey({
+    workspaceId,
+  }: Pick<BrowserDependenciesBuildParams, 'workspaceId' | 'targetRuntime'>) {
+    const name = await getFrontComponentBuilderName({
+      workspaceId,
+      namespace: this.options.resourceNamespace,
+      action: 'buildDependencies',
+    });
+    return `lambda:${name}`;
+  }
+
+  async buildDependencies({
+    targetRuntime: _targetRuntime,
+    ...request
+  }: BrowserDependenciesBuildParams) {
+    return frontComponentDependenciesBuildResultSchema.parse(
+      await this.invokeBrowserBuilder({
+        ...request,
+        action: 'buildDependencies',
+      }),
+    );
+  }
+
+  private async invokeBrowserBuilder({
+    workspaceId,
+    ...input
+  }: FrontComponentBuilderRequest & { workspaceId: string }): Promise<unknown> {
+    const isDependenciesBuild = input.action === 'buildDependencies';
+    const functionName = await getFrontComponentBuilderName({
+      workspaceId,
+      namespace: this.options.resourceNamespace,
+      action: input.action,
+    });
+    const timeoutSeconds = isDependenciesBuild
+      ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
+      : BUILDER_LAMBDA_TIMEOUT_SECONDS;
+    await this.ensureBuildToolLambdaIsActive({
+      functionName,
+      memoryMb: isDependenciesBuild
+        ? YARN_INSTALL_LAMBDA_MEMORY_MB
+        : BUILDER_LAMBDA_MEMORY_MB,
+      timeoutSeconds,
+      copyFiles: async (directory) => {
+        await copyFrontComponentBuilder(directory);
+        if (isDependenciesBuild) {
+          await fs.cp(YARN_ENGINE_DIRNAME, join(directory, 'yarn-engine'), {
+            recursive: true,
+          });
+        }
+      },
+    });
+    const lambdaClient = await this.awsClient.getLambdaClient();
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: functionName,
+        Payload: JSON.stringify(input),
+      }),
+      { abortSignal: AbortSignal.timeout(timeoutSeconds * 1000) },
+    );
+    if (result.FunctionError || !isDefined(result.Payload)) {
+      throw new FrontComponentException(
+        'Frontend component builder Lambda failed.',
+        FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+      );
+    }
+    return JSON.parse(result.Payload.transformToString());
   }
 
   async runYarnInstallCreateLayer(

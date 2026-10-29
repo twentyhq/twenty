@@ -8,15 +8,18 @@ import {
   writeFile,
 } from 'fs/promises';
 import { tmpdir } from 'os';
-import { dirname, join, resolve } from 'path';
+import { dirname, join } from 'path';
 import { PageLayoutType } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 
-import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
+import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
+import { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
-import { FrontComponentLocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/front-component-local.driver';
+import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
+import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+
 const mockBuilderOptions = {
   buildAssetsDirectory: '',
   yarnEngineDirectory: '',
@@ -70,8 +73,12 @@ const invokeFrontComponentBuilderLocally = async ({
     yarnEngineDirectory,
     timeoutMs,
   });
-  const driver = new FrontComponentLocalDriver();
-  const request = { ...input, workspaceId: 'workspace' };
+  const driver = new LocalDriver({} as LocalDriverOptions);
+  const request = {
+    ...input,
+    workspaceId: 'workspace',
+    targetRuntime: 'browser' as const,
+  };
   return request.action === 'buildDependencies'
     ? driver.buildDependencies(request)
     : driver.transpile(request);
@@ -107,7 +114,24 @@ const INPUT = {
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 
-describe('FrontComponentLocalDriver', () => {
+describe('LocalDriver', () => {
+  it.each([LogicFunctionRuntime.NODE18, LogicFunctionRuntime.NODE22])(
+    'builds Node code for %s with package imports external',
+    async (targetRuntime) => {
+      const driver = new LocalDriver({} as LocalDriverOptions);
+      const result = await driver.transpile({
+        targetRuntime,
+        sourceCode:
+          'import { value } from "external-package"; export const handler = (input: number) => value + input;',
+        sourceFileName: 'src/handler.ts',
+        builtFileName: 'dist/handler.mjs',
+      });
+      expect(result.builtCode).toContain('from "external-package"');
+      expect(result.builtCode).toContain('sourceMappingURL=handler.mjs.map');
+      expect(result.builtCode).not.toContain('input: number');
+    },
+  );
+
   let directory: string;
   let buildAssetsDirectory: string;
   let yarnEngineDirectory: string;
@@ -129,7 +153,7 @@ describe('FrontComponentLocalDriver', () => {
     });
     await mkdir(buildAssetsDirectory);
     await copyFile(
-      resolve(__dirname, '../../constants/builder/index.mjs'),
+      require.resolve('src/engine/metadata-modules/ai/ai-front-component/constants/builder/index.mjs'),
       join(buildAssetsDirectory, 'index.mjs'),
     );
     await copyFile(

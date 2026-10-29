@@ -9,17 +9,20 @@ import {
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
-import { FrontComponentLambdaDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/front-component-lambda.driver';
+import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 jest.mock(
-  'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/get-front-component-builder-name.util',
+  'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util',
   () => ({ getFrontComponentBuilderName: async () => 'workspace-builder' }),
 );
 
 jest.useRealTimers();
 
 const REQUEST = {
+  targetRuntime: 'browser' as const,
   workspaceId: 'workspace',
   packageJson: '{"name":"fixture","private":true}',
   yarnLock: '# fixture lockfile',
@@ -30,12 +33,13 @@ const RESULT = {
   error: 'Build diagnostic',
 };
 
-describe('FrontComponentLambdaDriver', () => {
+describe('LambdaDriver', () => {
   let state: State;
   let updateError: Error | undefined;
   let commands: string[];
   let payloads: unknown[];
-  let driver: FrontComponentLambdaDriver;
+  let functionNames: unknown[];
+  let driver: LambdaDriver;
   let client: Lambda;
 
   beforeEach(() => {
@@ -43,6 +47,7 @@ describe('FrontComponentLambdaDriver', () => {
     updateError = undefined;
     commands = [];
     payloads = [];
+    functionNames = [];
     client = new Lambda({ region: 'eu-west-1' });
     let isLocked = false;
     const cacheStorageService = {
@@ -85,9 +90,18 @@ describe('FrontComponentLambdaDriver', () => {
       }
       if (command instanceof InvokeCommand) {
         expect(state).toBe('Active');
-        payloads.push(JSON.parse(String(command.input.Payload)));
+        const payload = JSON.parse(String(command.input.Payload));
+        payloads.push(payload);
+        functionNames.push(command.input.FunctionName);
         return {
-          Payload: { transformToString: () => JSON.stringify(RESULT) },
+          Payload: {
+            transformToString: () =>
+              JSON.stringify(
+                payload.sourceCode
+                  ? { builtCode: 'export const handler = () => 1;' }
+                  : RESULT,
+              ),
+          },
           $metadata: {},
         };
       }
@@ -104,7 +118,7 @@ describe('FrontComponentLambdaDriver', () => {
           { FunctionName: functionName },
         );
       });
-    driver = new FrontComponentLambdaDriver({
+    driver = new LambdaDriver({
       region: 'eu-west-1',
       layerBucket: 'fixture',
       layerBucketRegion: 'eu-west-1',
@@ -112,13 +126,32 @@ describe('FrontComponentLambdaDriver', () => {
       lambdaRole: 'fixture',
       cacheStorageService,
       cacheLockService: new CacheLockService(cacheStorageService),
-    });
+    } as LambdaDriverOptions);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
     client.destroy();
   });
+
+  it.each([LogicFunctionRuntime.NODE18, LogicFunctionRuntime.NODE22])(
+    'selects the Node builder for %s and the browser builder on the same driver',
+    async (targetRuntime) => {
+      const request = {
+        targetRuntime,
+        sourceCode: 'export const handler = () => 1;',
+        sourceFileName: 'handler.ts',
+        builtFileName: 'handler.mjs',
+      };
+      await expect(driver.transpile(request)).resolves.toEqual({
+        builtCode: 'export const handler = () => 1;',
+      });
+      await expect(driver.buildDependencies(REQUEST)).resolves.toEqual(RESULT);
+      expect(payloads[0]).toEqual({ ...request, action: 'transpile' });
+      expect(functionNames[0]).not.toBe('workspace-builder');
+      expect(functionNames[1]).toBe('workspace-builder');
+    },
+  );
 
   it('reactivates an idle builder before sending the build exactly once', async () => {
     await expect(driver.buildDependencies(REQUEST)).resolves.toEqual(RESULT);
