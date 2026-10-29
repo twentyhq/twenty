@@ -55,6 +55,11 @@ export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
       await canvas.findByTestId('tab-general', undefined, { timeout: 3000 }),
     );
 
+    expect(
+      await canvas.findByText(
+        'Sync emails and calendar events from your Google accounts.',
+      ),
+    ).toBeVisible();
     expect(await canvas.findByText('Blocklist')).toBeVisible();
     expect(await canvas.findByText('tim@apple.dev')).toBeVisible();
     expect(canvas.getByText('tim.cook@gmail.com')).toBeVisible();
