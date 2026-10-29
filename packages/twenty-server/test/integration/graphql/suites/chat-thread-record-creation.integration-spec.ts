@@ -3,15 +3,29 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  type ObjectRecordCreateEvent,
-  type ObjectRecordUpdateEvent,
-} from 'twenty-shared/database-events';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+const isThreadRecordEvent = ({
+  recordEvent: { recordId, properties },
+  threadId,
+}: {
+  recordEvent: { recordId: string; properties: object };
+  threadId: string;
+}) => {
+  if (recordId === threadId) {
+    return true;
+  }
+
+  return (
+    'after' in properties &&
+    isPlainObject(properties.after) &&
+    properties.after.threadId === threadId
+  );
+};
 
 describe('Record API chat creation initializes personal inbox state', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
@@ -32,25 +46,20 @@ describe('Record API chat creation initializes personal inbox state', () => {
     );
 
     return (threadId: string) =>
-      emit.mock.calls.flatMap(([batchEvent]) =>
-        isDefined(batchEvent)
-          ? (
-              batchEvent.events as (
-                | ObjectRecordCreateEvent<{ threadId?: string }>
-                | ObjectRecordUpdateEvent<{ threadId?: string }>
-              )[]
-            )
-              .filter(
-                ({ recordId, properties }) =>
-                  recordId === threadId ||
-                  properties.after?.threadId === threadId,
-              )
-              .map(
-                () =>
-                  `${batchEvent.objectMetadataNameSingular} ${batchEvent.action}`,
-              )
-          : [],
-      );
+      emit.mock.calls.flatMap(([batchEvent]) => {
+        if (!isDefined(batchEvent)) {
+          return [];
+        }
+
+        return batchEvent.events
+          .filter((recordEvent) =>
+            isThreadRecordEvent({ recordEvent, threadId }),
+          )
+          .map(
+            () =>
+              `${batchEvent.objectMetadataNameSingular} ${batchEvent.action}`,
+          );
+      });
   };
   const expectParticipantCreatedBefore = ({
     events,

@@ -1,12 +1,15 @@
 import { randomUUID } from 'node:crypto';
 
-import { parse } from 'graphql';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { runWithRejectedChatWrite } from 'test/integration/ai/utils/run-with-rejected-chat-write.util';
 import { runWithReadOnlyChatPermission } from 'test/integration/ai/utils/run-with-read-only-chat-permission.util';
 import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
+import { deleteQueuedChatMessageOperationFactory } from 'test/integration/graphql/utils/delete-queued-chat-message-operation-factory.util';
+import { readChatThreadFieldOperationFactory } from 'test/integration/graphql/utils/read-chat-thread-field-operation-factory.util';
+import { readSharedChatThreadOperationFactory } from 'test/integration/graphql/utils/read-shared-chat-thread-operation-factory.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
+import { stopAgentChatStreamOperationFactory } from 'test/integration/graphql/utils/stop-agent-chat-stream-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -22,24 +25,6 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-
-const READ_THREAD = parse(`
-  query SharedConversation($threadId: UUID!) {
-    chatThread(id: $threadId) { id }
-    chatMessages(threadId: $threadId) { id senderWorkspaceMemberId senderUserWorkspaceId }
-    chatStreamCatchupChunks(threadId: $threadId) { chunks maxSeq }
-  }
-`);
-const DELETE_QUEUED_MESSAGE = parse(`
-  mutation DeleteSharedQueuedMessage($messageId: UUID!) {
-    deleteQueuedChatMessage(messageId: $messageId)
-  }
-`);
-const STOP_STREAM = parse(`
-  mutation StopSharedConversation($threadId: UUID!) {
-    stopAgentChatStream(threadId: $threadId)
-  }
-`);
 
 describe('Shared conversation API boundaries', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
@@ -62,7 +47,7 @@ describe('Shared conversation API boundaries', () => {
 
   const readThread = (threadId: string) =>
     makeMetadataApiRequest(
-      { query: READ_THREAD, variables: { threadId } },
+      readSharedChatThreadOperationFactory({ threadId }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
   const markDeleted = (threadId: string) =>
@@ -143,16 +128,16 @@ describe('Shared conversation API boundaries', () => {
       recipientWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       accessLevel: RecordShareAccessLevel.NONE,
     });
-    for (const selection of [
-      'chatThread(id: $threadId) { id }',
-      'chatMessages(threadId: $threadId) { id }',
-      'chatStreamCatchupChunks(threadId: $threadId) { maxSeq }',
+    for (const revokedRead of [
+      readChatThreadFieldOperationFactory({ threadId, field: 'chatThread' }),
+      readChatThreadFieldOperationFactory({ threadId, field: 'chatMessages' }),
+      readChatThreadFieldOperationFactory({
+        threadId,
+        field: 'chatStreamCatchupChunks',
+      }),
     ]) {
       const revoked = await makeMetadataApiRequest(
-        {
-          query: parse(`query($threadId: UUID!) { ${selection} }`),
-          variables: { threadId },
-        },
+        revokedRead,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
@@ -194,11 +179,11 @@ describe('Shared conversation API boundaries', () => {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
     const stopped = await makeMetadataApiRequest(
-      { query: STOP_STREAM, variables: { threadId } },
+      stopAgentChatStreamOperationFactory({ threadId }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
     const deleted = await makeMetadataApiRequest(
-      { query: DELETE_QUEUED_MESSAGE, variables: { messageId: queued.id } },
+      deleteQueuedChatMessageOperationFactory({ messageId: queued.id }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
@@ -236,7 +221,7 @@ describe('Shared conversation API boundaries', () => {
       accessLevel: RecordShareAccessLevel.READ_WRITE,
     });
     const editorDeleted = await makeMetadataApiRequest(
-      { query: DELETE_QUEUED_MESSAGE, variables: { messageId: queued.id } },
+      deleteQueuedChatMessageOperationFactory({ messageId: queued.id }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
@@ -565,10 +550,9 @@ describe('Shared conversation API boundaries', () => {
 
   it('allows an authorized stop to be a no-op when the thread is idle', async () => {
     const threadId = await context.createThread();
-    const response = await makeMetadataApiRequest({
-      query: STOP_STREAM,
-      variables: { threadId },
-    });
+    const response = await makeMetadataApiRequest(
+      stopAgentChatStreamOperationFactory({ threadId }),
+    );
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.stopAgentChatStream).toBe(true);
