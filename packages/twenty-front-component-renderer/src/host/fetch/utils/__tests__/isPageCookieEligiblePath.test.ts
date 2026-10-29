@@ -17,6 +17,9 @@ describe('isPageCookieEligiblePath', () => {
     '/s/my-route',
     '/webhooks/server/my-route',
     '/auth/apps/custom/callback',
+    '/rest/..%2Fs/my-route',
+    '/graphql/..%2fcdn-cgi/access/get-identity',
+    '/files/..%5Coauth2/userinfo',
   ])('should reject the path %s', (pathname) => {
     expect(isPageCookieEligiblePath(pathname)).toBe(false);
   });
