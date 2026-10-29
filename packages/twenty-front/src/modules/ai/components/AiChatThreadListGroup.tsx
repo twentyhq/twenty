@@ -6,6 +6,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 
+const COMPACT_HEADER_PADDING = `0 ${themeCssVariables.spacing[1]}`;
+const DEFAULT_HEADER_PADDING = `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`;
+
 const StyledGroup = styled.section<{ $isCompact: boolean }>`
   display: ${({ $isCompact }) => ($isCompact ? 'flex' : 'block')};
   flex-direction: column;
@@ -19,9 +22,7 @@ const StyledHeader = styled.div<{ $isCompact: boolean }>`
   margin-bottom: ${({ $isCompact }) =>
     $isCompact ? themeCssVariables.spacing[1.5] : '0'};
   padding: ${({ $isCompact }) =>
-    $isCompact
-      ? `0 ${themeCssVariables.spacing[1]}`
-      : `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
+    $isCompact ? COMPACT_HEADER_PADDING : DEFAULT_HEADER_PADDING};
 `;
 
 const StyledTitle = styled.h3<{ $isCompact: boolean }>`
