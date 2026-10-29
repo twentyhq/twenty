@@ -3030,6 +3030,16 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Completed"
 
+#. js-lingui-id: 3/Bvdi
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeded the {timeoutSeconds} second time limit."
+msgstr "Component build exceeded the {timeoutSeconds} second time limit."
+
+#. js-lingui-id: PfwSQo
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+msgstr "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5146,6 +5156,11 @@ msgstr "Failed"
 msgid "Failed to add people to the list."
 msgstr "Failed to add people to the list."
 
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Failed to build front component."
+msgstr "Failed to build front component."
+
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6788,6 +6803,16 @@ msgstr "Invalid filter: use \"{joinColumnName}\" to filter by this relation fiel
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "Invalid front component input."
+
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Invalid front component settings."
+msgstr "Invalid front component settings."
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Invalid front component source."
+msgstr "Invalid front component source."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
