@@ -1,14 +1,24 @@
 # Workflows
 
-Use when the app needs to ship a manual workflow on install, or when a logic function should be invocable from the workflow builder.
+Use when the app needs to ship a workflow, or when a logic function should be invocable from the workflow builder.
 
 See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 ## Mental Model
 
-Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. `twenty app pull` writes workflows in this form.
+Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. Install creates it active; installing a new app version updates it in place. Users can't edit an installed workflow — they duplicate it.
 
 Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+
+## defineWorkflow
+
+- The workflow and each step need a stable `universalIdentifier`. The trigger's is optional.
+- `nextStepIds` wires the graph: the trigger points to the first steps, each step to the steps after it.
+- Trigger types: `MANUAL`, `CRON`, `DATABASE_EVENT`, `WEBHOOK`. Step types exclude the builder's `CODE` — use `LOGIC_FUNCTION`.
+- Reference objects, fields, logic functions and agents by universal identifier, never by name or id.
+- Triggers take optional `name`, `position` and `outputSchema`; steps take optional `position` and `outputSchema`. They only shape the builder view. Omit them to get the derived defaults.
+- `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
+- `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
 
 ## Email and Calendar Steps
 
@@ -22,9 +32,9 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - The selected record is the trigger payload — no wrapping `record` field.
 - Reference fields with `{{trigger.<field>}}`. Do not use `{{trigger.record.<field>}}`.
 
-## Lifecycle
+## Lifecycle Through the Workspace API
 
-Always: create → configure draft → activate. Never publish a draft directly.
+Only for workflows created at runtime, e.g. from a post-install hook, instead of `defineWorkflow`. Always: create → configure draft → activate. Never publish a draft directly.
 
 1. Find or create the `Workflow` by stable name or slug. `createWorkflow` produces the draft `v1`.
 2. Set the trigger on the draft via `updateWorkflowVersion`.

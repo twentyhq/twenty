@@ -106,7 +106,7 @@ Read the smallest reference that matches the requested entity work:
 - Full-page custom UI and standalone page patterns: `references/develop-app/standalone-pages.md`
 - Front component source, Twenty UI imports, data hooks, runtime imports, and browser verification: `references/develop-app/front-components.md`
 - Logic functions, skills, agents, post-install hooks, and connection providers: `references/develop-app/logic.md`
-- Workflows, manual triggers, draft/activate lifecycle, and seeder pitfalls: `references/develop-app/workflows.md`
+- Workflows with `defineWorkflow`, manual triggers, the runtime draft/activate lifecycle, and seeder pitfalls: `references/develop-app/workflows.md`
 - Tests — what to cover and where to put the files: `references/develop-app/tests.md`
 - App file structure and entity validation checklist: `references/develop-app/app-structure.md`
 - Detailed front component UI design: `references/design/front-component-ui.md`
