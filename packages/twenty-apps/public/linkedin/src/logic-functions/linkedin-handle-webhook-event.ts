@@ -10,7 +10,9 @@ import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constant
 import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-linkedin-connection-by-unipile-account-id.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
+import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
+import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 
@@ -31,17 +33,27 @@ const ingestUnipileMessage = async ({
     return { handled: false, reason: 'Connection has no message channel' };
   }
 
+  const resolveUser = (user: UnipileUser) =>
+    withLinkedinPublicIdentifier({ unipileAccountId, user });
+
   const counterparts = message.is_sender
-    ? getLinkedinChatCounterparts(
-        await getUnipileChat({
-          accountId: unipileAccountId,
-          chatId: message.chat_id,
-        }),
+    ? await Promise.all(
+        getLinkedinChatCounterparts(
+          await getUnipileChat({
+            accountId: unipileAccountId,
+            chatId: message.chat_id,
+          }),
+        ).map(resolveUser),
       )
     : [];
 
+  const sender =
+    !message.is_sender && isDefined(message.sender)
+      ? await resolveUser(message.sender)
+      : message.sender;
+
   const ingestMessage = mapUnipileMessageToIngestMessage({
-    message,
+    message: { ...message, sender },
     channelHandle: channel.handle,
     counterparts,
   });
