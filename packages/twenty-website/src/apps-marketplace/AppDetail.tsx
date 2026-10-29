@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
@@ -207,7 +208,7 @@ export function AppDetail({ app }: AppDetailProps) {
                 ))}
               </ScreenshotList>
             )}
-            {app.aboutDescription !== undefined && (
+            {isDefined(app.aboutDescription) && (
               <AppReadme markdown={app.aboutDescription} />
             )}
           </MainColumn>

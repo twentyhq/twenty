@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   color,
@@ -13,7 +14,7 @@ import {
 } from '@/tokens';
 import { ExternalLink } from '@/ui';
 
-const LEADING_TITLE_PATTERN = /^\s*#\s[^\n]*\n+/;
+import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
 
 const Prose = styled.div`
   ${typeRampDeclarations('bodyMd')}
@@ -106,9 +107,10 @@ const Prose = styled.div`
   }
 `;
 
-const COMPONENTS: Components = {
+const README_COMPONENTS: Components = {
+  h1: ({ children }) => <h2>{children}</h2>,
   a: ({ href, children }) =>
-    href?.startsWith('http') === true ? (
+    isDefined(href) && href.startsWith('http') ? (
       <ExternalLink href={href}>{children}</ExternalLink>
     ) : (
       <a href={href}>{children}</a>
@@ -122,8 +124,12 @@ type AppReadmeProps = {
 export function AppReadme({ markdown }: AppReadmeProps) {
   return (
     <Prose>
-      <Markdown components={COMPONENTS} remarkPlugins={[remarkGfm]}>
-        {markdown.replace(LEADING_TITLE_PATTERN, '')}
+      <Markdown
+        components={README_COMPONENTS}
+        disallowedElements={['img']}
+        remarkPlugins={[remarkGfm]}
+      >
+        {stripLeadingMarkdownTitle(markdown)}
       </Markdown>
     </Prose>
   );
