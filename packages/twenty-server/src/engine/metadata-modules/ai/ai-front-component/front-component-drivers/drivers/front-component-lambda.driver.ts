@@ -25,7 +25,7 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
-export class LambdaDriver implements FrontComponentDriver {
+export class FrontComponentLambdaDriver implements FrontComponentDriver {
   private readonly awsClient: LambdaAwsClientService;
   private readonly toolFunctions: LambdaToolFunctionsService;
 
@@ -70,24 +70,24 @@ export class LambdaDriver implements FrontComponentDriver {
     workspaceId,
     ...input
   }: FrontComponentBuilderRequest & { workspaceId: string }): Promise<unknown> {
-    const buildsDependencies = input.action === 'buildDependencies';
+    const isDependenciesBuild = input.action === 'buildDependencies';
     const functionName = await getFrontComponentBuilderName({
       workspaceId,
       namespace: this.options.resourceNamespace,
       action: input.action,
     });
-    const timeoutSeconds = buildsDependencies
+    const timeoutSeconds = isDependenciesBuild
       ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
       : BUILDER_LAMBDA_TIMEOUT_SECONDS;
-    await this.toolFunctions.ensureToolLambdaExists({
+    await this.toolFunctions.ensureBuildToolLambdaIsActive({
       functionName,
-      memoryMb: buildsDependencies
+      memoryMb: isDependenciesBuild
         ? YARN_INSTALL_LAMBDA_MEMORY_MB
         : BUILDER_LAMBDA_MEMORY_MB,
       timeoutSeconds,
       copyFiles: async (directory) => {
         await copyFrontComponentBuilder(directory);
-        if (buildsDependencies) {
+        if (isDependenciesBuild) {
           await cp(YARN_ENGINE_DIRNAME, join(directory, 'yarn-engine'), {
             recursive: true,
           });

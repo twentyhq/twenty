@@ -16,7 +16,7 @@ import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
-import { LocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/local.driver';
+import { FrontComponentLocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/front-component-local.driver';
 const mockBuilderOptions = {
   buildAssetsDirectory: '',
   yarnEngineDirectory: '',
@@ -70,7 +70,7 @@ const invokeFrontComponentBuilderLocally = async ({
     yarnEngineDirectory,
     timeoutMs,
   });
-  const driver = new LocalDriver();
+  const driver = new FrontComponentLocalDriver();
   const request = { ...input, workspaceId: 'workspace' };
   return request.action === 'buildDependencies'
     ? driver.buildDependencies(request)
@@ -92,8 +92,8 @@ const charMap: Record<string, string> = {
   '\u2029': '\\u2029',
 };
 
-const escapeUnsafeChars = (str: string): string =>
-  str.replace(/[<>\/\\\b\f\n\r\t\0\u2028\u2029]/g, (char) => charMap[char]);
+const escapeUnsafeChars = (value: string): string =>
+  value.replace(/[<>\/\\\b\f\n\r\t\0\u2028\u2029]/g, (char) => charMap[char]);
 
 jest.useRealTimers();
 
@@ -107,7 +107,7 @@ const INPUT = {
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 
-describe('LocalDriver', () => {
+describe('FrontComponentLocalDriver', () => {
   let directory: string;
   let buildAssetsDirectory: string;
   let yarnEngineDirectory: string;

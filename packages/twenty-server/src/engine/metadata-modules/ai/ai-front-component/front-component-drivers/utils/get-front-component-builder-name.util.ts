@@ -21,9 +21,9 @@ export const getFrontComponentBuilderName = async ({
   namespace?: string;
   action: FrontComponentBuilderRequest['action'];
 }) => {
-  const buildsDependencies = action === 'buildDependencies';
+  const isDependenciesBuild = action === 'buildDependencies';
   const builderFiles = await getFrontComponentBuilderFiles();
-  const yarnEngineFiles = buildsDependencies
+  const yarnEngineFiles = isDependenciesBuild
     ? await Promise.all(
         ['.yarnrc.yml', '.yarn/releases/yarn-4.9.2.cjs'].map((file) =>
           readFile(join(YARN_ENGINE_DIRNAME, file), 'utf8'),
@@ -32,7 +32,7 @@ export const getFrontComponentBuilderName = async ({
     : [];
 
   return computeHashedLambdaResourceName({
-    resourceNamePrefix: buildsDependencies
+    resourceNamePrefix: isDependenciesBuild
       ? 'twenty-front-component-dependencies'
       : 'twenty-front-component-builder',
     namespace,
@@ -41,12 +41,12 @@ export const getFrontComponentBuilderName = async ({
       ...Object.values(builderFiles),
       ...yarnEngineFiles,
       String(
-        buildsDependencies
+        isDependenciesBuild
           ? YARN_INSTALL_LAMBDA_MEMORY_MB
           : BUILDER_LAMBDA_MEMORY_MB,
       ),
       String(
-        buildsDependencies
+        isDependenciesBuild
           ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
           : BUILDER_LAMBDA_TIMEOUT_SECONDS,
       ),
