@@ -37,6 +37,8 @@ const GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '6f6f983f-5c1a-4c60-a3c8-7d0e2a4a66f6';
 const AUTHORIZATION_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
   '7a7f983f-5c1a-4c60-a3c8-7d0e2a4a77a7';
+const ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '8b8f983f-5c1a-4c60-a3c8-7d0e2a4a88b8';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -69,6 +71,13 @@ const AUTHORIZATION_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = asyn
   ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
   status: 200,
   body: { authorization: event.headers.authorization ?? null },
+});
+`;
+
+const ROUTE_IDS_ECHO_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
+  ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
+  status: 200,
+  body: { serverRouteIds: JSON.parse(process.env.TWENTY_SERVER_ROUTE_IDS) },
 });
 `;
 
@@ -171,6 +180,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/route-ids-echo-resolver.mjs',
+      builtHandlerCode: ROUTE_IDS_ECHO_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -221,6 +235,12 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               forwardedRequestHeaders: ['authorization'],
             }),
             buildLogicFunctionManifest({
+              universalIdentifier: ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'route-ids-echo-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+            }),
+            buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
               name: 'target-function',
               serverRouteExposed: false,
@@ -268,6 +288,38 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ challenge: 'abc123' });
+    }, 60000);
+
+    it("gives the resolver the ids of its own app's server routes in the owner workspace", async () => {
+      const serverRouteRows: { id: string; universalIdentifier: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT lf.id, lf."universalIdentifier"
+           FROM core."logicFunction" lf
+           JOIN core."application" a ON a.id = lf."applicationId"
+           WHERE a."universalIdentifier" = $1
+             AND lf."workspaceId" = $2
+             AND lf."serverRouteTriggerSettings" IS NOT NULL`,
+          [APP_UNIVERSAL_IDENTIFIER, OWNER_WORKSPACE_ID],
+        );
+
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${ROUTE_IDS_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({});
+
+      expect(response.status).toBe(200);
+      expect(response.body.serverRouteIds).toEqual(
+        Object.fromEntries(
+          serverRouteRows.map((row) => [row.universalIdentifier, row.id]),
+        ),
+      );
+      expect(response.body.serverRouteIds).not.toHaveProperty(
+        NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER,
+      );
+      expect(response.body.serverRouteIds).not.toHaveProperty(
+        TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
+      );
     }, 60000);
 
     it('forwards a third-party JWT to a resolver that asked for it', async () => {

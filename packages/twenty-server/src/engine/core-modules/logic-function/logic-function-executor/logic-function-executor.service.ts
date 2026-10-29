@@ -520,8 +520,7 @@ export class LogicFunctionExecutorService {
     };
   }
 
-  // The ids come from the registration owner's workspace, where routes resolve,
-  // not from the workspace the function runs in.
+  // Ids come from the registration owner's workspace, where routes resolve.
   private async buildServerRouteIdsByUniversalIdentifier({
     flatApplication,
     flatLogicFunctionMaps,
