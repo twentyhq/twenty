@@ -3672,20 +3672,20 @@ msgstr "查看客户案例"
 msgid "Extend beyond the CRM screens"
 msgstr "扩展到 CRM 界面之外"
 
-#. js-lingui-id: qu9kGK
+#. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
-msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr "通过经过审核的应用扩展 Twenty——通话录音、数据增强、Slack、Discord、Linear 等等。只需一键即可在你的开源 CRM 工作区中安装任意应用。"
+msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr ""
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
 msgid "Extend your CRM"
 msgstr "扩展你的 CRM"
 
-#. js-lingui-id: wmJ4p4
+#. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
-msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
-msgstr "使用由 Twenty 构建并维护的应用扩展你的 CRM。这里的每个应用都经过我们团队的审核——一键安装，即可在你的工作区中启用。"
+msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
+msgstr ""
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4798,10 +4798,10 @@ msgstr "检查工作流运行中每个步骤的 AI 调用、代码输出、HTTP 
 msgid "Install"
 msgstr "安装"
 
-#. js-lingui-id: qq1x6K
+#. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
-msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
-msgstr "安装通话录音、数据增强、Slack、Linear 等应用——所有应用均由 Twenty 构建并维护。"
+msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
+msgstr ""
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7053,6 +7053,11 @@ msgstr "收入"
 msgid "Revenue (YTD)"
 msgstr "营收（年初至今）"
 
+#. js-lingui-id: mO7Tm0
+#: src/sections/menu/data/menu.ts
+msgid "Reviewed apps for your workspace"
+msgstr ""
+
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rich notes attached to records"
@@ -8732,10 +8737,10 @@ msgstr "图瓦卢 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | 全球排名第 1 的开源 CRM"
 
-#. js-lingui-id: XxKVz4
+#. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
-msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
-msgstr "Twenty 应用——这款开源 CRM 的精选应用"
+msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
+msgstr ""
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
@@ -9127,16 +9132,6 @@ msgstr "委内瑞拉 🇻🇪"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Version control"
 msgstr "版本控制"
-
-#. js-lingui-id: vNIHYX
-#: src/sections/menu/data/menu.ts
-msgid "Vetted apps for your workspace"
-msgstr "适用于你的工作区的精选应用"
-
-#. js-lingui-id: k5HTQK
-#: src/apps-marketplace/AppDetail.tsx
-msgid "Vetted by Twenty"
-msgstr "由 Twenty 审核"
 
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts

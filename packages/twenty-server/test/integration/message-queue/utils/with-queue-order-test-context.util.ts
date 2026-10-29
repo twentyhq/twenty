@@ -30,7 +30,13 @@ export const withQueueOrderTestContext = async (
           incrementCounterForEvent: jest.fn(),
         },
       },
-      { provide: TwentyConfigService, useValue: {} },
+      {
+        provide: TwentyConfigService,
+        useValue: {
+          get: (key: string) =>
+            key === 'IS_WORKER_FAIRNESS_ENABLED' ? false : undefined,
+        },
+      },
       { provide: EventEmitter2, useValue: new EventEmitter2() },
       {
         provide: BullMQDriver,

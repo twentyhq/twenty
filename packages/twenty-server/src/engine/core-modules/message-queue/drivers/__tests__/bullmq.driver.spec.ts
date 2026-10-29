@@ -3,6 +3,11 @@ import { type Job, Worker } from 'bullmq';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
+import {
+  FAIR_REBASE_STEP,
+  FAIR_TICKET_OFFSET,
+  URGENT_FAIR_PRIORITY,
+} from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -15,6 +20,9 @@ const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
+const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
+const mockAllocateTickets = jest.fn();
+const mockRecordDispatch = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -29,9 +37,20 @@ jest.mock('bullmq', () => ({
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
+  PRIORITY_LIMIT: jest.requireActual('bullmq').PRIORITY_LIMIT,
 }));
 
 jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
+
+jest.mock(
+  'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator',
+  () => ({
+    FairTicketAllocator: jest.fn().mockImplementation(() => ({
+      allocateTickets: mockAllocateTickets,
+      recordDispatch: mockRecordDispatch,
+    })),
+  }),
+);
 
 const WAITING_JOB_ID = 'sync-catalog-ws-1-5c98b035-5b09-4550-a4fb-b52056c494d1';
 
@@ -39,7 +58,7 @@ describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
     {} as never,
-    {} as never,
+    mockTwentyConfigService as never,
     {} as never,
   );
 
@@ -177,7 +196,7 @@ describe('BullMQDriver progress', () => {
   const driver = new BullMQDriver(
     {} as never,
     { recordHistogram: jest.fn() } as never,
-    {} as never,
+    mockTwentyConfigService as never,
     {} as never,
   );
 
@@ -237,7 +256,7 @@ describe('BullMQDriver job change events', () => {
   const driver = new BullMQDriver(
     {} as never,
     { recordHistogram: jest.fn() } as never,
-    {} as never,
+    mockTwentyConfigService as never,
     eventEmitter as never,
   );
 
@@ -314,7 +333,7 @@ describe('BullMQDriver queue wait metric', () => {
   const driver = new BullMQDriver(
     {} as never,
     { recordHistogram } as never,
-    {} as never,
+    mockTwentyConfigService as never,
     {} as never,
   );
 
@@ -414,7 +433,7 @@ describe('BullMQDriver queue job count gauges', () => {
   const driver = new BullMQDriver(
     {} as never,
     { createMultiObservableGauge } as never,
-    {} as never,
+    mockTwentyConfigService as never,
     {} as never,
   );
 
@@ -470,7 +489,7 @@ describe('BullMQDriver global concurrency', () => {
   const driver = new BullMQDriver(
     {} as never,
     {} as never,
-    {} as never,
+    mockTwentyConfigService as never,
     {} as never,
   );
 
@@ -494,5 +513,202 @@ describe('BullMQDriver global concurrency', () => {
 
     expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
     expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
+  });
+});
+
+describe('BullMQDriver fair tickets', () => {
+  const incrementCounterForEvent = jest.fn();
+  const driver = new BullMQDriver(
+    {} as never,
+    { incrementCounterForEvent } as never,
+    {
+      get: jest.fn((key: string) => key === 'IS_WORKER_FAIRNESS_ENABLED'),
+    } as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.workspaceQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetRanges.mockResolvedValue([]);
+    mockAdd.mockImplementation(async (_name, _data, opts) => ({
+      id: opts.jobId,
+    }));
+    mockAddBulk.mockImplementation(async (jobs) =>
+      jobs.map((job: { opts: { jobId?: string } }, index: number) => ({
+        id: job.opts.jobId ?? `auto-${index}`,
+      })),
+    );
+  });
+
+  it('ranks a job by the ticket of its workspace', async () => {
+    mockAllocateTickets.mockResolvedValue({
+      base: FAIR_REBASE_STEP,
+      tickets: [{ tag: 7, weight: 1 }],
+    });
+
+    await driver.add(MessageQueue.workspaceQueue, 'job', {
+      workspaceId: 'ws-1',
+    });
+
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
+      queueName: MessageQueue.workspaceQueue,
+      requests: [{ groupKeys: ['workspace:ws-1'], jobCount: 1 }],
+    });
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      { workspaceId: 'ws-1' },
+      expect.objectContaining({
+        priority: FAIR_TICKET_OFFSET + 7,
+        fairBase: FAIR_REBASE_STEP,
+      }),
+    );
+  });
+
+  it('allocates one ticket per group of a bulk and spaces its jobs by the weight', async () => {
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [
+        { tag: 10, weight: 0.5 },
+        { tag: 0, weight: 1 },
+      ],
+    });
+
+    await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
+      { data: { workspaceId: 'ws-1' } },
+      { data: { workspaceId: 'ws-2' } },
+      { data: { workspaceId: 'ws-1' } },
+    ]);
+
+    expect(mockAllocateTickets).toHaveBeenCalledWith({
+      queueName: MessageQueue.workspaceQueue,
+      requests: [
+        { groupKeys: ['workspace:ws-1'], jobCount: 2 },
+        { groupKeys: ['workspace:ws-2'], jobCount: 1 },
+      ],
+    });
+    expect(
+      mockAddBulk.mock.calls[0][0].map(
+        ({ opts }: { opts: { priority: number } }) => opts.priority,
+      ),
+    ).toEqual([
+      FAIR_TICKET_OFFSET + 10,
+      FAIR_TICKET_OFFSET,
+      FAIR_TICKET_OFFSET + 12,
+    ]);
+  });
+
+  it('keeps priority 1 ahead of the fair tickets while still charging its group keys', async () => {
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [{ tag: 7, weight: 1 }],
+    });
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      { workspaceId: 'ws-1' },
+      { priority: URGENT_FAIR_PRIORITY },
+    );
+
+    expect(mockAllocateTickets).toHaveBeenCalledTimes(1);
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      { workspaceId: 'ws-1' },
+      expect.objectContaining({ priority: URGENT_FAIR_PRIORITY }),
+    );
+  });
+
+  it('keeps the static priority and counts a fallback when no ticket comes back', async () => {
+    mockAllocateTickets.mockResolvedValue(undefined);
+
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      { workspaceId: 'ws-1' },
+      { priority: 4 },
+    );
+
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      { workspaceId: 'ws-1' },
+      expect.objectContaining({ priority: 4 }),
+    );
+    expect(incrementCounterForEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ key: MetricsKeys.JobFairTagFallback }),
+    );
+  });
+
+  it('leaves a delayed job on its static priority without charging a clock', async () => {
+    await driver.add(
+      MessageQueue.workspaceQueue,
+      'job',
+      { workspaceId: 'ws-1' },
+      { delay: 1_000, priority: 4 },
+    );
+
+    expect(mockAllocateTickets).not.toHaveBeenCalled();
+    expect(mockAdd).toHaveBeenCalledWith(
+      'job',
+      { workspaceId: 'ws-1' },
+      expect.objectContaining({ delay: 1_000, priority: 4 }),
+    );
+  });
+});
+
+describe('BullMQDriver fair dispatch', () => {
+  const processJob = async ({
+    isFairnessEnabled,
+  }: {
+    isFairnessEnabled: boolean;
+  }) => {
+    const driver = new BullMQDriver(
+      {} as never,
+      { recordHistogram: jest.fn() } as never,
+      {
+        get: jest.fn(
+          (key: string) =>
+            key === 'IS_WORKER_FAIRNESS_ENABLED' && isFairnessEnabled,
+        ),
+      } as never,
+      {} as never,
+    );
+
+    driver.register(MessageQueue.workflowQueue);
+    jest.clearAllMocks();
+    driver.work(MessageQueue.workflowQueue, jest.fn());
+
+    const processor = jest.mocked(Worker).mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await processor({
+      id: 'job-id',
+      name: 'job',
+      data: {},
+      opts: {},
+      timestamp: Date.now(),
+      attemptsStarted: 1,
+      updateData: jest.fn(),
+      updateProgress: jest.fn(),
+    } as unknown as Job);
+  };
+
+  it('records the dispatch of a job when fairness is on', async () => {
+    await processJob({ isFairnessEnabled: true });
+
+    expect(mockRecordDispatch).toHaveBeenCalledWith({
+      queueName: MessageQueue.workflowQueue,
+      jobId: 'job-id',
+    });
+  });
+
+  it('records nothing when fairness is off', async () => {
+    await processJob({ isFairnessEnabled: false });
+
+    expect(mockRecordDispatch).not.toHaveBeenCalled();
   });
 });
