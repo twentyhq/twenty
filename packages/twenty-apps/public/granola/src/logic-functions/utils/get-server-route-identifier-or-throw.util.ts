@@ -6,7 +6,6 @@ export const getServerRouteIdentifierOrThrow = (
 ): string => {
   const serverRouteIds = process.env.TWENTY_SERVER_ROUTE_IDS;
 
-  // Servers that predate TWENTY_SERVER_ROUTE_IDS still route by universalIdentifier.
   if (!isNonEmptyString(serverRouteIds)) {
     return logicFunctionUniversalIdentifier;
   }
