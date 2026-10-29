@@ -76,14 +76,13 @@ export class WorkflowRunJobScopeWorkspaceService {
     workspaceId: string;
     workflowRunId: string;
   }): Promise<QueueJobScope> {
-    const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
-      workflowRunId,
-      workspaceId,
-    });
-
     return this.resolveForCoreWorkflow({
       workspaceId,
-      coreWorkflowId: workflowRun?.coreWorkflowId ?? null,
+      coreWorkflowId:
+        await this.workflowRunWorkspaceService.getWorkflowRunCoreWorkflowId({
+          workflowRunId,
+          workspaceId,
+        }),
     });
   }
 }

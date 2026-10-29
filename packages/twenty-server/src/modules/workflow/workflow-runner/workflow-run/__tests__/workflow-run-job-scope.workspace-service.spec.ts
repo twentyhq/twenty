@@ -40,9 +40,7 @@ const buildService = () => {
     }),
   };
   const workflowRunWorkspaceService = {
-    getWorkflowRun: jest
-      .fn()
-      .mockResolvedValue({ id: 'run-a', coreWorkflowId: 'workflow-a' }),
+    getWorkflowRunCoreWorkflowId: jest.fn().mockResolvedValue('workflow-a'),
   };
 
   return new WorkflowRunJobScopeWorkspaceService(
