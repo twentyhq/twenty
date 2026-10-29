@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type FocusEvent, type ReactNode, useState } from 'react';
 import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -44,9 +44,17 @@ export const AiChatUserMessageCollapsibleContent = ({
     setIsExpanded((previousIsExpanded) => !previousIsExpanded);
   };
 
+  const handleContentFocus = (event: FocusEvent<HTMLDivElement>) => {
+    if (event.target.matches(':focus-visible')) {
+      setIsExpanded(true);
+    }
+  };
+
   return (
     <>
-      <StyledContent isCollapsed={!isExpanded}>{children}</StyledContent>
+      <StyledContent isCollapsed={!isExpanded} onFocus={handleContentFocus}>
+        {children}
+      </StyledContent>
       <StyledToggleContainer>
         <LightButton aria-expanded={isExpanded} onClick={handleToggleClick}>
           {isExpanded ? t`Show less` : t`Show more`}

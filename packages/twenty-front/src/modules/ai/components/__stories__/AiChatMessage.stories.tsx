@@ -342,7 +342,7 @@ const mockLongUserMessage: ExtendedUIMessage = {
 9. Tag the companies that have no open opportunity so we can plan outreach.
 10. Set up a reminder task for each owner to update their deal amounts every Friday.
 
-Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match.`,
+Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match. Follow the [pipeline guide](https://twenty.com/user-guide) for naming.`,
     },
   ],
 };
@@ -492,12 +492,22 @@ export const LongUserMessage: Story = {
     await expect(
       canvas.getAllByRole('button', { name: 'Show more' }),
     ).toHaveLength(1);
+    await expect(showMoreButton).toHaveAttribute('aria-expanded', 'false');
 
-    await userEvent.click(showMoreButton);
+    await userEvent.tab();
 
+    await expect(
+      canvas.getByRole('link', { name: 'pipeline guide' }),
+    ).toHaveFocus();
     await expect(
       await canvas.findByRole('button', { name: 'Show less' }),
     ).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show more' }),
+    ).toHaveAttribute('aria-expanded', 'false');
   },
 };
 
