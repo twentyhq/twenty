@@ -2380,6 +2380,12 @@ msgctxt "fieldMetadata.label"
 msgid "Campaigns"
 msgstr ""
 
+#. js-lingui-id: ig79t+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Campaigns"
+msgstr ""
+
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -8178,6 +8184,7 @@ msgstr ""
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
 msgstr ""
@@ -8186,6 +8193,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: pp414+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Merge with Another {objectLabelSingular}"
 msgstr ""
 
 #. js-lingui-id: 27Moeu
@@ -9590,6 +9603,11 @@ msgstr ""
 #. js-lingui-id: Rh2dh5
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
+msgstr ""
+
+#. js-lingui-id: XBLJbc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand {operand} is not supported for field type {filterType}"
 msgstr ""
 
 #. js-lingui-id: LXazcQ
@@ -12013,6 +12031,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr ""
 
+#. js-lingui-id: XcRf2D
+#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
+msgid "Sign in as a workspace member or use an application token to change this conversation."
+msgstr ""
+
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -14140,6 +14163,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
+msgstr ""
+
+#. js-lingui-id: JHfGIK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this field"
 msgstr ""
 
 #. js-lingui-id: RZF775
@@ -17370,6 +17398,11 @@ msgstr ""
 #. js-lingui-id: ycrsQ2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
+msgstr ""
+
+#. js-lingui-id: vAscP2
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr ""
 
 #. js-lingui-id: XxkUFT

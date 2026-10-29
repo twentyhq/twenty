@@ -420,7 +420,7 @@ export class ApplicationInstallService {
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
-      autoUpgrade: appRegistration.isVetted,
+      autoUpgrade: appRegistration.isListed,
     });
 
     await progressReporter.reportStepCompleted('CREATE_APPLICATION');

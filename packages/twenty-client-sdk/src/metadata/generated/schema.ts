@@ -574,7 +574,6 @@ export interface ApplicationRegistration {
     isConfigured: Scalars['Boolean']
     isListed: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
     name: Scalars['String']
@@ -1512,7 +1511,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1956,7 +1955,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
-    isVetted: Scalars['Boolean']
+    isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     sourcePackage?: Scalars['String']
@@ -1975,7 +1974,6 @@ export interface MarketplaceAppDetail {
     id: Scalars['String']
     installCount: Scalars['Int']
     isListed: Scalars['Boolean']
-    isVetted: Scalars['Boolean']
     issueReportUrl?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
@@ -2222,6 +2220,7 @@ export interface Mutation {
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
+    attachRecordToInboxThread: Scalars['Boolean']
     authorizeApp: AuthorizeApp
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     cancelSwitchBillingInterval: BillingUpdate
@@ -2338,6 +2337,7 @@ export interface Mutation {
     destroyViewFilterGroup: Scalars['Boolean']
     destroyViewGroup: ViewGroup
     destroyViewSort: Scalars['Boolean']
+    detachRecordFromInboxThread: Scalars['Boolean']
     disconnectConnectedAccount: ConnectedAccountPublicDTO
     duplicateDashboard: DuplicatedDashboard
     duplicateMessageList: DuplicatedMessageList
@@ -3770,6 +3770,8 @@ export type UserCreditsFallback = 'STOP' | 'WORKSPACE_CREDITS'
 
 export interface UserSession {
     authProvider: Scalars['String']
+    city?: Scalars['String']
+    country?: Scalars['String']
     createdAt: Scalars['DateTime']
     expiresAt: Scalars['DateTime']
     id: Scalars['UUID']
@@ -3777,6 +3779,7 @@ export interface UserSession {
     isCurrent: Scalars['Boolean']
     isImpersonating: Scalars['Boolean']
     lastActiveAt: Scalars['DateTime']
+    region?: Scalars['String']
     userAgent?: Scalars['String']
     workspaceId?: Scalars['UUID']
     __typename: 'UserSession'
@@ -4808,7 +4811,6 @@ export interface ApplicationRegistrationGenqlSelection{
     isConfigured?: boolean | number
     isListed?: boolean | number
     isPreInstalled?: boolean | number
-    isVetted?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
@@ -6228,6 +6230,8 @@ export interface ImpersonateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InboxThreadRecordInput {objectNameSingular: Scalars['String'],recordId: Scalars['UUID'],threadId: Scalars['UUID']}
+
 export interface IndexGenqlSelection{
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -6455,7 +6459,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     description?: boolean | number
     id?: boolean | number
-    isVetted?: boolean | number
+    isListed?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     sourcePackage?: boolean | number
@@ -6475,7 +6479,6 @@ export interface MarketplaceAppDetailGenqlSelection{
     id?: boolean | number
     installCount?: boolean | number
     isListed?: boolean | number
-    isVetted?: boolean | number
     issueReportUrl?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
@@ -6708,6 +6711,7 @@ export interface MutationGenqlSelection{
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    attachRecordToInboxThread?: { __args: {input: InboxThreadRecordInput} }
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
@@ -6824,6 +6828,7 @@ export interface MutationGenqlSelection{
     destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
     destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
     destroyViewSort?: { __args: {input: DestroyViewSortInput} }
+    detachRecordFromInboxThread?: { __args: {input: InboxThreadRecordInput} }
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7506,7 +7511,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -7614,7 +7619,7 @@ export interface QueryGenqlSelection{
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     previewMessageCampaignSend?: (PreviewMessageCampaignSendOutputDTOGenqlSelection & { __args: {input: PreviewMessageCampaignSendInput} })
     publicMarketplaceAppDetail?: (MarketplaceAppDetailGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
-    publicMarketplaceApps?: (MarketplaceAppGenqlSelection & { __args: {isVetted: Scalars['Boolean']} })
+    publicMarketplaceApps?: MarketplaceAppGenqlSelection
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -8627,6 +8632,8 @@ export interface UserApplicationVariableValueGenqlSelection{
 
 export interface UserSessionGenqlSelection{
     authProvider?: boolean | number
+    city?: boolean | number
+    country?: boolean | number
     createdAt?: boolean | number
     expiresAt?: boolean | number
     id?: boolean | number
@@ -8634,6 +8641,7 @@ export interface UserSessionGenqlSelection{
     isCurrent?: boolean | number
     isImpersonating?: boolean | number
     lastActiveAt?: boolean | number
+    region?: boolean | number
     userAgent?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
@@ -12260,7 +12268,6 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
-   IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const

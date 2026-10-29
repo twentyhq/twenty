@@ -22,7 +22,8 @@ Other rules:
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
 - An application variable declared with `scope: 'USER'` is in `process.env` with the value of the member who triggered the run, or its default until they set their own; a run nobody triggered (cron, install hooks) gets no user variables. That member is not always the one the run is about: a database event runs as whoever edited the record. For example, with a user `SLACK_TOKEN`, a function on opportunity update posts with the editor's token, not the opportunity owner's. When the run is about someone else or every member, read the values with `myUserApplicationVariables` through `new MetadataApiClient({ runAs: 'application' })`.
-- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names, or any other name starting with `TWENTY_`: the manifest is rejected on sync and publish.
+- To register a server route with a webhook provider, build its URL with `getServerRouteUrl(logicFunctionUniversalIdentifier)` from `twenty-sdk/utils`. It returns `/webhooks/server/<applicationRegistrationId>/<logicFunctionUniversalIdentifier>` on the server's URL, and only works inside a logic function of an application. Do not build the URL by hand.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
@@ -93,6 +94,7 @@ When adding AI behavior:
 - The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
 - Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 
 ## Connection Providers
 
