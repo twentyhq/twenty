@@ -5,7 +5,6 @@ export type AiChatInboxFilterOption = {
   label: string;
   Icon: IconComponent;
   count?: number;
-  isUnread?: boolean;
   isSelected: boolean;
   onSelect: () => void;
 };

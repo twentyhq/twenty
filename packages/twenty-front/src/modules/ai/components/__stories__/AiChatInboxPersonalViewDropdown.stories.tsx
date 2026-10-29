@@ -34,7 +34,6 @@ const RECORD_SELECTION_INSTANCE_ID = 'personal-view-story';
 const SELECTED_THREAD_ID = 'selected-chat';
 const OPEN_OPTION_PATTERN = /^Open\b/;
 const NEEDS_INPUT_OPTION_PATTERN = /^Needs input\b/;
-const UNREAD_MENTIONS_OPTION_PATTERN = /^Mentions\s*, unread$/;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -144,7 +143,7 @@ export const SwitchViews: Story = {
     await userEvent.click(trigger);
 
     const openOption = await body.findByRole('menuitemradio', {
-      name: /^Open\s*, unread\b/,
+      name: OPEN_OPTION_PATTERN,
     });
 
     await expect(openOption).toHaveAttribute('aria-checked', 'true');
@@ -155,7 +154,7 @@ export const SwitchViews: Story = {
       ).findByText('4'),
     ).toBeVisible();
     await expect(
-      body.getByRole('menuitemradio', { name: UNREAD_MENTIONS_OPTION_PATTERN }),
+      body.getByRole('menuitemradio', { name: 'Mentions' }),
     ).toBeVisible();
     await expect(
       body.getByRole('menuitemradio', { name: 'Assigned' }),
@@ -196,7 +195,7 @@ export const FromSnoozed: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Filter chats' }));
     await userEvent.click(
       await body.findByRole('menuitemradio', {
-        name: UNREAD_MENTIONS_OPTION_PATTERN,
+        name: 'Mentions',
       }),
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();
