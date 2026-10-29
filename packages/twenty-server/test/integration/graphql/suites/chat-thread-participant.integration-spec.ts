@@ -72,7 +72,7 @@ const addParticipants = (
 ) =>
   getAppProviderByClassName<AgentChatThreadService>(
     'AgentChatThreadService',
-  ).addParticipants({
+  ).mentionParticipants({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     workspaceMemberId,
     threadId,
@@ -1218,6 +1218,44 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(await findOpenThreadsSummary()).toMatchObject({
       openThreadCount: before.openThreadCount + 1,
       unreadOpenThreadCount: before.unreadOpenThreadCount + 1,
+    });
+  });
+
+  it('delivers app recipients without creating or clearing an explicit mention', async () => {
+    const threadId = await createTestThread();
+    const threadService = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    );
+    const delivery = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    };
+
+    await threadService.deliverToParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      isSubscribed: true,
+      lastReadAt: null,
+      lastMentionedAt: null,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    await threadService.deliverToParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: mentionedParticipant!.lastMentionedAt,
     });
   });
 });
