@@ -19,7 +19,11 @@ describe('resolveAndValidateHostname', () => {
   it('should trim leading and trailing whitespace from plain hostname before resolving', async () => {
     mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
 
-    await resolveAndValidateHostname('   imap.fastmail.com   ', [], mockDnsLookup);
+    await resolveAndValidateHostname(
+      '   imap.fastmail.com   ',
+      [],
+      mockDnsLookup,
+    );
 
     expect(mockDnsLookup).toHaveBeenCalledTimes(1);
     expect(mockDnsLookup).toHaveBeenCalledWith('imap.fastmail.com');
