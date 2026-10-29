@@ -5,7 +5,7 @@ import { AddMergeWithRecordCommandMenuItemCommand } from 'src/database/commands/
 import { UpdateCrmHygieneSkillMergeGuidanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793206127866-update-crm-hygiene-skill-merge-guidance.command';
 import { RemoveMessageCampaignFlagCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793266150123-remove-message-campaign-flag.command';
 import { AddCampaignsNavigationFolderCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793266210456-add-campaigns-navigation-folder.command';
-import { MigrateLambdaDependencyLayersToV1Command } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793209651736-migrate-lambda-dependency-layers-to-v1.command';
+import { MigrateLambdaDependencyLayersToV1Command } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793268360931-migrate-lambda-dependency-layers-to-v1.command';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';

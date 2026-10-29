@@ -47,7 +47,7 @@ type LogicFunctionMigrationOutcome =
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-@RegisteredWorkspaceCommand('2.54.0', 1793209651736)
+@RegisteredWorkspaceCommand('2.54.0', 1793268360931)
 @Command({
   name: 'upgrade:2-54:migrate-lambda-dependency-layers-to-v1',
   description:
