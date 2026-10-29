@@ -374,6 +374,9 @@ export default {
             "id": [
                 18
             ],
+            "isAssistantParticipant": [
+                4
+            ],
             "title": [
                 1
             ],
@@ -8514,6 +8517,12 @@ export default {
                         279,
                         "[FileAttachmentInput!]"
                     ],
+                    "isAssistantMentioned": [
+                        4
+                    ],
+                    "isAssistantParticipant": [
+                        4
+                    ],
                     "mentionedWorkspaceMemberIds": [
                         534,
                         "[UUID!]"
@@ -8524,6 +8533,10 @@ export default {
                     ],
                     "modelId": [
                         1
+                    ],
+                    "recipientWorkspaceMemberIds": [
+                        524,
+                        "[UUID!]"
                     ],
                     "shouldAssistantReply": [
                         4
@@ -12529,6 +12542,9 @@ export default {
             ],
             "queued": [
                 4
+            ],
+            "recipientParticipantWorkspaceMemberIds": [
+                524
             ],
             "streamId": [
                 1
