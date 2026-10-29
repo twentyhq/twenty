@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
+
 import { FileFolder } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
@@ -14,7 +17,6 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -27,12 +29,11 @@ export class AgentChatQueueService {
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   async queueMessage({
@@ -52,8 +53,9 @@ export class AgentChatQueueService {
     userWorkspaceId: string;
     workspaceMemberId: string;
   }) {
+    const savedMessageId = id ?? randomUUID();
     const messageValues = {
-      ...(id ? { id } : {}),
+      id: savedMessageId,
       threadId,
       turnId: null,
       role: AgentMessageRole.USER,
@@ -65,13 +67,6 @@ export class AgentChatQueueService {
         userWorkspaceId,
       }),
     };
-
-    const insertResult = await this.messageRepository.insert(
-      workspaceId,
-      messageValues,
-    );
-
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     const validFiles = isNonEmptyArray(fileAttachments)
       ? await this.fileRepository.find(workspaceId, {
@@ -103,7 +98,19 @@ export class AgentChatQueueService {
         })),
     ];
 
-    await this.messagePartRepository.insert(workspaceId, parts);
+    await this.conversationWriterService.runInTransaction(
+      workspaceId,
+      async (scope) => {
+        await this.participantService.resolveMentionInTransaction({
+          workspaceId,
+          workspaceMemberId,
+          threadId,
+          scope,
+        });
+        await scope.insert('agentMessage', messageValues);
+        await scope.insert('agentMessagePart', parts);
+      },
+    );
 
     await this.threadService.notifyThreadActivityUpdated({
       threadId,
@@ -112,10 +119,7 @@ export class AgentChatQueueService {
       text,
     });
 
-    return {
-      id: savedMessageId,
-      ...messageValues,
-    };
+    return messageValues;
   }
 
   async hasQueuedMessages({

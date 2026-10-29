@@ -16,12 +16,14 @@ import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modul
 import { type EndAgentChatThreadSnoozeJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
+import { buildAgentChatThreadParticipantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-lock-key.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
@@ -50,6 +52,9 @@ const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", par
 const HAS_UNRESOLVED_MENTION = `(participant."lastMentionedAt" IS NOT NULL AND (participant."mentionsResolvedAt" IS NULL OR participant."lastMentionedAt" > participant."mentionsResolvedAt"))`;
 
 const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
+
+const PARTICIPANT_LOCK_QUERY =
+  'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
 // Saved as ended when already due, since its queued end may have run before this write
 const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
@@ -135,6 +140,17 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
 };
 
 const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
+
+const buildMentionResolutionQuery = ({
+  participantTable,
+}: {
+  participantTable: string;
+}) =>
+  `UPDATE ${participantTable} AS participant
+   SET "lastResolvedMentionAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   WHERE "threadId" = $1 AND "workspaceMemberId" = $2
+     AND ${HAS_UNRESOLVED_MENTION}
+   RETURNING ${PARTICIPANT_COLUMNS}`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -261,6 +277,42 @@ export class AgentChatThreadParticipantService {
            "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,
     );
+  }
+
+  async resolveMention({
+    writeResponse,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    writeResponse: AgentChatThreadWriteStep;
+  }): Promise<void> {
+    await this.write(
+      { ...args, threadIds: [args.threadId] },
+      buildMentionResolutionQuery,
+      [],
+      writeResponse,
+    );
+  }
+
+  async resolveMentionInTransaction({
+    scope,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
+  }): Promise<void> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+    // Taken by the writes on the other pool too, so before and after stay this write's
+    await scope.executeRawQuery({
+      sql: PARTICIPANT_LOCK_QUERY,
+      parameters: [buildAgentChatThreadParticipantLockKey(args)],
+    });
+    await scope.executeRawQuery({
+      sql: buildMentionResolutionQuery({
+        participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
+      }),
+      parameters: [args.threadId, args.workspaceMemberId],
+    });
   }
 
   // An assignee follows the chat and finds it in their inbox, unread unless
@@ -594,12 +646,13 @@ export class AgentChatThreadParticipantService {
     // Also taken when the row does not exist yet, so two first writes cannot
     // both send it as created
     if (lock) {
-      await manager.query(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-        [
-          `agent-chat-thread-participant:${workspaceId}:${threadId}:${workspaceMemberId}`,
-        ],
-      );
+      await manager.query(PARTICIPANT_LOCK_QUERY, [
+        buildAgentChatThreadParticipantLockKey({
+          workspaceId,
+          threadId,
+          workspaceMemberId,
+        }),
+      ]);
     }
 
     const [participant] = await manager.query<AgentChatThreadParticipantRow[]>(

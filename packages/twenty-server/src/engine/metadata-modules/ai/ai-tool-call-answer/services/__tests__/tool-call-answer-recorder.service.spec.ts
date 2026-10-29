@@ -16,9 +16,19 @@ const buildService = () => {
     }),
   );
 
+  const participantService = {
+    resolveMention: jest.fn().mockImplementation(async ({ writeResponse }) =>
+      writeResponse({
+        table: (name: string) => name,
+        manager: { query: messagePartRepository.writePart },
+      }),
+    ),
+  };
+
   const service = new ToolCallAnswerRecorderService(
     messagePartRepository as never,
     threadRecordEventService as never,
+    participantService as never,
   );
 
   return { service, messagePartRepository, threadRecordEventService };
@@ -31,6 +41,7 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
     partId: 'part-id',
     toolOutput: { result: { status: 'answered' } },
     workspaceId: 'workspace-id',
+    resolveMentionForWorkspaceMemberId: 'answering-member-id',
   };
 
   it('tells open chat lists once the last answer stops the wait', async () => {

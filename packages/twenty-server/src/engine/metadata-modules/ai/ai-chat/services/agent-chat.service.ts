@@ -23,6 +23,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
@@ -41,6 +42,7 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   private getMessageSenderValues({
@@ -84,6 +86,7 @@ export class AgentChatService {
     id,
     workspaceId,
     userWorkspaceId,
+    resolveMentionForWorkspaceMemberId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -91,42 +94,63 @@ export class AgentChatService {
     id?: string;
     workspaceId: string;
     userWorkspaceId?: string;
+    resolveMentionForWorkspaceMemberId: string | null;
   }) {
-    const turnId = await this.conversationWriterService.insertTurn({
+    return this.conversationWriterService.runInTransaction(
       workspaceId,
-      threadId,
-      agentId: null,
-      status: turnStatus,
-      createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
-    });
+      async (scope) => {
+        if (isDefined(resolveMentionForWorkspaceMemberId)) {
+          await this.participantService.resolveMentionInTransaction({
+            workspaceId,
+            workspaceMemberId: resolveMentionForWorkspaceMemberId,
+            threadId,
+            scope,
+          });
+        }
 
-    const senderValues = this.getMessageSenderValues({
-      workspaceId,
-      userWorkspaceId,
-    });
-    const processedAt = new Date();
+        const turnId = await this.conversationWriterService.insertTurn({
+          workspaceId,
+          threadId,
+          agentId: null,
+          status: turnStatus,
+          createdBy: this.getMessageSenderActor({
+            workspaceId,
+            userWorkspaceId,
+          }),
+          scope,
+        });
 
-    const savedMessageId = await this.conversationWriterService.insertMessage({
-      workspaceId,
-      id,
-      threadId,
-      turnId,
-      role: uiMessage.role as AgentMessageRole,
-      agentId: null,
-      ...senderValues,
-      processedAt,
-      parts: uiMessage.parts ?? [],
-    });
+        const senderValues = this.getMessageSenderValues({
+          workspaceId,
+          userWorkspaceId,
+        });
+        const processedAt = new Date();
 
-    return {
-      id: savedMessageId,
-      threadId,
-      turnId,
-      role: uiMessage.role as AgentMessageRole,
-      agentId: null,
-      processedAt: processedAt.toISOString(),
-      ...senderValues,
-    };
+        const savedMessageId =
+          await this.conversationWriterService.insertMessage({
+            workspaceId,
+            id,
+            threadId,
+            turnId,
+            role: uiMessage.role as AgentMessageRole,
+            agentId: null,
+            ...senderValues,
+            processedAt,
+            parts: uiMessage.parts ?? [],
+            scope,
+          });
+
+        return {
+          id: savedMessageId,
+          threadId,
+          turnId,
+          role: uiMessage.role as AgentMessageRole,
+          agentId: null,
+          processedAt: processedAt.toISOString(),
+          ...senderValues,
+        };
+      },
+    );
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them

@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { getAgentChatResolvedMentionAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
@@ -10,6 +11,7 @@ import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
@@ -44,6 +46,10 @@ export const useAnswerAgentChatToolCall = () => {
       if (!isDefined(threadId)) {
         return false;
       }
+
+      const lastMentionedAt = store.get(
+        agentChatThreadParticipantsState.atom,
+      )?.[threadId]?.lastMentionedAt;
 
       const messagesAtom = agentChatMessagesFamilyState.atomFamily({
         threadId,
@@ -82,6 +88,28 @@ export const useAnswerAgentChatToolCall = () => {
           },
         });
         const streamId = data?.answerToolCall.streamId;
+
+        store.set(agentChatThreadParticipantsState.atom, (participants) => {
+          const participant = participants?.[threadId];
+
+          if (!isDefined(participants) || !isDefined(participant)) {
+            return participants;
+          }
+
+          const lastResolvedMentionAt = getAgentChatResolvedMentionAt({
+            lastMentionedAt,
+            lastResolvedMentionAt: participant.lastResolvedMentionAt,
+          });
+
+          if (lastResolvedMentionAt === participant.lastResolvedMentionAt) {
+            return participants;
+          }
+
+          return {
+            ...participants,
+            [threadId]: { ...participant, lastResolvedMentionAt },
+          };
+        });
 
         // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {

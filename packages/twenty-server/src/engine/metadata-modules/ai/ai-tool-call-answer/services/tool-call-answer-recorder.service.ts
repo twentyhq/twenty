@@ -3,12 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 @Injectable()
 export class ToolCallAnswerRecorderService {
@@ -16,6 +22,7 @@ export class ToolCallAnswerRecorderService {
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   async findAwaitingToolParts({
@@ -36,26 +43,38 @@ export class ToolCallAnswerRecorderService {
   }
 
   // only a still-pending call is claimed, so two answers never both run it
-  async claimToolCallAnswer({
+  async claimToolCallAnswerOrThrow({
+    threadId,
     partId,
     toolOutput,
     workspaceId,
+    workspaceMemberId,
   }: {
+    threadId: string;
     partId: string;
     toolOutput: Record<string, unknown>;
     workspaceId: string;
-  }): Promise<boolean> {
-    const claimedParts = await this.messagePartRepository.query(
+    workspaceMemberId: string;
+  }): Promise<void> {
+    await this.participantService.resolveMention({
+      threadId,
       workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
+      workspaceMemberId,
+      writeResponse: async ({ manager, table }) => {
+        const claimedParts = await manager.query<{ id: string }[]>(
           `WITH claimed_part AS (UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
            WHERE id = $1 AND "toolOutput"->'result'->>'status' = 'pending' RETURNING id) SELECT id FROM claimed_part`,
           [partId, JSON.stringify(toolOutput)],
-        ),
-    );
+        );
 
-    return claimedParts.length === 1;
+        if (claimedParts.length !== 1) {
+          throw new AiException(
+            'This tool call is no longer waiting for an answer',
+            AiExceptionCode.TOOL_CALL_NOT_PENDING,
+          );
+        }
+      },
+    });
   }
 
   // written together so an answer never strands a conversation waiting on answered calls
@@ -66,6 +85,7 @@ export class ToolCallAnswerRecorderService {
     toolOutput,
     isLastAnswer,
     workspaceId,
+    resolveMentionForWorkspaceMemberId,
   }: {
     threadId: string;
     messageId: string;
@@ -73,40 +93,54 @@ export class ToolCallAnswerRecorderService {
     toolOutput: Record<string, unknown>;
     isLastAnswer: boolean;
     workspaceId: string;
+    resolveMentionForWorkspaceMemberId: string | null;
   }): Promise<void> {
-    const isPendingQuestionCleared = await this.messagePartRepository.query(
-      workspaceId,
-      async ({ manager, table }) => {
-        await manager.query(
-          `UPDATE ${table('agentMessagePart')} SET "toolOutput" = $2::jsonb, "updatedAt" = now() WHERE id = $1`,
-          [partId, JSON.stringify(toolOutput)],
-        );
+    let isPendingQuestionCleared = false;
 
-        if (!isLastAnswer) {
-          return false;
-        }
+    const writeResponse = async ({
+      manager,
+      table,
+    }: AgentHistoryStorageContext) => {
+      await manager.query(
+        `UPDATE ${table('agentMessagePart')} SET "toolOutput" = $2::jsonb, "updatedAt" = now() WHERE id = $1`,
+        [partId, JSON.stringify(toolOutput)],
+      );
 
-        const clearedThreads = await manager.query<{ id: string }[]>(
-          `WITH cleared AS (
-             UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
-             WHERE id = $1 AND "pendingQuestionMessageId" = $2
-             RETURNING id
-           ) SELECT id FROM cleared`,
-          [threadId, messageId],
-        );
+      if (!isLastAnswer) {
+        return;
+      }
 
-        if (clearedThreads.length === 0) {
-          return false;
-        }
+      const clearedThreads = await manager.query<{ id: string }[]>(
+        `WITH cleared AS (
+           UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
+           WHERE id = $1 AND "pendingQuestionMessageId" = $2
+           RETURNING id
+         ) SELECT id FROM cleared`,
+        [threadId, messageId],
+      );
 
-        await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
-          messageId,
-          AgentTurnStatus.COMPLETED,
-        ]);
+      if (clearedThreads.length === 0) {
+        return;
+      }
 
-        return true;
-      },
-    );
+      await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+        messageId,
+        AgentTurnStatus.COMPLETED,
+      ]);
+
+      isPendingQuestionCleared = true;
+    };
+
+    if (isDefined(resolveMentionForWorkspaceMemberId)) {
+      await this.participantService.resolveMention({
+        workspaceId,
+        workspaceMemberId: resolveMentionForWorkspaceMemberId,
+        threadId,
+        writeResponse,
+      });
+    } else {
+      await this.messagePartRepository.query(workspaceId, writeResponse);
+    }
 
     if (isPendingQuestionCleared) {
       await this.threadRecordEventService.emitPendingQuestionCleared({

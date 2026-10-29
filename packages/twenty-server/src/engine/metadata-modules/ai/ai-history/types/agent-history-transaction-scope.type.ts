@@ -3,6 +3,10 @@ import { type ObjectLiteral } from 'typeorm';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 
 export type AgentHistoryTransactionScope = {
+  executeRawQuery: (args: {
+    sql: string;
+    parameters?: unknown[];
+  }) => Promise<void>;
   insert: (
     name: AgentHistoryObjectName,
     values: ObjectLiteral | ObjectLiteral[],
