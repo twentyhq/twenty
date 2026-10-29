@@ -1588,4 +1588,52 @@ describe('Chat thread participant state through the authenticated API', () => {
       new Date(resolvedAt).getTime() + 1,
     );
   });
+
+  describe('filing a settled chat on leave', () => {
+    const createSettledThread = async () => {
+      const threadId = await createTestThread();
+
+      await getAppProviderByClassName<AgentChatThreadService>(
+        'AgentChatThreadService',
+      ).recordThreadActivity({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        text: 'The agent replied',
+      });
+      await runInboxAction('READ', threadId);
+
+      return threadId;
+    };
+
+    it('files a chat that is still settled', async () => {
+      const threadId = await createSettledThread();
+
+      const response = await runInboxAction('ARCHIVE_IF_SETTLED', threadId);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await findMyParticipant(threadId)).toMatchObject({
+        archivedAt: expect.any(String),
+      });
+    });
+
+    it('keeps a chat in the inbox when a mention arrives before it is filed', async () => {
+      const threadId = await createSettledThread();
+
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+      await addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      );
+
+      const response = await runInboxAction('ARCHIVE_IF_SETTLED', threadId);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await findMyParticipant(threadId)).toMatchObject({
+        archivedAt: null,
+        lastMentionedAt: expect.any(String),
+        lastResolvedMentionAt: null,
+      });
+    });
+  });
 });

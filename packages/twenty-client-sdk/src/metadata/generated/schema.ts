@@ -86,7 +86,7 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
-export type AgentChatInboxAction = 'ARCHIVE' | 'MOVE_TO_INBOX' | 'READ' | 'SNOOZE' | 'SUBSCRIBE' | 'UNREAD' | 'UNSUBSCRIBE'
+export type AgentChatInboxAction = 'ARCHIVE' | 'ARCHIVE_IF_SETTLED' | 'MOVE_TO_INBOX' | 'READ' | 'SNOOZE' | 'SUBSCRIBE' | 'UNREAD' | 'UNSUBSCRIBE'
 
 export interface AgentChatOpenThreadsSummary {
     hasUnreadAssignedThread: Scalars['Boolean']
@@ -11902,6 +11902,7 @@ export const enumAgentChatChannelThreadStatus = {
 
 export const enumAgentChatInboxAction = {
    ARCHIVE: 'ARCHIVE' as const,
+   ARCHIVE_IF_SETTLED: 'ARCHIVE_IF_SETTLED' as const,
    MOVE_TO_INBOX: 'MOVE_TO_INBOX' as const,
    READ: 'READ' as const,
    SNOOZE: 'SNOOZE' as const,

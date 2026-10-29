@@ -85,6 +85,7 @@ type AgentChatEvent {
 
 enum AgentChatInboxAction {
   ARCHIVE
+  ARCHIVE_IF_SETTLED
   MOVE_TO_INBOX
   READ
   SNOOZE

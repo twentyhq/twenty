@@ -66,7 +66,10 @@ export const useUpdateAgentChatThreadInboxState = () => {
       const optimisticVisitState = store.get(agentChatThreadVisitState.atom);
 
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
-        if (!isDefined(participants)) {
+        if (
+          !isDefined(participants) ||
+          action === AgentChatInboxAction.ARCHIVE_IF_SETTLED
+        ) {
           return participants;
         }
 

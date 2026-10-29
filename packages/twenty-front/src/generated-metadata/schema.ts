@@ -109,6 +109,7 @@ export type AgentChatEvent = {
 
 export enum AgentChatInboxAction {
   ARCHIVE = 'ARCHIVE',
+  ARCHIVE_IF_SETTLED = 'ARCHIVE_IF_SETTLED',
   MOVE_TO_INBOX = 'MOVE_TO_INBOX',
   READ = 'READ',
   SNOOZE = 'SNOOZE',

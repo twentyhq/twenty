@@ -67,7 +67,7 @@ const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
      "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    RETURNING *`;
 
-// Mirrored by applyAgentChatInboxAction for the optimistic copy
+// Mirrored by applyAgentChatInboxAction for the optimistic copy, and ARCHIVE_IF_SETTLED by isAgentChatThreadSettledForMember
 const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
   BuildParticipantWriteQuery
@@ -99,6 +99,31 @@ const INBOX_ACTION_QUERIES: Record<
        "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
+  // Filed at the settled activity, so activity that waited on the thread lock still comes after
+  [AgentChatInboxAction.ARCHIVE_IF_SETTLED]: ({
+    participantTable,
+    threadTable,
+  }) =>
+    `WITH locked_thread AS (
+       SELECT * FROM ${threadTable} WHERE id = $1 FOR UPDATE
+     )
+     UPDATE ${participantTable} AS participant
+     SET "archivedAt" = thread."lastActivityAt" + interval '1 microsecond',
+       "snoozedUntil" = NULL,
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+     FROM locked_thread thread
+     WHERE participant."threadId" = thread.id
+       AND participant."workspaceMemberId" = $2
+       AND ${IS_IN_INBOX}
+       AND NOT ${HAS_UNRESOLVED_MENTION}
+       AND thread."pendingQuestionMessageId" IS NULL
+       AND thread."deletedAt" IS NULL
+       AND thread."workspaceMemberId" = $2::uuid
+       AND thread."lastActivityAt" IS NOT NULL
+       AND thread."lastActivityAt" <= participant."lastReadAt"
+       AND thread."lastMessageSenderWorkspaceMemberId" IS NULL
+       AND thread."assigneeId" IS DISTINCT FROM $2::uuid
+     RETURNING participant.*`,
   [AgentChatInboxAction.SNOOZE]: buildSnoozeQuery,
   [AgentChatInboxAction.MOVE_TO_INBOX]: ({ participantTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
@@ -227,7 +252,11 @@ export class AgentChatThreadParticipantService {
     };
 
     return this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
+      {
+        ...memberArgs,
+        threadIds: uniqueThreadIds,
+        isEveryRowRequired: action !== AgentChatInboxAction.ARCHIVE_IF_SETTLED,
+      },
       INBOX_ACTION_QUERIES[action],
       isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
