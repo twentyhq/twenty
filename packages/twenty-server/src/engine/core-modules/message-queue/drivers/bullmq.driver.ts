@@ -39,6 +39,7 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
@@ -74,13 +75,21 @@ export class BullMQDriver
     Record<MessageQueue, MessageQueueWorkerOptions>
   > = {};
   private workersDrain: Promise<void> | undefined;
+  private readonly fairQueueScheduler: FairQueueScheduler;
 
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    this.fairQueueScheduler = new FairQueueScheduler({
+      getClient: (queueName) => this.queueMap[queueName].client,
+      keyPrefix: options.prefix ?? 'bull',
+      metricsService,
+      twentyConfigService,
+    });
+  }
 
   onModuleInit() {
     this.metricsService.createMultiObservableGauge({
@@ -520,8 +529,17 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+    const [priority] = await this.fairQueueScheduler.computeJobPriorities({
+      queueName,
+      jobsData: [data],
+      options,
+      staticPriority: queueOptions.priority,
+    });
 
-    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, {
+      ...queueOptions,
+      priority,
+    });
 
     return job.id;
   }
@@ -572,6 +590,12 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+    const priorities = await this.fairQueueScheduler.computeJobPriorities({
+      queueName,
+      jobsData: jobsToAdd.map(({ data }) => data),
+      options,
+      staticPriority: queueOptions.priority,
+    });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
       jobsToAdd.map(({ data, jobId }, index) => ({
@@ -579,6 +603,7 @@ export class BullMQDriver
         data,
         opts: {
           ...queueOptions,
+          priority: priorities[index],
           jobId:
             jobId ??
             (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),
