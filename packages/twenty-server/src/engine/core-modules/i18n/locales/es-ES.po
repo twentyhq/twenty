@@ -3035,16 +3035,6 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Completado"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "La compilación del componente de interfaz superó el límite de tiempo de 10 segundos."
-
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "La compilación del componente de interfaz supera el límite de salida de 5 MB."
-
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5155,11 +5145,6 @@ msgstr "Fallido"
 msgid "Failed to add people to the list."
 msgstr "No se pudieron agregar personas a la lista."
 
-#. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Failed to build front component."
-msgstr "No se pudo compilar el componente de interfaz."
-
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6802,16 +6787,6 @@ msgstr "Filtro no válido: usa \"{joinColumnName}\" para filtrar por este campo 
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "Entrada del componente de interfaz no válida."
-
-#. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
-msgid "Invalid front component settings."
-msgstr "Configuración no válida del componente de interfaz."
-
-#. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Invalid front component source."
-msgstr "Fuente del componente de interfaz no válida."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts

@@ -3035,16 +3035,6 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "مكتمل"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "تجاوز إنشاء المكوّن الحد الزمني البالغ 10 ثوانٍ."
-
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "تجاوز إنشاء المكوّن حد الإخراج البالغ 5 ميغابايت."
-
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5155,11 +5145,6 @@ msgstr "فشل"
 msgid "Failed to add people to the list."
 msgstr "تعذرت إضافة الأشخاص إلى القائمة."
 
-#. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Failed to build front component."
-msgstr "فشل إنشاء المكوّن الأمامي."
-
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6802,16 +6787,6 @@ msgstr "عامل تصفية غير صالح: استخدم \"{joinColumnName}\" �
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "مدخل المكوّن الأمامي غير صالح."
-
-#. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
-msgid "Invalid front component settings."
-msgstr "إعدادات المكوّن الأمامي غير صالحة."
-
-#. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Invalid front component source."
-msgstr "مصدر المكوّن الأمامي غير صالح."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts

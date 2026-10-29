@@ -3035,16 +3035,6 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Ավարտված"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "Բաղադրիչի կառուցումը գերազանցել է 10 վայրկյան ժամանակային սահմանափակումը։"
-
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "Բաղադրիչի կառուցումը գերազանցում է ելքային 5 ՄԲ սահմանաչափը։"
-
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5155,11 +5145,6 @@ msgstr "Ձախողված"
 msgid "Failed to add people to the list."
 msgstr "Չհաջողվեց մարդկանց ավելացնել ցուցակին։"
 
-#. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Failed to build front component."
-msgstr "Չհաջողվեց կառուցել ֆրոնտենդ բաղադրիչը։"
-
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6802,16 +6787,6 @@ msgstr "Անվավեր ֆիլտր. այս կապի դաշտով ֆիլտրացն
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "Ֆրոնտենդ բաղադրիչի մուտքագրումը սխալ է։"
-
-#. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
-msgid "Invalid front component settings."
-msgstr "Ֆրոնտենդ բաղադրիչի կարգավորումները սխալ են։"
-
-#. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Invalid front component source."
-msgstr "Ֆրոնտենդ բաղադրիչի աղբյուրը անվավեր է։"
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts

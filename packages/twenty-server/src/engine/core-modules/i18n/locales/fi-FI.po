@@ -3035,16 +3035,6 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Valmis"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "Komponentin koonti ylitti 10 sekunnin aikarajan."
-
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "Komponentin koonti ylittää 5 Mt:n tulosterajan."
-
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -5155,11 +5145,6 @@ msgstr "Epäonnistui"
 msgid "Failed to add people to the list."
 msgstr "Henkilöiden lisääminen listaan epäonnistui."
 
-#. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Failed to build front component."
-msgstr "Front-komponentin koonti epäonnistui."
-
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -6802,16 +6787,6 @@ msgstr "Virheellinen suodatin: käytä \"{joinColumnName}\" suodattaaksesi täm�
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
 msgstr "Virheellinen front-komponentin syöte."
-
-#. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
-msgid "Invalid front component settings."
-msgstr "Virheelliset front-komponentin asetukset."
-
-#. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
-msgid "Invalid front component source."
-msgstr "Virheellinen front-komponentin lähde."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
