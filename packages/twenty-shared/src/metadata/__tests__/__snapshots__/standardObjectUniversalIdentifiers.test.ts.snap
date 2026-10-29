@@ -31,6 +31,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "conversationSize": {
         "universalIdentifier": "f34617ff-a0de-4116-a5ad-7cfd1d0c6d5a",
       },
+      "conversationType": {
+        "universalIdentifier": "66f93c2f-ae10-4c1a-8510-355a521f7899",
+      },
       "createdAt": {
         "universalIdentifier": "a8019021-2b81-5991-bf86-b1eab8e55500",
       },
