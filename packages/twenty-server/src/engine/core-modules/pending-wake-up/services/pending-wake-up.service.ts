@@ -143,9 +143,9 @@ export class PendingWakeUpService {
         recordReadAttempt,
       },
       {
-        ...(this.pendingWakeUpOwnerHandlerRegistryService
+        ...((await this.pendingWakeUpOwnerHandlerRegistryService
           .getHandlerOrThrow(wakeUp.ownerType)
-          .buildResumeJobOptions?.(wakeUp) ?? {
+          .buildResumeJobOptions?.(wakeUp)) ?? {
           workspaceId: wakeUp.workspaceId,
           isWorkspaceJob: true,
         }),

@@ -20,12 +20,14 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/message-queue/utils/build-application-queue-job-scope.util';
 import { type QueuedWorkflowTriggerDispatchIds } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
@@ -96,7 +98,7 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        const { trigger } = normalizedTrigger;
+        const { trigger, jobScope } = normalizedTrigger;
 
         const shouldDispatch = await this.shouldDispatch({ trigger, now });
 
@@ -116,11 +118,7 @@ export class WorkflowCronTriggerCronJob {
             ...buildCoreDispatchIds(trigger),
             payload: {},
           },
-          {
-            retryLimit: 3,
-            workspaceId: trigger.workspaceId,
-            isWorkspaceJob: true,
-          },
+          { retryLimit: 3, ...jobScope },
         );
       } catch (error) {
         this.logger.error(`Error processing cached trigger: ${error}`);
@@ -201,8 +199,11 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        const { trigger: cachedTrigger, isApplicationInstalled } =
-          normalizedTrigger;
+        const {
+          trigger: cachedTrigger,
+          isApplicationInstalled,
+          jobScope,
+        } = normalizedTrigger;
 
         triggersToCache.push(cachedTrigger);
 
@@ -229,11 +230,7 @@ export class WorkflowCronTriggerCronJob {
               ...buildCoreDispatchIds(cachedTrigger),
               payload: {},
             },
-            {
-              retryLimit: 3,
-              workspaceId,
-              isWorkspaceJob: true,
-            },
+            { retryLimit: 3, ...jobScope },
           );
         }
       }
@@ -276,6 +273,7 @@ export class WorkflowCronTriggerCronJob {
   private async normalizeCachedTrigger(trigger: CachedCronTrigger): Promise<{
     trigger: CachedCronTrigger;
     isApplicationInstalled: boolean;
+    jobScope: QueueJobScope;
   } | null> {
     const workflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
@@ -323,6 +321,11 @@ export class WorkflowCronTriggerCronJob {
         flatApplicationMaps,
         workflow.applicationId,
       ),
+      jobScope: buildApplicationQueueJobScope({
+        workspaceId: trigger.workspaceId,
+        applicationId: workflow.applicationId,
+        flatApplicationMaps,
+      }),
     };
   }
 

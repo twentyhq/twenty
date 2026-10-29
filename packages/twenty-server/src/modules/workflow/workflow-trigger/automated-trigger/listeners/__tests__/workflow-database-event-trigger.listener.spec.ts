@@ -54,9 +54,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     {
       applicationVersion = '1.0.1',
       applicationRole,
+      applicationUniversalIdentifierById = {},
     }: {
       applicationVersion?: string | null;
       applicationRole?: { canReadObjectRecords: boolean } | null;
+      applicationUniversalIdentifierById?: Record<string, string>;
     } = {},
   ) => {
     const isApplicationWorkflow = applicationRole !== undefined;
@@ -65,13 +67,26 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
       featureFlagsMap: {},
       flatApplicationMaps: {
-        byId: {
-          'application-id': {
-            id: 'application-id',
-            version: applicationVersion,
-            defaultRoleId: applicationRole ? 'application-role-id' : null,
-          },
-        },
+        byId: Object.fromEntries(
+          [
+            ...new Set([
+              'application-id',
+              ...Object.keys(applicationUniversalIdentifierById),
+            ]),
+          ].map((applicationId) => [
+            applicationId,
+            {
+              id: applicationId,
+              universalIdentifier:
+                applicationUniversalIdentifierById[applicationId],
+              version: applicationVersion,
+              defaultRoleId:
+                applicationId === 'application-id' && applicationRole
+                  ? 'application-role-id'
+                  : null,
+            },
+          ]),
+        ),
         idByUniversalIdentifier: {},
       },
       ...(isApplicationWorkflow
@@ -572,6 +587,53 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           record: createdRecord,
         });
       });
+    });
+
+    it('should scope each trigger job to the application owning its workflow', async () => {
+      const workspaceWorkflowId = 'workspace-workflow';
+      const applicationWorkflowId = 'application-workflow';
+
+      setTriggerMap(
+        [
+          {
+            ...mockEventListeners[0],
+            workflowId: workspaceWorkflowId,
+            applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+          },
+          { ...mockEventListeners[0], workflowId: applicationWorkflowId },
+        ],
+        {
+          applicationRole: { canReadObjectRecords: true },
+          applicationUniversalIdentifierById: {
+            [WORKSPACE_CUSTOM_APPLICATION_ID]:
+              'workspace-custom-application-universal-id',
+            'application-id': 'application-universal-id',
+          },
+        },
+      );
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({ workflowId: workspaceWorkflowId }),
+        {
+          retryLimit: 3,
+          workspaceId,
+          applicationUniversalIdentifier:
+            'workspace-custom-application-universal-id',
+        },
+      );
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({ workflowId: applicationWorkflowId }),
+        {
+          retryLimit: 3,
+          workspaceId,
+          applicationUniversalIdentifier: 'application-universal-id',
+        },
+      );
     });
 
     it('should handle delete events correctly', async () => {

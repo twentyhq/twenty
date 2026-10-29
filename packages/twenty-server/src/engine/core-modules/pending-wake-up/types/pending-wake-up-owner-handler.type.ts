@@ -8,7 +8,7 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
   buildResumeJobOptions?(
     wakeUp: Pick<PendingWakeUpEntity, 'ownerId' | 'workspaceId'>,
-  ): QueueJobOptions;
+  ): Promise<QueueJobOptions>;
 
   getOwnerState(
     wakeUp: PendingWakeUpEntity,

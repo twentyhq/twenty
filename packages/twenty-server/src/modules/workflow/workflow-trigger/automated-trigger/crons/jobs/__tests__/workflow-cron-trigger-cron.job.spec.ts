@@ -59,6 +59,8 @@ const buildCronTrigger = (index: number) => ({
   settings: { pattern: '* * * * *' },
 });
 
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'application-universal-id';
+
 const mockWorkspaceCaches = (
   triggersByWorkspaceId: Record<string, Record<string, unknown> | Error>,
   applicationVersion: string | null = '1.0.1',
@@ -70,7 +72,13 @@ const mockWorkspaceCaches = (
     if (keys.includes('flatApplicationMaps')) {
       return {
         flatApplicationMaps: {
-          byId: { 'application-id': { version: applicationVersion } },
+          byId: {
+            'application-id': {
+              id: 'application-id',
+              universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+              version: applicationVersion,
+            },
+          },
           idByUniversalIdentifier: {},
         },
       };
@@ -209,7 +217,7 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           retryLimit: 3,
           workspaceId: WORKSPACE_1,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
     });
@@ -239,8 +247,34 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           retryLimit: 3,
           workspaceId: WORKSPACE_1,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         },
+      );
+    });
+
+    it('should fall back to the workspace scope when the owning application cannot be resolved', async () => {
+      mockWorkflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockResolvedValue(
+        {
+          id: 'workflow-1',
+          applicationId: 'unknown-application-id',
+          workspaceWorkflowId: 'workflow-1',
+          lastPublishedCoreWorkflowVersionId: 'core-version-1',
+        },
+      );
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(mockMessageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.anything(),
+        { retryLimit: 3, workspaceId: WORKSPACE_1, isWorkspaceJob: true },
       );
     });
 
@@ -451,7 +485,7 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           retryLimit: 3,
           workspaceId: WORKSPACE_2,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
     });
@@ -488,7 +522,7 @@ describe('WorkflowCronTriggerCronJob', () => {
         {
           retryLimit: 3,
           workspaceId: WORKSPACE_2,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         },
       );
     });

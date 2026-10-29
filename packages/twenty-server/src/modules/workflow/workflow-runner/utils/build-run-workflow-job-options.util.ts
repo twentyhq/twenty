@@ -1,14 +1,16 @@
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import {
+  type QueueJobOptions,
+  type QueueJobScope,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 
 export const buildRunWorkflowJobOptions = ({
   workflowRunId,
-  workspaceId,
+  scope,
 }: {
   workflowRunId: string;
-  workspaceId: string;
+  scope: QueueJobScope;
 }): QueueJobOptions => ({
   id: workflowRunId,
   doNotCheckDuplicatesBasedOnPrefix: true,
-  workspaceId,
-  isWorkspaceJob: true,
+  ...scope,
 });

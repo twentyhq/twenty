@@ -28,6 +28,7 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
 
@@ -53,6 +54,7 @@ export class WorkflowWaitingStepWorkspaceService
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -168,7 +170,10 @@ export class WorkflowWaitingStepWorkspaceService
           workflowRunId,
           awaitedStepOutput: { stepId, actionOutput },
         },
-        buildRunWorkflowJobOptions({ workflowRunId, workspaceId }),
+        await this.buildResumeJobOptions({
+          ownerId: workflowRunId,
+          workspaceId,
+        }),
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
@@ -182,11 +187,21 @@ export class WorkflowWaitingStepWorkspaceService
     }
   }
 
-  buildResumeJobOptions({
+  async buildResumeJobOptions({
     ownerId: workflowRunId,
     workspaceId,
-  }: Pick<PendingWakeUpEntity, 'ownerId' | 'workspaceId'>): QueueJobOptions {
-    return buildRunWorkflowJobOptions({ workflowRunId, workspaceId });
+  }: Pick<
+    PendingWakeUpEntity,
+    'ownerId' | 'workspaceId'
+  >): Promise<QueueJobOptions> {
+    return buildRunWorkflowJobOptions({
+      workflowRunId,
+      scope:
+        await this.workflowRunJobScopeWorkspaceService.resolveForWorkflowRun({
+          workspaceId,
+          workflowRunId,
+        }),
+    });
   }
 
   // the wake-up's own run and step are all the step needs to resume
@@ -252,7 +267,10 @@ export class WorkflowWaitingStepWorkspaceService
                 : { result: buildDefaultWaitResult(outcome) },
           },
         },
-        buildRunWorkflowJobOptions({ workflowRunId, workspaceId }),
+        await this.buildResumeJobOptions({
+          ownerId: workflowRunId,
+          workspaceId,
+        }),
       );
     } catch (error) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
