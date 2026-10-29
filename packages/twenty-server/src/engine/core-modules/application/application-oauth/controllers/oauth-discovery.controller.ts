@@ -58,6 +58,7 @@ export class OAuthDiscoveryController {
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],
       // RFC 9207: advertise `iss` to defend against OAuth mix-up attacks
       authorization_response_iss_parameter_supported: true,
+      client_id_metadata_document_supported: true,
       cli_client_id: cliRegistration.oAuthClientId,
     };
   }

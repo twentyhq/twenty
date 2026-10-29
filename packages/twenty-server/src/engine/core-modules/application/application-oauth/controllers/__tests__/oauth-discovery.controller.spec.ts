@@ -114,6 +114,7 @@ describe('OAuthDiscoveryController', () => {
         issuer: 'https://crm.acme.com',
         authorization_endpoint: 'https://crm.acme.com/authorize',
         authorization_response_iss_parameter_supported: true,
+        client_id_metadata_document_supported: true,
       });
     });
 

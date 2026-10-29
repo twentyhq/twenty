@@ -9,6 +9,7 @@ import {
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-registration/application-registration-client-id-metadata-document.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
@@ -76,6 +77,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
           },
         },
         ApplicationRegistrationLookupService,
+        {
+          provide: ApplicationRegistrationClientIdMetadataDocumentService,
+          useValue: {},
+        },
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
           useValue: applicationRegistrationRepository,

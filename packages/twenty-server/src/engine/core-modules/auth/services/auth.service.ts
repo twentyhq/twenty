@@ -53,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isRedirectUriRegistered } from 'src/engine/core-modules/auth/utils/is-redirect-uri-registered.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -587,7 +588,8 @@ export class AuthService {
 
     if (hasRegisteredRedirectUris) {
       if (
-        !applicationRegistration.oAuthRedirectUris.includes(
+        !isRedirectUriRegistered(
+          applicationRegistration.oAuthRedirectUris,
           authorizeAppInput.redirectUrl,
         )
       ) {

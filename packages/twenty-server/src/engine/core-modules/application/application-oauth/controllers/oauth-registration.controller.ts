@@ -13,11 +13,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { type Request, type Response } from 'express';
+import isEqual from 'lodash.isequal';
 import { ApiPath } from 'twenty-shared/types';
+import { IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { InjectRepository } from '@nestjs/typeorm';
 import {
   ALL_OAUTH_SCOPES,
   type OAuthScope,
@@ -25,14 +28,15 @@ import {
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-registration/utils/is-client-id-metadata-document-url.util';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { normalizeRedirectUriForComparison } from 'src/engine/core-modules/auth/utils/is-redirect-uri-registered.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { Repository } from 'typeorm';
 
 const REGISTRATION_RATE_LIMIT_MAX =
   process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 100 : 10;
@@ -40,6 +44,10 @@ const REGISTRATION_RATE_LIMIT_WINDOW_MS = 3_600_000;
 
 const ALLOWED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
 const ALLOWED_RESPONSE_TYPES = ['code'];
+const REUSABLE_REGISTRATION_CANDIDATES_LIMIT = 50;
+
+const toComparableSet = (values: string[]): string[] =>
+  [...new Set(values)].sort();
 
 @Controller(ApiPath.OAuth)
 @UseFilters(AuthRestApiExceptionFilter)
@@ -139,22 +147,17 @@ export class OAuthRegistrationController {
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))
       : [...ALL_OAUTH_SCOPES];
 
-    const clientId = v4();
-
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: v4(),
+    // MCP clients re-register whenever they lose their cached client_id; reusing an identical public
+    // registration keeps a single installed app per client instead of one per reconnect
+    const reusableRegistration = await this.findReusableRegistration({
       name: body.client_name,
-      oAuthClientId: clientId,
-      oAuthClientSecretHash: null,
-      oAuthRedirectUris: body.redirect_uris,
-      oAuthScopes: requestedScopes as OAuthScope[],
-      createdByUserId: null,
-      ownerWorkspaceId: null,
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      logo: body.logo_uri ?? null,
+      redirectUris: body.redirect_uris,
+      scopes: requestedScopes,
     });
 
-    await this.applicationRegistrationRepository.save(registration);
+    const clientId =
+      reusableRegistration?.oAuthClientId ??
+      (await this.createRegistration({ body, scopes: requestedScopes }));
 
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
@@ -214,6 +217,74 @@ export class OAuthRegistrationController {
       scope: registration.oAuthScopes.join(' '),
       registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
     };
+  }
+
+  private async createRegistration({
+    body,
+    scopes,
+  }: {
+    body: OAuthRegisterInput;
+    scopes: string[];
+  }): Promise<string> {
+    const clientId = v4();
+
+    await this.applicationRegistrationRepository.save(
+      this.applicationRegistrationRepository.create({
+        universalIdentifier: v4(),
+        name: body.client_name,
+        oAuthClientId: clientId,
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: body.redirect_uris,
+        oAuthScopes: scopes as OAuthScope[],
+        createdByUserId: null,
+        ownerWorkspaceId: null,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        logo: body.logo_uri ?? null,
+      }),
+    );
+
+    return clientId;
+  }
+
+  private async findReusableRegistration({
+    name,
+    redirectUris,
+    scopes,
+  }: {
+    name: string;
+    redirectUris: string[];
+    scopes: string[];
+  }): Promise<ApplicationRegistrationEntity | null> {
+    const candidates = await this.applicationRegistrationRepository.find({
+      where: {
+        name,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        oAuthClientSecretHash: IsNull(),
+        ownerWorkspaceId: IsNull(),
+      },
+      order: { createdAt: 'ASC' },
+      take: REUSABLE_REGISTRATION_CANDIDATES_LIMIT,
+    });
+
+    const redirectUrisKey = toComparableSet(
+      redirectUris.map(normalizeRedirectUriForComparison),
+    );
+    const scopesKey = toComparableSet(scopes);
+
+    return (
+      candidates.find(
+        (candidate) =>
+          !isClientIdMetadataDocumentUrl(candidate.oAuthClientId) &&
+          isEqual(
+            toComparableSet(
+              candidate.oAuthRedirectUris.map(
+                normalizeRedirectUriForComparison,
+              ),
+            ),
+            redirectUrisKey,
+          ) && isEqual(toComparableSet(candidate.oAuthScopes), scopesKey),
+      ) ?? null
+    );
   }
 
   private async applyRateLimit(

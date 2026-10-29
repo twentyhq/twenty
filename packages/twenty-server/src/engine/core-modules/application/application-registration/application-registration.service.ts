@@ -34,6 +34,7 @@ import {
   type CreateApplicationRegistrationVersionParams,
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { ApplicationRegistrationClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-registration/application-registration-client-id-metadata-document.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -60,6 +61,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { type ApplicationInstallation } from 'src/engine/core-modules/application/application-registration/types/application-installation.type';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-registration/utils/is-client-id-metadata-document-url.util';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
@@ -145,6 +147,7 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationRegistrationClientIdMetadataDocumentService: ApplicationRegistrationClientIdMetadataDocumentService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -453,6 +456,12 @@ export class ApplicationRegistrationService {
   async findOneByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
+    if (isClientIdMetadataDocumentUrl(clientId)) {
+      return this.applicationRegistrationClientIdMetadataDocumentService.findOrRefreshRegistration(
+        clientId,
+      );
+    }
+
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
     });
@@ -461,20 +470,24 @@ export class ApplicationRegistrationService {
   async findPublicByClientId(
     clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-      select: [
-        'id',
-        'name',
-        'logo',
-        'logoFileId',
-        'sourceType',
-        'sourcePackage',
-        'latestAvailableVersion',
-        'websiteUrl',
-        'oAuthScopes',
-      ],
-    });
+    const registration = isClientIdMetadataDocumentUrl(clientId)
+      ? await this.applicationRegistrationClientIdMetadataDocumentService.findOrRefreshRegistration(
+          clientId,
+        )
+      : await this.applicationRegistrationRepository.findOne({
+          where: { oAuthClientId: clientId },
+          select: [
+            'id',
+            'name',
+            'logo',
+            'logoFileId',
+            'sourceType',
+            'sourcePackage',
+            'latestAvailableVersion',
+            'websiteUrl',
+            'oAuthScopes',
+          ],
+        });
 
     if (!registration) {
       return null;
