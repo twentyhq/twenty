@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { In } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -15,11 +16,13 @@ import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-hi
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
+import { type AgentConversationMessageText } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-message-text.type';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 
@@ -67,6 +70,51 @@ export class AgentConversationReaderService {
 
     return (
       parts.find((candidate) => candidate.messageId === message?.id) ?? null
+    );
+  }
+
+  async loadRecentMessageTexts({
+    workspaceId,
+    threadId,
+    limit,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    limit: number;
+  }): Promise<AgentConversationMessageText[]> {
+    return this.messageRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query<AgentConversationMessageText[]>(
+        doNotTranslate(`WITH recent_messages AS (
+          SELECT message.id, message.role, message."processedAt", message."createdAt"
+          FROM ${table('agentMessage')} message
+          LEFT JOIN ${table('agentTurn')} message_turn
+            ON message_turn.id = message."turnId" AND message_turn."threadId" = message."threadId"
+          WHERE message."threadId" = $1
+            AND message.role = ANY($2::text[])
+            AND message.status IS DISTINCT FROM $3
+            AND message_turn.status IS DISTINCT FROM $4
+          ORDER BY message."processedAt" DESC NULLS FIRST, message."createdAt" DESC, message.id DESC
+          LIMIT $5
+        )
+        SELECT recent_messages.role,
+          COALESCE((
+            SELECT part."textContent"
+            FROM ${table('agentMessagePart')} part
+            WHERE part."messageId" = recent_messages.id AND part.type = $6
+              AND part."textContent" ~ '[^[:space:]]'
+            ORDER BY part."orderIndex" DESC LIMIT 1
+          ), '') AS text
+        FROM recent_messages
+        ORDER BY "processedAt" ASC NULLS LAST, "createdAt" ASC, id ASC`),
+        [
+          threadId,
+          [AgentMessageRole.USER, AgentMessageRole.ASSISTANT],
+          AgentMessageStatus.QUEUED,
+          AgentTurnStatus.FAILED,
+          limit,
+          'text',
+        ],
+      ),
     );
   }
 
