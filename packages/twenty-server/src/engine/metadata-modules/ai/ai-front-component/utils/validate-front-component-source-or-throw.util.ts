@@ -31,10 +31,11 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
         ));
 
     if (isDefaultExport) {
-      throw new FrontComponentBuildException(
-        'Export a named Component without a default export. Twenty adds the SDK registration.',
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message:
+          'Export a named Component without a default export. Twenty adds the SDK registration.',
+        code: 'INVALID_INPUT',
+      });
     }
 
     if (
@@ -61,17 +62,44 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
       typescript.isStringLiteral(statement.moduleSpecifier) &&
       !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(statement.moduleSpecifier.text)
     ) {
-      throw new FrontComponentBuildException(
-        `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message: `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
+        code: 'INVALID_INPUT',
+      });
     }
   }
 
+  const validateModuleCalls = (node: typescript.Node): void => {
+    if (
+      typescript.isCallExpression(node) &&
+      (node.expression.kind === typescript.SyntaxKind.ImportKeyword ||
+        (typescript.isIdentifier(node.expression) &&
+          node.expression.text === 'require'))
+    ) {
+      const specifier = node.arguments[0];
+
+      if (!isDefined(specifier) || !typescript.isStringLiteralLike(specifier)) {
+        throw new FrontComponentBuildException({
+          message: 'Use a string literal for import() and require().',
+          code: 'INVALID_INPUT',
+        });
+      }
+      if (!FRONT_COMPONENT_ALLOWED_IMPORTS.includes(specifier.text)) {
+        throw new FrontComponentBuildException({
+          message: `Unsupported import: ${specifier.text}. Use React and the supported twenty-ui imports.`,
+          code: 'INVALID_INPUT',
+        });
+      }
+    }
+    typescript.forEachChild(node, validateModuleCalls);
+  };
+
+  validateModuleCalls(sourceFile);
+
   if (!hasComponent) {
-    throw new FrontComponentBuildException(
-      'Export a named Component function or const.',
-      'INVALID_INPUT',
-    );
+    throw new FrontComponentBuildException({
+      message: 'Export a named Component function or const.',
+      code: 'INVALID_INPUT',
+    });
   }
 };

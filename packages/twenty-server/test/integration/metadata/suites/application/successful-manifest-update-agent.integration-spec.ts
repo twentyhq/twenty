@@ -12,7 +12,7 @@ const TEST_AGENT_ID = uuidv4();
 const TEST_SECOND_AGENT_ID = uuidv4();
 
 const AGENT_GQL_FIELDS =
-  'id name label description prompt icon applicationId modelId';
+  'id name label description prompt icon applicationId modelId modelConfiguration isSystem';
 
 const buildManifest = (overrides?: Partial<Pick<Manifest, 'agents'>>) =>
   buildBaseManifest({ appId: TEST_APP_ID, roleId: TEST_ROLE_ID, overrides });
@@ -137,6 +137,62 @@ describe('Manifest update - agents', () => {
       description: 'An advanced AI agent for enterprise sales',
       prompt:
         'You are a senior sales assistant specializing in enterprise deals. Help users with complex prospecting, multi-threaded outreach, and deal strategy.',
+    });
+  }, 60000);
+
+  it('should sync the model configuration and isSystem of an agent', async () => {
+    const salesAssistant = {
+      universalIdentifier: TEST_AGENT_ID,
+      name: 'sales-assistant',
+      label: 'Sales Assistant',
+      prompt: 'You are a sales assistant.',
+    };
+
+    await syncApplication({
+      manifest: buildManifest({
+        agents: [
+          {
+            ...salesAssistant,
+            modelConfiguration: { webSearch: { enabled: true } },
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const agentsAfterFirstSync = await findAppAgents();
+
+    expect(agentsAfterFirstSync).toHaveLength(1);
+    expect(agentsAfterFirstSync[0]).toMatchObject({
+      modelConfiguration: { webSearch: { enabled: true } },
+      isSystem: false,
+    });
+
+    await syncApplication({
+      manifest: buildManifest({
+        agents: [
+          {
+            ...salesAssistant,
+            modelConfiguration: {
+              webSearch: { enabled: false },
+              twitterSearch: { enabled: true },
+            },
+            isSystem: true,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const agentsAfterSecondSync = await findAppAgents();
+
+    expect(agentsAfterSecondSync).toHaveLength(1);
+    expect(agentsAfterSecondSync[0]).toMatchObject({
+      modelConfiguration: {
+        webSearch: { enabled: false },
+        twitterSearch: { enabled: true },
+      },
+      isSystem: true,
     });
   }, 60000);
 

@@ -1,7 +1,7 @@
-import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { SettingsAdminWorkspaceDataExportSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -10,10 +10,11 @@ import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   formatUpgradeCommandName,
@@ -41,18 +42,25 @@ import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
   workspaceUpgradeStatus?: GetUpgradeStatusQuery['getUpgradeStatus'][number];
+  workspaceInfoActions?: ReactNode;
 };
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledWorkspaceInfo = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
-  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
   workspaceUpgradeStatus,
+  workspaceInfoActions,
 }: SettingsAdminWorkspaceContentProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -82,6 +90,8 @@ export const SettingsAdminWorkspaceContent = ({
           })}
           startElement={
             <AvatarOrIcon
+              name={activeWorkspace.name}
+              colorSeed={getWorkspaceAvatarColorSeed(activeWorkspace.name)}
               src={getAbsoluteImageUrl(
                 isNonEmptyString(activeWorkspace?.logo)
                   ? activeWorkspace?.logo
@@ -90,7 +100,7 @@ export const SettingsAdminWorkspaceContent = ({
             />
           }
         >
-          {getChipLabel(activeWorkspace.name).content}
+          {getAdminWorkspaceLabel(activeWorkspace)}
         </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')
@@ -145,10 +155,13 @@ export const SettingsAdminWorkspaceContent = ({
           title={t`Workspace Info`}
           description={t`About this workspace`}
         />
-        <SettingsTableCard
-          items={workspaceInfoItems}
-          gridAutoColumns="1fr 4fr"
-        />
+        <StyledWorkspaceInfo>
+          <SettingsTableCard
+            items={workspaceInfoItems}
+            gridAutoColumns="1fr 4fr"
+          />
+          {workspaceInfoActions}
+        </StyledWorkspaceInfo>
       </Section.Root>
       {workspaceUpgradeStatus && (
         <Section.Root>

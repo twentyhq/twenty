@@ -1,0 +1,163 @@
+---
+title: Флажок
+description: Выбирайте независимые варианты с отмеченным и неопределенным состояниями.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
+
+## Обзор
+
+Используйте `Checkbox`, когда каждый вариант можно выбрать независимо. Для взаимоисключающего выбора используйте [группу радиокнопок](/ru/ui/primitives/input/radio-group).
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--display" title="Пример Checkbox" height={100} />
+
+## Использование
+
+### Неуправляемое состояние
+
+Используйте `defaultChecked`, чтобы задать начальное состояние флажка. Флажок управляет последующими изменениями.
+
+```tsx
+import { useId } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox id={checkboxId} name="updates" value="email" defaultChecked />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+Отмеченный флажок с именем добавляет свое значение в форму. Укажите `uncheckedValue`, если форма также должна отправлять значение, когда флажок не отмечен.
+
+## Внешний вид и взаимодействие
+
+Сравните состояния «отмечено», «неопределённое» и «отключено», затем независимо выберите цвет, размер, форму и вариант. Состояние активных примеров можно переключать.
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--catalog" title="Внешний вид и взаимодействие флажка" height={400} />
+
+| Свойство  | Значения                       | По умолчанию |
+| --------- | ------------------------------ | ------------ |
+| `размер`  | `sm`, `md`                     | `sm`         |
+| `variant` | `solid`, `outline`, `soft`     | `solid`      |
+| `shape`   | `square`, `round`              | `square`     |
+| `цвет`    | `accent`, `success`, `warning` | `accent`     |
+
+Клавиша Tab переводит фокус на флажок, а пробел переключает его. Щелчок по его метке также переключает его. Используйте `disabled`, чтобы запретить взаимодействие, или `readOnly`, если значение должно оставаться неизменным, а элемент управления должен сохранять возможность получения фокуса. Передавайте смысл в метке, а не только с помощью цвета.
+
+## Управляемое состояние
+
+Передайте `checked` и обновляйте его с помощью `onCheckedChange`, чтобы управлять тем же параметром в состоянии React. Функция обратного вызова получает следующее логическое значение и сведения о событии.
+
+```tsx
+import { useId, useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+  const [checked, setChecked] = useState(true);
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox
+        id={checkboxId}
+        name="updates"
+        value="email"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+## Неопределенное состояние
+
+Флажок в неопределенном состоянии обозначает частичный выбор. Определяйте его на основе дочерних параметров независимо от состояния флажка.
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const ColumnSelection = () => {
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+
+  return (
+    <fieldset>
+      <legend>Visible columns</legend>
+      <label>
+        <Checkbox
+          checked={showEmail && showPhone}
+          indeterminate={showEmail !== showPhone}
+          onCheckedChange={(checked) => {
+            setShowEmail(checked);
+            setShowPhone(checked);
+          }}
+        />
+        All columns
+      </label>
+      <label>
+        <Checkbox checked={showEmail} onCheckedChange={setShowEmail} />
+        Email
+      </label>
+      <label>
+        <Checkbox checked={showPhone} onCheckedChange={setShowPhone} />
+        Phone
+      </label>
+    </fieldset>
+  );
+};
+```
+
+## Части и пользовательское содержимое
+
+`Checkbox` собирает стилизованный корневой элемент и его стандартные значки установки и неопределённого состояния. Используйте `Checkbox.Root` с `Checkbox.Indicator` для управления содержимым индикатора. Root управляет состоянием и внешним видом поля; Indicator отображает предоставленное вами содержимое.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Checkbox.Root aria-label="Updates" defaultChecked>
+    <Checkbox.Indicator>
+      <IconCheck aria-hidden />
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+);
+```
+
+`CheckboxRootProps` и `CheckboxIndicatorProps` — это публичные типы, экспортируемые из `twenty-ui/primitives/input`. Обе части принимают нативные атрибуты, обработчики, ссылки, `render` и обратные вызовы `className` и `style`, зависящие от состояния. `ref` Root указывает на видимый элемент управления; `inputRef` указывает на нативный input. Ссылка части указывает на её отображаемый элемент. Передайте `nativeButton` вместе с `render={<button />}`, когда заменяете Root кнопкой. Свойства внешнего вида относятся к Root; явные классы и стили объединяются со значениями по умолчанию.
+
+Indicator получает состояния установки и неопределённости, включая состояние перехода. Установите `keepMounted`, чтобы сохранять неустановленный индикатор в DOM; стилизация по умолчанию скрывает его с помощью opacity. Переопределите его `style` или `className` для пользовательских переходов.
+
+<StoryEmbed storyId="ui-input-checkbox-parts--composition" title="Композиция частей Checkbox" height={100} />
+
+Вызываемая сборка и её тип `CheckboxProps` по-прежнему поддерживаются. Замените сборку на Root и его часть при предоставлении пользовательских значков вместо добавления другой части к дочерним элементам сборки.
+
+Для сброса управляемой формы обработайте `onReset` формы и восстановите `checked` до начального значения. Base UI 1.8 не восстанавливает состояние неуправляемого компонента при нативном сбросе формы. `required`, `form`, `value` и `uncheckedValue` сохраняют вышестоящее поведение нативного input.
+
+## Свойства
+
+Справочник создан на основе общедоступных типов компонента. Нативные атрибуты, включая доступные имена и обработчики событий, также поддерживаются для частей, отрисовывающих элементы.
+
+<CheckboxReference />
+
+<PageBanner illustration="page-cover-checkbox" />

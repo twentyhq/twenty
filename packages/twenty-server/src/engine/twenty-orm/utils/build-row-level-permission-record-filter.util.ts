@@ -9,6 +9,8 @@ import {
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
+  getFilterOperandsForFilterableFieldType,
+  getFilterTypeFromFieldType,
   isDefined,
   type RecordFilter,
   type RecordFilterGroup,
@@ -156,11 +158,25 @@ const buildRecordFilterForRole = ({
       | CompositeFieldSubFieldName
       | undefined;
 
+    const operand = predicate.operand as unknown as RecordFilter['operand'];
+
+    const allowedOperands = getFilterOperandsForFilterableFieldType({
+      filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+      subFieldName: effectiveSubFieldName,
+    });
+
+    if (!allowedOperands.includes(operand)) {
+      throw new PermissionsException(
+        `Operand ${operand} is not supported for field ${fieldMetadata.name} of type ${fieldMetadata.type} in row-level permission predicate ${predicate.id}`,
+        PermissionsExceptionCode.INVALID_ARG,
+      );
+    }
+
     recordFilters.push({
       id: predicate.id,
       fieldMetadataId: predicate.fieldMetadataId,
       value: convertViewFilterValueToString(predicateValue),
-      operand: predicate.operand as unknown as RecordFilter['operand'],
+      operand,
       recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
       subFieldName: effectiveSubFieldName,
     });

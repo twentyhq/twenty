@@ -3,6 +3,10 @@ title: Obiecte
 description: Declarați noi tipuri de înregistrări — tabele personalizate cu propriile câmpuri — folosind defineObject.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 **Obiectele** personalizate sunt tipuri noi de înregistrări pe care aplicația dvs. le adaugă într-un spațiu de lucru — carte poștală, factură, abonament, orice este specific domeniului dvs. Fiecare obiect își declară propria schemă (câmpuri, relații, valori implicite) și un identificator universal stabil, care este păstrat între sincronizări și implementări.
 
 ```ts src/objects/post-card.object.ts
@@ -54,10 +58,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -79,29 +103,46 @@ export default defineObject({
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
 * `openRecordIn` stabilește unde se deschid înregistrările acestui obiect când se face clic pe ele: `ObjectOpenRecordIn.USER_CHOICE` (valoarea implicită, care respectă preferința fiecărui membru al spațiului de lucru din Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` sau `ObjectOpenRecordIn.RECORD_PAGE`. Fixează-l la `RECORD_PAGE` pentru înregistrările care au nevoie de o pagină completă pentru a fi utilizabile, așa cum este cazul fluxurilor de lucru și al dashboard-urilor, sau la `SIDE_PANEL` pentru înregistrările care au sens doar ca un panou rapid, așa cum este cazul evenimentelor din calendar.
-* `writability` controlează cine poate scrie înregistrări ale obiectului, înainte ca permisiunile pe roluri să se aplice: `MetadataWritability.OPEN` (valoarea implicită — rolurile din spațiul de lucru decid), `MetadataWritability.APPLICATION` (numai funcțiile de logică ale aplicației tale pot crea, actualiza sau șterge înregistrări; folosește acest lucru pentru obiecte de tip configurație ale căror înregistrări determină comportamentul, astfel încât membrii spațiului de lucru cu acces extins la înregistrări să nu le poată edita prin API) sau `MetadataWritability.SYSTEM` (rezervat pentru date administrate de platformă). Operațiunile de citire nu sunt afectate — acest lucru este impus la nivel de server, spre deosebire de `isUIEditable`, care doar ascunde elementele din interfața cu utilizatorul. Se aplică și la nivel de câmp, unde poate fi doar mai restrictivă decât la nivelul obiectului.
+* `disabledObjectPermissionActions` enumeră permisiunile pentru obiecte care nu pot fi acordate pentru obiect: oricare dintre `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` și `'canDestroyObjectRecords'`, aceleași indicatori pe care îi stabilește un rol pentru fiecare obiect. Utilizatorii, cheile API și agenții nu primesc niciodată aceste acțiuni asupra obiectului, indiferent de ce permite rolul lor, iar salvarea unei permisiuni pentru obiect care acordă una dintre acestea eșuează. Funcțiile logice proprii ale aplicației tale le păstrează. De exemplu, `['canUpdateObjectRecords', 'canSoftDeleteObjectRecords', 'canDestroyObjectRecords']` face ca un obiect să poată fi modificat numai de aplicația ta, pentru înregistrări similare configurației care acordă comportament.
+* `color` setează culoarea de accent a obiectului în interfața cu utilizatorul. Omiteți-l și Twenty alege una pentru obiect.
+* `imageIdentifierFieldMetadataUniversalIdentifier` denumește câmpul a cărui valoare este afișată drept avatarul înregistrării. Omiteți-l pentru ca Twenty să aleagă valoarea implicită.
+* `isLabelSyncedWithName`, pe un obiect sau pe un câmp, menține numele API sincronizat cu eticheta atunci când eticheta este editată în Setări. Valoarea implicită este `false`, astfel încât o etichetă redenumită lasă numele neschimbat.
+* `isSearchable: true`, aplicat unui câmp, include valorile acestuia în căutarea text integrală a obiectului (căutarea globală și meniul de comenzi). Necesită ca obiectul în sine să fie căutabil și un tip de câmp compatibil cu textul. O valoare omisă înseamnă că nu poate fi căutat, cu excepția câmpului de identificare a etichetei obiectului, care poate fi căutat întotdeauna și nu poate fi exclus. Fiecare sincronizare impune starea declarată, astfel încât un câmp a cărui căutare este activată din Setări revine la starea anterioară la următoarea sincronizare a aplicației dvs., cu excepția cazului în care manifestul o declară.
+* `isAuditLogged: false`, pe un câmp, împiedică apariția modificărilor sale în cronologia înregistrării. Valoarea implicită este `true`, cu excepția unui câmp `POSITION`, ale cărui modificări sunt afișate necompletate în cronologie și nu sunt niciodată înregistrate în jurnal. Setați această opțiune pe câmpurile pe care aplicația dvs. le rescrie conform unui program, cum ar fi un marcaj temporal al ultimului contact sau o relație de agregare, astfel încât fiecare sincronizare să nu adauge un rând de activitate la fiecare înregistrare pe care o modifică. O actualizare al cărei diff complet este format din câmpuri neînregistrate în jurnalul de audit nu produce deloc activitate în cronologie. La fel ca `isSearchable`, fiecare sincronizare impune starea declarată.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
-* Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/ro/developers/extend/apps/getting-started/scaffolding).
+* Puteți genera obiecte noi cu `twenty app add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/ro/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
+  **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat,
+  Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`,
+  `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați
+  în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un
+  câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
 </Note>
 
 ## Tipuri de câmpuri
 
 Setul complet de valori `FieldType`, exportate din `twenty-sdk/define`:
 
-| Categorie                 | Tipuri                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Text                      | `TEXT`, `RICH_TEXT`, `ARRAY` (de șiruri), `RAW_JSON`                                                                            |
-| Numerice                  | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precizie arbitrară), `RATING`, `POSITION` |
-| Date calendaristice       | `DATE`, `DATE_TIME`                                                                                                             |
-| Alegere                   | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                             |
-| Compuse                   | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                               |
-| Identificatori și relații | `UUID`, `RELATION`, `MORPH_RELATION` (vezi [Relații](/ro/developers/extend/apps/data/relations))                                   |
-| Sistem                    | `TS_VECTOR` (vector de căutare full-text, gestionat de server)                                                                  |
+| Categorie                 | Tipuri                                                                                                                                                                                                                                                                                                    |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Text                      | `TEXT`, `RICH_TEXT`, `ARRAY` (de șiruri), `RAW_JSON`                                                                                                                                                                                                                                                      |
+| Numerice                  | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precizie arbitrară), `RATING`, `POSITION`                                                                                                                                                                           |
+| Date calendaristice       | `DATE`, `DATE_TIME`                                                                                                                                                                                                                                                                                       |
+| Alegere                   | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                                                                                                                                                                                       |
+| Compuse                   | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (implicit) / `'domain'` — un câmp de domeniu stochează gazda simplă, astfel `https://www.acme.com/careers` se scrie ca `acme.com`, iar o valoare care nu este o gazdă este respinsă), `CURRENCY`, `ACTOR`, `FILES` |
+| Identificatori și relații | `UUID`, `RELATION`, `MORPH_RELATION` (vezi [Relații](/ro/developers/extend/apps/data/relations))                                                                                                                                                                                                             |
+| Sistem                    | `TS_VECTOR` (vector de căutare full-text, gestionat de server)                                                                                                                                                                                                                                            |
 
 Tipurile compuse stochează mai multe sub‑câmpuri (de ex. `FULL_NAME` = prenume + nume de familie; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` și `MULTI_SELECT` necesită un tablou `options`, ca în exemplul de mai sus.
+
+### Selectați opțiunile
+
+Pentru `SELECT` și `MULTI_SELECT`, furnizați o matrice `options` nevidă de obiecte. Fiecare opțiune are un `value`, un `label` și un `position`. `color` este opțională și are implicit valoarea `gray` atunci când este omisă sau nulă.
+
+Când este furnizată, `color` trebuie să fie una dintre: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
+
+Atât `defineObject()`, cât și `defineField()` returnează erori de validare pentru culori neacceptate sau intrări de opțiuni care sunt nule, primitive sau matrice.
 
 ## Valori implicite
 
@@ -121,7 +162,12 @@ Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale v
 Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincronizare, inclusiv la sincronizările care actualizează un câmp existent — astfel încât puteți schimba nullabilitatea unui câmp editând manifestul și resincronizând.
 
 <Note>
-**Transformarea unui câmp existent în non-nullable necesită o valoare implicită.** Atunci când modificați un câmp la `isNullable: false`, trebuie să furnizați și un `defaultValue` nenul. Valoarea implicită completează retroactiv orice rânduri `NULL` existente înainte ca restricția `NOT NULL` să fie aplicată; fără aceasta, sincronizarea eșuează cu mesajul `Default value cannot be null for non-nullable fields`. Câmpurile de relație și câmpurile `TS_VECTOR` sunt întotdeauna nullable, astfel încât `isNullable` nu are niciun efect asupra lor.
+  **Transformarea unui câmp existent în non-nullable necesită o valoare implicită.** Atunci când
+  modificați un câmp la `isNullable: false`, trebuie să furnizați și un
+  `defaultValue` nenul. Valoarea implicită completează retroactiv orice rânduri `NULL` existente înainte ca restricția `NOT
+    NULL` să fie aplicată; fără aceasta, sincronizarea eșuează cu mesajul `Default value
+    cannot be null for non-nullable fields`. Câmpurile de relație și câmpurile `TS_VECTOR`
+  sunt întotdeauna nullable, astfel încât `isNullable` nu are niciun efect asupra lor.
 </Note>
 
 ```ts
@@ -140,3 +186,5 @@ Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincron
 * **Conectați acest obiect la altele** — consultați [Relații](/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
 * **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
 * **Afișează acest obiect în interfața de utilizator** — consultă [Elemente de meniu de navigare](/ro/developers/extend/apps/layout/navigation-menu-items) pentru a adăuga un element în bara laterală; consultă [Vizualizări](/ro/developers/extend/apps/layout/views) pentru a adăuga configurații personalizate de listă.
+
+<PageBanner illustration="card-page-objects" />

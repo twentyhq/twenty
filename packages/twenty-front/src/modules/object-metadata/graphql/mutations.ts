@@ -286,7 +286,8 @@ export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
       name
       indexType
       isUnique
-      isCustom
+      applicationId
+      isSystemSideEffect
       indexWhereClause
       createdAt
       updatedAt

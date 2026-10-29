@@ -1,8 +1,9 @@
 ---
 title: Migliori Pratiche
+description: Migliori pratiche da seguire quando si lavora sul frontend.
 ---
 
-Questo documento descrive le migliori pratiche da seguire quando si lavora sul frontend.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Gestione dello Stato
 
@@ -255,7 +256,7 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 };
 ```
 
-Per far sì che React capisca che il componente è un componente, è necessario usare PascalCase, per poi istanziarlo con `<MyIcon>`.
+Per far sì che React capisca che il componente è un componente, è necessario usare PascalCase, per poi istanziarlo con `<MyIcon>`
 
 ## Prop Drilling: Mantienilo Minimal
 
@@ -326,3 +327,5 @@ type Form = z.infer<typeof validationSchema>;
 ## Modifiche Incompatibili
 
 Esegui sempre test manuali approfonditi prima di procedere per garantire che le modifiche non abbiano causato interruzioni altrove, dato che i test non sono ancora stati ampiamente integrati.
+
+<PageBanner illustration="card-page-campaign-practices" />

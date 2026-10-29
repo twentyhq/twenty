@@ -14,6 +14,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildAgentTurnStandardFlatFieldMetadatas = (
@@ -42,6 +43,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   agentId: {
@@ -63,6 +66,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   status: {
@@ -85,6 +90,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   error: {
@@ -106,6 +113,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   startedAt: {
@@ -127,6 +136,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   endedAt: {
@@ -148,6 +159,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   modelId: {
@@ -169,6 +182,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   inputTokens: {
@@ -193,6 +208,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   outputTokens: {
@@ -217,6 +234,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   cacheReadTokens: {
@@ -241,6 +260,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   cacheCreationTokens: {
@@ -268,6 +289,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   inputCredits: {
@@ -292,6 +315,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   outputCredits: {
@@ -316,6 +341,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdBy: {
@@ -342,6 +369,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -364,6 +393,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -386,6 +417,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -407,6 +440,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   thread: {
@@ -435,6 +470,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   messages: {
@@ -462,6 +499,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });

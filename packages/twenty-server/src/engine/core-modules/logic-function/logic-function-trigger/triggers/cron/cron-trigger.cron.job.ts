@@ -101,7 +101,10 @@ export class CronTriggerCronJob {
           const applicationRegistrationId =
             application?.applicationRegistrationId;
 
-          if (!isDefined(applicationRegistrationId)) {
+          if (
+            !isDefined(application) ||
+            !isDefined(applicationRegistrationId)
+          ) {
             continue;
           }
 
@@ -115,14 +118,12 @@ export class CronTriggerCronJob {
               throw error;
             }
 
-            if (isDefined(application)) {
-              this.applicationRepeatedEventRecorderService.record({
-                entry: buildApplicationJobThrottledLogEntry({
-                  workspaceId: activeWorkspace.id,
-                  application,
-                }),
-              });
-            }
+            this.applicationRepeatedEventRecorderService.record({
+              entry: buildApplicationJobThrottledLogEntry({
+                workspaceId: activeWorkspace.id,
+                application,
+              }),
+            });
 
             continue;
           }
@@ -132,11 +133,19 @@ export class CronTriggerCronJob {
             {
               logicFunctionId: logicFunction.id,
               workspaceId: activeWorkspace.id,
+              ...(isDefined(application)
+                ? {
+                    applicationUniversalIdentifier:
+                      application.universalIdentifier,
+                  }
+                : {}),
               payload: {},
             },
             {
               retryLimit: 10,
               backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+              workspaceId: activeWorkspace.id,
+              applicationUniversalIdentifier: application.universalIdentifier,
             },
           );
         }

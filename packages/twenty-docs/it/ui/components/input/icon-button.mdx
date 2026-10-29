@@ -1,0 +1,163 @@
+---
+title: IconButton
+description: Attiva azioni con pulsanti icona accessibili.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
+
+## Panoramica
+
+`IconButton` combina [Button](/it/ui/primitives/input/button) con una superficie quadrata o rotonda. Passa l'icona come elemento figlio e fornisci un nome accessibile con `aria-label` o `aria-labelledby`. Il contenuto dell'icona è decorativo e nascosto alle tecnologie assistive.
+
+<StoryEmbed storyId="ui-components-iconbutton--display" title="Pulsante icona con un nome accessibile" height={110} />
+
+## Utilizzo
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+Le dimensioni sono `xs` (20px), `sm` (24px) e `md` (32px). I valori predefiniti sono `md`, `outline` e `neutral`. Varianti e colori corrispondono a Button. Usa `shape="round"` per un pulsante circolare; la forma predefinita è `square`.
+
+## Opzioni visive
+
+Confronta una scelta visiva alla volta. Usa gli esempi con tooltip denominato, elevato e raggruppato per la composizione.
+
+<StoryEmbed storyId="ui-components-iconbutton--catalog" title="Varianti, colori, dimensioni, forme, elevazione e stati dei pulsanti icona" height={810} />
+
+## Nomi accessibili
+
+Usa `aria-label` per un nome fornito direttamente nel controllo. Quando il testo visibile denomina già l'azione, usa invece `aria-labelledby` per farvi riferimento. È richiesta almeno una prop per il nome.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </Text>
+);
+```
+
+<StoryEmbed title="Pulsante icona denominato dal testo visibile" storyId="ui-components-iconbutton--labelled-by" height={140} />
+
+## Tooltip
+
+Aggiungi `tooltip` per mostrare testo al passaggio del mouse e quando il focus è sulla tastiera. Mantieni `aria-label` o `aria-labelledby` come nome accessibile dell'azione. I pulsanti disabilitati e in caricamento mantengono i tooltip al passaggio del mouse.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Pulsante icona con tooltip" storyId="ui-components-iconbutton--tooltip-documentation" height={140} />
+
+Per impostazione predefinita, il tooltip viene visualizzato in basso, con un ritardo di 1000 ms e uno scostamento di 5 px. Usa `tooltipPlace`, `tooltipDelay` e `tooltipOffset` per modificarlo. Omettendo `tooltip`, il pulsante viene visualizzato direttamente.
+
+## Proprietà dello stato
+
+L'applicazione fornisce `loading` e `disabled`. Entrambi impediscono l'attivazione. Lo stato di caricamento mantiene le dimensioni quadrate e l'etichetta accessibile. Il pulsante non tiene traccia di un valore selezionato né imposta automaticamente lo stato di caricamento dopo un clic. Il focus nativo da tastiera segue il browser; usa `aria-pressed` quando l'applicazione gestisce uno stato di attivazione/disattivazione.
+
+## Azioni elevate
+
+Usa `elevated` per aggiungere un'ombra e la sfocatura dello sfondo. Anche il pulsante con contorno neutro predefinito ottiene una superficie con bordo, con colori corrispondenti per l'icona e l'interazione. Le altre varianti e i colori semantici mantengono la palette esistente.
+
+`elevated` è impostato su `false` per impostazione predefinita. Non modifica il posizionamento, la visibilità o le dimensioni. Per impostazione predefinita, la dimensione rimane `md` (32px); imposta `size="sm"` per un controllo da 24px.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Azione icona con rilievo" storyId="ui-components-iconbutton--elevated" height={100} />
+
+Ometti `elevated` o impostalo su `false` per ripristinare l'aspetto standard. I pulsanti con rilievo supportano gli stessi tooltip, stati di caricamento, link e interazioni da tastiera.
+
+<StoryEmbed title="Azione icona con rilievo e tooltip" storyId="ui-components-iconbutton--elevated-tooltip" height={140} />
+
+Sostituisci i controlli `FloatingIconButton` esistenti con `IconButton elevated`. Passa l'icona come `children`, usa `aria-label` nativo e mappa `small` a `sm` e `medium` a `md`. Fornisci `size="sm"` quando il controllo precedente utilizzava la dimensione predefinita. Il focus nativo e `aria-pressed` sostituiscono il focus sintetico e i flag attivi.
+
+`FloatingIconButtonGroup` è stato rimosso. Combina `ButtonGroup` con `IconButton` per le azioni raggruppate e mantieni nel layout qualsiasi superficie fluttuante condivisa.
+
+## Azioni raggruppate
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record" tooltip="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+[ButtonGroup](/it/ui/primitives/input/button-group) fornisce valori predefiniti per dimensione, variante e colore, oltre ad angoli contigui. Le prop esplicite degli elementi figlio hanno la precedenza in modo indipendente, incluso `size="xs"`. I singoli pulsanti non necessitano di una prop di posizione.
+
+Mantieni i pulsanti collegati della stessa dimensione affinché i loro bordi siano allineati. Imposta la dimensione sul gruppo e lascia che ogni pulsante la erediti.
+
+<StoryEmbed storyId="ui-components-iconbutton--grouped-overrides" title="Aspetto del singolo pulsante icona in un gruppo" height={140} />
+
+## Link e moduli
+
+Senza un `render` personalizzato, `href` esegue il rendering di un'ancora, a meno che `nativeButton` non sia esplicitamente true. Per un'ancora di navigazione personalizzata o un collegamento del router, imposta `nativeButton={false}` e `role="link"`. Il renderer può gestire la propria destinazione senza un `href` di IconButton. Mantieni `nativeButton` su true per un pulsante nativo personalizzato e usa false per un elemento azione non nativo. Le prop esplicite nativeButton e role vengono mantenute. I collegamenti disabilitati e in caricamento non possono essere attivati. Il routing rimane nell'applicazione.
+
+Gli attributi del pulsante nativo e dell'ancora, i gestori di eventi, i dettagli degli eventi, i ref e la composizione del render vengono passati a Button. Il ref riceve l'effettivo elemento radice. La composizione del tooltip mantiene quella radice e il relativo nome accessibile. Il valore predefinito è `type="button"`; imposta esplicitamente `type="submit"` per l'invio del modulo.
+
+## Controlli compatti e rotondi
+
+Usa `size="xs"` per un controllo da 20px e `shape="round"` per angoli circolari. I controlli `RoundedIconButton` esistenti diventano `IconButton` con `shape="round"`, `variant="solid"` e `color="accent"`. Mappa la precedente dimensione `small` a `xs` e la dimensione `medium` a `sm`. Fornisci elementi figlio icona e un nome accessibile.
+
+<StoryEmbed storyId="ui-components-iconbutton--round-documentation" title="Pulsanti icona rotondi in dimensioni compatte e regolari" height={140} />
+
+## Props
+
+<IconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

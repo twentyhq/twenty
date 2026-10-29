@@ -1,9 +1,9 @@
-import { type Agent } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const workflowAiAgentActionAgentState = createAtomState<
-  Agent | undefined
+  FlatAgent | undefined
 >({
   key: 'workflowAiAgentActionAgentState',
   defaultValue: undefined,

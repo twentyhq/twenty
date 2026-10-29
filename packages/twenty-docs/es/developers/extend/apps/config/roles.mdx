@@ -3,6 +3,10 @@ title: Roles y permisos
 description: Declara qué objetos y campos pueden leer y escribir las funciones de lógica y los componentes de interfaz de tu aplicación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Un **rol** es un conjunto de permisos: qué objetos puede leer o escribir una aplicación, qué campos puede ver y qué capacidades a nivel de plataforma puede usar. Las funciones lógicas y los componentes de interfaz de cada aplicación heredan los permisos del rol marcado con `defineApplicationRole()` (consulta [El rol de función predeterminado](#the-default-function-role) más abajo).
 
 ```ts src/roles/restricted-company-role.ts
@@ -21,6 +25,7 @@ export default defineRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
+  canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
@@ -50,6 +55,10 @@ export default defineRole({
 ```
 
 ## Seguridad a nivel de fila
+
+Los permisos a nivel de fila requieren el **plan Organization o superior** — consulta
+[precios](https://twenty.com/pricing). Lo que sucede en un plan sin el derecho se explica en
+las notas al final de esta sección.
 
 Los permisos de objetos y campos determinan *a qué objetos y campos* puede acceder o modificar un rol. **Los predicados de permisos a nivel de fila** van más allá y deciden *qué registros* puede ver y sobre los que puede actuar un rol; por ejemplo, un rol de autoservicio en el que cada usuario externo ve solo sus propios registros.
 
@@ -154,7 +163,14 @@ Notas:
 
 * Asigna a cada predicado y grupo un `universalIdentifier` estable (cualquier uuid): sirve como clave de la entidad a través de las actualizaciones, y los predicados hacen referencia a los grupos mediante él.
 * Los predicados pueden hacer referencia a objetos y campos que sean propiedad de tu aplicación o de los objetos estándar de Twenty.
-* La seguridad a nivel de fila se aplica para los espacios de trabajo en planes que la incluyen; los predicados siguen sincronizándose en otros planes, simplemente no se aplican.
+* La seguridad a nivel de fila se aplica a los espacios de trabajo en el **plan Organization o superior**. En otros
+  planes, los predicados declarados en un manifiesto de app se siguen sincronizando; simplemente no se aplican.
+* La API de metadatos se comporta de manera diferente al manifiesto en este caso: sin el derecho,
+  `upsertRowLevelPermissionPredicates` se rechaza con
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` en lugar de sincronizarse. Por lo tanto, un espacio de trabajo en un plan que no
+  incluye seguridad a nivel de fila no puede crear predicados fuera de un manifiesto de app, aunque
+  el campo `rowLevelPermissionPredicates` está presente en el tipo `Role` al inspeccionar
+  el esquema.
 
 ## El rol de función predeterminado
 
@@ -190,11 +206,19 @@ Notas:
 
 * Se permite exactamente **una** llamada a `defineApplicationRole(...)` por aplicación; la compilación del manifiesto fallará si encuentra más de una.
 * Usa `defineRole()` (no `defineApplicationRole()`) para cualquier rol **adicional** que distribuya tu aplicación.
-* Configurar `defaultRoleUniversalIdentifier` explícitamente en `defineApplication()` sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`.
+* Configurar `defaultRoleUniversalIdentifier` explícitamente en `defineApplication()` sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`. El identificador debe coincidir con un rol que defina tu aplicación; de lo contrario, la compilación falla.
+* Un rol al que se pueden asignar miembros del espacio de trabajo o claves de API (`canBeAssignedToUsers` o `canBeAssignedToApiKeys`, ambos `true` cuando se omiten) es un rol personalizado y requiere el **plan Organization o superior**: en otros planes, se rechaza la instalación. Mantén ambos en `false` en los roles que solo tu aplicación y sus agentes asumen.
+
+### Roles de Agente
+
+El rol de aplicación es lo que un espacio de trabajo revisa al instalar tu aplicación, por lo que debe abarcar todo lo que la propia aplicación puede hacer. Cualquier rol que asignes a un agente mediante `roleUniversalIdentifier` en `defineAgent()` no debe otorgar más que el rol de aplicación: ninguna acción de objeto, acceso a campos, indicador de permiso o ámbito de nivel de fila que el rol de aplicación no tenga. Si lo hace, la compilación falla con un error que enumera las concesiones excedentes. Los roles que tu aplicación distribuye para miembros del espacio de trabajo o claves de API no están sujetos a esta regla, ya que la aplicación nunca se ejecuta con ellos.
 
 ## Mejores prácticas
 
 * Parte del rol generado automáticamente y luego restríngeelo progresivamente; el valor predeterminado concede un acceso amplio de lectura, lo cual rara vez es lo que quieres en producción.
 * Reemplaza `objectPermissions` y `fieldPermissions` con los objetos y campos que realmente necesitan tus funciones.
 * `permissionFlagUniversalIdentifiers` controla el acceso a capacidades a nivel de plataforma. Manténlos al mínimo.
+* Una marca de permiso que tu aplicación declara con `definePermissionFlag()` tiene un `permissionType`: `'tool'` (el valor predeterminado) para una capacidad que se puede conceder a un agente o a un usuario, `'settings'` para una marca que desbloquea un área de configuración.
 * Consulta un ejemplo funcional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="card-page-roles" />

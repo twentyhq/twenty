@@ -1,8 +1,11 @@
 ---
 title: Impostazione
+description: Configura Venti dal pannello di amministrazione o con variabili di ambiente.
 ---
 
-# Gestione della Configurazione
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
 
 <Warning>
 **Prima volta che installi?** Segui la [guida all'installazione di Docker Compose](/it/developers/self-host/capabilities/docker-compose) per far funzionare Twenty, quindi torna qui per la configurazione.
@@ -195,7 +198,7 @@ Nel Microsoft Azure Console abilita le seguenti API in "Permessi":
 
 * Microsoft Graph: Mail.ReadWrite
 * Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
+* Microsoft Graph: Calendars.ReadWrite
 * Microsoft Graph: User.Read
 * Microsoft Graph: openid
 * Microsoft Graph: email
@@ -203,11 +206,11 @@ Nel Microsoft Azure Console abilita le seguenti API in "Permessi":
 * Microsoft Graph: offline_access
 
 <Note>
-"Mail.ReadWrite" e "Mail.Send" sono obbligatori solo se vuoi inviare email utilizzando le nostre azioni di flusso di lavoro. Puoi usare "Mail.Read" invece se vuoi solo ricevere email.
+Tutte queste autorizzazioni sono necessarie, anche se vuoi solo sincronizzare le email e gli eventi del calendario. Twenty richiede sempre "Mail.ReadWrite", "Mail.Send" e "Calendars.ReadWrite" quando un utente collega il proprio account, quindi le autorizzazioni di sola lettura come "Mail.Read" o "Calendars.Read" non sono sufficienti.
 </Note>
 
 <Note>
-"Calendars.ReadWrite" è obbligatorio se vuoi creare eventi del calendario utilizzando le nostre azioni di flusso di lavoro. Se vuoi solo sincronizzare gli eventi del calendario, usa "Calendars.Read".
+Se il tuo tenant non consente agli utenti regolari di acconsentire a queste autorizzazioni, visualizzeranno l'errore AADSTS90094 quando collegano il proprio account. Un amministratore può risolvere il problema facendo clic su "Concedi il consenso dell'amministratore per {your-tenant}" nella pagina "Autorizzazioni API" della registrazione dell'app.
 </Note>
 
 ### URI di Riindirizzamento Autorizzati
@@ -236,7 +239,7 @@ Devi aggiungere i seguenti URI di reindirizzamento al tuo progetto:
 
 ### Configura scope
 
-[Vedi il codice sorgente pertinente](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+[Vedi il codice sorgente pertinente](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L11)
 
 * 'openid'
 * 'email'
@@ -244,7 +247,8 @@ Devi aggiungere i seguenti URI di reindirizzamento al tuo progetto:
 * 'offline_access'
 * 'Mail.ReadWrite'
 * 'Mail.Send'
-* 'Calendars.Read'
+* 'Calendars.ReadWrite'
+* 'User.Read'
 
 ### Se la tua app è in modalità di test
 
@@ -268,6 +272,20 @@ yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
+
+## Connessioni in uscita verso host interni
+
+Per impostazione predefinita, Twenty rifiuta le connessioni in uscita verso indirizzi IP privati/interni (protezione SSRF). Ciò copre le azioni dei flussi di lavoro HTTP, i webhook, i provider di identità SSO e le connessioni IMAP/SMTP/CalDAV. Se il provider di identità, il server di posta o il server di calendario viene eseguito su una rete privata, elencane il nome host o il letterale IP:
+
+```bash
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=keycloak,mail.internal,192.168.1.10
+```
+
+Le voci vengono confrontate solo in base al nome host, senza caratteri jolly: per un emittente OIDC come `http://keycloak:8080/realms/twenty`, elenca `keycloak`. Ogni altro indirizzo privato rimane bloccato e persino un host consentito non può mai raggiungere l'intervallo di indirizzi dei metadati cloud. Imposta la variabile su `*` per disabilitare completamente la protezione, operazione appropriata solo su reti affidabili e isolate.
+
+`OUTBOUND_HTTP_SAFE_MODE_ENABLED` è deprecata. Finché è impostata su `false`, la protezione rimane completamente disattivata e `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` viene ignorata, quindi rimuovila quando esegui la migrazione all'elenco.
+
+Questo elenco non include gli allegati di file IA: immagini e PDF raggiungono il modello come link creati da `SERVER_URL`, recuperati dal provider di IA o dall'AI SDK nel worker, che rifiuta gli indirizzi privati. Affinché gli allegati funzionino, `SERVER_URL` deve essere pubblico; con un `SERVER_URL` localhost o privato, le chat e gli agenti IA funzionano solo con il testo.
 
 ## Configurazione Email
 
@@ -323,9 +341,100 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Per impostazione predefinita, Twenty archivia i file caricati nel file system locale. Per le distribuzioni in produzione, usa S3 o un servizio compatibile con S3 (MinIO, DigitalOcean Spaces, ecc.). per garantire che i file persistano tra i riavvii dei container e per poter scalare su più istanze server.
 </Warning>
 
-Imposta `STORAGE_TYPE=S_3` e configura le variabili `STORAGE_S3_*` tramite il pannello di amministrazione o `.env`. Consulta il [riferimento a config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) per l'elenco completo delle variabili S3.
+Imposta `STORAGE_TYPE=S_3` e configura le variabili `STORAGE_S3_*` tramite il pannello di amministrazione o `.env`.
 
-Quando si usa S3 con funzionalità che dipendono da CORS (ad esempio i download di file nel browser), assicurati che il tuo bucket consenta l'origine del tuo frontend di Twenty nella sua configurazione CORS.
+| Variabile                             | Obbligatorio | Descrizione                                                                                                                                                                                                                    |
+| ------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `STORAGE_S3_REGION`                   | Sì           | Regione del bucket: una regione AWS come `eu-west-3` oppure uno slug specifico del provider come `fr-par` per Scaleway.                                                                                                        |
+| `STORAGE_S3_NAME`                     | Sì           | Nome del bucket.                                                                                                                                                                                                               |
+| `STORAGE_S3_ACCESS_KEY_ID`            | No           | Chiave di accesso di un utente IAM. Lasciare non impostato per utilizzare la catena di credenziali predefinita di AWS (vedere [Credenziali](#credentials)).                                                                    |
+| `STORAGE_S3_SECRET_ACCESS_KEY`        | No           | Segreto per la chiave di accesso sopra indicata. Obbligatorio quando è impostato `STORAGE_S3_ACCESS_KEY_ID`.                                                                                                                   |
+| `STORAGE_S3_ENDPOINT`                 | No           | URL dell'endpoint personalizzato. Solo per servizi compatibili con S3 come `http://minio:9000` o per un endpoint di interfaccia VPC AWS. Lasciare non impostato per S3 AWS nativo, dove l'SDK ricava l'endpoint dalla regione. |
+| `STORAGE_S3_PRESIGNED_URL_ENABLED`    | No           | Quando è `true`, i download vengono reindirizzati a URL prefirmati e i browser caricano direttamente nel bucket anziché passare attraverso il server. Il valore predefinito è `false`.                                         |
+| `STORAGE_S3_PRESIGNED_URL_BASE`       | No           | Endpoint pubblico da usare negli URL prefirmati quando `STORAGE_S3_ENDPOINT` è un indirizzo interno che i browser non possono raggiungere, ad esempio MinIO all'interno di Docker.                                             |
+| `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` | No           | Durata degli URL prefirmati in secondi. Il valore predefinito è `900`.                                                                                                                                                         |
+
+Un file `.env` minimo per AWS S3 con un utente IAM:
+
+```ini
+STORAGE_TYPE=S_3
+STORAGE_S3_REGION=eu-west-3
+STORAGE_S3_NAME=my-twenty-bucket
+STORAGE_S3_ACCESS_KEY_ID=AKIA...
+STORAGE_S3_SECRET_ACCESS_KEY=...
+```
+
+<Note>
+Il file Docker Compose inoltra `STORAGE_TYPE`, `STORAGE_S3_REGION`, `STORAGE_S3_NAME`, `STORAGE_S3_ENDPOINT` e le due variabili delle credenziali da `.env`. Impostare le variabili degli URL prefirmati nel pannello di amministrazione oppure aggiungerle al blocco `environment` dei servizi `server` e `worker`.
+</Note>
+
+### Credenziali
+
+Quando `STORAGE_S3_ACCESS_KEY_ID` non è impostato, il server risolve le credenziali tramite la catena predefinita dell'SDK AWS: le variabili d'ambiente `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`, un file di credenziali condiviso, un ruolo di attività ECS, un ruolo di account di servizio EKS (IRSA) o un profilo di istanza EC2.
+
+<Warning>
+**Profili di istanza EC2 e Docker:** il profilo di istanza viene fornito dal servizio di metadati dell'istanza e un container sulla rete bridge predefinita di Docker si trova a un hop di rete più lontano da esso rispetto all'host. Con il limite di hop IMDSv2 predefinito di 1, il container non riceve mai le credenziali anche se l'AWS CLI funziona sull'host. Aumentare il limite a 2 sull'istanza oppure utilizzare credenziali statiche.
+</Warning>
+
+```bash
+aws ec2 modify-instance-metadata-options --instance-id i-0123456789abcdef0 --http-put-response-hop-limit 2
+```
+
+Quando non è possibile trovare credenziali, il server registra `CredentialsProviderError: Could not load credentials from any providers` al primo caricamento, mentre l'interfaccia utente mostra solo un errore generico.
+
+### Autorizzazioni del bucket
+
+Un caricamento viene prima scritto in un percorso in attesa, convalidato, quindi copiato nel percorso finale e l'oggetto in attesa viene eliminato. La policy necessita quindi di più di `s3:PutObject`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::my-twenty-bucket"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::my-twenty-bucket/*"
+    }
+  ]
+}
+```
+
+`s3:ListBucket` viene usato per eliminare cartelle, ad esempio quando viene eliminato uno spazio di lavoro. Senza di esso, S3 risponde alle richieste di oggetti mancanti con accesso negato anziché oggetto non trovato, quindi il server non può distinguere un file mancante da un problema di autorizzazioni.
+
+### Endpoint e indirizzamento
+
+Twenty utilizza sempre l'indirizzamento in stile percorso, pertanto le richieste vanno a `https://endpoint/bucket/key`. Per S3 AWS nativo, lasciare `STORAGE_S3_ENDPOINT` non impostato: l'SDK costruisce `https://s3.{region}.amazonaws.com` da `STORAGE_S3_REGION`, motivo per cui una regione digitata erroneamente si manifesta come errore DNS anziché come errore S3. Impostare l'endpoint solo per i servizi compatibili con S3 oppure quando il server raggiunge S3 tramite un endpoint di interfaccia VPC.
+
+### CORS
+
+Quando `STORAGE_S3_PRESIGNED_URL_ENABLED` è `true`, i browser comunicano direttamente con il bucket. I download sono richieste `GET` e i caricamenti sono richieste `PUT` che includono un'intestazione `Content-Type`, facendo sì che il browser invii prima una richiesta di preflight. La policy CORS del bucket deve quindi consentire la tua origine Twenty, entrambi i metodi e tale intestazione:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.example.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Senza URL prefirmati, tutto il traffico dei file passa attraverso il server e il bucket non necessita di alcuna configurazione CORS.
+
+### Risoluzione dei problemi
+
+Gli errori di caricamento raggiungono l'interfaccia utente come errore generico. L'errore S3 sottostante si trova nei log del server (`docker compose logs server`) e nella risposta GraphQL visibile nella scheda di rete del browser.
 
 ## Funzioni logiche & interprete del codice
 
@@ -411,3 +520,5 @@ Con multi-workspace abilitato, non elencare ogni sottodominio workspace qui.
 Invece, percorsi percorsi API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
 `/client-config`, `/file`) al back-end su ogni hostname di workspace, quindi ogni workspace
 rimane la stessa origine — così funziona Twenty Cloud.
+
+<PageBanner illustration="dev-self-host" />

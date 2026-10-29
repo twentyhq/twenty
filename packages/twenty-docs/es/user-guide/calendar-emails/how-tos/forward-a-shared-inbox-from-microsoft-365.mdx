@@ -1,0 +1,127 @@
+---
+title: Reenviar una bandeja de entrada compartida desde Microsoft 365
+description: Envía correo desde un buzón compartido de Microsoft 365 a un canal de correo electrónico de Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Un canal de correo electrónico proporciona a tu espacio de trabajo una dirección compartida, como `contact@yourcompany.com`. El correo enviado a esa dirección debe llegar a Twenty de alguna manera. Para ello, reenvía el buzón a la dirección privada que Twenty te proporciona.
+
+La configuración tiene dos partes: crea el canal en Twenty y, después, dirígelo desde Microsoft.
+
+## Parte 1: Crear el canal en Twenty
+
+1. Ve a **Configuración → Comunicación**.
+2. Haz clic en **Agregar canal de correo electrónico**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. En **Dirección de correo electrónico de origen**, escribe la dirección compartida en la que quieres recibir correo, por ejemplo, `contact@yourcompany.com`.
+4. En **Nombre para mostrar**, escribe el nombre que verán los destinatarios, por ejemplo, `Twenty Contact`.
+5. Haz clic en **Guardar**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty muestra ahora una **Dirección de reenvío**. Tiene este aspecto: `ch_2cd282d193b5@inbound.twenty.com`. Haz clic en **Copiar**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Cada canal tiene su propia dirección de reenvío. Nunca dirijas dos buzones a la
+  misma dirección, o su correo llegará al mismo lugar.
+</Note>
+
+## Parte 2: Crear el buzón compartido
+
+Omite esta parte si `contact@yourcompany.com` ya existe en Microsoft 365.
+
+1. Abre el [Centro de administración de Exchange](https://admin.cloud.microsoft/exchange).
+2. Ve a **Destinatarios → Buzones**.
+3. Haz clic en **Agregar un buzón compartido**.
+
+<img src="/images/user-guide/emails/inbound-channels/01-exchange-add-shared-mailbox.png" style={{ width: '100%' }} />
+
+4. Completa el **Nombre para mostrar**.
+5. Completa la **dirección de correo electrónico** y elige tu dominio.
+6. Haz clic en **Crear**. Tardará un minuto en aparecer en la lista.
+
+<img src="/images/user-guide/emails/inbound-channels/02-exchange-shared-mailbox-form.png" style={{ width: '100%' }} />
+
+## Parte 3: Reenviar el buzón a Twenty
+
+1. En **Destinatarios → Buzones**, haz clic en el buzón para abrirlo.
+2. Haz clic en **Reenvío de correo electrónico**.
+
+<img src="/images/user-guide/emails/inbound-channels/06-exchange-email-forwarding-link.png" style={{ width: '100%' }} />
+
+3. Activa **Reenviar todos los correos electrónicos enviados a este buzón**.
+4. Elige **Reenviar a una dirección de correo electrónico externa** y pega la dirección de reenvío que copiaste de Twenty.
+5. Marca **Entregar el mensaje tanto a la dirección de reenvío como al buzón** para que tu equipo conserve una copia en Outlook.
+6. Haz clic en **Guardar**.
+
+<img src="/images/user-guide/emails/inbound-channels/07-exchange-manage-forwarding.png" style={{ width: '100%' }} />
+
+<img src="/images/user-guide/emails/inbound-channels/08-exchange-forwarding-saved.png" style={{ width: '100%' }} />
+
+Microsoft indica que los cambios pueden tardar hasta 5 minutos en aplicarse.
+
+## Parte 4: Permitir el reenvío a direcciones externas
+
+Es fácil pasar por alto este paso. Sin él, ningún correo llega a Twenty.
+
+De forma predeterminada, Microsoft 365 bloquea el reenvío automático a direcciones fuera de tu organización. El correo se rechaza y el remitente original recibe un mensaje de no entrega que dice:
+
+```
+5.7.520 Access denied, Your organization does not allow external forwarding.
+```
+
+Para permitirlo:
+
+1. Abre el [portal de Microsoft Defender](https://security.microsoft.com).
+2. Ve a **Correo electrónico y colaboración → Directivas y reglas → Directivas de amenazas → Anti-spam**.
+3. Abre tu **directiva de salida contra correo no deseado** o crea una nueva que se aplique solo a tus buzones compartidos.
+4. Haz clic en **Editar la configuración de protección**.
+5. Establece **Reglas de reenvío automático** en **Activado: el reenvío está habilitado**.
+6. Guardar.
+
+<Warning>
+  Activar esta opción para todo el inquilino permite que cualquier cuenta comprometida reenvíe
+  correo al exterior. Crea una directiva limitada solo a los buzones compartidos que estás
+  conectando, en lugar de editar la predeterminada.
+</Warning>
+
+## Parte 5: Probarlo
+
+Envía un correo electrónico desde una dirección externa (puede ser un Gmail personal) a `contact@yourcompany.com`. Debería aparecer en Twenty en uno o dos minutos.
+
+## Solución de Problemas
+
+<Accordion title="Los remitentes reciben un mensaje de no entrega 5.7.520">
+  El reenvío externo sigue bloqueado. Repite la parte 4 y confirma que la directiva que
+  editaste se aplica a este buzón.
+</Accordion>
+
+<Accordion title="No llega nada y tampoco hay un mensaje de no entrega">
+  Compara la dirección de reenvío en Exchange carácter por carácter con la
+  de Twenty. Un solo carácter incorrecto significa que el correo no se entrega en ningún lugar
+  útil y se descarta silenciosamente.
+</Accordion>
+
+<Accordion title="El correo ya no aparece en Outlook">
+  **Entregar el mensaje tanto a la dirección de reenvío como al buzón** se dejó sin marcar.
+  Márcala y guarda los cambios.
+</Accordion>
+
+<Accordion title="El canal recibe correo, pero no puede enviar">
+  La recepción y el envío son procesos independientes. El envío requiere que tu dominio esté
+  verificado en la sección **Dominio de envío** del canal, lo que implica añadir
+  los registros de **Autenticación de dominio** que Twenty enumera allí. Consulta Canales de
+  correo electrónico para conocer los
+  registros que necesita cada uso.
+</Accordion>
+
+¿Usas otro proveedor? Consulta [Google Workspace](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace) o [cualquier otro proveedor de correo](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

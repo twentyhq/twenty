@@ -1,0 +1,90 @@
+---
+title: Aviso destacado
+description: Comentarios con contenido de nodo, acciones y descarte controlado por quien realiza la llamada.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+## Resumen
+
+`Callout` combina nodos de título, descripción, icono y acción. Usa `status` para `neutral`, `info`, `success`, `warning` o `error`. El valor predeterminado es `info` y admite la apariencia `soft`. El estado selecciona una paleta gris, azul, verde, naranja o roja; `color` anula esa paleta sin cambiar el significado.
+
+<StoryEmbed storyId="ui-feedback-callout--display" title="Ejemplo de Callout" height={230} />
+
+## "Uso"
+
+```tsx
+import { Callout } from 'twenty-ui/components/feedback';
+
+export const WorkflowNotice = () => (
+  <Callout
+    status="neutral"
+    title="This form will appear in workflow runs."
+    description="Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
+    action={<Callout.Action>Learn more</Callout.Action>}
+  />
+);
+```
+
+## Opciones visuales
+
+Compare los estados semánticos usando el mismo contenido. Elija un estado para el significado del mensaje y anule el color solo cuando el diseño circundante lo requiera.
+
+<StoryEmbed storyId="ui-feedback-callout--catalog" title="Estados de comentarios de Callout" height={1010} />
+
+## Aviso descartable
+
+```tsx
+import { useState } from 'react';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+      {isVisible && (
+        <Callout
+          status="warning"
+          title="Some records need attention"
+          description="Review the missing email addresses before importing."
+          icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+          action={
+            <Callout.Action onClick={onReview}>Review records</Callout.Action>
+          }
+          onDismiss={() => setIsVisible(false)}
+          closeLabel="Dismiss import notice"
+        />
+      )}
+      <Button onClick={() => setIsVisible(true)}>Show notice</Button>
+    </>
+  );
+};
+```
+
+## Descarte y etiquetas
+
+Pasar `onDismiss` expone un botón de cierre accesible. Cada activación con puntero o teclado lo llama una vez. El callout permanece renderizado hasta que quien lo invoca lo oculta. Omite `onDismiss` para un mensaje persistente. `closeLabel` usa `Close` de forma predeterminada.
+
+Tu aplicación es propietaria del contenido, las acciones, los nombres accesibles y las traducciones. Usa `Callout.Action` para un botón fantasma pequeño con un grosor de fuente normal. Acepta las props de Button, incluidos los atributos de enlace, el estado deshabilitado, las refs y el renderizado personalizado; el tamaño y la apariencia son fijos. El espacio para acciones también acepta botones personalizados, enlaces, controles deshabilitados o varios nodos. El icono de ayuda predeterminado es decorativo; pasa `icon={null}` para omitirlo o proporciona un nodo con la semántica accesible adecuada. Twenty no requiere un proveedor de i18n.
+
+## Integración nativa
+
+Los atributos nativos, `className`, `style` y `ref` se aplican al `div` raíz. Usa `render` para componer un elemento raíz diferente o una devolución de llamada que reciba las props raíz y `{ status, variant, color }`. `title` y `description` son espacios de contenido. `fullWidth` elimina el ancho máximo predeterminado de 512px.
+
+El componente no agrega ningún rol de región activa ni anuncios. Proporciona `role`, `aria-live` y otros atributos accesibles nativos cuando el flujo de trabajo circundante los requiera.
+
+## Migración
+
+Reemplaza el `variant` semántico anterior por `status`, y el constructor `Icon` por un nodo `icon`. Reemplaza los objetos de acción `{ label, onClick }` por `Callout.Action` o controles personalizados. Reemplaza `isClosable` y `onClose` por `onDismiss`, y renderiza condicionalmente el callout en quien lo invoca cuando descartarlo deba ocultarlo. El contenido traducido y las etiquetas de acción existentes permanecen en la aplicación.
+
+## "Props"
+
+<CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

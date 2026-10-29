@@ -80,8 +80,8 @@
       ],
       "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
-    "typecheck": {},
-    "test": {},
+    "typecheck": { "dependsOn": ["build"] },
+    "test": { "dependsOn": ["build"] },
     "lint": { "options": {}, "configurations": { "fix": {} } },
     "fmt": { "options": { "files": "src" }, "configurations": { "fix": {} } }
   }

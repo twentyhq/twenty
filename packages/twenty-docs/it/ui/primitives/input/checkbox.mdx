@@ -1,0 +1,163 @@
+---
+title: Checkbox
+description: Seleziona opzioni indipendenti con stati selezionato e indeterminato.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
+
+## Panoramica
+
+Usa `Checkbox` quando ogni opzione può essere selezionata indipendentemente. Per una scelta mutuamente esclusiva, usa [RadioGroup](/it/ui/primitives/input/radio-group).
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--display" title="Esempio di casella di controllo" height={100} />
+
+## Utilizzo
+
+### Stato non controllato
+
+Usa `defaultChecked` per impostare lo stato iniziale della selezione. La casella di controllo gestisce le modifiche successive.
+
+```tsx
+import { useId } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox id={checkboxId} name="updates" value="email" defaultChecked />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+Una casella di controllo selezionata e con nome contribuisce con il proprio valore a un modulo. Imposta `uncheckedValue` se il modulo deve inviare un valore anche quando non è selezionata.
+
+## Aspetto e interazione
+
+Confronta gli stati selezionato, indeterminato e disabilitato, quindi scegli in modo indipendente colore, dimensione, forma e variante. Gli esempi abilitati possono essere attivati o disattivati.
+
+<StoryEmbed storyId="ui-input-checkbox-checkbox--catalog" title="Aspetto e interazione per la casella di controllo" height={400} />
+
+| Proprietà    | Valori                         | Predefinito |
+| ------------ | ------------------------------ | ----------- |
+| `dimensione` | `sm`, `md`                     | `sm`        |
+| `variant`    | `solid`, `outline`, `soft`     | `solid`     |
+| `shape`      | `square`, `round`              | `square`    |
+| `colore`     | `accent`, `success`, `warning` | `accent`    |
+
+Tab porta il focus sulla casella di controllo e Spazio ne cambia lo stato. Facendo clic sulla relativa etichetta ne cambia anch'esso lo stato. Usa `disabled` per impedire l'interazione oppure `readOnly` quando il valore deve rimanere invariato mantenendo il controllo selezionabile tramite focus. Mantieni il significato nell'etichetta anziché comunicarlo solo tramite il colore.
+
+## Stato controllato
+
+Passa `checked` e aggiornalo con `onCheckedChange` per gestire la stessa preferenza nello stato di React. Il callback riceve il valore booleano successivo e i dettagli dell'evento.
+
+```tsx
+import { useId, useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const EmailPreference = () => {
+  const checkboxId = useId();
+  const [checked, setChecked] = useState(true);
+
+  return (
+    <label
+      htmlFor={checkboxId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Checkbox
+        id={checkboxId}
+        name="updates"
+        value="email"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Receive product updates</Text>
+    </label>
+  );
+};
+```
+
+## Stato indeterminato
+
+Una casella di controllo indeterminata rappresenta una selezione parziale. Derivalo dalle opzioni figlie indipendentemente dallo stato selezionato della casella di controllo.
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const ColumnSelection = () => {
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+
+  return (
+    <fieldset>
+      <legend>Visible columns</legend>
+      <label>
+        <Checkbox
+          checked={showEmail && showPhone}
+          indeterminate={showEmail !== showPhone}
+          onCheckedChange={(checked) => {
+            setShowEmail(checked);
+            setShowPhone(checked);
+          }}
+        />
+        All columns
+      </label>
+      <label>
+        <Checkbox checked={showEmail} onCheckedChange={setShowEmail} />
+        Email
+      </label>
+      <label>
+        <Checkbox checked={showPhone} onCheckedChange={setShowPhone} />
+        Phone
+      </label>
+    </fieldset>
+  );
+};
+```
+
+## Parti e contenuti personalizzati
+
+`Checkbox` assembla la radice con stile e le relative icone di selezione e stato indeterminato predefinite. Usa `Checkbox.Root` con `Checkbox.Indicator` per gestire il contenuto dell'indicatore. Root gestisce lo stato e l'aspetto della casella; Indicator esegue il rendering del contenuto fornito.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Checkbox } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Checkbox.Root aria-label="Updates" defaultChecked>
+    <Checkbox.Indicator>
+      <IconCheck aria-hidden />
+    </Checkbox.Indicator>
+  </Checkbox.Root>
+);
+```
+
+`CheckboxRootProps` e `CheckboxIndicatorProps` sono tipi pubblici esportati da `twenty-ui/primitives/input`. Entrambe le parti accettano attributi nativi, gestori, ref, `render` e callback `className` e `style` basate sullo stato. Il `ref` di Root punta al controllo visibile; `inputRef` punta all'input nativo. Il ref della parte punta al relativo elemento renderizzato. Passa `nativeButton` con `render={<button />}` quando sostituisci Root con un pulsante. Le props dell'aspetto appartengono a Root; classi e stili espliciti vengono uniti a quelli predefiniti.
+
+Indicator riceve lo stato selezionato e indeterminato, incluso lo stato di transizione. Imposta `keepMounted` per mantenere nel DOM un indicatore non selezionato; lo stile predefinito lo nasconde tramite opacità. Sovrascrivi il relativo `style` o `className` per transizioni personalizzate.
+
+<StoryEmbed storyId="ui-input-checkbox-parts--composition" title="Composizione delle parti di Checkbox" height={100} />
+
+L'assembly richiamabile e il relativo tipo `CheckboxProps` rimangono supportati. Sostituisci l'assembly con Root e la relativa parte quando fornisci icone personalizzate, anziché aggiungere un'altra parte ai figli dell'assembly.
+
+Per il ripristino di un modulo controllato, gestisci `onReset` del modulo e ripristina `checked` al valore iniziale. Base UI 1.8 non ripristina lo stato dei componenti non controllati al ripristino nativo del modulo. `required`, `form`, `value` e `uncheckedValue` mantengono il comportamento dell'input nativo upstream.
+
+## Props
+
+Il riferimento viene generato dai tipi pubblici del componente. Gli attributi nativi, inclusi i nomi accessibili e i gestori degli eventi, sono accettati anche nelle parti che eseguono il rendering degli elementi.
+
+<CheckboxReference />
+
+<PageBanner illustration="page-cover-checkbox" />

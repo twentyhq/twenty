@@ -42,6 +42,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
   dryRun?: boolean;
+  shouldDeferActions?: boolean;
 };
 
 type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
@@ -49,8 +50,10 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  applicationDefaultRoleUniversalIdentifier?: string;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
+  shouldDeferActions?: boolean;
 };
 
 type ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs =
@@ -65,8 +68,10 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
+  applicationDefaultRoleUniversalIdentifier?: string;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
+  shouldDeferActions?: boolean;
 } & FlatEntityMapsBundle;
 
 @Injectable()
@@ -92,6 +97,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     args: WorkspaceMigrationOrchestratorBuildArgs & {
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
       dryRun?: boolean;
+      shouldDeferActions?: boolean;
     },
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
@@ -99,8 +105,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
-      args;
+    const {
+      idByUniversalIdentifierByMetadataName,
+      dryRun,
+      shouldDeferActions,
+      ...buildArgs
+    } = args;
 
     const buildStart = performance.now();
     const validateAndBuildResult =
@@ -190,6 +200,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
+        shouldDeferActions,
       });
     const runMs = performance.now() - runStart;
 
@@ -216,6 +227,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     dryRun,
+    shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
@@ -231,6 +243,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       isSystemBuild,
       applicationUniversalIdentifier,
       dryRun,
+      shouldDeferActions,
     });
   }
 
@@ -261,6 +274,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     dryRun,
+    shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
@@ -276,6 +290,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       isSystemBuild,
       applicationUniversalIdentifier,
       dryRun,
+      shouldDeferActions,
       skipSideEffectExpandEngine: true,
     });
   }
@@ -285,8 +300,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    applicationDefaultRoleUniversalIdentifier,
     idByUniversalIdentifierByMetadataName,
     dryRun,
+    shouldDeferActions,
     skipSideEffectExpandEngine,
   }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
@@ -337,9 +354,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      applicationDefaultRoleUniversalIdentifier,
       providedIdByUniversalIdentifierByMetadataName:
         idByUniversalIdentifierByMetadataName,
       dryRun,
+      shouldDeferActions,
       flatApplicationMaps,
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
@@ -351,8 +370,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild,
     applicationUniversalIdentifier,
+    applicationDefaultRoleUniversalIdentifier,
     providedIdByUniversalIdentifierByMetadataName,
     dryRun,
+    shouldDeferActions,
     flatApplicationMaps,
     allRelatedFlatEntityMaps,
     allMetadataNameCacheToCompute,
@@ -399,6 +420,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
+        applicationDefaultRoleUniversalIdentifier,
       },
       fromToAllFlatEntityMaps,
       workspaceId,
@@ -407,6 +429,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       idByUniversalIdentifierByMetadataName:
         mergedIdByUniversalIdentifierByMetadataName,
       dryRun,
+      shouldDeferActions,
     });
   }
 }

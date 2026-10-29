@@ -196,6 +196,7 @@ export class BackfillRelationJoinColumnIndexesCommand extends ProvisionedWorkspa
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             index: {

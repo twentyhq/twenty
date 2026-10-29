@@ -154,7 +154,6 @@ Do NOT call \`validate_workflow\` after every change. Call it exactly ONCE at th
 - Ensure workflow logic remains coherent
 
 Prioritize user understanding and workflow effectiveness.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -290,7 +289,6 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
 Every tool round-trip re-sends the ENTIRE conversation (system prompt, loaded skills, and all prior tool inputs/outputs) as new input tokens, so a long thread makes every later step progressively more expensive. When the user finishes an import and moves on to a distinct objective (e.g. field configuration, segmentation, dashboards, or a second unrelated import), suggest starting a NEW thread for it rather than continuing in the same one, which resets the context and keeps cost low. Keep a single import (inspect, confirm, validate, write, report) within one thread.
 
 Prioritize data integrity and provide clear feedback on operations performed.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -418,7 +416,6 @@ Share links to the configured objects and views so the user can open them when r
 
 Loop STEP 6 for all the custom objects
 `,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -582,7 +579,6 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - Start simple, add complexity as needed
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -669,7 +665,6 @@ You help users manage their workspace data model by creating, updating, and orga
 - Provide clear feedback on operations performed
 
 Prioritize data model integrity and user understanding.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -841,7 +836,6 @@ company_ids = twenty.lookup_by('companies', 'name', ['Acme', 'Globex'])
 \`\`\`
 
 For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill for the full recipe.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -985,7 +979,6 @@ If errors found, fix them and recalculate again.
 | Create Excel | openpyxl | \`Workbook()\` |
 | Add formula | openpyxl | \`sheet['B2'] = '=SUM(A1:A10)'\` |
 | Recalculate | script | \`python /home/user/scripts/xlsx/recalc.py file.xlsx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1129,7 +1122,6 @@ writer.write('/home/user/output/page1.pdf')
 | Validate fill | script | \`python create_validation_image.py filled.pdf\` |
 | Create PDF | reportlab | \`canvas.Canvas('out.pdf')\` |
 | Merge PDFs | PyPDF2 | \`PdfMerger()\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1294,7 +1286,6 @@ para.paragraph_format.space_after = Pt(12)
 | Unpack for editing | script | \`python unpack.py doc.docx ./out/\` |
 | Repack | script | \`python pack.py ./out/ doc.docx\` |
 | Validate | script | \`python validate.py doc.docx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1437,7 +1428,6 @@ Some fields carry sub-fields you filter on directly:
 - Suggest the most relevant view type based on the object's fields
 - After creating a view, configure useful view fields and share a clickable view reference
 - Explain what each view type does so users can make informed choices`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1620,7 +1610,6 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
 | Get slide inventory | script | \`python inventory.py pres.pptx\` |
 | Reorder slides | script | \`python rearrange.py pres.pptx '[2,1,3]' out.pptx\` |
 | Find/replace | script | \`python replace.py pres.pptx '{...}' out.pptx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1725,7 +1714,6 @@ When the user names a person, resolve them to a workspace member first and resta
 ## After mutating
 
 Report what changed in plain terms: which role, what it can now do, and who is affected. If you changed overrides, restate the objects that are still overridden so the user can see nothing was dropped.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1779,7 +1767,6 @@ Reference every record you name so the user can click through to it.
 - This skill only reads. Do not create or update anything.
 - If the user has not said who the meeting is with, ask before gathering.
 - Keep it short. A brief nobody finishes is a brief nobody uses.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1831,7 +1818,6 @@ Say which signals you could not evaluate and why. A review that hides its gaps i
 - This skill only reads. Propose the next step and let the user ask you to create the task.
 - Never call a deal at risk without naming the signal that says so.
 - Never guess at an amount or a date that is missing. Report it as missing.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1875,17 +1861,17 @@ Lead with counts, so the user sees the shape of the problem before the detail. T
 
 Always confirm before writing. Show what you will change and wait.
 
-- You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
+- Merge duplicates with merge_many_* (merge_many_companies, merge_many_people, and so on), one call per group. Call it with dryRun: true first and show the user the merged record. When the records disagree, ask which one to keep and pass its position in ids as conflictPriorityIndex. The other records are permanently deleted, so merge only the groups the user approved.
+- If there is no merge_many_* tool for the object, the user's role cannot merge it. Report each group with its records referenced and leave the merge to someone who can.
 - Fill missing fields only from data already in the workspace, never from a guess.
 - Apply approved changes in one call rather than one record at a time. These tools carry the object's plural name: update_many_people, upsert_many_companies, and so on. Use update_many_* when every matched record gets the same value, upsert_many_* when each record needs its own.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
 
-- Never delete a record in this skill, and never fake a merge by copying fields across and deleting the loser.
+- Never delete a record in this skill except through merge_many_*, and never fake a merge by copying fields across and deleting the loser: that loses every record linked to it.
 - Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
 - If there is nothing wrong, say so. A clean workspace is a valid result.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1937,7 +1923,6 @@ Anything you found that has no field to live in belongs in a note on the record,
 - Never invent a value to fill a gap. An empty field beats a wrong one.
 - Confidence matters: if the search returned a different person who shares the name, say so and stop.
 - Do not enrich a large set of records unless the user asked for exactly that, and confirm the scope before you start.`,
-        isCustom: false,
         isSystem: false,
       },
     }),

@@ -1,9 +1,22 @@
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
-import { type GetCoreWorkflowVersionQuery } from '~/generated/graphql';
+import { type CoreWorkflowVersionDto } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildWorkflowVersionFromCore = (
-  version: GetCoreWorkflowVersionQuery['coreWorkflowVersion'],
+  version:
+    | Pick<
+        CoreWorkflowVersionDto,
+        | 'id'
+        | 'coreWorkflowId'
+        | 'label'
+        | 'status'
+        | 'trigger'
+        | 'steps'
+        | 'createdAt'
+        | 'updatedAt'
+      >
+    | null
+    | undefined,
 ): WorkflowVersion | undefined =>
   isDefined(version) && isDefined(version.coreWorkflowId)
     ? {

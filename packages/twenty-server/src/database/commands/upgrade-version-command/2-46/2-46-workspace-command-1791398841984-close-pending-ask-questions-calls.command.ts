@@ -175,6 +175,10 @@ export class ClosePendingAskQuestionsCallsCommand extends ProvisionedWorkspaceCo
       await this.messageQueueService.add<ResumePendingWakeUpJobData>(
         RESUME_PENDING_WAKE_UP_JOB_NAME,
         { workspaceId, wakeUpId: wakeUp.id, answer: { result: {} } },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
 

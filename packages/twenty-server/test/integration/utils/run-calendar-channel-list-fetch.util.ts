@@ -16,9 +16,13 @@ export const runCalendarChannelListFetch = async (
     CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
   );
 
-  await enqueueJobAndDrain(
-    MessageQueue.calendarQueue,
-    CalendarEventListFetchJob.name,
-    { workspaceId, calendarChannelId },
-  );
+  await enqueueJobAndDrain({
+    queue: MessageQueue.calendarQueue,
+    jobName: CalendarEventListFetchJob.name,
+    data: { workspaceId, calendarChannelId },
+    scope: {
+      workspaceId,
+      isWorkspaceJob: true,
+    },
+  });
 };

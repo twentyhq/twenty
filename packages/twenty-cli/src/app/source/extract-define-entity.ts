@@ -17,6 +17,8 @@ export const DEFINE_ENTITY_KEYS = {
   defineAgent: 'agents',
   defineWorkflow: 'workflows',
   defineConnectionProvider: 'connectionProviders',
+  defineMessagingProvider: 'messagingProviders',
+  defineMcpServer: 'mcpServers',
   defineFrontComponent: 'frontComponents',
   defineSettingsFrontComponent: 'frontComponents',
   defineView: 'views',

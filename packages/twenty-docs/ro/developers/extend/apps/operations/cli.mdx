@@ -1,130 +1,174 @@
 ---
 title: CLI
-description: comenzi `yarn twenty` pentru executarea funcțiilor, transmiterea în flux a jurnalelor, gestionarea instalărilor de aplicații și comutarea între remote-uri.
+description: Autentifică-te într-un spațiu de lucru, explorează datele acestuia și creează aplicații din terminal folosind CLI-ul Twenty.
 ---
 
-Interfața CLI `yarn twenty` este punctul tău de acces pentru tot ce ține de aplicație. Lista completă de comenzi:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| Comandă                                         | Ce face                                                                                   | Documentat în                                                                                              |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `dev`                                           | Monitorizează fișierele sursă și sincronizează în timp real modificările                  | [Ghid de pornire rapidă](/ro/developers/extend/apps/getting-started/quick-start)                              |
-| `plan`                                          | Previzualizează modificările metadatelor fără a le aplica                                 | [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
-| `aplică`                                        | Aplică modificările metadatelor după afișarea planului                                    | [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery)                         |
-| `dev:build`                                     | Compilează aplicația și generează clientul API (`--tarball` pentru a împacheta un `.tgz`) | [Publicare](/ro/developers/extend/apps/operations/publishing)                                                 |
-| `dev:typecheck`                                 | Rulează verificarea tipurilor TypeScript                                                  | [Testare](/ro/developers/extend/apps/operations/testing)                                                      |
-| `dev:add`                                       | Creează scheletul unei entități noi                                                       | [Generarea scheletului](/ro/developers/extend/apps/getting-started/scaffolding)                               |
-| `dev:generate-client`                           | Regenerează clientul API tipizat                                                          | această pagină                                                                                             |
-| `dev:function:exec` / `dev:function:logs`       | Execută funcții și transmite în flux jurnalele acestora                                   | această pagină                                                                                             |
-| `dev:translations-extract`                      | Extrage șirurile traducibile în cataloagele din `locales/`                                | [Traduceri](/ro/developers/extend/apps/operations/translations)                                                 |
-| `dev:catalog-sync`                              | Declanșează o sincronizare a catalogului marketplace-ului                                 | [Publicare](/ro/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)                 |
-| `app:publish` / `app:install` / `app:uninstall` | Ciclul de viață al lansărilor                                                             | [Publicare](/ro/developers/extend/apps/operations/publishing) și această pagină                               |
-| `docker:*`                                      | Administrează containerul serverului Twenty local                                         | [Server local](/ro/developers/extend/apps/getting-started/local-server)                                       |
-| `remote:*`                                      | Administrează conexiunile la server                                                       | această pagină                                                                                             |
+## Rularea CLI-ului
 
-Fiecare comandă acceptă `-r, --remote \<name>` pentru a viza un anumit server la distanță în locul celui implicit.
+CLI-ul `twenty` se conectează la spațiile de lucru Twenty din terminalul dvs. Folosiți-l pentru a inspecta metadatele, a citi înregistrări, a trimite solicitări API și a crea, sincroniza și depana aplicații. Necesită **Node.js 24.5+ sau 26.5+**.
 
-## Executarea funcțiilor (`yarn twenty dev:function:exec`)
-
-Rulați manual o funcție logică fără a o declanșa prin HTTP, cron sau eveniment de bază de date:
+Rulați orice comandă prin `npx`, fără a instala nimic:
 
 ```bash filename="Terminal"
-# Execute by function name
-yarn twenty dev:function:exec -n create-new-post-card
-
-# Execute by universalIdentifier
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-
-# Pass a JSON payload
-yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
-
-# Execute the install and uninstall hooks
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
-yarn twenty dev:function:exec --uninstall
+npx twenty@latest --version
 ```
 
-## Vizualizarea jurnalelor funcțiilor (`yarn twenty dev:function:logs`)
-
-Transmiteți în flux jurnalele de execuție pentru funcțiile logice ale aplicației:
+Sau instalați-l o singură dată la nivel global și apelați `twenty` direct:
 
 ```bash filename="Terminal"
-# Stream all function logs
-yarn twenty dev:function:logs
-
-# Filter by function name
-yarn twenty dev:function:logs -n create-new-post-card
-
-# Filter by universalIdentifier
-yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+npm install -g twenty
+twenty --version
 ```
 
-<Note>
-Acest lucru este diferit de `yarn twenty docker:logs`, care afișează jurnalele containerului Docker. `yarn twenty dev:function:logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
-</Note>
+Exemplele de mai jos folosesc `twenty`. Prefixați-le cu `npx twenty@latest` dacă nu l-ați instalat la nivel global. Rulați `twenty commands` pentru lista completă de comenzi și `twenty \<command> --help` pentru opțiunile unei comenzi.
 
-## Generarea clientului tipizat (`yarn twenty dev:generate-client`)
+| Comandă         | Ce face                                                                                |
+| --------------- | -------------------------------------------------------------------------------------- |
+| `autentificare` | Autentificați-vă, verificați și eliminați acreditările                                 |
+| `remote`        | Enumerați, selectați, redenumiți și eliminați conexiunile salvate la spațiile de lucru |
+| `metadate`      | Inspectați obiecte și câmpuri                                                          |
+| `data`          | Enumerați și citiți înregistrări                                                       |
+| `api`           | Trimiteți cereri REST sau GraphQL brute                                                |
+| `open`          | Deschideți spațiul de lucru în browser                                                 |
+| `aplicație`     | Creați, compilați, sincronizați, depanați și dezinstalați aplicații                    |
+| `doctor`        | Diagnosticați CLI-ul, SDK-ul aplicației și conexiunea la spațiul de lucru              |
 
-Regenerați clientul tipizat al API-ului (`twenty-client-sdk`) din schema remote-ului activ, fără a construi sau sincroniza o aplicație. Folosiți-l pentru a obține un client tipizat în orice proiect — cum ar fi un serviciu backend aflat într-un repository separat — care comunică cu instanța dvs. Twenty:
+Fiecare comandă care comunică cu un spațiu de lucru acceptă `--remote \<name>` pentru a viza o conexiune salvată alta decât cea implicită și `--json` pentru ieșire structurată.
+
+## Conectarea la un spațiu de lucru
+
+Autentificați-vă cu browserul. `--use` face din această conexiune conexiunea implicită:
 
 ```bash filename="Terminal"
-# In your project (no Twenty app definition required)
-yarn add twenty-sdk twenty-client-sdk
-
-# Connect to the Twenty instance to generate the client from
-yarn twenty remote:add
-
-# Generate the typed client into node_modules/twenty-client-sdk
-yarn twenty dev:generate-client
+twenty auth login --url https://acme.twenty.com --use
+twenty auth status
 ```
 
-Apoi importați clientul în codul dvs.:
+Utilizați adresa spațiului de lucru sau adresa serverului pentru o configurare locală: `http://localhost:2020` pentru [serverul Docker local](/ro/developers/extend/apps/getting-started/local-server), `http://localhost:3000` pentru o copie locală a sursei. Puteți copia comanda exactă din **Settings > Developers > CLI**. Autentificarea prin browser necesită Twenty 2.42 sau o versiune ulterioară.
 
-```typescript
-import { CoreApiClient } from 'twenty-client-sdk/core';
-```
-
-Rulați din nou comanda ori de câte ori se schimbă modelul de date pentru a reîmprospăta tipurile generate.
-
-<Note>
-Clientul este generat în interiorul `node_modules`, astfel încât nu este inclus în commit împreună cu codul dvs. Rulați `yarn twenty dev:generate-client` după fiecare instalare (de exemplu, într-un script `postinstall` sau în CI).
-</Note>
-
-## Dezinstalarea unei aplicații (`yarn twenty app:uninstall`)
-
-Eliminați aplicația din spațiul de lucru activ:
+Păstrați mai multe conexiuni denumindu-le:
 
 ```bash filename="Terminal"
-yarn twenty app:uninstall
-
-# Skip the confirmation prompt
-yarn twenty app:uninstall --yes
+twenty auth login --url http://localhost:2020 --name local
+twenty remote list
+twenty remote use local
 ```
 
-## Gestionarea remote-urilor
-
-Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, Scaffolderul creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
+În CI sau scripturi, redirecționați o cheie API în loc să vă autentificați cu browserul:
 
 ```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote:add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote:add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote:list
-
-# Set the active remote
-yarn twenty remote:use <name>
-
-# Check that the active remote's authentication is still valid
-yarn twenty remote:status
-
-# Remove a remote
-yarn twenty remote:remove <name>
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name ci
 ```
 
-Acreditările dvs. sunt stocate în `~/.twenty/config.json`.
+De asemenea, puteți seta `TWENTY_API_URL` și `TWENTY_API_KEY` pentru o singură rulare fără a salva nimic. Conexiunile salvate se află în `~/.twenty/config.json`.
+
+## Explorarea datelor
+
+```bash filename="Terminal"
+# Objects and fields
+twenty metadata object list
+twenty metadata field list companies
+
+# Records
+twenty data list companies --limit 5
+twenty data list companies --filter 'employees[gte]:5000' --order-by 'employees[DescNullsLast]'
+twenty data get people <id>
+
+# Raw API requests
+twenty api rest '/rest/companies?limit=5'
+twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
+
+# Open the workspace, or a page inside it
+twenty open
+twenty open settings/developers
+```
+
+Numele obiectelor sunt nume API exacte, la singular sau plural (`company` sau `companies`). Scrierile API brute se execută fără un pas de confirmare, iar permisiunile din spațiul de lucru se aplică în continuare.
+
+## Construirea unei aplicații
+
+```bash filename="Terminal"
+npx twenty@latest app init my-app
+cd my-app
+yarn install
+npx twenty@latest app apply --create
+npx twenty@latest app dev
+```
+
+* `app init` scrie un proiect nou din șablon. Nu instalează dependențe și nu contactează un spațiu de lucru.
+* `app apply --create` compilează aplicația, o înregistrează în spațiul de lucru, o instalează și îi sincronizează metadatele.
+* `app dev` monitorizează sursa și sincronizează fiecare compilare reușită.
+
+Alte comenzi pentru aplicații:
+
+| Comandă                       | Ce face                                                                 |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități |
+| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                      |
+| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare   |
+| `app apply`                   | Compilați, încărcați și sincronizați aplicația                          |
+| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                       |
+| `app pull`                    | Scrieți metadatele aplicației instalate înapoi în sursa locală          |
+| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`              |
+| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty           |
+| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat   |
+| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru          |
+
+Definițiile care lipsesc din sursă sunt șterse implicit din spațiul de lucru. Transmiteți `--no-prune` pentru a le păstra. Aplicația Personalizată pentru spațiul de lucru le păstrează dacă nu transmiteți `--prune`. Ștergerea obiectelor sau a câmpurilor șterge și datele acestora, deci necesită confirmare. Consultați [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery) pentru detalii.
+
+## Executarea funcțiilor
+
+Rulați o funcție logică implementată fără a o declanșa printr-o rută, un cron sau un eveniment de bază de date. Sincronizați mai întâi modificările locale cu `app apply` sau `app dev`.
+
+```bash filename="Terminal"
+twenty app exec --name create-new-post-card
+twenty app exec --name create-new-post-card --payload '{"name": "Hello"}'
+
+# Install and uninstall hooks
+twenty app exec --post-install
+twenty app exec --pre-install
+twenty app exec --uninstall-hook
+```
+
+Executarea funcțiilor necesită autentificare prin browser. Cheile API nu le pot executa.
+
+## Monitorizarea jurnalelor funcțiilor
+
+Transmiteți în flux ieșirea funcțiilor logice ale aplicației pe măsură ce execuțiile se finalizează:
+
+```bash filename="Terminal"
+twenty app logs
+twenty app logs --name create-new-post-card
+```
+
+Afișează doar execuțiile noi, nu și pe cele anterioare.
+
+## Dezinstalarea unei aplicații
+
+```bash filename="Terminal"
+twenty app uninstall
+twenty app uninstall --yes
+```
+
+Aceasta execută cârligul de dezinstalare al aplicației și șterge tot ce îi aparține, inclusiv obiectele, câmpurile și datele lor. Aplicația rămâne înregistrată, astfel încât `twenty app apply` o poate instala din nou.
+
+## Diagnosticarea problemelor
+
+```bash filename="Terminal"
+twenty doctor
+twenty doctor --offline
+```
+
+`doctor` verifică versiunea Node, ce binar `twenty` se află în `PATH`, conexiunile salvate și SDK-ul aplicației, apoi raportează ce trebuie remediat.
+
+## Scripturi și teste
+
+Rezultatul compilării aparține CLI-ului. Nu citiți `.twenty/output/manifest.json` și nu importați cod intern de compilare; citiți `data.manifest` din `twenty app build --json`.
+
+## Referință completă
+
+[Referința comenzilor](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) acoperă fiecare opțiune, permisiune, format de ieșire și cod de ieșire.
+
+<PageBanner illustration="card-page-cli" />

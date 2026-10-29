@@ -1,0 +1,193 @@
+---
+title: Invia la tua prima campagna
+description: Crea il tuo elenco, scrivi l'email, testala, quindi inviala o programmala.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Inizia con un elenco di persone che si aspettano di ricevere tue notizie. Scrivi l'email, inviati un test, quindi inviala subito o programmala per più tardi.
+
+<Tip>
+  L'IA può aiutarti: può creare l'elenco e redigere l'email.
+  Consulta Crea una campagna con
+  l'IA.
+</Tip>
+
+## Prima di iniziare
+
+Prima di iniziare, assicurati di avere:
+
+* **Un dominio di invio verificato.** Consulta [Configura un dominio di invio](/it/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+* L'autorizzazione **Workspace settings** per testare, programmare e inviare campagne.
+* **Crediti email** se usi Twenty Cloud. Ogni email inviata utilizza crediti. Consulta [Crediti](/it/user-guide/billing/capabilities/credits).
+
+## Parte 1: Crea un elenco
+
+Crea un elenco delle persone che devono ricevere questa email.
+
+1. Premi `Cmd+K` (`Ctrl+K` su Windows) e cerca **Go to Lists**.
+2. Fai clic su **New List** e assegna un nome all'elenco, ad esempio `Newsletter subscribers`.
+3. Apri l'elenco e usa il campo **Members** per aggiungere persone.
+
+<img src="/images/user-guide/email-campaigns/list-members.png" style={{ width: '100%' }} />
+
+Puoi anche aggiungere una persona dal suo record usando il campo **Lists**.
+
+<Note>
+  Twenty invia all'indirizzo email principale di ogni persona. Ignora le persone senza
+  un indirizzo e quelle che hanno annullato l'iscrizione, per cui si è verificato un bounce o che hanno segnalato spam.
+</Note>
+
+## Parte 2: Crea la campagna
+
+1. Premi `Cmd+K` e scegli **Compose Campaign**, oppure apri **Campaigns** e fai clic su **New Campaign**.
+2. Assegna un nome alla campagna. Solo il tuo team può vedere questo nome.
+3. Apri la scheda **Email** e compila la busta:
+   * **Da**: l'indirizzo che le persone vedono come mittente. Elenca i tuoi canali email.
+   * **A**: l'elenco della Parte 1. Puoi anche creare un nuovo elenco qui.
+   * **Argomento di disiscrizione**: facoltativo. Scegli un argomento affinché le persone possano annullare l'iscrizione a questo tipo di email senza uscire da ogni elenco. Questo campo viene visualizzato dopo aver creato un argomento. Consulta [Gestisci disiscrizioni e argomenti](/it/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+   * **Oggetto**: l'oggetto che le persone vedono nella loro casella di posta.
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+## Parte 3: Scrivi l'email
+
+Scrivi la tua email nell'editor sotto l'oggetto. Twenty salva la bozza mentre procedi.
+
+* Digita `/` per visualizzare i comandi oppure usa la barra laterale sinistra per aggiungere **Text**, **Image**, **Blocks** e **Variables**.
+* I **Blocks** includono **Section**, **2 Columns**, **3 Columns**, **Button**, **Divider**, **Image** e **HTML**, per incollare il tuo HTML.
+
+### Personalizza con le variabili
+
+Le variabili vengono sostituite con i dettagli di ogni persona al momento dell'invio della campagna. Inseriscine una da **Variables**, oppure digitala tra doppie parentesi graffe:
+
+| Variabile            | Sostituito con   |
+| -------------------- | ---------------- |
+| `{{name.firstName}}` | Nome             |
+| `{{name.lastName}}`  | Cognome          |
+| `{{fullName}}`       | Nome completo    |
+| `{{jobTitle}}`       | Titolo di lavoro |
+
+Puoi anche utilizzare campi di testo, numeri, date e selezione da Persone, inclusi i campi personalizzati. Le variabili funzionano nell'oggetto, nel corpo e negli indirizzi dei link.
+
+Ad esempio, `Hi {{name.firstName}},` diventa `Hi Ana,` per Ana.
+
+<img src="/images/user-guide/email-campaigns/campaign-variables.png" style={{ width: '100%' }} />
+
+<Warning>
+  Se una persona non ha un valore per una variabile, Twenty lo lascia vuoto.
+  `Hi {{name.firstName}},` diventa `Hi ,` quando una persona non ha un nome.
+  Controlla l'elenco o scrivi un saluto che funzioni comunque.
+</Warning>
+
+Twenty non aggiunge l'indirizzo postale della tua azienda. Aggiungilo in fondo all'email; la legge statunitense lo richiede nelle email di marketing.
+
+## Parte 4: Invia un test
+
+1. Fai clic su **Test** nella parte superiore della campagna oppure premi `Cmd+K` e scegli **Send Test Email**.
+2. In **Recipient**, inserisci il tuo indirizzo.
+3. Fai clic su **Invia email di prova**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-test.png" style={{ width: '100%' }} />
+
+Controlla il layout, i link e il mittente nella tua posta in arrivo, sul desktop e sul telefono.
+
+<Note>
+  Le variabili sono vuote nelle email di prova perché un test non viene inviato a una persona
+  specifica. Il tuo spazio di lavoro può inviare tre email di prova al giorno.
+</Note>
+
+## Parte 5: Invia o programma
+
+1. Fai clic su **Send** nella parte superiore della campagna oppure premi `Cmd+K` e scegli **Send Campaign**.
+2. Controlla il riepilogo. **Recipients** mostra quante persone riceveranno l'email e perché altre vengono saltate, ad esempio perché non hanno un indirizzo email o hanno annullato l'iscrizione.
+3. In **Delivery**, scegli:
+   * **Send now**: inizia subito e non può essere annullato.
+   * **Send later**: scegli una data e un'ora in **Send at**.
+4. Fai clic su **Send campaign** o **Schedule campaign**.
+
+<img src="/images/user-guide/email-campaigns/campaign-send-panel.png" style={{ width: '50%' }} />
+
+Per riprogrammare una campagna, fai di nuovo clic su **Send**, scegli un nuovo orario in **Send at** e fai clic su **Reschedule campaign**. Twenty conta nuovamente i destinatari al momento dell'invio, quindi il numero può cambiare.
+
+<img src="/images/user-guide/email-campaigns/campaign-schedule-panel.png" style={{ width: '50%' }} />
+
+Il tuo spazio di lavoro può inviare fino a 1.000 email di campagne al giorno. Hai bisogno di altro? Contattaci tramite chat per richiedere un limite più alto.
+
+<Note>
+  Twenty controlla nuovamente una campagna programmata quando è il momento di inviarla. Se nessuno
+  può riceverla o il dominio di invio non è più verificato, torna a
+  **Bozza** invece di essere inviata.
+</Note>
+
+## Dopo l'invio
+
+Lo **Stato** della campagna indica a che punto è:
+
+<img src="/images/user-guide/email-campaigns/campaigns-list.png" style={{ width: '100%' }} />
+
+| Stato                  | Significato                                                                                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Bozza**              | Non ancora inviata. Puoi modificarla.                                                                    |
+| **Programmato**        | In attesa dell'orario di invio.                                                                          |
+| **Invio in corso**     | Le email sono in fase di invio.                                                                          |
+| **Inviati**            | Tutte le email sono state inviate al provider di consegna.                                               |
+| **Inviata con errori** | Non è stato possibile inviare alcune email, ad esempio perché lo spazio di lavoro ha esaurito i crediti. |
+| **Annullato**          | Interrotta prima del completamento.                                                                      |
+
+La scheda **Home** mostra i conteggi di email inviate, consegnate, respinte, contrassegnate come spam, non riuscite e saltate. L'elenco **Recipients** mostra a chi è stata inviata la campagna.
+
+<img src="/images/user-guide/email-campaigns/campaign-sent-results.png" style={{ width: '100%' }} />
+
+Per inviare una campagna simile in seguito, fai clic su **Duplicate**. Twenty copia l'email, l'elenco e le impostazioni in una nuova bozza.
+
+### Annullare una campagna
+
+Fai clic su **Cancel** nella parte superiore della campagna oppure premi `Cmd+K` e scegli **Cancel Campaign**:
+
+* **Programmato**: non è stato ancora inviato nulla. Conferma con **Unschedule Campaign**. La campagna torna alle bozze e puoi modificarla o programmarla di nuovo.
+* **Invio in corso**: le email ancora in attesa vengono interrotte. Non puoi richiamare le email già inviate.
+
+## Risoluzione dei problemi
+
+<Accordion title="Il campo Da non contiene indirizzi">
+  **From** elenca i tuoi canali email. Crea prima un canale email, quindi verifica
+  il suo dominio. Vedi Configurare un dominio
+  di invio.
+</Accordion>
+
+<Accordion title="L'invio non riesce con Nessun dominio di invio verificato corrisponde a questo indirizzo mittente">
+  L'indirizzo **From** appartiene a un dominio che non è ancora verificato. Completa i passaggi
+  in Configurare un dominio
+  di invio, oppure
+  scegli un altro indirizzo.
+</Accordion>
+
+<Accordion title="Send campaign è disattivato">
+  La campagna richiede un indirizzo **From**, un elenco, un oggetto e un corpo e
+  almeno una persona che possa riceverla. Controlla il riepilogo **Recipients** per individuare
+  le persone che vengono saltate. Con **Send later**, anche l'orario di invio deve essere nel
+  futuro.
+</Accordion>
+
+<Accordion title="L'invio non riesce con Questa campagna non può essere inviata">
+  Controlla che la campagna abbia un indirizzo **From**, un elenco e un oggetto. Quindi
+  controlla le variabili: una variabile che non corrisponde a un campo in Persone blocca
+  l'invio. Inserisci le variabili da **Variables** invece di digitarle e usa
+  `{{name.firstName}}`, non `{{firstName}}`.
+</Accordion>
+
+<Accordion title="Una campagna programmata è tornata in Bozza">
+  Quando era il momento dell'invio, non è stato possibile inviare la campagna, ad esempio perché
+  nessuno nell'elenco poteva riceverla o il dominio non era più verificato. Correggi
+  la causa, quindi programmala di nuovo.
+</Accordion>
+
+<Accordion title="Non riesco a trovare Campagne">
+  Le campagne email potrebbero non essere ancora abilitate per il tuo spazio di lavoro. Contattaci tramite
+  chat per abilitarle.
+</Accordion>
+
+<PageBanner illustration="card-page-first-campaign" />

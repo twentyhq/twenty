@@ -4,8 +4,9 @@ import { type MetadataEntityOverridablePropertyName } from 'src/engine/metadata-
 import { type OverrideAuthorReadContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 
+// Repository rows carry no applicationUniversalIdentifier; without it the owner entry is not ordered last
 export type OverridableFlatEntity = {
-  applicationUniversalIdentifier: string;
+  applicationUniversalIdentifier?: string;
   overrides?: unknown;
 };
 

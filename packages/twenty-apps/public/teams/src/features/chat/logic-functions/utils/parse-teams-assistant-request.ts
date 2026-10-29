@@ -1,13 +1,12 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
+import { TEAMS_PERSONAL_CONVERSATION_TYPE } from 'src/features/chat/logic-functions/constants/teams-personal-conversation-type';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
 import { collectTeamsBotMentionTexts } from 'src/features/chat/logic-functions/utils/collect-teams-bot-mention-texts';
 import { normalizeTeamsRequestText } from 'src/features/chat/logic-functions/utils/normalize-teams-request-text';
 
 const BOT_ACCOUNT_ID_PREFIX = '28:';
-
-const PERSONAL_CONVERSATION_TYPE = 'personal';
 
 type ParsedTeamsAssistantRequest =
   | { request: TeamsAssistantRequestDraft }
@@ -45,10 +44,10 @@ export const parseTeamsAssistantRequest = ({
   }
 
   const conversationType =
-    activity.conversation?.conversationType ?? PERSONAL_CONVERSATION_TYPE;
+    activity.conversation?.conversationType ?? TEAMS_PERSONAL_CONVERSATION_TYPE;
 
   if (
-    conversationType !== PERSONAL_CONVERSATION_TYPE &&
+    conversationType !== TEAMS_PERSONAL_CONVERSATION_TYPE &&
     !isNonEmptyArray(collectTeamsBotMentionTexts(activity))
   ) {
     return { request: null, skipReason: 'Bot is not mentioned' };

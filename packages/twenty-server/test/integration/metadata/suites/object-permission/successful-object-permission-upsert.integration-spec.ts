@@ -6,7 +6,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 describe('Object permission upsert should succeed', () => {
   let createdRoleId: string;
@@ -58,6 +58,7 @@ describe('Object permission upsert should succeed', () => {
               node {
                 id
                 isSystem
+                disabledObjectPermissionActions
               }
             }
           }
@@ -66,8 +67,15 @@ describe('Object permission upsert should succeed', () => {
     });
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
     const systemObjectNode = edges.find(
-      (edge: { node: { isSystem: boolean | string } }) =>
-        edge.node.isSystem === true || String(edge.node.isSystem) === 'true',
+      (edge: {
+        node: {
+          isSystem: boolean | string;
+          disabledObjectPermissionActions: string[] | null;
+        };
+      }) =>
+        (edge.node.isSystem === true ||
+          String(edge.node.isSystem) === 'true') &&
+        !isNonEmptyArray(edge.node.disabledObjectPermissionActions),
     )?.node;
 
     jestExpectToBeDefined(systemObjectNode);

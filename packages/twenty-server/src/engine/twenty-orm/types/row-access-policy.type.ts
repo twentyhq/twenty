@@ -11,7 +11,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { type WorkspaceRelationShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
@@ -33,12 +32,7 @@ export type RowAccessExpression =
       // Compiled as a grant list read once, so it can be ORed with an indexed filter
       isUncorrelated?: boolean;
     } & RecordShareExpressionTarget)
-  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
-  | ({
-      kind: 'inheritedReadability';
-      parents: InheritedReadabilityParentExpression[];
-      isOpenWhenDetached: boolean;
-    } & RecordShareExpressionTarget);
+  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget);
 
 export type RecordShareExpressionTarget = {
   tableAlias: string;
@@ -46,22 +40,6 @@ export type RecordShareExpressionTarget = {
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
 };
-
-export type InheritedReadabilityParentExpression =
-  | {
-      kind: 'column';
-      joinColumnName: string;
-      parentTableAlias: string;
-      parentFlatObjectMetadata: FlatObjectMetadata;
-      policy: RowAccessPolicy;
-    }
-  | {
-      kind: 'children';
-      childTableAlias: string;
-      childJoinColumnName: string;
-      childFlatObjectMetadata: FlatObjectMetadata;
-      policy: RowAccessPolicy;
-    };
 
 export type RowAccessPolicy =
   | { kind: 'open' }
@@ -92,7 +70,6 @@ export type RowAccessPolicyEnvironment = {
 
 export type RowAccessCompilationEnvironment = {
   recordShareTableExpression: string;
-  resolveTableExpression: (objectMetadataId: string) => string;
 };
 
 export type RowAccessPolicyContext = {
@@ -104,6 +81,4 @@ export type RowAccessPolicyTarget = {
   tableAlias: string;
   flatObjectMetadata: FlatObjectMetadata;
   operationType: OperationType;
-  depth: number;
-  joinParentRelationShape?: WorkspaceRelationShape;
 };

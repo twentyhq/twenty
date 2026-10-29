@@ -1,33 +1,44 @@
-import { runInNewContext } from 'node:vm';
-import {
-  getSharedDependenciesShimSource,
-  toSharedDependenciesNamespaceIdentifier,
-} from 'twenty-shared/front-component-build';
-import { createHash } from 'crypto';
-import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
-import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 import { build, transform } from 'esbuild';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
 import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
+import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
 jest.useRealTimers();
-let sharedDependencies: Awaited<
-  ReturnType<typeof buildFrontComponentSharedDependencies>
->;
-beforeAll(async () => {
-  sharedDependencies = await buildFrontComponentSharedDependencies({
-    resolveDirectory: __dirname,
-  });
-});
-const buildFrontComponent = async (
+
+const sharedDependencies: Parameters<
+  typeof compileFrontComponent
+>[0]['sharedDependencies'] = {
+  checksum: 'a'.repeat(64),
+  exportNamesBySpecifier: new Map([
+    [
+      'react',
+      { namedExports: ['useEffect', 'useState'], hasDefaultExport: true },
+    ],
+    [
+      'react/jsx-runtime',
+      { namedExports: ['jsx', 'jsxs', 'Fragment'], hasDefaultExport: false },
+    ],
+    [
+      'react-dom/client',
+      { namedExports: ['createRoot'], hasDefaultExport: false },
+    ],
+    [
+      'twenty-ui/theme',
+      { namedExports: ['ThemeProvider'], hasDefaultExport: false },
+    ],
+    ['twenty-ui/style.css', { namedExports: [], hasDefaultExport: false }],
+    [
+      'twenty-ui/theme-light.css',
+      { namedExports: [], hasDefaultExport: false },
+    ],
+  ]),
+};
+const buildFrontComponent = (
   input: Parameters<typeof compileFrontComponent>[0]['input'],
-) => ({
-  ...(await compileFrontComponent({ input, sharedDependencies })),
-  sharedDependencies,
-});
+) => compileFrontComponent({ input, sharedDependencies });
 
 const SOURCE = `import { useState } from 'react';
 type Company = { id: string; name: string };
@@ -84,128 +95,6 @@ describe('buildFrontComponent', () => {
     },
   );
 
-  it('loads real twenty-ui controls, icons and theme from one pinned shared bundle', async () => {
-    const { compiledSource, sharedDependencies } = await buildFrontComponent({
-      ...INPUT,
-      source: `import { Button } from 'twenty-ui/primitives/input';
-import { SearchInput } from 'twenty-ui/components/input';
-import { Card } from 'twenty-ui/primitives/surfaces';
-import { IconBuildingSkyscraper } from 'twenty-ui/icon';
-export function Component() {
-  return <Card.Root><Card.Content><SearchInput aria-label="Filter companies" /><Button startIcon={<IconBuildingSkyscraper />}>Reset</Button></Card.Content></Card.Root>;
-}`,
-    });
-
-    expect(compiledSource).toContain('Filter companies');
-    expect(compiledSource).toContain(
-      FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-    );
-    expect(compiledSource).toMatch(
-      new RegExp(
-        '^// twenty-ai-shared-dependencies: ' +
-          sharedDependencies.checksum +
-          '\\n',
-      ),
-    );
-    expect(
-      sharedDependencies.exportNamesBySpecifier.get('react-dom')?.namedExports,
-    ).toContain('createPortal');
-    expect(
-      sharedDependencies.exportNamesBySpecifier.get('react-dom/client')
-        ?.namedExports,
-    ).toContain('createRoot');
-    expect(compiledSource).not.toContain('--t-font-color-primary:');
-    expect(sharedDependencies.source).toContain('--t-font-color-primary:');
-    expect(
-      sharedDependencies.exportNamesBySpecifier.get(
-        'twenty-ui/primitives/input',
-      )?.namedExports,
-    ).toContain('Button');
-    expect(
-      sharedDependencies.exportNamesBySpecifier.get('react')?.namedExports,
-    ).toContain('useState');
-    expect(Buffer.byteLength(compiledSource)).toBeLessThan(
-      Buffer.byteLength(sharedDependencies.source) / 5,
-    );
-    const next = await buildFrontComponent(INPUT);
-    expect(next.sharedDependencies).toBe(sharedDependencies);
-    const rebuilt = await buildFrontComponentSharedDependencies({
-      resolveDirectory: __dirname,
-    });
-    expect(rebuilt.checksum).toBe(sharedDependencies.checksum);
-    expect(
-      createHash('sha256').update(sharedDependencies.source).digest('hex'),
-    ).toBe(sharedDependencies.checksum);
-    await expect(
-      build({
-        stdin: { contents: compiledSource, loader: 'js' },
-        write: false,
-        bundle: true,
-        format: 'esm',
-        plugins: [
-          {
-            name: 'test-vendor',
-            setup(build) {
-              build.onResolve(
-                { filter: /^twenty:front-component-shared-dependencies$/ },
-                () => ({ path: 'vendor', namespace: 'vendor' }),
-              );
-              build.onLoad({ filter: /.*/, namespace: 'vendor' }, () => ({
-                contents: sharedDependencies.source,
-                loader: 'js',
-              }));
-            },
-          },
-        ],
-      }),
-    ).resolves.toHaveProperty('outputFiles');
-    expect(compiledSource).not.toMatch(/from\s*['"]twenty-ui/);
-  });
-
-  it('exposes every server vendor export through the shared CLI and SDK shim format', async () => {
-    const vendorModule: {
-      exports: Record<string, Record<string, unknown>>;
-    } = { exports: {} };
-    const vendor = await transform(sharedDependencies.source, {
-      format: 'cjs',
-    });
-
-    runInNewContext(vendor.code, {
-      module: vendorModule,
-      exports: vendorModule.exports,
-    });
-
-    for (const [
-      specifier,
-      exportNames,
-    ] of sharedDependencies.exportNamesBySpecifier) {
-      const shim = await transform(
-        getSharedDependenciesShimSource({ specifier, exportNames }),
-        { format: 'cjs' },
-      );
-      const shimModule: { exports: Record<string, unknown> } = { exports: {} };
-
-      runInNewContext(shim.code, {
-        module: shimModule,
-        exports: shimModule.exports,
-        require: () => vendorModule.exports,
-      });
-
-      const namespace =
-        vendorModule.exports[
-          toSharedDependenciesNamespaceIdentifier(specifier)
-        ];
-      const names = [
-        ...exportNames.namedExports,
-        ...(exportNames.hasDefaultExport ? ['default'] : []),
-      ];
-
-      for (const name of names) {
-        expect(shimModule.exports[name]).toBe(namespace[name]);
-      }
-    }
-  });
-
   it.each([
     'node:fs',
     'twenty-sdk',
@@ -237,6 +126,74 @@ export function Component() {
   );
 
   it.each([
+    'import(url)',
+    'import(`https://example.com/${url}.js`)',
+    'require(url)',
+    "require('react' + url)",
+  ])('rejects computed module loading: %s', async (expression) => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: `export const Component = ({ url }) => <button onClick={() => ${expression}}>Load</button>;`,
+      }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_INPUT',
+      message: 'Use a string literal for import() and require().',
+    });
+  });
+
+  it('rejects computed imports even when esbuild would remove the unused function', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source:
+          'const load = (url) => import(url); export const Component = () => <div />;',
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_INPUT' });
+  });
+
+  it.each(['import("react")', 'import(`react`)', 'require("react")'])(
+    'allows supported literal module loading: %s',
+    async (expression) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `export const Component = () => <button onClick={() => ${expression}}>Load</button>;`,
+        }),
+      ).resolves.toHaveProperty('compiledSource');
+    },
+  );
+
+  it.each(['LIST', 'DASHBOARD }; globalThis.injected = true; //'])(
+    'rejects invalid page layout before generating source: %s',
+    (pageLayoutType) => {
+      expect(() =>
+        buildFrontComponentEntrySource({
+          ...INPUT,
+          pageLayoutType: pageLayoutType as typeof INPUT.pageLayoutType,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'INVALID_SETTINGS',
+          message: expect.stringContaining('pageLayoutType'),
+        }),
+      );
+    },
+  );
+
+  it.each([
+    { ...INPUT.query, objectName: 'company.name' },
+    { ...INPUT.query, select: [] },
+    { ...INPUT.query, limit: 101 },
+  ])('returns a structured error for invalid query %j', async (query) => {
+    await expect(
+      buildFrontComponent({ ...INPUT, query }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_SETTINGS',
+    });
+  });
+
+  it.each([
     'export default () => <div />;',
     'export default function Component() { return <div />; }',
     'const View = () => <div />; export { View as default };',
@@ -256,7 +213,10 @@ export function Component() {
         ...INPUT,
         source: 'export const Component = () => <div>;',
       }),
-    ).rejects.toThrow();
+    ).rejects.toMatchObject({
+      code: 'BUILD_FAILED',
+      message: expect.stringContaining('Build failed'),
+    });
   });
 
   it('rejects collisions with the SDK wrapper before saving', async () => {

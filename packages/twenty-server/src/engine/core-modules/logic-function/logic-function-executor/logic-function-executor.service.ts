@@ -9,6 +9,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
+  DEFAULT_SERVER_ROUTES_URL_NAME,
 } from 'twenty-shared/application-runtime';
 import {
   type LogicFunctionExecutionContext,
@@ -43,6 +44,7 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
+import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ThrottlerException,
@@ -123,6 +125,31 @@ export class LogicFunctionExecutorService {
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
 
+  async executeOrThrow({
+    toException,
+    ...executeArgs
+  }: Parameters<LogicFunctionExecutorService['execute']>[0] & {
+    toException: (reason: string) => CustomException;
+  }): Promise<LogicFunctionExecuteResult['data']> {
+    const executionResult = await this.execute(executeArgs).catch(
+      (error: unknown) => {
+        if (error instanceof CustomException) {
+          throw error;
+        }
+
+        throw toException(
+          `could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
+    );
+
+    if (isDefined(executionResult.error)) {
+      throw toException(`failed: ${executionResult.error.errorMessage}`);
+    }
+
+    return executionResult.data;
+  }
+
   async execute({
     logicFunctionId,
     workspaceId,
@@ -199,7 +226,6 @@ export class LogicFunctionExecutorService {
       resultLogicFunction = await driver.execute({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         payload,
         context,
         env: envVariables,
@@ -464,6 +490,11 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
+      [DEFAULT_SERVER_ROUTES_URL_NAME]: isDefined(
+        flatApplication.applicationRegistrationId,
+      )
+        ? `${baseUrl ?? ''}/${SERVER_ROUTE_PATH}/${flatApplication.applicationRegistrationId}`
+        : '',
       APPLICATION_ID: flatApplication.id,
     };
   }

@@ -1,8 +1,11 @@
 ---
 title: Configurare
+description: Configurați douăzeci din panoul de administrare sau cu variabilele de mediu.
 ---
 
-# Gestionarea configurației
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
 
 <Warning>
 **Prima instalare?** Urmați [ghidul de instalare Docker Compose](/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
@@ -196,7 +199,7 @@ Va trebui să creați un proiect în [Microsoft Azure](https://portal.azure.com/
 
 * Graph Microsoft: Mail.ReadWrite
 * Graph Microsoft: Mail.Send
-* Graph Microsoft: Calendars.Read
+* Graph Microsoft: Calendars.ReadWrite
 * Graph Microsoft: User.Read
 * Graph Microsoft: openid
 * Graph Microsoft: email
@@ -204,16 +207,16 @@ Va trebui să creați un proiect în [Microsoft Azure](https://portal.azure.com/
 * Graph Microsoft: offline_access
 
 <Note>
-"Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să trimiteți e-mailuri utilizând acțiunile noastre de flux de lucru. Puteți utiliza "Mail.Read" dacă doriți doar să primiți e-mailuri.
+Toate aceste permisiuni sunt necesare, chiar dacă doriți doar să sincronizați e-mailuri și evenimente din calendar. Twenty solicită întotdeauna "Mail.ReadWrite", "Mail.Send" și "Calendars.ReadWrite" atunci când un utilizator își conectează contul, astfel încât permisiunile doar de citire, precum "Mail.Read" sau "Calendars.Read", nu sunt suficiente.
 </Note>
 
 <Note>
-"Calendars.ReadWrite" este obligatoriu dacă doriți să creați evenimente de calendar utilizând acțiunile noastre de flux de lucru. Dacă doriți doar să sincronizați evenimente de calendar, utilizați "Calendars.Read".
+Dacă entitatea dvs. găzduită nu le permite utilizatorilor obișnuiți să consimtă la aceste permisiuni, aceștia vor vedea eroarea AADSTS90094 atunci când își conectează contul. Un administrator poate remedia acest lucru făcând clic pe "Grant admin consent for {your-tenant}" în pagina "API permissions" a înregistrării aplicației.
 </Note>
 
 ### URIs de redirecționare autorizate
 
-Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs.:
+Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs:
 
 * `https://{your-domain}/auth/microsoft/redirect` dacă doriți să utilizați SSO Microsoft
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
@@ -237,7 +240,7 @@ Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs
 
 ### Configurați scopurile
 
-[Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+[Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L11)
 
 * 'openid'
 * 'email'
@@ -245,7 +248,8 @@ Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs
 * 'offline_access'
 * 'Mail.ReadWrite'
 * 'Mail.Send'
-* 'Calendars.Read'
+* 'Calendars.ReadWrite'
+* 'User.Read'
 
 ### Dacă aplicația dvs. este în modul de test
 
@@ -269,6 +273,20 @@ yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
+
+## Conexiuni de ieșire către gazde interne
+
+În mod implicit, Twenty refuză conexiunile de ieșire către adrese IP private/interne (protecție SSRF). Aceasta acoperă acțiunile fluxurilor de lucru HTTP, webhookurile, furnizorii de identitate SSO și conexiunile IMAP/SMTP/CalDAV. Dacă furnizorul de identitate, serverul de e-mail sau serverul de calendar rulează într-o rețea privată, enumerați numele de gazdă sau literalul IP al acestuia:
+
+```bash
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=keycloak,mail.internal,192.168.1.10
+```
+
+Intrările sunt potrivite numai pe baza numelui de gazdă, fără metacaractere: pentru un emitent OIDC precum `http://keycloak:8080/realms/twenty`, enumerați `keycloak`. Orice altă adresă privată rămâne blocată și chiar și o gazdă permisă nu poate accesa niciodată intervalul de adrese pentru metadatele cloud. Setați variabila la `*` pentru a dezactiva complet protecția, lucru adecvat doar în rețele izolate, de încredere.
+
+`OUTBOUND_HTTP_SAFE_MODE_ENABLED` este depreciată. Cât timp este setată la `false`, protecția rămâne complet dezactivată, iar `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` este ignorată, așa că eliminați-o când migrați la listă.
+
+Această listă nu acoperă atașamentele de fișiere AI: imaginile și PDF-urile ajung la model ca linkuri create din `SERVER_URL`, preluate fie de furnizorul AI, fie de AI SDK în worker, care refuză adresele private. Pentru ca atașamentele să funcționeze, `SERVER_URL` trebuie să fie public; cu un `SERVER_URL` localhost sau privat, conversațiile și agenții AI funcționează doar cu text.
 
 ## Configurare Email
 
@@ -324,9 +342,100 @@ yarn command:prod cron:workflow:automated-cron-trigger
 În mod implicit, Twenty stochează fișierele încărcate în sistemul de fișiere local. Pentru implementări în producție, utilizați S3 sau un serviciu compatibil cu S3 (MinIO, DigitalOcean Spaces etc.). pentru a vă asigura că fișierele persistă între repornirile containerelor și se scalează pe mai multe instanțe de server.
 </Warning>
 
-Setați `STORAGE_TYPE=S_3` și configurați variabilele `STORAGE_S3_*` prin panoul de administrare sau `.env`. Consultați [referința config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pentru lista completă a variabilelor S3.
+Setați `STORAGE_TYPE=S_3` și configurați variabilele `STORAGE_S3_*` prin panoul de administrare sau `.env`.
 
-Când utilizați S3 cu funcționalități dependente de CORS (de ex., descărcări de fișiere în browser), asigurați-vă că bucketul permite originea frontend-ului Twenty în configurația sa CORS.
+| Variabilă                             | Obligatoriu | Descriere                                                                                                                                                                                                                   |
+| ------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `STORAGE_S3_REGION`                   | Da          | Regiunea bucketului: o regiune AWS precum `eu-west-3` sau un slug specific furnizorului, precum `fr-par` pentru Scaleway.                                                                                                   |
+| `STORAGE_S3_NAME`                     | Da          | Numele bucketului.                                                                                                                                                                                                          |
+| `STORAGE_S3_ACCESS_KEY_ID`            | Nu          | Cheia de acces a unui utilizator IAM. Lăsați nesetat pentru a utiliza lanțul de acreditări implicit AWS (consultați [Acreditări](#credentials)).                                                                            |
+| `STORAGE_S3_SECRET_ACCESS_KEY`        | Nu          | Secretul pentru cheia de acces de mai sus. Obligatoriu când `STORAGE_S3_ACCESS_KEY_ID` este setat.                                                                                                                          |
+| `STORAGE_S3_ENDPOINT`                 | Nu          | URL endpoint personalizat. Numai pentru servicii compatibile cu S3, precum `http://minio:9000`, sau pentru un endpoint de interfață AWS VPC. Lăsați nesetat pentru AWS S3 nativ, unde SDK-ul derivă endpointul din regiune. |
+| `STORAGE_S3_PRESIGNED_URL_ENABLED`    | Nu          | Când este `true`, descărcările sunt redirecționate către URL-uri presemnate, iar browserele încarcă direct în bucket în loc să treacă prin server. Valoarea implicită este `false`.                                         |
+| `STORAGE_S3_PRESIGNED_URL_BASE`       | Nu          | Endpoint public de utilizat în URL-uri presemnate când `STORAGE_S3_ENDPOINT` este o adresă internă la care browserele nu pot ajunge, de exemplu MinIO în Docker.                                                            |
+| `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` | Nu          | Durata de valabilitate a URL-urilor presemnate, în secunde. Valoarea implicită este `900`.                                                                                                                                  |
+
+Un fișier `.env` minimal pentru AWS S3 cu un utilizator IAM:
+
+```ini
+STORAGE_TYPE=S_3
+STORAGE_S3_REGION=eu-west-3
+STORAGE_S3_NAME=my-twenty-bucket
+STORAGE_S3_ACCESS_KEY_ID=AKIA...
+STORAGE_S3_SECRET_ACCESS_KEY=...
+```
+
+<Note>
+Fișierul Docker Compose transmite `STORAGE_TYPE`, `STORAGE_S3_REGION`, `STORAGE_S3_NAME`, `STORAGE_S3_ENDPOINT` și cele două variabile de acreditări din `.env`. Setați variabilele pentru URL-uri presemnate în panoul de administrare sau adăugați-le în blocul `environment` al serviciilor `server` și `worker`.
+</Note>
+
+### Acreditări
+
+Când `STORAGE_S3_ACCESS_KEY_ID` este nesetat, serverul rezolvă acreditările prin lanțul implicit al SDK-ului AWS: variabilele de mediu `AWS_ACCESS_KEY_ID` și `AWS_SECRET_ACCESS_KEY`, un fișier de acreditări partajat, un rol de sarcină ECS, un rol de cont de serviciu EKS (IRSA) sau un profil de instanță EC2.
+
+<Warning>
+**Profiluri de instanță EC2 și Docker:** profilul de instanță este furnizat de serviciul de metadate al instanței, iar un container din rețeaua bridge implicită a Docker este la un salt de rețea mai departe de acesta decât gazda. Cu limita implicită de salt IMDSv2 de 1, containerul nu primește niciodată acreditările, chiar dacă AWS CLI funcționează pe gazdă. Măriți limita la 2 pe instanță sau utilizați acreditări statice.
+</Warning>
+
+```bash
+aws ec2 modify-instance-metadata-options --instance-id i-0123456789abcdef0 --http-put-response-hop-limit 2
+```
+
+Când nu pot fi găsite acreditări, serverul înregistrează `CredentialsProviderError: Could not load credentials from any providers` la prima încărcare, în timp ce interfața afișează doar o eroare generică.
+
+### Permisiuni pentru bucket
+
+O încărcare este mai întâi scrisă într-o cale în așteptare, validată, apoi copiată în calea sa finală, iar obiectul în așteptare este șters. Prin urmare, politica necesită mai mult decât `s3:PutObject`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::my-twenty-bucket"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::my-twenty-bucket/*"
+    }
+  ]
+}
+```
+
+`s3:ListBucket` este utilizat pentru a șterge foldere, de exemplu când un spațiu de lucru este șters. Fără acesta, S3 răspunde solicitărilor pentru obiecte lipsă cu acces refuzat în loc de negăsit, astfel încât serverul nu poate distinge un fișier lipsă de o problemă de permisiuni.
+
+### Endpoint și adresare
+
+Twenty utilizează întotdeauna adresarea în stil cale, astfel încât solicitările ajung la `https://endpoint/bucket/key`. Pentru AWS S3 nativ, lăsați `STORAGE_S3_ENDPOINT` nesetat: SDK-ul construiește `https://s3.{region}.amazonaws.com` din `STORAGE_S3_REGION`, motiv pentru care o regiune introdusă greșit apare ca o eroare DNS, nu ca o eroare S3. Setați endpointul numai pentru servicii compatibile cu S3 sau când serverul accesează S3 printr-un endpoint de interfață VPC.
+
+### CORS
+
+Când `STORAGE_S3_PRESIGNED_URL_ENABLED` este `true`, browserele comunică direct cu bucketul. Descărcările sunt solicitări `GET`, iar încărcările sunt solicitări `PUT` care conțin un antet `Content-Type`, ceea ce face ca browserul să trimită mai întâi o solicitare preflight. Prin urmare, politica CORS a bucketului trebuie să permită originea Twenty, ambele metode și acel antet:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.example.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+Fără URL-uri presemnate, tot traficul de fișiere trece prin server, iar bucketul nu necesită configurare CORS.
+
+### Depanare
+
+Eșecurile de încărcare ajung în interfață ca o eroare generică. Eroarea S3 subiacentă se află în jurnalele serverului (`docker compose logs server`) și în răspunsul GraphQL vizibil în fila de rețea a browserului.
 
 ## Funcții logice și interpretor de cod
 
@@ -411,3 +520,5 @@ Cu multi-workspace activat, nu listați aici fiecare subdomeniu de workspace.
 În schimb, direcționați căile API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
 `/client-config`, `/file`) către back-end pe fiecare hostname de workspace, astfel încât fiecare
 workspace să rămână de aceeași origine — acesta este modul în care rulează Twenty Cloud.
+
+<PageBanner illustration="dev-self-host" />
