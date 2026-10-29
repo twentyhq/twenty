@@ -57,7 +57,7 @@ const renderAppearance = () => {
 
 describe('SettingsAppearance', () => {
   beforeAll(() => {
-    window.PointerEvent ??= MouseEvent as typeof PointerEvent;
+    Object.defineProperty(window, 'PointerEvent', { value: MouseEvent });
   });
 
   beforeEach(() => {
@@ -92,6 +92,7 @@ describe('SettingsAppearance', () => {
       workspaceMemberId: 'appearance-member',
       update: { colorScheme: 'Dark' },
     });
+    expect(updateSettings).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(reloadWindow).toHaveBeenCalledTimes(1));
   });
 });

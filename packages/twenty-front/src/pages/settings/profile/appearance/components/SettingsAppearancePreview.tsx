@@ -1,15 +1,10 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import {
-  GRAY_SCALE_DARK,
-  GRAY_SCALE_LIGHT,
-  themeCssVariables,
-} from 'twenty-ui/theme';
-import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
-import { SALESFARCE_PREVIEW_COLORS } from '@/salesfarce/constants/SalesfarcePreviewColors';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { type SettingsAppearanceValue } from '~/pages/settings/profile/appearance/types/SettingsAppearanceValue';
+import { type AppearanceValue } from '@/salesfarce/types/AppearanceValue';
+import { getAppearancePreviewColors } from '~/pages/settings/profile/appearance/utils/getAppearancePreviewColors';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -70,30 +65,20 @@ const StyledContent = styled.div`
 `;
 
 type SettingsAppearancePreviewProps = {
-  appearance: SettingsAppearanceValue;
+  appearance: AppearanceValue;
 };
 
 export const SettingsAppearancePreview = ({
   appearance,
 }: SettingsAppearancePreviewProps) => {
-  const segments = doNotTranslate(
+  const segments = doNotTranslate<AppearanceValue[]>(
     appearance === 'System' ? ['Light', 'Dark'] : [appearance],
   );
 
   return (
     <StyledPreview aria-hidden>
       {segments.map((segment) => {
-        const grayScale =
-          segment === 'Dark' ? GRAY_SCALE_DARK : GRAY_SCALE_LIGHT;
-        const previewColors =
-          segment === SALESFARCE_APPEARANCE_VALUE
-            ? SALESFARCE_PREVIEW_COLORS
-            : {
-                background: grayScale.gray4,
-                border: grayScale.gray5,
-                contentBackground: grayScale.gray1,
-                contentColor: grayScale.gray12,
-              };
+        const previewColors = getAppearancePreviewColors(segment);
 
         return (
           <StyledSegment

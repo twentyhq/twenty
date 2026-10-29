@@ -51,7 +51,7 @@ export const SelectionAndKeyboard: Story = {
     const dark = group.getByRole('radio', { name: 'Dark' });
     const system = group.getByRole('radio', { name: 'System settings' });
 
-    expect(group.getAllByRole('radio')).toHaveLength(3);
+    expect(group.getAllByRole('radio')).toHaveLength(4);
     expect(light).toBeChecked();
     await userEvent.click(group.getByText('Dark'));
     await waitFor(() => expect(dark).toBeChecked());
@@ -80,8 +80,8 @@ export const SelectionAndKeyboard: Story = {
     await userEvent.tab({ shift: true });
     expect(system).toHaveFocus();
     expect(getComputedStyle(system).outlineStyle).toBe('solid');
-    await userEvent.keyboard('{ArrowRight}');
-    await waitFor(() => expect(light).toBeChecked());
+    await userEvent.keyboard('{ArrowLeft}');
+    await waitFor(() => expect(dark).toBeChecked());
     expect(system).not.toBeChecked();
   },
 };

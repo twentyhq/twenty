@@ -6,7 +6,7 @@ import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
-import { type SettingsAppearanceValue } from '~/pages/settings/profile/appearance/types/SettingsAppearanceValue';
+import { type AppearanceValue } from '@/salesfarce/types/AppearanceValue';
 
 const StyledChoice = styled.label`
   display: flex;
@@ -93,7 +93,7 @@ const StyledLabel = styled.span`
 `;
 
 type SettingsAppearanceOptionProps = {
-  appearance: SettingsAppearanceValue;
+  appearance: AppearanceValue;
   label: string;
   badge?: ReactNode;
 };
