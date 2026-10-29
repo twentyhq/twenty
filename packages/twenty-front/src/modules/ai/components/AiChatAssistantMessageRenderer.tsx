@@ -173,6 +173,7 @@ export const AiChatAssistantMessageRenderer = ({
       ? renderItemsWithoutThinkingSteps
       : groupedRenderItems;
 
+  const lastRenderItemIndex = renderItems.length - 1;
   // the duration covers the whole message, so only the steps right before the final answer carry it
   const lastThinkingStepsRenderItemIndex = renderItems.findLastIndex(
     (renderItem) => renderItem.type === 'thinking-steps',
@@ -200,14 +201,7 @@ export const AiChatAssistantMessageRenderer = ({
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
-                renderItems
-                  .slice(index + 1)
-                  .every(
-                    (nextRenderItem) =>
-                      nextRenderItem.type === 'part' &&
-                      nextRenderItem.part.type === 'text' &&
-                      nextRenderItem.part.text.trim().length === 0,
-                  )
+                index === lastRenderItemIndex
               }
               workDurationMs={
                 index === lastThinkingStepsRenderItemIndex

@@ -42,14 +42,8 @@ export const useSmoothlyRevealedText = ({
     });
   };
 
-  const revealedText = isAppendedText ? textReveal.revealedText : text;
-
-  if (revealedText.trim().length > 0) {
-    return { revealedText, isRevealing, revealNextFrame };
-  }
-
   return {
-    revealedText: /^\s*\S+/.exec(text)?.[0] ?? revealedText,
+    revealedText: isAppendedText ? textReveal.revealedText : text,
     isRevealing,
     revealNextFrame,
   };

@@ -2,7 +2,6 @@ import { AiChatTextRevealEffect } from '@/ai/components/AiChatTextRevealEffect';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { useSmoothlyRevealedText } from '@/ai/hooks/useSmoothlyRevealedText';
 import { type MarkdownDisplayMode } from '@/ai/types/MarkdownDisplayMode';
-import { getDisplayableStreamingMarkdown } from '@/ai/utils/getDisplayableStreamingMarkdown';
 
 type AiChatTextPartProps = {
   text: string;
@@ -23,14 +22,7 @@ export const AiChatTextPart = ({
       {isRevealing && (
         <AiChatTextRevealEffect onAnimationFrame={revealNextFrame} />
       )}
-      <LazyMarkdownContent
-        text={
-          isStreaming || isRevealing
-            ? getDisplayableStreamingMarkdown(revealedText)
-            : text
-        }
-        displayMode={displayMode}
-      />
+      <LazyMarkdownContent text={revealedText} displayMode={displayMode} />
     </>
   );
 };

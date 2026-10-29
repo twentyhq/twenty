@@ -141,29 +141,6 @@ describe('AiChatAssistantMessageRenderer', () => {
     );
   });
 
-  it('should keep a thinking steps group trailing until the answer shows text', () => {
-    const messageParts = [
-      {
-        type: 'tool-web_search',
-        toolCallId: 'tool-1',
-        input: { query: 'crm software' },
-        output: { result: { ok: true } },
-        state: 'output-available',
-      },
-      {
-        type: 'text',
-        text: ' ',
-        state: 'streaming',
-      },
-    ] as ExtendedUIMessagePart[];
-
-    renderAssistantRenderer(messageParts, { isLastMessageStreaming: true });
-
-    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'trailing-while-streaming',
-    );
-  });
-
   it('should show data-code-execution during streaming and hide the tool part to avoid duplicates', () => {
     const messageParts = [
       {

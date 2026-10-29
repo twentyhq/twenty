@@ -32,8 +32,6 @@ describe('AiChatTextPart', () => {
   it('reveals a streaming text word by word until it is whole', () => {
     render(<AiChatTextPart text={TEXT} isStreaming displayMode="chat" />);
 
-    expect(getShownText()).toBe('Pipeline');
-
     const shownTexts = [getShownText()];
 
     for (let frame = 0; frame < 120 && getShownText() !== TEXT; frame++) {
@@ -45,7 +43,7 @@ describe('AiChatTextPart', () => {
 
     expect(getShownText()).toBe(TEXT);
     expect(new Set(shownTexts).size).toBeGreaterThan(3);
-    shownTexts.forEach((shownText) => {
+    shownTexts.filter(Boolean).forEach((shownText) => {
       expect(TEXT.startsWith(shownText)).toBe(true);
       expect(
         shownText.length === TEXT.length || /\s/.test(TEXT[shownText.length]),
