@@ -161,7 +161,6 @@ export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilte
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { isFieldReferenceFilterOperator } from './filter/utils/isFieldReferenceFilterOperator';
-export { isFilterOperandAvailableForFieldType } from './filter/utils/isFilterOperandAvailableForFieldType';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
 export type { CompositeSubFieldMatcher } from './filter/utils/isMatchingCompositeFilter';

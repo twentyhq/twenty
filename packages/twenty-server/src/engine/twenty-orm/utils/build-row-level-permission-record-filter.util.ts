@@ -9,8 +9,9 @@ import {
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
+  getFilterOperandsForFilterableFieldType,
+  getFilterTypeFromFieldType,
   isDefined,
-  isFilterOperandAvailableForFieldType,
   type RecordFilter,
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
@@ -159,13 +160,12 @@ const buildRecordFilterForRole = ({
 
     const operand = predicate.operand as unknown as RecordFilter['operand'];
 
-    if (
-      !isFilterOperandAvailableForFieldType({
-        fieldType: fieldMetadata.type,
-        operand,
-        subFieldName: effectiveSubFieldName,
-      })
-    ) {
+    const allowedOperands = getFilterOperandsForFilterableFieldType({
+      filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+      subFieldName: effectiveSubFieldName,
+    });
+
+    if (!allowedOperands.includes(operand)) {
       throw new PermissionsException(
         `Operand ${operand} is not supported for field ${fieldMetadata.name} of type ${fieldMetadata.type} in row-level permission predicate ${predicate.id}`,
         PermissionsExceptionCode.INVALID_ARG,

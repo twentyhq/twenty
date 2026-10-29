@@ -12,10 +12,10 @@ import {
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
+  getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
-  isFilterOperandAvailableForFieldType,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   jsonRelationFilterValueSchema,
@@ -591,19 +591,20 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     operand: RowLevelPermissionPredicateOperand;
     subFieldName: string | null | undefined;
   }) {
-    if (
-      isFilterOperandAvailableForFieldType({
-        fieldType,
-        operand: operand as unknown as ViewFilterOperand,
-        subFieldName,
-      })
-    ) {
+    const filterType = getFilterTypeFromFieldType(fieldType);
+
+    const allowedOperands = getFilterOperandsForFilterableFieldType({
+      filterType,
+      subFieldName,
+    });
+
+    if (allowedOperands.includes(operand as unknown as ViewFilterOperand)) {
       return undefined;
     }
 
     return {
       code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-      message: t`Operand ${operand} is not supported for field type ${getFilterTypeFromFieldType(fieldType)}`,
+      message: t`Operand ${operand} is not supported for field type ${filterType}`,
       userFriendlyMessage: msg`This operand is not supported for this field`,
     };
   }
