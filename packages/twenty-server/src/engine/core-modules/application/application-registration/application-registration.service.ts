@@ -36,6 +36,8 @@ import {
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-registration/client-id-metadata-document/client-id-metadata-document.service';
+import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-registration/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import {
@@ -145,6 +147,7 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -453,6 +456,12 @@ export class ApplicationRegistrationService {
   async findOneByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
+    if (isClientIdMetadataDocumentUrl(clientId)) {
+      return this.clientIdMetadataDocumentService.findOrSyncRegistration(
+        clientId,
+      );
+    }
+
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
     });
@@ -461,6 +470,17 @@ export class ApplicationRegistrationService {
   async findPublicByClientId(
     clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
+    if (
+      isClientIdMetadataDocumentUrl(clientId) &&
+      !isDefined(
+        await this.clientIdMetadataDocumentService.findOrSyncRegistration(
+          clientId,
+        ),
+      )
+    ) {
+      return null;
+    }
+
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
       select: [

@@ -28,6 +28,8 @@ import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guar
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-registration/client-id-metadata-document/client-id-metadata-document.service';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
@@ -59,6 +61,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     FileUploadModule,
     FileUrlModule,
     MetricsModule,
+    SecureHttpClientModule,
   ],
   controllers: [ApplicationRegistrationClaimController],
   providers: [
@@ -69,6 +72,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationTarballService,
     ApplicationRegistrationAssetService,
     ApplicationRegistrationAssetUrlService,
+    ClientIdMetadataDocumentService,
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [

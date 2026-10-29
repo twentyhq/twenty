@@ -15,6 +15,7 @@ import {
 
 import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,6 +24,7 @@ import {
   type OAuthScope,
 } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
+import { isEquivalentDynamicRegistration } from 'src/engine/core-modules/application/application-oauth/utils/is-equivalent-dynamic-registration.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -32,7 +34,7 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 const REGISTRATION_RATE_LIMIT_MAX =
   process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 100 : 10;
@@ -139,6 +141,33 @@ export class OAuthRegistrationController {
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))
       : [...ALL_OAUTH_SCOPES];
 
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Pragma', 'no-cache');
+
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
+    const reusableRegistration = await this.findReusableRegistration({
+      clientName: body.client_name,
+      redirectUris: body.redirect_uris,
+      scopes: requestedScopes,
+    });
+
+    if (isDefined(reusableRegistration)) {
+      return {
+        client_id: reusableRegistration.oAuthClientId,
+        client_name: reusableRegistration.name,
+        redirect_uris: body.redirect_uris,
+        grant_types: grantTypes,
+        response_types: responseTypes,
+        token_endpoint_auth_method: tokenEndpointAuthMethod,
+        scope: reusableRegistration.oAuthScopes.join(' '),
+        client_id_issued_at: Math.floor(
+          reusableRegistration.createdAt.getTime() / 1000,
+        ),
+        registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${reusableRegistration.oAuthClientId}`,
+      };
+    }
+
     const clientId = v4();
 
     const registration = this.applicationRegistrationRepository.create({
@@ -155,11 +184,6 @@ export class OAuthRegistrationController {
     });
 
     await this.applicationRegistrationRepository.save(registration);
-
-    res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Pragma', 'no-cache');
-
-    const issuer = `${req.protocol}://${req.get('host')}`;
 
     return {
       client_id: clientId,
@@ -214,6 +238,33 @@ export class OAuthRegistrationController {
       scope: registration.oAuthScopes.join(' '),
       registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
     };
+  }
+
+  // Clients re-register whenever they lose their client_id; reusing an identical public registration keeps one app per workspace
+  private async findReusableRegistration({
+    clientName,
+    redirectUris,
+    scopes,
+  }: {
+    clientName: string;
+    redirectUris: string[];
+    scopes: string[];
+  }): Promise<ApplicationRegistrationEntity | null> {
+    const candidates = await this.applicationRegistrationRepository.find({
+      where: {
+        name: clientName,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        oAuthClientSecretHash: IsNull(),
+        ownerWorkspaceId: IsNull(),
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    return (
+      candidates.find((candidate) =>
+        isEquivalentDynamicRegistration(candidate, { redirectUris, scopes }),
+      ) ?? null
+    );
   }
 
   private async applyRateLimit(
