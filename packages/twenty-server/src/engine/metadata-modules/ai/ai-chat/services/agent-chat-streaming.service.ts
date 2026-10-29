@@ -451,12 +451,18 @@ export class AgentChatStreamingService {
     browsingContext?: BrowsingContextType | null;
     lastUserMessageText?: string;
   }): Promise<void> {
-    const [thread, messages] = await Promise.all([
+    const [thread, messages, jobScope] = await Promise.all([
       this.threadRepository.findOneOrFail(workspaceId, {
         where: { id: threadId },
         select: ['id', 'title', 'conversationSize'],
       }),
       this.loadMessagesFromDB(threadId, workspaceId, workspaceMemberId),
+      this.actorService.resolveSenderJobScope({
+        workspaceId,
+        threadId,
+        messageId,
+        turnId,
+      }),
     ]);
 
     await this.messageQueueService.add<StreamAgentChatJobData>(
@@ -479,10 +485,7 @@ export class AgentChatStreamingService {
         hasTitle: isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
       },
-      {
-        workspaceId,
-        isWorkspaceJob: true,
-      },
+      jobScope,
     );
   }
 
