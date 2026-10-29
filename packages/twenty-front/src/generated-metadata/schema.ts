@@ -2766,6 +2766,12 @@ export type Impersonate = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type InboxThreadRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
+};
+
 export type Index = {
   __typename?: 'Index';
   applicationId: Scalars['UUID']['output'];
@@ -3383,6 +3389,7 @@ export type Mutation = {
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
+  attachRecordToInboxThread: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
@@ -3499,6 +3506,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
@@ -3712,6 +3720,11 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAttachRecordToInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
@@ -4286,6 +4299,11 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
+};
+
+
+export type MutationDetachRecordFromInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
