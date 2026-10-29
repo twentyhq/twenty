@@ -6,7 +6,6 @@ const parseUrl = (value: string): URL | null => {
   }
 };
 
-// draft-ietf-oauth-client-id-metadata-document §3: an https URL with a path, no fragment, credentials or dot segments
 export const isClientIdMetadataDocumentUrl = (clientId: string): boolean => {
   const url = parseUrl(clientId);
 

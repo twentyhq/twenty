@@ -240,7 +240,6 @@ export class OAuthRegistrationController {
     };
   }
 
-  // Clients re-register whenever they lose their client_id; reusing an identical public registration keeps one app per workspace
   private async findReusableRegistration({
     clientName,
     redirectUris,

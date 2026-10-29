@@ -9,7 +9,6 @@ const parseUri = (uri: string): URL | null => {
 const isLoopbackUrl = (url: URL): boolean =>
   url.hostname === 'localhost' || url.hostname === '127.0.0.1';
 
-// RFC 8252 §7.3: a loopback redirect URI matches on any port, since native apps bind a free port per sign-in
 export const matchesRegisteredRedirectUri = (
   registeredUri: string,
   requestedUri: string,

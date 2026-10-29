@@ -43,7 +43,6 @@ export class ClientIdMetadataDocumentService {
 
     const fetchedDocument = await this.fetchDocument(clientId);
 
-    // Keep serving the last known document while the client's host is unreachable
     if (!fetchedDocument.isFetched) {
       return existingRegistration;
     }
