@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { Fragment, type ReactNode, useState } from 'react';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -18,6 +18,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { applicationsSelector } from '@/applications/states/applicationsSelector';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type LogConsoleFilter } from '@/log-console/types/LogConsoleFilter';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
@@ -33,6 +34,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -117,6 +119,7 @@ export const LogConsoleToolbar = ({
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const applications = useAtomStateValue(applicationsSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [selectedFilterFieldId, setSelectedFilterFieldId] = useState<
     string | null
   >(null);
@@ -140,6 +143,7 @@ export const LogConsoleToolbar = ({
       activeObjectMetadataItems,
       logicFunctions,
       applications,
+      currentWorkspace,
     });
 
   const getFilter = (filterField: LogConsoleFilterField): LogConsoleFilter =>
@@ -277,26 +281,35 @@ export const LogConsoleToolbar = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
           {isNonEmptyArray(matchingOptions) ? (
-            matchingOptions.map((option) => {
+            matchingOptions.map((option, optionIndex) => {
               const isSelected = isOptionSelected(filter, option);
+              const sectionLabelToDisplay =
+                option.sectionLabel !==
+                matchingOptions[optionIndex - 1]?.sectionLabel
+                  ? option.sectionLabel
+                  : undefined;
 
               return (
-                <ListItemButton
-                  key={option.values.join()}
-                  role="option"
-                  aria-selected={isSelected}
-                  selected={isSelected}
-                  indicator="checkbox"
-                  disabled={
-                    !isSelected &&
-                    filter.values.length + option.values.length >
-                      MAX_VALUES_PER_FILTER
-                  }
-                  startIcon={option.startIcon}
-                  onClick={() => toggleOption(filter, option)}
-                >
-                  {option.tag ?? option.label}
-                </ListItemButton>
+                <Fragment key={option.values.join()}>
+                  {isDefined(sectionLabelToDisplay) && (
+                    <DropdownMenuSectionLabel label={sectionLabelToDisplay} />
+                  )}
+                  <ListItemButton
+                    role="option"
+                    aria-selected={isSelected}
+                    selected={isSelected}
+                    indicator="checkbox"
+                    disabled={
+                      !isSelected &&
+                      filter.values.length + option.values.length >
+                        MAX_VALUES_PER_FILTER
+                    }
+                    startIcon={option.startIcon}
+                    onClick={() => toggleOption(filter, option)}
+                  >
+                    {option.tag ?? option.label}
+                  </ListItemButton>
+                </Fragment>
               );
             })
           ) : (

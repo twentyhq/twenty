@@ -1,6 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/icon';
 
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type LogConsoleFilterOption } from '@/log-console/types/LogConsoleFilterOption';
 import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
@@ -17,5 +18,6 @@ export type LogConsoleFilterField = {
     activeObjectMetadataItems: EnrichedObjectMetadataItem[];
     logicFunctions: LogicFunction[];
     applications: FlatApplication[];
+    currentWorkspace: CurrentWorkspace | null;
   }) => LogConsoleFilterOption[];
 };

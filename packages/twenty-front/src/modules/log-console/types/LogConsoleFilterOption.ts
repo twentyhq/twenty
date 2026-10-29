@@ -5,4 +5,5 @@ export type LogConsoleFilterOption = {
   values: string[];
   startIcon?: ReactNode;
   tag?: ReactNode;
+  sectionLabel?: string;
 };

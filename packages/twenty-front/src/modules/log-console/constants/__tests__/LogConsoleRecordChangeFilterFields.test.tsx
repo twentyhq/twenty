@@ -22,6 +22,7 @@ const getObjectOptionLabels = (
       workspaceMembers: [],
       logicFunctions: [],
       applications: [],
+      currentWorkspace: null,
     })
     .map(({ label }) => label);
 
