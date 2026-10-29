@@ -6931,6 +6931,12 @@ msgstr "Σύνδεση με αυτόν τον χώρο εργασίας"
 msgid "Connect via IMAP/SMTP"
 msgstr "Σύνδεση μέσω IMAP/SMTP"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr ""
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -31318,12 +31324,6 @@ msgstr "Δεν έχετε πρόσβαση σε αυτό το αντικείμε
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "Δεν έχετε πρόσβαση σε αυτήν τη σελίδα ρυθμίσεων."
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "Δεν έχετε ακόμη σύνδεση {0}."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
