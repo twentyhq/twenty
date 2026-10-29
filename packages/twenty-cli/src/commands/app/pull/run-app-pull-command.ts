@@ -82,7 +82,12 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
 
   const [workspaceId, applicationExport] = await Promise.all([
     fetchWorkspaceId({ target, signal }),
-    fetchAppExport({ universalIdentifier, target, signal }),
+    fetchAppExport({
+      universalIdentifier,
+      target,
+      signal,
+      includeDependencies: true,
+    }),
   ]);
   output.progress({
     message:

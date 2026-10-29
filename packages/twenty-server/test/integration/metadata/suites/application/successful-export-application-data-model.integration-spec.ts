@@ -13,7 +13,6 @@ import {
   getWorkflowRun,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { findManyApplications } from 'test/integration/graphql/utils/find-many-applications.util';
-import { TEST_APPLICATION_PACKAGE_JSON } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -944,18 +943,7 @@ describe('Application export - data model', () => {
       displayName: 'Test Application',
       sourceType: 'LOCAL',
     });
-    expect(exported.files).toContainEqual({
-      folder: 'dependencies',
-      path: 'package.json',
-      content: TEST_APPLICATION_PACKAGE_JSON,
-    });
-    expect(
-      exported.files.every(
-        ({ folder, path }) =>
-          folder === 'dependencies' &&
-          ['package.json', 'yarn.lock'].includes(path),
-      ),
-    ).toBe(true);
+    expect(exported.files).toEqual([]);
     expect(nameIdentifiers(exported.manifest)).toMatchSnapshot('manifest');
 
     const isNamedRow = ({

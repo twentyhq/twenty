@@ -9,10 +9,12 @@ import { type ApplicationExportCoverageEntryDTO } from 'src/engine/core-modules/
 
 export const exportApplication = async ({
   universalIdentifier,
+  includeDependencies,
   expectToFail = false,
   token,
 }: {
   universalIdentifier: string;
+  includeDependencies?: boolean;
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
@@ -29,6 +31,7 @@ export const exportApplication = async ({
 }> => {
   const graphqlOperation = exportApplicationQueryFactory({
     universalIdentifier,
+    includeDependencies,
   });
 
   const response = await makeMetadataApiRequest(graphqlOperation, token);

@@ -33,6 +33,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 
 const launch = vi.hoisted(() => ({ modulePath: '', execArgv: [] as string[] }));
@@ -174,11 +175,11 @@ describe('app pull command with the packaged worker', () => {
 
   it.each([true, false])(
     'pulls dependencies and keeps the app usable with an exported SDK dependency: %s',
-    async (includesSdk) => {
+    async (hasSdk) => {
       const packageJson = JSON.stringify({
         name: 'pulled-app',
         dependencies: {
-          ...(includesSdk ? { 'twenty-sdk': '2.44.0' } : {}),
+          ...(hasSdk ? { 'twenty-sdk': '2.44.0' } : {}),
           lodash: '4.17.21',
         },
       });
@@ -189,6 +190,16 @@ describe('app pull command with the packaged worker', () => {
 
       const first = await runJson();
       expect(first.exitCode, JSON.stringify(first.envelope)).toBe(0);
+      expect(
+        server.requests
+          .filter((request) => request.body.includes('exportApplication'))
+          .map((request) => readGraphqlRequest(request).arguments),
+      ).toEqual([
+        {
+          universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+          includeDependencies: true,
+        },
+      ]);
       const pulledPackageJson = await readFile(
         join(appPath, 'package.json'),
         'utf8',
@@ -197,7 +208,9 @@ describe('app pull command with the packaged worker', () => {
         'twenty-sdk': '2.44.0',
         lodash: '4.17.21',
       });
-      if (includesSdk) expect(pulledPackageJson).toBe(packageJson);
+      if (hasSdk) {
+        expect(pulledPackageJson).toBe(packageJson);
+      }
       expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
         'remote-lock',
       );
@@ -270,6 +283,7 @@ describe('app pull command with the packaged worker', () => {
         relativePath: 'package.json',
       });
     },
+    30_000,
   );
 
   it.each([

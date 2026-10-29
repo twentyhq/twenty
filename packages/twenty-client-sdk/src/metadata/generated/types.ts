@@ -10755,6 +10755,9 @@ export default {
             "exportApplication": [
                 51,
                 {
+                    "includeDependencies": [
+                        4
+                    ],
                     "universalIdentifier": [
                         525,
                         "UUID!"

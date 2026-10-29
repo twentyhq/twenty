@@ -10,6 +10,9 @@ const compareRelativePaths = (
   [second]: [string, string],
 ) => (first < second ? -1 : first > second ? 1 : 0);
 
+const sortFingerprints = (fingerprints: Record<string, string>) =>
+  Object.fromEntries(Object.entries(fingerprints).sort(compareRelativePaths));
+
 export const createPullBaseWrite = ({
   manifest,
   target,
@@ -35,16 +38,12 @@ export const createPullBaseWrite = ({
         : {}),
       ...(isDefined(dependencyFingerprints)
         ? {
-            dependencyFingerprints: Object.fromEntries(
-              Object.entries(dependencyFingerprints).sort(compareRelativePaths),
-            ),
+            dependencyFingerprints: sortFingerprints(dependencyFingerprints),
           }
         : {}),
       ...(isDefined(sourceFingerprints)
         ? {
-            sourceFingerprints: Object.fromEntries(
-              Object.entries(sourceFingerprints).sort(compareRelativePaths),
-            ),
+            sourceFingerprints: sortFingerprints(sourceFingerprints),
           }
         : {}),
     },
