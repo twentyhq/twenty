@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
@@ -34,6 +34,7 @@ import {
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
+import { isUuidShaped } from 'src/engine/core-modules/server-route-trigger/utils/is-uuid-shaped.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -248,8 +249,8 @@ export class ServerRouteTriggerService {
       );
 
     if (
-      !isValidUuid(applicationRegistrationId) ||
-      !isValidUuid(logicFunctionUniversalIdentifier)
+      !isUuidShaped(applicationRegistrationId) ||
+      !isUuidShaped(logicFunctionUniversalIdentifier)
     ) {
       throw buildNotFoundException();
     }
