@@ -8178,6 +8178,7 @@ msgstr ""
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
 msgstr ""
@@ -8186,6 +8187,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: pp414+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Merge with Another {objectLabelSingular}"
 msgstr ""
 
 #. js-lingui-id: 27Moeu
@@ -17370,6 +17377,11 @@ msgstr ""
 #. js-lingui-id: ycrsQ2
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
+msgstr ""
+
+#. js-lingui-id: vAscP2
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr ""
 
 #. js-lingui-id: XxkUFT

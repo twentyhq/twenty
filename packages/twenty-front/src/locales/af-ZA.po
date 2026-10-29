@@ -17158,6 +17158,11 @@ msgstr "Voeg rekords saam"
 msgid "Merge review tabs"
 msgstr "Voeg hersieningsoortjies saam"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr ""
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"

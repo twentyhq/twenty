@@ -17153,6 +17153,11 @@ msgstr "Merge records"
 msgid "Merge review tabs"
 msgstr "Merge review tabs"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr "Merge with"
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
