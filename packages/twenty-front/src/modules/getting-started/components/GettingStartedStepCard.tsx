@@ -1,6 +1,5 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
-import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
 import { styled } from '@linaria/react';
 import { IconCheck, useIcons } from 'twenty-ui/icon';
@@ -9,10 +8,7 @@ import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
-import {
-  type GettingStartedStepDefinition,
-  type GettingStartedStepReward,
-} from '~/generated-metadata/graphql';
+import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
 const StyledHeading = styled.div<{ isCompleted: boolean }>`
   align-items: flex-start;
@@ -55,14 +51,12 @@ const StyledBody = styled.div`
 
 type GettingStartedStepCardProps = {
   stepDefinition: GettingStartedStepDefinition;
-  stepReward: GettingStartedStepReward | undefined;
   isCompleted: boolean;
   isJustCompleted: boolean;
 };
 
 export const GettingStartedStepCard = ({
   stepDefinition,
-  stepReward,
   isCompleted,
   isJustCompleted,
 }: GettingStartedStepCardProps) => {
@@ -105,7 +99,6 @@ export const GettingStartedStepCard = ({
           </Heading>
           <StyledDescription>{stepDefinition.description}</StyledDescription>
         </StyledTitle>
-        <GettingStartedStepRewardChip stepReward={stepReward} />
       </StyledHeading>
       <StyledBody>
         <GettingStartedStepAction stepDefinition={stepDefinition} />

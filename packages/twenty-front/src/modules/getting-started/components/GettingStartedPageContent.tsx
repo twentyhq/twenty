@@ -7,12 +7,8 @@ import { useGettingStartedJustCompletedStep } from '@/getting-started/hooks/useG
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
-import { getGettingStartedCreditsToEarn } from '@/getting-started/utils/getGettingStartedCreditsToEarn';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
-import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -118,7 +114,6 @@ const StyledFooter = styled.div`
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { numberFormat } = useNumberFormat();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
   const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
@@ -145,39 +140,18 @@ export const GettingStartedPageContent = () => {
       selectedStep: justCompletedStep ?? progress?.selectedStep,
     });
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
-  const creditsEarned = progress?.creditsEarned ?? 0;
-
-  const stepRewards = progress?.stepRewards ?? [];
-  const creditsToEarn = getGettingStartedCreditsToEarn({ stepRewards });
-  const goalCredits = isComplete ? creditsEarned : creditsToEarn;
-  const formattedGoalCredits = formatOnboardingCredits(
-    goalCredits,
-    numberFormat,
-  );
 
   const remainingStepCount = remainingSteps.length;
   const remainingStepsLabel = isDefined(formattedTrialEnd)
-    ? creditsToEarn > 0
-      ? plural(remainingStepCount, {
-          one: `Finish # step by ${formattedTrialEnd} to earn`,
-          other: `Finish # steps by ${formattedTrialEnd} to earn`,
-        })
-      : plural(remainingStepCount, {
-          one: `Finish # step by ${formattedTrialEnd}`,
-          other: `Finish # steps by ${formattedTrialEnd}`,
-        })
-    : creditsToEarn > 0
-      ? plural(remainingStepCount, {
-          one: 'Finish # step to earn',
-          other: 'Finish # steps to earn',
-        })
-      : plural(remainingStepCount, {
-          one: 'Finish # step',
-          other: 'Finish # steps',
-        });
-  const completedLabel =
-    creditsEarned > 0 ? t`All steps done, you earned` : t`All steps done`;
-  const goalLabel = isComplete ? completedLabel : remainingStepsLabel;
+    ? plural(remainingStepCount, {
+        one: `Finish # step by ${formattedTrialEnd}`,
+        other: `Finish # steps by ${formattedTrialEnd}`,
+      })
+    : plural(remainingStepCount, {
+        one: 'Finish # step',
+        other: 'Finish # steps',
+      });
+  const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
 
   const selectStep = (step: GettingStartedStep) => {
     clearJustCompletedStep();
@@ -246,21 +220,12 @@ export const GettingStartedPageContent = () => {
                 />
               )}
               <GettingStartedRollingText text={goalLabel} />
-              {goalCredits > 0 && (
-                <OnboardingCreditsRewardChip
-                  formattedCreditsReward={plural(goalCredits, {
-                    one: `${formattedGoalCredits} credit`,
-                    other: `${formattedGoalCredits} credits`,
-                  })}
-                />
-              )}
             </StyledGoal>
             {isNonEmptyArray(steps) && (
               <GettingStartedStepStack
                 steps={stepDefinitions}
                 selectedStep={selectedStep}
                 completedSteps={completedSteps}
-                stepRewards={stepRewards}
                 justCompletedStep={justCompletedStep}
                 isSaving={isSaving}
                 onSelectStep={selectStep}

@@ -1,5 +1,4 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
-import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -11,7 +10,6 @@ import { parseThemeColor } from 'twenty-ui/utilities';
 import {
   type GettingStartedStep,
   type GettingStartedStepDefinition,
-  type GettingStartedStepReward,
 } from '~/generated-metadata/graphql';
 
 const StyledActiveStep = styled.div`
@@ -110,7 +108,6 @@ type GettingStartedStepStackProps = {
   steps: GettingStartedStepDefinition[];
   selectedStep: GettingStartedStep;
   completedSteps: GettingStartedStep[];
-  stepRewards: GettingStartedStepReward[];
   justCompletedStep: GettingStartedStep | null;
   isSaving: boolean;
   onSelectStep: (step: GettingStartedStep) => void;
@@ -120,7 +117,6 @@ export const GettingStartedStepStack = ({
   steps,
   selectedStep,
   completedSteps,
-  stepRewards,
   justCompletedStep,
   isSaving,
   onSelectStep,
@@ -172,11 +168,6 @@ export const GettingStartedStepStack = ({
                 color={themeCssVariables.tag.text[parseThemeColor(iconColor)]}
               />
               <StyledStackedStepTitle>{title}</StyledStackedStepTitle>
-              <GettingStartedStepRewardChip
-                stepReward={stepRewards.find(
-                  (stepReward) => stepReward.step === step,
-                )}
-              />
             </StyledStackedStep>
           );
         })}
@@ -213,9 +204,6 @@ export const GettingStartedStepStack = ({
           >
             <GettingStartedStepCard
               stepDefinition={selectedStepDefinition}
-              stepReward={stepRewards.find(
-                (stepReward) => stepReward.step === selectedStep,
-              )}
               isCompleted={completedSteps.includes(selectedStep)}
               isJustCompleted={justCompletedStep === selectedStep}
             />

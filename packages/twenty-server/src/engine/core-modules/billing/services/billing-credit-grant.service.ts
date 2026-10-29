@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager, IsNull, LessThan, Like, MoreThan } from 'typeorm';
 
 import {
@@ -233,31 +233,6 @@ export class BillingCreditGrantService {
         idempotencyKey: Like(`${idempotencyKeyPrefix}%`),
       },
     });
-  }
-
-  async sumGrantsMicroByIdempotencyKeyPrefixes({
-    workspaceId,
-    type,
-    idempotencyKeyPrefixes,
-  }: {
-    workspaceId: string;
-    type: BillingCreditGrantType;
-    idempotencyKeyPrefixes: string[];
-  }): Promise<number> {
-    if (!isNonEmptyArray(idempotencyKeyPrefixes)) {
-      return 0;
-    }
-
-    const grants = await this.billingCreditGrantRepository.find(workspaceId, {
-      where: idempotencyKeyPrefixes.map((idempotencyKeyPrefix) => ({
-        type,
-        revokedAt: IsNull(),
-        sourceGrantId: IsNull(),
-        idempotencyKey: Like(`${idempotencyKeyPrefix}%`),
-      })),
-    });
-
-    return grants.reduce((total, grant) => total + grant.amountMicro, 0);
   }
 
   async revokeGrant({

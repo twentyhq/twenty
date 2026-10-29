@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
@@ -13,7 +12,6 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
 import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
@@ -24,10 +22,7 @@ import {
   OnboardingException,
   OnboardingExceptionCode,
 } from 'src/engine/core-modules/onboarding/onboarding.exception';
-import { type GrantableOnboardingReward } from 'src/engine/core-modules/onboarding/types/grantable-onboarding-reward.type';
-import { type OnboardingStepReward } from 'src/engine/core-modules/onboarding/types/onboarding-step-reward.type';
 import { type ReversibleOnboardingStep } from 'src/engine/core-modules/onboarding/types/reversible-onboarding-step.type';
-import { buildOnboardingRewardIdempotencyKeyPrefix } from 'src/engine/core-modules/onboarding/utils/build-onboarding-reward-idempotency-key-prefix.util';
 import { getOnboardingEnrichmentCreditRewardMicro } from 'src/engine/core-modules/onboarding/utils/get-onboarding-enrichment-credit-reward-micro.util';
 import { readBookCallStepMinEmployeeCount } from 'src/engine/core-modules/onboarding/utils/read-book-call-step-min-employee-count.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -37,7 +32,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 export enum OnboardingStepKeys {
   ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
-  ONBOARDING_CONNECT_ACCOUNT_SKIPPED = 'ONBOARDING_CONNECT_ACCOUNT_SKIPPED',
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
@@ -47,7 +41,6 @@ export enum OnboardingStepKeys {
 
 export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
-  [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED]: boolean;
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
@@ -65,7 +58,6 @@ export class OnboardingService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -472,27 +464,12 @@ export class OnboardingService {
       await this.runStepTransitionInLockedTransaction(
         { userId, workspaceId },
         async (queryRunner) => {
-          const hasClaimedPendingStep =
-            await this.claimOnboardingConnectAccountStep(
-              {
-                userId,
-                workspaceId,
-                key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-              },
-              queryRunner,
-            );
+          const hasClaimedStep = await this.claimOnboardingConnectAccountStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
 
-          const hasClaimedSkippedStep =
-            await this.claimOnboardingConnectAccountStep(
-              {
-                userId,
-                workspaceId,
-                key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
-              },
-              queryRunner,
-            );
-
-          if (!hasClaimedPendingStep && !hasClaimedSkippedStep) {
+          if (!hasClaimedStep) {
             return false;
           }
 
@@ -524,39 +501,17 @@ export class OnboardingService {
     workspaceId: string;
     isAutoSkipped: boolean;
   }) {
-    const isGettingStartedEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
-        workspaceId,
-      );
-
     await this.runStepTransitionInLockedTransaction(
       { userId, workspaceId },
       async (queryRunner) => {
         const hasClaimedConnectAccountStep =
           await this.claimOnboardingConnectAccountStep(
-            {
-              userId,
-              workspaceId,
-              key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-            },
+            { userId, workspaceId },
             queryRunner,
           );
 
         if (!hasClaimedConnectAccountStep || isAutoSkipped) {
           return;
-        }
-
-        if (isGettingStartedEnabled) {
-          await this.userVarsService.set(
-            {
-              userId,
-              workspaceId,
-              key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED,
-              value: true,
-            },
-            queryRunner,
-          );
         }
 
         await this.pushReversibleOnboardingStep(
@@ -591,13 +546,9 @@ export class OnboardingService {
     {
       userId,
       workspaceId,
-      key,
     }: {
       userId: string;
       workspaceId: string;
-      key:
-        | OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING
-        | OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED;
     },
     queryRunner?: QueryRunner,
   ): Promise<boolean> {
@@ -605,7 +556,7 @@ export class OnboardingService {
       {
         userId,
         workspaceId,
-        key,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
       },
       queryRunner,
     );
@@ -637,10 +588,7 @@ export class OnboardingService {
         ),
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: import contacts',
-        idempotencyKey: buildOnboardingRewardIdempotencyKeyPrefix({
-          reward: 'importContacts',
-          workspaceId,
-        }),
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
@@ -657,13 +605,24 @@ export class OnboardingService {
     workspaceId: string;
     userId: string;
   }) {
+    const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
+
     try {
       await this.cacheLockService.withLock(
         async () => {
-          const remainingInviteTeamRewardCount =
-            await this.getRemainingInviteTeamRewardCount(workspaceId);
+          const rewardedTeammatesCount =
+            await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
+              {
+                workspaceId,
+                type: BillingCreditGrantType.ONBOARDING_REWARD,
+                idempotencyKeyPrefix,
+              },
+            );
 
-          if (remainingInviteTeamRewardCount === 0) {
+          if (
+            rewardedTeammatesCount >=
+            this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
+          ) {
             return;
           }
 
@@ -674,10 +633,7 @@ export class OnboardingService {
             ),
             type: BillingCreditGrantType.ONBOARDING_REWARD,
             reason: 'Onboarding reward: invited teammate signed up',
-            idempotencyKey: `${buildOnboardingRewardIdempotencyKeyPrefix({
-              reward: 'inviteTeam',
-              workspaceId,
-            })}${userId}`,
+            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
           });
         },
         buildOnboardingInviteTeamRewardLockKey(workspaceId),
@@ -693,131 +649,6 @@ export class OnboardingService {
         workspace: { id: workspaceId },
       });
     }
-  }
-
-  async findGrantableReward({
-    reward,
-    userId,
-    workspaceId,
-  }: {
-    reward: OnboardingStepReward;
-    userId: string;
-    workspaceId: string;
-  }): Promise<GrantableOnboardingReward | null> {
-    if (!this.billingService.isBillingEnabled()) {
-      return null;
-    }
-
-    switch (reward) {
-      case 'importContacts':
-        return this.findGrantableImportContactsReward({ userId, workspaceId });
-      case 'inviteTeam':
-        return this.findGrantableInviteTeamReward(workspaceId);
-      default:
-        return assertUnreachable(reward);
-    }
-  }
-
-  async sumEarnedRewardsMicro({
-    workspaceId,
-    rewards,
-  }: {
-    workspaceId: string;
-    rewards: OnboardingStepReward[];
-  }): Promise<number> {
-    if (!this.billingService.isBillingEnabled()) {
-      return 0;
-    }
-
-    return this.billingCreditGrantService.sumGrantsMicroByIdempotencyKeyPrefixes(
-      {
-        workspaceId,
-        type: BillingCreditGrantType.ONBOARDING_REWARD,
-        idempotencyKeyPrefixes: rewards.map((reward) =>
-          buildOnboardingRewardIdempotencyKeyPrefix({ reward, workspaceId }),
-        ),
-      },
-    );
-  }
-
-  private async findGrantableImportContactsReward({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<GrantableOnboardingReward | null> {
-    const userVars = await this.userVarsService.getAll({
-      userId,
-      workspaceId,
-    });
-
-    const isConnectAccountRewardClaimable =
-      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
-        true ||
-      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_SKIPPED) ===
-        true;
-
-    if (!isConnectAccountRewardClaimable) {
-      return null;
-    }
-
-    const [isWorkspaceCreator, existingGrant] = await Promise.all([
-      this.isWorkspaceCreator({ userId, workspaceId }),
-      this.billingCreditGrantService.findGrantByIdempotencyKey(
-        workspaceId,
-        buildOnboardingRewardIdempotencyKeyPrefix({
-          reward: 'importContacts',
-          workspaceId,
-        }),
-      ),
-    ]);
-
-    const amountMicro = this.twentyConfigService.get(
-      'ONBOARDING_IMPORT_CONTACTS_CREDITS_REWARD',
-    );
-
-    if (!isWorkspaceCreator || isDefined(existingGrant) || amountMicro <= 0) {
-      return null;
-    }
-
-    return { amountMicro, remainingCount: 1 };
-  }
-
-  private async findGrantableInviteTeamReward(
-    workspaceId: string,
-  ): Promise<GrantableOnboardingReward | null> {
-    const remainingCount =
-      await this.getRemainingInviteTeamRewardCount(workspaceId);
-    const amountMicro = this.twentyConfigService.get(
-      'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-    );
-
-    if (remainingCount === 0 || amountMicro <= 0) {
-      return null;
-    }
-
-    return { amountMicro, remainingCount };
-  }
-
-  private async getRemainingInviteTeamRewardCount(
-    workspaceId: string,
-  ): Promise<number> {
-    const rewardedTeammatesCount =
-      await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix({
-        workspaceId,
-        type: BillingCreditGrantType.ONBOARDING_REWARD,
-        idempotencyKeyPrefix: buildOnboardingRewardIdempotencyKeyPrefix({
-          reward: 'inviteTeam',
-          workspaceId,
-        }),
-      });
-
-    return Math.max(
-      0,
-      this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES') -
-        rewardedTeammatesCount,
-    );
   }
 
   async setOnboardingInviteTeamPending(

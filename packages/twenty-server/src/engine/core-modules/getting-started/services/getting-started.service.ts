@@ -7,8 +7,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { GETTING_STARTED_STEP_REWARDS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-rewards.constant';
-import { type GettingStartedStepRewardDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-step-reward.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import {
@@ -21,8 +19,6 @@ import {
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
 import { getGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/get-getting-started-steps.util';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import {
   WorkflowVersionEntity,
@@ -48,7 +44,6 @@ type GettingStartedUserVars = Awaited<
 export class GettingStartedService {
   constructor(
     private readonly userVarsService: UserVarsService<GettingStartedKeyValueTypeMap>,
-    private readonly onboardingService: OnboardingService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly permissionsService: PermissionsService,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
@@ -63,23 +58,15 @@ export class GettingStartedService {
     workspaceId,
     userWorkspaceId,
   }: GettingStartedScope): Promise<GettingStartedProgress> {
-    const [
-      userVars,
-      creditsEarnedMicro,
-      { permissionFlags },
-      ownSendingMailbox,
-    ] = await Promise.all([
-      this.userVarsService.getAll({ userId, workspaceId }),
-      this.onboardingService.sumEarnedRewardsMicro({
-        workspaceId,
-        rewards: Object.values(GETTING_STARTED_STEP_REWARDS).filter(isDefined),
-      }),
-      this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId,
-        workspaceId,
-      }),
-      this.findOwnSendingMailbox({ workspaceId, userWorkspaceId }),
-    ]);
+    const [userVars, { permissionFlags }, ownSendingMailbox] =
+      await Promise.all([
+        this.userVarsService.getAll({ userId, workspaceId }),
+        this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId,
+        }),
+        this.findOwnSendingMailbox({ workspaceId, userWorkspaceId }),
+      ]);
 
     const steps = getGettingStartedSteps({
       userEmail,
@@ -109,12 +96,6 @@ export class GettingStartedService {
       (step) => isSavedAsCompleted(step) || alreadyDoneSteps.includes(step),
     );
 
-    const stepRewards = await this.findStepRewards({
-      userId,
-      workspaceId,
-      openSteps: steps.filter((step) => !completedSteps.includes(step)),
-    });
-
     const savedSelectedStep = userVars.get(
       GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
     );
@@ -123,8 +104,6 @@ export class GettingStartedService {
     );
 
     return {
-      creditsEarned: toDisplayCredits(creditsEarnedMicro),
-      stepRewards,
       steps,
       completedSteps,
       selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
@@ -200,45 +179,6 @@ export class GettingStartedService {
       key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`,
       value: { completedAt: new Date().toISOString() },
     });
-  }
-
-  private async findStepRewards({
-    userId,
-    workspaceId,
-    openSteps,
-  }: {
-    userId: string;
-    workspaceId: string;
-    openSteps: GettingStartedStep[];
-  }): Promise<GettingStartedStepRewardDTO[]> {
-    const stepRewards = await Promise.all(
-      openSteps.map(async (step) => {
-        const reward = GETTING_STARTED_STEP_REWARDS[step];
-
-        if (!isDefined(reward)) {
-          return null;
-        }
-
-        const grantableReward =
-          await this.onboardingService.findGrantableReward({
-            reward,
-            userId,
-            workspaceId,
-          });
-
-        if (!isDefined(grantableReward)) {
-          return null;
-        }
-
-        return {
-          step,
-          creditsEach: toDisplayCredits(grantableReward.amountMicro),
-          remainingCount: grantableReward.remainingCount,
-        };
-      }),
-    );
-
-    return stepRewards.filter(isDefined);
   }
 
   private async findAlreadyDoneSteps({

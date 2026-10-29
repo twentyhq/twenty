@@ -2707,11 +2707,9 @@ export type GetAuthorizationUrlForSsoInput = {
 export type GettingStartedProgress = {
   __typename?: 'GettingStartedProgress';
   completedSteps: Array<GettingStartedStep>;
-  creditsEarned: Scalars['Float']['output'];
   isHidden: Scalars['Boolean']['output'];
   selectedStep?: Maybe<GettingStartedStep>;
   snoozedUntil?: Maybe<Scalars['String']['output']>;
-  stepRewards: Array<GettingStartedStepReward>;
   steps: Array<GettingStartedStepDefinition>;
 };
 
@@ -2742,13 +2740,6 @@ export enum GettingStartedStepKind {
   PROMPT = 'PROMPT',
   WORKFLOW = 'WORKFLOW'
 }
-
-export type GettingStartedStepReward = {
-  __typename?: 'GettingStartedStepReward';
-  creditsEach: Scalars['Float']['output'];
-  remainingCount: Scalars['Int']['output'];
-  step: GettingStartedStep;
-};
 
 export type GettingStartedWorkflow = {
   __typename?: 'GettingStartedWorkflow';

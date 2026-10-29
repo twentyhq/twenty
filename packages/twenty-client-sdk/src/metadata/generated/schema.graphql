@@ -2556,11 +2556,9 @@ input GetAuthorizationUrlForSSOInput {
 
 type GettingStartedProgress {
   completedSteps: [GettingStartedStep!]!
-  creditsEarned: Float!
   isHidden: Boolean!
   selectedStep: GettingStartedStep
   snoozedUntil: String
-  stepRewards: [GettingStartedStepReward!]!
   steps: [GettingStartedStepDefinition!]!
 }
 
@@ -2589,12 +2587,6 @@ enum GettingStartedStepKind {
   CUSTOM
   PROMPT
   WORKFLOW
-}
-
-type GettingStartedStepReward {
-  creditsEach: Float!
-  remainingCount: Int!
-  step: GettingStartedStep!
 }
 
 type GettingStartedWorkflow {
