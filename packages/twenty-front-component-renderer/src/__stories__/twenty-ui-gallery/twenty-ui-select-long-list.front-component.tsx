@@ -79,7 +79,7 @@ const LongListSelectExample = () => {
                   <Select.Icon />
                 </Select.Trigger>
                 <Select.Portal>
-                  <Select.Positioner>
+                  <Select.Positioner alignItemWithTrigger={false}>
                     <Select.Popup>
                       {ENGINEER_OPTIONS.map((option) => (
                         <Select.Item key={option.value} value={option.value}>

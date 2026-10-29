@@ -992,6 +992,8 @@ Foundational controls are grouped under `twenty-ui/primitives/<family>`. Shared 
 
 Use [`MainButton`](/ui/components/input/main-button) for prominent actions and [`LightButton`](/ui/components/input/light-button) for lightweight actions. Use `Button`, `Field`, `Input`, `Select`, and other primitives from `twenty-ui/primitives/input` for foundational controls and forms. Follow each compound control's documented parts, such as `Field.Root`, `Field.Label`, and `Field.Description`.
 
+Pass `alignItemWithTrigger={false}` to `Select.Positioner`. Aligning the selected item with the trigger, Base UI's default, needs synchronous layout measurements that the sandbox cannot provide, so the popup collapses when it reopens.
+
 Use [`Dropdown`](/ui/components/navigation/dropdown) from `twenty-ui/components/navigation` for action menus, option pickers, and nonmodal form panels. Use `enqueueSnackbar` from `twenty-sdk/front-component` for host notifications.
 
 The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.

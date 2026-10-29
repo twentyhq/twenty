@@ -564,10 +564,7 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/select',
     partPropDescriptions: SELECT_PART_PROP_DESCRIPTIONS,
-    partPropDefaults: {
-      Trigger: { size: 'md' },
-      Positioner: { alignItemWithTrigger: 'false' },
-    },
+    partPropDefaults: { Trigger: { size: 'md' } },
   },
   {
     name: 'Slider',

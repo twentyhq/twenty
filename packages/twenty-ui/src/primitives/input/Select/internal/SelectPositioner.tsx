@@ -8,7 +8,6 @@ import { type SelectPositionerProps } from '../types/SelectPositionerProps';
 
 export const SelectPositioner = ({
   className,
-  alignItemWithTrigger = false,
   ...props
 }: SelectPositionerProps) => {
   const direction = useProvidedTextDirection();
@@ -16,7 +15,6 @@ export const SelectPositioner = ({
   return (
     <SelectPrimitive.Positioner
       dir={direction}
-      alignItemWithTrigger={alignItemWithTrigger}
       {...props}
       className={mergeClassNames(styles.positioner, className)}
     />

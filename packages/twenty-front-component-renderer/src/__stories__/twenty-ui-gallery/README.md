@@ -85,7 +85,7 @@ effect within the interaction timeout.
 | `twenty-ui-card-composition`     | Card (native parts and refs, render composition, display semantics, button/link ownership and nested controls)                          |
 | `twenty-ui-dialog`               | SDK `openCommandConfirmationModal` confirmation request                                                                                 |
 | `twenty-ui-select`               | Select                                                                                                                                  |
-| `twenty-ui-select-long-list`     | Controlled nonmodal Select with 20 options, default anchor positioning, trigger/selection reopening and host outside dismissal           |
+| `twenty-ui-select-long-list`     | Controlled nonmodal Select with 20 options, anchored positioning, trigger/selection reopening and host outside dismissal                 |
 | `twenty-ui-portals`              | Body portal callbacks, removal, nearby overflow, menu placement and confinement                                                         |
 | `twenty-ui-dropdown`             | Dropdown (controlled opening, action refs and callbacks, disabled actions, page navigation, picker Tab stop and selection)                                                                                                               |
 | `twenty-ui-dropdown-dismissal`   | Dropdown (reopening, clicks inside the popup, worker and host outside dismissal, cancellation and custom portal containers)             |
@@ -303,7 +303,7 @@ expected-to-fail by the runner.
 | Component                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Popover (React and Preact) | Full focus restoration, scrolling and collision coverage remain pending. |
-| Select (React and Preact) | Explicit `alignItemWithTrigger={true}` is unsupported in front-component workers. Full focus restoration, scrolling and collision coverage remain pending. |
+| Select (React and Preact) | Selected-item alignment, Base UI's default, collapses a reopened popup in front-component workers; pass `alignItemWithTrigger={false}`. Full focus restoration, scrolling and collision coverage remain pending. |
 | CountrySelect (React and Preact)                                       | Fixtures pass pointer opening, filtering, disabled interaction, translated labels and decorative flags, controlled/uncontrolled shorthand and compound selection, null clearing/reselection, canceled changes, external values, trigger and option-group render/ref targets, and search input props/ref. Search keyboard activation and IME (API-34), page sessions (API-35), and full portal, geometry, scrolling, outside dismissal and focus restoration acceptance (C04-C07) remain open. |
 | PhoneCountryPicker (React and Preact)                             | React interactions and React/Preact trigger cases pass, covering shorthand/compound selection, cancellation, controlled clearing, native refs/render and RTL calling codes. Strict Preact interaction remains failing: typing `"+966"` yields `"966"`, before the clear/replacement assertions run. The input propagation gap remains visible in the active fixture.                                                                                        |
 | Slider (React)                                                        | Edge-aligned thumbs stay hidden until the value changes. Base UI 1.8 and 1.9 set up the thumb's `ResizeObserver` before React attaches the `Slider.Control` ref, so the thumb never re-measures once the first host geometry arrives ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995), fix pending in [mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)). Preact attaches the ref first, so its thumbs appear. `thumbAlignment="center"` avoids the issue. |
@@ -314,9 +314,9 @@ expected-to-fail by the runner.
 fifth engineer selected, a controlled value, `modal={false}` and a page origin at
 220px left and 48px top. It checks host outside dismissal, reopening through the
 trigger and option selection, with popup dimensions, overlap with the trigger and
-pointer reachability on every open. Aligning the selected item with the trigger
-collapsed the reopened popup to 10px in workers, so `Select.Positioner` defaults
-`alignItemWithTrigger` to false.
+pointer reachability on every open. Selected-item alignment collapses the
+reopened popup to 10px in workers, so the fixture passes
+`alignItemWithTrigger={false}`.
 
 `TooltipFirstHover` uses a direct ghost icon Button and the default hover delay.
 Its play waits one sandbox round trip before the first hover to allow Base UI's

@@ -6765,8 +6765,8 @@
             "name": "alignItemWithTrigger",
             "type": "boolean",
             "required": false,
-            "defaultValue": "false",
-            "description": "Aligns the selected item with the trigger when true. Defaults to false to position the popup using side, align and offsets."
+            "defaultValue": "true",
+            "description": "Uses the upstream selected-item alignment by default. Set false to use side, align and offsets without overlapping the trigger."
           },
           {
             "name": "alignOffset",

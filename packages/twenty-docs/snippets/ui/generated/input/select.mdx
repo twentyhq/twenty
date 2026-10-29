@@ -292,8 +292,8 @@
   How to align the popup relative to the specified side.
 </ParamField>
 
-<ParamField body="Positioner.alignItemWithTrigger" type="boolean" default="false">
-  Aligns the selected item with the trigger when true. Defaults to false to position the popup using side, align and offsets.
+<ParamField body="Positioner.alignItemWithTrigger" type="boolean" default="true">
+  Uses the upstream selected-item alignment by default. Set false to use side, align and offsets without overlapping the trigger.
 </ParamField>
 
 <ParamField body="Positioner.alignOffset" type="number | OffsetFunction" default="0">
