@@ -3,29 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
-import {
-  AgentChatChannelAssignmentFilter,
-  AgentChatChannelThreadFilter,
-} from '~/generated-metadata/graphql';
-
-const isAgentChatThreadInChannelThreadFilter = ({
-  thread,
-  filter,
-  isMentioned,
-}: {
-  thread: Pick<AgentChatThreadRecord, 'pendingQuestionMessageId'>;
-  filter: AgentChatChannelThreadFilter;
-  isMentioned: boolean;
-}): boolean => {
-  switch (filter) {
-    case AgentChatChannelThreadFilter.ANY:
-      return true;
-    case AgentChatChannelThreadFilter.NEEDS_INPUT:
-      return isDefined(thread.pendingQuestionMessageId);
-    case AgentChatChannelThreadFilter.MENTIONED:
-      return isMentioned;
-  }
-};
+import { isAgentChatThreadInChannelThreadFilter } from '@/ai/utils/isAgentChatThreadInChannelThreadFilter';
+import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
 export const isAgentChatThreadInChannelView = ({
   thread,

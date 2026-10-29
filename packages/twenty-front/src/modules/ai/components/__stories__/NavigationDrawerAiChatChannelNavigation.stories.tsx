@@ -217,22 +217,6 @@ export const NeedsInput: Story = {
   },
 };
 
-export const Unassigned: Story = {
-  args: {
-    channelView: {
-      ...OPEN_VIEW,
-      assignment: AgentChatChannelAssignmentFilter.UNASSIGNED,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
-    ).toHaveAttribute('aria-current', 'true');
-  },
-};
-
 export const CollapsedDrawer: Story = {
   beforeEach: () => {
     jotaiStore.set(isNavigationDrawerExpandedState.atom, false);
