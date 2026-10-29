@@ -30,7 +30,6 @@ export const AgentChatStreamingAutoScrollEffect = () => {
       return;
     }
 
-    // what the reader opens or clicks must stay where it is, like after scrolling up
     const pauseFollowing = () => setIsPausedByReader(true);
     const resumeFollowingAtBottom = () => {
       if (getScrollBottomInPx(scrollWrapperElement) <= 1) {
@@ -66,7 +65,6 @@ export const AgentChatStreamingAutoScrollEffect = () => {
       return;
     }
 
-    // the answer keeps revealing between message updates, so follow its height instead
     const resizeObserver = new ResizeObserver(() =>
       scrollAiChatToBottom(scrollWrapperElement),
     );

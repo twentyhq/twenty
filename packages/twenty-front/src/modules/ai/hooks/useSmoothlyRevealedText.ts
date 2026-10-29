@@ -48,7 +48,6 @@ export const useSmoothlyRevealedText = ({
     return { revealedText, isRevealing, revealNextFrame };
   }
 
-  // the first word shows at once so a starting answer never renders empty
   return {
     revealedText: /^\s*\S+/.exec(text)?.[0] ?? revealedText,
     isRevealing,

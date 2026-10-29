@@ -18,7 +18,6 @@ export const getNextRevealedTextLength = ({
     return text.length;
   }
 
-  // capped so a reveal resuming after an idle pause starts slow again
   const elapsedFrameCount = Math.min(
     Math.max(elapsedMs / FRAME_DURATION_IN_MS, 1),
     MAXIMUM_ELAPSED_FRAME_COUNT,

@@ -50,7 +50,7 @@ export const useUpdateStreamingPartsWithDiff = () => {
     for (const [index, incomingMessage] of incomingMessages.entries()) {
       const lastSeenMessage = lastSeenMessages[index];
 
-      // a stream flush keeps the unchanged messages, a refetch rebuilds them all and reprocessing those is a no-op
+      // a stream flush keeps the unchanged messages, a refetch rebuilds them all
       if (lastSeenMessage === incomingMessage) {
         continue;
       }

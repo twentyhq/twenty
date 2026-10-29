@@ -8,7 +8,6 @@ const hideFrom = ({ text, index }: { text: string; index: number }) =>
 const countOccurrences = ({ text, token }: { text: string; token: string }) =>
   text.split(token).length - 1;
 
-// Text cut mid-stream would flash raw syntax, so hide what cannot render yet and close what can.
 export const getDisplayableStreamingMarkdown = (text: string): string => {
   const codeFenceLineCount = text
     .split('\n')
@@ -22,7 +21,6 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
   const lastBlockStart = lastBlankLineIndex === -1 ? 0 : lastBlankLineIndex + 2;
   const lastBlock = text.slice(lastBlockStart);
 
-  // a table header renders as a paragraph until its delimiter row arrives
   if (
     lastBlock.trimStart().startsWith('|') &&
     !TABLE_DELIMITER_LINE_REGEX.test(lastBlock)
@@ -36,7 +34,6 @@ export const getDisplayableStreamingMarkdown = (text: string): string => {
     return text;
   }
 
-  // code spans, including one still open, cannot hold references or links
   const lastLineOutsideCode = text
     .slice(lastLineStart)
     .replace(/`[^`]*`?/g, (code) => ' '.repeat(code.length));

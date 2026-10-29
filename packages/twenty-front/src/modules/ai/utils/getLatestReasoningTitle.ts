@@ -1,4 +1,3 @@
-// Reasoning summaries open each section with a bold title line.
 const REASONING_TITLE_REGEX = /^\*\*(.+?)\*\*\s*$/gm;
 
 export const getLatestReasoningTitle = (text: string): string | null => {
