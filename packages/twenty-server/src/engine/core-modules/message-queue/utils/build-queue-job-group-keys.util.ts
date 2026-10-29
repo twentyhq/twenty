@@ -14,11 +14,15 @@ export const buildQueueJobGroupKeys = (scope: QueueJobScope): string[] => {
 
   const { workspaceId, applicationUniversalIdentifier } = scope;
 
-  return applicationUniversalIdentifier ===
+  if (
+    applicationUniversalIdentifier ===
     TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-    ? [buildWorkspaceGroupKey(workspaceId)]
-    : [
-        buildWorkspaceGroupKey(workspaceId),
-        buildApplicationGroupKey(applicationUniversalIdentifier),
-      ];
+  ) {
+    return [buildWorkspaceGroupKey(workspaceId)];
+  }
+
+  return [
+    buildWorkspaceGroupKey(workspaceId),
+    buildApplicationGroupKey(applicationUniversalIdentifier),
+  ];
 };
