@@ -107,6 +107,21 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).toContain('flatFieldPermissionMaps');
   });
 
+  it('invalidates the object metadata map on an index update, which regenerates the index id', () => {
+    const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+      buildAction({
+        type: 'update',
+        metadataName: 'index',
+        universalIdentifier: 'index-1',
+        update: {},
+      }),
+    ]);
+
+    expect(result.sort()).toEqual(
+      ['flatIndexMaps', 'flatObjectMetadataMaps'].sort(),
+    );
+  });
+
   it('invalidates the cascade-exposed child maps when a view is deleted', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({

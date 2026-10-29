@@ -13,6 +13,12 @@ type ManyToOneRelation = {
   universalForeignKey: string | null;
 };
 
+// Updating these deletes and recreates the row with a new id, relinking the
+// parent aggregators even when no foreign key is in the update payload.
+const METADATA_NAMES_WITH_ID_REGENERATING_UPDATE = new Set<AllMetadataName>([
+  'index',
+]);
+
 const getUpdateAffectedMetadataNames = ({
   metadataName,
   changedProperties,
@@ -24,11 +30,15 @@ const getUpdateAffectedMetadataNames = ({
     metadataName
   ] as Record<string, ManyToOneRelation | null>;
 
+  const regeneratesId =
+    METADATA_NAMES_WITH_ID_REGENERATING_UPDATE.has(metadataName);
+
   return Object.values(manyToOneRelations)
     .filter(
       (relation): relation is ManyToOneRelation =>
         isDefined(relation) &&
-        (changedProperties.has(relation.foreignKey) ||
+        (regeneratesId ||
+          changedProperties.has(relation.foreignKey) ||
           (isDefined(relation.universalForeignKey) &&
             changedProperties.has(relation.universalForeignKey))),
     )
