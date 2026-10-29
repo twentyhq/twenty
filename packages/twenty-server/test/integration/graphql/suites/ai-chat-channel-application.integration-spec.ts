@@ -757,7 +757,8 @@ describe('Uninstalling an application that created inbox channels', () => {
     expect(grantRoleIds).not.toContain(uninstalledApplication.roleId);
   }, 60_000);
 
-  it('deletes its channels when its failed install is rolled back', async () => {
+  it('deletes its channels when its failed install is rolled back, moving their chats to General with the access of General', async () => {
+    const generalChannelId = await findGeneralChannelId();
     const channelId = await createChannelOrThrow({
       input: {
         name: buildChannelName(),
@@ -765,6 +766,9 @@ describe('Uninstalling an application that created inbox channels', () => {
       },
       token: rolledBackApplication.token,
     });
+    const threadId = await createThreadInChannel(channelId);
+    const generalThreadId = await createThreadInChannel(generalChannelId);
+    const generalRoleIds = await readChannelGrantRoleIds(generalThreadId);
 
     await getAppProviderByClassName<ApplicationSyncService>(
       'ApplicationSyncService',
@@ -777,5 +781,10 @@ describe('Uninstalling an application that created inbox channels', () => {
     });
 
     expect(await readChannelApplicationId(channelId)).toBeUndefined();
+    expect(await readThreadChannelId(threadId)).toBe(generalChannelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: generalChannelId },
+    ]);
+    expect(await readChannelGrantRoleIds(threadId)).toEqual(generalRoleIds);
   }, 60_000);
 });
