@@ -13,6 +13,7 @@ import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
@@ -53,12 +54,8 @@ export class AgentChatThreadService {
     recipientWorkspaceMemberIds,
     mentionedWorkspaceMemberIds,
     ...args
-  }: Parameters<AgentChatSharingService['createThread']>[0] & {
-    isAssistantMentioned?: boolean;
-    initialIsAssistantParticipant?: boolean;
-    recipientWorkspaceMemberIds?: string[];
-    mentionedWorkspaceMemberIds?: string[];
-  }): Promise<AgentChatThreadWorkspaceEntity> {
+  }: Parameters<AgentChatSharingService['createThread']>[0] &
+    AgentChatAssistantParticipationArgs): Promise<AgentChatThreadWorkspaceEntity> {
     if (isDefined(args.channelId)) {
       await this.channelAccessService.assertChannelAccess({
         workspaceId: args.workspaceId,
@@ -107,11 +104,7 @@ export class AgentChatThreadService {
     title?: string;
     isSubscribed?: boolean;
     channelId?: string;
-    isAssistantMentioned?: boolean;
-    initialIsAssistantParticipant?: boolean;
-    recipientWorkspaceMemberIds?: string[];
-    mentionedWorkspaceMemberIds?: string[];
-  }): Promise<boolean> {
+  } & AgentChatAssistantParticipationArgs): Promise<boolean> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {
@@ -456,14 +449,11 @@ export class AgentChatThreadService {
     messageId,
     shouldEmitEvent = true,
     ...args
-  }: AgentChatThreadAccessArgs & {
-    isAssistantMentioned?: boolean;
-    initialIsAssistantParticipant?: boolean;
-    recipientWorkspaceMemberIds?: string[];
-    mentionedWorkspaceMemberIds?: string[];
-    messageId?: string;
-    shouldEmitEvent?: boolean;
-  }): Promise<{
+  }: AgentChatThreadAccessArgs &
+    AgentChatAssistantParticipationArgs & {
+      messageId?: string;
+      shouldEmitEvent?: boolean;
+    }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage: boolean;
     assistantPolicy: Awaited<
@@ -497,15 +487,12 @@ export class AgentChatThreadService {
     mentionedWorkspaceMemberIds = [],
     shouldEmitEvent = true,
     ...args
-  }: AgentChatThreadAccessArgs & {
-    thread: AgentChatThreadWorkspaceEntity;
-    isInitialMessage: boolean;
-    isAssistantMentioned?: boolean;
-    initialIsAssistantParticipant?: boolean;
-    recipientWorkspaceMemberIds?: string[];
-    mentionedWorkspaceMemberIds?: string[];
-    shouldEmitEvent?: boolean;
-  }): Promise<{
+  }: AgentChatThreadAccessArgs &
+    AgentChatAssistantParticipationArgs & {
+      thread: AgentChatThreadWorkspaceEntity;
+      isInitialMessage: boolean;
+      shouldEmitEvent?: boolean;
+    }): Promise<{
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage: boolean;
     assistantPolicy: Awaited<
