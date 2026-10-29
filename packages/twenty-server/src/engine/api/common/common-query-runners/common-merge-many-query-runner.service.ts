@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isArray, isString } from '@sniptt/guards';
+import { isArray } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
@@ -14,7 +14,7 @@ import {
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,6 +39,7 @@ import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-select
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -750,13 +751,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    if (!ids.every((id) => isString(id) && isValidUuid(id))) {
-      throw new CommonQueryRunnerException(
-        'Record IDs to merge must be UUIDs',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
+    ids.forEach(assertIsValidUuid);
 
     if (
       !Number.isInteger(conflictPriorityIndex) ||

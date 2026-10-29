@@ -63,7 +63,7 @@ describe('Core REST API Merge endpoint', () => {
     })
       .expect(400)
       .expect((res) => {
-        expect(res.body.messages[0]).toBe('Record IDs to merge must be UUIDs');
+        expect(res.body.messages[0]).toBe('Value "abc" is not a valid UUID');
       });
   });
 
