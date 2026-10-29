@@ -112,10 +112,15 @@ A plan:
 `twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
 
 ```bash
+twenty app pull --remote dev
 twenty app pull --universal-identifier <universalIdentifier>
 ```
 
-Pull needs an existing project — scaffold one with `twenty app init` first, then pull into it. Without `--universal-identifier`, pull targets the application your local `defineApplication()` file declares. If `--universal-identifier` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+Pull needs an existing project with `package.json` depending on an installed `twenty-sdk`. Without `--universal-identifier`, pull targets the selected workspace's custom application. Pass the flag to pull another application, even when its identifier is declared in your local `defineApplication()` file.
+
+For a first custom-app pull, use a project without an application definition. If you scaffold a new project with `twenty app init`, remove its generated `src/application-config.ts` before pulling. Pull writes the custom application's definition. If an existing local definition names a different application, pull refuses before export or writing and suggests the explicit identifier for that local app. A workspace without a custom application produces an error instead of pulling the local app.
+
+If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
 
 **What it writes:**
 

@@ -12,13 +12,14 @@ export const APP_PULL_COMMAND_DEFINITION: TargetCommandDefinition = {
     {
       flags: '--universal-identifier <uuid>',
       description:
-        'Application to pull when this project has no application definition',
+        'Application to pull (default: the workspace custom application)',
     },
     { flags: '--verbose', description: 'List coverage details' },
   ],
   examples: [
     'twenty app pull --remote dev',
-    'twenty app pull --path ./apps/billing --json',
+    'twenty app pull --path ./workspace-app --json',
+    'twenty app pull --universal-identifier <uuid> --path ./apps/billing',
   ],
   outputModes: ['human', 'json'],
   writes: true,

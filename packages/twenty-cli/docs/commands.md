@@ -415,11 +415,13 @@ The app must already be installed in the workspace; otherwise the command fails 
 
 ```bash
 twenty app pull --remote dev
-twenty app pull --path ./apps/billing --json
-twenty app pull --universal-identifier <uuid> --verbose
+twenty app pull --path ./workspace-app --json
+twenty app pull --universal-identifier <uuid> --path ./apps/billing --verbose
 ```
 
-`app pull` reads the app's definition and exports its workspace metadata into the existing project. It uses the selected connection and the server's `APPLICATIONS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. When a project has no application definition, provide `--universal-identifier`. A project declaring a different app is refused before writing.
+`app pull` defaults to the selected workspace's custom application. Pass `--universal-identifier` to pull another application, even when its identifier is declared locally. It uses the selected connection and the server's `APPLICATIONS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. A project declaring a different app is refused before export or writing, with a hint to pass its identifier explicitly. A missing workspace custom application is an error, not a fallback to the local app.
+
+Pull requires an existing project with `package.json` depending on an installed `twenty-sdk`. For a first custom-app pull, use a project without an application definition; if you scaffold a new project with `twenty app init`, remove its generated `src/application-config.ts` before pulling. Pull generates the custom application's definition.
 
 The project must have `twenty-sdk` installed, version `>=1.23.0`, with its public `twenty-sdk/define` and `twenty-sdk/front-component` exports. Pull also checks that the SDK provides the authoring APIs required by the generated files. Missing APIs fail with `SDK_SOURCE_UNSUPPORTED`; install a compatible version (2.50.0 or later). Pull does not require a project TypeScript compiler. Run `twenty app typecheck` afterwards to check the generated definitions against your installed SDK.
 

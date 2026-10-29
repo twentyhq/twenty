@@ -2,7 +2,7 @@ import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fetchAppExport } from '@/app/fetch-app-export';
-import { fetchWorkspaceId } from '@/app/fetch-workspace-id';
+import { fetchWorkspace } from '@/app/fetch-workspace';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { parseToolingResult } from '@/app/parse-tooling-result';
 import { formatPullReport } from '@/app/pull/format-pull-report';
@@ -54,16 +54,21 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
     warn: output.warn,
   });
 
+  const workspace = await fetchWorkspace({
+    target,
+    signal,
+    shouldIncludeCustomApplication: !isDefined(explicitIdentifier),
+  });
   const universalIdentifier = (
-    explicitIdentifier ?? identity.application?.universalIdentifier
+    explicitIdentifier ??
+    workspace.workspaceCustomApplication?.universalIdentifier
   )?.toLowerCase();
 
   if (!isDefined(universalIdentifier)) {
     throw new CliError({
-      code: 'INVALID_INPUT',
-      exitCode: EXIT_CODE.USAGE,
-      message: 'This project has no application definition.',
-      hint: 'Pass --universal-identifier <uuid> to pull an app into this project.',
+      code: 'APP_NOT_FOUND',
+      message: 'This workspace has no custom application to pull.',
+      hint: 'Pass --universal-identifier <uuid> to pull a specific application.',
     });
   }
 
@@ -76,14 +81,18 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
       code: 'INVALID_INPUT',
       exitCode: EXIT_CODE.USAGE,
       message: `This project declares application ${identity.application.universalIdentifier}, not ${universalIdentifier}. Pull it into a different directory.`,
+      hint: !isDefined(explicitIdentifier)
+        ? `Pass --universal-identifier ${identity.application.universalIdentifier} to pull this project's application.`
+        : undefined,
     });
   }
   output.progress({ message: `Exporting the app from ${target.apiUrl}…` });
 
-  const [workspaceId, applicationExport] = await Promise.all([
-    fetchWorkspaceId({ target, signal }),
-    fetchAppExport({ universalIdentifier, target, signal }),
-  ]);
+  const applicationExport = await fetchAppExport({
+    universalIdentifier,
+    target,
+    signal,
+  });
   output.progress({
     message:
       'Reconciling local definitions. Changed workspace entities replace local edits…',
@@ -93,7 +102,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
     request: {
       type: 'pull',
       appPath: project.path,
-      target: { apiUrl: target.apiUrl, workspaceId },
+      target: { apiUrl: target.apiUrl, workspaceId: workspace.id },
       applicationExport,
     },
     signal,

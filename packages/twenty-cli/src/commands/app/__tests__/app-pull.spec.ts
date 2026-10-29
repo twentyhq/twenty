@@ -32,6 +32,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { readGraphqlRequest } from '@/__tests__/utils/read-graphql-request';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 
 const launch = vi.hoisted(() => ({ modulePath: '', execArgv: [] as string[] }));
@@ -74,10 +75,18 @@ const createExport = () => ({
 });
 let exported = createExport();
 let forbidden = false;
+let customApplication: { universalIdentifier: string } | null = {
+  universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+};
 const server = await startTestServer((request, response) => {
   if (request.body.includes('currentWorkspace')) {
     return sendJson(response, 200, {
-      data: { currentWorkspace: { id: WORKSPACE_ID } },
+      data: {
+        currentWorkspace: {
+          id: WORKSPACE_ID,
+          workspaceCustomApplication: customApplication,
+        },
+      },
     });
   }
   if (forbidden) {
@@ -111,6 +120,7 @@ describe('app pull command with the packaged worker', () => {
     await writeFile(join(appPath, 'app.ts'), sourceApplication());
     exported = createExport();
     forbidden = false;
+    customApplication = { universalIdentifier: SOURCE_TEST_APPLICATION_ID };
     server.requests.length = 0;
     vi.stubEnv('TWENTY_API_URL', server.url);
     vi.stubEnv('TWENTY_API_KEY', 'must-not-reach-source');
@@ -220,25 +230,92 @@ export default defineObject({ nameSingular: 'invalid' });`,
     });
   });
 
-  it('requires an explicit UUID in a project without an app definition', async () => {
+  it('pulls the workspace custom application without an identifier or local definition', async () => {
     await rm(join(appPath, 'app.ts'));
-    expect((await runJson()).envelope.error.code).toBe('INVALID_INPUT');
-    expect(server.requests).toHaveLength(0);
+    const result = await runJson();
+
+    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+    expect(result.envelope.data.application.universalIdentifier).toBe(
+      SOURCE_TEST_APPLICATION_ID,
+    );
+    expect(readGraphqlRequest(server.requests[0]).query).toContain(
+      'workspaceCustomApplication',
+    );
+    expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
+      universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+    });
     expect(
-      (
-        await runJson(
-          '--universal-identifier',
-          SOURCE_TEST_APPLICATION_ID.toUpperCase(),
-        )
-      ).exitCode,
+      await readFile(join(appPath, 'src/application.config.ts'), 'utf8'),
+    ).toContain(SOURCE_TEST_APPLICATION_ID);
+  });
+
+  it('uses an explicit identifier even when the workspace has no custom application', async () => {
+    await rm(join(appPath, 'app.ts'));
+    customApplication = null;
+    const result = await runJson(
+      '--universal-identifier',
+      SOURCE_TEST_APPLICATION_ID.toUpperCase(),
+    );
+
+    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+    expect(readGraphqlRequest(server.requests[0]).query).not.toContain(
+      'workspaceCustomApplication',
+    );
+    expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
+      universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+    });
+  });
+
+  it('does not fall back to the local application when the custom application is missing', async () => {
+    customApplication = null;
+    const original = await readFile(join(appPath, 'app.ts'), 'utf8');
+    const result = await runJson();
+
+    expect(result.envelope.error).toMatchObject({
+      code: 'APP_NOT_FOUND',
+      message: 'This workspace has no custom application to pull.',
+    });
+    expect(server.requests).toHaveLength(1);
+    expect(await readFile(join(appPath, 'app.ts'), 'utf8')).toBe(original);
+    expect(await readdir(appPath)).not.toContain('.twenty');
+  });
+
+  it('rejects a malformed workspace custom application identifier before export', async () => {
+    customApplication = { universalIdentifier: 'not-a-uuid' };
+
+    expect((await runJson()).envelope.error.code).toBe('INVALID_RESPONSE');
+    expect(server.requests).toHaveLength(1);
+    expect(await readdir(appPath)).not.toContain('.twenty');
+  });
+
+  it('requires the explicit identifier to pull a different locally declared application', async () => {
+    customApplication = { universalIdentifier: OBJECT_ID };
+    const original = await readFile(join(appPath, 'app.ts'), 'utf8');
+    const result = await runJson();
+
+    expect(result.envelope.error).toMatchObject({
+      code: 'INVALID_INPUT',
+      hint: expect.stringContaining(
+        `--universal-identifier ${SOURCE_TEST_APPLICATION_ID}`,
+      ),
+    });
+    expect(server.requests).toHaveLength(1);
+    expect(await readFile(join(appPath, 'app.ts'), 'utf8')).toBe(original);
+    expect(await readdir(appPath)).not.toContain('.twenty');
+    expect(
+      (await runJson('--universal-identifier', SOURCE_TEST_APPLICATION_ID))
+        .exitCode,
     ).toBe(0);
   });
 
-  it('rejects a different app before requesting the export', async () => {
+  it('rejects a different explicit app before requesting the export', async () => {
     expect(
       (await runJson('--universal-identifier', OBJECT_ID)).envelope.error.code,
     ).toBe('INVALID_INPUT');
-    expect(server.requests).toHaveLength(0);
+    expect(server.requests).toHaveLength(1);
+    expect(readGraphqlRequest(server.requests[0]).query).toContain(
+      'currentWorkspace',
+    );
   });
 
   it('leaves local files untouched when server authorization fails', async () => {
