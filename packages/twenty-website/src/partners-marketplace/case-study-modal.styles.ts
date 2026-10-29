@@ -127,66 +127,6 @@ const ModalBody = styled.div`
   }
 `;
 
-const ModalDesc = styled.div`
-  color: ${semanticColor.inkMuted};
-  font-size: ${fontSize(4)};
-  line-height: 1.58;
-  overflow-wrap: anywhere;
-
-  & p {
-    margin: 0 0 ${spacing(3)};
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  & strong {
-    color: ${semanticColor.ink};
-    font-weight: 600;
-  }
-
-  & h3,
-  & h4 {
-    color: ${semanticColor.ink};
-    font-size: ${fontSize(3.75)};
-    font-weight: 600;
-    margin: ${spacing(5)} 0 ${spacing(2.5)};
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-  }
-
-  & ul {
-    display: grid;
-    gap: ${spacing(2)};
-    list-style: none;
-    padding: 0;
-  }
-
-  & ul li {
-    padding-left: ${spacing(5)};
-    position: relative;
-  }
-
-  & ul li::before {
-    background: ${color('blue')};
-    border-radius: 50%;
-    content: '';
-    height: 5px;
-    left: 3px;
-    position: absolute;
-    top: 9px;
-    width: 5px;
-  }
-
-  & a {
-    color: ${color('blue')};
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-`;
-
 const ModalFoot = styled.div`
   align-items: center;
   border-top: 1px solid ${semanticColor.line};
@@ -243,7 +183,6 @@ export const caseStudyModalStyles = {
   CloseButton,
   ModalBody,
   ModalClient,
-  ModalDesc,
   ModalFoot,
   ModalHeader,
   ModalHeaderCopy,

@@ -1,10 +1,6 @@
-import Markdown from 'react-markdown';
+import { Markdown, type MarkdownSize } from '@/ui';
 
-import { ExternalLink } from '@/ui';
-
-// h1/h2 are demoted to h3 so partner headings never emit a second <h1> on the page
-// (the page title already owns the h1). Without this they'd unwrap to bare inline text.
-const ALLOWED = [
+const PARTNER_RICH_TEXT_ELEMENTS = [
   'p',
   'strong',
   'em',
@@ -21,20 +17,18 @@ const ALLOWED = [
   'pre',
 ];
 
-export const RichText = ({ markdown }: { markdown: string }) => (
+type RichTextProps = {
+  className?: string;
+  markdown: string;
+  size?: MarkdownSize;
+};
+
+export const RichText = ({ className, markdown, size }: RichTextProps) => (
   <Markdown
-    allowedElements={ALLOWED}
-    unwrapDisallowed
-    components={{
-      h1: ({ children }) => <h3>{children}</h3>,
-      h2: ({ children }) => <h3>{children}</h3>,
-      a: ({ href, title, children }) => (
-        <ExternalLink href={href ?? '#'} title={title}>
-          {children}
-        </ExternalLink>
-      ),
-    }}
-  >
-    {markdown}
-  </Markdown>
+    allowedElements={PARTNER_RICH_TEXT_ELEMENTS}
+    className={className}
+    headingFloor="h3"
+    markdown={markdown}
+    size={size}
+  />
 );

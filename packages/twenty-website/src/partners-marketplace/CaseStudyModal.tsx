@@ -169,9 +169,7 @@ export function CaseStudyModal({
           </modal.ModalHeaderIntro>
         </modal.ModalHeader>
         <modal.ModalBody ref={bodyRef}>
-          <modal.ModalDesc>
-            <RichText markdown={caseStudy.body} />
-          </modal.ModalDesc>
+          <RichText markdown={caseStudy.body} size="sm" />
         </modal.ModalBody>
         <modal.ModalFoot>
           {outboundLink !== null ? (

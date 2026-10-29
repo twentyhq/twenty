@@ -1,4 +1,10 @@
 export { MarkedDivider } from './MarkedDivider';
+export {
+  Markdown,
+  type MarkdownHeadingFloor,
+  type MarkdownProps,
+  type MarkdownSize,
+} from './Markdown';
 export { Modal, type ModalProps } from './Modal';
 export { NotchedCardShape } from './NotchedCardShape';
 export { GuideCrosshair, type GuideCrosshairProps } from './GuideCrosshair';
