@@ -2,7 +2,6 @@
 
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -22,7 +21,6 @@ const getValidationRulesInputSchema = z.object({
   name: 'get_validation_rules',
   category: ToolCategory.METADATA,
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
   icon: 'IconSettings',
   description:
     'List the validation rules of an object: conditions a record must meet to be saved.',

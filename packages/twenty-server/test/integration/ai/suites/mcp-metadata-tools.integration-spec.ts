@@ -3,10 +3,8 @@ import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-r
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
@@ -583,50 +581,5 @@ describe('MCP metadata tools (integration)', () => {
         message: `Tool "${toolName}" not found`,
       });
     });
-  });
-
-  describe('with IS_RECORD_CREATION_FORM_ENABLED off', () => {
-    beforeAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    });
-
-    // The flag is seeded on
-    afterAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    });
-
-    it('should list the object and field tools only', async () => {
-      const catalog = await getMcpToolCatalog({ token: API_KEY_ACCESS_TOKEN });
-
-      expect(catalog[ToolCategory.METADATA].map(({ name }) => name)).toEqual(
-        OBJECT_AND_FIELD_TOOL_NAMES,
-      );
-    });
-
-    it('should still run an object tool', async () => {
-      expect(await findObjectOrThrow('company')).toMatchObject({
-        nameSingular: 'company',
-      });
-    });
-
-    it.each(VALIDATION_RULE_TOOL_NAMES)(
-      'should refuse %s',
-      async (toolName) => {
-        expect(
-          await runFailingMetadataTool({ toolName, toolArguments: {} }),
-        ).toMatchObject({
-          success: false,
-          message: `Tool "${toolName}" not found`,
-        });
-      },
-    );
   });
 });

@@ -172,7 +172,6 @@ export class WorkspaceOrmManager {
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
-      featureFlagsMap,
       billingEntitlements,
       hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
       isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),

@@ -51,7 +51,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
     });
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { createRecordWithOptionalForm } = useRecordCreationForm();
+  const { requestRecordCreation } = useRecordCreationForm();
 
   const apolloCoreClient = useApolloCoreClient();
 
@@ -103,7 +103,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
         attachRecord: shouldAttachToSourceRecord ? attachRecord : undefined,
       });
 
-      const createdRecord = await createRecordWithOptionalForm({
+      const createdRecord = await requestRecordCreation({
         objectMetadataItem: relationObjectMetadataItem,
         initialDraftRecord: {
           ...buildRecordInputFromRLSPredicates(),
