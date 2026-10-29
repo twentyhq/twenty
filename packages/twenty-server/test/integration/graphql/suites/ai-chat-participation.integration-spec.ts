@@ -134,7 +134,7 @@ describe('Chat participation through the authenticated API', () => {
     expect(models.evaluate).not.toHaveBeenCalled();
   });
 
-  it('includes Ada on the first automatic DM message despite client opt-outs', async () => {
+  it('includes Ada on the first automatic DM message without replying while the client cannot run her', async () => {
     models.enableEvaluation();
     await context.setAssistantModes({
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
@@ -148,13 +148,11 @@ describe('Chat participation through the authenticated API', () => {
     });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.sendChatMessage.streamId).toEqual(
-      expect.any(String),
-    );
+    expect(response.body.data.sendChatMessage.streamId).toBeNull();
     expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
       true,
     );
-    expect(models.evaluate).toHaveBeenCalledTimes(1);
+    expect(models.evaluate).not.toHaveBeenCalled();
   });
 
   it('stops replies in an existing DM after the workspace changes to Never', async () => {

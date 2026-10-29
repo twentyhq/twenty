@@ -105,6 +105,35 @@ describe('Assistant reply selection with stored conversation participants', () =
     expect(models.evaluate).not.toHaveBeenCalled();
   });
 
+  it('stays silent on a mention or an automatic DM while the client cannot run Ada', async () => {
+    models.enableEvaluation();
+    await context.setAssistantModes({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.AUTOMATIC,
+    });
+    const groupThreadId = await createGroup();
+    const directMessageThreadId = await context.createThread();
+
+    await context.setConversationType({
+      threadId: directMessageThreadId,
+      conversationType: 'DIRECT_MESSAGE',
+    });
+
+    await expect(
+      shouldReply({
+        threadId: groupThreadId,
+        isAssistantMentioned: true,
+        shouldAssistantReply: false,
+      }),
+    ).resolves.toBe(false);
+    await expect(
+      shouldReply({
+        threadId: directMessageThreadId,
+        shouldAssistantReply: false,
+      }),
+    ).resolves.toBe(false);
+    expect(models.evaluate).not.toHaveBeenCalled();
+  });
+
   it('blocks an explicit mention in a shared chat when the inbox mode is Never', async () => {
     models.enableEvaluation();
     const threadId = await createGroup();
