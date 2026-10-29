@@ -116,11 +116,15 @@ msgstr "\"{path}\" is not a value"
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 
-#. js-lingui-id: TaLmrR
-#. placeholder {0}: formatNumber(currentCreditsByPeriod, { decimals: 2 })
+#. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "({0} credits)"
-msgstr "({0} credits)"
+msgid "({currentCreditsByPeriodDisplay} credits/month)"
+msgstr "({currentCreditsByPeriodDisplay} credits/month)"
+
+#. js-lingui-id: M9SJOb
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({currentCreditsByPeriodDisplay} credits/year)"
+msgstr "({currentCreditsByPeriodDisplay} credits/year)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -1046,6 +1050,26 @@ msgstr "{runCount, plural, one {# run} other {# runs}}"
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
 msgstr "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
 
+#. js-lingui-id: FTxMFo
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month"
+msgstr "{seatCreditsDisplay} from seats, reset each month"
+
+#. js-lingui-id: QzeEhD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
+
+#. js-lingui-id: d7aej9
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year"
+msgstr "{seatCreditsDisplay} from seats, reset each year"
+
+#. js-lingui-id: TfWeSD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
@@ -1207,10 +1231,10 @@ msgstr "{visibleFieldsCount} visible fields"
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 
-#. js-lingui-id: bQNjUR
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
+#. js-lingui-id: imLPQY
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1276,7 +1300,7 @@ msgid "≈ 10,000 workflow steps"
 msgstr "≈ 10,000 workflow steps"
 
 #. js-lingui-id: tSb6yd
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 100 AI tasks/week"
 msgstr "≈ 100 AI tasks/week"
 
@@ -1292,7 +1316,7 @@ msgid "≈ 50,000 workflow steps"
 msgstr "≈ 50,000 workflow steps"
 
 #. js-lingui-id: bLGKEo
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 500 AI tasks/week"
 msgstr "≈ 500 AI tasks/week"
 
@@ -8003,6 +8027,11 @@ msgstr "Credit limit reached. Contact your admin to resume workflows, AI, and ap
 msgid "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
 msgstr "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
 
+#. js-lingui-id: M9521O
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Credit pack"
+msgstr "Credit pack"
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -8045,7 +8074,6 @@ msgstr "credits"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
-#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -11110,6 +11138,11 @@ msgstr "Enter your text"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Enter your two-factor authentication code to confirm."
+
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr "Enterprise only"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -14571,6 +14604,11 @@ msgstr "Include emails where all participants share the same domain."
 msgid "Included"
 msgstr "Included"
 
+#. js-lingui-id: 6FtcQl
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Included per seat"
+msgstr "Included per seat"
+
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15658,7 +15696,7 @@ msgid "Last active {lastActive}"
 msgstr "Last active {lastActive}"
 
 #. js-lingui-id: vmfZix
-#. placeholder {0}: session.ipAddress
+#. placeholder {0}: details.join(' · ')
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Last active {lastActive} · {0}"
 msgstr "Last active {lastActive} · {0}"
@@ -20772,8 +20810,8 @@ msgid "Per"
 msgstr "Per"
 
 #. js-lingui-id: nU1kSZ
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "per member"
 
@@ -20884,8 +20922,9 @@ msgid "Person ID"
 msgstr "Person ID"
 
 #. js-lingui-id: Lz7jRL
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
 msgstr "Personal AI usage"
@@ -23405,6 +23444,11 @@ msgstr "Russian"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Sales"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr "Salesfarce"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30943,6 +30987,7 @@ msgid "Workspace creation failed"
 msgstr "Workspace creation failed"
 
 #. js-lingui-id: Rg6QK1
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
 msgstr "Workspace credits"

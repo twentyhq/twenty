@@ -170,12 +170,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 <Note>
   A `USER` item renders as a tab on the app's page under **Settings > App
   preferences**, where only the signed-in member sees it, and only when their
-  role grants the `CONNECTED_ACCOUNTS` permission. That page is not enabled in
+  role grants the User Apps permission. That page is not enabled in
   every workspace yet: where it is not, a `USER` item is persisted and synced
   but nothing renders it.
 </Note>
 
-A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.CONNECTED_ACCOUNTS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.USER_APPS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -663,8 +663,8 @@ Notes:
 - Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
-- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
-- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no `APPLICATIONS` permission, but it needs the `CONNECTED_ACCOUNTS` permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles). See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
+- Reading a variable's `value`, and writing it, need the Workspace Apps settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.WORKSPACE_APPS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no Workspace Apps permission, but it needs the User Apps permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.USER_APPS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles). See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### System variables
 

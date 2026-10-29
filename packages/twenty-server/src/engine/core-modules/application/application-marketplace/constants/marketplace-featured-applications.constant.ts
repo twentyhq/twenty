@@ -1,6 +1,6 @@
 import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
 
-export const MARKETPLACE_VETTED_APPLICATIONS: {
+export const MARKETPLACE_FEATURED_APPLICATIONS: {
   universalIdentifier: string;
   sourcePackage: string;
   position?: number;

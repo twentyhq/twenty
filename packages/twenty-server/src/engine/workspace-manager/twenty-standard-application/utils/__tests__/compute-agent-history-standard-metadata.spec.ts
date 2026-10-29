@@ -149,6 +149,23 @@ describe('agent history workspace metadata', () => {
     expect(titleField).toMatchObject({ isUIEditable: true });
   });
 
+  it('keeps conversation identity system-managed and existing chats regular', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.conversationType
+          .universalIdentifier
+      ],
+    ).toMatchObject({
+      type: FieldMetadataType.SELECT,
+      isSystem: true,
+      isUIEditable: false,
+      isNullable: false,
+      defaultValue: "'STANDARD'",
+      disabledFieldPermissionActions: ['canUpdateFieldValue'],
+      options: [{ value: 'STANDARD' }, { value: 'DIRECT_MESSAGE' }],
+    });
+  });
+
   it('keeps the legacy archive column out of reach now that archive is soft delete', () => {
     expect(
       allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[

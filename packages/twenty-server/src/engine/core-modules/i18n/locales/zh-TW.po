@@ -2389,7 +2389,7 @@ msgstr "行銷活動"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Campaigns"
-msgstr ""
+msgstr "行銷活動"
 
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8204,7 +8204,7 @@ msgstr "合併 {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge with Another {objectLabelSingular}"
-msgstr ""
+msgstr "與另一個 {objectLabelSingular} 合併"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -9609,6 +9609,11 @@ msgstr "運算元「{operand}」需要一個值，空的謂詞將會完全移除
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
 msgstr "元件「{widgetTitle}」的圖表篩選器之運算元「{rawOperand}」在欄位類型「{effectiveFieldType}」上不受支援。支援的運算元：{allowedOperandsText}。"
+
+#. js-lingui-id: XBLJbc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand {operand} is not supported for field type {filterType}"
+msgstr ""
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -12034,7 +12039,7 @@ msgstr "短連結"
 #. js-lingui-id: XcRf2D
 #: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
 msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr ""
+msgstr "以工作區成員身分登入，或使用應用程式權杖來變更此對話。"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -14164,6 +14169,11 @@ msgstr "此物件沒有搜尋向量"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
 msgstr "此物件權限已為該角色設定"
+
+#. js-lingui-id: JHfGIK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this field"
+msgstr ""
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -17398,7 +17408,7 @@ msgstr "無法新增您購買的點數。請聯絡支援團隊。"
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
-msgstr ""
+msgstr "您的角色無法刪除其中一些記錄，因此無法合併。"
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

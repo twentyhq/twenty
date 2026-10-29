@@ -70,6 +70,57 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.OPEN,
     isAuditLogged: false,
   },
+  conversationType: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'conversationType',
+        type: FieldMetadataType.SELECT,
+        label: i18nLabel(
+          msg({ message: 'Conversation type', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'Whether this is a regular chat or a canonical direct message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMessages',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: "'STANDARD'",
+        options: [
+          {
+            id: '3236f63d-b8f8-4339-9562-1f45814338fd',
+            value: 'STANDARD',
+            label: i18nLabel(
+              msg({ message: 'Regular chat', context: 'fieldMetadata.label' }),
+            ),
+            position: 0,
+            color: 'gray',
+          },
+          {
+            id: '293035d8-eaa1-4f12-8a78-e9eec497ef10',
+            value: 'DIRECT_MESSAGE',
+            label: i18nLabel(
+              msg({
+                message: 'Direct message',
+                context: 'fieldMetadata.label',
+              }),
+            ),
+            position: 1,
+            color: 'blue',
+          },
+        ],
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+    isAuditLogged: false,
+  },
   isAssistantParticipant: {
     ...createStandardFieldFlatMetadata({
       ...args,
