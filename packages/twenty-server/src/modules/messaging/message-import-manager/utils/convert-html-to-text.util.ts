@@ -6,9 +6,15 @@ import { removeQuotedMarkup } from 'src/modules/messaging/message-import-manager
 import { renderHtmlWithQuoteMarkers } from 'src/modules/messaging/message-import-manager/utils/render-html-with-quote-markers.util';
 
 export const convertHtmlToText = (html: string): string => {
-  const safeHtml = sanitizeHtml(html, MESSAGE_HTML_SANITIZE_OPTIONS);
-  const markedText = renderHtmlWithQuoteMarkers(safeHtml);
-  const withoutQuotedMarkup = removeQuotedMarkup(markedText);
+  try {
+    const safeHtml = sanitizeHtml(html, MESSAGE_HTML_SANITIZE_OPTIONS);
+    const markedText = renderHtmlWithQuoteMarkers(safeHtml);
+    const withoutQuotedMarkup = removeQuotedMarkup(markedText);
 
-  return normalizeMessageText(withoutQuotedMarkup);
+    return normalizeMessageText(withoutQuotedMarkup);
+  } catch {
+    const fallbackText = sanitizeHtml(html, { allowedTags: [] });
+
+    return normalizeMessageText(fallbackText);
+  }
 };

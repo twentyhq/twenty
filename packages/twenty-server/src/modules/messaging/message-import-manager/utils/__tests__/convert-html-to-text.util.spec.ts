@@ -118,4 +118,12 @@ describe('convertHtmlToText', () => {
       'Real text kept',
     );
   });
+
+  it('should handle deeply nested HTML without throwing RangeError (closes #29200)', () => {
+    const deeplyNestedHtml =
+      '<div>'.repeat(3000) + 'Deep Content' + '</div>'.repeat(3000);
+
+    expect(() => convertHtmlToText(deeplyNestedHtml)).not.toThrow();
+    expect(convertHtmlToText(deeplyNestedHtml)).toContain('Deep Content');
+  });
 });
