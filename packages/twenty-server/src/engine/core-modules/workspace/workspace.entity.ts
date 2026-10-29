@@ -389,7 +389,7 @@ export class WorkspaceEntity {
   @Column({
     type: 'varchar',
     nullable: false,
-    default: AiChatAssistantMode.PROACTIVE,
+    default: AiChatAssistantMode.AUTOMATIC,
   })
   aiChatInboxAssistantMode: AiChatAssistantMode;
 

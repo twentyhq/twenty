@@ -10,7 +10,7 @@ export class AddWorkspaceChatAssistantModesFastInstanceCommand implements FastIn
       'ALTER TABLE "core"."workspace" ADD "aiChatDirectMessageAssistantMode" character varying NOT NULL DEFAULT \'MENTION_ONLY\'',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."workspace" ADD "aiChatInboxAssistantMode" character varying NOT NULL DEFAULT \'PROACTIVE\'',
+      'ALTER TABLE "core"."workspace" ADD "aiChatInboxAssistantMode" character varying NOT NULL DEFAULT \'AUTOMATIC\'',
     );
   }
 
