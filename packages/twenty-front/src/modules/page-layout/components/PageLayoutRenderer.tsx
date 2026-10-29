@@ -73,7 +73,9 @@ export const PageLayoutRenderer = ({
               layoutType={layoutType}
               pageLayoutId={pageLayoutId}
             >
-              <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+              <PageLayoutInitializationQueryEffect
+                pageLayoutId={pageLayoutId}
+              />
               <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
               <RecordTableWidgetViewDraftsInitializationEffect />
               <PageLayoutRendererContent />

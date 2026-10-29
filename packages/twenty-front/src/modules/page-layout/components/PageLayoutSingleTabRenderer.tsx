@@ -179,7 +179,9 @@ export const PageLayoutSingleTabRenderer = ({
               layoutType={layoutType}
               pageLayoutId={pageLayoutId}
             >
-              <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+              <PageLayoutInitializationQueryEffect
+                pageLayoutId={pageLayoutId}
+              />
               <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
               <RecordTableWidgetViewDraftsInitializationEffect />
               <PageLayoutSingleTabRendererContent />
