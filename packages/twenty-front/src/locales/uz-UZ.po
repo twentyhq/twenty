@@ -22355,6 +22355,11 @@ msgstr "Rad etish"
 msgid "Rejected"
 msgstr "Rad etildi"
 
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr ""
+
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"

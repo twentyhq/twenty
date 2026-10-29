@@ -22350,6 +22350,11 @@ msgstr "Reject"
 msgid "Rejected"
 msgstr "Rejected"
 
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "related record path"
+
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"
