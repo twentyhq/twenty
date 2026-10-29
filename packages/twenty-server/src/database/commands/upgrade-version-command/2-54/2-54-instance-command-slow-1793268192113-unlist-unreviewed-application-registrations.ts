@@ -6,7 +6,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 // Being listed now means the app passed the marketplace review; isVetted is dropped one release later
-@RegisteredInstanceCommand('2.54.0', 1793266191219, { type: 'slow' })
+@RegisteredInstanceCommand('2.54.0', 1793268192113, { type: 'slow' })
 export class UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand
   implements SlowInstanceCommand
 {
