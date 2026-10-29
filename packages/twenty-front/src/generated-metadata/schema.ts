@@ -724,7 +724,6 @@ export type ApplicationRegistration = {
   isConfigured: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -2766,6 +2765,12 @@ export type Impersonate = {
   workspace: WorkspaceUrlsAndId;
 };
 
+export type InboxThreadRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
+};
+
 export type Index = {
   __typename?: 'Index';
   applicationId: Scalars['UUID']['output'];
@@ -3030,7 +3035,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  isVetted: Scalars['Boolean']['output'];
+  isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   sourcePackage?: Maybe<Scalars['String']['output']>;
@@ -3049,7 +3054,6 @@ export type MarketplaceAppDetail = {
   id: Scalars['String']['output'];
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   issueReportUrl?: Maybe<Scalars['String']['output']>;
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -3383,6 +3387,7 @@ export type Mutation = {
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
+  attachRecordToInboxThread: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
@@ -3499,6 +3504,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
@@ -3712,6 +3718,11 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAttachRecordToInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
@@ -4286,6 +4297,11 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
+};
+
+
+export type MutationDetachRecordFromInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
@@ -5984,6 +6000,7 @@ export type QueryEventLogsArgs = {
 
 
 export type QueryExportApplicationArgs = {
+  shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
 
@@ -6337,11 +6354,6 @@ export type QueryPreviewMessageCampaignSendArgs = {
 
 export type QueryPublicMarketplaceAppDetailArgs = {
   universalIdentifier: Scalars['String']['input'];
-};
-
-
-export type QueryPublicMarketplaceAppsArgs = {
-  isVetted?: Scalars['Boolean']['input'];
 };
 
 
@@ -8054,6 +8066,8 @@ export enum UserCreditsFallback {
 export type UserSession = {
   __typename?: 'UserSession';
   authProvider: Scalars['String']['output'];
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   expiresAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
@@ -8061,6 +8075,7 @@ export type UserSession = {
   isCurrent: Scalars['Boolean']['output'];
   isImpersonating: Scalars['Boolean']['output'];
   lastActiveAt: Scalars['DateTime']['output'];
+  region?: Maybe<Scalars['String']['output']>;
   userAgent?: Maybe<Scalars['String']['output']>;
   workspaceId?: Maybe<Scalars['UUID']['output']>;
 };

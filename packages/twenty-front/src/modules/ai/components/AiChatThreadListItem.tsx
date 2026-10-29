@@ -71,7 +71,9 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-  const { status: triageStatus } = useAiChatThreadTriage(thread.id);
+  const { status: triageStatus } = useAiChatThreadTriage({
+    threadId: thread.id,
+  });
   const shouldShowMore =
     isDefined(onDetach) ||
     isDefined(thread.deletedAt) ||

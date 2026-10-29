@@ -12,15 +12,23 @@ const STORED_FILES = {
 
 const STORED_FILES_CHECKSUMS = computeApplicationPackageChecksums(STORED_FILES);
 
+const LEGACY_STORED_FILES_CHECKSUMS =
+  computeLegacyApplicationPackageChecksums(STORED_FILES);
+
+const STORED_CHECKSUMS = {
+  storedFilesChecksums: STORED_FILES_CHECKSUMS,
+  legacyStoredFilesChecksums: LEGACY_STORED_FILES_CHECKSUMS,
+};
+
 describe('assertMatchingDependencyChecksumsOrThrow', () => {
-  it('returns the checksums of the stored files when the declared ones match', () => {
-    expect(
+  it('accepts declared checksums that describe the stored files', () => {
+    expect(() =>
       assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: STORED_FILES_CHECKSUMS,
-        ...STORED_FILES,
+        ...STORED_CHECKSUMS,
       }),
-    ).toEqual(STORED_FILES_CHECKSUMS);
+    ).not.toThrow();
   });
 
   it('refuses a package.json checksum that does not describe the stored file', () => {
@@ -31,7 +39,7 @@ describe('assertMatchingDependencyChecksumsOrThrow', () => {
           ...STORED_FILES_CHECKSUMS,
           packageJsonChecksum: 'other-package-json',
         },
-        ...STORED_FILES,
+        ...STORED_CHECKSUMS,
       }),
     ).toThrow(ApplicationException);
   });
@@ -44,7 +52,7 @@ describe('assertMatchingDependencyChecksumsOrThrow', () => {
           ...STORED_FILES_CHECKSUMS,
           yarnLockChecksum: 'other-yarn-lock',
         },
-        ...STORED_FILES,
+        ...STORED_CHECKSUMS,
       }),
     ).toThrow(ApplicationException);
   });
@@ -57,34 +65,42 @@ describe('assertMatchingDependencyChecksumsOrThrow', () => {
           ...STORED_FILES_CHECKSUMS,
           yarnLockChecksum: null,
         },
-        ...STORED_FILES,
+        ...STORED_CHECKSUMS,
       }),
     ).toThrow(ApplicationException);
   });
 
   it('ignores the declared yarn.lock checksum when no yarn.lock is stored', () => {
-    expect(
+    const storedFilesWithoutYarnLock = {
+      packageJsonContent: STORED_FILES.packageJsonContent,
+      yarnLockContent: null,
+    };
+
+    expect(() =>
       assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           ...STORED_FILES_CHECKSUMS,
           yarnLockChecksum: 'declared-yarn-lock',
         },
-        packageJsonContent: STORED_FILES.packageJsonContent,
-        yarnLockContent: null,
+        storedFilesChecksums: computeApplicationPackageChecksums(
+          storedFilesWithoutYarnLock,
+        ),
+        legacyStoredFilesChecksums: computeLegacyApplicationPackageChecksums(
+          storedFilesWithoutYarnLock,
+        ),
       }),
-    ).toEqual({ ...STORED_FILES_CHECKSUMS, yarnLockChecksum: null });
+    ).not.toThrow();
   });
 
-  it('accepts the md5 checksums of older CLIs and returns the current ones', () => {
-    expect(
+  it('accepts the md5 checksums of older CLIs', () => {
+    expect(() =>
       assertMatchingDependencyChecksumsOrThrow({
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-        declaredChecksums:
-          computeLegacyApplicationPackageChecksums(STORED_FILES),
-        ...STORED_FILES,
+        declaredChecksums: LEGACY_STORED_FILES_CHECKSUMS,
+        ...STORED_CHECKSUMS,
       }),
-    ).toEqual(STORED_FILES_CHECKSUMS);
+    ).not.toThrow();
   });
 
   it('refuses a pair that mixes both formulas', () => {
@@ -93,11 +109,9 @@ describe('assertMatchingDependencyChecksumsOrThrow', () => {
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         declaredChecksums: {
           packageJsonChecksum: STORED_FILES_CHECKSUMS.packageJsonChecksum,
-          yarnLockChecksum:
-            computeLegacyApplicationPackageChecksums(STORED_FILES)
-              .yarnLockChecksum,
+          yarnLockChecksum: LEGACY_STORED_FILES_CHECKSUMS.yarnLockChecksum,
         },
-        ...STORED_FILES,
+        ...STORED_CHECKSUMS,
       }),
     ).toThrow(ApplicationException);
   });

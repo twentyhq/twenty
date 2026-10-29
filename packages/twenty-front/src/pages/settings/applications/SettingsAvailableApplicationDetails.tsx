@@ -24,7 +24,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconAlertTriangle, IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
+import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -142,10 +142,9 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const builtInApplicationContent = getBuiltInApplicationContent();
 
-  const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isNotVetted =
+  const isUnlisted =
     isDefined(detail) &&
-    !detail.isVetted &&
+    !detail.isListed &&
     !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
@@ -258,14 +257,9 @@ export const SettingsAvailableApplicationDetails = () => {
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
-              icon={<IconEyeOff aria-hidden="true" />}
-            >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
-          )}
-          {isNotVetted && (
-            <InlineBanner
               status="warning"
-              icon={<IconAlertTriangle aria-hidden="true" />}
-            >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
+              icon={<IconEyeOff aria-hidden="true" />}
+            >{t`This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
           )}
           {renderContent()}
         </SettingsPageContainer>
@@ -278,7 +272,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
-        isVetted={detail?.isVetted}
+        isListed={detail?.isListed}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

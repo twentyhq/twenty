@@ -6,10 +6,10 @@ import {
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
-  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   WORKFLOW_ENUM_BINDINGS,
+  buildRoleEnumBindings,
   type EnumBinding,
 } from '@/app/pull/write-define-file';
 import {
@@ -21,6 +21,7 @@ import {
 import { stripGraphqlTypename } from '@/app/pull/strip-graphql-typename';
 import { kebabCase } from '@/app/pull/kebab-case';
 import { type Manifest } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { fromApplicationManifestToApplicationConfig } from '@/app/pull/from-application-manifest-to-application-config';
 import { fromRoleManifestToRoleConfig } from '@/app/pull/from-role-manifest-to-role-config';
 import { buildPullFieldFileName } from '@/app/pull/build-pull-field-file-name';
@@ -69,13 +70,15 @@ export type SkippedPullEntity = {
   reason: string;
 };
 
-export const buildPullEntities = (
-  manifest: Manifest,
-  sourceFileByUniversalIdentifier: ReadonlyMap<
-    string,
-    ScannedSourceFile
-  > = new Map(),
-): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
+export const buildPullEntities = ({
+  manifest,
+  sourceFileByUniversalIdentifier = new Map(),
+  systemPermissionFlag = SystemPermissionFlag,
+}: {
+  manifest: Manifest;
+  sourceFileByUniversalIdentifier?: ReadonlyMap<string, ScannedSourceFile>;
+  systemPermissionFlag?: Record<string, string>;
+}): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
   const entities: PullEntity[] = [];
@@ -228,7 +231,7 @@ export const buildPullEntities = (
         roleManifest,
         applicationUniversalIdentifier,
       }),
-      enumBindings: ROLE_ENUM_BINDINGS,
+      enumBindings: buildRoleEnumBindings(systemPermissionFlag),
       defaultFolder: 'src/roles',
       fileSuffix: '.role.ts',
       fileBaseName: toFileBaseName({

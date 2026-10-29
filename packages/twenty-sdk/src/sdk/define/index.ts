@@ -190,7 +190,7 @@ export {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
-export { SystemPermissionFlag } from 'twenty-shared/constants';
+export { SystemPermissionFlag } from '@/sdk/define/roles/system-permission-flag.constant';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 

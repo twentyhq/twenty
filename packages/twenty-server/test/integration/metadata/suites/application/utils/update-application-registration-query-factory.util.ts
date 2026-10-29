@@ -22,7 +22,6 @@ export const updateApplicationRegistrationQueryFactory = ({
         name
         isListed
         isPreInstalled
-        isVetted
       }
     }
   `,
