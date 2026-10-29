@@ -47,7 +47,9 @@ describe('ApplicationRegistrationClientIdMetadataDocumentService', () => {
       ],
     }).compile();
 
-    service = module.get(ApplicationRegistrationClientIdMetadataDocumentService);
+    service = module.get(
+      ApplicationRegistrationClientIdMetadataDocumentService,
+    );
   });
 
   it('should create a public registration keyed by the document URL', async () => {

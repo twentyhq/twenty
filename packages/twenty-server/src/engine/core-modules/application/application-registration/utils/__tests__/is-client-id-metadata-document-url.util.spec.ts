@@ -3,7 +3,9 @@ import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/applicati
 describe('isClientIdMetadataDocumentUrl', () => {
   it('should accept an HTTPS URL with a path', () => {
     expect(
-      isClientIdMetadataDocumentUrl('https://app.example.com/oauth/client.json'),
+      isClientIdMetadataDocumentUrl(
+        'https://app.example.com/oauth/client.json',
+      ),
     ).toBe(true);
   });
 

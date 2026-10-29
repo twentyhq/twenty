@@ -7,6 +7,7 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { type OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 describe('OAuthRegistrationController', () => {
@@ -48,6 +49,7 @@ describe('OAuthRegistrationController', () => {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
           useValue: applicationRegistrationRepository,
         },
+        { provide: HttpExceptionHandlerService, useValue: {} },
         {
           provide: ThrottlerService,
           useValue: { tokenBucketThrottleOrThrow: jest.fn() },
@@ -67,8 +69,8 @@ describe('OAuthRegistrationController', () => {
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledTimes(1);
     expect(result).toMatchObject({
-      client_id: applicationRegistrationRepository.save.mock.calls[0][0]
-        .oAuthClientId,
+      client_id:
+        applicationRegistrationRepository.save.mock.calls[0][0].oAuthClientId,
     });
   });
 

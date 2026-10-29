@@ -282,7 +282,8 @@ export class OAuthRegistrationController {
               ),
             ),
             redirectUrisKey,
-          ) && isEqual(toComparableSet(candidate.oAuthScopes), scopesKey),
+          ) &&
+          isEqual(toComparableSet(candidate.oAuthScopes), scopesKey),
       ) ?? null
     );
   }

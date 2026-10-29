@@ -50,8 +50,8 @@ describe('isRedirectUriRegistered', () => {
 describe('normalizeRedirectUriForComparison', () => {
   it('should leave unparseable and custom-scheme URIs untouched', () => {
     expect(normalizeRedirectUriForComparison('not a url')).toBe('not a url');
-    expect(normalizeRedirectUriForComparison('cursor://anysphere/callback')).toBe(
-      'cursor://anysphere/callback',
-    );
+    expect(
+      normalizeRedirectUriForComparison('cursor://anysphere/callback'),
+    ).toBe('cursor://anysphere/callback');
   });
 });

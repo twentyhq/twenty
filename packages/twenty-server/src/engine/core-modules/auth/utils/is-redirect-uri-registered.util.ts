@@ -10,7 +10,10 @@ export const normalizeRedirectUriForComparison = (uri: string): string => {
     return uri;
   }
 
-  if (parsed.protocol !== 'http:' || !LOOPBACK_HOSTNAMES.includes(parsed.hostname)) {
+  if (
+    parsed.protocol !== 'http:' ||
+    !LOOPBACK_HOSTNAMES.includes(parsed.hostname)
+  ) {
     return uri;
   }
 

@@ -34,12 +34,18 @@ export const parseClientIdMetadataDocument = ({
   const metadata: Record<string, unknown> = document;
 
   if (metadata.client_id !== clientId) {
-    return { valid: false, reason: 'client_id does not match the document URL' };
+    return {
+      valid: false,
+      reason: 'client_id does not match the document URL',
+    };
   }
 
   // Shared secrets cannot be published in a public document
   if ('client_secret' in metadata || 'client_secret_expires_at' in metadata) {
-    return { valid: false, reason: 'Document must not contain a client secret' };
+    return {
+      valid: false,
+      reason: 'Document must not contain a client secret',
+    };
   }
 
   const tokenEndpointAuthMethod = metadata.token_endpoint_auth_method;
