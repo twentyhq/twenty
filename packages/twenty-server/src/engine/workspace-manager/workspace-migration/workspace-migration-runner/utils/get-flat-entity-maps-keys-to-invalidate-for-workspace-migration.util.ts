@@ -13,10 +13,13 @@ type ManyToOneRelation = {
   universalForeignKey: string | null;
 };
 
-const getUpdateAffectedMetadataNames = (
-  metadataName: AllMetadataName,
-  changedProperties: Set<string>,
-): AllMetadataName[] => {
+const getUpdateAffectedMetadataNames = ({
+  metadataName,
+  changedProperties,
+}: {
+  metadataName: AllMetadataName;
+  changedProperties: Set<string>;
+}): AllMetadataName[] => {
   const manyToOneRelations = ALL_MANY_TO_ONE_METADATA_RELATIONS[
     metadataName
   ] as Record<string, ManyToOneRelation | null>;
@@ -49,10 +52,10 @@ export const getFlatEntityMapsKeysToInvalidateForWorkspaceMigration = (
 
     const affectedMetadataNames =
       action.type === 'update'
-        ? getUpdateAffectedMetadataNames(
-            action.metadataName,
-            new Set(Object.keys(action.update)),
-          )
+        ? getUpdateAffectedMetadataNames({
+            metadataName: action.metadataName,
+            changedProperties: new Set(Object.keys(action.update)),
+          })
         : getMetadataRelatedMetadataNames(action.metadataName);
 
     for (const metadataName of affectedMetadataNames) {

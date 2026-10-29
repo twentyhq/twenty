@@ -36,6 +36,25 @@ import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engi
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
+const getDerivedCacheTriggers = (
+  flatEntityMapsKeys: (keyof AllFlatEntityMaps)[],
+) => ({
+  hasRolesPermissionsChanged: flatEntityMapsKeys.some(
+    (flatEntityMapsKey) =>
+      flatEntityMapsKey === 'flatRoleMaps' ||
+      flatEntityMapsKey === 'flatRoleTargetMaps' ||
+      flatEntityMapsKey === 'flatObjectPermissionMaps' ||
+      flatEntityMapsKey === 'flatFieldPermissionMaps' ||
+      flatEntityMapsKey === 'flatRolePermissionFlagMaps',
+  ),
+  hasWorkflowVersionsChanged: flatEntityMapsKeys.includes(
+    'flatWorkflowVersionMaps',
+  ),
+  hasApplicationVariablesChanged: flatEntityMapsKeys.includes(
+    'flatApplicationVariableMaps',
+  ),
+});
+
 @Injectable()
 export class WorkspaceMigrationRunnerService {
   constructor(
@@ -62,20 +81,13 @@ export class WorkspaceMigrationRunnerService {
         ),
     ),
     hasMorphRelationFieldChanged = false,
-    hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
-      (flatEntityMapsKey) =>
-        flatEntityMapsKey === 'flatRoleMaps' ||
-        flatEntityMapsKey === 'flatRoleTargetMaps' ||
-        flatEntityMapsKey === 'flatObjectPermissionMaps' ||
-        flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
-    ),
-    hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
-      'flatWorkflowVersionMaps',
-    ),
-    hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
-      'flatApplicationVariableMaps',
-    ),
+    hasRolesPermissionsChanged = getDerivedCacheTriggers(allFlatEntityMapsKeys)
+      .hasRolesPermissionsChanged,
+    hasWorkflowVersionsChanged = getDerivedCacheTriggers(allFlatEntityMapsKeys)
+      .hasWorkflowVersionsChanged,
+    hasApplicationVariablesChanged = getDerivedCacheTriggers(
+      allFlatEntityMapsKeys,
+    ).hasApplicationVariablesChanged,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
@@ -294,20 +306,11 @@ export class WorkspaceMigrationRunnerService {
     const flatEntityMapsKeysToInvalidate =
       getFlatEntityMapsKeysToInvalidateForWorkspaceMigration(actions);
 
-    const hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
-      (flatEntityMapsKey) =>
-        flatEntityMapsKey === 'flatRoleMaps' ||
-        flatEntityMapsKey === 'flatRoleTargetMaps' ||
-        flatEntityMapsKey === 'flatObjectPermissionMaps' ||
-        flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
-    );
-    const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
-      'flatWorkflowVersionMaps',
-    );
-    const hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
-      'flatApplicationVariableMaps',
-    );
+    const {
+      hasRolesPermissionsChanged,
+      hasWorkflowVersionsChanged,
+      hasApplicationVariablesChanged,
+    } = getDerivedCacheTriggers(allFlatEntityMapsKeys);
 
     const cachedAllFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
