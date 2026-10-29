@@ -257,8 +257,10 @@ const PREDICATE_BUILDER_BY_OPERAND_BY_FIELD_KEY: Record<
         pattern: `%${escapeForIlike(requireTextValue(rule))}%`,
         negated: true,
       }),
-    [CoreWorkflowFilterOperand.IS]: null,
-    [CoreWorkflowFilterOperand.IS_NOT]: null,
+    [CoreWorkflowFilterOperand.IS]: ({ rule, bindParameter }) =>
+      `${NAME_COLUMN} = ${bindParameter(requireTextValue(rule))}`,
+    [CoreWorkflowFilterOperand.IS_NOT]: ({ rule, bindParameter }) =>
+      `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} <> ${bindParameter(requireTextValue(rule))})`,
     [CoreWorkflowFilterOperand.IS_EMPTY]: () =>
       `(${NAME_COLUMN} IS NULL OR ${NAME_COLUMN} = '')`,
     [CoreWorkflowFilterOperand.IS_NOT_EMPTY]: () =>

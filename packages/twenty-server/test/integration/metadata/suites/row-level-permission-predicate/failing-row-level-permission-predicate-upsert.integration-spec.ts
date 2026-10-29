@@ -164,7 +164,7 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
           predicates: [
             {
               fieldMetadataId: testSetup.companyNameFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.IS,
+              operand: RowLevelPermissionPredicateOperand.GREATER_THAN_OR_EQUAL,
               value: 'Apple',
             },
           ],

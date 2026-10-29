@@ -131,6 +131,75 @@ describe('computeViewRecordGqlOperationFilter', () => {
       ],
     });
   });
+
+  it('should compile a TEXT IS filter to a case-sensitive exact match', () => {
+    const companyMockNameFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'name',
+      );
+
+    if (!isDefined(companyMockNameFieldMetadataId)) {
+      throw new Error('Company mock name field metadata ID is undefined');
+    }
+
+    const nameFilter: RecordFilter = {
+      id: 'company-name-filter',
+      value: mockedCompanyRecords[0].name,
+      fieldMetadataId: companyMockNameFieldMetadataId.id,
+      displayValue: mockedCompanyRecords[0].name,
+      operand: RecordFilterOperand.IS,
+      type: 'TEXT',
+      label: 'Name',
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [nameFilter],
+      recordFilterGroups: [],
+      fieldMetadataItems: companyFields,
+    });
+
+    expect(result).toEqual({
+      name: {
+        eq: mockedCompanyRecords[0].name,
+      },
+    });
+  });
+
+  it('should compile a TEXT IS_NOT filter and keep NULL rows', () => {
+    const companyMockNameFieldMetadataId =
+      companyMockObjectMetadataItem.fields.find(
+        (field) => field.name === 'name',
+      );
+
+    if (!isDefined(companyMockNameFieldMetadataId)) {
+      throw new Error('Company mock name field metadata ID is undefined');
+    }
+
+    const nameFilter: RecordFilter = {
+      id: 'company-name-filter',
+      value: mockedCompanyRecords[0].name,
+      fieldMetadataId: companyMockNameFieldMetadataId.id,
+      displayValue: mockedCompanyRecords[0].name,
+      operand: RecordFilterOperand.IS_NOT,
+      type: 'TEXT',
+      label: 'Name',
+    };
+
+    const result = computeRecordGqlOperationFilter({
+      filterValueDependencies: mockFilterValueDependencies,
+      recordFilters: [nameFilter],
+      recordFilterGroups: [],
+      fieldMetadataItems: companyFields,
+    });
+
+    expect(result).toEqual({
+      or: [
+        { name: { neq: mockedCompanyRecords[0].name } },
+        { name: { is: 'NULL' } },
+      ],
+    });
+  });
 });
 
 describe('should work as expected for the different field types', () => {
