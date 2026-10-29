@@ -46,7 +46,7 @@
   "devDependencies": {
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "twenty-ui": "~2.51.0"
+    "twenty-ui": "~2.52.0"
   },
   "frontComponentSharedDependencies": [
     "react",

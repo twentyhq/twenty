@@ -293,10 +293,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
         workspaceMigrationWebhookActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.mcpServer,
-        workspaceMigrationMcpServerActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
         ALL_METADATA_NAME.applicationVariable,
         workspaceMigrationApplicationVariableActionsBuilderService,
       ),
@@ -307,6 +303,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.messagingProvider,
         workspaceMigrationMessagingProviderActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.mcpServer,
+        workspaceMigrationMcpServerActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.timelineActivityType,
