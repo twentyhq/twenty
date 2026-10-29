@@ -1370,6 +1370,9 @@ export default {
             "creditsUsed": [
                 6
             ],
+            "operationLabel": [
+                1
+            ],
             "operationType": [
                 1
             ],
