@@ -20,10 +20,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-const createObject = async (
-  nameSingular: string,
-  labelSingular: string,
-): Promise<string> => {
+const createObject = async ({
+  nameSingular,
+  labelSingular,
+}: {
+  nameSingular: string;
+  labelSingular: string;
+}): Promise<string> => {
   const {
     data: {
       createOneObject: { id },
@@ -122,14 +125,14 @@ describe('Related record path metadata', () => {
     jestExpectToBeDefined(personObject);
     personObjectMetadataId = personObject.id;
 
-    projectObjectMetadataId = await createObject(
-      'relatedPathProject',
-      'Related path project',
-    );
-    taskObjectMetadataId = await createObject(
-      'relatedPathTask',
-      'Related path task',
-    );
+    projectObjectMetadataId = await createObject({
+      nameSingular: 'relatedPathProject',
+      labelSingular: 'Related path project',
+    });
+    taskObjectMetadataId = await createObject({
+      nameSingular: 'relatedPathTask',
+      labelSingular: 'Related path task',
+    });
 
     const projectTasksField = await createRelationBetweenObjects({
       objectMetadataId: projectObjectMetadataId,

@@ -14,7 +14,7 @@ import {
   RelatedRecordPathExceptionCode,
 } from 'src/engine/metadata-modules/related-record-path/related-record-path.exception';
 
-export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreate =
+export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow =
   ({
     createRelatedRecordPathInput,
     workspaceId,

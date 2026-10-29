@@ -40,6 +40,12 @@ const buildInvalidInputError = ({
   userFriendlyMessage,
 });
 
+const buildNotFoundError = (): FlatEntityValidationError => ({
+  code: RelatedRecordPathExceptionCode.RELATED_RECORD_PATH_NOT_FOUND,
+  message: t`Related record path not found`,
+  userFriendlyMessage: msg`Related record path not found`,
+});
+
 @Injectable()
 export class FlatRelatedRecordPathValidatorService {
   private collectPathErrors({
@@ -261,11 +267,7 @@ export class FlatRelatedRecordPathValidatorService {
     });
 
     if (!isDefined(existingFlatRelatedRecordPath)) {
-      validationResult.errors.push({
-        code: RelatedRecordPathExceptionCode.RELATED_RECORD_PATH_NOT_FOUND,
-        message: t`Related record path not found`,
-        userFriendlyMessage: msg`Related record path not found`,
-      });
+      validationResult.errors.push(buildNotFoundError());
     }
 
     return validationResult;
@@ -293,11 +295,7 @@ export class FlatRelatedRecordPathValidatorService {
     });
 
     if (!isDefined(existingFlatRelatedRecordPath)) {
-      validationResult.errors.push({
-        code: RelatedRecordPathExceptionCode.RELATED_RECORD_PATH_NOT_FOUND,
-        message: t`Related record path not found`,
-        userFriendlyMessage: msg`Related record path not found`,
-      });
+      validationResult.errors.push(buildNotFoundError());
 
       return validationResult;
     }

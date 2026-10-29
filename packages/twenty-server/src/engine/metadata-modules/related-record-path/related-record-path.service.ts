@@ -9,7 +9,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
-import { fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreate } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-create-related-record-path-input-to-flat-related-record-path-to-create.util';
+import { fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-create-related-record-path-input-to-flat-related-record-path-to-create-or-throw.util';
 import { fromFlatRelatedRecordPathToRelatedRecordPathDto } from 'src/engine/metadata-modules/flat-related-record-path/utils/from-flat-related-record-path-to-related-record-path-dto.util';
 import { type CreateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/create-related-record-path.input';
 import { type RelatedRecordPathDTO } from 'src/engine/metadata-modules/related-record-path/dtos/related-record-path.dto';
@@ -114,7 +114,7 @@ export class RelatedRecordPathService {
       );
 
     const flatRelatedRecordPathToCreate =
-      fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreate({
+      fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow({
         createRelatedRecordPathInput: input,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
