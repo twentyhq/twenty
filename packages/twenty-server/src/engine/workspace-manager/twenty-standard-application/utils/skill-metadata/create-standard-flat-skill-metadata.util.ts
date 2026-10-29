@@ -260,10 +260,10 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
    \`\`\`
    Never paginate through hundreds of existing records with \`find_many_*\` to find the ones you just created.
 5. **Confirm the mapping before writing.** Present the proposed column → field mapping to the user (source column → target field, relation strategy such as "Company matched by name → companyId", and any type coercions) and wait for them to confirm or adjust. Do not write anything before this confirmation.
-6. **Silently validate the mapping with a 2-row upsert.** Inside the same \`code_interpreter\` run, upsert just 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
-7. **Write with bulk_upsert.** Prefer upsert so dedup on unique fields (e.g. email) is handled server-side and re-runs are idempotent:
+6. **Silently validate the mapping with a 2-row upsert.** Inside the same \`code_interpreter\` run, upsert just the first 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
+7. **Write the remaining rows with bulk_upsert.** Write \`records[2:]\`, never the full list again: objects without a unique field (opportunities, tasks, notes, most custom objects) cannot dedupe, so the 2 check rows would be created twice. Prefer upsert so dedup on unique fields (e.g. email) is handled server-side and re-runs are idempotent:
    \`\`\`python
-   summary = twenty.bulk_upsert('people', records)
+   summary = twenty.bulk_upsert('people', records[2:])
    print(summary)  # { 'created': 4000, 'updated': 380, 'upserted': 4380, 'failed': 0, 'errors': [] }
    \`\`\`
    \`bulk_upsert\` batches at 200 (the platform maximum) and paginates to completion. Never stop at "partial" — if some batches failed, report the count and retry the failed offsets.
