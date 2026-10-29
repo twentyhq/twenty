@@ -21,6 +21,7 @@ const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
 const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
 const mockAllocateTickets = jest.fn();
+const mockRecordDispatch = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -43,9 +44,10 @@ jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
 jest.mock(
   'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator',
   () => ({
-    FairTicketAllocator: jest
-      .fn()
-      .mockImplementation(() => ({ allocateTickets: mockAllocateTickets })),
+    FairTicketAllocator: jest.fn().mockImplementation(() => ({
+      allocateTickets: mockAllocateTickets,
+      recordDispatch: mockRecordDispatch,
+    })),
   }),
 );
 
@@ -639,5 +641,61 @@ describe('BullMQDriver fair tickets', () => {
       { workspaceId: 'ws-1' },
       expect.objectContaining({ delay: 1_000, priority: 4 }),
     );
+  });
+});
+
+describe('BullMQDriver fair dispatch', () => {
+  const processJob = async ({
+    isFairnessEnabled,
+  }: {
+    isFairnessEnabled: boolean;
+  }) => {
+    const driver = new BullMQDriver(
+      {} as never,
+      { recordHistogram: jest.fn() } as never,
+      {
+        get: jest.fn(
+          (key: string) =>
+            key === 'IS_WORKER_FAIRNESS_ENABLED' && isFairnessEnabled,
+        ),
+      } as never,
+      {} as never,
+    );
+
+    driver.register(MessageQueue.workflowQueue);
+    jest.clearAllMocks();
+    driver.work(MessageQueue.workflowQueue, jest.fn());
+
+    const processor = jest.mocked(Worker).mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await processor({
+      id: 'job-id',
+      name: 'job',
+      data: {},
+      opts: {},
+      timestamp: Date.now(),
+      attemptsStarted: 1,
+      updateData: jest.fn(),
+      updateProgress: jest.fn(),
+    } as unknown as Job);
+  };
+
+  it('records the dispatch of a job when fairness is on', async () => {
+    await processJob({ isFairnessEnabled: true });
+
+    expect(mockRecordDispatch).toHaveBeenCalledWith({
+      queueName: MessageQueue.workflowQueue,
+      jobId: 'job-id',
+    });
+  });
+
+  it('records nothing when fairness is off', async () => {
+    await processJob({ isFairnessEnabled: false });
+
+    expect(mockRecordDispatch).not.toHaveBeenCalled();
   });
 });

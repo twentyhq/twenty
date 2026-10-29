@@ -85,6 +85,8 @@ export class BullMQDriver
   ) {
     this.fairQueueScheduler = new FairQueueScheduler({
       getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       twentyConfigService,
@@ -287,6 +289,10 @@ export class BullMQDriver
       async (job, _token, abortSignal) =>
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
+
+          if (isDefined(job.id)) {
+            this.fairQueueScheduler.onJobStarted({ queueName, jobId: job.id });
+          }
 
           const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 
