@@ -216,7 +216,6 @@ export class LocalDriver implements LogicFunctionDriver {
   async execute({
     flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
     payload,
     context,
     env,
@@ -235,14 +234,8 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
-    await this.layerManager.ensureDepsLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    await this.layerManager.ensureSdkLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    await this.layerManager.ensureDepsLayer(flatApplication);
+    await this.layerManager.ensureSdkLayer(flatApplication);
 
     const startTime = Date.now();
     const temporaryDirManager = new TemporaryDirManager();
@@ -253,7 +246,6 @@ export class LocalDriver implements LogicFunctionDriver {
       await this.childProcessRunner.assembleNodeModules({
         sourceTemporaryDir,
         flatApplication,
-        applicationUniversalIdentifier,
       });
 
       const inMemoryBuiltHandlerPath =
@@ -264,7 +256,8 @@ export class LocalDriver implements LogicFunctionDriver {
             })
           : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
               workspaceId: flatLogicFunction.workspaceId,
-              applicationUniversalIdentifier,
+              applicationUniversalIdentifier:
+                flatApplication.universalIdentifier,
               builtHandlerPath: flatLogicFunction.builtHandlerPath,
               inMemoryDestinationPath: sourceTemporaryDir,
             });
@@ -313,7 +306,6 @@ export class LocalDriver implements LogicFunctionDriver {
             runnerPath,
             executionDirectory: sourceTemporaryDir,
             flatApplication,
-            applicationUniversalIdentifier,
             env: env ?? {},
             payload,
             context,

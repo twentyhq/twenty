@@ -230,7 +230,7 @@ const WORKFLOW_MANIFEST: WorkflowManifest = {
 
 describe('buildPullEntities', () => {
   it('should strip the checksums the build recomputes from the application config', () => {
-    const { entities } = buildPullEntities(buildManifest());
+    const { entities } = buildPullEntities({ manifest: buildManifest() });
     const application = entities.find(
       (entity) => entity.kind === 'application',
     );
@@ -248,7 +248,7 @@ describe('buildPullEntities', () => {
 
   it('should write an object verbatim, keeping its name field and label identifier', () => {
     const manifest = buildManifest();
-    const { entities } = buildPullEntities(manifest);
+    const { entities } = buildPullEntities({ manifest: manifest });
     const object = entities.find((entity) => entity.kind === 'object');
 
     expect(object?.config).toEqual(manifest.objects[0]);
@@ -258,7 +258,7 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a field on a standard object after that object', () => {
-    const { entities } = buildPullEntities(buildManifest());
+    const { entities } = buildPullEntities({ manifest: buildManifest() });
     const field = entities.find((entity) => entity.kind === 'field');
 
     expect(
@@ -267,8 +267,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should name an index after its object and fields', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         indexes: [
           {
             universalIdentifier: INDEX_UID,
@@ -277,7 +277,7 @@ describe('buildPullEntities', () => {
           },
         ],
       } as unknown as Partial<Manifest>),
-    );
+    });
     const index = entities.find((entity) => entity.kind === 'index');
 
     expect(
@@ -303,11 +303,11 @@ describe('buildPullEntities', () => {
       ],
     };
 
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         objects: [junctionObject],
       } as unknown as Partial<Manifest>),
-    );
+    });
     const object = entities.find((entity) => entity.kind === 'object');
 
     expect(skipped).toEqual([]);
@@ -315,8 +315,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should skip an index whose object is not part of the export', () => {
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         objects: [],
         indexes: [
           {
@@ -326,7 +326,7 @@ describe('buildPullEntities', () => {
           },
         ],
       } as unknown as Partial<Manifest>),
-    );
+    });
 
     expect(entities.some((entity) => entity.kind === 'index')).toBe(false);
     expect(
@@ -336,9 +336,9 @@ describe('buildPullEntities', () => {
 
   it('should write a view verbatim into src/views with the view enum bindings and its object as parent', () => {
     const viewManifest = buildViewManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ views: [viewManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ views: [viewManifest] }),
+    });
     const view = entities.find((entity) => entity.kind === 'view');
 
     expect(skipped).toEqual([]);
@@ -353,8 +353,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should give a view on a standard object that object as parent', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [
           buildViewManifest({
             objectUniversalIdentifier:
@@ -362,29 +362,29 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const view = entities.find((entity) => entity.kind === 'view');
 
     expect(view?.parentName).toBe('person');
   });
 
   it('should name a view whose name has no kebab-case form after its identifier prefix', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({ views: [buildViewManifest({ name: '!!!' })] }),
-    );
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({ views: [buildViewManifest({ name: '!!!' })] }),
+    });
     const view = entities.find((entity) => entity.kind === 'view');
 
     expect(view?.fileBaseName).toBe('88888888');
   });
 
   it('should cap the file name of a view with an overlong name', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [
           buildViewManifest({ name: `${'Ab'.repeat(39)} ${'c'.repeat(300)}` }),
         ],
       }),
-    );
+    });
     const view = entities.find((entity) => entity.kind === 'view');
 
     expect(view?.fileBaseName).toBe(`${'ab-'.repeat(26)}ab`);
@@ -393,12 +393,12 @@ describe('buildPullEntities', () => {
 
   it('should write a standalone view field into src/view-fields named after the manifest object and field it points to', () => {
     const viewFieldManifest = buildViewFieldManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         views: [buildViewManifest()],
         viewFields: [viewFieldManifest],
       }),
-    );
+    });
     const viewField = entities.find((entity) => entity.kind === 'viewField');
 
     expect(skipped).toEqual([]);
@@ -413,8 +413,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a standalone view field pointing at a manifest field on a standard object after that object', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [buildViewManifest()],
         viewFields: [
           buildViewFieldManifest({
@@ -422,15 +422,15 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const viewField = entities.find((entity) => entity.kind === 'viewField');
 
     expect(viewField?.fileBaseName).toBe('company-cared-for-pets');
   });
 
   it('should name a standalone view field pointing at a standard field after the standard object and field', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [buildViewManifest()],
         viewFields: [
           buildViewFieldManifest({
@@ -439,15 +439,15 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const viewField = entities.find((entity) => entity.kind === 'viewField');
 
     expect(viewField?.fileBaseName).toBe('person-job-title');
   });
 
   it('should name a standalone view field pointing at an unknown field after its identifier prefix', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [buildViewManifest()],
         viewFields: [
           buildViewFieldManifest({
@@ -455,7 +455,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const viewField = entities.find((entity) => entity.kind === 'viewField');
 
     expect(viewField?.fileBaseName).toBe('99999999');
@@ -463,9 +463,9 @@ describe('buildPullEntities', () => {
 
   it('should write a page layout verbatim into src/page-layouts with the page layout enum bindings and its object as parent', () => {
     const pageLayoutManifest = buildPageLayoutManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ pageLayouts: [pageLayoutManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ pageLayouts: [pageLayoutManifest] }),
+    });
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
 
     expect(skipped).toEqual([]);
@@ -490,8 +490,8 @@ describe('buildPullEntities', () => {
         viewUniversalIdentifier: VIEW_UID,
       },
     };
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayouts: [
           {
             ...pageLayoutManifest,
@@ -506,7 +506,7 @@ describe('buildPullEntities', () => {
           } as unknown as Partial<PageLayoutTabManifest>),
         ],
       }),
-    );
+    });
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
     const pageLayoutTab = entities.find(
       (entity) => entity.kind === 'pageLayoutTab',
@@ -528,8 +528,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should give a page layout on a standard object that object as parent', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayouts: [
           buildPageLayoutManifest({
             objectUniversalIdentifier:
@@ -537,7 +537,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
 
     expect(pageLayout?.parentName).toBe('person');
@@ -551,9 +551,9 @@ describe('buildPullEntities', () => {
       name: 'Pet docs',
       type: PageLayoutType.STANDALONE_PAGE,
     });
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ pageLayouts: [standalonePageManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ pageLayouts: [standalonePageManifest] }),
+    });
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
 
     expect(skipped).toEqual([]);
@@ -562,11 +562,11 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a page layout whose name has no kebab-case form after its identifier prefix', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayouts: [buildPageLayoutManifest({ name: '!!!' })],
       }),
-    );
+    });
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
 
     expect(pageLayout?.fileBaseName).toBe('cccccccc');
@@ -574,9 +574,9 @@ describe('buildPullEntities', () => {
 
   it('should write a standalone page layout tab into src/page-layout-tabs with the tab enum bindings and its standard page layout as parent', () => {
     const pageLayoutTabManifest = buildPageLayoutTabManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ pageLayoutTabs: [pageLayoutTabManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ pageLayoutTabs: [pageLayoutTabManifest] }),
+    });
     const pageLayoutTab = entities.find(
       (entity) => entity.kind === 'pageLayoutTab',
     );
@@ -593,8 +593,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should give a standalone tab on the record page of a manifest object that page as parent', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayoutTabs: [
           buildPageLayoutTabManifest({
             pageLayoutUniversalIdentifier:
@@ -605,7 +605,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const pageLayoutTab = entities.find(
       (entity) => entity.kind === 'pageLayoutTab',
     );
@@ -614,8 +614,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should give a standalone tab on a page layout of the manifest that layout as parent', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayouts: [buildPageLayoutManifest()],
         pageLayoutTabs: [
           buildPageLayoutTabManifest({
@@ -623,7 +623,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const pageLayoutTab = entities.find(
       (entity) => entity.kind === 'pageLayoutTab',
     );
@@ -636,9 +636,9 @@ describe('buildPullEntities', () => {
       pageLayoutUniversalIdentifier: _pageLayoutUniversalIdentifier,
       ...tabWithoutPageLayout
     } = buildPageLayoutTabManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ pageLayoutTabs: [tabWithoutPageLayout] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ pageLayoutTabs: [tabWithoutPageLayout] }),
+    });
 
     expect(entities.some((entity) => entity.kind === 'pageLayoutTab')).toBe(
       false,
@@ -654,9 +654,11 @@ describe('buildPullEntities', () => {
 
   it('should write a navigation menu item verbatim into src/navigation-menu-items with the navigation menu item enum bindings, named after the object it targets', () => {
     const navigationMenuItemManifest = buildNavigationMenuItemManifest();
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ navigationMenuItems: [navigationMenuItemManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
+        navigationMenuItems: [navigationMenuItemManifest],
+      }),
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -677,13 +679,13 @@ describe('buildPullEntities', () => {
   });
 
   it('should prefer the name a navigation menu item carries over the object it targets', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           buildNavigationMenuItemManifest({ name: 'Pet shelter' }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -692,11 +694,11 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a navigation menu item with an empty name after the object it targets', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [buildNavigationMenuItemManifest({ name: '' })],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -705,11 +707,11 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a navigation menu item whose name is only whitespace after the object it targets', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [buildNavigationMenuItemManifest({ name: '   ' })],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -718,8 +720,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a navigation menu item targeting a standard object after that object', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           buildNavigationMenuItemManifest({
             targetObjectUniversalIdentifier:
@@ -727,7 +729,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -744,12 +746,12 @@ describe('buildPullEntities', () => {
       targetObjectUniversalIdentifier: PET_UID,
       viewUniversalIdentifier: VIEW_UID,
     });
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         views: [buildViewManifest()],
         navigationMenuItems: [viewItemManifest],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -769,9 +771,9 @@ describe('buildPullEntities', () => {
         viewKey: SYSTEM_VIEW_KEYS.INDEX,
       }),
     });
-    const { entities } = buildPullEntities(
-      buildManifest({ navigationMenuItems: [indexViewItemManifest] }),
-    );
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({ navigationMenuItems: [indexViewItemManifest] }),
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -787,12 +789,12 @@ describe('buildPullEntities', () => {
       type: NavigationMenuItemType.PAGE_LAYOUT,
       pageLayoutUniversalIdentifier: PAGE_LAYOUT_UID,
     });
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         pageLayouts: [buildPageLayoutManifest()],
         navigationMenuItems: [pageLayoutItemManifest],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -808,9 +810,9 @@ describe('buildPullEntities', () => {
       type: NavigationMenuItemType.LINK,
       link: 'https://twenty.com',
     });
-    const { entities } = buildPullEntities(
-      buildManifest({ navigationMenuItems: [linkItemManifest] }),
-    );
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({ navigationMenuItems: [linkItemManifest] }),
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -828,8 +830,8 @@ describe('buildPullEntities', () => {
       name: 'Care',
       position: 0,
     });
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
@@ -837,7 +839,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
     );
@@ -855,8 +857,8 @@ describe('buildPullEntities', () => {
       name: '',
       position: 0,
     });
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
@@ -864,7 +866,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
     );
@@ -882,8 +884,8 @@ describe('buildPullEntities', () => {
       name: '///',
       position: 0,
     });
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
@@ -891,7 +893,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.universalIdentifier === NAVIGATION_MENU_ITEM_UID,
     );
@@ -900,15 +902,15 @@ describe('buildPullEntities', () => {
   });
 
   it('should give a navigation menu item whose folder is not part of the export no parent', () => {
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         navigationMenuItems: [
           buildNavigationMenuItemManifest({
             folderUniversalIdentifier: 'a-folder-of-another-application',
           }),
         ],
       }),
-    );
+    });
     const navigationMenuItem = entities.find(
       (entity) => entity.kind === 'navigationMenuItem',
     );
@@ -918,8 +920,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should write a standalone page layout widget into src/page-layout-widgets, named after its title', () => {
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         pageLayoutWidgets: [
           {
             universalIdentifier: WIDGET_UID,
@@ -939,7 +941,7 @@ describe('buildPullEntities', () => {
           },
         ],
       } as unknown as Partial<Manifest>),
-    );
+    });
     const widget = entities.find(
       (entity) => entity.kind === 'pageLayoutWidget',
     );
@@ -955,9 +957,9 @@ describe('buildPullEntities', () => {
   });
 
   it('should write a workflow verbatim into src/workflows with the workflow enum bindings, named after the workflow', () => {
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ workflows: [WORKFLOW_MANIFEST] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ workflows: [WORKFLOW_MANIFEST] }),
+    });
     const workflow = entities.find((entity) => entity.kind === 'workflow');
 
     expect(skipped).toEqual([]);
@@ -974,9 +976,11 @@ describe('buildPullEntities', () => {
   });
 
   it('should name a workflow whose name has no kebab-case form after its identifier prefix', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({ workflows: [{ ...WORKFLOW_MANIFEST, name: '!!!' }] }),
-    );
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
+        workflows: [{ ...WORKFLOW_MANIFEST, name: '!!!' }],
+      }),
+    });
 
     expect(
       entities.find((entity) => entity.kind === 'workflow')?.fileBaseName,
@@ -997,9 +1001,9 @@ describe('buildPullEntities', () => {
       label: 'Grooming Tips',
       content: 'Brush first.',
     };
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ agents: [agent], skills: [skill] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ agents: [agent], skills: [skill] }),
+    });
     const pathOf = (kind: string) => {
       const entity = entities.find((candidate) => candidate.kind === kind);
 
@@ -1039,9 +1043,9 @@ describe('buildPullEntities', () => {
       pageLayoutTabs: [buildPageLayoutTabManifest()],
     });
 
-    const { entities, skipped } = buildPullEntities(
-      manifestWithoutViews as unknown as Manifest,
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: manifestWithoutViews as unknown as Manifest,
+    });
 
     expect(skipped).toEqual([]);
     expect(entities.map((entity) => entity.kind)).toEqual([
@@ -1052,8 +1056,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should never skip a view, a view field, a page layout or a page layout tab, even when their parent is unknown', () => {
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({
         objects: [],
         views: [
           buildViewManifest({
@@ -1077,7 +1081,7 @@ describe('buildPullEntities', () => {
           }),
         ],
       }),
-    );
+    });
     const view = entities.find((entity) => entity.kind === 'view');
     const pageLayout = entities.find((entity) => entity.kind === 'pageLayout');
     const pageLayoutTab = entities.find(
@@ -1105,9 +1109,9 @@ describe('buildPullEntities', () => {
       label: 'Export pets',
       permissionType: 'settings' as const,
     };
-    const { entities, skipped } = buildPullEntities(
-      buildManifest({ permissionFlags: [permissionFlagManifest] }),
-    );
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ permissionFlags: [permissionFlagManifest] }),
+    });
     const permissionFlag = entities.find(
       (entity) => entity.kind === 'permissionFlag',
     );
@@ -1121,15 +1125,15 @@ describe('buildPullEntities', () => {
   });
 
   it('should write the default role with defineApplicationRole and the other roles with defineRole into src/roles under the role enum bindings', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
         roles: [
           { universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' },
           { universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' },
         ],
       } as unknown as Partial<Manifest>),
-    );
+    });
 
     expect(
       entities
@@ -1154,12 +1158,12 @@ describe('buildPullEntities', () => {
   });
 
   it('should drop the default role from the application config when that role is written', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
         roles: [{ universalIdentifier: SUPPORT_ROLE_UID, label: 'Support' }],
       } as unknown as Partial<Manifest>),
-    );
+    });
 
     expect(
       entities.find((entity) => entity.kind === 'application')?.config,
@@ -1171,12 +1175,12 @@ describe('buildPullEntities', () => {
   });
 
   it('should keep a default role that is not one of the written roles on the application config', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         application: APPLICATION_WITH_SUPPORT_DEFAULT_ROLE,
         roles: [{ universalIdentifier: AUDITOR_ROLE_UID, label: 'Auditor' }],
       } as unknown as Partial<Manifest>),
-    );
+    });
 
     expect(
       entities.find((entity) => entity.kind === 'application')?.config,
@@ -1187,8 +1191,8 @@ describe('buildPullEntities', () => {
   });
 
   it('should leave out the object and field permission identifiers the build derives and keep the others', () => {
-    const { entities } = buildPullEntities(
-      buildManifest({
+    const { entities } = buildPullEntities({
+      manifest: buildManifest({
         roles: [
           {
             universalIdentifier: SUPPORT_ROLE_UID,
@@ -1226,7 +1230,7 @@ describe('buildPullEntities', () => {
           },
         ],
       }),
-    );
+    });
 
     expect(entities.find((entity) => entity.kind === 'role')?.config).toEqual({
       universalIdentifier: SUPPORT_ROLE_UID,

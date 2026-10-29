@@ -32,7 +32,6 @@ export type LogicFunctionExecuteResult = {
 export type LogicFunctionExecuteParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
   payload: object;
   context: LogicFunctionExecutionContext;
   env?: Record<string, string>;
@@ -43,7 +42,6 @@ export type LogicFunctionExecuteParams = {
 export type LogicFunctionInstallPrebuiltBundleParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
 };
 
 export type LogicFunctionTranspileParams = {

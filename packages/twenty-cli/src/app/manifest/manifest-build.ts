@@ -13,6 +13,7 @@ import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-con
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
+import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
@@ -39,6 +40,7 @@ import {
   ASSETS_DIR,
   type CommandMenuItemManifest,
   type ConnectionProviderManifest,
+  type McpServerManifest,
   type MessagingProviderManifest,
   type FieldManifest,
   type FrontComponentManifest,
@@ -114,6 +116,7 @@ export const buildManifest = async (
   const workflows: WorkflowManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
   const messagingProviders: MessagingProviderManifest[] = [];
+  const mcpServers: McpServerManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -147,6 +150,7 @@ export const buildManifest = async (
   const workflowsFilePaths: string[] = [];
   const connectionProvidersFilePaths: string[] = [];
   const messagingProvidersFilePaths: string[] = [];
+  const mcpServersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -298,6 +302,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         messagingProvidersFilePaths.push(relativePath);
+        break;
+      }
+      case 'mcpServers': {
+        const extract = await extractManifestFromFile<McpServerManifest>({
+          appPath,
+          filePath,
+        });
+        mcpServers.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        mcpServersFilePaths.push(relativePath);
         break;
       }
       case 'logicFunctions': {
@@ -647,6 +662,7 @@ export const buildManifest = async (
         objects,
         permissionFlags,
         defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+        systemPermissionFlag: resolveAppSystemPermissionFlag(appPath),
       }),
     );
   }
@@ -721,6 +737,7 @@ export const buildManifest = async (
         workflows: workflows.sort(byId),
         connectionProviders: connectionProviders.sort(byId),
         messagingProviders: messagingProviders.sort(byId),
+        mcpServers: mcpServers.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
@@ -747,6 +764,7 @@ export const buildManifest = async (
     workflows: workflowsFilePaths,
     connectionProviders: connectionProvidersFilePaths,
     messagingProviders: messagingProvidersFilePaths,
+    mcpServers: mcpServersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

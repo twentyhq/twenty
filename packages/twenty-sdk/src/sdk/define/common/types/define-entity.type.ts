@@ -18,6 +18,7 @@ import {
   type AgentManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
+  type McpServerManifest,
   type MessagingProviderManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
@@ -46,6 +47,7 @@ export type DefinableEntity =
   | AgentManifest
   | ConnectionProviderManifest
   | MessagingProviderManifest
+  | McpServerManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig

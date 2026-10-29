@@ -23,6 +23,7 @@ export interface QueueJobOptions {
   delay?: number;
   deduplication?: QueueJobDeduplicationOptions;
   broadcastTo?: QueueJobRecipient;
+  groupKeys?: string[];
 }
 
 export interface QueueCronJobOptions extends QueueJobOptions {
