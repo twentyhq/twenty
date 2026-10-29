@@ -54,13 +54,13 @@ export class ApplicationExportResolver {
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: true,
     })
-    { universalIdentifier, includeDependencies }: ExportApplicationInput,
+    { universalIdentifier, shouldIncludeDependencies }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationExportDTO> {
     return this.applicationDevelopmentService.exportApplication({
       universalIdentifier,
       workspaceId,
-      includeDependencies,
+      shouldIncludeDependencies,
     });
   }
 }

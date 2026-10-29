@@ -22,7 +22,6 @@ export const planDependencyWrites = async ({
   const writes: PullWrite[] = [];
   const fingerprints: Record<string, string> = {};
   const unchangedSourceFingerprints: Record<string, string> = {};
-  let unchangedCount = 0;
 
   for (const { path, content: remoteContent } of files) {
     const absolutePath = join(appPath, path);
@@ -36,7 +35,6 @@ export const planDependencyWrites = async ({
       isDefined(existingContent) &&
       (dependencyFingerprints[path] ?? sourceFingerprints[path]) === fingerprint
     ) {
-      unchangedCount++;
       continue;
     }
 
@@ -50,7 +48,6 @@ export const planDependencyWrites = async ({
 
     if (existingContent === content) {
       unchangedSourceFingerprints[path] = hashContent(content);
-      unchangedCount++;
       continue;
     }
 
@@ -64,5 +61,10 @@ export const planDependencyWrites = async ({
     });
   }
 
-  return { writes, fingerprints, unchangedSourceFingerprints, unchangedCount };
+  return {
+    writes,
+    fingerprints,
+    unchangedSourceFingerprints,
+    unchangedCount: files.length - writes.length,
+  };
 };

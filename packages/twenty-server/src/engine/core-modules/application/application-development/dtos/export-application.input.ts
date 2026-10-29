@@ -14,5 +14,5 @@ export class ExportApplicationInput {
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsOptional()
   @IsBoolean()
-  includeDependencies?: boolean;
+  shouldIncludeDependencies?: boolean;
 }

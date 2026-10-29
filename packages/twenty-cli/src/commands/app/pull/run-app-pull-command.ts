@@ -86,7 +86,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
       universalIdentifier,
       target,
       signal,
-      includeDependencies: true,
+      shouldIncludeDependencies: true,
     }),
   ]);
   output.progress({

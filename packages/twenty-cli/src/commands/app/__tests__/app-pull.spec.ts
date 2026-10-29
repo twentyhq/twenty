@@ -197,7 +197,7 @@ describe('app pull command with the packaged worker', () => {
       ).toEqual([
         {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
-          includeDependencies: true,
+          shouldIncludeDependencies: true,
         },
       ]);
       const pulledPackageJson = await readFile(

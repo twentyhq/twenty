@@ -58,11 +58,11 @@ export class ApplicationManifestExportService {
   async exportApplication({
     workspaceId,
     applicationUniversalIdentifier,
-    includeDependencies = false,
+    shouldIncludeDependencies = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    includeDependencies?: boolean;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -245,7 +245,7 @@ export class ApplicationManifestExportService {
           ...skillsCoverage,
         ],
       }),
-      files: includeDependencies
+      files: shouldIncludeDependencies
         ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
             {
               workspaceId,

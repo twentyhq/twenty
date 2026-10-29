@@ -2,19 +2,19 @@ import gql from 'graphql-tag';
 
 export const exportApplicationQueryFactory = ({
   universalIdentifier,
-  includeDependencies,
+  shouldIncludeDependencies,
 }: {
   universalIdentifier: string;
-  includeDependencies?: boolean;
+  shouldIncludeDependencies?: boolean;
 }) => ({
   query: gql`
     query ExportApplication(
       $universalIdentifier: UUID!
-      $includeDependencies: Boolean
+      $shouldIncludeDependencies: Boolean
     ) {
       exportApplication(
         universalIdentifier: $universalIdentifier
-        includeDependencies: $includeDependencies
+        shouldIncludeDependencies: $shouldIncludeDependencies
       ) {
         application {
           universalIdentifier
@@ -38,6 +38,6 @@ export const exportApplicationQueryFactory = ({
   `,
   variables: {
     universalIdentifier,
-    includeDependencies,
+    shouldIncludeDependencies,
   },
 });

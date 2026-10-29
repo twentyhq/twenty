@@ -103,16 +103,16 @@ export class ApplicationDevelopmentService {
   async exportApplication({
     universalIdentifier,
     workspaceId,
-    includeDependencies,
+    shouldIncludeDependencies,
   }: {
     universalIdentifier: string;
     workspaceId: string;
-    includeDependencies?: boolean;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     return this.applicationManifestExportService.exportApplication({
       workspaceId,
       applicationUniversalIdentifier: universalIdentifier,
-      includeDependencies,
+      shouldIncludeDependencies,
     });
   }
 

@@ -74,11 +74,11 @@ describe('Application export - dependency files', () => {
   });
 
   it.each([undefined, false])(
-    'keeps exports metadata-only when includeDependencies is %s',
-    async (includeDependencies) => {
+    'keeps exports metadata-only when shouldIncludeDependencies is %s',
+    async (shouldIncludeDependencies) => {
       const { data, errors } = await exportApplication({
         universalIdentifier: TEST_APP_ID,
-        includeDependencies,
+        shouldIncludeDependencies,
       });
 
       expect(errors).toBeUndefined();
@@ -104,7 +104,7 @@ describe('Application export - dependency files', () => {
 
     const { data, errors } = await exportApplication({
       universalIdentifier: TEST_APP_ID,
-      includeDependencies: true,
+      shouldIncludeDependencies: true,
     });
 
     expect(errors).toBeUndefined();
@@ -123,7 +123,7 @@ describe('Application export - dependency files', () => {
 
     const { data, errors } = await exportApplication({
       universalIdentifier: TEST_APP_ID,
-      includeDependencies: true,
+      shouldIncludeDependencies: true,
     });
 
     expect(errors).toBeUndefined();
@@ -139,7 +139,7 @@ describe('Application export - dependency files', () => {
 
     const { data, errors } = await exportApplication({
       universalIdentifier: TEST_APP_ID,
-      includeDependencies: true,
+      shouldIncludeDependencies: true,
     });
 
     expect(errors).toBeUndefined();

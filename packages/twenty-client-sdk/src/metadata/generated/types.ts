@@ -10755,7 +10755,7 @@ export default {
             "exportApplication": [
                 51,
                 {
-                    "includeDependencies": [
+                    "shouldIncludeDependencies": [
                         4
                     ],
                     "universalIdentifier": [
