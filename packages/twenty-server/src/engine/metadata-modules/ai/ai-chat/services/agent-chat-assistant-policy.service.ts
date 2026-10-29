@@ -22,6 +22,11 @@ type AssistantPolicyThread = Pick<
   | 'writerWorkspaceMemberIds'
 >;
 
+type AssistantPolicyWorkspace = Pick<
+  WorkspaceEntity,
+  'aiChatDirectMessageAssistantMode' | 'aiChatInboxAssistantMode'
+>;
+
 @Injectable()
 export class AgentChatAssistantPolicyService {
   @Inject(AgentChatThreadParticipantService)
@@ -45,7 +50,7 @@ export class AgentChatAssistantPolicyService {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds?: string[];
-    workspace?: WorkspaceEntity;
+    workspace?: AssistantPolicyWorkspace;
   }): Promise<{
     mode: AiChatAssistantMode;
     isDirectAssistantChat: boolean;
