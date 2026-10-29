@@ -34,22 +34,10 @@ export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWo
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, 'up');
-  }
-
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.apply(args, 'down');
-  }
-
-  private async apply(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
-  ): Promise<void> {
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -83,14 +71,8 @@ export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWo
         flatSkillMaps.byUniversalIdentifier[
           DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER
         ],
-      fromContent:
-        direction === 'up'
-          ? DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX
-          : standardContent,
-      toContent:
-        direction === 'up'
-          ? standardContent
-          : DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX,
+      fromContent: DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX,
+      toContent: standardContent,
     });
 
     if (!isDefined(skillToUpdate)) {
@@ -102,7 +84,7 @@ export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWo
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId} (${direction}): updating the data-manipulation skill content`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating the data-manipulation skill content`,
     );
 
     if (options.dryRun) {
