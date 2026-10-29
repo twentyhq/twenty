@@ -1,14 +1,12 @@
-import { AppChip } from '@/applications/components/AppChip';
 import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable';
+import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -26,7 +24,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
   connectionProviders,
 }: SettingsAppPreferencesConnectionsTabProps) => {
   const { t } = useLingui();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
   const {
     accounts: personalAccounts,
     loading,
@@ -80,24 +77,10 @@ export const SettingsAppPreferencesConnectionsTab = ({
               </>
             ) : (
               canStartAuthorization && (
-                <SettingsCard
-                  Icon={
-                    <AppChip
-                      applicationId={applicationId}
-                      logoUrl={provider.logoUrl}
-                      size="md"
-                      chipOnly
-                    />
-                  }
+                <SettingsApplicationConnectCard
+                  applicationId={applicationId}
+                  connectionProvider={provider}
                   title={t`Connect with ${provider.displayName}`}
-                  onClick={() =>
-                    triggerAppOAuth({
-                      applicationId,
-                      providerName: provider.name,
-                      redirectLocation:
-                        getApplicationPreferencesGeneralPath(applicationId),
-                    })
-                  }
                 />
               )
             )}
