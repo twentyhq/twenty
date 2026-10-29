@@ -91,7 +91,9 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
-export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
+export const buildRoleEnumBindings = (
+  systemPermissionFlag: Record<string, string>,
+): EnumBinding[] => [
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
@@ -105,9 +107,11 @@ export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
   {
     path: ['permissionFlagUniversalIdentifiers', '[]'],
     symbol: 'SystemPermissionFlag',
-    members: SystemPermissionFlag,
+    members: systemPermissionFlag,
   },
 ];
+
+export const ROLE_ENUM_BINDINGS = buildRoleEnumBindings(SystemPermissionFlag);
 
 const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   path,

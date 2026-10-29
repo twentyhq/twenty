@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { collectSourceFingerprints } from '@/app/pull/collect-source-fingerprints';
@@ -1003,6 +1004,81 @@ export default defineField({
     );
     expect(second.writes).toEqual([]);
     expect(await read('src/application.config.ts')).toBe(localApplication);
+  });
+
+  it('writes permission flags with the names the app SDK exports', async () => {
+    const exported = createExport();
+    const data = requireSuccess(
+      await pull({
+        ...exported,
+        manifest: {
+          ...exported.manifest,
+          roles: [
+            {
+              universalIdentifier: OTHER_IDENTIFIER,
+              label: 'Reader',
+              permissionFlagUniversalIdentifiers: [
+                SystemPermissionFlag.CONNECTED_ACCOUNTS,
+                SystemPermissionFlag.APPLICATIONS,
+              ],
+            },
+          ],
+        },
+      }),
+    );
+    const roleWrite = data.writes.find(
+      (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+    );
+
+    expect(roleWrite).toBeDefined();
+    const role = await read(roleWrite?.relativePath ?? '');
+    expect(role).toContain('SystemPermissionFlag.USER_APPS');
+    expect(role).toContain('SystemPermissionFlag.WORKSPACE_APPS');
+  });
+
+  it('does not report a role file an older pull wrote with the former flag names', async () => {
+    const exported = createExport();
+    const exportWithRole = (label: string) => ({
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        roles: [
+          {
+            universalIdentifier: OTHER_IDENTIFIER,
+            label,
+            permissionFlagUniversalIdentifiers: [
+              SystemPermissionFlag.CONNECTED_ACCOUNTS,
+            ],
+          },
+        ],
+      },
+    });
+    const pulled = requireSuccess(await pull(exportWithRole('Reader')));
+    const rolePath =
+      pulled.writes.find(
+        (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+      )?.relativePath ?? '';
+    await writeFile(
+      join(appPath, rolePath),
+      (await read(rolePath)).replace(
+        'SystemPermissionFlag.USER_APPS',
+        'SystemPermissionFlag.CONNECTED_ACCOUNTS',
+      ),
+    );
+    await writePullBase({
+      appPath,
+      manifest: parseAppExport({
+        value: exportWithRole('Reader'),
+        universalIdentifier: APPLICATION_IDENTIFIER,
+      }).manifest,
+      target: TARGET,
+      signal: new AbortController().signal,
+    });
+
+    const changed = requireSuccess(await pull(exportWithRole('Remote reader')));
+
+    expect(changed.overwrittenLocalChanges).toEqual([]);
+    expect(await read(rolePath)).toContain("label: 'Remote reader'");
   });
 
   it('deletes a remotely removed base entity and preserves a local-only definition', async () => {

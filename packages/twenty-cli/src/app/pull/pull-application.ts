@@ -11,6 +11,7 @@ import { preserveNestedPullEntities } from '@/app/pull/preserve-nested-pull-enti
 import { reconcilePullBaseManifest } from '@/app/pull/reconcile-pull-base-manifest';
 import { createPullBaseWrite } from '@/app/pull/create-pull-base-write';
 import { readTargetBoundPullBase } from '@/app/pull/read-target-bound-pull-base';
+import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { type PullAppOptions, type PullAppResult } from '@/app/pull/types';
 import { type ToolingResult } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
@@ -56,6 +57,7 @@ export const pullApplication = async (
       baseManifest,
       scannedFiles,
       unreconciledUniversalIdentifiers: unreconciledBaseIdentifiers,
+      systemPermissionFlag: resolveAppSystemPermissionFlag(appPath),
     });
 
     signal?.throwIfAborted();

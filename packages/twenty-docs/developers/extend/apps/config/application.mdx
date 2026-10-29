@@ -190,7 +190,7 @@ Values are strings, in the same format as `process.env` (see [Variable types](#v
 
 `updateMyUserApplicationVariable` saves a member's own value. It takes your app's `applicationUniversalIdentifier` and writes the value of the person behind the token: the member's own session, or your app's token when a member is behind it, such as in a front component or a logic function run for a member. Your app's token can only name your own app, and a token with nobody behind it, such as in a cron job or an install hook, is refused. An empty value removes the member's own value, so they read the default again, or an empty string for a variable without one.
 
-It needs no `APPLICATIONS` permission, but it needs `CONNECTED_ACCOUNTS`: on the member's role, and, when your app's token makes the call, on your app's default role too, if it declares one. If your app saves user variables, add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in its [role](/developers/extend/apps/config/roles).
+It needs no Workspace Apps permission, but it needs User Apps: on the member's role, and, when your app's token makes the call, on your app's default role too, if it declares one. If your app saves user variables, add `SystemPermissionFlag.USER_APPS` to `permissionFlagUniversalIdentifiers` in its [role](/developers/extend/apps/config/roles).
 
 ## Default function role
 

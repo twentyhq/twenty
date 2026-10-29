@@ -13,6 +13,7 @@ import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-con
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
+import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
@@ -661,6 +662,7 @@ export const buildManifest = async (
         objects,
         permissionFlags,
         defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+        systemPermissionFlag: resolveAppSystemPermissionFlag(appPath),
       }),
     );
   }
