@@ -1,10 +1,10 @@
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { type AppPreferencesAppStatusAccount } from '@/settings/app-preferences/types/AppPreferencesAppStatusAccount';
 import { type AppPreferencesAppStatusApplication } from '@/settings/app-preferences/types/AppPreferencesAppStatusApplication';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { getBuiltInAccountAppStatus } from '@/settings/app-preferences/utils/getBuiltInAccountAppStatus';
 import { getInstalledApplicationStatus } from '@/settings/app-preferences/utils/getInstalledApplicationStatus';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getAppPreferencesAppStatusById = <
@@ -17,7 +17,7 @@ export const getAppPreferencesAppStatusById = <
   groups: ConnectedAccountGroup<TConnectedAccount>[];
   builtInAccountApps: Pick<BuiltInAccountApp, 'id'>[];
   applicationsWithPreferences: AppPreferencesAppStatusApplication[];
-}): Record<string, AppPreferencesAppStatus<TConnectedAccount>> => {
+}): Record<string, SettingsApplicationStatus<TConnectedAccount>> => {
   const activeBuiltInAccounts = groups
     .map((group) => group.builtInAccount)
     .filter(isDefined)
@@ -28,7 +28,7 @@ export const getAppPreferencesAppStatusById = <
 
   const statusById: Record<
     string,
-    AppPreferencesAppStatus<TConnectedAccount>
+    SettingsApplicationStatus<TConnectedAccount>
   > = {};
 
   for (const { id } of builtInAccountApps) {

@@ -1,15 +1,15 @@
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { useLingui } from '@lingui/react/macro';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
-type SettingsAppPreferencesAppStatusCellProps = {
-  status?: AppPreferencesAppStatus;
+type SettingsApplicationStatusCellProps = {
+  status?: SettingsApplicationStatus;
 };
 
-export const SettingsAppPreferencesAppStatusCell = ({
+export const SettingsApplicationStatusCell = ({
   status,
-}: SettingsAppPreferencesAppStatusCellProps) => {
+}: SettingsApplicationStatusCellProps) => {
   const { t } = useLingui();
 
   switch (status?.type) {
@@ -23,6 +23,12 @@ export const SettingsAppPreferencesAppStatusCell = ({
       return (
         <Tag color="gray" weight="regular" truncate={false}>
           {t`Not connected`}
+        </Tag>
+      );
+    case 'updateAvailable':
+      return (
+        <Tag color="blue" weight="medium" truncate={false}>
+          {t`Update`}
         </Tag>
       );
     default:

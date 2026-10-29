@@ -1,12 +1,34 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
+import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useWorkspaceApplicationStatusById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusById';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const StyledToolbar = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsApplicationsInstalledTab = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
   const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+  const {
+    statusById,
+    error: statusError,
+    refetch: refetchStatuses,
+  } = useWorkspaceApplicationStatusById({
+    applications: installedApplications,
+    skip: !isAppPreferencesEnabled,
+  });
 
   if (installedApplications.length === 0) {
     return null;
@@ -16,9 +38,21 @@ export const SettingsApplicationsInstalledTab = () => {
     <SettingsApplicationsTable
       title={t`Installed apps`}
       description={t`All the applications currently installed on this workspace`}
+      toolbar={
+        isDefined(statusError) ? (
+          <StyledToolbar>
+            <SettingsApplicationLoadErrorBanner
+              message={t`App configuration could not be loaded. Check your connection and try again.`}
+              onRetry={() => refetchStatuses().catch(() => undefined)}
+            />
+          </StyledToolbar>
+        ) : undefined
+      }
       applications={installedApplications}
       builtInAccountApps={installedBuiltInAccountApps}
       variant="workspace"
+      middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}
+      statusById={statusById}
     />
   );
 };

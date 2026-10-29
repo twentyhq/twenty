@@ -68,6 +68,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       )}
       builtInAccountApps={enabledBuiltInAccountApps}
       variant="member"
+      middleColumn="status"
       statusById={statusById}
       isLoading={isLoadingApplications}
     />

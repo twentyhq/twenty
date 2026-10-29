@@ -1,4 +1,3 @@
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
 import { splitApplicationsAroundBuiltInAccountApps } from '@/settings/applications/utils/splitApplicationsAroundBuiltInAccountApps';
@@ -17,6 +16,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
@@ -49,7 +49,8 @@ type SettingsApplicationsTableProps = {
   applications: SettingsApplicationsTableApplication[];
   builtInAccountApps: BuiltInAccountApp[];
   variant: 'workspace' | 'member';
-  statusById?: Record<string, AppPreferencesAppStatus>;
+  middleColumn: SettingsApplicationTableRowMiddleColumn;
+  statusById?: Record<string, SettingsApplicationStatus>;
   isLoading?: boolean;
   toolbar?: ReactNode;
 };
@@ -60,6 +61,7 @@ export const SettingsApplicationsTable = ({
   applications,
   builtInAccountApps,
   variant,
+  middleColumn,
   statusById,
   isLoading = false,
   toolbar,
@@ -119,9 +121,6 @@ export const SettingsApplicationsTable = ({
   const hasApplications =
     isNonEmptyArray(applications) || isNonEmptyArray(builtInAccountApps);
 
-  const middleColumn: SettingsApplicationTableRowMiddleColumn =
-    variant === 'member' ? 'status' : 'type';
-
   const getApplicationLink = (applicationId: string) =>
     variant === 'member'
       ? getSettingsPath(SettingsPath.ApplicationPreferences, { applicationId })
@@ -139,18 +138,20 @@ export const SettingsApplicationsTable = ({
   const renderApplicationRow = (
     application: SettingsApplicationsTableApplication,
   ) => {
-    const hasUpdate = hasApplicationUpdate({
-      sourceType: application.applicationRegistration?.sourceType,
-      currentVersion: application.version,
-      latestAvailableVersion:
-        application.applicationRegistration?.latestAvailableVersion,
-    });
+    const shouldShowUpdateTag =
+      middleColumn === 'type' &&
+      hasApplicationUpdate({
+        sourceType: application.applicationRegistration?.sourceType,
+        currentVersion: application.version,
+        latestAvailableVersion:
+          application.applicationRegistration?.latestAvailableVersion,
+      });
 
     return (
       <SettingsApplicationTableRow
         key={application.id}
         application={application}
-        hasUpdate={hasUpdate}
+        shouldShowUpdateTag={shouldShowUpdateTag}
         sourceType={application.applicationRegistration?.sourceType}
         middleColumn={middleColumn}
         status={statusById?.[application.id]}

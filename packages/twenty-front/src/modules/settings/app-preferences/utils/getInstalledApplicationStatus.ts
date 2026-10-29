@@ -1,6 +1,6 @@
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { type AppPreferencesAppStatusAccount } from '@/settings/app-preferences/types/AppPreferencesAppStatusAccount';
 import { type AppPreferencesAppStatusApplication } from '@/settings/app-preferences/types/AppPreferencesAppStatusApplication';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ export const getInstalledApplicationStatus = ({
   applicationWithPreferences: AppPreferencesAppStatusApplication;
   activeAppAccounts: AppPreferencesAppStatusAccount[];
 }):
-  | Exclude<AppPreferencesAppStatus, { type: 'accountSyncIssue' }>
+  | Exclude<SettingsApplicationStatus, { type: 'accountSyncIssue' }>
   | undefined => {
   const activeConnections = activeAppAccounts.filter(
     (account) => account.applicationId === application.id,

@@ -3,8 +3,8 @@ import { type ReactNode } from 'react';
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
-import { SettingsAppPreferencesAppStatusCell } from '@/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell';
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
+import { SettingsApplicationStatusCell } from '@/settings/applications/components/SettingsApplicationStatusCell';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -25,11 +25,11 @@ export type SettingsApplicationTableRowProps = {
   application: ApplicationDisplayData & {
     description?: string | null;
   };
-  hasUpdate?: boolean;
+  shouldShowUpdateTag?: boolean;
   link?: string;
   middleColumn?: SettingsApplicationTableRowMiddleColumn;
   sourceType?: ApplicationRegistrationSourceType;
-  status?: AppPreferencesAppStatus;
+  status?: SettingsApplicationStatus;
 };
 
 const SOURCE_TYPE_LABELS: Record<
@@ -48,7 +48,7 @@ const getSourceTypeLabel = (sourceType?: ApplicationRegistrationSourceType) =>
 export const SettingsApplicationTableRow = ({
   action,
   application,
-  hasUpdate,
+  shouldShowUpdateTag,
   link,
   middleColumn = 'type',
   sourceType,
@@ -73,7 +73,7 @@ export const SettingsApplicationTableRow = ({
       </StyledNameTableCell>
       <TableCell color={themeCssVariables.font.color.tertiary}>
         {middleColumn === 'status' ? (
-          <SettingsAppPreferencesAppStatusCell status={status} />
+          <SettingsApplicationStatusCell status={status} />
         ) : (
           getSourceTypeLabel(sourceType)
         )}
@@ -81,7 +81,7 @@ export const SettingsApplicationTableRow = ({
       {!isMobile && (
         <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
           <OverflowingTextWithTooltip text={descriptionSummary} />
-          {hasUpdate && (
+          {shouldShowUpdateTag && (
             <Tag color="blue" weight="medium" truncate={false}>
               {t`Update`}
             </Tag>

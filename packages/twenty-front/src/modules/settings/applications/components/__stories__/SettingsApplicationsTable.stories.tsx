@@ -50,6 +50,7 @@ const meta: Meta<typeof SettingsApplicationsTable> = {
     applications: [OAUTH_APPLICATION, NPM_APPLICATION, STANDARD_APPLICATION],
     builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
     variant: 'workspace',
+    middleColumn: 'type',
   },
 };
 

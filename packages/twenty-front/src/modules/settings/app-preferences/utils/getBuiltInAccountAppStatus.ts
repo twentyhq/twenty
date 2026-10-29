@@ -1,9 +1,9 @@
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
-import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { type AppPreferencesAppStatusAccount } from '@/settings/app-preferences/types/AppPreferencesAppStatusAccount';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getBuiltInAccountAppStatus = <
@@ -14,7 +14,7 @@ export const getBuiltInAccountAppStatus = <
 }: {
   builtInAccountAppId: BuiltInAccountApp['id'];
   activeBuiltInAccounts: TConnectedAccount[];
-}): AppPreferencesAppStatus<TConnectedAccount> | undefined => {
+}): SettingsApplicationStatus<TConnectedAccount> | undefined => {
   const accountsUsingApp = activeBuiltInAccounts.filter((account) =>
     getBuiltInAccountAppsUsingAccount(account).some(
       (app) => app.id === builtInAccountAppId,
