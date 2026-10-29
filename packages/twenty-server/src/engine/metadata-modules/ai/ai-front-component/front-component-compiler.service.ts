@@ -56,18 +56,7 @@ export class FrontComponentCompilerService {
         FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
       );
     }
-    let source: string;
-    try {
-      source = buildFrontComponentEntrySource(input);
-    } catch (error) {
-      if (!(error instanceof FrontComponentBuildException)) {
-        throw error;
-      }
-      throw convertFrontComponentBuildFailureToException({
-        error: error.message,
-        code: error.code,
-      });
-    }
+    const source = this.buildEntrySource(input);
     const driver = this.driverFactory.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
@@ -117,5 +106,19 @@ export class FrontComponentCompilerService {
         ),
       },
     };
+  }
+
+  private buildEntrySource(input: FrontComponentBuildInput) {
+    try {
+      return buildFrontComponentEntrySource(input);
+    } catch (error) {
+      if (!(error instanceof FrontComponentBuildException)) {
+        throw error;
+      }
+      throw convertFrontComponentBuildFailureToException({
+        error: error.message,
+        code: error.code,
+      });
+    }
   }
 }

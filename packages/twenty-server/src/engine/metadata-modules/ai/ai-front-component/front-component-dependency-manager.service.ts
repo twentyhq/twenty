@@ -39,7 +39,6 @@ export class FrontComponentDependencyManagerService {
   }) {
     const builderKey = await driver.getDependenciesBuildCacheKey({
       workspaceId,
-      targetRuntime: 'browser',
     });
     const key = `ai-front-component-dependencies:${builderKey}:${dependencies.revision}`;
     return this.cacheLockService.withLock(
