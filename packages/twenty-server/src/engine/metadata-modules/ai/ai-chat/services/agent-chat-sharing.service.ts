@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { throwAgentChatUpgradeInProgress } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-upgrade-in-progress.util';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -112,7 +111,10 @@ export class AgentChatSharingService {
         ],
       )
     ) {
-      throwAgentChatUpgradeInProgress();
+      throw new AiException(
+        'Chats are not available until this workspace finishes upgrading',
+        AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      );
     }
   }
 
