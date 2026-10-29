@@ -17,14 +17,14 @@ export const runMessageChannelSync = async (
     MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
   );
 
-  await enqueueJobAndDrain(
-    MessageQueue.messagingQueue,
-    MessagingMessageListFetchJob.name,
-    { workspaceId, messageChannelId },
-    {
+  await enqueueJobAndDrain({
+    queue: MessageQueue.messagingQueue,
+    jobName: MessagingMessageListFetchJob.name,
+    data: { workspaceId, messageChannelId },
+    scope: {
       workspaceId,
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     },
-  );
+  });
 };
