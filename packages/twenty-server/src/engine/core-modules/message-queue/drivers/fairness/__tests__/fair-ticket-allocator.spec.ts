@@ -6,11 +6,14 @@ import { type Redis } from 'ioredis';
 import RedisMock from 'ioredis-mock';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  PRIORITY_SCORE_BASE,
+  ticketOf,
+} from 'src/engine/core-modules/message-queue/drivers/__tests__/fairness-harness.test-util';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import {
   FAIR_REBASE_STEP,
   FAIR_REBASE_THRESHOLD,
-  FAIR_TICKET_OFFSET,
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -25,11 +28,8 @@ const WEIGHTS_KEY = `${QUEUE_KEY_PREFIX}fair:weights`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
 const ACTIVE_KEY = `${QUEUE_KEY_PREFIX}active`;
-const PRIORITY_SCORE_BASE = 2 ** 32;
 const BULLMQ_PRIORITY_SCORE_LUA =
   require.resolve('bullmq/dist/cjs/commands/includes/getPriorityScore.lua');
-
-const ticketOf = (tag: number) => FAIR_TICKET_OFFSET + tag;
 
 const jobKeyOf = (jobId: string) => `${QUEUE_KEY_PREFIX}${jobId}`;
 
