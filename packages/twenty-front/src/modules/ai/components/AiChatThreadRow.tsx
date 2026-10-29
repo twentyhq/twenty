@@ -116,10 +116,9 @@ const StyledCompactTrailing = styled.div`
   height: ${themeCssVariables.spacing[8]};
 `;
 
-const StyledStreamingIcon = styled.div`
-  align-items: center;
+const StyledStreamingIcon = styled(ThinkingOrbitLoaderIcon)`
   color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
+  flex-shrink: 0;
 
   @media (prefers-reduced-motion: reduce) {
     display: none;
@@ -187,11 +186,7 @@ export const AiChatThreadRow = ({
       $isActionMenuOpen={isActionMenuOpen}
       $hasActions={isDefined(actions)}
     >
-      {isCompact && isStreaming && (
-        <StyledStreamingIcon>
-          <ThinkingOrbitLoaderIcon />
-        </StyledStreamingIcon>
-      )}
+      {isCompact && isStreaming && <StyledStreamingIcon />}
       {activityTime}
     </StyledTime>
   );
@@ -206,16 +201,14 @@ export const AiChatThreadRow = ({
       {actions}
     </StyledActions>
   );
-  let rowActions = actionButtons;
-
-  if (isCompact) {
-    rowActions = (
-      <StyledCompactTrailing>
-        {time}
-        {actionButtons}
-      </StyledCompactTrailing>
-    );
-  }
+  const rowActions = isCompact ? (
+    <StyledCompactTrailing>
+      {time}
+      {actionButtons}
+    </StyledCompactTrailing>
+  ) : (
+    actionButtons
+  );
 
   return (
     <ListItem
