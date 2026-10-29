@@ -2,17 +2,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
-import { useState } from 'react';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
-import { IconChevronRight } from 'twenty-ui/icon';
-import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
-import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ThinkingStepRowLayout } from '@/ai/components/ThinkingStepRowLayout';
 import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
@@ -22,94 +18,8 @@ import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-
-const StyledToolRowLabel = styled.div`
-  color: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-  white-space: nowrap;
-`;
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  justify-content: center;
-  min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
-`;
-
-const StyledRowLabelContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const StyledChevronContainer = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  justify-content: center;
-  transform: rotate(0deg);
-  transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-
-  [data-panel-open] & {
-    transform: rotate(90deg);
-  }
-`;
-
-const StyledToolRowContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledToolRow = styled.div<{ isExpandable: boolean }>`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
-  display: flex;
-  font-family: inherit;
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
-  padding: 0;
-  text-align: left;
-  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-  width: 100%;
-
-  &:hover {
-    color: ${({ isExpandable }) =>
-      isExpandable
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
-  }
-`;
-
-const StyledShimmeringLabel = styled(ShimmeringText)`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 const StyledToolDetailsContainer = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -162,7 +72,6 @@ export const ThinkingToolStepRow = ({
   part,
 }: ThinkingToolStepRowProps) => {
   const { copyToClipboard } = useCopyToClipboard();
-  const [isExpanded, setIsExpanded] = useState(false);
   const rawToolName = getToolName(part);
   const { toolInput, toolName } = unwrapToolInput({
     input: part.input,
@@ -199,49 +108,13 @@ export const ThinkingToolStepRow = ({
     { id: 'input', title: t`Input` },
   ];
 
-  const rowContent = (
-    <>
-      <StyledIconContainer>
-        <ToolIcon size={14} />
-      </StyledIconContainer>
-      <StyledRowLabelContainer>
-        <StyledToolRowLabel>
-          {isActive ? (
-            <StyledShimmeringLabel>{displayMessage}</StyledShimmeringLabel>
-          ) : (
-            <OverflowingTextWithTooltip
-              text={displayMessage}
-              tooltipDelay={TooltipDelay.shortDelay}
-            />
-          )}
-        </StyledToolRowLabel>
-        {isExpandable && (
-          <StyledChevronContainer>
-            <IconChevronRight size={14} />
-          </StyledChevronContainer>
-        )}
-      </StyledRowLabelContainer>
-    </>
-  );
-
   return (
-    <Collapsible.Root
-      open={isExpanded}
-      onOpenChange={setIsExpanded}
-      render={<StyledToolRowContainer />}
-    >
-      {isExpandable ? (
-        <Collapsible.Trigger
-          render={<StyledToolRow as="button" isExpandable />}
-        >
-          {rowContent}
-        </Collapsible.Trigger>
-      ) : (
-        <StyledToolRow isExpandable={false}>{rowContent}</StyledToolRow>
-      )}
-
-      {isExpandable && (
-        <Collapsible.Panel>
+    <ThinkingStepRowLayout
+      icon={<ToolIcon size={14} />}
+      label={displayMessage}
+      isActive={isActive}
+      details={
+        isExpandable ? (
           <StyledToolDetailsContainer>
             {isNonEmptyArray(recordReferences) && (
               <StyledToolRecordsContainer>
@@ -289,8 +162,8 @@ export const ThinkingToolStepRow = ({
               </TabListRoot>
             )}
           </StyledToolDetailsContainer>
-        </Collapsible.Panel>
-      )}
-    </Collapsible.Root>
+        ) : undefined
+      }
+    />
   );
 };
