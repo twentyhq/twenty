@@ -230,6 +230,22 @@ export class AgentChatThreadParticipantService {
     );
   }
 
+  async deliverToInbox(args: AgentChatThreadAccessArgs): Promise<void> {
+    await this.write(
+      { ...args, threadIds: [args.threadId] },
+      ({ participantTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+         VALUES ($1, $2)
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "lastReadAt" = NULL,
+           "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "isSubscribed" = true,
+           "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+         RETURNING *`,
+    );
+  }
+
   // An assignee follows the chat and finds it in their inbox, unread unless
   // they assigned it to themselves
   // The assignment is written by writeAssignment in the same transaction, so
