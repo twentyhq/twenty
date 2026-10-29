@@ -15,7 +15,7 @@ const mockRenderedContentHeight = (contentHeight: number) => {
     .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
     .mockReturnValue('24px');
   jest
-    .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+    .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
     .mockReturnValue(contentHeight);
 };
 
@@ -44,6 +44,22 @@ describe('AiChatUserMessageCollapsibleContent', () => {
     expect(
       screen.queryByRole('button', { name: 'Show more' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('offers the toggle once a narrower chat makes the message overflow', async () => {
+    mockRenderedContentHeight(240);
+
+    renderContent('Review every open opportunity and flag the risks');
+
+    mockRenderedContentHeight(480);
+
+    await userEvent.hover(
+      screen.getByText('Review every open opportunity and flag the risks'),
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Show more' }),
+    ).toBeInTheDocument();
   });
 
   it('collapses a taller message and toggles it open and closed', async () => {

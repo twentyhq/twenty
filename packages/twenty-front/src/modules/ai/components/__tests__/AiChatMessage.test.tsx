@@ -268,7 +268,7 @@ describe('AiChatMessage', () => {
       .spyOn(CSSStyleDeclaration.prototype, 'lineHeight', 'get')
       .mockReturnValue('24px');
     jest
-      .spyOn(HTMLElement.prototype, 'offsetHeight', 'get')
+      .spyOn(HTMLElement.prototype, 'scrollHeight', 'get')
       .mockReturnValue(960);
 
     const { unmount } = renderMessage({
