@@ -1,5 +1,4 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { GETTING_STARTED_APP_CONTENT } from '@/getting-started/constants/GettingStartedAppContent';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
@@ -8,18 +7,20 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { type GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
+import {
+  FindMarketplaceAppDetailDocument,
+  type MarketplaceApp,
+} from '~/generated-metadata/graphql';
 
 type GettingStartedAppInstallButtonProps = {
-  item: { id: (typeof GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS)[number] };
+  item: Pick<MarketplaceApp, 'id' | 'name'>;
 };
 
 export const GettingStartedAppInstallButton = ({
-  item: { id: universalIdentifier },
+  item: { id: universalIdentifier, name: appLabel },
 }: GettingStartedAppInstallButtonProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
@@ -38,7 +39,6 @@ export const GettingStartedAppInstallButton = ({
     universalIdentifier,
     onCompleted: () => void refetch(),
   });
-  const appLabel = t(GETTING_STARTED_APP_CONTENT[universalIdentifier].label);
   const modalInstanceId = `getting-started-install-${universalIdentifier}`;
 
   return (

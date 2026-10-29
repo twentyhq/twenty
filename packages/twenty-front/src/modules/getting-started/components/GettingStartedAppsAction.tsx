@@ -1,22 +1,32 @@
 import { GettingStartedAppInstallButton } from '@/getting-started/components/GettingStartedAppInstallButton';
-import { GETTING_STARTED_APP_CONTENT } from '@/getting-started/constants/GettingStartedAppContent';
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
+import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { useLingui } from '@lingui/react/macro';
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const GettingStartedAppsAction = () => {
-  const { t } = useLingui();
+  const { data: marketplaceApps, isLoading } = useMarketplaceApps();
+
+  const featuredApps = GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS.map(
+    (universalIdentifier) =>
+      marketplaceApps.find(
+        (marketplaceApp) => marketplaceApp.id === universalIdentifier,
+      ),
+  ).filter(isDefined);
 
   return (
     <SettingsListCard
-      items={GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS.map(
-        (universalIdentifier) => ({ id: universalIdentifier }),
-      )}
-      getItemLabel={({ id }) => t(GETTING_STARTED_APP_CONTENT[id].label)}
-      getItemDescription={({ id }) =>
-        t(GETTING_STARTED_APP_CONTENT[id].description)
+      items={featuredApps}
+      isLoading={isLoading}
+      getItemLabel={({ name }) => name}
+      getItemDescription={({ description }) =>
+        getApplicationDescriptionSummary(description)
       }
-      RowIconFn={({ id }) => GETTING_STARTED_APP_CONTENT[id].Icon}
+      getItemAvatarUrl={({ logoUrl }) =>
+        getAbsoluteImageUrl(logoUrl || null) ?? null
+      }
       RowRightComponent={GettingStartedAppInstallButton}
     />
   );
