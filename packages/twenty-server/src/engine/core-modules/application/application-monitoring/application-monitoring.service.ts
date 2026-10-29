@@ -239,7 +239,11 @@ export class ApplicationMonitoringService {
 
       const rows =
         await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
-          { installations, ...period },
+          {
+            installations,
+            declaredOperations: Object.keys(billableOperations),
+            ...period,
+          },
         );
 
       return { rows, billableOperations };

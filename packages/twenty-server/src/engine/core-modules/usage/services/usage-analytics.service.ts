@@ -161,11 +161,13 @@ export class UsageAnalyticsService {
 
   async getCreditsUsedTimeSeriesForInstallations({
     installations,
+    declaredOperations,
     periodStart,
     periodEnd,
     bucketSizeInSeconds,
   }: {
     installations: { applicationId: string; workspaceId: string }[];
+    declaredOperations: string[];
     periodStart: Date;
     periodEnd: Date;
     bucketSizeInSeconds: number;
@@ -187,11 +189,12 @@ export class UsageAnalyticsService {
       operation: string;
       creditsUsedMicro: string | number;
     }>(
-      // Only app-raised rows carry the app's declared operation name in resourceContext
+      // Only app-raised rows carry a declared operation name in resourceContext; any other
+      // context is free-form and collapsed here so it cannot fan out into one row per charge
       `SELECT
          toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32})) AS bucketStart,
          operationType,
-         if(resourceType = 'APP', resourceContext, '') AS operation,
+         if(resourceType = 'APP' AND has({declaredOperations:Array(String)}, resourceContext), resourceContext, '') AS operation,
          sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
@@ -204,6 +207,7 @@ export class UsageAnalyticsService {
        SETTINGS max_execution_time = 10`,
       {
         ...buildInstallationFilterParams(installations),
+        declaredOperations,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
         bucketSizeInSeconds,
