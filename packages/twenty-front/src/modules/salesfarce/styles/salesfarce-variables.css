@@ -1,4 +1,5 @@
-.salesfarce {
+.salesfarce,
+.salesfarce .light {
   --t-accent-primary: #8ccfee;
   --t-accent-secondary: #8ccfee;
   --t-accent-tertiary: #cfeef8;
