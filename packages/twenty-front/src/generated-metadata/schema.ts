@@ -2238,6 +2238,7 @@ export enum EngineComponentKey {
   MARK_AI_CHAT_AS_READ = 'MARK_AI_CHAT_AS_READ',
   MARK_AI_CHAT_AS_UNREAD = 'MARK_AI_CHAT_AS_UNREAD',
   MERGE_MULTIPLE_RECORDS = 'MERGE_MULTIPLE_RECORDS',
+  MERGE_WITH_RECORD = 'MERGE_WITH_RECORD',
   NAVIGATE_TO_NEXT_RECORD = 'NAVIGATE_TO_NEXT_RECORD',
   NAVIGATE_TO_PREVIOUS_RECORD = 'NAVIGATE_TO_PREVIOUS_RECORD',
   NAVIGATION = 'NAVIGATION',
@@ -2421,7 +2422,6 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
-  IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
@@ -2764,6 +2764,12 @@ export type Impersonate = {
   __typename?: 'Impersonate';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type InboxThreadRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
 };
 
 export type Index = {
@@ -3383,6 +3389,7 @@ export type Mutation = {
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
+  attachRecordToInboxThread: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
@@ -3499,6 +3506,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
@@ -3712,6 +3720,11 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAttachRecordToInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 
@@ -4286,6 +4299,11 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
+};
+
+
+export type MutationDetachRecordFromInboxThreadArgs = {
+  input: InboxThreadRecordInput;
 };
 
 

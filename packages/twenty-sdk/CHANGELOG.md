@@ -54,6 +54,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const text = `${await inboxMention({ workspaceMemberId })}, the report is ready.`;
   ```
 
+- **`attachRecordToInboxThread` and `detachRecordFromInboxThread` in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** Link a conversation to a person, company, opportunity or custom object record, or remove the link. Both are idempotent and run like the default API clients: a member must be able to edit the conversation, and your application can act on a conversation it wrote in or one its default role was granted. The record must be readable with the same access.
+
+  ```ts
+  import { attachRecordToInboxThread } from 'twenty-sdk/logic-function';
+
+  await attachRecordToInboxThread({
+    threadId,
+    objectNameSingular: 'company',
+    recordId: company.id,
+  });
+  ```
+
 - **`useSelectedRecordsFilter` in `twenty-sdk/front-component`.** Returns a record filter matching exactly the records the user selected, or `null` when there is no selection context. Under Select all, `useSelectedRecordIds()` is empty because the selection is defined by the view's filters, search and unticked rows; query the records with this filter, or pass it to a logic function. Twenty servers that predate it return `null`.
 
   ```tsx
