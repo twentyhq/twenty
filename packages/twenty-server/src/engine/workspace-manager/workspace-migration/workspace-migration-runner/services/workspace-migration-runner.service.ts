@@ -62,32 +62,32 @@ export class WorkspaceMigrationRunnerService {
         ),
     ),
     hasMorphRelationFieldChanged = false,
-  }: {
-    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
-    workspaceId: string;
-    hasSchemaMetadataChanged?: boolean;
-    hasMorphRelationFieldChanged?: boolean;
-  }): Promise<void> {
-    this.logger.perfTime(
-      'Runner',
-      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
-    );
-
-    const hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
+    hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
       (flatEntityMapsKey) =>
         flatEntityMapsKey === 'flatRoleMaps' ||
         flatEntityMapsKey === 'flatRoleTargetMaps' ||
         flatEntityMapsKey === 'flatObjectPermissionMaps' ||
         flatEntityMapsKey === 'flatFieldPermissionMaps' ||
         flatEntityMapsKey === 'flatRolePermissionFlagMaps',
-    );
-
-    const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
+    ),
+    hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
       'flatWorkflowVersionMaps',
-    );
-
-    const hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
+    ),
+    hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
       'flatApplicationVariableMaps',
+    ),
+  }: {
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    workspaceId: string;
+    hasSchemaMetadataChanged?: boolean;
+    hasMorphRelationFieldChanged?: boolean;
+    hasRolesPermissionsChanged?: boolean;
+    hasWorkflowVersionsChanged?: boolean;
+    hasApplicationVariablesChanged?: boolean;
+  }): Promise<void> {
+    this.logger.perfTime(
+      'Runner',
+      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
     );
 
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
@@ -287,12 +287,27 @@ export class WorkspaceMigrationRunnerService {
       getMetadataFlatEntityMapsKey,
     );
 
-    // The load set above is broad (relations + validation deps) because
-    // actions need related maps to execute and validate. Invalidation must be
-    // narrower: only the maps the actions actually mutate, otherwise a lone
-    // viewField reorder would recompute flatObjectMetadataMaps/flatFieldMetadataMaps.
+    // Flat-map invalidation covers only the maps actions mutate (not the broad
+    // load set), so a lone viewField reorder no longer recomputes the object
+    // and field metadata maps. Derived caches still key off the broad set to
+    // keep their refresh scope.
     const flatEntityMapsKeysToInvalidate =
       getFlatEntityMapsKeysToInvalidateForWorkspaceMigration(actions);
+
+    const hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
+      (flatEntityMapsKey) =>
+        flatEntityMapsKey === 'flatRoleMaps' ||
+        flatEntityMapsKey === 'flatRoleTargetMaps' ||
+        flatEntityMapsKey === 'flatObjectPermissionMaps' ||
+        flatEntityMapsKey === 'flatFieldPermissionMaps' ||
+        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
+    );
+    const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
+      'flatWorkflowVersionMaps',
+    );
+    const hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
+      'flatApplicationVariableMaps',
+    );
 
     const cachedAllFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
@@ -528,6 +543,9 @@ export class WorkspaceMigrationRunnerService {
           workspaceId,
           hasSchemaMetadataChanged,
           hasMorphRelationFieldChanged,
+          hasRolesPermissionsChanged,
+          hasWorkflowVersionsChanged,
+          hasApplicationVariablesChanged,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -559,6 +577,9 @@ export class WorkspaceMigrationRunnerService {
         workspaceId,
         hasSchemaMetadataChanged,
         hasMorphRelationFieldChanged,
+        hasRolesPermissionsChanged,
+        hasWorkflowVersionsChanged,
+        hasApplicationVariablesChanged,
       });
 
       this.recordRunPhaseMetric({

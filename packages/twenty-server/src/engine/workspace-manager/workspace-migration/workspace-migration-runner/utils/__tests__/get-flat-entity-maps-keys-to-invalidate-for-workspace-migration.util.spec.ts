@@ -41,7 +41,7 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).not.toContain('flatFieldMetadataMaps');
   });
 
-  it('invalidates the view field map plus every many-to-one related map on create', () => {
+  it('invalidates the related view-side maps but not object metadata when a viewField is created', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({
         type: 'create',
@@ -60,7 +60,7 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).not.toContain('flatObjectMetadataMaps');
   });
 
-  it('invalidates the view field map plus every many-to-one related map on delete', () => {
+  it('invalidates the related view-side maps but not object metadata when a viewField is deleted', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({
         type: 'delete',
@@ -93,17 +93,34 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).toEqual(['flatFieldMetadataMaps']);
   });
 
-  it('still invalidates the object metadata map when a field is created', () => {
+  it('invalidates field, object and permission maps when an object is created (bundled fields and default permissions)', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({
         type: 'create',
-        metadataName: 'fieldMetadata',
+        metadataName: 'objectMetadata',
       }),
     ]);
 
-    expect(result.sort()).toEqual(
-      ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'].sort(),
-    );
+    expect(result).toContain('flatObjectMetadataMaps');
+    expect(result).toContain('flatFieldMetadataMaps');
+    expect(result).toContain('flatObjectPermissionMaps');
+    expect(result).toContain('flatFieldPermissionMaps');
+  });
+
+  it('invalidates the cascade-exposed child maps when a view is deleted', () => {
+    const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+      buildAction({
+        type: 'delete',
+        metadataName: 'view',
+        universalIdentifier: 'view-1',
+      }),
+    ]);
+
+    expect(result).toContain('flatViewMaps');
+    expect(result).toContain('flatViewFieldMaps');
+    expect(result).toContain('flatViewFieldGroupMaps');
+    expect(result).toContain('flatViewSortMaps');
+    expect(result).toContain('flatViewFilterMaps');
   });
 
   it('deduplicates keys across several actions', () => {
