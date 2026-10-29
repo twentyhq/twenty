@@ -22,10 +22,37 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME,
 })
-@Index('IDX_RELATED_RECORD_PATH_WORKSPACE_ID_SOURCE_OBJECT_METADATA_ID', [
-  'workspaceId',
-  'sourceObjectMetadataId',
-])
+// Postgres treats NULLs as distinct, so each path length gets its own unique index.
+@Index(
+  'IDX_RELATED_RECORD_PATH_UNIQUE_ONE_HOP',
+  ['workspaceId', 'sourceObjectMetadataId', 'firstFieldMetadataId'],
+  { unique: true, where: '"secondFieldMetadataId" IS NULL' },
+)
+@Index(
+  'IDX_RELATED_RECORD_PATH_UNIQUE_TWO_HOPS',
+  [
+    'workspaceId',
+    'sourceObjectMetadataId',
+    'firstFieldMetadataId',
+    'secondFieldMetadataId',
+  ],
+  {
+    unique: true,
+    where:
+      '"secondFieldMetadataId" IS NOT NULL AND "thirdFieldMetadataId" IS NULL',
+  },
+)
+@Index(
+  'IDX_RELATED_RECORD_PATH_UNIQUE_THREE_HOPS',
+  [
+    'workspaceId',
+    'sourceObjectMetadataId',
+    'firstFieldMetadataId',
+    'secondFieldMetadataId',
+    'thirdFieldMetadataId',
+  ],
+  { unique: true, where: '"thirdFieldMetadataId" IS NOT NULL' },
+)
 @Index('IDX_RELATED_RECORD_PATH_TARGET_OBJECT_METADATA_ID', [
   'targetObjectMetadataId',
 ])

@@ -22,9 +22,12 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreate =
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
-    createRelatedRecordPathInput: CreateRelatedRecordPathInput;
+    createRelatedRecordPathInput: Pick<
+      CreateRelatedRecordPathInput,
+      'sourceObjectMetadataId' | 'fieldMetadataIds'
+    >;
     workspaceId: string;
-    flatApplication: FlatApplication;
+    flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   } & Pick<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'

@@ -9,6 +9,7 @@ import {
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -16,6 +17,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -51,7 +53,10 @@ export class RelatedRecordPathResolver {
   ) {}
 
   @Query(() => [RelatedRecordPathDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(
+    FeatureFlagGuard(FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED),
+    NoPermissionGuard,
+  )
   async relatedRecordPaths(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RelatedRecordPathDTO[]> {
@@ -61,7 +66,10 @@ export class RelatedRecordPathResolver {
   }
 
   @Mutation(() => RelatedRecordPathDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
+  @UseGuards(
+    FeatureFlagGuard(FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED),
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   async createRelatedRecordPath(
     @Args('input') input: CreateRelatedRecordPathInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -73,7 +81,10 @@ export class RelatedRecordPathResolver {
   }
 
   @Mutation(() => RelatedRecordPathDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
+  @UseGuards(
+    FeatureFlagGuard(FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED),
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
+  )
   async deleteRelatedRecordPath(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -3,6 +3,7 @@
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RelatedRecordPathResolver } from 'src/engine/metadata-modules/related-record-path/related-record-path.resolver';
@@ -13,6 +14,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   imports: [
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
+    FeatureFlagModule,
     PermissionsModule,
     WorkspaceMigrationModule,
   ],

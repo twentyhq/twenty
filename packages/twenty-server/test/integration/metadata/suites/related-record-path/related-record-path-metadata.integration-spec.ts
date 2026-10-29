@@ -13,12 +13,17 @@ import {
   deleteRelatedRecordPath,
   findRelatedRecordPaths,
 } from 'test/integration/metadata/suites/related-record-path/utils/related-record-path-api.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-const createObject = async (nameSingular: string, labelSingular: string) => {
+const createObject = async (
+  nameSingular: string,
+  labelSingular: string,
+): Promise<string> => {
   const {
     data: {
       createOneObject: { id },
@@ -35,7 +40,7 @@ const createObject = async (nameSingular: string, labelSingular: string) => {
     },
   });
 
-  return id as string;
+  return id;
 };
 
 const deleteObject = async (objectMetadataId: string) => {
@@ -87,7 +92,7 @@ describe('Related record path metadata', () => {
     });
     const createdPath = response.body.data?.createRelatedRecordPath;
 
-    if (createdPath) {
+    if (isDefined(createdPath)) {
       createdPathIds.push(createdPath.id);
     }
 
@@ -95,6 +100,12 @@ describe('Related record path metadata', () => {
   };
 
   beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
@@ -230,6 +241,26 @@ describe('Related record path metadata', () => {
     expect(JSON.stringify(secondResponse.body.errors)).toContain(
       'This related record path already exists',
     );
+  });
+
+  it('should save only one of two identical paths created at the same time', async () => {
+    const responses = await Promise.all([
+      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
+      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
+    ]);
+
+    expect(
+      responses.filter((response) =>
+        isDefined(response.body.data?.createRelatedRecordPath),
+      ),
+    ).toHaveLength(1);
+
+    const createdPath = responses.find((response) =>
+      isDefined(response.body.data?.createRelatedRecordPath),
+    )?.body.data.createRelatedRecordPath;
+
+    jestExpectToBeDefined(createdPath);
+    await deleteRelatedRecordPath(createdPath.id);
   });
 
   it('should reject a path that comes back to an object it already visited', async () => {

@@ -63,7 +63,6 @@ export { MAX_ALLOWED_IFRAME_ORIGINS } from './MaxAllowedIframeOrigins';
 export { MAX_CORE_WORKFLOW_FILTER_RULES } from './MaxCoreWorkflowFilterRules';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';
-export { MAX_RELATED_RECORD_PATH_FIELD_COUNT } from './MaxRelatedRecordPathFieldCount';
 export { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from './MemberRoleUniversalIdentifier';
 export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxValues';
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';

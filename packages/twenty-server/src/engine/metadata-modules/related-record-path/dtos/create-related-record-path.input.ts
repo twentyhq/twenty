@@ -9,9 +9,9 @@ import {
   IsNotEmpty,
   IsUUID,
 } from 'class-validator';
-import { MAX_RELATED_RECORD_PATH_FIELD_COUNT } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { RELATED_RECORD_PATH_MAX_FIELD_COUNT } from 'src/engine/metadata-modules/related-record-path/constants/related-record-path-max-field-count.constant';
 
 @InputType()
 export class CreateRelatedRecordPathInput {
@@ -22,7 +22,7 @@ export class CreateRelatedRecordPathInput {
 
   @IsArray()
   @ArrayMinSize(1)
-  @ArrayMaxSize(MAX_RELATED_RECORD_PATH_FIELD_COUNT)
+  @ArrayMaxSize(RELATED_RECORD_PATH_MAX_FIELD_COUNT)
   @IsUUID('all', { each: true })
   @Field(() => [UUIDScalarType])
   fieldMetadataIds: string[];

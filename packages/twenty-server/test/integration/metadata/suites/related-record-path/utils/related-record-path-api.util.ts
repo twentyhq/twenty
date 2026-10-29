@@ -55,5 +55,8 @@ export const findRelatedRecordPaths = async () => {
     `,
   });
 
-  return response.body.data.relatedRecordPaths as RelatedRecordPathResponse[];
+  const relatedRecordPaths: RelatedRecordPathResponse[] =
+    response.body.data.relatedRecordPaths;
+
+  return relatedRecordPaths;
 };

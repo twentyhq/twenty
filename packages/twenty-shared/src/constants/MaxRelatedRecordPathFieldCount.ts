@@ -1,1 +1,0 @@
-export const MAX_RELATED_RECORD_PATH_FIELD_COUNT = 3;

@@ -19,14 +19,22 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
-type RelatedRecordPathRelatedMaps = UniversalFlatEntityValidationArgs<
-  typeof ALL_METADATA_NAME.relatedRecordPath
->['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
+type RelatedRecordPathRelatedMaps = Pick<
+  UniversalFlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.relatedRecordPath
+  >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'],
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatRelatedRecordPathMaps'
+>;
 
-const buildInvalidInputError = (
-  message: string,
-  userFriendlyMessage: FlatEntityValidationError['userFriendlyMessage'],
-): FlatEntityValidationError => ({
+const buildInvalidInputError = ({
+  message,
+  userFriendlyMessage,
+}: Pick<
+  FlatEntityValidationError,
+  'message' | 'userFriendlyMessage'
+>): FlatEntityValidationError => ({
   code: RelatedRecordPathExceptionCode.INVALID_RELATED_RECORD_PATH_INPUT,
   message,
   userFriendlyMessage,
@@ -59,10 +67,10 @@ export class FlatRelatedRecordPathValidatorService {
 
     if (!isDefined(sourceFlatObjectMetadata)) {
       return [
-        buildInvalidInputError(
-          t`Related record path source object not found`,
-          msg`Related record path source object not found`,
-        ),
+        buildInvalidInputError({
+          message: t`Related record path source object not found`,
+          userFriendlyMessage: msg`Related record path source object not found`,
+        }),
       ];
     }
 
@@ -73,10 +81,10 @@ export class FlatRelatedRecordPathValidatorService {
 
     if (!isDefined(targetFlatObjectMetadata)) {
       return [
-        buildInvalidInputError(
-          t`Related record path target object not found`,
-          msg`Related record path target object not found`,
-        ),
+        buildInvalidInputError({
+          message: t`Related record path target object not found`,
+          userFriendlyMessage: msg`Related record path target object not found`,
+        }),
       ];
     }
 
@@ -85,10 +93,10 @@ export class FlatRelatedRecordPathValidatorService {
       !isDefined(secondFieldMetadataUniversalIdentifier)
     ) {
       return [
-        buildInvalidInputError(
-          t`Related record path cannot skip its second relation`,
-          msg`Related record path cannot skip its second relation`,
-        ),
+        buildInvalidInputError({
+          message: t`Related record path cannot skip its second relation`,
+          userFriendlyMessage: msg`Related record path cannot skip its second relation`,
+        }),
       ];
     }
 
@@ -115,10 +123,10 @@ export class FlatRelatedRecordPathValidatorService {
           currentObjectMetadataUniversalIdentifier
       ) {
         return [
-          buildInvalidInputError(
-            t`Each related record path field must belong to the object reached by the previous relation`,
-            msg`Each related record path field must belong to the object reached by the previous relation`,
-          ),
+          buildInvalidInputError({
+            message: t`Each related record path field must belong to the object reached by the previous relation`,
+            userFriendlyMessage: msg`Each related record path field must belong to the object reached by the previous relation`,
+          }),
         ];
       }
 
@@ -130,19 +138,19 @@ export class FlatRelatedRecordPathValidatorService {
         )
       ) {
         return [
-          buildInvalidInputError(
-            t`Related record path fields must be relations`,
-            msg`Related record path fields must be relations`,
-          ),
+          buildInvalidInputError({
+            message: t`Related record path fields must be relations`,
+            userFriendlyMessage: msg`Related record path fields must be relations`,
+          }),
         ];
       }
 
       if (!flatFieldMetadata.isActive) {
         return [
-          buildInvalidInputError(
-            t`Related record path fields must be active`,
-            msg`Related record path fields must be active`,
-          ),
+          buildInvalidInputError({
+            message: t`Related record path fields must be active`,
+            userFriendlyMessage: msg`Related record path fields must be active`,
+          }),
         ];
       }
 
@@ -155,10 +163,10 @@ export class FlatRelatedRecordPathValidatorService {
         )
       ) {
         return [
-          buildInvalidInputError(
-            t`Related record path cannot visit the same object twice`,
-            msg`Related record path cannot visit the same object twice`,
-          ),
+          buildInvalidInputError({
+            message: t`Related record path cannot visit the same object twice`,
+            userFriendlyMessage: msg`Related record path cannot visit the same object twice`,
+          }),
         ];
       }
 
@@ -174,10 +182,10 @@ export class FlatRelatedRecordPathValidatorService {
       targetObjectMetadataUniversalIdentifier
     ) {
       return [
-        buildInvalidInputError(
-          t`Related record path must end on its target object`,
-          msg`Related record path must end on its target object`,
-        ),
+        buildInvalidInputError({
+          message: t`Related record path must end on its target object`,
+          userFriendlyMessage: msg`Related record path must end on its target object`,
+        }),
       ];
     }
 
@@ -197,10 +205,10 @@ export class FlatRelatedRecordPathValidatorService {
 
     if (hasDuplicatePath) {
       return [
-        buildInvalidInputError(
-          t`This related record path already exists`,
-          msg`This related record path already exists`,
-        ),
+        buildInvalidInputError({
+          message: t`This related record path already exists`,
+          userFriendlyMessage: msg`This related record path already exists`,
+        }),
       ];
     }
 
