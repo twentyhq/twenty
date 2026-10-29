@@ -12,10 +12,9 @@ const StyledSectionToggle = styled.button`
   border: none;
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   height: 100%;
-  min-width: 0;
-  overflow: hidden;
   padding: 0;
 
   &:focus-visible {
@@ -70,6 +69,7 @@ export const RecordGroupSectionHeader = ({
         recordGroupDefinition={recordGroupDefinition}
         fieldMetadataItem={fieldMetadataItem}
         valueTagWeight="medium"
+        truncate={false}
       />
     </StyledSectionToggle>
   );
