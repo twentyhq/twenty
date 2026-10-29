@@ -15,7 +15,9 @@ describe('ScrollWrapper', () => {
       </ScrollWrapper>,
     );
 
-    const wrapper = container.querySelector('#scroll-wrapper-test-scroll-wrapper');
+    const wrapper = container.querySelector(
+      '#scroll-wrapper-test-scroll-wrapper',
+    );
     expect(wrapper).toBeInTheDocument();
     expect(wrapper?.classList.contains('scroll-wrapper-y-enabled')).toBe(true);
     expect(wrapper?.classList.contains('scroll-wrapper-x-enabled')).toBe(false);
