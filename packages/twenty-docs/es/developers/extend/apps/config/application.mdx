@@ -191,7 +191,7 @@ Los valores son cadenas, en el mismo formato que `process.env` (consulta [Tipos 
 
 `updateMyUserApplicationVariable` guarda el valor propio de un miembro. Toma el `applicationUniversalIdentifier` de tu aplicación y escribe el valor de la persona detrás del token: la propia sesión del miembro o el token de tu aplicación cuando hay un miembro detrás de él, como en un componente frontal o una función lógica ejecutada para un miembro. El token de tu aplicación solo puede nombrar tu propia aplicación, y se rechaza un token sin nadie detrás de él, como en una tarea cron o un hook de instalación. Un valor vacío elimina el valor propio del miembro, por lo que vuelve a leer el valor predeterminado o una cadena vacía para una variable que no tiene uno.
 
-No necesita permiso `APPLICATIONS`, pero necesita `CONNECTED_ACCOUNTS`: en el rol del miembro y, cuando el token de tu aplicación realiza la llamada, también en el rol predeterminado de tu aplicación, si declara uno. Si tu aplicación guarda variables de usuario, añade `SystemPermissionFlag.CONNECTED_ACCOUNTS` a `permissionFlagUniversalIdentifiers` en su [rol](/es/developers/extend/apps/config/roles).
+No necesita el permiso Aplicaciones del espacio de trabajo, pero sí necesita Aplicaciones de usuario: en el rol del miembro y, cuando el token de tu aplicación realiza la llamada, también en el rol predeterminado de tu aplicación, si declara uno. Si tu aplicación guarda variables de usuario, añade `SystemPermissionFlag.USER_APPS` a `permissionFlagUniversalIdentifiers` en su [rol](/es/developers/extend/apps/config/roles).
 
 ## Rol de función predeterminado
 

@@ -191,7 +191,7 @@ I valori sono stringhe, nello stesso formato di `process.env` (consulta [Tipi di
 
 `updateMyUserApplicationVariable` salva il valore personale di un membro. Prende l'`applicationUniversalIdentifier` della tua app e scrive il valore della persona dietro al token: la sessione del membro stesso oppure il token della tua app quando dietro c'è un membro, ad esempio in un componente front-end o in una funzione logica eseguita per un membro. Il token della tua app può identificare solo la tua app e un token senza nessuna persona associata, ad esempio in un processo cron o in un hook di installazione, viene rifiutato. Un valore vuoto rimuove il valore proprio del membro, quindi viene letto nuovamente il valore predefinito oppure una stringa vuota per una variabile senza valore predefinito.
 
-Non richiede l'autorizzazione `APPLICATIONS`, ma richiede `CONNECTED_ACCOUNTS`: nel ruolo del membro e, quando il token della tua app effettua la chiamata, anche nel ruolo predefinito della tua app, se ne dichiara uno. Se la tua app salva variabili utente, aggiungi `SystemPermissionFlag.CONNECTED_ACCOUNTS` a `permissionFlagUniversalIdentifiers` nel suo [ruolo](/it/developers/extend/apps/config/roles).
+Non richiede l'autorizzazione Workspace Apps, ma richiede User Apps: nel ruolo del membro e, quando il token dell'app effettua la chiamata, anche nel ruolo predefinito dell'app, se ne dichiara uno. Se l'app salva variabili utente, aggiungi `SystemPermissionFlag.USER_APPS` a `permissionFlagUniversalIdentifiers` nel suo [ruolo](/it/developers/extend/apps/config/roles).
 
 ## Ruolo funzione predefinito
 

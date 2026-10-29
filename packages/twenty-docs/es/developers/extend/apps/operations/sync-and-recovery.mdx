@@ -23,7 +23,7 @@ El desarrollo de aplicaciones locales gira en torno a la **sincronización**: la
 | Previsualizar cambios **sin aplicarlos**                  | `twenty app plan`              | Calcula e imprime el diff; no escribe nada.                                                                                                                 |
 | Sincroniza sin eliminar nada                              | `twenty app apply --no-prune`  | Solo crea y actualiza: las entidades que existen en el espacio de trabajo, pero no en tu fuente, se dejan sin modificar. También lo aceptan `plan` y `dev`. |
 | Depure la aplicación personalizada del espacio de trabajo | `twenty app apply --prune`     | Esa aplicación conserva las entidades que faltan en el origen a menos que pase `--prune`. También lo aceptan `plan` y `dev`.                                |
-| Regenerar la fuente local desde el espacio de trabajo     | `twenty app pull`              | **Experimental.** Escribe la aplicación instalada de nuevo en los archivos de definición. Consulta más abajo.                                               |
+| Regenerar la fuente local desde el espacio de trabajo     | `twenty app pull`              | **Experimental.** Restaura los archivos de definición, las traducciones y las dependencias almacenadas. Consulta más abajo.                                 |
 | Eliminar la aplicación del espacio de trabajo             | `twenty app uninstall`         | Agrega `--yes` para omitir la confirmación.                                                                                                                 |
 | Enviar un tarball a un servidor                           | `twenty app publish --private` | Requiere una versión de `package.json` **estrictamente superior**; consulta [Publicación](/es/developers/extend/apps/operations/publishing).                   |
 | Publicar en el marketplace (npm)                          | `twenty app publish`           | —                                                                                                                                                           |
@@ -108,7 +108,7 @@ Un plan:
   antes de ejecutarlo y revisa el diff.
 </Warning>
 
-`twenty app pull` es lo contrario de `apply`: lee una aplicación del espacio de trabajo y la vuelve a escribir como archivos de definición.
+`twenty app pull` es la operación inversa de `apply`: lee una aplicación desde el espacio de trabajo y restaura sus archivos de definición, traducciones y archivos de dependencias almacenados.
 
 ```bash
 twenty app pull --universal-identifier <universalIdentifier>
@@ -119,6 +119,7 @@ Pull necesita un proyecto existente — primero crea uno con `twenty app init` y
 **Qué escribe:**
 
 * la configuración de la aplicación;
+* archivos de dependencias `package.json` y `yarn.lock` almacenados, en la raíz del proyecto;
 * objetos, con sus campos en línea;
 * campos que tu aplicación añadió a objetos que no posee;
 * índices creados;
@@ -137,6 +138,10 @@ Pull necesita un proyecto existente — primero crea uno con `twenty app init` y
 
 Cada entidad va al archivo que ya la define, por lo que una segunda extracción vuelve a escribir solo lo que cambió en el servidor. Un archivo también se vuelve a escribir cuando usa una función de definición distinta de la que escribiría pull; por ejemplo, un rol que se convirtió en el rol predeterminado o dejó de serlo. Las entidades nuevas se colocan junto a los archivos existentes de su tipo, y un nombre generado que coincidiría con un archivo no relacionado se califica en lugar de sobrescribirlo.
 
+**Archivos de dependencias.** Cuando cambia el `package.json` o `yarn.lock` almacenado, pull reemplaza el archivo local e informa de cualquier edición local sobrescrita. Si el archivo remoto no ha cambiado desde el pull anterior, se conservan las ediciones locales. La ausencia de un archivo remoto no elimina su equivalente local. Cuando el paquete exportado omite `twenty-sdk`, como hace la aplicación Custom del espacio de trabajo, pull conserva la dependencia local del SDK para que los comandos de CLI aún puedan cargar el proyecto. Los archivos de dependencias, los metadatos y la base se escriben juntos y se revierten juntos si se produce un error de escritura.
+
+Ejecuta `yarn install` después de obtener los cambios de dependencias. Pull no instala paquetes, ejecuta scripts de paquetes ni regenera el cliente tipado.
+
 **Qué no escribe:**
 
 * **Aún no se exportan** — elementos del menú de comandos y del menú de configuración, funciones lógicas y componentes frontend, proveedores de conexión, variables de aplicación, recursos públicos, tipos de actividad de cronología y la fuente almacenada de tus funciones.
@@ -146,14 +151,14 @@ Cada entidad va al archivo que ya la define, por lo que una segunda extracción 
 * **Widgets que la exportación aún no puede incluir** — en cualquier diseño, incluido el suyo, se informa de un widget del tipo obsoleto `VIEW`, un widget que muestra uno de los componentes de frontend o elementos del menú de comandos de su propia aplicación, o un widget sin posición para el modo de diseño de su pestaña, y el diseño o la pestaña se escribe sin él.
 * **Flujos de trabajo que la exportación aún no puede incluir** — se informa sobre un flujo de trabajo modificado en el generador de flujos de trabajo desde la última sincronización, un flujo de trabajo del sistema o privado, uno con un paso de Código o de mensaje de chat, que los flujos de trabajo de aplicaciones no admiten, y uno que llama a la acción de flujo de trabajo de otra aplicación, y se dejan en su lugar. La aplicación personalizada del espacio de trabajo es la excepción para el primer y el último caso: el generador también publica sus flujos de trabajo, y estos pueden llamar a las acciones de cualquier aplicación, por lo que se incorporan. En su lugar, se informa de uno de sus flujos de trabajo cuando no tiene una versión activa o cuando su versión activa utiliza configuraciones que una definición no puede expresar. Se extraen los pasos de correo electrónico y calendario: una cuenta compartida con el espacio de trabajo se escribe como su `connectedAccountHandle`, mientras que la cuenta privada de un miembro y las variables se conservan tal como están. En cambio, se informa sobre el flujo de trabajo cuando la cuenta de un paso está archivada, ya no puede ejecutar el paso o comparte su dirección con una cuenta más antigua, ya que aplicar el identificador seleccionaría otra cuenta.
 * **Agentes que la exportación aún no puede transportar** — se informa de un agente con más de un rol, o vinculado a un rol que la extracción no escribe, y se deja en su lugar.
-* **Estado de tiempo de ejecución del espacio de trabajo** — asignaciones de roles de miembros y claves de API, webhooks, navegación por usuario y elementos de navegación fijados a un registro, todo excluido por diseño.
+* **El estado de ejecución del espacio de trabajo**, los adjuntos de registros, los adjuntos de correo electrónico, las asignaciones de roles de miembros y claves de API, los webhooks, la navegación por usuario y los elementos de navegación fijados a un registro, todo excluido por diseño, incluso para la aplicación Custom del espacio de trabajo.
 * **Propiedad de otra aplicación** — se informa de ello, pero nunca se extrae.
 
 El informe al final de una extracción enumera todo ello, agrupado por tipo y motivo. Todo lo que indique como no escrito sigue estando en su espacio de trabajo, así que vuelva a enviar un árbol extraído con `twenty app apply --no-prune` hasta que se cubran los tipos que faltan. La aplicación personalizada del espacio de trabajo ya se aplica de esta forma de manera predeterminada. Una aplicación con depuración (la predeterminada para otras aplicaciones, `--prune` para la aplicación personalizada) los eliminaría, y `twenty app plan` enumera exactamente cuáles.
 
 **Estado local del espacio de trabajo.** Una entidad desactivada en el espacio de trabajo se escribe como una definición activa, y las anulaciones que el espacio de trabajo realizó en una entidad, como una etiqueta renombrada, no se escriben. El informe enumera esas filas bajo "Escritas sin su estado local del espacio de trabajo". Aplicar el árbol de nuevo al mismo espacio de trabajo deja ese estado intacto; otro espacio de trabajo recibe la entidad activa y sin las anulaciones.
 
-**El archivo base.** Pull registra lo que extrajo en `.twenty/pull-base.json`, que está ignorado por git y es específico de cada checkout. Ese archivo es con lo que una extracción posterior compara para dejar intactos los archivos cuya entidad no cambió y para eliminar el archivo de una entidad que ya no está en el espacio de trabajo. Un checkout sin él simplemente escribe todo y no elimina nada.
+**El archivo base.** Pull registra lo que obtuvo en `.twenty/cli/pull-base.json`, que se ignora en git y es específico de cada copia de trabajo. Ese archivo es con lo que una extracción posterior compara para dejar intactos los archivos cuya entidad no cambió y para eliminar el archivo de una entidad que ya no está en el espacio de trabajo. Un checkout sin él simplemente escribe todo y no elimina nada.
 
 ## Escalera de recuperación
 

@@ -163,10 +163,12 @@ export default defineSettingsMenuItem({
 * **`USER`** — يُعدّه كل عضو لنفسه، ضمن إعدادات المستخدم الخاصة به.
 
 <Note>
-  يُعرَض عنصر `USER` كعلامة تبويب على صفحة التطبيق ضمن **الإعدادات > تفضيلات التطبيق**، حيث لا يراه إلا العضو الذي سجّل الدخول، وفقط عندما يمنح دوره إذن `CONNECTED_ACCOUNTS`. لم تُفعَّل تلك الصفحة في كل مساحات العمل بعد: وحيثما لم تُفعَّل، يستمر حفظ عنصر `USER` ومزامنته، ولكن لا يُعرَض في أي مكان.
+  يُعرَض عنصر `USER` كعلامة تبويب في صفحة التطبيق ضمن **الإعدادات > تفضيلات
+  التطبيق**، حيث لا يراه إلا العضو الذي سجّل الدخول، وفقط عندما يمنح دوره
+  إذن تطبيقات المستخدم. لم تُفعَّل تلك الصفحة في كل مساحات العمل بعد: وحيثما لم تُفعَّل، يستمر حفظ عنصر `USER` ومزامنته، ولكن لا يُعرَض في أي مكان.
 </Note>
 
-يعمل عنصر `USER` باعتبار العضو الذي يعرضه. لتخزين شيء لكل شخص، عرّف المتغير باستخدام `scope: 'USER'`: تُرجع `getApplicationVariable` قيمة العضو الذي يعرض الصفحة، ويحفظها مكوّنك باستخدام `updateMyUserApplicationVariable`، الذي يكتب قيمة ذلك العضو فقط ويتطلب `SystemPermissionFlag.CONNECTED_ACCOUNTS` في دور تطبيقك، إذا كان يعرّف دورًا (راجع [قراءة المتغيرات وتحديثها في وقت التشغيل](#reading-and-updating-variables-at-runtime)). مثل عنصر `WORKSPACE`، يستبدل عنصر `USER` نموذج **المتغيرات** الذي تم إنشاؤه، لذا يجب أن يتيح للعضو تعيين كل متغير مستخدم يحتاجه تطبيقك. يحتوي متغير مساحة العمل على قيمة واحدة مشتركة بين الجميع، لذا فإن حفظ عضو واحد سيستبدل قيمة عضو آخر.
+يعمل عنصر `USER` باعتبار العضو الذي يعرضه. لتخزين شيء لكل شخص، عرّف المتغير باستخدام `scope: 'USER'`: تُرجع `getApplicationVariable` قيمة العضو الذي يعرض الصفحة، ويحفظها مكوّنك باستخدام `updateMyUserApplicationVariable`، الذي يكتب قيمة ذلك العضو فقط ويتطلب `SystemPermissionFlag.USER_APPS` في دور تطبيقك، إذا كان يعرّف دورًا (راجع [قراءة المتغيرات وتحديثها في وقت التشغيل](#reading-and-updating-variables-at-runtime)). مثل عنصر `WORKSPACE`، يستبدل عنصر `USER` نموذج **المتغيرات** الذي تم إنشاؤه، لذا يجب أن يتيح للعضو تعيين كل متغير مستخدم يحتاجه تطبيقك. يحتوي متغير مساحة العمل على قيمة واحدة مشتركة بين الجميع، لذا فإن حفظ عضو واحد سيستبدل قيمة عضو آخر.
 
 <Note>
   تم إهمال `defineSettingsFrontComponent()` لصالح
@@ -652,8 +654,8 @@ const saveMyLanguage = async (language: string) => {
 * رمز المكوّن الخاص بك مرتبط بتطبيقك الخاص. يستهدف `updateOneApplicationVariable` هذا التطبيق، لذا يكون `applicationId` اختياريًا ويُرفض تحديد تطبيق آخر. يُرفض بالطريقة نفسها قراءة `applicationVariables` لتطبيق آخر، ويُتعامل مع التطبيق الذي ينتمي إلى مساحة عمل أخرى على أنه غير موجود.
 * يجب أن يكون المفتاح من المفاتيح التي يعرّفها تطبيقك في [`defineApplication()`](/ar/developers/extend/apps/config/application). تُعامل كتابة مفتاح غير مُعرَّف على أنها غير موجودة.
 * تُقرأ المتغيرات السرية مقنّعة، وليس بالقيمة المخزنة مطلقًا. تعمل كتابتها بشكل طبيعي.
-* تتطلب قراءة `value` لمتغير وكتابته إذن إعدادات `APPLICATIONS` لكل من دور تطبيقك ودور الشخص المسجّل دخوله، لأن رمز المكوّن هو تقاطع الاثنين. أضف `SystemPermissionFlag.APPLICATIONS` إلى `permissionFlagUniversalIdentifiers` في [دور التطبيق](/ar/developers/extend/apps/config/roles) الخاص بك.
-* يتم إدراج متغير مستخدم (`scope: 'USER'`) بقيمة العضو الذي يعرض الصفحة، ما لم يكن سريًا. ترفضه `updateOneApplicationVariable`: احفظه باستخدام `updateMyUserApplicationVariable`، كما يفعل `saveMyLanguage` أعلاه. يكتب قيمة العضو الذي يعرض الصفحة فقط ويرفض تسمية تطبيق آخر. لا يحتاج إلى إذن `APPLICATIONS`، لكنه يحتاج إلى إذن `CONNECTED_ACCOUNTS` في دور العضو الذي يعرض الصفحة وفي دور تطبيقك، إذا كان يعرّف دورًا: أضف `SystemPermissionFlag.CONNECTED_ACCOUNTS` إلى `permissionFlagUniversalIdentifiers` في [دور التطبيق](/ar/developers/extend/apps/config/roles). راجع [متغيرات مساحة العمل والمستخدم](/ar/developers/extend/apps/config/application#workspace-and-user-variables).
+* تتطلب قراءة `value` الخاص بمتغير وكتابته إذن إعدادات تطبيقات مساحة العمل في كل من دور تطبيقك ودور الشخص الذي سجّل الدخول، لأن الرمز المميز للمكوّن هو تقاطع الاثنين. أضف `SystemPermissionFlag.WORKSPACE_APPS` إلى `permissionFlagUniversalIdentifiers` في [دور التطبيق](/ar/developers/extend/apps/config/roles).
+* يتم إدراج متغير مستخدم (`scope: 'USER'`) بقيمة العضو الذي يعرض الصفحة، ما لم يكن سريًا. ترفضه `updateOneApplicationVariable`: احفظه باستخدام `updateMyUserApplicationVariable`، كما يفعل `saveMyLanguage` أعلاه. يكتب قيمة العضو الذي يعرض الصفحة فقط ويرفض تسمية تطبيق آخر. لا يتطلب إذن تطبيقات مساحة العمل، لكنه يتطلب إذن تطبيقات المستخدم في دور العضو الذي يعرض الصفحة وفي دور تطبيقك، إذا كان يعرّف دورًا: أضف `SystemPermissionFlag.USER_APPS` إلى `permissionFlagUniversalIdentifiers` في [دور التطبيق](/ar/developers/extend/apps/config/roles). راجع [متغيرات مساحة العمل والمستخدم](/ar/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### متغيرات النظام
 

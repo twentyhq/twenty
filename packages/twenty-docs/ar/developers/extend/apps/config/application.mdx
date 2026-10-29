@@ -191,7 +191,7 @@ const { myUserApplicationVariables } = await client.query({
 
 يحفظ `updateMyUserApplicationVariable` قيمة العضو الخاصة به. يأخذ `applicationUniversalIdentifier` الخاص بتطبيقك ويكتب قيمة الشخص الذي يقف خلف الرمز المميز: جلسة العضو نفسه، أو الرمز المميز لتطبيقك عندما يكون عضو خلفه، مثلما يحدث في مكوّن واجهة أو دالة منطقية تُشغَّل لعضو. لا يمكن لرمز تطبيقك تسمية سوى تطبيقك الخاص، ويُرفَض الرمز الذي لا يرتبط به أي شخص، كما في مهمة cron أو خطاف تثبيت. تؤدي القيمة الفارغة إلى إزالة القيمة الخاصة بالعضو، بحيث يقرأ القيمة الافتراضية مجددًا، أو سلسلة فارغة لمتغير لا يملك قيمة افتراضية.
 
-لا يحتاج إلى إذن `APPLICATIONS`، لكنه يحتاج إلى `CONNECTED_ACCOUNTS`: في دور العضو، وعندما يجري الرمز المميز لتطبيقك الاستدعاء، في الدور الافتراضي لتطبيقك أيضًا، إذا كان يعرّف دورًا. إذا كان تطبيقك يحفظ متغيرات المستخدم، فأضف `SystemPermissionFlag.CONNECTED_ACCOUNTS` إلى `permissionFlagUniversalIdentifiers` في [الدور](/ar/developers/extend/apps/config/roles).
+لا يتطلب إذن Workspace Apps، لكنه يتطلب User Apps: في دور العضو، وعندما يجري رمز تطبيقك المميز الاستدعاء، في الدور الافتراضي لتطبيقك أيضًا، إذا كان يعرّف واحدًا. إذا كان تطبيقك يحفظ متغيرات المستخدم، فأضف `SystemPermissionFlag.USER_APPS` إلى `permissionFlagUniversalIdentifiers` في [الدور](/ar/developers/extend/apps/config/roles).
 
 ## الدور الافتراضي للوظيفة
 

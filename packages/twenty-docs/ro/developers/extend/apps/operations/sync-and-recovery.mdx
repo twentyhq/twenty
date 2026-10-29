@@ -23,7 +23,7 @@ Dezvoltarea locală de aplicații se învârte în jurul **sincronizării**: CLI
 | Previzualizează modificările **fără a le aplica**              | `twenty app plan`              | Calculează și afișează diff-ul; nu scrie nimic.                                                                                                         |
 | Sincronizare fără a șterge nimic                               | `twenty app apply --no-prune`  | Creează și actualizează numai: entitățile care există în spațiul de lucru, dar nu și în sursa ta, sunt lăsate neatinse. Acceptat și de `plan` și `dev`. |
 | Curățați aplicația Custom din spațiul de lucru                 | `twenty app apply --prune`     | Acea aplicație păstrează entitățile care lipsesc din sursă, cu excepția cazului în care transmiteți `--prune`. Acceptat și de `plan` și `dev`.          |
-| Regenerați sursa locală din spațiul de lucru                   | `twenty app pull`              | **Experimental.** Scrie aplicația instalată înapoi în fișierele de definire. Consultați mai jos.                                                        |
+| Regenerați sursa locală din spațiul de lucru                   | `twenty app pull`              | **Experimental.** Restaurează fișierele define, traducerile și dependențele stocate. Consultați mai jos.                                                |
 | Elimină aplicația din spațiul de lucru                         | `twenty app uninstall`         | Adaugă `--yes` pentru a sări peste prompt.                                                                                                              |
 | Trimite un tarball către un server                             | `twenty app publish --private` | Necesită o versiune `package.json` **strict mai mare** — vezi [Publicare](/ro/developers/extend/apps/operations/publishing).                               |
 | Publică în marketplace (npm)                                   | `twenty app publish`           | —                                                                                                                                                       |
@@ -108,7 +108,7 @@ Un plan:
   înainte de a-l rula și verifică diferențele.
 </Warning>
 
-`twenty app pull` este inversul lui `apply`: citește o aplicație din spațiul de lucru și o scrie înapoi ca fișiere de definire.
+`twenty app pull` este inversul comenzii `apply`: citește o aplicație din spațiul de lucru și îi restaurează fișierele define, traducerile și fișierele de dependențe stocate.
 
 ```bash
 twenty app pull --universal-identifier <universalIdentifier>
@@ -119,6 +119,7 @@ Extragerea necesită un proiect existent — creează mai întâi unul cu `twent
 **Ce scrie:**
 
 * configurația aplicației;
+* fișierele de dependențe `package.json` și `yarn.lock` stocate, în rădăcina proiectului;
 * obiecte, cu câmpurile lor incluse;
 * câmpuri pe care aplicația ta le-a adăugat obiectelor pe care nu le deține;
 * indici creați;
@@ -137,6 +138,10 @@ Extragerea necesită un proiect existent — creează mai întâi unul cu `twent
 
 Fiecare entitate ajunge în fișierul care o definește deja, astfel încât o a doua extragere rescrie doar ce s-a schimbat pe server. Un fișier este, de asemenea, rescris atunci când folosește o funcție de definire diferită de cea pe care ar scrie-o pull, de exemplu un rol care a devenit sau a încetat să mai fie rolul implicit. Entitățile noi sunt plasate lângă fișierele existente de același tip, iar un nume generat care ar ajunge într-un fișier fără legătură este calificat în loc să îl suprascrie.
 
+**Fișiere de dependențe.** Când `package.json` sau `yarn.lock` stocat se modifică, pull înlocuiește fișierul local și raportează orice modificări locale suprascrise. Dacă fișierul la distanță nu s-a modificat de la pull-ul anterior, modificările locale sunt păstrate. Lipsa unui fișier la distanță nu șterge fișierul local corespunzător. Când pachetul exportat omite `twenty-sdk`, așa cum face aplicația Custom a spațiului de lucru, pull păstrează dependența SDK locală, astfel încât comenzile CLI să poată încărca în continuare proiectul. Fișierele de dependențe, metadatele și baza de referință sunt scrise împreună și sunt anulate împreună dacă o scriere eșuează.
+
+Rulați `yarn install` după preluarea modificărilor dependențelor. Pull nu instalează pachete, nu rulează scripturi de pachete și nu regenerează clientul tipizat.
+
 **Ce nu scrie:**
 
 * **Neexportate încă** — elemente de meniu pentru comenzi și elemente de meniu pentru setări, funcții de logică și componente front-end, furnizori de conexiuni, variabile ale aplicației, active publice, tipuri de activitate în cronologie și sursa stocată a funcțiilor dvs.
@@ -146,14 +151,14 @@ Fiecare entitate ajunge în fișierul care o definește deja, astfel încât o a
 * **Widgeturi pe care exportul nu le poate include încă** — în orice aspect, inclusiv în al dvs., este raportat un widget de tip `VIEW` depreciat, un widget care afișează una dintre propriile componente front-end ale aplicației dvs. sau elemente din meniul de comenzi, ori un widget fără poziție pentru modul de aspect al filei sale, iar aspectul sau fila sunt scrise fără acesta.
 * **Fluxuri de lucru pe care exportul nu le poate prelua încă** — un flux de lucru modificat în generatorul de fluxuri de lucru de la ultima sincronizare, un flux de lucru de sistem sau privat, unul cu un pas de Cod sau de mesaj de chat, pe care fluxurile de lucru ale aplicației nu îl acceptă, precum și unul care apelează acțiunea fluxului de lucru al unei alte aplicații sunt semnalate și lăsate pe loc. Aplicația Custom a spațiului de lucru este excepția pentru primul și ultimul caz: constructorul publică și fluxurile sale de lucru, iar acestea pot apela acțiunile oricărei aplicații, deci sunt extrase. În schimb, unul dintre fluxurile sale de lucru este raportat atunci când nu are o versiune activă sau când versiunea sa activă utilizează setări pe care o definiție nu le poate exprima. Pașii de e-mail și calendar sunt preluați: un cont partajat cu spațiul de lucru este scris ca `connectedAccountHandle`, în timp ce contul privat și variabilele unui membru sunt păstrate ca atare. În schimb, fluxul de lucru este semnalat atunci când contul unui pas este arhivat, nu mai poate executa pasul sau își partajează adresa cu un cont mai vechi, deoarece aplicarea identificatorului ar selecta un alt cont.
 * **Agenți pe care exportul nu îi poate prelua încă** — un agent cu mai mult de un rol sau asociat cu un rol pe care extragerea nu îl scrie este raportat și lăsat pe loc.
-* **Starea de rulare a spațiului de lucru** — atribuiri de roluri pentru membri și chei API, webhook-uri, navigare per utilizator și elemente de navigare fixate la o înregistrare, toate excluse prin concepție.
+* **Starea de rulare a spațiului de lucru**, atașamentele înregistrărilor, atașamentele e-mailurilor, alocările de roluri pentru membri și chei API, webhookurile, navigarea per utilizator și elementele de navigare fixate la o înregistrare, toate excluse prin design, inclusiv pentru aplicația Custom a spațiului de lucru.
 * **Deținut de o altă aplicație** — raportat, dar niciodată extras.
 
 Raportul de la sfârșitul unui pull le listează pe toate, grupate după tip și motiv. Tot ce indică drept nescris există încă în spațiul dvs. de lucru, așa că împingeți înapoi un arbore extras cu `twenty app apply --no-prune` până când sunt acoperite tipurile lipsă. Aplicația Custom din spațiul de lucru aplică deja acest comportament în mod implicit. O aplicare cu curățare (cea implicită pentru celelalte aplicații, `--prune` pentru aplicația Custom) le-ar șterge, iar `twenty app plan` enumeră exact care sunt acestea.
 
 **Stare locală spațiului de lucru.** O entitate dezactivată în spațiul de lucru este scrisă ca definiție activă, iar suprascrierile pe care spațiul de lucru le-a efectuat asupra unei entități, cum ar fi o etichetă redenumită, nu sunt scrise. Raportul listează acele rânduri sub „Scrise fără starea lor locală spațiului de lucru”. Aplicarea arborelui înapoi în același spațiu de lucru lasă acea stare neatinsă; un alt spațiu de lucru primește entitatea activă și fără suprascrieri.
 
-**Fișierul de bază.** Pull înregistrează ce a extras în `.twenty/pull-base.json`, care este ignorat de git și specific fiecărui checkout. Acest fișier este cel cu care compară o extragere ulterioară pentru a lăsa neatinse fișierele ale căror entități nu s-au schimbat și pentru a șterge fișierul unei entități care nu mai există în spațiul de lucru. Un checkout fără acesta scrie pur și simplu totul și nu șterge nimic.
+**Fișierul de bază.** Pull înregistrează ceea ce a preluat în `.twenty/cli/pull-base.json`, care este ignorat de git și specific fiecărei copii de lucru. Acest fișier este cel cu care compară o extragere ulterioară pentru a lăsa neatinse fișierele ale căror entități nu s-au schimbat și pentru a șterge fișierul unei entități care nu mai există în spațiul de lucru. Un checkout fără acesta scrie pur și simplu totul și nu șterge nimic.
 
 ## Plan de recuperare în trepte
 

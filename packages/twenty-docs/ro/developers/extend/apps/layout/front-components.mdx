@@ -163,14 +163,14 @@ Declarați câte aveți nevoie. Propriul element **Generale** al Twenty — actu
 * **`USER`** — configurat de fiecare membru pentru sine, în propriile setări de utilizator.
 
 <Note>
-  Un element `USER` se afișează ca o filă pe pagina aplicației, în **Settings > App
-  preferences**, unde este văzut numai de membrul autentificat și numai atunci când
-  rolul acestuia acordă permisiunea `CONNECTED_ACCOUNTS`. Acea pagină nu este încă activată în
+  Un element `USER` se redă ca o filă pe pagina aplicației, în **Setări > Preferințe
+  aplicație**, unde doar membrul autentificat îl vede și doar atunci când rolul său
+  acordă permisiunea Aplicații utilizator. Acea pagină nu este încă activată în
   fiecare spațiu de lucru: acolo unde nu este activată, un element `USER` este păstrat și sincronizat,
   dar nimic nu îl afișează.
 </Note>
 
-Un element `USER` rulează ca membrul care îl vizualizează. Pentru a stoca ceva pentru fiecare persoană, declară variabila cu `scope: 'USER'`: `getApplicationVariable` returnează valoarea membrului care vizualizează, iar componenta ta o salvează cu `updateMyUserApplicationVariable`, care scrie numai valoarea acelui membru și necesită `SystemPermissionFlag.CONNECTED_ACCOUNTS` în rolul aplicației tale, dacă declară unul (consultă [Citirea și actualizarea variabilelor în timpul rulării](#reading-and-updating-variables-at-runtime)). La fel ca un element `WORKSPACE`, un element `USER` înlocuiește formularul **Variabile** generat, așa că ar trebui să permită membrului să seteze fiecare variabilă de utilizator de care are nevoie aplicația dvs. O variabilă de spațiu de lucru conține o singură valoare partajată de toată lumea, astfel încât salvarea unui membru ar suprascrie valoarea altuia.
+Un element `USER` rulează ca membrul care îl vizualizează. Pentru a stoca ceva pentru fiecare persoană, declară variabila cu `scope: 'USER'`: `getApplicationVariable` returnează valoarea membrului care vizualizează, iar componenta dvs. o salvează cu `updateMyUserApplicationVariable`, care scrie doar valoarea acelui membru și necesită `SystemPermissionFlag.USER_APPS` în rolul aplicației dvs., dacă aceasta declară unul (consultați [Citirea și actualizarea variabilelor în timpul rulării](#reading-and-updating-variables-at-runtime)). La fel ca un element `WORKSPACE`, un element `USER` înlocuiește formularul **Variabile** generat, așa că ar trebui să permită membrului să seteze fiecare variabilă de utilizator de care are nevoie aplicația dvs. O variabilă de spațiu de lucru conține o singură valoare partajată de toată lumea, astfel încât salvarea unui membru ar suprascrie valoarea altuia.
 
 <Note>
   `defineSettingsFrontComponent()` este învechită în favoarea
@@ -658,8 +658,8 @@ Notițe:
 * Tokenul componentei tale este asociat propriei tale aplicații. `updateOneApplicationVariable` o vizează, astfel încât `applicationId` este opțional, iar specificarea unei alte aplicații este refuzată. Citirea `applicationVariables` ale unei alte aplicații este refuzată în același mod, iar o aplicație care aparține unui alt spațiu de lucru este citită ca fiind negăsită.
 * Cheia trebuie să fie una pe care aplicația ta o declară în [`defineApplication()`](/ro/developers/extend/apps/config/application). Scrierea unei chei care nu este declarată returnează negăsit.
 * Variabilele secrete sunt citite înapoi mascate, niciodată ca valoarea stocată. Scrierea acestora funcționează normal.
-* Citirea `value` al unei variabile și scrierea acestuia necesită permisiunea de setări `APPLICATIONS` atât pentru rolul aplicației tale, cât și pentru rolul persoanei autentificate, deoarece tokenul componentei este intersecția celor două. Adaugă `SystemPermissionFlag.APPLICATIONS` la `permissionFlagUniversalIdentifiers` în [rolul aplicației](/ro/developers/extend/apps/config/roles).
-* O variabilă de utilizator (`scope: 'USER'`) este injectată cu valoarea membrului care vizualizează, cu excepția cazului în care este secretă. `updateOneApplicationVariable` o refuză: salvați-o cu `updateMyUserApplicationVariable`, așa cum face `saveMyLanguage` mai sus. Scrie numai valoarea membrului care vizualizează și refuză să numească o altă aplicație. Nu necesită permisiunea `APPLICATIONS`, dar necesită permisiunea `CONNECTED_ACCOUNTS` pentru rolul membrului care vizualizează și pentru rolul aplicației tale, dacă declară unul: adaugă `SystemPermissionFlag.CONNECTED_ACCOUNTS` la `permissionFlagUniversalIdentifiers` în [rolul aplicației](/ro/developers/extend/apps/config/roles). Consultați [Variabile de spațiu de lucru și de utilizator](/ro/developers/extend/apps/config/application#workspace-and-user-variables).
+* Citirea `value` al unei variabile și scrierea acesteia necesită permisiunea de setări Workspace Apps atât pentru rolul aplicației dvs., cât și pentru rolul persoanei autentificate, deoarece tokenul componentei este intersecția celor două. Adăugați `SystemPermissionFlag.WORKSPACE_APPS` la `permissionFlagUniversalIdentifiers` în [rolul aplicației](/ro/developers/extend/apps/config/roles).
+* O variabilă de utilizator (`scope: 'USER'`) este injectată cu valoarea membrului care vizualizează, cu excepția cazului în care este secretă. `updateOneApplicationVariable` o refuză: salvați-o cu `updateMyUserApplicationVariable`, așa cum face `saveMyLanguage` mai sus. Scrie numai valoarea membrului care vizualizează și refuză să numească o altă aplicație. Nu necesită nicio permisiune Workspace Apps, dar necesită permisiunea Aplicații utilizator pentru rolul membrului care vizualizează și pentru rolul aplicației dvs., dacă aplicația dvs. declară un astfel de rol: adăugați `SystemPermissionFlag.USER_APPS` la `permissionFlagUniversalIdentifiers` în [rolul aplicației](/ro/developers/extend/apps/config/roles). Consultați [Variabile de spațiu de lucru și de utilizator](/ro/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### Variabile de sistem
 

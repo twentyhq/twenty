@@ -191,7 +191,7 @@ Valorile sunt șiruri, în același format ca `process.env` (consultați [Tipuri
 
 `updateMyUserApplicationVariable` salvează propria valoare a unui membru. Preia `applicationUniversalIdentifier` al aplicației tale și scrie valoarea persoanei din spatele tokenului: sesiunea proprie a membrului sau tokenul aplicației tale atunci când un membru se află în spatele acestuia, cum ar fi într-o componentă frontend sau într-o funcție logică executată pentru un membru. Tokenul aplicației dvs. poate indica doar propria aplicație, iar un token fără nicio persoană asociată, cum ar fi într-o sarcină cron sau într-un hook de instalare, este refuzat. O valoare goală elimină valoarea proprie a membrului, astfel încât acesta citește din nou valoarea implicită sau un șir gol pentru o variabilă fără valoare implicită.
 
-Nu necesită permisiunea `APPLICATIONS`, dar necesită `CONNECTED_ACCOUNTS`: în rolul membrului și, atunci când tokenul aplicației tale efectuează apelul, și în rolul implicit al aplicației tale, dacă aceasta declară unul. Dacă aplicația ta salvează variabile de utilizator, adaugă `SystemPermissionFlag.CONNECTED_ACCOUNTS` la `permissionFlagUniversalIdentifiers` în [rol](/ro/developers/extend/apps/config/roles).
+Nu necesită permisiunea Workspace Apps, dar necesită User Apps: în rolul membrului și, atunci când tokenul aplicației tale efectuează apelul, și în rolul implicit al aplicației tale, dacă aceasta declară unul. Dacă aplicația ta salvează variabile ale utilizatorului, adaugă `SystemPermissionFlag.USER_APPS` la `permissionFlagUniversalIdentifiers` din [rolul](/ro/developers/extend/apps/config/roles).
 
 ## Rol implicit pentru funcții
 

@@ -163,14 +163,14 @@ Declara tantos como necesites. El elemento propio **General** de Twenty — actu
 * **`USER`** — cada miembro lo configura para sí mismo, en su propia configuración de usuario.
 
 <Note>
-  Un elemento `USER` se muestra como una pestaña en la página de la app, en \*\*Configuración > Preferencias de la app
-  \*\*, donde solo lo ve el miembro que ha iniciado sesión y únicamente cuando su
-  rol concede el permiso `CONNECTED_ACCOUNTS`. Esa página todavía no está habilitada en
+  Un elemento `USER` se muestra como una pestaña en la página de la aplicación en **Configuración > Preferencias
+  de la aplicación**, donde solo lo ve el miembro que inició sesión y únicamente cuando su
+  rol concede el permiso User Apps. Esa página todavía no está habilitada en
   todos los espacios de trabajo: donde no lo está, un elemento `USER` se conserva y sincroniza,
   pero no hay nada que lo muestre.
 </Note>
 
-Un elemento `USER` se ejecuta como el miembro que lo visualiza. Para almacenar algo por persona, declara la variable con `scope: 'USER'`: `getApplicationVariable` devuelve el valor del miembro que está viendo la página, y tu componente lo guarda con `updateMyUserApplicationVariable`, que escribe únicamente el valor de ese miembro y necesita `SystemPermissionFlag.CONNECTED_ACCOUNTS` en el rol de tu app, si declara uno (consulta [Lectura y actualización de variables en tiempo de ejecución](#reading-and-updating-variables-at-runtime)). Al igual que un elemento `WORKSPACE`, un elemento `USER` reemplaza el formulario generado **Variables**, por lo que debe permitir que el miembro establezca todas las variables de usuario que necesita su aplicación. Una variable de espacio de trabajo contiene un valor compartido por todos, por lo que el guardado de un miembro sobrescribiría el de otro.
+Un elemento `USER` se ejecuta como el miembro que lo visualiza. Para almacenar algo por persona, declara la variable con `scope: 'USER'`: `getApplicationVariable` devuelve el valor del miembro que está visualizando y tu componente lo guarda con `updateMyUserApplicationVariable`, que solo escribe el valor de ese miembro y necesita `SystemPermissionFlag.USER_APPS` en el rol de tu aplicación, si declara uno (consulta [Lectura y actualización de variables en tiempo de ejecución](#reading-and-updating-variables-at-runtime)). Al igual que un elemento `WORKSPACE`, un elemento `USER` reemplaza el formulario generado **Variables**, por lo que debe permitir que el miembro establezca todas las variables de usuario que necesita su aplicación. Una variable de espacio de trabajo contiene un valor compartido por todos, por lo que el guardado de un miembro sobrescribiría el de otro.
 
 <Note>
   `defineSettingsFrontComponent()` está obsoleta en favor de
@@ -656,8 +656,8 @@ Notas:
 * El token de tu componente está vinculado a tu propia aplicación. `updateOneApplicationVariable` la selecciona como destino, por lo que `applicationId` es opcional y se rechaza nombrar otra aplicación. La lectura de las `applicationVariables` de otra aplicación se rechaza de la misma manera, y una aplicación que pertenece a otro espacio de trabajo se interpreta como no encontrada.
 * La clave debe ser una que tu aplicación declare en [`defineApplication()`](/es/developers/extend/apps/config/application). Escribir una clave que no está declarada se considera no encontrada.
 * Las variables secretas se leen enmascaradas, nunca como el valor almacenado. Escribirlas funciona normalmente.
-* Leer el `value` de una variable y escribirlo requieren el permiso de configuración `APPLICATIONS` tanto en el rol de tu aplicación como en el rol de la persona que ha iniciado sesión, ya que el token del componente es la intersección de ambos. Añade `SystemPermissionFlag.APPLICATIONS` a `permissionFlagUniversalIdentifiers` en tu [rol de aplicación](/es/developers/extend/apps/config/roles).
-* Una variable de usuario (`scope: 'USER'`) se inyecta con el valor del miembro que está viendo la página, a menos que sea secreta. `updateOneApplicationVariable` lo rechaza: guárdelo con `updateMyUserApplicationVariable`, como lo hace `saveMyLanguage` anteriormente. Escribe únicamente el valor del miembro que está viendo la página y no permite indicar otra aplicación. No necesita el permiso `APPLICATIONS`, pero necesita el permiso `CONNECTED_ACCOUNTS` en el rol del miembro que está viendo la página y en el rol de tu app, si declara uno: añade `SystemPermissionFlag.CONNECTED_ACCOUNTS` a `permissionFlagUniversalIdentifiers` en tu [rol de aplicación](/es/developers/extend/apps/config/roles). Consulte [Variables de espacio de trabajo y de usuario](/es/developers/extend/apps/config/application#workspace-and-user-variables).
+* La lectura del `value` de una variable y su escritura requieren el permiso de configuración de Workspace Apps tanto en el rol de tu aplicación como en el rol de la persona que inició sesión, ya que el token del componente es la intersección de ambos. Añade `SystemPermissionFlag.WORKSPACE_APPS` a `permissionFlagUniversalIdentifiers` en tu [rol de aplicación](/es/developers/extend/apps/config/roles).
+* Una variable de usuario (`scope: 'USER'`) se inyecta con el valor del miembro que está viendo la página, a menos que sea secreta. `updateOneApplicationVariable` lo rechaza: guárdelo con `updateMyUserApplicationVariable`, como lo hace `saveMyLanguage` anteriormente. Escribe únicamente el valor del miembro que está viendo la página y no permite indicar otra aplicación. No necesita permiso de Workspace Apps, pero necesita el permiso User Apps en el rol del miembro que está visualizando y en el rol de tu aplicación, si declara uno: añade `SystemPermissionFlag.USER_APPS` a `permissionFlagUniversalIdentifiers` en tu [rol de aplicación](/es/developers/extend/apps/config/roles). Consulte [Variables de espacio de trabajo y de usuario](/es/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### Variables del sistema
 
