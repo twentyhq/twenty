@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-28 14:17\n"
+"PO-Revision-Date: 2026-10-29 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -3675,7 +3675,7 @@ msgstr "Extinde-te dincolo de ecranele CRM"
 #. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "Extinde Twenty cu aplicații — înregistrare a apelurilor, îmbogățire a datelor, Slack, Discord, Linear și multe altele. Instalează orice aplicație în spațiul tău de lucru CRM open source cu un singur clic."
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
@@ -3685,7 +3685,7 @@ msgstr "Extinde-ți CRM-ul"
 #. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "Extinde-ți CRM-ul cu aplicații de la Twenty și comunitatea sa. Fiecare aplicație de aici este verificată de echipa noastră pentru securitate și calitate — instaleaz-o cu un singur clic și este activă în spațiul tău de lucru."
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4801,7 +4801,7 @@ msgstr "Instalează"
 #. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
-msgstr ""
+msgstr "Instalează înregistrare a apelurilor, îmbogățire a datelor, Slack, Linear și multe altele — fiecare aplicație este verificată de Twenty."
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7056,7 +7056,7 @@ msgstr "Venituri (YTD)"
 #. js-lingui-id: mO7Tm0
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
-msgstr ""
+msgstr "Aplicații verificate pentru spațiul tău de lucru"
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -8740,7 +8740,7 @@ msgstr "Twenty | CRM Open Source #1"
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
-msgstr ""
+msgstr "Twenty Apps — Aplicații verificate pentru CRM-ul open source"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
