@@ -6,31 +6,48 @@ import {
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
+import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueGroupRateLimit } from 'src/engine/core-modules/message-queue/types/message-queue-group-rate-limit.type';
 import { getDefaultGroupKeys } from 'src/engine/core-modules/message-queue/utils/get-default-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type FairJobOptions = { priority?: number; fairBase?: number };
+export type FairJobOptions = {
+  priority?: number;
+  fairBase?: number;
+  delay?: number;
+};
+
+type GroupKeysRequest = { groupKeys: string[]; jobIndexes: number[] };
 
 type FairQueueSchedulerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
+  getGroupRateLimits: (
+    queueName: MessageQueue,
+  ) => Partial<Record<string, MessageQueueGroupRateLimit>> | undefined;
   metricsService: MetricsService;
   twentyConfigService: TwentyConfigService;
 };
 
 export class FairQueueScheduler {
   private readonly fairTicketAllocator: FairTicketAllocator;
+  private readonly groupRatePacer: GroupRatePacer;
 
   constructor(private readonly options: FairQueueSchedulerOptions) {
     this.fairTicketAllocator = new FairTicketAllocator({
       getClient: options.getClient,
       getJobKey: options.getJobKey,
       keyPrefix: options.keyPrefix,
+    });
+    this.groupRatePacer = new GroupRatePacer({
+      getClient: options.getClient,
+      keyPrefix: options.keyPrefix,
+      metricsService: options.metricsService,
     });
   }
 
@@ -45,26 +62,53 @@ export class FairQueueScheduler {
     options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
     staticPriority: number | undefined;
   }): Promise<FairJobOptions[]> {
-    const staticJobOptions: FairJobOptions[] = jobsData.map(() => ({
-      priority: staticPriority,
-    }));
+    const requests = this.groupJobsByGroupKeys({
+      jobsData,
+      groupKeys: options?.groupKeys,
+    });
+    const callerDelayMs = options?.delay ?? 0;
+    const [fairJobOptions, pacedDelays] = await Promise.all([
+      this.computeFairJobOptions({
+        queueName,
+        jobCount: jobsData.length,
+        requests,
+        callerDelayMs,
+        staticPriority,
+      }),
+      staticPriority === URGENT_FAIR_PRIORITY
+        ? undefined
+        : this.computePacedDelays({
+            queueName,
+            jobCount: jobsData.length,
+            requests,
+          }),
+    ]);
 
-    if (!this.isFairnessEnabled() || (options?.delay ?? 0) > 0) {
-      return staticJobOptions;
-    }
+    return fairJobOptions.map((jobOptions, jobIndex) => {
+      const pacedDelayMs = pacedDelays?.[jobIndex] ?? 0;
 
-    const requestByGroupKeys = new Map<
-      string,
-      { groupKeys: string[]; jobIndexes: number[] }
-    >();
+      return pacedDelayMs > callerDelayMs
+        ? { ...jobOptions, delay: pacedDelayMs }
+        : jobOptions;
+    });
+  }
+
+  private groupJobsByGroupKeys({
+    jobsData,
+    groupKeys,
+  }: {
+    jobsData: unknown[];
+    groupKeys: string[] | undefined;
+  }): GroupKeysRequest[] {
+    const requestByGroupKeys = new Map<string, GroupKeysRequest>();
 
     jobsData.forEach((jobData, jobIndex) => {
-      const groupKeys = isNonEmptyArray(options?.groupKeys)
-        ? [...new Set(options.groupKeys)]
+      const jobGroupKeys = isNonEmptyArray(groupKeys)
+        ? [...new Set(groupKeys)]
         : getDefaultGroupKeys(jobData);
-      const signature = JSON.stringify(groupKeys);
+      const signature = JSON.stringify(jobGroupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
-        groupKeys,
+        groupKeys: jobGroupKeys,
         jobIndexes: [],
       };
 
@@ -72,7 +116,31 @@ export class FairQueueScheduler {
       requestByGroupKeys.set(signature, request);
     });
 
-    const requests = [...requestByGroupKeys.values()];
+    return [...requestByGroupKeys.values()];
+  }
+
+  private async computeFairJobOptions({
+    queueName,
+    jobCount,
+    requests,
+    callerDelayMs,
+    staticPriority,
+  }: {
+    queueName: MessageQueue;
+    jobCount: number;
+    requests: GroupKeysRequest[];
+    callerDelayMs: number;
+    staticPriority: number | undefined;
+  }): Promise<FairJobOptions[]> {
+    const staticJobOptions: FairJobOptions[] = Array.from(
+      { length: jobCount },
+      () => ({ priority: staticPriority }),
+    );
+
+    if (!this.isFairnessEnabled() || callerDelayMs > 0) {
+      return staticJobOptions;
+    }
+
     const fairTickets = await this.fairTicketAllocator.allocateTickets({
       queueName,
       requests: requests.map(({ groupKeys, jobIndexes }) => ({
@@ -116,6 +184,56 @@ export class FairQueueScheduler {
     return fairJobOptions;
   }
 
+  private async computePacedDelays({
+    queueName,
+    jobCount,
+    requests,
+  }: {
+    queueName: MessageQueue;
+    jobCount: number;
+    requests: GroupKeysRequest[];
+  }): Promise<number[] | undefined> {
+    const groupRateLimits = this.options.getGroupRateLimits(queueName);
+
+    if (
+      !this.isGroupRateLimitEnabled(queueName) ||
+      !isDefined(groupRateLimits)
+    ) {
+      return undefined;
+    }
+
+    const delaysByRequest = await this.groupRatePacer.computeDelays({
+      queueName,
+      requests: requests.map(({ groupKeys, jobIndexes }) => ({
+        groupKeys,
+        jobCount: jobIndexes.length,
+      })),
+      groupRateLimits,
+    });
+
+    if (!isDefined(delaysByRequest)) {
+      return undefined;
+    }
+
+    const pacedDelays = new Array<number>(jobCount).fill(0);
+
+    requests.forEach(({ jobIndexes }, requestIndex) => {
+      jobIndexes.forEach((jobIndex, position) => {
+        pacedDelays[jobIndex] = delaysByRequest[requestIndex][position];
+      });
+    });
+
+    if (pacedDelays.some((delayMs) => delayMs > 0)) {
+      void this.options.metricsService.incrementCounterForEvent({
+        key: MetricsKeys.JobGroupRatePaced,
+        attributes: { queue: queueName },
+        shouldStoreInCache: false,
+      });
+    }
+
+    return pacedDelays;
+  }
+
   onJobStarted({
     queueName,
     jobId,
@@ -128,6 +246,14 @@ export class FairQueueScheduler {
     }
 
     void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
+  }
+
+  isGroupRateLimitEnabled(queueName: MessageQueue): boolean {
+    return (
+      this.options.twentyConfigService.get(
+        'IS_WORKER_GROUP_RATE_LIMIT_ENABLED',
+      ) && isDefined(this.options.getGroupRateLimits(queueName))
+    );
   }
 
   private isFairnessEnabled(): boolean {

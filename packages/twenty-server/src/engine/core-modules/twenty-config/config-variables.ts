@@ -1627,6 +1627,15 @@ export class ConfigVariables {
   IS_WORKER_FAIRNESS_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Pace the jobs of each group key (workspace, application) to the rate set in groupRateLimits of its queue by delaying them at enqueue. Off: jobs are never delayed by group key.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKER_GROUP_RATE_LIMIT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Node environment (development, production, etc.)',
     type: ConfigVariableType.ENUM,

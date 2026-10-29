@@ -40,6 +40,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
@@ -89,6 +90,8 @@ export class BullMQDriver
       getJobKey: ({ queueName, jobId }) =>
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
+      getGroupRateLimits: (queueName) =>
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].groupRateLimits,
       metricsService,
       twentyConfigService,
     });
@@ -553,7 +556,9 @@ export class BullMQDriver
 
   private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      ['waiting', 'paused', 'prioritized'],
+      this.fairQueueScheduler.isGroupRateLimitEnabled(queueName)
+        ? ['waiting', 'paused', 'prioritized', 'delayed']
+        : ['waiting', 'paused', 'prioritized'],
       0,
       -1,
     );

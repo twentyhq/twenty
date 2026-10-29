@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-
 import { Logger } from '@nestjs/common';
 
 import { type RedisClient } from 'bullmq';
@@ -17,6 +15,7 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FAIR_REBASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-rebase-script.constant';
 import { FAIR_TAG_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-tag-script.constant';
+import { runRedisScript } from 'src/engine/core-modules/message-queue/drivers/fairness/run-redis-script';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type FairTicketRequest = { groupKeys: string[]; jobCount: number };
@@ -35,7 +34,6 @@ type FairTicketAllocatorOptions = {
 export class FairTicketAllocator {
   private readonly logger = new Logger(FairTicketAllocator.name);
   private readonly rebasesInProgress = new Map<MessageQueue, Promise<void>>();
-  private readonly scriptShas = new Map<string, string>();
 
   constructor(private readonly options: FairTicketAllocatorOptions) {}
 
@@ -222,36 +220,11 @@ export class FairTicketAllocator {
     keys: string[];
     args: (string | number)[];
   }): Promise<unknown> {
-    const client = await this.options.getClient(queueName);
-    const scriptSha = this.getScriptSha(script);
-
-    return client
-      .runCommand('evalsha', [scriptSha, keys.length, ...keys, ...args])
-      .catch((error: unknown) => {
-        if (!(error instanceof Error && error.message.startsWith('NOSCRIPT'))) {
-          throw error;
-        }
-
-        return client.runCommand('eval', [
-          script,
-          keys.length,
-          ...keys,
-          ...args,
-        ]);
-      });
-  }
-
-  private getScriptSha(script: string): string {
-    const cachedScriptSha = this.scriptShas.get(script);
-
-    if (isDefined(cachedScriptSha)) {
-      return cachedScriptSha;
-    }
-
-    const scriptSha = createHash('sha1').update(script).digest('hex');
-
-    this.scriptShas.set(script, scriptSha);
-
-    return scriptSha;
+    return runRedisScript({
+      client: await this.options.getClient(queueName),
+      script,
+      keys,
+      args,
+    });
   }
 }

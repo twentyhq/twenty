@@ -54,6 +54,7 @@ type BullMQDouble = {
   jobs: StoredJob[];
   schedulers: SchedulerTemplate[];
   nextInsertionIndex: number;
+  rangeTypes: string[][];
   processor: ((job: Job) => Promise<void>) | undefined;
   client: RedisClientDouble | undefined;
   redis: Redis | undefined;
@@ -69,6 +70,7 @@ const KEY_PREFIX = 'bull';
 const QUEUE_KEY_PREFIX = `${KEY_PREFIX}:${QUEUE}:`;
 const JOB_NAME = 'scenario-job';
 const FAIRNESS_FLAG = 'IS_WORKER_FAIRNESS_ENABLED';
+const GROUP_RATE_LIMIT_FLAG = 'IS_WORKER_GROUP_RATE_LIMIT_ENABLED';
 const VIRTUAL_TIME_KEY = `${QUEUE_KEY_PREFIX}fair:vtime`;
 const PRIORITIZED_KEY = `${QUEUE_KEY_PREFIX}prioritized`;
 const DELAYED_KEY = `${QUEUE_KEY_PREFIX}delayed`;
@@ -97,6 +99,7 @@ const mockBullMQ: BullMQDouble = {
   jobs: [],
   schedulers: [],
   nextInsertionIndex: 0,
+  rangeTypes: [],
   processor: undefined,
   client: undefined,
   redis: undefined,
@@ -204,6 +207,7 @@ const mockBullMQ: BullMQDouble = {
     mockBullMQ.jobs = [];
     mockBullMQ.schedulers = [];
     mockBullMQ.nextInsertionIndex = 0;
+    mockBullMQ.rangeTypes = [];
     mockBullMQ.processor = undefined;
     mockBullMQ.client = client;
     mockBullMQ.redis = redis;
@@ -232,7 +236,11 @@ jest.mock('bullmq', () => ({
 
       return storedJobs;
     },
-    getRanges: async () => mockBullMQ.jobs.map((job) => job.id),
+    getRanges: async (types: string[]) => {
+      mockBullMQ.rangeTypes.push(types);
+
+      return mockBullMQ.jobs.map((job) => job.id);
+    },
     upsertJobScheduler: async (
       _schedulerId: string,
       _repeat: unknown,
@@ -312,8 +320,10 @@ type EnqueueInput = { label: string; workspaceId?: string } & Pick<
 
 export const createFairnessHarness = async ({
   isFairnessEnabled: initialFairnessEnabled,
+  isGroupRateLimitEnabled = false,
 }: {
   isFairnessEnabled: boolean;
+  isGroupRateLimitEnabled?: boolean;
 }) => {
   const redis: Redis = new RedisMock();
 
@@ -329,8 +339,15 @@ export const createFairnessHarness = async ({
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
     {
-      get: (key: string) =>
-        key === FAIRNESS_FLAG ? isFairnessEnabled : undefined,
+      get: (key: string) => {
+        if (key === FAIRNESS_FLAG) {
+          return isFairnessEnabled;
+        }
+
+        return key === GROUP_RATE_LIMIT_FLAG
+          ? isGroupRateLimitEnabled
+          : undefined;
+      },
     } as never,
     { emit: jest.fn() } as never,
   );
@@ -418,16 +435,20 @@ export const createFairnessHarness = async ({
       labels,
       workspaceId,
       groupKeys,
+      delay,
     }: {
       labels: string[];
       workspaceId: string;
       groupKeys?: string[];
+      delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
         labels.map((label) => ({ data: { label, workspaceId } })),
-        isDefined(groupKeys) ? { groupKeys } : undefined,
+        isDefined(groupKeys) || isDefined(delay)
+          ? { groupKeys, delay }
+          : undefined,
       );
     },
     scheduleCron: async ({
@@ -502,6 +523,9 @@ export const createFairnessHarness = async ({
     },
     readPriority: ({ label }: { label: string }) =>
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
+    readDelay: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.delay,
+    readRangeTypes: () => mockBullMQ.rangeTypes,
     breakRedis: () => {
       const runCommand = jest
         .fn()

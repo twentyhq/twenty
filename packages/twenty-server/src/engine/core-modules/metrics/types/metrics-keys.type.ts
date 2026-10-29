@@ -69,6 +69,8 @@ export enum MetricsKeys {
   JobLatencyMs = 'job/latency-ms',
   JobDurationMs = 'job/duration-ms',
   JobFairTagFallback = 'job/fair-tag-fallback',
+  JobGroupRatePaced = 'job/group-rate-paced',
+  JobGroupRateLimitFallback = 'job/group-rate-limit-fallback',
   AiChatTurnLatencyMs = 'ai-chat/turn-latency-ms',
   AiChatStepLatencyMs = 'ai-chat/step-latency-ms',
   AiChatTtftMs = 'ai-chat/ttft-ms',
