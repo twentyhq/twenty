@@ -1,6 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const getCountryName = (countryCode: string, locale: string): string => {
+const getCountryName = ({
+  countryCode,
+  locale,
+}: {
+  countryCode: string;
+  locale: string;
+}): string => {
   try {
     return (
       new Intl.DisplayNames([locale], { type: 'region' }).of(countryCode) ??
@@ -24,7 +30,7 @@ export const formatSessionLocation = ({
 }): string | undefined => {
   const place = isNonEmptyString(city) ? city : region;
   const countryName = isNonEmptyString(country)
-    ? getCountryName(country, locale)
+    ? getCountryName({ countryCode: country, locale })
     : undefined;
 
   const location = [place, countryName].filter(isNonEmptyString).join(', ');

@@ -11,10 +11,15 @@ export type CloudflareGeolocation = {
 const UNKNOWN_COUNTRY_CODES = new Set(['XX', 'T1']);
 
 // Cloudflare sends non-ASCII values as raw UTF-8 bytes, which Node reads as latin1.
-const readUtf8Header = (
-  request: Request,
-  headerName: string,
-): string | null => {
+type RequestWithHeaders = Pick<Request, 'headers'>;
+
+const readUtf8Header = ({
+  request,
+  headerName,
+}: {
+  request: RequestWithHeaders;
+  headerName: string;
+}): string | null => {
   const value = request.headers[headerName];
 
   if (!isNonEmptyString(value)) {
@@ -26,8 +31,11 @@ const readUtf8Header = (
   return isNonEmptyString(decodedValue) ? decodedValue : null;
 };
 
-const readCountryCode = (request: Request): string | null => {
-  const countryCode = readUtf8Header(request, 'cf-ipcountry')?.toUpperCase();
+const readCountryCode = (request: RequestWithHeaders): string | null => {
+  const countryCode = readUtf8Header({
+    request,
+    headerName: 'cf-ipcountry',
+  })?.toUpperCase();
 
   if (
     !isNonEmptyString(countryCode) ||
@@ -41,9 +49,9 @@ const readCountryCode = (request: Request): string | null => {
 };
 
 export const extractCloudflareGeolocationFromRequest = (
-  request: Request,
+  request: RequestWithHeaders,
 ): CloudflareGeolocation => ({
   country: readCountryCode(request),
-  region: readUtf8Header(request, 'cf-region'),
-  city: readUtf8Header(request, 'cf-ipcity'),
+  region: readUtf8Header({ request, headerName: 'cf-region' }),
+  city: readUtf8Header({ request, headerName: 'cf-ipcity' }),
 });

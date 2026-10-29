@@ -1,9 +1,6 @@
-import { type Request } from 'express';
-
 import { extractCloudflareGeolocationFromRequest } from 'src/engine/core-modules/user-session/utils/extract-cloudflare-geolocation-from-request.util';
 
-const buildRequest = (headers: Record<string, string>): Request =>
-  ({ headers }) as Request;
+const buildRequest = (headers: Record<string, string>) => ({ headers });
 
 // How Node exposes a header whose raw bytes are UTF-8.
 const asReceivedByNode = (value: string) =>
