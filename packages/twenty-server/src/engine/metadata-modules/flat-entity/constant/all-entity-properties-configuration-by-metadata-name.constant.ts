@@ -2199,6 +2199,38 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  relatedRecordPath: {
+    objectMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    firstFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'firstFieldMetadataUniversalIdentifier',
+    },
+    secondFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'secondFieldMetadataUniversalIdentifier',
+    },
+    thirdFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'thirdFieldMetadataUniversalIdentifier',
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   validationRule: {
     objectMetadataId: {
       toCompare: false,
