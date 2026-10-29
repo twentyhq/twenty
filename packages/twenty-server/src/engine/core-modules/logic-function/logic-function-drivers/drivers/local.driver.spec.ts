@@ -387,9 +387,7 @@ export const handler = () => {
 const require = createRequire(import.meta.url);
 export const handler = () => new Promise(() => {
 require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
-if (process.platform !== 'win32') {
-  require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);
-}
+require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);
 setInterval(() => {}, 1000);
 });`,
     );
@@ -404,11 +402,9 @@ setInterval(() => {}, 1000);
     const workingDirectory = await readFile(workingDirectoryFile, 'utf8');
 
     await expect(access(workingDirectory)).rejects.toThrow();
-    if (process.platform !== 'win32') {
-      const heartbeat = await readFile(heartbeatFile, 'utf8');
+    const heartbeat = await readFile(heartbeatFile, 'utf8');
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      expect(await readFile(heartbeatFile, 'utf8')).toBe(heartbeat);
-    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(await readFile(heartbeatFile, 'utf8')).toBe(heartbeat);
   });
 });
