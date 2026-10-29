@@ -52,8 +52,12 @@ export type UniversalFlatEntityFrom<
   | keyof (typeof ALL_MANY_TO_ONE_METADATA_RELATIONS)[TMetadataName]
   | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TMetadataName]
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
-  | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+  | keyof CastRecordTypeOrmDatePropertiesToString<
+      MakeWasRemovedInUpgradePropertiesOptional<TEntity>
+    >
   | AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName>
 > &
-  CastRecordTypeOrmDatePropertiesToString<TEntity> &
+  CastRecordTypeOrmDatePropertiesToString<
+    MakeWasRemovedInUpgradePropertiesOptional<TEntity>
+  > &
   UniversalFlatEntityExtraProperties<TEntity, TMetadataName>;

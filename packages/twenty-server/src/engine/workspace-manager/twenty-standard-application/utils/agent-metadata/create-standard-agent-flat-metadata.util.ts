@@ -66,6 +66,5 @@ export const createStandardAgentFlatMetadata = ({
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     createdAt: now,
     updatedAt: now,
-    deletedAt: null,
   };
 };

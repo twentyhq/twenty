@@ -23,7 +23,6 @@ export const transformAgentEntityToFlatAgent = ({
 
   return {
     createdAt: agentEntity.createdAt.toISOString(),
-    deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
     updatedAt: agentEntity.updatedAt.toISOString(),
     id: agentEntity.id,
     name: agentEntity.name,

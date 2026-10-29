@@ -5,6 +5,10 @@ import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-m
 export type ScalarFlatEntity<TEntity> = Omit<
   MakeWasRemovedInUpgradePropertiesOptional<TEntity>,
   | ExtractEntityRelatedEntityProperties<TEntity>
-  | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+  | keyof CastRecordTypeOrmDatePropertiesToString<
+      MakeWasRemovedInUpgradePropertiesOptional<TEntity>
+    >
 > &
-  CastRecordTypeOrmDatePropertiesToString<TEntity>;
+  CastRecordTypeOrmDatePropertiesToString<
+    MakeWasRemovedInUpgradePropertiesOptional<TEntity>
+  >;

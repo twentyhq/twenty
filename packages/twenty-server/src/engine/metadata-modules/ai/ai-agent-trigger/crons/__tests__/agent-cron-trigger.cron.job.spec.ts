@@ -43,7 +43,6 @@ const buildFlatAgentMaps = ({
       triggers,
       isActive: true,
       overrides: agentOverrides,
-      deletedAt: null,
     } as never,
     flatEntityMaps: createEmptyFlatEntityMaps(),
   });
