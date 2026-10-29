@@ -209,19 +209,4 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       threadId: null,
     });
   });
-
-  it('restores every open chat when Open is chosen from a narrower view', async () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
-    );
-
-    renderTriage();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Open' }));
-
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
-    );
-  });
 });

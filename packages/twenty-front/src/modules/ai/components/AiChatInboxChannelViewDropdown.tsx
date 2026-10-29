@@ -61,6 +61,9 @@ export const AiChatInboxChannelViewDropdown = ({
         count: isDefined(openViewItem.countKey)
           ? channelSummary?.[openViewItem.countKey]
           : undefined,
+        isUnread: isDefined(openViewItem.unreadKey)
+          ? channelSummary?.[openViewItem.unreadKey]
+          : undefined,
         isSelected: openViewItem === selectedOpenViewItem,
         onSelect: () => handleSelect(openViewItem),
       }))}

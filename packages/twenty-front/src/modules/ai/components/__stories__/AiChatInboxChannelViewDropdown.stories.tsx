@@ -100,7 +100,7 @@ const meta = {
         needsInputCount: 2,
         assignedToMeCount: 1,
         hasUnreadOpen: false,
-        hasUnreadAssignedToMe: false,
+        hasUnreadAssignedToMe: true,
         snoozedCount: 0,
         doneCount: 0,
       },
@@ -151,6 +151,12 @@ export const Open: Story = {
       within(
         body.getByRole('menuitemradio', { name: NEEDS_INPUT_OPTION_PATTERN }),
       ).getByText('2'),
+    ).toBeVisible();
+    await expect(
+      body.getByRole('menuitemradio', { name: /^Assigned\s*, unread\b/ }),
+    ).toBeVisible();
+    await expect(
+      body.getByRole('menuitemradio', { name: 'Mentions' }),
     ).toBeVisible();
     await expect(
       body.queryByRole('menuitemradio', { name: 'Snoozed' }),

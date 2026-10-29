@@ -3,8 +3,10 @@ import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import {
   AgentChatChannelAssignmentFilter,
@@ -16,6 +18,9 @@ import { isMatchingPathname } from '~/utils/isMatchingPathname';
 export const useOpenAgentChatChannel = () => {
   const store = useStore();
   const navigate = useNavigateApp();
+  const { resetRecordSelection } = useResetRecordSelection(
+    AI_CHAT_INBOX_INSTANCE_ID,
+  );
 
   const openAgentChatChannel = useCallback(
     ({
@@ -27,6 +32,7 @@ export const useOpenAgentChatChannel = () => {
       Partial<
         Pick<AgentChatChannelView, 'channelStatus' | 'assignment' | 'filter'>
       >) => {
+      resetRecordSelection();
       store.set(agentChatChannelViewState.atom, {
         channelId,
         channelStatus,
@@ -40,7 +46,7 @@ export const useOpenAgentChatChannel = () => {
         ),
       });
     },
-    [navigate, store],
+    [navigate, resetRecordSelection, store],
   );
 
   return { openAgentChatChannel };
