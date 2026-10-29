@@ -16,6 +16,7 @@ import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-a
 import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
+import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { type AgentConversationWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-conversation-wait.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
@@ -70,6 +71,7 @@ export class AgentRunSuspensionService {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
+    private readonly agentRunJobScopeService: AgentRunJobScopeService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -143,13 +145,23 @@ export class AgentRunSuspensionService {
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
+    const { workspaceId, wakeUpId } = jobData;
+    const wakeUp = await this.pendingWakeUpService.find({
+      workspaceId,
+      wakeUpId,
+    });
+
     await this.messageQueueService.add<ContinueAgentRunJobData>(
       CONTINUE_AGENT_RUN_JOB_NAME,
       jobData,
       {
-        deduplication: { id: `continue-agent-run-${jobData.wakeUpId}` },
-        workspaceId: jobData.workspaceId,
-        isWorkspaceJob: true,
+        deduplication: { id: `continue-agent-run-${wakeUpId}` },
+        ...(isDefined(wakeUp)
+          ? await this.agentRunJobScopeService.resolve({
+              workspaceId,
+              agentId: (wakeUp.payload as AgentRunSuspension).runSpec.agentId,
+            })
+          : { workspaceId, isWorkspaceJob: true as const }),
       },
     );
   }

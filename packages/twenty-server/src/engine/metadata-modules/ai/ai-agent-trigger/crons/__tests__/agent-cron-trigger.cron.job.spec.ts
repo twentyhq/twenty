@@ -19,6 +19,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const WORKSPACE_ID = 'workspace-id';
 const AGENT_ID = 'agent-id';
 const TRIGGER_ID = '0d2b1a8c-77a4-4e2e-8f0c-3a8e9f6b4c22';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'agent-application';
 
 const buildCronTrigger = (isActive = true): AgentTrigger => ({
   id: TRIGGER_ID,
@@ -39,6 +40,7 @@ const buildFlatAgentMaps = ({
     flatEntity: {
       id: AGENT_ID,
       universalIdentifier: AGENT_ID,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceId: WORKSPACE_ID,
       triggers,
       isActive: true,
@@ -122,7 +124,7 @@ describe('AgentCronTriggerCronJob', () => {
       }),
       {
         workspaceId: WORKSPACE_ID,
-        isWorkspaceJob: true,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       },
     );
   });

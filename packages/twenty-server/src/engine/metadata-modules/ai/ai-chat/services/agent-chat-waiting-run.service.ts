@@ -6,6 +6,7 @@ import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -20,7 +21,12 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
-type AgentChatWaitingRun = { jobName: string; jobData: object };
+// scope is absent on runs parked before it was stored, which fall back to a workspace scope
+type AgentChatWaitingRun = {
+  jobName: string;
+  jobData: object;
+  scope?: QueueJobScope;
+};
 
 // the recheck reaps a holder whose worker died, which nothing else releases
 const buildRecheckAt = () =>
@@ -140,10 +146,11 @@ export class AgentChatWaitingRunService
     const run = claimedWakeUp.payload as AgentChatWaitingRun;
 
     try {
-      await this.messageQueueService.add(run.jobName, run.jobData, {
-        workspaceId,
-        isWorkspaceJob: true,
-      });
+      await this.messageQueueService.add(
+        run.jobName,
+        run.jobData,
+        run.scope ?? { workspaceId, isWorkspaceJob: true },
+      );
     } catch (error) {
       await this.wait({ workspaceId, threadId, run });
 

@@ -17,6 +17,7 @@ import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execu
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
@@ -81,6 +82,7 @@ export class AgentRunnerService {
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly waitingRunService: AgentChatWaitingRunService,
+    private readonly agentRunJobScopeService: AgentRunJobScopeService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -91,10 +93,10 @@ export class AgentRunnerService {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
       input,
-      {
+      await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
-        isWorkspaceJob: true,
-      },
+        agentId: input.spec.agentId,
+      }),
     );
   }
 
@@ -141,6 +143,10 @@ export class AgentRunnerService {
         run: {
           jobName: RUN_AGENT_JOB_NAME,
           jobData: { ...jobData, parkId: undefined },
+          scope: await this.agentRunJobScopeService.resolve({
+            workspaceId,
+            agentId: jobData.spec.agentId,
+          }),
         },
       });
 
@@ -286,6 +292,10 @@ export class AgentRunnerService {
         run: {
           jobName: CONTINUE_AGENT_RUN_JOB_NAME,
           jobData: { ...jobData, parkId: undefined },
+          scope: await this.agentRunJobScopeService.resolve({
+            workspaceId,
+            agentId: suspension.runSpec.agentId,
+          }),
         },
       });
 

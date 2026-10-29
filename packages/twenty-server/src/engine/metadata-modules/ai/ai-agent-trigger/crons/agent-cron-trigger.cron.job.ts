@@ -120,7 +120,8 @@ export class AgentCronTriggerCronJob {
         },
         {
           workspaceId,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier:
+            flatAgent.applicationUniversalIdentifier,
         },
       );
     }

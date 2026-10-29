@@ -173,7 +173,8 @@ export class CallAgentDatabaseEventTriggersJob {
             },
           },
           workspaceId,
-          isWorkspaceJob: true,
+          applicationUniversalIdentifier:
+            flatAgent.applicationUniversalIdentifier,
         })),
       );
     }

@@ -17,6 +17,7 @@ const buildService = (waitingState: 'NOT_READY' | 'WAITING') => {
     {} as never,
     {} as never,
     { getHandlerOrThrow: () => handler } as never,
+    {} as never,
     messageQueueService as never,
   );
 
