@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 type AiChatTextRevealEffectProps = {
-  onAnimationFrame: (frameAtInMs: number) => void;
+  onAnimationFrame: (frameTimestamp: number) => void;
 };
 
 export const AiChatTextRevealEffect = ({

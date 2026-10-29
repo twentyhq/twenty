@@ -8,17 +8,14 @@ import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledCompo
 import { ThinkingStepRowLayout } from '@/ai/components/ThinkingStepRowLayout';
 import { getReasoningStepLabel } from '@/ai/utils/getReasoningStepLabel';
 
-const StyledReasoningContainer = styled.div`
-  padding-left: calc(
-    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
-  );
-`;
-
 const StyledReasoningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.lg};
+  padding-left: calc(
+    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
+  );
 
   // reasoning uses single newlines as line breaks, which markdown would collapse
   ${StyledParagraph} {
@@ -41,11 +38,9 @@ export const ThinkingReasoningStepRow = ({
     isActive={isActive}
     details={
       part.text.trim().length > 0 ? (
-        <StyledReasoningContainer>
-          <StyledReasoningText>
-            <LazyMarkdownRenderer text={part.text} />
-          </StyledReasoningText>
-        </StyledReasoningContainer>
+        <StyledReasoningText>
+          <LazyMarkdownRenderer text={part.text} />
+        </StyledReasoningText>
       ) : undefined
     }
   />

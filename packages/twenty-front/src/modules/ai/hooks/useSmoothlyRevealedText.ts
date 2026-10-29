@@ -4,7 +4,7 @@ import { getNextRevealedTextLength } from '@/ai/utils/getNextRevealedTextLength'
 
 type TextReveal = {
   revealedText: string;
-  revealedAtInMs: number | null;
+  revealedAtTimestamp: number | null;
 };
 
 export const useSmoothlyRevealedText = ({
@@ -16,29 +16,30 @@ export const useSmoothlyRevealedText = ({
 }) => {
   const [textReveal, setTextReveal] = useState<TextReveal>({
     revealedText: isStreaming ? '' : text,
-    revealedAtInMs: null,
+    revealedAtTimestamp: null,
   });
 
   const isAppendedText = text.startsWith(textReveal.revealedText);
 
   if (!isAppendedText) {
-    setTextReveal({ revealedText: text, revealedAtInMs: null });
+    setTextReveal({ revealedText: text, revealedAtTimestamp: null });
   }
 
   const isRevealing =
     isAppendedText && textReveal.revealedText.length < text.length;
 
-  const revealNextFrame = (frameAtInMs: number) => {
+  const revealNextFrame = (frameTimestamp: number) => {
     setTextReveal({
       revealedText: text.slice(
         0,
         getNextRevealedTextLength({
           text,
           revealedLength: textReveal.revealedText.length,
-          elapsedMs: frameAtInMs - (textReveal.revealedAtInMs ?? frameAtInMs),
+          elapsedMs:
+            frameTimestamp - (textReveal.revealedAtTimestamp ?? frameTimestamp),
         }),
       ),
-      revealedAtInMs: frameAtInMs,
+      revealedAtTimestamp: frameTimestamp,
     });
   };
 
