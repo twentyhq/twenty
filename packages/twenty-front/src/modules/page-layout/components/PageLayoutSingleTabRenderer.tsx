@@ -30,51 +30,116 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledRecordIdentifierBar = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  gap: ${themeCssVariables.spacing[2]};
   height: ${PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT}px;
   justify-content: space-between;
-  padding: 0 ${themeCssVariables.spacing[6]};
-  width: 100%;
-`;
-
-const StyledRecordIdentifierBarLeft = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-`;
-
-const StyledRecordIdentifierBarRight = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
+  padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
 type PageLayoutSingleTabRendererProps = {
   pageLayoutId: string;
 };
 
+const PageLayoutSingleTabRendererContent = () => {
+  const pageLayoutIsInitialized = useAtomComponentStateValue(
+    pageLayoutIsInitializedComponentState,
+  );
+
+  if (!pageLayoutIsInitialized) {
+    return null;
+  }
+
+  return <PageLayoutSingleTabRendererInner />;
+};
+
+const PageLayoutSingleTabRendererInner = () => {
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const targetRecordIdentifier = useTargetRecord();
+
+  const sortedActiveTabs = sortTabsByPosition(
+    currentPageLayout.tabs.filter((tab) => tab.isActive),
+  );
+  const firstTab = sortedActiveTabs.at(0);
+
+  return (
+    <>
+      <StyledRecordIdentifierBar>
+        <RecordIdentifierBarTitle
+          objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
+          objectRecordId={targetRecordIdentifier.id}
+        />
+        <RecordIdentifierBarCreatedAt
+          objectRecordId={targetRecordIdentifier.id}
+        />
+      </StyledRecordIdentifierBar>
+
+      {isDefined(firstTab) && (
+        <PageLayoutSingleTabRendererTabContent firstTabId={firstTab.id} />
+      )}
+    </>
+  );
+};
+
+type PageLayoutSingleTabRendererTabContentProps = {
+  firstTabId: string;
+};
+
+const PageLayoutSingleTabRendererTabContent = ({
+  firstTabId,
+}: PageLayoutSingleTabRendererTabContentProps) => {
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const firstTabWithVisibleWidgets =
+    usePageLayoutTabWithVisibleWidgetsOrThrow(firstTabId);
+
+  const layoutMode = getTabLayoutMode({
+    tab: firstTabWithVisibleWidgets,
+    pageLayoutType: currentPageLayout.type,
+  });
+
+  const presentation = getTabPresentation({
+    widgets: firstTabWithVisibleWidgets.widgets,
+    layoutMode,
+    isInEditMode: isPageLayoutInEditMode,
+  });
+
+  return (
+    <PageLayoutContentProvider
+      value={{
+        tabId: firstTabId,
+        layoutMode,
+        presentation,
+      }}
+    >
+      <PageLayoutWidgetDndProvider>
+        <PageLayoutContent />
+      </PageLayoutWidgetDndProvider>
+    </PageLayoutContentProvider>
+  );
+};
+
 export const PageLayoutSingleTabRenderer = ({
   pageLayoutId,
 }: PageLayoutSingleTabRendererProps) => {
-  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const pageLayoutComponentInstanceId = pageLayoutId;
+  const pageLayoutComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
 
   const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: pageLayoutComponentInstanceId,
+      pageLayoutId,
+      layoutType,
       targetRecordIdentifier,
     }),
   );
@@ -127,57 +192,5 @@ export const PageLayoutSingleTabRenderer = ({
         </TabListComponentInstanceContext.Provider>
       </PageLayoutComponentInstanceContext.Provider>
     </RecordFilterValueDependenciesContext.Provider>
-  );
-};
-
-const PageLayoutSingleTabRendererContent = () => {
-  const { layoutType } = useLayoutRenderingContext();
-  const targetRecord = useTargetRecord();
-
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const pageLayout = useCurrentPageLayoutOrThrow();
-
-  const sortedTabs = useMemo(
-    () => sortTabsByPosition(pageLayout.tabs),
-    [pageLayout.tabs],
-  );
-
-  const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(
-    sortedTabs?.[0]?.id,
-  );
-
-  const tabLayoutMode = getTabLayoutMode(activeTab.layoutMode);
-  const tabPresentation = getTabPresentation(activeTab.presentation);
-
-  const isPageLayoutInitialized = useAtomComponentStateValue(
-    pageLayoutIsInitializedComponentState,
-  );
-
-  const showRecordIdentifierBar =
-    layoutType === PageLayoutType.RECORD_PAGE &&
-    !isPageLayoutInEditMode &&
-    isDefined(targetRecord);
-
-  return (
-    <PageLayoutWidgetDndProvider>
-      <PageLayoutContentProvider
-        layoutMode={tabLayoutMode}
-        presentation={tabPresentation}
-      >
-        {showRecordIdentifierBar && (
-          <StyledRecordIdentifierBar>
-            <StyledRecordIdentifierBarLeft>
-              <RecordIdentifierBarTitle />
-            </StyledRecordIdentifierBarLeft>
-            <StyledRecordIdentifierBarRight>
-              <RecordIdentifierBarCreatedAt />
-            </StyledRecordIdentifierBarRight>
-          </StyledRecordIdentifierBar>
-        )}
-        {isPageLayoutInitialized && (
-          <PageLayoutContent pageLayoutTab={activeTab} />
-        )}
-      </PageLayoutContentProvider>
-    </PageLayoutWidgetDndProvider>
   );
 };

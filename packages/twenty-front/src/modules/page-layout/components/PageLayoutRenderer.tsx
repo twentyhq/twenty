@@ -14,7 +14,6 @@ import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layou
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
-
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 import 'react-grid-layout/css/styles.css';
@@ -27,13 +26,15 @@ type PageLayoutRendererProps = {
 export const PageLayoutRenderer = ({
   pageLayoutId,
 }: PageLayoutRendererProps) => {
-  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
-  const pageLayoutComponentInstanceId = pageLayoutId;
+  const pageLayoutComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(pageLayoutId);
 
   const tabListInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
     getTabListInstanceIdFromPageLayoutAndRecord({
-      pageLayoutId: pageLayoutComponentInstanceId,
+      pageLayoutId,
+      layoutType,
       targetRecordIdentifier,
     }),
   );
