@@ -85,7 +85,7 @@ export const MENU: {
             imagePosition: 'center',
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Reviewed apps for your workspace`,
-            description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
+            description: msg`Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty.`,
           },
         },
         {

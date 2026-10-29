@@ -19,7 +19,8 @@ export class UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand
       `UPDATE "core"."applicationRegistration"
        SET "isListed" = false
        WHERE "isListed" = true
-         AND "isVetted" = false`,
+         AND "isVetted" = false
+         AND "sourceType" = 'npm'`,
     );
 
     await this.coreEntityCacheService.invalidate(
