@@ -3,7 +3,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.54.0', 1793208592359, { type: 'slow' })
+@RegisteredInstanceCommand('2.54.0', 1793272266091, { type: 'slow' })
 export class PurgeSoftDeletedAgentsSlowInstanceCommand implements SlowInstanceCommand {
   // 2.54 stops filtering on deletedAt, so soft-deleted agents would come back live
   async runDataMigration(dataSource: DataSource): Promise<void> {
