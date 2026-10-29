@@ -240,6 +240,7 @@ export class ServerRouteTriggerService {
       };
     }
 
+    // TODO(@charlesBochet): stop resolving server routes by universalIdentifier after 2026-11-29.
     const legacyCandidates = await this.createResolverQueryBuilder()
       .andWhere('logicFunction.universalIdentifier = :universalIdentifier', {
         universalIdentifier: identifier,
