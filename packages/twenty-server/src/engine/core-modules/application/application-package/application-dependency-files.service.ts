@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { assertMatchingDependencyChecksumsOrThrow } from 'src/engine/core-modules/application/application-package/utils/assert-matching-dependency-checksums-or-throw.util';
 import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
@@ -26,6 +27,38 @@ type StoredDependencyFiles = {
 @Injectable()
 export class ApplicationDependencyFilesService {
   constructor(private readonly fileStorageService: FileStorageService) {}
+
+  async getExportedDependencyFiles(identifier: ApplicationIdentifier) {
+    const isPackageJsonStored = await this.fileStorageService.checkFileExists({
+      ...identifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+
+    if (!isPackageJsonStored) {
+      return [];
+    }
+
+    const { packageJsonContent, yarnLockContent } =
+      await this.getDependencyContents(identifier);
+
+    return [
+      {
+        folder: FileFolder.Dependencies,
+        path: 'package.json',
+        content: packageJsonContent,
+      },
+      ...(isDefined(yarnLockContent)
+        ? [
+            {
+              folder: FileFolder.Dependencies,
+              path: 'yarn.lock',
+              content: yarnLockContent,
+            },
+          ]
+        : []),
+    ];
+  }
 
   async getVerifiedDependencyContentsOrThrow({
     workspaceId,

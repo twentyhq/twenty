@@ -63,16 +63,23 @@ export const fetchAppExport = async ({
   universalIdentifier,
   target,
   signal,
+  shouldIncludeDependencies = false,
 }: {
   universalIdentifier: string;
   target: ResolvedTarget;
   signal: AbortSignal;
+  shouldIncludeDependencies?: boolean;
 }): Promise<AppExport> => {
   const data = await createMetadataClient({ target, signal })
     .query({
       __name: 'ExportApplication',
       exportApplication: {
-        __args: { universalIdentifier },
+        __args: {
+          universalIdentifier,
+          ...(shouldIncludeDependencies
+            ? { shouldIncludeDependencies: true }
+            : {}),
+        },
         application: {
           universalIdentifier: true,
           displayName: true,

@@ -6002,6 +6002,7 @@ export type QueryEventLogsArgs = {
 
 
 export type QueryExportApplicationArgs = {
+  shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
 
