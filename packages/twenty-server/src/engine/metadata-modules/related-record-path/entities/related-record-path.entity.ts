@@ -15,7 +15,6 @@ import {
 import { ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-related-record-path-table-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'relatedRecordPath', schema: 'core' })
@@ -23,19 +22,13 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   upgradeCommandName: ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME,
 })
 // Postgres treats NULLs as distinct, so each path length gets its own unique index.
-@Index(
-  'IDX_RELATED_RECORD_PATH_UNIQUE_ONE_HOP',
-  ['workspaceId', 'sourceObjectMetadataId', 'firstFieldMetadataId'],
-  { unique: true, where: '"secondFieldMetadataId" IS NULL' },
-)
+@Index('IDX_RELATED_RECORD_PATH_UNIQUE_ONE_HOP', ['firstFieldMetadataId'], {
+  unique: true,
+  where: '"secondFieldMetadataId" IS NULL',
+})
 @Index(
   'IDX_RELATED_RECORD_PATH_UNIQUE_TWO_HOPS',
-  [
-    'workspaceId',
-    'sourceObjectMetadataId',
-    'firstFieldMetadataId',
-    'secondFieldMetadataId',
-  ],
+  ['firstFieldMetadataId', 'secondFieldMetadataId'],
   {
     unique: true,
     where:
@@ -44,22 +37,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 )
 @Index(
   'IDX_RELATED_RECORD_PATH_UNIQUE_THREE_HOPS',
-  [
-    'workspaceId',
-    'sourceObjectMetadataId',
-    'firstFieldMetadataId',
-    'secondFieldMetadataId',
-    'thirdFieldMetadataId',
-  ],
+  ['firstFieldMetadataId', 'secondFieldMetadataId', 'thirdFieldMetadataId'],
   { unique: true, where: '"thirdFieldMetadataId" IS NOT NULL' },
 )
 @Index('IDX_RELATED_RECORD_PATH_APPLICATION_ID', ['applicationId'])
-@Index('IDX_RELATED_RECORD_PATH_SOURCE_OBJECT_METADATA_ID', [
-  'sourceObjectMetadataId',
-])
-@Index('IDX_RELATED_RECORD_PATH_TARGET_OBJECT_METADATA_ID', [
-  'targetObjectMetadataId',
-])
 @Index('IDX_RELATED_RECORD_PATH_FIRST_FIELD_METADATA_ID', [
   'firstFieldMetadataId',
 ])
@@ -75,20 +56,6 @@ export class RelatedRecordPathEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  sourceObjectMetadataId: string;
-
-  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'sourceObjectMetadataId' })
-  sourceObjectMetadata: Relation<ObjectMetadataEntity>;
-
-  @Column({ nullable: false, type: 'uuid' })
-  targetObjectMetadataId: string;
-
-  @ManyToOne(() => ObjectMetadataEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'targetObjectMetadataId' })
-  targetObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   firstFieldMetadataId: string;

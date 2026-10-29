@@ -619,20 +619,6 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   relatedRecordPath: {
     workspace: null,
     application: null,
-    sourceObjectMetadata: {
-      metadataName: 'objectMetadata',
-      foreignKey: 'sourceObjectMetadataId',
-      inverseOneToManyProperty: null,
-      isNullable: false,
-      universalForeignKey: 'sourceObjectMetadataUniversalIdentifier',
-    },
-    targetObjectMetadata: {
-      metadataName: 'objectMetadata',
-      foreignKey: 'targetObjectMetadataId',
-      inverseOneToManyProperty: null,
-      isNullable: false,
-      universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
-    },
     firstFieldMetadata: {
       metadataName: 'fieldMetadata',
       foreignKey: 'firstFieldMetadataId',

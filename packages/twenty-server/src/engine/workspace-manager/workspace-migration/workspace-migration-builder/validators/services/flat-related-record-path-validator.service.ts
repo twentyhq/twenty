@@ -23,9 +23,7 @@ type RelatedRecordPathRelatedMaps = Pick<
   UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.relatedRecordPath
   >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'],
-  | 'flatObjectMetadataMaps'
-  | 'flatFieldMetadataMaps'
-  | 'flatRelatedRecordPathMaps'
+  'flatFieldMetadataMaps' | 'flatRelatedRecordPathMaps'
 >;
 
 const buildInvalidInputError = ({
@@ -51,7 +49,6 @@ export class FlatRelatedRecordPathValidatorService {
   private collectPathErrors({
     universalFlatRelatedRecordPath,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatRelatedRecordPathMaps,
     },
@@ -60,39 +57,9 @@ export class FlatRelatedRecordPathValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RelatedRecordPathRelatedMaps;
   }): FlatEntityValidationError[] {
     const {
-      sourceObjectMetadataUniversalIdentifier,
-      targetObjectMetadataUniversalIdentifier,
-      thirdFieldMetadataUniversalIdentifier,
       secondFieldMetadataUniversalIdentifier,
+      thirdFieldMetadataUniversalIdentifier,
     } = universalFlatRelatedRecordPath;
-
-    const sourceFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: sourceObjectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(sourceFlatObjectMetadata)) {
-      return [
-        buildInvalidInputError({
-          message: t`Related record path source object not found`,
-          userFriendlyMessage: msg`Related record path source object not found`,
-        }),
-      ];
-    }
-
-    const targetFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: targetObjectMetadataUniversalIdentifier,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
-
-    if (!isDefined(targetFlatObjectMetadata)) {
-      return [
-        buildInvalidInputError({
-          message: t`Related record path target object not found`,
-          userFriendlyMessage: msg`Related record path target object not found`,
-        }),
-      ];
-    }
 
     if (
       isDefined(thirdFieldMetadataUniversalIdentifier) &&
@@ -111,11 +78,8 @@ export class FlatRelatedRecordPathValidatorService {
         universalFlatRelatedRecordPath,
       );
 
-    const visitedObjectMetadataUniversalIdentifiers = new Set([
-      sourceObjectMetadataUniversalIdentifier,
-    ]);
-    let currentObjectMetadataUniversalIdentifier =
-      sourceObjectMetadataUniversalIdentifier;
+    const visitedObjectMetadataUniversalIdentifiers = new Set<string>();
+    let currentObjectMetadataUniversalIdentifier: string | undefined;
 
     for (const fieldMetadataUniversalIdentifier of fieldMetadataUniversalIdentifiers) {
       const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -123,10 +87,26 @@ export class FlatRelatedRecordPathValidatorService {
         flatEntityMaps: flatFieldMetadataMaps,
       });
 
+      if (!isDefined(flatFieldMetadata)) {
+        return [
+          buildInvalidInputError({
+            message: t`Related record path field not found`,
+            userFriendlyMessage: msg`Related record path field not found`,
+          }),
+        ];
+      }
+
+      if (!isDefined(currentObjectMetadataUniversalIdentifier)) {
+        currentObjectMetadataUniversalIdentifier =
+          flatFieldMetadata.objectMetadataUniversalIdentifier;
+        visitedObjectMetadataUniversalIdentifiers.add(
+          currentObjectMetadataUniversalIdentifier,
+        );
+      }
+
       if (
-        !isDefined(flatFieldMetadata) ||
         flatFieldMetadata.objectMetadataUniversalIdentifier !==
-          currentObjectMetadataUniversalIdentifier
+        currentObjectMetadataUniversalIdentifier
       ) {
         return [
           buildInvalidInputError({
@@ -183,18 +163,6 @@ export class FlatRelatedRecordPathValidatorService {
         nextObjectMetadataUniversalIdentifier;
     }
 
-    if (
-      currentObjectMetadataUniversalIdentifier !==
-      targetObjectMetadataUniversalIdentifier
-    ) {
-      return [
-        buildInvalidInputError({
-          message: t`Related record path must end on its target object`,
-          userFriendlyMessage: msg`Related record path must end on its target object`,
-        }),
-      ];
-    }
-
     const hasDuplicatePath = Object.values(
       flatRelatedRecordPathMaps.byUniversalIdentifier,
     ).some(
@@ -202,8 +170,6 @@ export class FlatRelatedRecordPathValidatorService {
         isDefined(otherFlatRelatedRecordPath) &&
         otherFlatRelatedRecordPath.universalIdentifier !==
           universalFlatRelatedRecordPath.universalIdentifier &&
-        otherFlatRelatedRecordPath.sourceObjectMetadataUniversalIdentifier ===
-          sourceObjectMetadataUniversalIdentifier &&
         getRelatedRecordPathFieldMetadataUniversalIdentifiers(
           otherFlatRelatedRecordPath,
         ).join() === fieldMetadataUniversalIdentifiers.join(),

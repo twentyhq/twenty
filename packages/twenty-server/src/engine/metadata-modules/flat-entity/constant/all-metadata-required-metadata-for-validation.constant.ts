@@ -143,7 +143,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     frontComponent: true,
   },
   relatedRecordPath: {
-    objectMetadata: true,
     fieldMetadata: true,
   },
   validationRule: {

@@ -128,7 +128,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for relatedRecordPath 1`] = `
 [
-  "objectMetadata",
   "fieldMetadata",
 ]
 `;

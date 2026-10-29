@@ -29,8 +29,6 @@ export class CreateRelatedRecordPathActionHandlerService extends WorkspaceMigrat
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRelatedRecordPathAction>): Promise<FlatCreateRelatedRecordPathAction> {
     const {
-      sourceObjectMetadataId,
-      targetObjectMetadataId,
       firstFieldMetadataId,
       secondFieldMetadataId,
       thirdFieldMetadataId,
@@ -49,8 +47,6 @@ export class CreateRelatedRecordPathActionHandlerService extends WorkspaceMigrat
       ...action,
       flatEntity: {
         ...action.flatEntity,
-        sourceObjectMetadataId,
-        targetObjectMetadataId,
         firstFieldMetadataId,
         secondFieldMetadataId,
         thirdFieldMetadataId,
