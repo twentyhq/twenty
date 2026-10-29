@@ -69,7 +69,7 @@ const StyledStepCount = styled.span`
   font-weight: ${themeCssVariables.font.weight.regular};
   text-align: end;
 
-  [data-countdown] > & {
+  &[data-countdown] {
     color: ${themeCssVariables.font.color.light};
     text-align: start;
   }
@@ -157,7 +157,7 @@ export const GettingStartedSidebarCard = () => {
                 }
               />
               {t`Getting started`}
-              <StyledStepCount>
+              <StyledStepCount data-countdown={isCountdownVisible || undefined}>
                 {`${progress.completedSteps.length}/${progress.steps.length}`}
               </StyledStepCount>
               {!isGettingStartedPageOpen && (

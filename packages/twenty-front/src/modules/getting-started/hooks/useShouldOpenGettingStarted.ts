@@ -1,5 +1,5 @@
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
-import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
+import { getShouldOpenGettingStarted } from '@/getting-started/utils/getShouldOpenGettingStarted';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,17 +20,11 @@ export const useShouldOpenGettingStarted = ({
     return { shouldOpenGettingStarted: false, isLoading: loading };
   }
 
-  const remainingSteps = getGettingStartedRemainingSteps({
-    steps: progress.steps,
-    completedSteps: progress.completedSteps,
-  });
-
   return {
-    shouldOpenGettingStarted:
-      !progress.isHidden &&
-      remainingSteps.length > 0 &&
-      (!isDefined(progress.snoozedUntil) ||
-        Date.parse(progress.snoozedUntil) <= Date.now()),
+    shouldOpenGettingStarted: getShouldOpenGettingStarted({
+      progress,
+      now: new Date(),
+    }),
     isLoading: false,
   };
 };

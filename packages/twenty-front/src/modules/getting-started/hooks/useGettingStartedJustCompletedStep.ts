@@ -1,4 +1,4 @@
-import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
+import { getGettingStartedJustCompletedStep } from '@/getting-started/utils/getGettingStartedJustCompletedStep';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,20 +17,13 @@ export const useGettingStartedJustCompletedStep = ({
     useState<GettingStartedStep | null>(null);
 
   if (isDefined(progress) && progress !== seenProgress) {
-    if (isDefined(seenProgress)) {
-      const { selectedStep: previouslyDisplayedStep } =
-        getGettingStartedStepSelection({
-          steps: seenProgress.steps.map(({ step }) => step),
-          completedSteps: seenProgress.completedSteps,
-          selectedStep: seenProgress.selectedStep,
-        });
+    const newlyCompletedStep = getGettingStartedJustCompletedStep({
+      previousProgress: seenProgress,
+      progress,
+    });
 
-      if (
-        !seenProgress.completedSteps.includes(previouslyDisplayedStep) &&
-        progress.completedSteps.includes(previouslyDisplayedStep)
-      ) {
-        setJustCompletedStep(previouslyDisplayedStep);
-      }
+    if (isDefined(newlyCompletedStep)) {
+      setJustCompletedStep(newlyCompletedStep);
     }
 
     setSeenProgress(progress);
