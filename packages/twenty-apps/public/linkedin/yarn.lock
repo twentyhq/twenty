@@ -421,8 +421,8 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@unipile/sdk": "npm:^2.59.0"
     oxlint: "npm:^0.16.0"
-    twenty-client-sdk: "portal:../../../twenty-client-sdk"
-    twenty-sdk: "portal:../../../twenty-sdk"
+    twenty-client-sdk: "npm:2.53.0"
+    twenty-sdk: "npm:2.53.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.1.12"
@@ -1478,31 +1478,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@portal:../../../twenty-client-sdk::locator=%40twentyhq%2Flinkedin%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "twenty-client-sdk@portal:../../../twenty-client-sdk::locator=%40twentyhq%2Flinkedin%40workspace%3A."
+"twenty-client-sdk@npm:2.53.0":
+  version: 2.53.0
+  resolution: "twenty-client-sdk@npm:2.53.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
+  checksum: 10c0/b1e3b73a495a91d6b80c012ca4b54b9ec472efc012b86cb712def56fb16a9f427e654b2559ba01590c4178e44072504aafa753e3e1a895ff268c28ebed954012
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"twenty-sdk@portal:../../../twenty-sdk::locator=%40twentyhq%2Flinkedin%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "twenty-sdk@portal:../../../twenty-sdk::locator=%40twentyhq%2Flinkedin%40workspace%3A."
+"twenty-sdk@npm:2.53.0":
+  version: 2.53.0
+  resolution: "twenty-sdk@npm:2.53.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     esbuild: "npm:^0.28.1"
     preact: "npm:^11.0.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
-    twenty-client-sdk: "workspace:*"
+    twenty-client-sdk: "npm:2.53.0"
     uuid: "npm:^13.0.2"
+  checksum: 10c0/85ccb19d370da9f45b4a460ae7f8dff384be7004dda366435697faa266cfa5fe01d43f6bedddebbc19008e111e340b7cb1945fe46679a0d0ab39eeb98ef51930
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "typescript@npm:^5.9.3":
   version: 5.9.3

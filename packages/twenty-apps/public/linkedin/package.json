@@ -28,9 +28,6 @@
     "test:watch": "vitest",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
-  "resolutions": {
-    "twenty-client-sdk": "portal:../../../twenty-client-sdk"
-  },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "@unipile/sdk": "^2.59.0"
@@ -39,8 +36,8 @@
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
-    "twenty-client-sdk": "portal:../../../twenty-client-sdk",
-    "twenty-sdk": "portal:../../../twenty-sdk",
+    "twenty-client-sdk": "2.53.0",
+    "twenty-sdk": "2.53.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.12"
