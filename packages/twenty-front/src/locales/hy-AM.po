@@ -15668,7 +15668,7 @@ msgid "Last active {lastActive}"
 msgstr "Վերջին ակտիվությունը {lastActive}"
 
 #. js-lingui-id: vmfZix
-#. placeholder {0}: session.ipAddress
+#. placeholder {0}: details.join(' · ')
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Last active {lastActive} · {0}"
 msgstr "Վերջին ակտիվությունը {lastActive} · {0}"
