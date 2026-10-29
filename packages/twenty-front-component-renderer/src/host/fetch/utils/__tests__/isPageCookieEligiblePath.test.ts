@@ -1,12 +1,16 @@
 import { isPageCookieEligiblePath } from '../isPageCookieEligiblePath';
 
 describe('isPageCookieEligiblePath', () => {
-  it.each(['/graphql', '/metadata', '/rest/companies', '/file/x', '/files/x'])(
-    'should accept the API path %s',
-    (pathname) => {
-      expect(isPageCookieEligiblePath(pathname)).toBe(true);
-    },
-  );
+  it.each([
+    '/graphql',
+    '/metadata',
+    '/rest/companies',
+    '/file/x',
+    '/files/x',
+    '/s/my-route',
+  ])('should accept the API path %s', (pathname) => {
+    expect(isPageCookieEligiblePath(pathname)).toBe(true);
+  });
 
   it.each([
     '/',
@@ -14,7 +18,6 @@ describe('isPageCookieEligiblePath', () => {
     '/cdn-cgi/access/get-identity',
     '/oauth2/userinfo',
     '/graphqlish',
-    '/s/my-route',
     '/webhooks/server/my-route',
     '/auth/apps/custom/callback',
     '/rest/..%2Fs/my-route',
