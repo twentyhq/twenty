@@ -3672,20 +3672,20 @@ msgstr "導入事例をもっと見る"
 msgid "Extend beyond the CRM screens"
 msgstr "CRM 画面の外まで拡張"
 
-#. js-lingui-id: qu9kGK
+#. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
-msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr "Twenty が厳選したアプリで Twenty を拡張しましょう。通話録音、エンリッチメント、Slack、Discord、Linear などに対応しています。オープンソースの CRM ワークスペースに、任意のアプリをワンクリックでインストールできます。"
+msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
+msgstr ""
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
 msgid "Extend your CRM"
 msgstr "CRM を拡張"
 
-#. js-lingui-id: wmJ4p4
+#. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
-msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
-msgstr "Twenty が構築・保守するアプリで、あなたの CRM を拡張しましょう。ここにあるすべてのアプリは当社チームが厳選済みです。ワンクリックでインストールすれば、すぐにあなたのワークスペースで利用できます。"
+msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
+msgstr ""
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4798,10 +4798,10 @@ msgstr "ワークフロー実行の各ステップについて、AI呼び出し�
 msgid "Install"
 msgstr "インストール"
 
-#. js-lingui-id: qq1x6K
+#. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
-msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
-msgstr "通話録音、エンリッチメント、Slack、Linear などのアプリをインストールしましょう。すべて Twenty が構築・保守しています。"
+msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
+msgstr ""
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7053,6 +7053,11 @@ msgstr "収益"
 msgid "Revenue (YTD)"
 msgstr "売上（年初来）"
 
+#. js-lingui-id: mO7Tm0
+#: src/sections/menu/data/menu.ts
+msgid "Reviewed apps for your workspace"
+msgstr ""
+
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rich notes attached to records"
@@ -8732,10 +8737,10 @@ msgstr "Tuvalu 🇹🇻"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | #1 Open Source CRM"
 
-#. js-lingui-id: XxKVz4
+#. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
-msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
-msgstr "Twenty Apps — オープンソース CRM 向けの厳選アプリ"
+msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
+msgstr ""
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
@@ -9127,16 +9132,6 @@ msgstr "Venezuela 🇻🇪"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Version control"
 msgstr "バージョン管理"
-
-#. js-lingui-id: vNIHYX
-#: src/sections/menu/data/menu.ts
-msgid "Vetted apps for your workspace"
-msgstr "あなたのワークスペース向けの厳選アプリ"
-
-#. js-lingui-id: k5HTQK
-#: src/apps-marketplace/AppDetail.tsx
-msgid "Vetted by Twenty"
-msgstr "Twenty による審査済み"
 
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
