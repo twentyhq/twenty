@@ -48,7 +48,7 @@ import {
 
 type DepsLayerDependencies = {
   packageJson: string;
-  yarnLock: string;
+  yarnLock: string | null;
 };
 
 const LAYER_LOCK_OPTIONS = {
@@ -82,21 +82,9 @@ export class LambdaLayerManagerService {
     return this.ensureApplicationDepsLayer(flatApplication);
   }
 
-  async findExistingDepsLayerArn(
+  private async getDepsLayerNames(
     flatApplication: FlatApplication,
-  ): Promise<string | undefined> {
-    for (const layerName of await this.getDepsLayerNames(flatApplication)) {
-      const existingArn = await this.awsClient.getExistingLayerArn(layerName);
-
-      if (isDefined(existingArn)) {
-        return existingArn;
-      }
-    }
-
-    return undefined;
-  }
-
-  async getDepsLayerNames(flatApplication: FlatApplication): Promise<string[]> {
+  ): Promise<string[]> {
     const applicationDepsLayerName = getLambdaDepsLayerName({
       flatApplication,
       namespace: this.options.resourceNamespace,
@@ -127,10 +115,13 @@ export class LambdaLayerManagerService {
       return this.ensureApplicationDepsLayer(flatApplication);
     }
 
-    return this.buildDepsLayer({
-      layerName,
-      dependencies: await this.getVerifiedDependencies(flatApplication),
-    });
+    const dependencies = await this.getVerifiedDependencies(flatApplication);
+
+    if (!isDefined(dependencies.yarnLock)) {
+      return this.ensureApplicationDepsLayer(flatApplication);
+    }
+
+    return this.buildDepsLayer({ layerName, dependencies });
   }
 
   private async ensureApplicationDepsLayer(
@@ -308,7 +299,7 @@ export class LambdaLayerManagerService {
     await this.deleteAllLayerVersions(layerName);
   }
 
-  hasExpectedSdkLayer({
+  private hasExpectedSdkLayer({
     lambdaExecutor,
     flatApplication,
   }: {
@@ -398,9 +389,7 @@ export class LambdaLayerManagerService {
     yarnLock,
   }: {
     layerName: string;
-    packageJson: string;
-    yarnLock: string;
-  }): Promise<void> {
+  } & DepsLayerDependencies): Promise<void> {
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
@@ -413,7 +402,7 @@ export class LambdaLayerManagerService {
 
     await this.toolFunctions.runYarnInstallCreateLayer({
       packageJson,
-      yarnLock,
+      yarnLock: yarnLock ?? EMPTY_YARN_LOCK_CONTENT,
       presignedUploadUrl,
     });
 
@@ -468,19 +457,9 @@ export class LambdaLayerManagerService {
         },
       );
 
-    if (
-      isDefined(flatApplication.yarnLockChecksum) &&
-      !isDefined(yarnLockContent)
-    ) {
-      throw new ApplicationException(
-        `Application ${flatApplication.universalIdentifier} declares a yarn.lock that is not stored`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
     return {
       packageJson: sanitizeApplicationPackageJson(packageJsonContent),
-      yarnLock: yarnLockContent ?? EMPTY_YARN_LOCK_CONTENT,
+      yarnLock: yarnLockContent,
     };
   }
 

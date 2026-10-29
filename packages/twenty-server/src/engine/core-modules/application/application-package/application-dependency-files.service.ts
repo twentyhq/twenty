@@ -53,7 +53,7 @@ export class ApplicationDependencyFilesService {
     return { packageJsonContent, yarnLockContent, storedFilesChecksums };
   }
 
-  async getDependencyContents({
+  private async getDependencyContents({
     workspaceId,
     applicationUniversalIdentifier,
   }: ApplicationIdentifier): Promise<StoredDependencyFiles> {

@@ -35,12 +35,10 @@ import {
   PREBUILT_INSTALL_LOCK_RETRY_MS,
   PREBUILT_INSTALL_LOCK_TTL_MS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
-import { type LambdaLegacyDepsLayerBridgeService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/legacy-deps-layer/lambda-legacy-deps-layer-bridge.service';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { buildLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-tags.util';
-import { getLambdaExecutorBuildLockKey } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-executor-build-lock-key.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -67,7 +65,6 @@ export class LambdaExecutorManagerService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
-    private readonly legacyDepsLayerBridge: LambdaLegacyDepsLayerBridgeService,
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -108,7 +105,7 @@ export class LambdaExecutorManagerService {
       return;
     }
 
-    const lockKey = getLambdaExecutorBuildLockKey(context.flatLogicFunction.id);
+    const lockKey = `lambda-build:${context.flatLogicFunction.id}`;
 
     try {
       await this.cacheLockService.withLock(
@@ -300,8 +297,7 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      // TODO: use layerManager.hasExpectedLayers once the 2-54 upgrade folder is removed
-      (await this.legacyDepsLayerBridge.hasExpectedLayers({
+      (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
       }));
@@ -319,11 +315,7 @@ export class LambdaExecutorManagerService {
     let depsLayerArn: string;
 
     try {
-      // TODO: use layerManager.ensureDepsLayer once the 2-54 upgrade folder is removed
-      depsLayerArn = await this.legacyDepsLayerBridge.resolveDepsLayerArn({
-        lambdaExecutor,
-        flatApplication,
-      });
+      depsLayerArn = await this.layerManager.ensureDepsLayer(flatApplication);
     } catch (error) {
       if (
         error instanceof LogicFunctionException &&
