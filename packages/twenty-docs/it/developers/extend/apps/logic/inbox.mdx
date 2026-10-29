@@ -1,0 +1,95 @@
+---
+title: Posta
+description: Pubblica messaggi dalla tua app nella casella di posta dei membri, da una funzione logica o da un componente anteriore.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+La tua app può iniziare e continuare le conversazioni nella casella di posta dei membri del workspace, dove parlano anche con l'assistente di Twenty. Un messaggio può terminare su una domanda, un modulo o una modifica da approvare, che il membro risponde dalla chat prima della conversazione continua con l'assistente.
+
+Gli helper della posta in arrivo vengono esportati sia da `twenty-sdk/logic-function` che da `twenty-sdk/front-component`, quindi una esecuzione pianificata e un pulsante nella tua app postare allo stesso modo.
+
+## Invio di un messaggio
+
+`sendInboxMessage()` pubblica un messaggio dalla tua app nelle chat di uno o più membri del workspace e restituisce il `threadId` della conversazione.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+Punti chiave:
+
+* `workspaceMemberIds` elenca i membri che ricevono la conversazione, almeno uno. Il primo membro di una nuova conversazione la possiede, e gli altri lo seguono come partecipanti. Un invio successivo sotto la stessa chiave che elenca i nuovi membri li aggiunge; membri che lascia fuori mantenere la conversazione.
+* `threadKey` sceglie la conversazione per questa app, condivisa da ogni membro a cui viene inviata. Una nuova chiave avvia una conversazione intitolata `titolo`; una chiave usata prima di aggiungere il messaggio a quella conversazione.
+* `idempotencyKey` identifica il messaggio all'interno della conversazione. Invio di nuovo con le stesse chiavi non scrive nulla di nuovo, quindi riprova e simultaneo non duplica mai un messaggio.
+* `text` è markdown, e può portare [menzioni e riferimenti di record](#mentions-and-record-references).
+* `toolCall` (opzionale) termina il messaggio su uno di:
+  * a call the member answers, which pauses the conversation: `ask_question` (one multiple choice question), `request_form` (fields to fill in) or `propose_tool_call` (call to approve). Il suo `input` prende il `toolName`, gli `arguments` con cui chiameresti lo strumento e un `summary` di una frase. Lo strumento deve essere un ruolo predefinito della tua app potrebbe essere eseguito da solo, come `create_one_person` o `update_one_opportunity` (con il record `id`); un'email (`send_email` o `draft_email`, con `recipients`, `subject` e un `body` in HTML) non ha bisogno del permesso della tua app. Il membro esamina la chiamata nella stessa carta di una chiamata che l'assistente propone, lo modifica se lo desiderano, e la chiamata approvata viene eseguita con il proprio accesso;
+  * uno degli strumenti della tua app, da `logicFunctionUniversalIdentifier`, renderizzato dal suo componente frontale con `input` e `output` che passi. Non interrompe la conversazione.
+* Solo una chiamata le risposte del membro possono aspettare in una conversazione alla volta: inviarne un'altra prima che la risposta fallisca con `THREAD_AWAITING_ANSWER`. I messaggi semplici e le chiamate degli strumenti dell'app sono ancora accettati.
+* Solo il membro che possiede una conversazione può eliminarla, e una conversazione cancellata è andata per ogni membro: non è ricreato, e nulla è aggiunto ad esso. Gli altri membri possono annullare l'iscrizione per toglierla dalla propria casella di posta.
+* Ogni membro deve avere il permesso `AI` e la chiamata fallisce senza scrivere il messaggio quando uno di loro non può avere la conversazione. Il [ruolo predefinito](/it/developers/extend/apps/config/roles) della tua app deve concedere `SystemPermissionFlag.AI`.
+
+### Chi invia il messaggio
+
+Un messaggio è sempre scritto dalla tua app, qualunque cosa abbia innescato la chiamata. La chiamata stessa viene eseguita come [API clients](/it/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses):
+
+* In una funzione logica, agisce come la persona che ha innescato la corsa, o come la vostra applicazione quando nessuno ha fatto, ad esempio su un programma cron.
+* In un componente anteriore, agisce come il membro che guarda la pagina. Quando il token è scaduto, la chiamata lo aggiorna una volta attraverso venti e riprova.
+
+La persona dietro la chiamata ha bisogno del permesso `AI` pure, come ogni destinatario.
+
+Per inviare da un componente anteriore, importare gli stessi helper da `twenty-sdk/front-component`. [Pubblicazione nella posta in arrivo](/it/developers/extend/apps/layout/front-components#posting-to-the-inbox) mostra come aprire la conversazione in seguito.
+
+## Menzioni e riferimenti a record
+
+La casella di posta visualizza i token di riferimento in `text` come chip. Scriveteli con questi aiutanti piuttosto che a mano:
+
+```ts src/logic-functions/flag-idle-deal.ts
+import {
+  inboxMention,
+  inboxReferenceRecord,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+
+const dealReference = await inboxReferenceRecord({
+  objectNameSingular: 'opportunity',
+  recordId: opportunity.id,
+});
+
+await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `idle-deal-${opportunity.id}`,
+  idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
+  title: `${opportunity.name} is idle`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+});
+```
+
+* `inboxMention({ workspaceMemberId })` scrive una menzione di un membro del workspace e `inboxReferenceRecord({ objectNameSingular, recordId })` un chip che collega a qualsiasi record.
+* Entrambi leggono l'etichetta che mostra il chip, come fa il compositore: il nome completo del membro, o la loro e-mail quando il nome è vuoto, e l'identificativo dell'etichetta del record, come il nome dell'azienda. Le parentesi diventano parentesi e le interruzioni di linea diventano spazi, in modo che il chip si renda sempre.
+* Hanno letto con lo stesso accesso del resto della chiamata, in modo che l'accesso deve raggiungere il membro o registrare. Un riferimento record fa due richieste, una per il campo dell'etichetta dell'oggetto e una per il record.
+* Una menzione solo render. Non aggiunge il membro alla conversazione né li notifica, quindi elenca tutti coloro che dovrebbero ricevere il messaggio in `workspaceMemberIds`.
+* `INBOX_ASSISTANT_MENTION` è il testo che il compositore scrive quando un membro menziona l'assistente (`@Ada`), quindi i tuoi messaggi lo chiamano allo stesso modo.
+
+<PageBanner illustration="card-page-inbox" />

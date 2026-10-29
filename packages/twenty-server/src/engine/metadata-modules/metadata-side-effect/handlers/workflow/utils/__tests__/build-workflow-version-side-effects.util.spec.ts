@@ -1,3 +1,4 @@
+import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { buildWorkflowVersionSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-side-effects.util';
 import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
@@ -289,6 +290,181 @@ describe('application workflow command menu item side effects', () => {
         existing.flatCommandMenuItemMaps.byUniversalIdentifier[
           COMMAND_MENU_ITEM_ID
         ],
+    });
+  });
+});
+
+describe('workspace custom application workflow version side effects', () => {
+  const BUILDER_VERSION_UNIVERSAL_IDENTIFIER =
+    '88888888-8888-4888-8888-888888888888';
+  const BUILDER_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER =
+    '99999999-9999-4999-8999-999999999999';
+  const manualDefinition = structuredClone(manifest);
+
+  manualDefinition.version.trigger = {
+    ...manifest.version.trigger,
+    type: 'MANUAL',
+    settings: { availability: { type: 'GLOBAL' }, isPinned: true },
+  };
+
+  const publishedFromBuilder = () => {
+    const existing = persisted(convert(manualDefinition));
+    const workflow =
+      existing.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID]!;
+    const { [VERSION_ID]: managedVersion } =
+      existing.flatWorkflowVersionMaps.byUniversalIdentifier;
+    const { [COMMAND_MENU_ITEM_ID]: managedCommandMenuItem } =
+      existing.flatCommandMenuItemMaps.byUniversalIdentifier;
+    const builderVersion = {
+      ...managedVersion!,
+      universalIdentifier: BUILDER_VERSION_UNIVERSAL_IDENTIFIER,
+      isSystemSideEffect: false,
+    };
+
+    existing.flatWorkflowVersionMaps.byUniversalIdentifier = {
+      [BUILDER_VERSION_UNIVERSAL_IDENTIFIER]: builderVersion,
+    };
+    existing.flatCommandMenuItemMaps.byUniversalIdentifier = {
+      [BUILDER_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER]: {
+        ...managedCommandMenuItem!,
+        universalIdentifier: BUILDER_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: false,
+        position: 3,
+      },
+    };
+    existing.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] = {
+      ...workflow,
+      versionDefinitionHash: null,
+      createdByUserWorkspaceId: 'user-workspace-id',
+    };
+
+    return { existing, builderVersion };
+  };
+
+  const convertForWorkspaceCustomApplication = ({
+    definition,
+    existing,
+  }: {
+    definition: WorkflowManifest;
+    existing: Pick<
+      ReturnType<typeof persisted>,
+      'flatWorkflowMaps' | 'flatWorkflowVersionMaps'
+    >;
+  }) =>
+    fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest: definition,
+      applicationUniversalIdentifier: APPLICATION_ID,
+      now: '2026-10-27T10:00:00.000Z',
+      logicFunctionIdByUniversalIdentifier: new Map(),
+      existingWorkflow:
+        existing.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID],
+      activeVersion:
+        existing.flatWorkflowVersionMaps.byUniversalIdentifier[
+          BUILDER_VERSION_UNIVERSAL_IDENTIFIER
+        ],
+      isWorkspaceCustomApplication: true,
+    });
+
+  it('does nothing when the definition matches the active version', () => {
+    const { existing } = publishedFromBuilder();
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: manualDefinition,
+      existing,
+    });
+
+    expect(diff(workflow, existing)).toEqual({});
+  });
+
+  it('archives the active version and publishes the changed definition in the same migration', () => {
+    const { existing, builderVersion } = publishedFromBuilder();
+    const changed = structuredClone(manualDefinition);
+
+    changed.version.steps[0].name = 'Updated step';
+
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: changed,
+      existing,
+    });
+    const version = workflow.flatUniversalWorkflowVersion!;
+    const operations = expand(workflow, existing);
+
+    expect(version.id).not.toBe(builderVersion.id);
+    expect(operations.workflowVersion).toEqual({
+      flatEntityToCreate: { [version.universalIdentifier]: version },
+      flatEntityToUpdate: {
+        [BUILDER_VERSION_UNIVERSAL_IDENTIFIER]: {
+          ...builderVersion,
+          status: 'ARCHIVED',
+        },
+      },
+    });
+    expect(
+      operations.commandMenuItem?.flatEntityToDelete?.[
+        BUILDER_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
+      ],
+    ).toBeDefined();
+    expect(
+      operations.commandMenuItem?.flatEntityToCreate?.[COMMAND_MENU_ITEM_ID],
+    ).toMatchObject({ coreWorkflowVersionId: version.id });
+    expect(diff(workflow, existing).workflow?.flatEntityToUpdate).toEqual({
+      [WORKFLOW_ID]: expect.objectContaining({
+        lastPublishedCoreWorkflowVersionId: version.id,
+        createdByUserWorkspaceId: 'user-workspace-id',
+      }),
+    });
+  });
+
+  it('keeps the builder trigger command of the active version on a rename', () => {
+    const { existing, builderVersion } = publishedFromBuilder();
+    const workflow = convertForWorkspaceCustomApplication({
+      definition: { ...manualDefinition, name: 'Renamed workflow' },
+      existing,
+    });
+    const operations = expand(workflow, existing);
+
+    expect(operations.workflowVersion).toEqual({
+      flatEntityToUpdate: {
+        [BUILDER_VERSION_UNIVERSAL_IDENTIFIER]: expect.objectContaining({
+          id: builderVersion.id,
+          status: 'ACTIVE',
+        }),
+      },
+    });
+    expect(operations.commandMenuItem).toEqual({
+      flatEntityToDelete: {},
+      flatEntityToUpdate: {
+        [BUILDER_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER]:
+          expect.objectContaining({
+            label: 'Renamed workflow',
+            position: 3,
+            isSystemSideEffect: false,
+            coreWorkflowVersionId: builderVersion.id,
+          }),
+      },
+    });
+  });
+
+  it('publishes the first version of a workflow without an active one', () => {
+    const { existing, builderVersion } = publishedFromBuilder();
+
+    existing.flatWorkflowVersionMaps.byUniversalIdentifier[
+      BUILDER_VERSION_UNIVERSAL_IDENTIFIER
+    ] = { ...builderVersion, status: WorkflowVersionStatus.DEACTIVATED };
+
+    const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest: manualDefinition,
+      applicationUniversalIdentifier: APPLICATION_ID,
+      now: '2026-10-27T10:00:00.000Z',
+      logicFunctionIdByUniversalIdentifier: new Map(),
+      existingWorkflow:
+        existing.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID],
+      isWorkspaceCustomApplication: true,
+    });
+    const version = workflow.flatUniversalWorkflowVersion!;
+
+    expect(expand(workflow, existing).workflowVersion).toEqual({
+      flatEntityToCreate: { [version.universalIdentifier]: version },
+      flatEntityToUpdate: {},
     });
   });
 });

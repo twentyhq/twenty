@@ -1,0 +1,95 @@
+---
+title: Mesaje
+description: Postează mesaje din aplicația ta în căsuța poștală a membrilor, de la o funcție logică sau o componentă frontală.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Aplicația ta poate începe și continua conversațiile în căsuța poștală a membrilor spațiului de lucru, unde și ei vorbesc cu asistentul Twenty. Un mesaj se poate termina cu o întrebare, un formular sau o modificare pentru aprobare, pe care membrul îl răspunde din partea chatului, înainte ca conversația să continue cu asistentul.
+
+Ajutoarele de intrare sunt exportate atât din `douăzeci de aplicații/logic-funcție" cât și din `douăzeci de aplicații/componenta frontală\`, astfel încât un buton rulează programat și un buton din aplicație să posteze în același mod.
+
+## Trimiterea unui mesaj
+
+`sendInboxMessage()` postează un mesaj de la aplicația ta în conversațiile unuia sau mai multor membri ai spațiului de lucru și returnează `threadId` conversației.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+Puncte principale:
+
+* `workspaceMemberIds` enumeră membrii care primesc conversaţia, cel puţin unul. Primul membru al unei noi conversaţii îl deţine, iar ceilalţi îl urmăresc ca participanţi. Un trimis ulterior sub aceeaşi cheie pe care se adaugă noii membri; membrii pe care îi părăseşte conversaţia.
+* `threadKey` alege conversaţia pentru această aplicaţie, împărtăşită de fiecare membru către care este trimisă. O nouă cheie începe o conversație intitulată \`title"; o cheie pe care ai folosit-o înainte de a adăuga mesajul la acea conversație.
+* `idempotencyKey` identifică mesajul din conversaţie. Trimițând din nou cu aceleași chei nu scrie nimic nou, așa că reîncearcă și rulările simultane nu dublează niciodată un mesaj.
+* `text` este markdown, și poate avea [menționări și referințe înregistrare](#mentions-and-record-references).
+* `toolCall` (opţional) încheie mesajul pe unul dintre el:
+  * un apel la membrii răspunsuri, care pune pauză de conversație: `ask_question` (o întrebare cu mai multe opțiuni), `request_form` (câmpuri de completat) sau `propose_tool_call` (un apel pentru aprobare). `input` acesteia ia `toolName`, `arguments` pe care le-ai apela unealtă și un `summary` de o propoziție. Unealta trebuie să fie una dintre funcțiile implicite ale aplicației dvs., cum ar fi `create_one_person` sau `update_one_oportunity` (cu înregistrarea `id`); un e-mail (`send_email` sau `draft_email`, cu `recipients`, `subject` și un `body` în HTML) nu are nevoie de permisiunea aplicației. Membrul revizuieşte apelul pe aceeaşi carte ca şi apelul propus de asistent, îl modifică dacă doresc, iar apelul aprobat se desfășoară cu acces propriu;
+  * una dintre uneltele proprii ale aplicației, prin `logicFunctionUniversalIdentifier`, redat de componenta din față cu `input` și `output` pe care le treci. Nu întrerupe conversația.
+* Doar un singur apel răspunsurile membrului pot aştepta într-o conversaţie odată: trimiterea unui altul înainte ca ei să răspundă nu reuşeşte cu `THREAD_AWAITING_ANSWER`. Mesajele simple și apelurile prin instrumente de aplicații sunt încă acceptate.
+* Numai membrul care deține o conversație îl poate șterge, şi o conversaţie ştearsă pentru fiecare membru: nu este recreată şi nu se adaugă nimic la ea. Ceilalți membri se pot dezabona să o scoată din propria căsuță poștală.
+* Fiecare membru trebuie să aibă permisiunea `AI`, iar apelul eşuează fără a scrie mesajul când unul dintre ei nu poate purta conversaţia. Aplicația ta [rolul implicit](/ro/developers/extend/apps/config/roles) trebuie să acorde `SystemPermissionFlag.AI`.
+
+### Cine trimite mesajul
+
+Un mesaj este întotdeauna scris de aplicația ta, indiferent de ce a declanșat apelul. Apelul în sine funcționează ca [clienții API implici](/ro/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses):
+
+* Într-o funcție logică, aceasta acționează ca persoana care a declanșat cursul, sau ca aplicarea dumneavoastră atunci când nimeni nu a făcut, cum ar fi la un program de cron.
+* Într-o componentă din față, aceasta acționează ca membru care se uită la pagină. Când token-ul a expirat, apelul îl reîmprospătează o dată la douăzeci și recuperează.
+
+Persoana din spatele apelului are nevoie și de permisiunea `AI`, ca orice destinatar.
+
+Pentru a posta de pe o componentă din faţă, importă acelaşi ajutor din `twenty-sdk/front-component`. [Postarea în căsuța poștală](/ro/developers/extend/apps/layout/front-components#posting-to-the-inbox) arată cum să deschidă conversația după aceea.
+
+## Mențiuni și referințe ale înregistrărilor
+
+Căsuța poștală redă tokeni de referință în `text` ca cipuri. Scrieţi-le cu aceste ajutoare, nu de mână:
+
+```ts src/logic-functions/flag-idle-deal.ts
+import {
+  inboxMention,
+  inboxReferenceRecord,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+
+const dealReference = await inboxReferenceRecord({
+  objectNameSingular: 'opportunity',
+  recordId: opportunity.id,
+});
+
+await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `idle-deal-${opportunity.id}`,
+  idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
+  title: `${opportunity.name} is idle`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+});
+```
+
+* `inboxMention({ workspaceMemberId })` scrie o mențiune a unui membru al spațiului de lucru, iar `inboxReferenceRecord({ objectNameSingular, recordId })` un cip care se conectează la orice înregistrare.
+* Amândoi citesc eticheta pe care cipul o arată, după cum face compozitorul: numele complet al membrului, sau adresa lor de e-mail atunci când numele este gol și identificatorul etichetei înregistrării, cum ar fi numele companiei. Parantezele devin paranteze şi rupturile de linie devin spaţii, astfel încât cipul se redă întotdeauna.
+* Au citit cu acelaşi acces ca şi restul apelului, astfel încât accesul trebuie să ajungă la membru sau la înregistrare. O referință de înregistrare face două solicitări, una pentru câmpul de etichetare al obiectului și una pentru înregistrare.
+* O mențiune doar de randare. Acesta nu adaugă membrul la conversație sau îi notifică, așa că listează pe toți cei care ar trebui să primească mesajul în `workspaceMemberIds`.
+* `INBOX_ASSISTANT_MENTION` este textul pe care îl scrie compozitorul atunci când un membru menționează asistentul (`@Ada`), așa că mesajele tale îl numesc în același mod.
+
+<PageBanner illustration="card-page-inbox" />

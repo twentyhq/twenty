@@ -174,6 +174,8 @@ export type {
   RelationFieldManifest,
   FieldManifest,
 } from './fieldManifestType';
+export type { FieldPermissionAction } from './fieldPermissionActionType';
+export { FIELD_PERMISSION_ACTIONS } from './fieldPermissionActionType';
 export type {
   CommandMenuItemManifest,
   FrontComponentWidgetPageLayoutType,
@@ -196,6 +198,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { McpServerManifest } from './mcpServerManifestType';
 export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
