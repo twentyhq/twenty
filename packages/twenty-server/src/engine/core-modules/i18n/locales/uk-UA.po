@@ -2385,6 +2385,12 @@ msgctxt "fieldMetadata.label"
 msgid "Campaigns"
 msgstr "Кампанії"
 
+#. js-lingui-id: ig79t+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Campaigns"
+msgstr ""
+
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
