@@ -376,6 +376,88 @@
 
 .salesfarce
   :is(
+    .tabler-icon-chevron-down,
+    [data-table-header='true'] .tabler-icon-arrow-down
+  ) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tri%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237a7a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b2b2b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3.5%205.5%20H12.5%20L8%2011Z%22%20fill%3D%22url%28%23tri%29%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-chevron-up,
+    [data-table-header='true'] .tabler-icon-arrow-up
+  ) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tri%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237a7a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b2b2b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M3.5%2010.5%20H12.5%20L8%205Z%22%20fill%3D%22url%28%23tri%29%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-chevron-right) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tri%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237a7a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b2b2b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M5.5%203.5%20V12.5%20L11%208Z%22%20fill%3D%22url%28%23tri%29%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-chevron-left) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22tri%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%237a7a7a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b2b2b%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M10.5%203.5%20V12.5%20L5%208Z%22%20fill%3D%22url%28%23tri%29%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-dots-vertical) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ball%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%223%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%227.4%22%20cy%3D%222.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%227.4%22%20cy%3D%227.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%2213%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%227.4%22%20cy%3D%2212.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-dots) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22ball%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231e5fa6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%223%22%20cy%3D%228%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%222.4%22%20cy%3D%227.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%227.4%22%20cy%3D%227.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%228%22%20r%3D%221.9%22%20fill%3D%22url%28%23ball%29%22%20stroke%3D%22%2316467d%22%20stroke-width%3D%220.5%22%2F%3E%3Ccircle%20cx%3D%2212.4%22%20cy%3D%227.4%22%20r%3D%220.6%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.8%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-x) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22close%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f3907a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23c4261a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%221.5%22%20width%3D%2213%22%20height%3D%2213%22%20rx%3D%222.5%22%20fill%3D%22url%28%23close%29%22%20stroke%3D%22%238c1a10%22%2F%3E%3Crect%20x%3D%222.3%22%20y%3D%222.3%22%20width%3D%2211.4%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M5.2%205.2%20L10.8%2010.8%20M10.8%205.2%20L5.2%2010.8%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-layout-sidebar-left-collapse) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22pane%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%222.5%22%20width%3D%2213%22%20height%3D%2211%22%20rx%3D%221.2%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%233e6b9e%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%223%22%20width%3D%224%22%20height%3D%2210%22%20fill%3D%22url%28%23pane%29%22%2F%3E%3Crect%20x%3D%222.4%22%20y%3D%223.4%22%20width%3D%221%22%20height%3D%229.2%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.45%22%2F%3E%3Cpath%20d%3D%22M11.8%205.6%20V10.4%20L8.8%208Z%22%20fill%3D%22%233e6b9e%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-layout-sidebar-left-expand) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22pane%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%222.5%22%20width%3D%2213%22%20height%3D%2211%22%20rx%3D%221.2%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%233e6b9e%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%223%22%20width%3D%224%22%20height%3D%2210%22%20fill%3D%22url%28%23pane%29%22%2F%3E%3Crect%20x%3D%222.4%22%20y%3D%223.4%22%20width%3D%221%22%20height%3D%229.2%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.45%22%2F%3E%3Cpath%20d%3D%22M9.2%205.6%20V10.4%20L12.2%208Z%22%20fill%3D%22%233e6b9e%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-layout-sidebar-right,
+    .tabler-icon-layout-sidebar-right-collapse,
+    .tabler-icon-layout-sidebar-right-expand
+  ) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22pane%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20x%3D%221.5%22%20y%3D%222.5%22%20width%3D%2213%22%20height%3D%2211%22%20rx%3D%221.2%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%233e6b9e%22%2F%3E%3Crect%20x%3D%2210%22%20y%3D%223%22%20width%3D%224%22%20height%3D%2210%22%20fill%3D%22url%28%23pane%29%22%2F%3E%3Crect%20x%3D%2210.4%22%20y%3D%223.4%22%20width%3D%221%22%20height%3D%229.2%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.45%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce
+  :is(
+    .tabler-icon-maximize,
+    .tabler-icon-arrows-diagonal,
+    .tabler-icon-arrows-maximize
+  ) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22frame%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2.2%206.2%20V2.2%20H6.2%20M9.8%202.2%20H13.8%20V6.2%20M13.8%209.8%20V13.8%20H9.8%20M6.2%2013.8%20H2.2%20V9.8%22%20fill%3D%22none%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.2%206.2%20V2.2%20H6.2%20M9.8%202.2%20H13.8%20V6.2%20M13.8%209.8%20V13.8%20H9.8%20M6.2%2013.8%20H2.2%20V9.8%22%20fill%3D%22none%22%20stroke%3D%22url%28%23frame%29%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-arrow-up-right, .tabler-icon-external-link) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22arrow%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239fd3f7%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232b7fc6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M2.6%2011.8%20L9%205.4%20H5.8%20V2.6%20H13.4%20V10.2%20H10.6%20V7%20L4.2%2013.4Z%22%20fill%3D%22url%28%23arrow%29%22%20stroke%3D%22%231d5f99%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M6.4%203.2%20H12.8%20V4.2%20H6.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-plus) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22plus%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238be884%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232c9a2c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M6.2%201.6%20H9.8%20V6.2%20H14.4%20V9.8%20H9.8%20V14.4%20H6.2%20V9.8%20H1.6%20V6.2%20H6.2Z%22%20fill%3D%22url%28%23plus%29%22%20stroke%3D%22%231d6b1d%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%226.8%22%20y%3D%222.2%22%20width%3D%221.2%22%20height%3D%224.4%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.55%22%2F%3E%3Crect%20x%3D%222.2%22%20y%3D%226.8%22%20width%3D%224.4%22%20height%3D%221.2%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.55%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-circle-plus) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22plus%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238be884%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%232c9a2c%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%228%22%20cy%3D%228%22%20r%3D%226.8%22%20fill%3D%22url%28%23plus%29%22%20stroke%3D%22%231d6b1d%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M8%204.3%20V11.7%20M4.3%208%20H11.7%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M3.2%206.4%20C4%204.2%206%202.9%208.3%202.9%20C6.2%203.6%204.5%204.8%203.2%206.4Z%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.6%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-heart-off) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22heart%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff8a9a%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d0203a%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cpath%20d%3D%22M8%2014.2%20C3.6%2011%201.4%208.6%201.4%205.8%20C1.4%203.6%203%202%205%202%20C6.3%202%207.4%202.7%208%203.8%20C8.6%202.7%209.7%202%2011%202%20C13%202%2014.6%203.6%2014.6%205.8%20C14.6%208.6%2012.4%2011%208%2014.2Z%22%20fill%3D%22url%28%23heart%29%22%20stroke%3D%22%238c1028%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.5%2014%20L13.5%202%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M2.5%2014%20L13.5%202%22%20stroke%3D%22%235e6a76%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce :is(.tabler-icon-tool) {
+  --salesfarce-icon: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22steel%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f4f6f8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237f8b98%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Cg%20transform%3D%22rotate%2845%208%208%29%22%3E%3Crect%20x%3D%226.9%22%20y%3D%227.2%22%20width%3D%222.2%22%20height%3D%227.8%22%20rx%3D%221.1%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%2F%3E%3Cpath%20d%3D%22M6.8%201.2%20V4.4%20H9.2%20V1.2%20A3.6%203.6%200%201%201%206.8%201.2Z%22%20fill%3D%22url%28%23steel%29%22%20stroke%3D%22%234f5a66%22%20stroke-width%3D%220.8%22%20stroke-linejoin%3D%22round%22%2F%3E%3Crect%20x%3D%227.4%22%20y%3D%228%22%20width%3D%220.7%22%20height%3D%226.2%22%20rx%3D%220.35%22%20fill%3D%22%23ffffff%22%20opacity%3D%220.7%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+}
+
+.salesfarce
+  :is(
     .tabler-icon-home,
     .tabler-icon-building-skyscraper,
     .tabler-icon-user,
@@ -486,7 +568,30 @@
     [data-click-outside-id='workflow-diagram-step-node-base']
       .tabler-icon-sparkles,
     [data-click-outside-id='workflow-diagram-step-node-base']
-      .tabler-icon-database
+      .tabler-icon-database,
+    .tabler-icon-chevron-down,
+    [data-table-header='true'] .tabler-icon-arrow-down,
+    .tabler-icon-chevron-up,
+    [data-table-header='true'] .tabler-icon-arrow-up,
+    .tabler-icon-chevron-right,
+    .tabler-icon-chevron-left,
+    .tabler-icon-dots-vertical,
+    .tabler-icon-dots,
+    .tabler-icon-x,
+    .tabler-icon-layout-sidebar-left-collapse,
+    .tabler-icon-layout-sidebar-left-expand,
+    .tabler-icon-layout-sidebar-right,
+    .tabler-icon-layout-sidebar-right-collapse,
+    .tabler-icon-layout-sidebar-right-expand,
+    .tabler-icon-maximize,
+    .tabler-icon-arrows-diagonal,
+    .tabler-icon-arrows-maximize,
+    .tabler-icon-arrow-up-right,
+    .tabler-icon-external-link,
+    .tabler-icon-plus,
+    .tabler-icon-circle-plus,
+    .tabler-icon-heart-off,
+    .tabler-icon-tool
   )
   > :is(path, rect, circle, line, polyline, polygon, ellipse, g) {
   opacity: 0;
