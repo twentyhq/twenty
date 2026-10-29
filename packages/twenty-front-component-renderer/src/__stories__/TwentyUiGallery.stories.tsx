@@ -62,7 +62,7 @@ import {
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
 import { popoverTest } from '@/__stories__/twenty-ui-gallery/utils/popoverTest';
 import { selectTest } from '@/__stories__/twenty-ui-gallery/utils/selectTest';
-import { createLongListSelectTest } from '@/__stories__/twenty-ui-gallery/utils/createLongListSelectTest';
+import { selectLongListTest } from '@/__stories__/twenty-ui-gallery/utils/selectLongListTest';
 import { tooltipFirstHoverTest } from '@/__stories__/twenty-ui-gallery/utils/tooltipFirstHoverTest';
 import { switchTest } from '@/__stories__/twenty-ui-gallery/utils/switchTest';
 import { tabsTest } from '@/__stories__/twenty-ui-gallery/utils/tabsTest';
@@ -563,32 +563,18 @@ export const SelectPreact: Story = createGalleryStory({
   play: selectTest,
 });
 
-export const SelectLongListReopeningReact: Story = createGalleryStory({
+export const SelectLongListReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select-long-list',
   runtime: 'react',
   decorators: [SelectPageDecorator],
-  play: createLongListSelectTest('selection'),
+  play: selectLongListTest,
 });
 
-export const SelectLongListReopeningPreact: Story = createGalleryStory({
+export const SelectLongListPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select-long-list',
   runtime: 'preact',
   decorators: [SelectPageDecorator],
-  play: createLongListSelectTest('selection'),
-});
-
-export const SelectLongListOutsideHostReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-select-long-list',
-  runtime: 'react',
-  decorators: [SelectPageDecorator],
-  play: createLongListSelectTest('host'),
-});
-
-export const SelectLongListOutsideHostPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-select-long-list',
-  runtime: 'preact',
-  decorators: [SelectPageDecorator],
-  play: createLongListSelectTest('host'),
+  play: selectLongListTest,
 });
 
 export const ToastReact: Story = createGalleryStory({

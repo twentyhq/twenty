@@ -1,6 +1,6 @@
 import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
 import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
-import { findRemoteElementIdContainingNode } from '@/host/geometry/utils/findRemoteElementIdContainingNode';
+import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 const createOutsidePressTracker = ({
   ownedElements = [],
@@ -9,20 +9,19 @@ const createOutsidePressTracker = ({
   ownedElements?: Element[];
   hasActivePointerCaptureForEvent?: (event: object) => boolean;
 } = {}) => {
-  const remoteElementIdByRegisteredNode = new WeakMap<object, string>();
+  const geometryTracker = createGeometryTracker();
 
-  for (const element of ownedElements) {
-    remoteElementIdByRegisteredNode.set(element, 'owned-element');
+  for (const [ownedElementIndex, ownedElement] of ownedElements.entries()) {
+    geometryTracker.registerNode(
+      `owned-element-${ownedElementIndex}`,
+      ownedElement,
+    );
   }
 
   const pushOutsidePressEvent = jest.fn();
   const dispose = trackHostOutsidePress({
-    documentTarget: document,
-    findRemoteElementIdContainingNode: (node) =>
-      findRemoteElementIdContainingNode({
-        node,
-        remoteElementIdByRegisteredNode,
-      }),
+    findRemoteElementIdContainingNode:
+      geometryTracker.findRemoteElementIdContainingNode,
     pushOutsidePressEvent,
     hasActivePointerCaptureForEvent,
   });

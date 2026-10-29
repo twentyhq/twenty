@@ -4,9 +4,7 @@ import { type PressEventTransport } from '@/host/events/types/PressEventTranspor
 export type HostOutsidePressController = {
   observeOutsidePresses: () => void;
   unobserveOutsidePresses: () => void;
-  setPressEventTransport: (
-    pressEventTransport: PressEventTransport | null,
-  ) => void;
+  setPressEventTransport: (pressEventTransport: PressEventTransport) => void;
   forwardUnhandledOwnedPress: (hostEvent: HostEventDispatchFields) => void;
   reset: () => void;
 };

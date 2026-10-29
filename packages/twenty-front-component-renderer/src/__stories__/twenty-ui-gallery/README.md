@@ -94,7 +94,7 @@ effect within the interaction timeout.
 | `twenty-ui-checkbox`             | Checkbox                                                                                                                                |
 | `twenty-ui-radio-group`          | RadioGroup, Radio Root/Indicator and styled cards, SegmentedControl                                                                     |
 | `twenty-ui-tooltip`              | Tooltip (convenience and compound APIs)                                                                                                 |
-| `twenty-ui-tooltip-first-hover`  | Tooltip on a ghost icon Button, default timing, button/SVG hover, exit and re-entry without a worker ThemeProvider                      |
+| `twenty-ui-tooltip-first-hover`  | Tooltip on a ghost icon Button, default timing, button/SVG hover, exit and re-entry                                                     |
 | `twenty-ui-responsive-hooks`     | useIsMobile, useIsTouchDevice, Button hotkeys                                                                                           |
 | `twenty-ui-reading-directions`   | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`)     |
 | `twenty-ui-country-select`       | CountrySelect (`TwentyUiCountrySelect.stories.tsx`)                                                                                     |
@@ -302,31 +302,26 @@ expected-to-fail by the runner.
 
 | Component                                                             | Current limitation                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Popover (React and Preact) | Visible body-portal content, attachment to the trigger, repeated closing and reopening, and outside-press dismissal are checked. Full focus restoration, scrolling and collision coverage remain pending. |
-| Select (React and Preact) | The long-list fixture checks default anchor positioning, repeated selection/reopening and host outside dismissal without a worker ThemeProvider. Explicit `alignItemWithTrigger={true}` remains unsupported in front-component workers. Full focus restoration, scrolling and collision coverage remain pending. |
+| Popover (React and Preact) | Full focus restoration, scrolling and collision coverage remain pending. |
+| Select (React and Preact) | Explicit `alignItemWithTrigger={true}` is unsupported in front-component workers. Full focus restoration, scrolling and collision coverage remain pending. |
 | CountrySelect (React and Preact)                                       | Fixtures pass pointer opening, filtering, disabled interaction, translated labels and decorative flags, controlled/uncontrolled shorthand and compound selection, null clearing/reselection, canceled changes, external values, trigger and option-group render/ref targets, and search input props/ref. Search keyboard activation and IME (API-34), page sessions (API-35), and full portal, geometry, scrolling, outside dismissal and focus restoration acceptance (C04-C07) remain open. |
 | PhoneCountryPicker (React and Preact)                             | React interactions and React/Preact trigger cases pass, covering shorthand/compound selection, cancellation, controlled clearing, native refs/render and RTL calling codes. Strict Preact interaction remains failing: typing `"+966"` yields `"966"`, before the clear/replacement assertions run. The input propagation gap remains visible in the active fixture.                                                                                        |
 | Slider (React)                                                        | Edge-aligned thumbs stay hidden until the value changes. Base UI 1.8 and 1.9 set up the thumb's `ResizeObserver` before React attaches the `Slider.Control` ref, so the thumb never re-measures once the first host geometry arrives ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995), fix pending in [mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)). Preact attaches the ref first, so its thumbs appear. `thumbAlignment="center"` avoids the issue. |
 | OverflowingList                                                       | Item widths come from the last host layout, because a worker cannot lay out the measuring state synchronously. The truncated last item is measured at its truncated width, so the visible count can differ from a native render when that item's full width decides whether it fits.                                                                                                                                                                                                 |
 | Responsive hooks                                                      | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width.                          |
 
-`SelectLongListReopening` and `SelectLongListOutsideHost` reproduce the application's
-20-option engineer picker with the fifth engineer selected, a controlled value,
-`modal={false}` and a page origin at 220px left and 48px top. The previous
-three-option fixture missed a live failure: closing and reopening the long list
-collapsed its popup to 10px high while its option rows remained 32px high, and
-shifted it away from the trigger. The long-list story reproduced that failure;
-`alignItemWithTrigger={false}` restored the popup. `Select.Positioner` now defaults
-to that setting. The retained fixture omits the prop and checks popup dimensions,
-overlap with the trigger, pointer reachability and repeated reopening. Explicit
-item alignment remains unsupported in workers, and these checks do not establish
-full deployed application behavior.
+`SelectLongList` reproduces the application's 20-option engineer picker with the
+fifth engineer selected, a controlled value, `modal={false}` and a page origin at
+220px left and 48px top. It checks host outside dismissal, reopening through the
+trigger and option selection, with popup dimensions, overlap with the trigger and
+pointer reachability on every open. Aligning the selected item with the trigger
+collapsed the reopened popup to 10px in workers, so `Select.Positioner` defaults
+`alignItemWithTrigger` to false.
 
 `TooltipFirstHover` uses a direct ghost icon Button and the default hover delay.
 Its play waits one sandbox round trip before the first hover to allow Base UI's
 native listener effects to finish. It checks visible, anchored content when
 hovering the button or its SVG icon, then leaving and re-entering the trigger.
-Native mouse probes pass button-padding and SVG hover, movement within the trigger, exit and re-entry in both runtimes. No Tooltip runtime fix was established by these probes.
 
 The CurrencyPicker fixtures cover shorthand and composed selection in React and
 Preact, disabled controls and options, exact no-results/name/symbol search,
@@ -404,14 +399,15 @@ still dismisses a popup. A captured gesture's release, and the `mouseup` and
 such as keyboard activation of a host control, are not forwarded: the worker
 reports `document.body` as active whenever host focus is elsewhere, so Base UI
 would move focus back into the component. Presses on host scrollbars are not
-forwarded either, as Base UI ignores them natively. Worker dispatches set
-`window.event`, so React flushes the resulting close before the next forwarded
-press as it does in a browser. Touch swipes outside the component do not
-dismiss popups, because the worker has no `TouchEvent` touch lists for Base UI's
-touch tracking; taps still close them through their compatibility `mousedown`.
-Dropdown and Popover stories verify the dismissal behavior described above;
-other components still need their own acceptance checks. General host keyboard
-forwarding and full focus restoration remain separate work.
+forwarded either, as Base UI ignores them natively. Dispatches of outside
+presses and of the remaining owned presses set `window.event`, so React flushes
+the resulting close before the next forwarded press as it does in a browser.
+Touch swipes outside the component do not dismiss popups, because the worker has
+no `TouchEvent` touch lists for Base UI's touch tracking; taps still close them
+through their compatibility `mousedown`. Dropdown and Popover stories verify the
+dismissal behavior described above; other components still need their own
+acceptance checks. General host keyboard forwarding and full focus restoration
+remain separate work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures

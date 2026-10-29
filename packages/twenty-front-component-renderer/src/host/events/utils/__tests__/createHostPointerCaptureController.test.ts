@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
-import { trackHostOutsidePress } from '@/host/events/utils/trackHostOutsidePress';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createHostPointerCaptureController } from '../createHostPointerCaptureController';
@@ -100,29 +99,14 @@ describe('createHostPointerCaptureController', () => {
     document.body.replaceChildren();
   });
 
-  it('leaves an outside release after capture loss on the captured event path', () => {
-    const { controller, element, geometryTracker, pushCapturedPointerEvent } =
+  it('keeps a release after capture loss on the captured event path until it is forwarded', () => {
+    const { controller, element, pushCapturedPointerEvent } =
       createCaptureFixture();
     const { handleCaptureLoss, handlePointerUp } = startCapturedGesture({
       controller,
       element,
       pointerId: 0,
     });
-    const pushOutsidePressEvent = jest.fn();
-    const addDocumentListener = jest.spyOn(document, 'addEventListener');
-    const dispose = trackHostOutsidePress({
-      documentTarget: document,
-      findRemoteElementIdContainingNode:
-        geometryTracker.findRemoteElementIdContainingNode,
-      hasActivePointerCaptureForEvent:
-        controller.hasActivePointerCaptureForEvent,
-      pushOutsidePressEvent,
-    });
-    const outsidePointerUp = findRegisteredListener({
-      addEventListenerCalls: addDocumentListener.mock.calls,
-      eventType: 'pointerup',
-    });
-    addDocumentListener.mockRestore();
 
     try {
       element.hasPointerCapture.mockReturnValue(false);
@@ -149,10 +133,8 @@ describe('createHostPointerCaptureController', () => {
           }),
         ),
       ).toBe(false);
-      outsidePointerUp(event);
       handlePointerUp(event);
 
-      expect(pushOutsidePressEvent).not.toHaveBeenCalled();
       expect(
         pushCapturedPointerEvent.mock.calls.map(
           ([update]) => update.eventData.type,
@@ -160,7 +142,6 @@ describe('createHostPointerCaptureController', () => {
       ).toEqual(['lostpointercapture', 'pointerup']);
       expect(controller.hasActivePointerCaptureForEvent(event)).toBe(false);
     } finally {
-      dispose();
       controller.reset();
     }
   });

@@ -1,10 +1,10 @@
 import { type Hooks } from '@remote-dom/polyfill';
-import { isBoolean } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { OUTSIDE_PRESS_OBSERVATION_TRANSPORT_FAILURE_WARNING } from '@/polyfills/events/constants/OutsidePressObservationTransportFailureWarning';
 import { type OutsidePressObservationTransport } from '@/polyfills/events/types/OutsidePressObservationTransport';
 import { type WorkerOutsidePressObservation } from '@/polyfills/events/types/WorkerOutsidePressObservation';
+import { resolveAddEventListenerOptions } from '@/polyfills/utils/resolveAddEventListenerOptions';
 import { isOutsidePressEventType } from '@/utils/isOutsidePressEventType';
 
 type ListenerRegistration = {
@@ -87,9 +87,7 @@ export const installOutsidePressObservation = ({
       return undefined;
     }
 
-    const isCapture = isBoolean(options)
-      ? options
-      : (options?.capture ?? false);
+    const isCapture = resolveAddEventListenerOptions(options).capture === true;
 
     return `${targetName}:${eventType}:${isCapture}`;
   };

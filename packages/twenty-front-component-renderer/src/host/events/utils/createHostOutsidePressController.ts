@@ -36,7 +36,6 @@ export const createHostOutsidePressController = ({
     }
 
     stopTrackingHostOutsidePress = trackHostOutsidePress({
-      documentTarget: document,
       findRemoteElementIdContainingNode:
         geometryTracker.findRemoteElementIdContainingNode,
       hasActivePointerCaptureForEvent:

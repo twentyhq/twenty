@@ -4,26 +4,19 @@ export const createCapturedGestureEventFilter = (
   let isAwaitingReleaseCompatibilityEvents = false;
 
   return (event) => {
-    if (event.type === 'pointerdown') {
-      isAwaitingReleaseCompatibilityEvents = false;
-    }
-
     if (hasActivePointerCaptureForEvent(event)) {
       isAwaitingReleaseCompatibilityEvents = event.type === 'pointerup';
       return true;
     }
 
-    if (
-      !isAwaitingReleaseCompatibilityEvents ||
-      (event.type !== 'mouseup' && event.type !== 'click')
-    ) {
-      return false;
-    }
+    const isReleaseCompatibilityEvent =
+      isAwaitingReleaseCompatibilityEvents &&
+      (event.type === 'mouseup' || event.type === 'click');
 
-    if (event.type === 'click') {
+    if (event.type === 'pointerdown' || event.type === 'click') {
       isAwaitingReleaseCompatibilityEvents = false;
     }
 
-    return true;
+    return isReleaseCompatibilityEvent;
   };
 };

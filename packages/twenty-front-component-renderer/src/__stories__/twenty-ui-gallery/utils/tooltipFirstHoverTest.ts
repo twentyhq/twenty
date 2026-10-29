@@ -5,12 +5,10 @@ import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitFor
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
-import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '@/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { computePopupAnchorGapAndOverlap } from '@/__stories__/twenty-ui-gallery/utils/computePopupAnchorGapAndOverlap';
+import { expectPopupAttachedToAnchor } from '@/__stories__/twenty-ui-gallery/utils/expectPopupAttachedToAnchor';
 
 const PROJECT_HELP = 'Project progress is calculated from completed tasks.';
-const POPUP_POSITION_ROUNDING_TOLERANCE = 1;
 
 export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -32,28 +30,7 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
         const tooltip = page.getByRole('tooltip');
         expect(tooltip).toBeVisible();
         expect(tooltip).toHaveTextContent(PROJECT_HELP);
-        const popupRectangle = tooltip.getBoundingClientRect();
-        expect(popupRectangle.width).toBeGreaterThan(0);
-        expect(popupRectangle.height).toBeGreaterThan(0);
-        const {
-          popupAnchorGap,
-          popupOverlapStart,
-          popupOverlapEnd,
-          anchorOverlapStart,
-          anchorOverlapEnd,
-        } = computePopupAnchorGapAndOverlap({
-          anchor: trigger.getBoundingClientRect(),
-          popup: popupRectangle,
-          side: tooltip.getAttribute('data-side'),
-        });
-        expect(popupAnchorGap).toBeGreaterThanOrEqual(
-          -POPUP_POSITION_ROUNDING_TOLERANCE,
-        );
-        expect(popupAnchorGap).toBeLessThanOrEqual(
-          MAXIMUM_DROPDOWN_TRIGGER_GAP,
-        );
-        expect(popupOverlapStart).toBeLessThan(anchorOverlapEnd);
-        expect(popupOverlapEnd).toBeGreaterThan(anchorOverlapStart);
+        expectPopupAttachedToAnchor({ popup: tooltip, anchor: trigger });
       },
       { timeout: INTERACTION_TIMEOUT },
     );

@@ -2,23 +2,21 @@ import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OUTSIDE_PRESS_EVENT_TYPES } from '@/constants/OutsidePressEventTypes';
+import { type PushOutsidePressEvent } from '@/host/events/types/PushOutsidePressEvent';
 import { createCapturedGestureEventFilter } from '@/host/events/utils/createCapturedGestureEventFilter';
 import { isPressLessClick } from '@/host/events/utils/isPressLessClick';
 import { isScrollbarPress } from '@/host/events/utils/isScrollbarPress';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
-import { type OutsidePressEventData } from '@/types/OutsidePressEventData';
 import { isOutsidePressEventType } from '@/utils/isOutsidePressEventType';
 
 export const trackHostOutsidePress = ({
-  documentTarget,
   findRemoteElementIdContainingNode,
   hasActivePointerCaptureForEvent,
   pushOutsidePressEvent,
 }: {
-  documentTarget: Document;
   findRemoteElementIdContainingNode: FindRemoteElementIdContainingNode;
   hasActivePointerCaptureForEvent: (event: object) => boolean;
-  pushOutsidePressEvent: (eventData: OutsidePressEventData) => void;
+  pushOutsidePressEvent: PushOutsidePressEvent;
 }): (() => void) => {
   const isCapturedGestureEvent = createCapturedGestureEventFilter(
     hasActivePointerCaptureForEvent,
@@ -29,7 +27,6 @@ export const trackHostOutsidePress = ({
       !isOutsidePressEventType(event.type) ||
       isCapturedGestureEvent(event) ||
       isPressLessClick(event) ||
-      isDefined(findRemoteElementIdContainingNode(event.target)) ||
       event
         .composedPath()
         .some((target) =>
@@ -53,12 +50,12 @@ export const trackHostOutsidePress = ({
   };
 
   for (const eventType of OUTSIDE_PRESS_EVENT_TYPES) {
-    documentTarget.addEventListener(eventType, handleOutsidePress, true);
+    document.addEventListener(eventType, handleOutsidePress, true);
   }
 
   return () => {
     for (const eventType of OUTSIDE_PRESS_EVENT_TYPES) {
-      documentTarget.removeEventListener(eventType, handleOutsidePress, true);
+      document.removeEventListener(eventType, handleOutsidePress, true);
     }
   };
 };

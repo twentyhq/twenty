@@ -4,11 +4,8 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
-import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '@/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { computePopupAnchorGapAndOverlap } from '@/__stories__/twenty-ui-gallery/utils/computePopupAnchorGapAndOverlap';
-
-const POPUP_POSITION_ROUNDING_TOLERANCE = 1;
+import { expectPopupAttachedToAnchor } from '@/__stories__/twenty-ui-gallery/utils/expectPopupAttachedToAnchor';
 
 export const popoverTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
@@ -25,28 +22,7 @@ export const popoverTest: TwentyUiGalleryPlayFunction = async ({
         expect(trigger).toHaveAttribute('aria-expanded', 'true');
         const popup = page.getByRole('dialog', { name: 'Account owner' });
         expect(popup).toBeVisible();
-        const popupRectangle = popup.getBoundingClientRect();
-        expect(popupRectangle.width).toBeGreaterThan(0);
-        expect(popupRectangle.height).toBeGreaterThan(0);
-        const {
-          popupAnchorGap,
-          popupOverlapStart,
-          popupOverlapEnd,
-          anchorOverlapStart,
-          anchorOverlapEnd,
-        } = computePopupAnchorGapAndOverlap({
-          anchor: trigger.getBoundingClientRect(),
-          popup: popupRectangle,
-          side: popup.getAttribute('data-side'),
-        });
-        expect(popupAnchorGap).toBeGreaterThanOrEqual(
-          -POPUP_POSITION_ROUNDING_TOLERANCE,
-        );
-        expect(popupAnchorGap).toBeLessThanOrEqual(
-          MAXIMUM_DROPDOWN_TRIGGER_GAP,
-        );
-        expect(popupOverlapStart).toBeLessThan(anchorOverlapEnd);
-        expect(popupOverlapEnd).toBeGreaterThan(anchorOverlapStart);
+        expectPopupAttachedToAnchor({ popup, anchor: trigger });
         expectElementToReceivePointer(
           within(popup).getByRole('button', { name: 'Close details' }),
         );
