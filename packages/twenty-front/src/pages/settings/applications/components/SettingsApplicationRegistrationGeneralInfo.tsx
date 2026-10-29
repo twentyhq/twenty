@@ -7,6 +7,7 @@ import {
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -123,7 +124,10 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           })}
           startElement={ownerWorkspaceAvatar}
         >
-          {getChipLabel(ownerWorkspace.displayName).content}
+          {getAdminWorkspaceLabel({
+            id: registration.ownerWorkspaceId,
+            name: ownerWorkspace.displayName,
+          })}
         </LinkChip>
       ) : (
         <Chip size="md" variant="soft" startElement={ownerWorkspaceAvatar}>

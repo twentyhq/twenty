@@ -1,7 +1,7 @@
-import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { SettingsAdminWorkspaceDataExportSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -100,7 +100,7 @@ export const SettingsAdminWorkspaceContent = ({
             />
           }
         >
-          {getChipLabel(activeWorkspace.name).content}
+          {getAdminWorkspaceLabel(activeWorkspace)}
         </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')

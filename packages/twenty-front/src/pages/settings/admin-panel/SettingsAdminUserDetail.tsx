@@ -28,6 +28,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -78,7 +79,7 @@ export const SettingsAdminUserDetail = () => {
   const tabs =
     userLookupResult?.workspaces.map((workspace) => ({
       id: workspace.id,
-      title: workspace.name,
+      title: getAdminWorkspaceLabel(workspace),
       colorSeed: getWorkspaceAvatarColorSeed(workspace.name),
       logo:
         getImageAbsoluteURI({

@@ -19,6 +19,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { SettingsPath } from 'twenty-shared/types';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
@@ -178,7 +179,10 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                     size="md"
                   />
                   <OverflowingTextWithTooltip
-                    text={workspace.displayName ?? '—'}
+                    text={getAdminWorkspaceLabel({
+                      id: workspace.id,
+                      name: workspace.displayName,
+                    })}
                   />
                 </TableCell>
                 <TableCell

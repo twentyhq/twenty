@@ -6,7 +6,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminApplicationMonitoringData } from '@/settings/admin-panel/apps/types/AdminApplicationMonitoringData';
-import { getAdminApplicationMonitoringWorkspaceLabel } from '@/settings/admin-panel/apps/utils/getAdminApplicationMonitoringWorkspaceLabel';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { APPLICATION_MONITORING_TABLE_METRIC_COLUMNS } from '@/settings/application-monitoring/constants/ApplicationMonitoringTableMetricColumns';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -66,7 +66,10 @@ export const SettingsAdminApplicationMonitoringWorkspacesTable = ({
                 size="md"
               />
               <OverflowingTextWithTooltip
-                text={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
+                text={getAdminWorkspaceLabel({
+                  id: workspace.workspaceId,
+                  name: workspace.workspaceName,
+                })}
               />
             </TableCell>
             <TableCell color={themeCssVariables.font.color.tertiary}>

@@ -31,6 +31,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -211,7 +212,10 @@ export const SettingsAdminWorkspaceDetail = () => {
       : []),
   ];
 
-  const workspaceName = workspace?.name || workspaceId || '';
+  const workspaceName = getAdminWorkspaceLabel({
+    id: workspaceId ?? '',
+    name: workspace?.name,
+  });
   const workspaceLogo = isNonEmptyString(workspace?.logo)
     ? workspace.logo
     : DEFAULT_WORKSPACE_LOGO;

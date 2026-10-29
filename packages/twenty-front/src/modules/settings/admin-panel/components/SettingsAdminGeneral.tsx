@@ -5,6 +5,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { getAdminPanelTopWorkspaceGroups } from '@/settings/admin-panel/utils/getAdminPanelTopWorkspaceGroups';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -265,7 +266,7 @@ export const SettingsAdminGeneral = () => {
                           size="md"
                         />
                         <OverflowingTextWithTooltip
-                          text={workspace.name || '\u2014'}
+                          text={getAdminWorkspaceLabel(workspace)}
                         />
                       </TableCell>
                       <TableCell align="right">
