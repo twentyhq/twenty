@@ -332,6 +332,7 @@ export enum AllMetadataName {
   pageLayoutTab = 'pageLayoutTab',
   pageLayoutWidget = 'pageLayoutWidget',
   permissionFlag = 'permissionFlag',
+  relatedRecordPath = 'relatedRecordPath',
   role = 'role',
   rolePermissionFlag = 'rolePermissionFlag',
   roleTarget = 'roleTarget',
@@ -7658,6 +7659,7 @@ export type UpdateViewInput = {
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };

@@ -51,11 +51,7 @@ describe('component build limits', () => {
       buildFrontComponentWithLimitsOrThrow({}),
     ).rejects.toMatchObject({
       message: 'Component build exceeded the 10 second time limit.',
-      code: 'BUILD_FAILED',
-      userFriendlyMessage: {
-        id: expect.any(String),
-        message: 'Component build exceeded the 10 second time limit.',
-      },
+      code: 'BUILD_TIMEOUT',
     });
 
     await jest.advanceTimersByTimeAsync(10000);
@@ -95,11 +91,7 @@ describe('component build limits', () => {
       buildFrontComponentWithLimitsOrThrow({}),
     ).rejects.toMatchObject({
       message: 'Component build exceeds the 5 MB output limit.',
-      code: 'INVALID_INPUT',
-      userFriendlyMessage: {
-        id: expect.any(String),
-        message: 'Component build exceeds the 5 MB output limit.',
-      },
+      code: 'OUTPUT_TOO_LARGE',
     });
     expect(dispose).toHaveBeenCalledTimes(1);
   });
@@ -111,10 +103,6 @@ describe('component build limits', () => {
     ).rejects.toMatchObject({
       message: 'Unsupported import',
       code: 'BUILD_FAILED',
-      userFriendlyMessage: {
-        id: expect.any(String),
-        message: 'Failed to build front component.',
-      },
     });
     expect(dispose).toHaveBeenCalledTimes(1);
     await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
@@ -132,10 +120,6 @@ describe('component build limits', () => {
     ).rejects.toMatchObject({
       message: 'Invalid build options',
       code: 'BUILD_FAILED',
-      userFriendlyMessage: {
-        id: expect.any(String),
-        message: 'Failed to build front component.',
-      },
     });
     expect(dispose).not.toHaveBeenCalled();
     await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(

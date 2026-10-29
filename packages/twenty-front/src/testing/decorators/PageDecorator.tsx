@@ -25,7 +25,6 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -110,9 +109,7 @@ const Providers = () => {
                         <HelmetProvider>
                           <IconsProvider>
                             <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                              <RecordCreationFormProvider>
-                                <MinimalMetadataGate />
-                              </RecordCreationFormProvider>
+                              <MinimalMetadataGate />
                             </RecordComponentInstanceContextsWrapper>
                           </IconsProvider>
                         </HelmetProvider>
