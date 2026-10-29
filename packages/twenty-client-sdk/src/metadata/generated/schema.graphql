@@ -5375,6 +5375,7 @@ input UpdateViewInput {
   openRecordIn: ViewOpenRecordIn
   position: Float
   shouldHideEmptyGroups: Boolean
+  translations: [MetadataTranslationOverrideInput!]
   type: ViewType
   visibility: ViewVisibility
 }
