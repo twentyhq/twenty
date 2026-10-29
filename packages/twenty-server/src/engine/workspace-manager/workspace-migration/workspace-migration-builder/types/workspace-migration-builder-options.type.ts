@@ -5,4 +5,5 @@ export type WorkspaceMigrationBuilderOptions = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
+  workspaceCustomApplicationUniversalIdentifier?: string;
 };

@@ -12,7 +12,9 @@ describe('Logic function creation should reject server route triggers', () => {
     });
 
     expect(errors).toHaveLength(1);
-    expect(errors[0].extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(errors[0].message).toContain('serverRouteTriggerSettings');
+    expect(errors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(
+      errors[0].extensions.errors.logicFunction[0].errors[0].message,
+    ).toContain('serverRouteTriggerSettings');
   });
 });

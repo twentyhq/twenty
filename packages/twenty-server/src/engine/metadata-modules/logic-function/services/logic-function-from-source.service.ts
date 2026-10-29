@@ -47,16 +47,6 @@ export class LogicFunctionFromSourceService {
     input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
-    if (isDefined(input.serverRouteTriggerSettings)) {
-      throw new LogicFunctionException(
-        'serverRouteTriggerSettings cannot be set on a logic function created from source',
-        LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        {
-          userFriendlyMessage: msg`Server routes can only be defined by an application.`,
-        },
-      );
-    }
-
     const { workspaceCustomFlatApplication: ownerFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
