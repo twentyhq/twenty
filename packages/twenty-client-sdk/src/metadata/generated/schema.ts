@@ -66,10 +66,13 @@ export interface AgentChatChannelSummary {
     doneCount: Scalars['Int']
     hasUnreadAssignedToMe: Scalars['Boolean']
     hasUnreadOpen: Scalars['Boolean']
+    needsInputCount: Scalars['Int']
     openCount: Scalars['Int']
     snoozedCount: Scalars['Int']
     __typename: 'AgentChatChannelSummary'
 }
+
+export type AgentChatChannelThreadFilter = 'ANY' | 'MENTIONED' | 'NEEDS_INPUT'
 
 export interface AgentChatChannelThreadIds {
     endCursor?: Scalars['String']
@@ -4267,6 +4270,7 @@ export interface AgentChatChannelSummaryGenqlSelection{
     doneCount?: boolean | number
     hasUnreadAssignedToMe?: boolean | number
     hasUnreadOpen?: boolean | number
+    needsInputCount?: boolean | number
     openCount?: boolean | number
     snoozedCount?: boolean | number
     __typename?: boolean | number
@@ -7474,7 +7478,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 export interface QueryGenqlSelection{
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
-    agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
+    agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
@@ -11888,6 +11892,12 @@ export const enumAgentChatChannelAssignmentFilter = {
    ANY: 'ANY' as const,
    ASSIGNED_TO_ME: 'ASSIGNED_TO_ME' as const,
    UNASSIGNED: 'UNASSIGNED' as const
+}
+
+export const enumAgentChatChannelThreadFilter = {
+   ANY: 'ANY' as const,
+   MENTIONED: 'MENTIONED' as const,
+   NEEDS_INPUT: 'NEEDS_INPUT' as const
 }
 
 export const enumAgentChatChannelThreadStatus = {

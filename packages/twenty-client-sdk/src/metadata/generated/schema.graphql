@@ -62,8 +62,15 @@ type AgentChatChannelSummary {
   doneCount: Int!
   hasUnreadAssignedToMe: Boolean!
   hasUnreadOpen: Boolean!
+  needsInputCount: Int!
   openCount: Int!
   snoozedCount: Int!
+}
+
+enum AgentChatChannelThreadFilter {
+  ANY
+  MENTIONED
+  NEEDS_INPUT
 }
 
 type AgentChatChannelThreadIds {
@@ -4014,7 +4021,7 @@ type PublicWorkspaceDataSummary {
 type Query {
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
-  agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
+  agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!

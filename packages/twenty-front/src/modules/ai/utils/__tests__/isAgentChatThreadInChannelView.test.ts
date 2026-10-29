@@ -3,6 +3,7 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
@@ -10,6 +11,7 @@ const OPEN_CHANNEL_VIEW: AgentChatChannelView = {
   channelId: 'channel-1',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
   assignment: AgentChatChannelAssignmentFilter.ANY,
+  filter: AgentChatChannelThreadFilter.ANY,
 };
 
 const buildThread = (
@@ -36,6 +38,7 @@ describe('isAgentChatThreadInChannelView', () => {
         thread: buildThread(),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(true);
   });
@@ -46,6 +49,7 @@ describe('isAgentChatThreadInChannelView', () => {
         thread: buildThread({ channelId: 'channel-2' }),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(false);
     expect(
@@ -53,6 +57,7 @@ describe('isAgentChatThreadInChannelView', () => {
         thread: buildThread({ deletedAt: '2026-01-02T00:00:00.000Z' }),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(false);
   });
@@ -67,6 +72,7 @@ describe('isAgentChatThreadInChannelView', () => {
         thread: doneThread,
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(false);
     expect(
@@ -77,6 +83,7 @@ describe('isAgentChatThreadInChannelView', () => {
           channelStatus: AgentChatChannelThreadStatus.DONE,
         },
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(true);
   });
@@ -92,6 +99,7 @@ describe('isAgentChatThreadInChannelView', () => {
           assignment: AgentChatChannelAssignmentFilter.UNASSIGNED,
         },
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(false);
     expect(
@@ -102,6 +110,7 @@ describe('isAgentChatThreadInChannelView', () => {
           assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
         },
         currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(true);
     expect(
@@ -112,6 +121,55 @@ describe('isAgentChatThreadInChannelView', () => {
           assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
         },
         currentWorkspaceMemberId: 'member-2',
+        isMentioned: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('narrows to chats waiting on an answer', () => {
+    const channelView = {
+      ...OPEN_CHANNEL_VIEW,
+      filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
+    };
+
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread({ pendingQuestionMessageId: 'message-1' }),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
+      }),
+    ).toBe(true);
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread(),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
+      }),
+    ).toBe(false);
+  });
+
+  it('narrows to chats the member was mentioned in', () => {
+    const channelView = {
+      ...OPEN_CHANNEL_VIEW,
+      filter: AgentChatChannelThreadFilter.MENTIONED,
+    };
+
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread(),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: true,
+      }),
+    ).toBe(true);
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread(),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
       }),
     ).toBe(false);
   });

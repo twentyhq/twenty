@@ -1,18 +1,22 @@
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
-import { IconButton } from 'twenty-ui/components/input';
-import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconFilter } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
+import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
+import { AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
+import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
+import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
+import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
+import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
+import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
+  AgentChatChannelThreadStatus,
+} from '~/generated-metadata/graphql';
 
 type AiChatInboxChannelViewDropdownProps = {
   channelView: AgentChatChannelView;
@@ -22,78 +26,44 @@ export const AiChatInboxChannelViewDropdown = ({
   channelView,
 }: AiChatInboxChannelViewDropdownProps) => {
   const { t } = useLingui();
-  const instanceId = useId();
   const setAgentChatChannelView = useSetAtomState(agentChatChannelViewState);
-  const { resetRecordSelection } = useResetRecordSelection();
-  const selectedNavigationItem =
-    getAgentChatChannelNavigationItemOrThrow(channelView);
-  const assignmentOptions = [
-    { value: AgentChatChannelAssignmentFilter.ANY, label: t`All` },
-    {
-      value: AgentChatChannelAssignmentFilter.UNASSIGNED,
-      label: t`Unassigned`,
-    },
-    { value: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME, label: t`Mine` },
+  const channelSummary = useAtomStateValue(agentChatChannelSummariesState)[
+    channelView.channelId
   ];
+  const { resetRecordSelection } = useResetRecordSelection();
+  const selectedOpenViewItem = findAgentChatChannelOpenViewItem(channelView);
 
-  const handleAssignmentSelect = (
-    assignment: AgentChatChannelAssignmentFilter,
-  ) => {
-    resetRecordSelection();
-    setAgentChatChannelView({ ...channelView, assignment });
-  };
-
-  const handleViewSelect = ({
-    channelStatus,
+  const handleSelect = ({
     assignment,
-  }: Pick<AgentChatChannelView, 'channelStatus' | 'assignment'>) => {
+    filter,
+  }: Pick<AgentChatChannelView, 'assignment' | 'filter'>) => {
     resetRecordSelection();
-    setAgentChatChannelView({ ...channelView, channelStatus, assignment });
+    setAgentChatChannelView({
+      ...channelView,
+      channelStatus: AgentChatChannelThreadStatus.OPEN,
+      assignment,
+      filter,
+    });
   };
 
   return (
-    <DropdownRoot dropdownId={`ai-chat-channel-view-${instanceId}`} type="menu">
-      <Dropdown.Trigger
-        render={
-          <IconButton
-            size="sm"
-            variant="outline"
-            color={
-              channelView.assignment === AgentChatChannelAssignmentFilter.ANY
-                ? 'neutral'
-                : 'accent'
-            }
-            aria-label={t`Filter channel chats`}
-          >
-            <IconFilter />
-          </IconButton>
-        }
-      />
-      <DropdownContent align="end" aria-label={t`Filter channel chats`}>
-        <Dropdown.Section label={t`View`}>
-          {AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.map((navigationItem) => (
-            <Dropdown.OptionItem
-              key={navigationItem.label.id}
-              startIcon={<navigationItem.Icon />}
-              selected={navigationItem === selectedNavigationItem}
-              onSelect={() => handleViewSelect(navigationItem)}
-            >
-              {t(navigationItem.label)}
-            </Dropdown.OptionItem>
-          ))}
-        </Dropdown.Section>
-        <Dropdown.Section label={t`Assignee`}>
-          {assignmentOptions.map(({ value, label }) => (
-            <Dropdown.OptionItem
-              key={value}
-              selected={value === channelView.assignment}
-              onSelect={() => handleAssignmentSelect(value)}
-            >
-              {label}
-            </Dropdown.OptionItem>
-          ))}
-        </Dropdown.Section>
-      </DropdownContent>
-    </DropdownRoot>
+    <AiChatInboxFilterDropdown
+      isFiltered={
+        channelView.assignment !== AgentChatChannelAssignmentFilter.ANY ||
+        channelView.filter !== AgentChatChannelThreadFilter.ANY
+      }
+      options={AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS.map((openViewItem) => ({
+        key: openViewItem.filterStatus,
+        label: t(
+          AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[openViewItem.filterStatus],
+        ),
+        Icon: AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[openViewItem.filterStatus],
+        count: isDefined(openViewItem.countKey)
+          ? channelSummary?.[openViewItem.countKey]
+          : undefined,
+        isSelected: openViewItem === selectedOpenViewItem,
+        onSelect: () => handleSelect(openViewItem),
+      }))}
+    />
   );
 };

@@ -16,6 +16,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -32,10 +33,10 @@ const OPEN_VIEW: AgentChatChannelView = {
   channelId: 'sales',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
   assignment: AgentChatChannelAssignmentFilter.ANY,
+  filter: AgentChatChannelThreadFilter.ANY,
 };
 
 const OPEN_CHANNEL_LABEL_PATTERN = /^Open\s*·\s*6$/;
-const ASSIGNED_CHANNEL_LABEL_PATTERN = /^Assigned\s*·\s*1$/;
 const INACCESSIBLE_CHANNEL_LABEL_PATTERN = /^Sales\s*·\s*Not open to you$/;
 
 const onOptions = fn();
@@ -98,6 +99,7 @@ const meta = {
     },
     summary: {
       openCount: 6,
+      needsInputCount: 2,
       hasUnreadOpen: false,
       assignedToMeCount: 1,
       hasUnreadAssignedToMe: false,
@@ -119,16 +121,9 @@ export const Open: Story = {
     await expect(
       canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).toHaveAttribute('aria-current', 'true');
-    await userEvent.click(
-      canvas.getByRole('button', { name: ASSIGNED_CHANNEL_LABEL_PATTERN }),
-    );
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
-      ...OPEN_VIEW,
-      assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
-    });
     await expect(
-      canvas.getByRole('button', { name: ASSIGNED_CHANNEL_LABEL_PATTERN }),
-    ).toHaveAttribute('aria-current', 'true');
+      canvas.queryByRole('button', { name: /^Assigned\b/ }),
+    ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
@@ -201,12 +196,24 @@ export const KeyboardAndOptions: Story = {
   },
 };
 
-export const Assigned: Story = {
+export const NeedsInput: Story = {
   args: {
     channelView: {
       ...OPEN_VIEW,
-      assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
+      filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const openItem = canvas.getByRole('button', {
+      name: OPEN_CHANNEL_LABEL_PATTERN,
+    });
+
+    await expect(openItem).toHaveAttribute('aria-current', 'true');
+    await userEvent.click(openItem);
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
+      OPEN_VIEW,
+    );
   },
 };
 
@@ -293,6 +300,7 @@ export const Empty: Story = {
   args: {
     summary: {
       openCount: 0,
+      needsInputCount: 0,
       hasUnreadOpen: false,
       assignedToMeCount: 0,
       hasUnreadAssignedToMe: false,

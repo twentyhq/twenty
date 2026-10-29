@@ -84,9 +84,16 @@ export type AgentChatChannelSummary = {
   doneCount: Scalars['Int']['output'];
   hasUnreadAssignedToMe: Scalars['Boolean']['output'];
   hasUnreadOpen: Scalars['Boolean']['output'];
+  needsInputCount: Scalars['Int']['output'];
   openCount: Scalars['Int']['output'];
   snoozedCount: Scalars['Int']['output'];
 };
+
+export enum AgentChatChannelThreadFilter {
+  ANY = 'ANY',
+  MENTIONED = 'MENTIONED',
+  NEEDS_INPUT = 'NEEDS_INPUT'
+}
 
 export type AgentChatChannelThreadIds = {
   __typename?: 'AgentChatChannelThreadIds';
@@ -5867,6 +5874,7 @@ export type QueryAgentChatChannelThreadIdsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   assignment?: InputMaybe<AgentChatChannelAssignmentFilter>;
   channelId: Scalars['UUID']['input'];
+  filter?: InputMaybe<AgentChatChannelThreadFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<AgentChatChannelThreadStatus>;
 };

@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
@@ -20,6 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -30,7 +32,11 @@ const OPEN_VIEW: AgentChatChannelView = {
   channelId: 'sales',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
   assignment: AgentChatChannelAssignmentFilter.ANY,
+  filter: AgentChatChannelThreadFilter.ANY,
 };
+const OPEN_OPTION_PATTERN = /^Open\b/;
+const NEEDS_INPUT_OPTION_PATTERN = /^Needs input\b/;
+const ASSIGNED_OPTION_PATTERN = /^Assigned\b/;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -88,6 +94,17 @@ const meta = {
         roleIds: [],
       },
     ]);
+    jotaiStore.set(agentChatChannelSummariesState.atom, {
+      [OPEN_VIEW.channelId]: {
+        openCount: 6,
+        needsInputCount: 2,
+        assignedToMeCount: 1,
+        hasUnreadOpen: false,
+        hasUnreadAssignedToMe: false,
+        snoozedCount: 0,
+        doneCount: 0,
+      },
+    });
     jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
@@ -117,33 +134,61 @@ export const Open: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', {
-      name: 'Filter channel chats',
-    });
+    const trigger = canvas.getByRole('button', { name: 'Filter chats' });
 
     await expect(canvas.getByText('Sales')).toBeVisible();
     await expect(canvas.getByText('Open')).toBeVisible();
     await expect(canvas.getByText('1 selected')).toBeVisible();
     await userEvent.click(trigger);
+
+    const openOption = await body.findByRole('menuitemradio', {
+      name: OPEN_OPTION_PATTERN,
+    });
+
+    await expect(openOption).toHaveAttribute('aria-checked', 'true');
+    await expect(within(openOption).getByText('6')).toBeVisible();
     await expect(
-      await body.findByRole('menuitemradio', { name: 'All' }),
-    ).toHaveAttribute('aria-checked', 'true');
+      within(
+        body.getByRole('menuitemradio', { name: NEEDS_INPUT_OPTION_PATTERN }),
+      ).getByText('2'),
+    ).toBeVisible();
+    await expect(
+      body.queryByRole('menuitemradio', { name: 'Snoozed' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      body.queryByRole('menuitemradio', { name: 'Unassigned' }),
+    ).not.toBeInTheDocument();
     await userEvent.click(
-      body.getByRole('menuitemradio', { name: 'Unassigned' }),
+      body.getByRole('menuitemradio', { name: NEEDS_INPUT_OPTION_PATTERN }),
     );
-    await expect(canvas.getByText('Open · Unassigned')).toBeVisible();
+    await expect(canvas.getByText('Needs input')).toBeVisible();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
-
-    await userEvent.click(trigger);
-    await expect(
-      await body.findByRole('menuitemradio', { name: 'Unassigned' }),
-    ).toHaveAttribute('aria-checked', 'true');
-    await userEvent.click(body.getByRole('menuitemradio', { name: 'Mine' }));
-    await expect(canvas.getByText('Assigned')).toBeVisible();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
+    });
 
     await userEvent.click(trigger);
     await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'All' }),
+      await body.findByRole('menuitemradio', { name: 'Mentions' }),
+    );
+    await expect(canvas.getByText('Mentions')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', {
+        name: ASSIGNED_OPTION_PATTERN,
+      }),
+    );
+    await expect(canvas.getByText('Assigned')).toBeVisible();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
+    });
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', { name: OPEN_OPTION_PATTERN }),
     );
     await expect(canvas.getByText('Open')).toBeVisible();
     await expect(canvas.getByText('Sales')).toBeVisible();
@@ -162,15 +207,18 @@ export const Snoozed: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await expect(canvas.getByText('Snoozed')).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Filter chats' }));
+    await expect(
+      await body.findByRole('menuitemradio', { name: OPEN_OPTION_PATTERN }),
+    ).toHaveAttribute('aria-checked', 'false');
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Filter channel chats' }),
+      body.getByRole('menuitemradio', { name: NEEDS_INPUT_OPTION_PATTERN }),
     );
-    await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'Unassigned' }),
-    );
-    await expect(canvas.getByText('Snoozed · Unassigned')).toBeVisible();
-    await expect(canvas.getByText('Sales')).toBeVisible();
-    await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+    await expect(canvas.getByText('Needs input')).toBeVisible();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
+    });
   },
 };
 
@@ -183,52 +231,5 @@ export const ChannelsLoading: Story = {
 
     await expect(canvas.getByText('Open')).toBeVisible();
     await expect(canvas.queryByText('→')).not.toBeInTheDocument();
-  },
-};
-
-export const EveryView: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', {
-      name: 'Filter channel chats',
-    });
-
-    await userEvent.click(trigger);
-    await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'Snoozed' }),
-    );
-    await expect(canvas.getByText('Snoozed')).toBeVisible();
-    await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
-
-    await userEvent.click(trigger);
-    await expect(
-      await body.findByRole('menuitemradio', { name: 'Snoozed' }),
-    ).toHaveAttribute('aria-checked', 'true');
-    await userEvent.click(body.getByRole('menuitemradio', { name: 'Mine' }));
-    await expect(canvas.getByText('Snoozed · Mine')).toBeVisible();
-
-    await userEvent.click(trigger);
-    await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'Done' }),
-    );
-    await expect(canvas.getByText('Done')).toBeVisible();
-
-    await userEvent.click(trigger);
-    await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'Assigned' }),
-    );
-    await expect(canvas.getByText('Assigned')).toBeVisible();
-
-    await userEvent.click(trigger);
-    await expect(
-      await body.findByRole('menuitemradio', { name: 'Assigned' }),
-    ).toHaveAttribute('aria-checked', 'true');
-    await expect(
-      body.getByRole('menuitemradio', { name: 'Mine' }),
-    ).toHaveAttribute('aria-checked', 'true');
-    await userEvent.click(body.getByRole('menuitemradio', { name: 'Open' }));
-    await expect(canvas.getByText('Open')).toBeVisible();
-    await expect(canvas.getByText('Sales')).toBeVisible();
   },
 };

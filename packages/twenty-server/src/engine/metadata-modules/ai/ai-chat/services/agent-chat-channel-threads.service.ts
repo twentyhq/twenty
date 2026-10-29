@@ -10,6 +10,7 @@ import {
 import { type AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { type AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -28,6 +29,8 @@ const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 const IS_ASSIGNED_TO_ME =
   'thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid';
 
+const NEEDS_INPUT = 'thread."pendingQuestionMessageId" IS NOT NULL';
+
 type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 type ReadableThreadsQuery = (readableThreads: {
@@ -39,6 +42,12 @@ const ASSIGNMENT_FILTERS: Record<AgentChatChannelAssignmentFilter, string> = {
   [AgentChatChannelAssignmentFilter.ANY]: '',
   [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND thread."assigneeId" IS NULL`,
   [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND ${IS_ASSIGNED_TO_ME}`,
+};
+
+const THREAD_FILTERS: Record<AgentChatChannelThreadFilter, string> = {
+  [AgentChatChannelThreadFilter.ANY]: '',
+  [AgentChatChannelThreadFilter.NEEDS_INPUT]: `AND ${NEEDS_INPUT}`,
+  [AgentChatChannelThreadFilter.MENTIONED]: `AND participant."lastMentionedAt" IS NOT NULL`,
 };
 
 // Computed here because the client cannot load every chat of every channel to sort them
@@ -54,6 +63,7 @@ export class AgentChatChannelThreadsService {
     channelId,
     status,
     assignment,
+    filter,
     first,
     after,
     ...args
@@ -61,6 +71,7 @@ export class AgentChatChannelThreadsService {
     channelId: string;
     status: AgentChatChannelThreadStatus | null;
     assignment: AgentChatChannelAssignmentFilter | null;
+    filter: AgentChatChannelThreadFilter | null;
     first: number | null;
     after: string | null;
   }): Promise<AgentChatChannelThreadIdsDTO> {
@@ -93,6 +104,7 @@ export class AgentChatChannelThreadsService {
             AND thread."channelId" = :channelThreadsChannelId::uuid
             AND ${STATUS[status ?? AgentChatChannelThreadStatus.OPEN]}
             ${ASSIGNMENT_FILTERS[assignment ?? AgentChatChannelAssignmentFilter.ANY]}
+            ${THREAD_FILTERS[filter ?? AgentChatChannelThreadFilter.ANY]}
             ${buildAgentChatChannelThreadCursorFilter(cursor)}
             ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
@@ -133,6 +145,7 @@ export class AgentChatChannelThreadsService {
     const counts = await this.queryReadableThreads<{
       channelId: string;
       openCount: number;
+      needsInputCount: number;
       assignedToMeCount: number;
       snoozedCount: number;
       doneCount: number;
@@ -143,6 +156,7 @@ export class AgentChatChannelThreadsService {
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread."channelId",
               count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${NEEDS_INPUT})::int AS "needsInputCount",
               count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME})::int AS "assignedToMeCount",
               count(*) FILTER (WHERE ${STATUS.SNOOZED})::int AS "snoozedCount",
               count(*) FILTER (WHERE ${STATUS.DONE})::int AS "doneCount",
@@ -165,6 +179,7 @@ export class AgentChatChannelThreadsService {
     return channels.map(({ id }) => ({
       channelId: id,
       openCount: countByChannelId.get(id)?.openCount ?? 0,
+      needsInputCount: countByChannelId.get(id)?.needsInputCount ?? 0,
       assignedToMeCount: countByChannelId.get(id)?.assignedToMeCount ?? 0,
       snoozedCount: countByChannelId.get(id)?.snoozedCount ?? 0,
       doneCount: countByChannelId.get(id)?.doneCount ?? 0,

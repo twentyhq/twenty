@@ -4,6 +4,7 @@ import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
@@ -20,5 +21,6 @@ export const agentChatChannelViewState =
       ) &&
       Object.values(AgentChatChannelAssignmentFilter).includes(
         channelView.assignment,
-      ),
+      ) &&
+      Object.values(AgentChatChannelThreadFilter).includes(channelView.filter),
   });

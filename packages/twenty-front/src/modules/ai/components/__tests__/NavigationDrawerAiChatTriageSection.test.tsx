@@ -20,6 +20,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
   FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
@@ -186,6 +187,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       channelId: 'sales',
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,
+      filter: AgentChatChannelThreadFilter.ANY,
     });
 
     renderTriage();

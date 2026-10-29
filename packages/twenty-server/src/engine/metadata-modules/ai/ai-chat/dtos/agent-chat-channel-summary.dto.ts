@@ -11,6 +11,9 @@ export class AgentChatChannelSummaryDTO {
   openCount: number;
 
   @Field(() => Int)
+  needsInputCount: number;
+
+  @Field(() => Int)
   assignedToMeCount: number;
 
   @Field(() => Int)

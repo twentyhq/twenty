@@ -52,6 +52,7 @@ type ChannelAccess = { roleIds?: string[] };
 type ChannelThreadsFilter = {
   status?: 'OPEN' | 'SNOOZED' | 'DONE';
   assignment?: 'ANY' | 'UNASSIGNED' | 'ASSIGNED_TO_ME';
+  filter?: 'ANY' | 'NEEDS_INPUT' | 'MENTIONED';
 };
 
 type ChannelThreadMutationName =
@@ -102,7 +103,7 @@ const ASSIGN = parse(
 );
 
 const CHANNEL_THREAD_IDS = parse(
-  `query Ids($channelId: UUID!, $status: AgentChatChannelThreadStatus, $assignment: AgentChatChannelAssignmentFilter, $first: Int, $after: String) { agentChatChannelThreadIds(channelId: $channelId, status: $status, assignment: $assignment, first: $first, after: $after) { threadIds hasNextPage endCursor } }`,
+  `query Ids($channelId: UUID!, $status: AgentChatChannelThreadStatus, $assignment: AgentChatChannelAssignmentFilter, $filter: AgentChatChannelThreadFilter, $first: Int, $after: String) { agentChatChannelThreadIds(channelId: $channelId, status: $status, assignment: $assignment, filter: $filter, first: $first, after: $after) { threadIds hasNextPage endCursor } }`,
 );
 
 const CHANNEL_SUMMARIES = parse(
@@ -1905,6 +1906,53 @@ describe('Chat channels through the authenticated API', () => {
       hasUnreadOpen: false,
       hasUnreadAssignedToMe: false,
     });
+  });
+
+  it('narrows open channel chats to those waiting on an answer or mentioning the member', async () => {
+    const channelId = await createChannel();
+    const needsInputThreadId = await createThreadInChannel(channelId);
+    const mentionedThreadId = await createThreadInChannel(channelId);
+
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
+      [randomUUID(), needsInputThreadId],
+    );
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "lastMentionedAt" = now()
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [mentionedThreadId, JANE],
+    );
+
+    expect(
+      (await findChannelThreadIds(channelId, { filter: 'NEEDS_INPUT' }))
+        .threadIds,
+    ).toEqual([needsInputThreadId]);
+    expect(
+      (await findChannelThreadIds(channelId, { filter: 'MENTIONED' }))
+        .threadIds,
+    ).toEqual([mentionedThreadId]);
+    expect(
+      (
+        await findChannelThreadIds(
+          channelId,
+          { filter: 'MENTIONED' },
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        )
+      ).threadIds,
+    ).toEqual([]);
+
+    const response = await makeMetadataApiRequest({
+      query: parse(
+        `query Summaries { agentChatChannelSummaries { channelId needsInputCount } }`,
+      ),
+    });
+
+    assertGraphQLSuccessfulResponse(response);
+    expect(
+      response.body.data.agentChatChannelSummaries.find(
+        (summary: { channelId: string }) => summary.channelId === channelId,
+      ),
+    ).toEqual({ channelId, needsInputCount: 1 });
   });
 
   it('keeps the channel chats of a removed member in their channel', async () => {
