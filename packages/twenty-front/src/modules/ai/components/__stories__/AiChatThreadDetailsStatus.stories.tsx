@@ -170,11 +170,11 @@ const DEFAULT_SCENARIO: StatusScenario = {};
 const getScenarioParticipants = (
   scenario: StatusScenario,
 ): Record<string, AgentChatThreadParticipantFieldsFragment> | null => {
-  if (scenario.areParticipantsLoading === true) {
+  if (scenario.areParticipantsLoading) {
     return null;
   }
 
-  if (scenario.isNotInPersonalInbox === true) {
+  if (scenario.isNotInPersonalInbox) {
     return {};
   }
 
@@ -195,7 +195,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
   jotaiStore.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
     permissionFlags:
-      scenario.hasAiPermission === false ? [] : [PermissionFlagType.AI],
+      (scenario.hasAiPermission ?? true) ? [PermissionFlagType.AI] : [],
   });
   setAgentChatThreadPermissions(jotaiStore, THREAD_ID, {
     canRead: scenario.hasReadAccess ?? true,
@@ -215,7 +215,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
           updatedAt: ACTIVITY_AT,
           lastActivityAt: ACTIVITY_AT,
           deletedAt: scenario.isDeleted ? FILED_AT : null,
-          channelId: scenario.hasChannel === false ? null : CHANNEL_ID,
+          channelId: (scenario.hasChannel ?? true) ? CHANNEL_ID : null,
           channelArchivedAt: FILED_AT,
           channelSnoozedUntil: null,
         },
@@ -224,7 +224,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
     agentChatChannelsState.atom,
     scenario.areChannelsLoading
       ? null
-      : [{ ...CHANNEL, isAccessible: scenario.isChannelInaccessible !== true }],
+      : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],
   );
   jotaiStore.set(
     agentChatThreadParticipantsState.atom,

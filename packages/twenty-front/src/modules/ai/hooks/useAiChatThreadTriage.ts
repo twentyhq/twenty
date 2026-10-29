@@ -15,10 +15,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
-export const useAiChatThreadTriage = (
-  threadId: string,
-  { channelIdOutsideInbox }: { channelIdOutsideInbox?: string | null } = {},
-) => {
+export const useAiChatThreadTriage = ({
+  threadId,
+  channelIdOutsideInbox,
+}: {
+  threadId: string;
+  channelIdOutsideInbox?: string | null;
+}) => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,

@@ -13,7 +13,7 @@ type AiChatThreadRowTriageProps = {
 export const AiChatThreadRowTriage = ({
   threadId,
 }: AiChatThreadRowTriageProps) => {
-  const { status, isInChannel } = useAiChatThreadTriage(threadId);
+  const { status, isInChannel } = useAiChatThreadTriage({ threadId });
   const { executeAgentChatThreadInboxAction, isPending } =
     useExecuteAgentChatThreadInboxAction();
 
