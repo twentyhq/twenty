@@ -38,7 +38,7 @@ describe('convertFrontComponentBuildFailureToException', () => {
     ],
   ] as const)(
     'localizes %s on the server while retaining its diagnostic',
-    (code, message, translation, buildFailed) => {
+    (code, message, translation, isBuildFailure) => {
       const failure = frontComponentBuildFailureSchema.parse(
         JSON.parse(
           JSON.stringify({
@@ -56,7 +56,7 @@ describe('convertFrontComponentBuildFailureToException', () => {
 
       expect(exception.message).toBe('Internal compiler diagnostic');
       expect(exception.code).toBe(
-        buildFailed
+        isBuildFailure
           ? FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED
           : FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
       );
