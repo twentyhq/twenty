@@ -149,6 +149,7 @@ export type AgentChatThread = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['ID']['output'];
+  isAssistantParticipant: Scalars['Boolean']['output'];
   title?: Maybe<Scalars['String']['output']>;
   totalCacheReadTokens: Scalars['Int']['output'];
   totalInputCredits: Scalars['Float']['output'];
@@ -4634,9 +4635,12 @@ export type MutationSendChatMessageArgs = {
   browsingContext?: InputMaybe<Scalars['JSON']['input']>;
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
+  isAssistantMentioned?: InputMaybe<Scalars['Boolean']['input']>;
+  isAssistantParticipant?: InputMaybe<Scalars['Boolean']['input']>;
   mentionedWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   messageId: Scalars['UUID']['input'];
   modelId?: InputMaybe<Scalars['String']['input']>;
+  recipientWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
   shouldAssistantReply?: InputMaybe<Scalars['Boolean']['input']>;
   text: Scalars['String']['input'];
   threadId: Scalars['UUID']['input'];
@@ -6823,6 +6827,7 @@ export type SendChatMessageResult = {
   mentionedParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   messageId?: Maybe<Scalars['String']['output']>;
   queued: Scalars['Boolean']['output'];
+  recipientParticipantWorkspaceMemberIds?: Maybe<Array<Scalars['UUID']['output']>>;
   streamId?: Maybe<Scalars['String']['output']>;
 };
 

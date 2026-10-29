@@ -123,6 +123,7 @@ type AgentChatThread {
   createdAt: DateTime!
   deletedAt: DateTime
   id: ID!
+  isAssistantParticipant: Boolean!
   title: String
   totalCacheReadTokens: Int!
   totalInputCredits: Float!
@@ -3422,7 +3423,7 @@ type Mutation {
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
-  sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
+  sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], isAssistantMentioned: Boolean, isAssistantParticipant: Boolean, mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, recipientWorkspaceMemberIds: [UUID!], shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
@@ -4569,6 +4570,7 @@ type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
   queued: Boolean!
+  recipientParticipantWorkspaceMemberIds: [UUID!]
   streamId: String
 }
 

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -11,6 +12,7 @@ import { EndAgentChatChannelSnoozeJob } from 'src/engine/metadata-modules/ai/ai-
 import { EndAgentChatThreadSnoozeJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze.job';
 import { RewriteAgentChatChannelGrantsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants.job';
 import { AgentChatChannelRoleAccessListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-channel-role-access.listener';
+import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel.service';
@@ -33,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatChannelModule,
     AgentChatThreadLifecycleModule,
     AgentHistoryModule,
+    CoreEntityCacheModule,
     PermissionsModule,
     RecordShareModule,
     RecordShareStorageModule,
@@ -42,6 +45,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
+    AgentChatAssistantPolicyService,
     AgentChatChannelAccessService,
     AgentChatChannelRoleAccessListener,
     AgentChatChannelGrantService,
@@ -58,6 +62,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RewriteAgentChatChannelGrantsJob,
   ],
   exports: [
+    AgentChatAssistantPolicyService,
     AgentChatChannelGrantService,
     AgentChatChannelService,
     AgentChatChannelThreadsService,

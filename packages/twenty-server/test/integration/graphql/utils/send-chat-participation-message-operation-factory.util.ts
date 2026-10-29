@@ -9,14 +9,20 @@ export const sendChatParticipationMessageOperationFactory = ({
   text = 'Can you help with this task?',
   modelId = TEST_AI_MODEL_ID,
   shouldAssistantReply = true,
+  isAssistantParticipant,
+  isAssistantMentioned = false,
   mentionedWorkspaceMemberIds = [],
+  recipientWorkspaceMemberIds = [],
 }: {
   threadId: string;
   messageId?: string;
   text?: string;
   modelId?: string;
   shouldAssistantReply?: boolean;
+  isAssistantParticipant?: boolean;
+  isAssistantMentioned?: boolean | null;
   mentionedWorkspaceMemberIds?: string[];
+  recipientWorkspaceMemberIds?: string[];
 }) => ({
   query: gql`
     mutation SendParticipationMessage(
@@ -25,7 +31,10 @@ export const sendChatParticipationMessageOperationFactory = ({
       $text: String!
       $modelId: String
       $shouldAssistantReply: Boolean
+      $isAssistantParticipant: Boolean
+      $isAssistantMentioned: Boolean
       $mentionedWorkspaceMemberIds: [UUID!]
+      $recipientWorkspaceMemberIds: [UUID!]
     ) {
       sendChatMessage(
         threadId: $threadId
@@ -33,12 +42,16 @@ export const sendChatParticipationMessageOperationFactory = ({
         text: $text
         modelId: $modelId
         shouldAssistantReply: $shouldAssistantReply
+        isAssistantParticipant: $isAssistantParticipant
+        isAssistantMentioned: $isAssistantMentioned
         mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
+        recipientWorkspaceMemberIds: $recipientWorkspaceMemberIds
       ) {
         messageId
         queued
         streamId
         mentionedParticipantWorkspaceMemberIds
+        recipientParticipantWorkspaceMemberIds
       }
     }
   `,
@@ -48,6 +61,9 @@ export const sendChatParticipationMessageOperationFactory = ({
     text,
     modelId,
     shouldAssistantReply,
+    isAssistantParticipant,
+    isAssistantMentioned,
     mentionedWorkspaceMemberIds,
+    recipientWorkspaceMemberIds,
   },
 });

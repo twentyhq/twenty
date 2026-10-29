@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -12,6 +13,10 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -30,6 +35,29 @@ export const createChatParticipationTestContext = async () => {
   const userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
   const schema = getWorkspaceSchemaName(workspaceId);
   const threadIds = new Set<string>();
+  const workspaceRepository =
+    getCoreRepository<WorkspaceEntity>(WorkspaceEntity);
+  const workspace = await workspaceRepository.findOneByOrFail({
+    id: workspaceId,
+  });
+  const coreEntityCacheService =
+    getAppProviderByClassName<CoreEntityCacheService>('CoreEntityCacheService');
+  const setAssistantModes = async (
+    modes: Partial<
+      Pick<
+        WorkspaceEntity,
+        'aiChatDirectMessageAssistantMode' | 'aiChatInboxAssistantMode'
+      >
+    >,
+  ) => {
+    await workspaceRepository.update({ id: workspaceId }, modes);
+    await coreEntityCacheService.invalidate('workspaceEntity', workspaceId);
+  };
+
+  await setAssistantModes({
+    aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+    aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
+  });
   const threadService = getAppProviderByClassName<AgentChatThreadService>(
     'AgentChatThreadService',
   );
@@ -38,6 +66,10 @@ export const createChatParticipationTestContext = async () => {
   const sharingService = getAppProviderByClassName<AgentChatSharingService>(
     'AgentChatSharingService',
   );
+  const participationService =
+    getAppProviderByClassName<AgentChatParticipationService>(
+      'AgentChatParticipationService',
+    );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
   const wasInboxEnabled = await featureFlagService.isFeatureEnabled(
@@ -66,6 +98,18 @@ export const createChatParticipationTestContext = async () => {
       `UPDATE "${schema}"."agentChatThread"
        SET "isAssistantParticipant" = $2 WHERE id = $1`,
       [threadId, isAssistantParticipant],
+    );
+  const setConversationType = ({
+    threadId,
+    conversationType,
+  }: {
+    threadId: string;
+    conversationType: AgentChatThreadConversationType;
+  }) =>
+    global.testDataSource.query(
+      `UPDATE "${schema}"."agentChatThread"
+       SET "conversationType" = $2 WHERE id = $1`,
+      [threadId, conversationType],
     );
   const createThread = async (isAssistantParticipant = true) => {
     const threadId = registerThread();
@@ -184,7 +228,10 @@ export const createChatParticipationTestContext = async () => {
     threadService,
     chatService,
     sharingService,
+    participationService,
     featureFlagService,
+    setAssistantModes,
+    setConversationType,
     registerThread,
     createThread,
     readThread,
@@ -205,6 +252,11 @@ export const createChatParticipationTestContext = async () => {
         workspaceId,
         featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         value: wasInboxEnabled,
+      });
+      await setAssistantModes({
+        aiChatDirectMessageAssistantMode:
+          workspace.aiChatDirectMessageAssistantMode,
+        aiChatInboxAssistantMode: workspace.aiChatInboxAssistantMode,
       });
     },
   };

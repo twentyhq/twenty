@@ -238,6 +238,7 @@ describe('Shared conversation API boundaries', () => {
     const response = await sendChatParticipationMessage({
       threadId,
       messageId,
+      isAssistantMentioned: true,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -370,6 +371,7 @@ describe('Shared conversation API boundaries', () => {
     const response = await sendChatParticipationMessage({
       threadId,
       messageId,
+      isAssistantMentioned: true,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 

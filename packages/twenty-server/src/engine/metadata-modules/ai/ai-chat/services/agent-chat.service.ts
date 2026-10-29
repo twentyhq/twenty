@@ -245,6 +245,25 @@ export class AgentChatService {
     });
   }
 
+  async hasMessage({
+    workspaceId,
+    threadId,
+    messageId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+    workspaceMemberId: string;
+  }): Promise<boolean> {
+    return this.messageRepository.existsBy(workspaceId, {
+      id: messageId,
+      threadId,
+      senderWorkspaceMemberId: workspaceMemberId,
+      role: AgentMessageRole.USER,
+    });
+  }
+
   async deleteAssistantMessagesForTurn({
     turnId,
     workspaceId,

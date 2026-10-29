@@ -114,6 +114,7 @@ export interface AgentChatThread {
     createdAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     id: Scalars['ID']
+    isAssistantParticipant: Scalars['Boolean']
     title?: Scalars['String']
     totalCacheReadTokens: Scalars['Int']
     totalInputCredits: Scalars['Float']
@@ -3368,6 +3369,7 @@ export interface SendChatMessageResult {
     mentionedParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     messageId?: Scalars['String']
     queued: Scalars['Boolean']
+    recipientParticipantWorkspaceMemberIds?: Scalars['UUID'][]
     streamId?: Scalars['String']
     __typename: 'SendChatMessageResult'
 }
@@ -4349,6 +4351,7 @@ export interface AgentChatThreadGenqlSelection{
     createdAt?: boolean | number
     deletedAt?: boolean | number
     id?: boolean | number
+    isAssistantParticipant?: boolean | number
     title?: boolean | number
     totalCacheReadTokens?: boolean | number
     totalInputCredits?: boolean | number
@@ -6948,7 +6951,7 @@ export interface MutationGenqlSelection{
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
     sendAppChannelMessage?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: SendAppChannelMessageInput} })
-    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), channelId?: (Scalars['UUID'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
+    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), channelId?: (Scalars['UUID'] | null), fileAttachments?: (FileAttachmentInput[] | null), isAssistantMentioned?: (Scalars['Boolean'] | null), isAssistantParticipant?: (Scalars['Boolean'] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), recipientWorkspaceMemberIds?: (Scalars['UUID'][] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     sendInvitations?: (SendInvitationsGenqlSelection & { __args: {emails: Scalars['String'][], roleId?: (Scalars['UUID'] | null)} })
@@ -7972,6 +7975,7 @@ export interface SendChatMessageResultGenqlSelection{
     mentionedParticipantWorkspaceMemberIds?: boolean | number
     messageId?: boolean | number
     queued?: boolean | number
+    recipientParticipantWorkspaceMemberIds?: boolean | number
     streamId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
