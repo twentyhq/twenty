@@ -64,7 +64,7 @@ describe('isAgentChatThreadSettledForMember', () => {
       isSettled({
         participant: {
           lastMentionedAt: LAST_ACTIVITY_AT,
-          lastResolvedMentionAt: LAST_ACTIVITY_AT,
+          mentionsResolvedAt: LAST_ACTIVITY_AT,
         },
       }),
     ).toBe(true);
