@@ -115,10 +115,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         };
       }
 
-      // In Apollo v4, useLazyQuery's execute aborts in-flight queries when
-      // the query document changes (e.g. metadata/permissions loading).
-      // Calling .retain() keeps the query running to completion even if
-      // the ObservableQuery is updated, preventing AbortError rejections.
       const result = await findManyRecords({
         variables: queryVariables,
       }).retain();

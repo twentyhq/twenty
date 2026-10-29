@@ -86,7 +86,7 @@ export const fetchAllRecordPagesOrThrow = async ({
 
   let previousCursor: string | undefined;
   let hasMorePages = shouldThrowOnIncompleteResult
-    ? connection?.pageInfo?.hasNextPage === true
+    ? (connection?.pageInfo?.hasNextPage ?? false)
     : remainingPages > 0;
 
   for (
@@ -131,7 +131,7 @@ export const fetchAllRecordPagesOrThrow = async ({
     });
 
     hasMorePages = shouldThrowOnIncompleteResult
-      ? connection.pageInfo?.hasNextPage === true
+      ? (connection.pageInfo?.hasNextPage ?? false)
       : connection.pageInfo?.hasNextPage !== false;
   }
 
