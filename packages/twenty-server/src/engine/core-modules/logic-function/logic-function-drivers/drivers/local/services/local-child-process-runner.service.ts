@@ -234,7 +234,7 @@ export class LocalChildProcessRunnerService {
       cwd: executionDirectory,
       env,
       stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-      detached: process.platform !== 'win32',
+      detached: true,
     });
     const closed = new Promise<void>((resolve) =>
       child.once('close', () => resolve()),
@@ -300,11 +300,7 @@ export class LocalChildProcessRunnerService {
       if (isDefined(child.pid)) {
         try {
           // Yarn and esbuild must exit before their temporary files are removed.
-          if (process.platform === 'win32') {
-            child.kill('SIGKILL');
-          } else {
-            process.kill(-child.pid, 'SIGKILL');
-          }
+          process.kill(-child.pid, 'SIGKILL');
         } catch (error) {
           const code =
             isObject(error) && 'code' in error ? error.code : undefined;
