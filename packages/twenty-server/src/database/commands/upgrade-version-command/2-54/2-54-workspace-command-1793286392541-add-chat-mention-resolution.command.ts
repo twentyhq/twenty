@@ -39,7 +39,10 @@ export class AddChatMentionResolutionCommand extends ProvisionedWorkspaceCommand
     await this.up(args);
   }
 
-  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+  async up({
+    workspaceId,
+    options,
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'>): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -89,7 +92,10 @@ export class AddChatMentionResolutionCommand extends ProvisionedWorkspaceCommand
     }
   }
 
-  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+  async down({
+    workspaceId,
+    options,
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'>): Promise<void> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
