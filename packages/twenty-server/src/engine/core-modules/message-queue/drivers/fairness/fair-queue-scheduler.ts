@@ -119,7 +119,7 @@ export class FairQueueScheduler {
       return;
     }
 
-    void this.fairTicketAllocator.dispatched({ queueName, jobId });
+    void this.fairTicketAllocator.recordDispatch({ queueName, jobId });
   }
 
   private isFairnessEnabled(): boolean {

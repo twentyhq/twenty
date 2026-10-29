@@ -21,7 +21,7 @@ const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
 const mockTwentyConfigService = { get: jest.fn().mockReturnValue(false) };
 const mockAllocateTickets = jest.fn();
-const mockDispatched = jest.fn();
+const mockRecordDispatch = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -46,7 +46,7 @@ jest.mock(
   () => ({
     FairTicketAllocator: jest.fn().mockImplementation(() => ({
       allocateTickets: mockAllocateTickets,
-      dispatched: mockDispatched,
+      recordDispatch: mockRecordDispatch,
     })),
   }),
 );
@@ -687,7 +687,7 @@ describe('BullMQDriver fair dispatch', () => {
   it('records the dispatch of a job when fairness is on', async () => {
     await processJob({ isFairnessEnabled: true });
 
-    expect(mockDispatched).toHaveBeenCalledWith({
+    expect(mockRecordDispatch).toHaveBeenCalledWith({
       queueName: MessageQueue.workflowQueue,
       jobId: 'job-id',
     });
@@ -696,6 +696,6 @@ describe('BullMQDriver fair dispatch', () => {
   it('records nothing when fairness is off', async () => {
     await processJob({ isFairnessEnabled: false });
 
-    expect(mockDispatched).not.toHaveBeenCalled();
+    expect(mockRecordDispatch).not.toHaveBeenCalled();
   });
 });

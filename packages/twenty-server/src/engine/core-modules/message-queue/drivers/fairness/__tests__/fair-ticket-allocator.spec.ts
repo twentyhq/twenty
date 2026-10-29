@@ -18,6 +18,8 @@ const WEIGHTS_KEY = `${QUEUE_KEY_PREFIX}fair:weights`;
 
 const ticketOf = (tag: number) => FAIR_TICKET_OFFSET + tag;
 
+const jobKeyOf = (jobId: string) => `${QUEUE_KEY_PREFIX}${jobId}`;
+
 const createAllocator = async () => {
   const redis: Redis = new RedisMock();
 
@@ -51,14 +53,14 @@ const createAllocator = async () => {
     redis,
     allocator: new FairTicketAllocator({
       getClient: async () => client as never,
-      getJobKey: ({ jobId }) => `${QUEUE_KEY_PREFIX}${jobId}`,
+      getJobKey: ({ jobId }) => jobKeyOf(jobId),
       keyPrefix: KEY_PREFIX,
     }),
     readClock: async (groupKey: string) =>
       Number(await redis.get(`${QUEUE_KEY_PREFIX}fair:clock:${groupKey}`)),
     readVirtualTime: async () => Number(await redis.get(VIRTUAL_TIME_KEY)),
     seedJob: async ({ jobId, priority }: { jobId: string; priority: number }) =>
-      redis.hset(`${QUEUE_KEY_PREFIX}${jobId}`, 'priority', priority),
+      redis.hset(jobKeyOf(jobId), 'priority', priority),
   };
 };
 
@@ -67,7 +69,7 @@ const createBrokenAllocator = () =>
     getClient: async () => {
       throw new Error('Redis connection lost');
     },
-    getJobKey: ({ jobId }) => `${QUEUE_KEY_PREFIX}${jobId}`,
+    getJobKey: ({ jobId }) => jobKeyOf(jobId),
     keyPrefix: KEY_PREFIX,
   });
 
@@ -148,7 +150,7 @@ describe('FairTicketAllocator', () => {
         .mockRejectedValue(new Error('READONLY replica is read only'));
       const allocator = new FairTicketAllocator({
         getClient: async () => ({ runCommand }) as never,
-        getJobKey: ({ jobId }) => `${QUEUE_KEY_PREFIX}${jobId}`,
+        getJobKey: ({ jobId }) => jobKeyOf(jobId),
         keyPrefix: KEY_PREFIX,
       });
 
@@ -163,16 +165,16 @@ describe('FairTicketAllocator', () => {
     });
   });
 
-  describe('dispatched', () => {
+  describe('recordDispatch', () => {
     it('advances the virtual time from the dispatched job hash and leaves urgent and missing jobs alone', async () => {
       const { allocator, seedJob, readVirtualTime } = await createAllocator();
 
       await seedJob({ jobId: 'A1', priority: ticketOf(5) });
       await seedJob({ jobId: 'urgent', priority: URGENT_FAIR_PRIORITY });
 
-      await allocator.dispatched({ queueName: QUEUE, jobId: 'A1' });
-      await allocator.dispatched({ queueName: QUEUE, jobId: 'urgent' });
-      await allocator.dispatched({ queueName: QUEUE, jobId: 'missing' });
+      await allocator.recordDispatch({ queueName: QUEUE, jobId: 'A1' });
+      await allocator.recordDispatch({ queueName: QUEUE, jobId: 'urgent' });
+      await allocator.recordDispatch({ queueName: QUEUE, jobId: 'missing' });
 
       expect(await readVirtualTime()).toBe(5);
       expect(
@@ -189,15 +191,18 @@ describe('FairTicketAllocator', () => {
       await seedJob({ jobId: 'late', priority: ticketOf(9) });
       await seedJob({ jobId: 'early', priority: ticketOf(3) });
 
-      await allocator.dispatched({ queueName: QUEUE, jobId: 'late' });
-      await allocator.dispatched({ queueName: QUEUE, jobId: 'early' });
+      await allocator.recordDispatch({ queueName: QUEUE, jobId: 'late' });
+      await allocator.recordDispatch({ queueName: QUEUE, jobId: 'early' });
 
       expect(await readVirtualTime()).toBe(9);
     });
 
     it('swallows a Redis failure', async () => {
       await expect(
-        createBrokenAllocator().dispatched({ queueName: QUEUE, jobId: 'j' }),
+        createBrokenAllocator().recordDispatch({
+          queueName: QUEUE,
+          jobId: 'j',
+        }),
       ).resolves.toBeUndefined();
     });
   });

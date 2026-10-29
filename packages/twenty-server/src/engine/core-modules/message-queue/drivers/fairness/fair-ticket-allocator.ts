@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { Logger } from '@nestjs/common';
 
 import { type RedisClient } from 'bullmq';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FAIR_DISPATCH_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-dispatch-script.constant';
 import {
@@ -24,6 +25,7 @@ type FairTicketAllocatorOptions = {
 
 export class FairTicketAllocator {
   private readonly logger = new Logger(FairTicketAllocator.name);
+  private readonly scriptShas = new Map<string, string>();
 
   constructor(private readonly options: FairTicketAllocatorOptions) {}
 
@@ -88,19 +90,21 @@ export class FairTicketAllocator {
     }
   }
 
-  async dispatched({
+  async recordDispatch({
     queueName,
     jobId,
   }: {
     queueName: MessageQueue;
     jobId: string;
   }): Promise<void> {
+    const fairKeyPrefix = `${this.options.keyPrefix}:${queueName}:fair:`;
+
     try {
       await this.runScript({
         queueName,
         script: FAIR_DISPATCH_SCRIPT,
         keys: [
-          `${this.options.keyPrefix}:${queueName}:fair:vtime`,
+          `${fairKeyPrefix}vtime`,
           this.options.getJobKey({ queueName, jobId }),
         ],
         args: [FAIR_TICKET_OFFSET],
@@ -124,7 +128,7 @@ export class FairTicketAllocator {
     args: (string | number)[];
   }): Promise<unknown> {
     const client = await this.options.getClient(queueName);
-    const scriptSha = createHash('sha1').update(script).digest('hex');
+    const scriptSha = this.getScriptSha(script);
 
     return client
       .runCommand('evalsha', [scriptSha, keys.length, ...keys, ...args])
@@ -140,5 +144,19 @@ export class FairTicketAllocator {
           ...args,
         ]);
       });
+  }
+
+  private getScriptSha(script: string): string {
+    const cachedScriptSha = this.scriptShas.get(script);
+
+    if (isDefined(cachedScriptSha)) {
+      return cachedScriptSha;
+    }
+
+    const scriptSha = createHash('sha1').update(script).digest('hex');
+
+    this.scriptShas.set(script, scriptSha);
+
+    return scriptSha;
   }
 }
