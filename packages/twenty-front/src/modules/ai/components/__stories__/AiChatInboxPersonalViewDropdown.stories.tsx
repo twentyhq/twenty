@@ -42,7 +42,7 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[3]};
-  width: 480px;
+  width: 100%;
 `;
 
 const PersonalViewStory = () => {
