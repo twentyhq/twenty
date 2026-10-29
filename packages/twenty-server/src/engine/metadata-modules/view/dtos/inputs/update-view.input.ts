@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -22,7 +23,6 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { MetadataTranslationOverrideInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation-override.input';
 import { KANBAN_COLUMN_MAX_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-max-width.constant';
 import { KANBAN_COLUMN_MIN_WIDTH } from 'src/engine/metadata-modules/view/constants/kanban-column-min-width.constant';
@@ -31,13 +31,14 @@ import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/vie
 // TODO: refactor like view-field.input.ts; extending CreateViewInput added defaults for unset fields
 @InputType()
 export class UpdateViewInput {
+  @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   id: string;
 
   @IsOptional()
+  @IsString()
   @IsNotEmpty()
-  @IsValidMetadataName()
   @Field({ nullable: true })
   name?: string;
 
@@ -52,7 +53,7 @@ export class UpdateViewInput {
   icon?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsNumber()
   @Field({ nullable: true })
   position?: number;
 

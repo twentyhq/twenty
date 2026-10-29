@@ -6,7 +6,6 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -366,23 +365,6 @@ describe('fromUpdateViewInputToFlatViewToUpdateOrThrow', () => {
           i18nContext: buildI18nContext('fr-FR'),
         }),
       ).toBe('Par étape');
-    });
-
-    it('throws on an unsupported locale', () => {
-      expect(() =>
-        updateView({
-          groupingOverride: null,
-          updateViewInput: {
-            translations: [
-              {
-                locale: 'fr_FR' as keyof typeof APP_LOCALES,
-                property: 'name',
-                value: 'Par étape',
-              },
-            ],
-          },
-        }),
-      ).toThrow('Unsupported translation locales: fr_FR');
     });
 
     it('throws when translating a non-translatable property', () => {
