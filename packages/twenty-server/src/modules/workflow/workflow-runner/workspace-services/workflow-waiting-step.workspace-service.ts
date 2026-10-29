@@ -5,7 +5,7 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { type QueueJobSettings } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -26,10 +26,7 @@ import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/
 import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-execution-context.util';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import {
-  buildRunWorkflowJobOptions,
-  buildRunWorkflowJobSettings,
-} from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { buildDefaultWaitResult } from 'src/modules/workflow/workflow-wait/utils/build-default-wait-result.util';
@@ -185,8 +182,11 @@ export class WorkflowWaitingStepWorkspaceService
     }
   }
 
-  buildResumeJobOptions(workflowRunId: string): QueueJobSettings {
-    return buildRunWorkflowJobSettings(workflowRunId);
+  buildResumeJobOptions({
+    ownerId: workflowRunId,
+    workspaceId,
+  }: Pick<PendingWakeUpEntity, 'ownerId' | 'workspaceId'>): QueueJobOptions {
+    return buildRunWorkflowJobOptions({ workflowRunId, workspaceId });
   }
 
   // the wake-up's own run and step are all the step needs to resume

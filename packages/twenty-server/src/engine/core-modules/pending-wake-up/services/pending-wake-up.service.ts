@@ -144,13 +144,14 @@ export class PendingWakeUpService {
         recordReadAttempt,
       },
       {
-        ...this.pendingWakeUpOwnerHandlerRegistryService
+        ...(this.pendingWakeUpOwnerHandlerRegistryService
           .getHandlerOrThrow(wakeUp.ownerType)
-          .buildResumeJobOptions?.(wakeUp.ownerId),
+          .buildResumeJobOptions?.(wakeUp) ?? {
+          workspaceId: wakeUp.workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
         delay: Math.max(delayMs, 0),
-        workspaceId: wakeUp.workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         ...(isDefined(deduplicationId)
           ? { deduplication: { id: deduplicationId } }
           : {}),
