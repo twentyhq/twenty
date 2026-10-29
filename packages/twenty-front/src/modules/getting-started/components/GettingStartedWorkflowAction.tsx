@@ -1,5 +1,6 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
@@ -58,6 +59,7 @@ export const GettingStartedWorkflowAction = ({
   const navigateApp = useNavigateApp();
   const { enqueueToast } = useToast();
   const { progress } = useGettingStartedProgress();
+  const { updateGettingStarted } = useUpdateGettingStarted();
   const [prepareGettingStartedWorkflow, { loading }] = useMutation(
     PrepareGettingStartedWorkflowDocument,
   );
@@ -101,6 +103,7 @@ export const GettingStartedWorkflowAction = ({
         return;
       }
 
+      void updateGettingStarted({ completedStep: step });
       navigateApp(AppPath.WorkflowCoreShowPage, {
         coreWorkflowId: data.prepareGettingStartedWorkflow.workflowId,
       });
