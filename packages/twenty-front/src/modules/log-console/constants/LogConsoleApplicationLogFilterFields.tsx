@@ -9,10 +9,8 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { AppChip } from '@/applications/components/AppChip';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
-import { isThirdPartyApplication } from '@/applications/utils/isThirdPartyApplication';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
-import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
 import { APPLICATION_LOG_SOURCE_LABELS } from '@/settings/application-monitoring/constants/ApplicationLogSourceLabels';
 
 export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] =
@@ -53,38 +51,18 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
       label: msg`Function`,
       Icon: IconBrandTypescript,
       serverField: 'logicFunctionId',
-      getOptions: ({ logicFunctions, applications, currentWorkspace }) => {
-        // Workflow code steps live in the workspace's own application.
-        const isAppLogicFunction = (logicFunction: LogicFunction) =>
-          isThirdPartyApplication({
-            application: applications.find(
-              (application) => application.id === logicFunction.applicationId,
-            ),
-            currentWorkspace,
-          });
-
-        return [
-          ...logicFunctions.filter(isAppLogicFunction).map((logicFunction) => ({
-            label: logicFunction.name,
-            values: [logicFunction.id],
-            sectionLabel: t`Apps`,
-            startIcon: (
-              <ApplicationStackIcon
-                Icon={IconBrandTypescript}
-                applicationId={logicFunction.applicationId}
-              />
-            ),
-          })),
-          ...logicFunctions
-            .filter((logicFunction) => !isAppLogicFunction(logicFunction))
-            .map((logicFunction) => ({
-              label: logicFunction.name,
-              values: [logicFunction.id],
-              sectionLabel: t`Workflow steps`,
-              startIcon: <IconBrandTypescript />,
-            })),
-        ];
-      },
+      getOptions: ({ logicFunctions }) =>
+        logicFunctions.map((logicFunction) => ({
+          label: logicFunction.name,
+          values: [logicFunction.id],
+          startIcon: (
+            <ApplicationStackIcon
+              Icon={IconBrandTypescript}
+              applicationId={logicFunction.applicationId}
+              showFirstPartyApplication
+            />
+          ),
+        })),
     },
     {
       id: 'app',
