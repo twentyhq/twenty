@@ -9,6 +9,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
+  DEFAULT_SERVER_ROUTE_IDS_NAME,
 } from 'twenty-shared/application-runtime';
 import {
   type LogicFunctionExecutionContext,
@@ -57,7 +58,10 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionEntity,
+  LogicFunctionExecutionMode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -121,6 +125,8 @@ export class LogicFunctionExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
   async executeOrThrow({
@@ -460,6 +466,9 @@ export class LogicFunctionExecutorService {
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
     );
+    const serverRouteIds = await this.buildServerRouteIdsByUniversalIdentifier(
+      flatApplication.applicationRegistrationId,
+    );
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -489,8 +498,44 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
+      [DEFAULT_SERVER_ROUTE_IDS_NAME]: JSON.stringify(serverRouteIds),
       APPLICATION_ID: flatApplication.id,
     };
+  }
+
+  // Server routes resolve to the resolver rows in the registration owner's
+  // workspace, so the ids an app must register come from there, not from the
+  // workspace the function runs in.
+  private async buildServerRouteIdsByUniversalIdentifier(
+    applicationRegistrationId: string | null,
+  ): Promise<Record<string, string>> {
+    if (!isDefined(applicationRegistrationId)) {
+      return {};
+    }
+
+    const resolvers = await this.logicFunctionRepository
+      .createQueryBuilder('logicFunction')
+      .select(['logicFunction.id', 'logicFunction.universalIdentifier'])
+      .innerJoin('logicFunction.application', 'application')
+      .innerJoin(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        {
+          applicationRegistrationId,
+        },
+      )
+      .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
+      .andWhere(
+        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
+      )
+      .getMany();
+
+    return Object.fromEntries(
+      resolvers.map((resolver) => [resolver.universalIdentifier, resolver.id]),
+    );
   }
 
   private async buildFunctionsBaseUrl({

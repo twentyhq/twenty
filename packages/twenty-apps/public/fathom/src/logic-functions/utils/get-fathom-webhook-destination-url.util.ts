@@ -1,5 +1,6 @@
 import { FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER } from 'src/constants/fathom.constant';
 import { FATHOM_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { getServerRouteIdentifier } from 'src/logic-functions/utils/get-server-route-identifier.util';
 
 export const getFathomWebhookDestinationUrl = ({
   apiUrl,
@@ -11,7 +12,7 @@ export const getFathomWebhookDestinationUrl = ({
   const destinationUrl = new URL(apiUrl);
   const apiBasePath = destinationUrl.pathname.replace(/\/+$/, '');
 
-  destinationUrl.pathname = `${apiBasePath}/webhooks/server/${FATHOM_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER}`;
+  destinationUrl.pathname = `${apiBasePath}/webhooks/server/${getServerRouteIdentifier(FATHOM_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER)}`;
 
   destinationUrl.searchParams.set(
     FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER,
