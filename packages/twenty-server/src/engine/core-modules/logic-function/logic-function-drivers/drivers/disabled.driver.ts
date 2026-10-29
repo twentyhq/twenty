@@ -1,9 +1,7 @@
 import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteResult,
-  type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -25,9 +23,23 @@ export class DisabledDriver implements LogicFunctionDriver {
     );
   }
 
-  async transpile(): Promise<LogicFunctionTranspileResult> {
+  async transpile(): Promise<never> {
     throw new LogicFunctionException(
       'Logic function transpilation is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+    );
+  }
+
+  async buildDependencies(): Promise<never> {
+    throw new LogicFunctionException(
+      'Dependency builds are disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+    );
+  }
+
+  async getDependenciesBuildCacheKey(): Promise<never> {
+    throw new LogicFunctionException(
+      'Dependency builds are disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
       LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
     );
   }

@@ -8,7 +8,7 @@ import {
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
-import { type FrontComponentDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/types/front-component-driver.type';
+import { type LogicFunctionDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
 import { type WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
@@ -35,9 +35,12 @@ export class FrontComponentDependencyManagerService {
       >,
       'revision' | 'packageJson' | 'yarnLock'
     >;
-    driver: FrontComponentDriver;
+    driver: LogicFunctionDriver;
   }) {
-    const builderKey = await driver.getDependenciesBuildCacheKey(workspaceId);
+    const builderKey = await driver.getDependenciesBuildCacheKey({
+      workspaceId,
+      targetRuntime: 'browser',
+    });
     const key = `ai-front-component-dependencies:${builderKey}:${dependencies.revision}`;
     return this.cacheLockService.withLock(
       async () => {
@@ -45,6 +48,7 @@ export class FrontComponentDependencyManagerService {
         const result = frontComponentDependenciesBuildResultSchema.parse(
           cached ??
             (await driver.buildDependencies({
+              targetRuntime: 'browser',
               workspaceId,
               packageJson: dependencies.packageJson,
               yarnLock: dependencies.yarnLock,

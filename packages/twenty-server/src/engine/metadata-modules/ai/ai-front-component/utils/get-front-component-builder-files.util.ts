@@ -1,6 +1,7 @@
 import { build } from 'esbuild';
 import { readFile } from 'fs/promises';
 import { join, resolve } from 'path';
+
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { FRONT_COMPONENT_BUILDER_DIRECTORY } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-directory.constant';
 
@@ -8,9 +9,9 @@ let helpers: Promise<string> | undefined;
 
 export const getFrontComponentBuilderFiles = async () => {
   helpers ??= build({
-    absWorkingDir: resolve(__dirname, '../..'),
+    absWorkingDir: resolve(__dirname, '..'),
     entryPoints: [
-      require.resolve('../../utils/execute-front-component-builder-request.util'),
+      require.resolve('./execute-front-component-builder-request.util'),
     ],
     bundle: true,
     platform: 'node',

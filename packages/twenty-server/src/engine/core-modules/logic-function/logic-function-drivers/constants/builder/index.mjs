@@ -19,10 +19,15 @@ const assertPathInsideDir = (filePath, dir) => {
 };
 
 export const handler = async (event) => {
-  const { action, sourceCode, sourceFileName, builtFileName } = event;
+  const { action, targetRuntime, sourceCode, sourceFileName, builtFileName } =
+    event;
 
   if (action !== 'transpile') {
     throw new Error(`Unknown action: ${action}`);
+  }
+
+  if (targetRuntime !== 'nodejs18.x' && targetRuntime !== 'nodejs22.x') {
+    throw new Error(`Unsupported target runtime: ${targetRuntime}`);
   }
 
   if (!sourceCode || !sourceFileName || !builtFileName) {
@@ -49,7 +54,7 @@ export const handler = async (event) => {
       outfile: outFilePath,
       platform: 'node',
       format: 'esm',
-      target: 'esnext',
+      target: targetRuntime === 'nodejs18.x' ? 'node18' : 'node22',
       bundle: true,
       sourcemap: true,
       packages: 'external',
