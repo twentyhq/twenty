@@ -22,6 +22,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -139,7 +140,10 @@ export const AiChatNewThreadRecipientBar = () => {
             </LightButton>
           }
         />
-        <DropdownContent width={280} aria-label={t`Select recipients`}>
+        <DropdownContent
+          width={GenericDropdownContentWidth.ExtraLarge}
+          aria-label={t`Select recipients`}
+        >
           <AiChatNewThreadRecipientPicker />
         </DropdownContent>
       </DropdownRoot>
