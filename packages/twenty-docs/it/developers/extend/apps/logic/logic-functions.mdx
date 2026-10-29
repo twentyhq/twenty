@@ -293,28 +293,25 @@ export default defineLogicFunction({
 L'endpoint è raggiungibile all'indirizzo:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-L'identificatore è l'`id` del resolver: la chiave primaria che il server assegna quando l'app viene sincronizzata per la prima volta nel workspace proprietario, non l'`universalIdentifier` del tuo manifest. Recuperalo dall'API `/metadata` del workspace proprietario, quindi registra quell'URL con il provider:
+Il primo segmento è l'id della registrazione della tua app, il secondo è il `universalIdentifier` del resolver dal tuo manifest. Una route viene risolta solo a un resolver di quella registrazione, nel relativo workspace proprietario. Quando la tua app registra il webhook stesso, crea l'URL dall'interno di una funzione logica con `getServerRouteUrl`; Twenty inserisce l'URL di base delle route del server della tua app come `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  Un URL contenente il `universalIdentifier` del resolver continua per ora a essere risolto,
-  e la risposta include un header `Deprecation`. Un `universalIdentifier` è
-  univoco per spazio di lavoro, non a livello globale: se un'altra registrazione di proprietà di un
-  diverso spazio di lavoro dichiara lo stesso identificatore, la piattaforma restituisce `404` per quell'
-  URL anziché scegliere tra le due. Sposta gli URL registrati presso i tuoi
-  provider nella forma `id`.
+  Gli URL che contengono solo l'`id` o l'`universalIdentifier` del resolver
+  (`/webhooks/server/:identifier`) continuano per ora a essere risolti. La forma
+  `universalIdentifier` risponde con un'intestazione `Deprecation` e restituisce
+  `404` quando due registrazioni dichiarano lo stesso identificatore. Sposta gli URL
+  registrati con i tuoi provider nel modulo di registrazione.
 </Note>
 
 **Risposta a una verifica GET.** Alcuni provider verificano un endpoint prima di inviarvi dati, inviando un `GET` contenente una verifica allo stesso URL a cui in seguito invieranno eventi tramite `POST` — WhatsApp Cloud API di Meta è uno di questi. Una route del server risponde solo a `POST`, a meno che non venga specificato diversamente, quindi dichiara entrambi i metodi:

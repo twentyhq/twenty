@@ -111,10 +111,15 @@ Un piano:
 `twenty app pull` è l'inverso di `apply`: legge un'applicazione dall'area di lavoro e ripristina i relativi file di definizione, le traduzioni e i file delle dipendenze archiviate.
 
 ```bash
-twenty app pull --universal-identifier <universalIdentifier>
+twenty app pull --remote dev
+twenty app pull --path ./workspace-app --yes --no-input
 ```
 
-Pull richiede un progetto esistente — creane prima uno con `twenty app init`, quindi esegui pull al suo interno. Senza `--universal-identifier`, pull si rivolge all'applicazione dichiarata dal file locale `defineApplication()`. Se `--universal-identifier` indica un'applicazione diversa da quella dichiarata dal tuo progetto, pull si rifiuta di procedere anziché lasciare due applicazioni in un unico albero: estrai quell'applicazione nella propria directory. Se il progetto ha un file dell'applicazione il cui identificatore non può essere letto, di solito perché le dipendenze non sono installate, anche pull si rifiuta di procedere e chiede di eseguire prima `yarn install`. Aggiungi `--verbose` per espandere le sezioni di copertura del report, che indicheranno fino a 20 identificatori per tipo di metadati anziché solo i totali.
+All'interno di un'app, pull legge il proprio identificatore `defineApplication()` locale e recupera quell'applicazione. All'esterno di un'app, richiede una directory e una conferma, crea un progetto locale per l'applicazione personalizzata dell'area di lavoro selezionata, installa le dipendenze con Yarn, quindi recupera le definizioni. Il nuovo progetto include file di pacchetto e configurazione, senza le entità demo dell'inizializzatore.
+
+Usa `--path` per selezionare un'app esistente o una directory nuova o vuota. La creazione non interattiva richiede `--path` e `--yes`; pull si rifiuta di sovrascrivere una directory non vuota non correlata. La creazione di un progetto non registra un'applicazione né modifica l'area di lavoro. Un progetto SDK esistente senza una definizione dell'applicazione recupera anche l'applicazione personalizzata. Non esiste alcuna opzione `--universal-identifier`.
+
+Se l'installazione delle dipendenze non riesce per un nuovo progetto, lo scaffold viene mantenuto. Esegui `yarn install` al suo interno, quindi riprova il pull. I progetti esistenti non installano automaticamente le dipendenze. Se non è possibile leggere il relativo identificatore dell'applicazione, pull segnala quell'errore invece di creare un'altra app. Aggiungi `--verbose` per espandere le sezioni di copertura del report, che indicheranno fino a 20 identificatori per tipo di metadati anziché solo i totali.
 
 **Cosa scrive:**
 

@@ -111,10 +111,15 @@ Un plan:
 `twenty app pull` este inversul comenzii `apply`: citește o aplicație din spațiul de lucru și îi restaurează fișierele define, traducerile și fișierele de dependențe stocate.
 
 ```bash
-twenty app pull --universal-identifier <universalIdentifier>
+twenty app pull --remote dev
+twenty app pull --path ./workspace-app --yes --no-input
 ```
 
-Extragerea necesită un proiect existent — creează mai întâi unul cu `twenty app init`, apoi extrage în acesta. Fără `--universal-identifier`, extragerea vizează aplicația declarată de fișierul local `defineApplication()`. Dacă `--universal-identifier` denumește o aplicație diferită de cea declarată de proiectul tău, extragerea refuză să continue în loc să lase două aplicații într-un singur arbore: extrage-o pe aceea în propriul director. Dacă proiectul are un fișier de aplicație al cărui identificator nu poate fi citit, de obicei deoarece dependențele nu sunt instalate, comanda pull refuză și îți cere să rulezi mai întâi `yarn install`. Adaugă `--verbose` pentru a extinde secțiunile de acoperire ale raportului, care apoi denumesc până la 20 de identificatori per tip de metadate, în loc să afișeze doar totalurile.
+În interiorul unei aplicații, pull citește identificatorul local `defineApplication()` și preia aplicația respectivă. În afara unei aplicații, solicită un director și confirmare, creează un proiect local pentru aplicația particularizată a spațiului de lucru selectat, instalează dependențele cu Yarn, apoi preia definițiile. Noul proiect include fișiere de pachet și de configurare, fără entitățile demonstrative ale inițializatorului.
+
+Utilizați `--path` pentru a selecta o aplicație existentă sau un director nou ori gol. Crearea neinteractivă necesită `--path` și `--yes`; pull refuză să suprascrie un director nevid fără legătură. Crearea unui proiect nu înregistrează o aplicație și nu modifică spațiul de lucru. Un proiect SDK existent fără o definiție a aplicației preia, de asemenea, aplicația personalizată. Nu există nicio opțiune `--universal-identifier`.
+
+Dacă instalarea dependențelor eșuează pentru un proiect nou, scaffold-ul este păstrat. Rulați `yarn install` în interiorul acestuia, apoi reîncercați pull. Proiectele existente nu instalează automat dependențele. Dacă identificatorul aplicației lor nu poate fi citit, pull raportează acea eroare în loc să creeze o altă aplicație. Adaugă `--verbose` pentru a extinde secțiunile de acoperire ale raportului, care apoi denumesc până la 20 de identificatori per tip de metadate, în loc să afișeze doar totalurile.
 
 **Ce scrie:**
 

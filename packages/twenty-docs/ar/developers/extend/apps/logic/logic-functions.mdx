@@ -293,28 +293,25 @@ export default defineLogicFunction({
 يمكن الوصول إلى نقطة النهاية عند:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-المعرّف هو `id` الخاص بالمحلّل: المفتاح الأساسي الذي يعيّنه الخادم عند مزامنة التطبيق لأول مرة مع مساحة عمل المالك، وليس `universalIdentifier` الوارد في البيان الخاص بك. اقرأه مرة أخرى من واجهة برمجة التطبيقات `/metadata` لمساحة عمل المالك، ثم سجّل عنوان URL هذا لدى الموفّر:
+المقطع الأول هو معرّف تسجيل تطبيقك، والثاني هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. لا يُحلّ المسار إلا إلى resolver تابع لذلك التسجيل، في مساحة العمل الخاصة بمالكه. عندما يسجّل تطبيقك webhook نفسه، أنشئ عنوان URL من داخل دالة منطق باستخدام `getServerRouteUrl`؛ يحقن Twenty عنوان URL الأساسي لمسارات خادم تطبيقك باعتباره `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  لا يزال عنوان URL الذي يحمل `universalIdentifier` الخاص بالمحلل يُحل في الوقت الحالي،
-  وتحمل الاستجابة رأس `Deprecation`. يكون `universalIdentifier`
-  فريدًا لكل مساحة عمل، وليس عالميًا: إذا أعلن تسجيل آخر تملكه مساحة عمل
-  مختلفة عن المعرف نفسه، فستجيب المنصة بـ `404` لعنوان URL ذلك
-  بدلًا من الاختيار بينهما. انقل عناوين URL المسجلة لدى
-  موفري الخدمة لديك إلى صيغة `id`.
+  لا تزال عناوين URL التي تحمل فقط `id` الخاص بالمحلِّل أو `universalIdentifier`
+  (`/webhooks/server/:identifier`) تُحلّ في الوقت الحالي. تستجيب صيغة
+  `universalIdentifier` بترويسة `Deprecation` وتُرجع
+  `404` عندما يعلن تسجيلان عن المعرّف نفسه. انقل عناوين URL
+  المسجَّلة لدى موفّري الخدمة لديك إلى نموذج التسجيل.
 </Note>
 
 **الرد على طلب GET للتحقق.** يتحقق بعض الموفّرين من نقطة نهاية قبل أن يرسلوا إليها، وذلك بإرسال طلب `GET` يحمل تحديًا إلى عنوان URL نفسه الذي سيرسلون إليه الأحداث لاحقًا عبر `POST` — وتُعد WhatsApp Cloud API من Meta أحدهم. لا يستجيب مسار الخادم إلا لطلبات `POST` ما لم تحدد خلاف ذلك، لذا أعلن الطريقتين معًا:

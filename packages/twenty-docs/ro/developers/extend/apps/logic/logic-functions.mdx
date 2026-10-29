@@ -294,28 +294,25 @@ export default defineLogicFunction({
 Endpoint-ul este accesibil la:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Identificatorul este `id` al resolverului: cheia primară pe care serverul o atribuie când aplicația este sincronizată pentru prima dată în spațiul de lucru al proprietarului, nu `universalIdentifier` din manifestul dvs. Citiți-l din API-ul `/metadata` al spațiului de lucru al proprietarului, apoi înregistrați acel URL la furnizor:
+Primul segment este ID-ul înregistrării aplicației dvs., iar al doilea este `universalIdentifier` al resolver-ului din manifestul dvs. O rută se rezolvă doar către un resolver al acelei înregistrări, în spațiul de lucru al proprietarului. Când aplicația dvs. înregistrează webhook-ul propriu-zis, construiți URL-ul dintr-o funcție logică folosind `getServerRouteUrl`; Twenty injectează URL-ul de bază al rutelor de server ale aplicației dvs. ca `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  Un URL care conține `universalIdentifier` al resolver-ului încă se rezolvă,
-  deocamdată, iar răspunsul conține un header `Deprecation`. Un `universalIdentifier` este
-  unic pentru fiecare spațiu de lucru, nu la nivel global: dacă o altă înregistrare deținută de un
-  spațiu de lucru diferit declară același identificator, platforma răspunde cu `404` pentru acel
-  URL în loc să aleagă între ele. Mutați URL-urile înregistrate la
-  furnizorii dvs. în forma `id`.
+  URL-urile care conțin doar `id` sau `universalIdentifier` ale resolverului
+  (`/webhooks/server/:identifier`) se rezolvă în continuare deocamdată. Forma
+  `universalIdentifier` răspunde cu un antet `Deprecation` și returnează
+  `404` atunci când două înregistrări declară același identificator. Mutați URL-urile
+  înregistrate la furnizorii dvs. în formularul de înregistrare.
 </Note>
 
 **Răspunsul la un GET de verificare.** Unii furnizori verifică un punct final înainte de a livra către acesta, trimițând un `GET` care conține o provocare la același URL către care vor trimite ulterior evenimente prin `POST` — WhatsApp Cloud API de la Meta este unul dintre aceștia. O rută de server răspunde numai la `POST`, cu excepția cazului în care specifici altfel, așa că declară ambele metode:
