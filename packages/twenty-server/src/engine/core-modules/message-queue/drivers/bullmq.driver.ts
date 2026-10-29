@@ -57,6 +57,7 @@ export type BullMQDriverOptions = QueueOptions;
 
 type BullMQJobsOptions = JobsOptions & {
   broadcastTo?: QueueJobRecipient;
+  fairBase?: number;
 };
 
 export class BullMQDriver
@@ -535,7 +536,7 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
-    const [priority] = await this.fairQueueScheduler.computeJobPriorities({
+    const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       jobsData: [data],
       options,
@@ -544,7 +545,7 @@ export class BullMQDriver
 
     const job = await this.queueMap[queueName].add(jobName, data, {
       ...queueOptions,
-      priority,
+      ...jobOptions,
     });
 
     return job.id;
@@ -596,7 +597,7 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
-    const priorities = await this.fairQueueScheduler.computeJobPriorities({
+    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       jobsData: jobsToAdd.map(({ data }) => data),
       options,
@@ -609,7 +610,7 @@ export class BullMQDriver
         data,
         opts: {
           ...queueOptions,
-          priority: priorities[index],
+          ...jobOptions[index],
           jobId:
             jobId ??
             (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),

@@ -13,6 +13,8 @@ import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.ser
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+export type FairJobOptions = { priority?: number; fairBase?: number };
+
 type FairQueueSchedulerOptions = {
   getClient: (queueName: MessageQueue) => Promise<RedisClient>;
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
@@ -32,7 +34,7 @@ export class FairQueueScheduler {
     });
   }
 
-  async computeJobPriorities({
+  async computeJobOptions({
     queueName,
     jobsData,
     options,
@@ -42,11 +44,13 @@ export class FairQueueScheduler {
     jobsData: unknown[];
     options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
     staticPriority: number | undefined;
-  }): Promise<(number | undefined)[]> {
-    const staticPriorities = jobsData.map(() => staticPriority);
+  }): Promise<FairJobOptions[]> {
+    const staticJobOptions: FairJobOptions[] = jobsData.map(() => ({
+      priority: staticPriority,
+    }));
 
     if (!this.isFairnessEnabled() || (options?.delay ?? 0) > 0) {
-      return staticPriorities;
+      return staticJobOptions;
     }
 
     const requestByGroupKeys = new Map<
@@ -69,7 +73,7 @@ export class FairQueueScheduler {
     });
 
     const requests = [...requestByGroupKeys.values()];
-    const tickets = await this.fairTicketAllocator.allocateTickets({
+    const fairTickets = await this.fairTicketAllocator.allocateTickets({
       queueName,
       requests: requests.map(({ groupKeys, jobIndexes }) => ({
         groupKeys,
@@ -78,20 +82,21 @@ export class FairQueueScheduler {
     });
 
     if (staticPriority === URGENT_FAIR_PRIORITY) {
-      return staticPriorities;
+      return staticJobOptions;
     }
 
-    if (!isDefined(tickets)) {
+    if (!isDefined(fairTickets)) {
       void this.options.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFairTagFallback,
         attributes: { queue: queueName },
         shouldStoreInCache: false,
       });
 
-      return staticPriorities;
+      return staticJobOptions;
     }
 
-    const priorities = [...staticPriorities];
+    const { base, tickets } = fairTickets;
+    const fairJobOptions = [...staticJobOptions];
 
     requests.forEach(({ jobIndexes }, requestIndex) => {
       const { tag, weight } = tickets[requestIndex];
@@ -99,13 +104,16 @@ export class FairQueueScheduler {
       jobIndexes.forEach((jobIndex, position) => {
         const ticket = Math.floor(tag + position / weight);
 
-        priorities[jobIndex] =
-          FAIR_TICKET_OFFSET +
-          Math.min(PRIORITY_LIMIT - FAIR_TICKET_OFFSET, Math.max(0, ticket));
+        fairJobOptions[jobIndex] = {
+          priority:
+            FAIR_TICKET_OFFSET +
+            Math.min(PRIORITY_LIMIT - FAIR_TICKET_OFFSET, Math.max(0, ticket)),
+          fairBase: base,
+        };
       });
     });
 
-    return priorities;
+    return fairJobOptions;
   }
 
   onJobStarted({

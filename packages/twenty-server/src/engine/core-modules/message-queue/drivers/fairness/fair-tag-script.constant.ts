@@ -1,7 +1,8 @@
 export const FAIR_TAG_SCRIPT = `
 local virtualTimeKey = KEYS[1]
-local weightsKey = KEYS[2]
-local firstClockKeyIndex = 3
+local baseKey = KEYS[2]
+local weightsKey = KEYS[3]
+local firstClockKeyIndex = 4
 local clockTtlMs = ARGV[1]
 local distinctKeyCount = tonumber(ARGV[2])
 local firstGroupKeyArgIndex = 3
@@ -9,16 +10,23 @@ local requestCount = tonumber(ARGV[firstGroupKeyArgIndex + distinctKeyCount])
 local firstRequestArgIndex = firstGroupKeyArgIndex + distinctKeyCount + 1
 
 local virtualTime = tonumber(redis.call('GET', virtualTimeKey) or '0')
+local base = tonumber(redis.call('GET', baseKey) or '0')
 local clocks = {}
 local weights = {}
 
 for i = 1, distinctKeyCount do
-  local clock = tonumber(redis.call('GET', KEYS[firstClockKeyIndex + i - 1]))
+  local raw = redis.call('GET', KEYS[firstClockKeyIndex + i - 1]) or ''
+  local clockBase, clock = string.match(raw, '^([^:]+):(.+)$')
+  local shiftedClock = tonumber(raw)
+
+  if clockBase ~= nil then
+    shiftedClock = tonumber(clock) - (base - tonumber(clockBase))
+  end
 
   clocks[i] = virtualTime
 
-  if clock ~= nil and clock > virtualTime then
-    clocks[i] = clock
+  if shiftedClock ~= nil and shiftedClock > virtualTime then
+    clocks[i] = shiftedClock
   end
 
   local weight = tonumber(redis.call('HGET', weightsKey, ARGV[firstGroupKeyArgIndex + i - 1]))
@@ -30,8 +38,8 @@ for i = 1, distinctKeyCount do
   weights[i] = weight
 end
 
-local tickets = {}
-local ticketCount = 0
+local tickets = { string.format('%d', base) }
+local ticketCount = 1
 local position = firstRequestArgIndex
 
 for _ = 1, requestCount do
@@ -63,7 +71,7 @@ for _ = 1, requestCount do
 end
 
 for i = 1, distinctKeyCount do
-  redis.call('SET', KEYS[firstClockKeyIndex + i - 1], tostring(clocks[i]), 'PX', clockTtlMs)
+  redis.call('SET', KEYS[firstClockKeyIndex + i - 1], string.format('%d', base) .. ':' .. clocks[i], 'PX', clockTtlMs)
 end
 
 return table.concat(tickets, ' ')

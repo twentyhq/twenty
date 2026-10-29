@@ -4,6 +4,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import {
+  FAIR_REBASE_STEP,
   FAIR_TICKET_OFFSET,
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
@@ -542,7 +543,10 @@ describe('BullMQDriver fair tickets', () => {
   });
 
   it('ranks a job by the ticket of its workspace', async () => {
-    mockAllocateTickets.mockResolvedValue([{ tag: 7, weight: 1 }]);
+    mockAllocateTickets.mockResolvedValue({
+      base: FAIR_REBASE_STEP,
+      tickets: [{ tag: 7, weight: 1 }],
+    });
 
     await driver.add(MessageQueue.workspaceQueue, 'job', {
       workspaceId: 'ws-1',
@@ -555,15 +559,21 @@ describe('BullMQDriver fair tickets', () => {
     expect(mockAdd).toHaveBeenCalledWith(
       'job',
       { workspaceId: 'ws-1' },
-      expect.objectContaining({ priority: FAIR_TICKET_OFFSET + 7 }),
+      expect.objectContaining({
+        priority: FAIR_TICKET_OFFSET + 7,
+        fairBase: FAIR_REBASE_STEP,
+      }),
     );
   });
 
   it('allocates one ticket per group of a bulk and spaces its jobs by the weight', async () => {
-    mockAllocateTickets.mockResolvedValue([
-      { tag: 10, weight: 0.5 },
-      { tag: 0, weight: 1 },
-    ]);
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [
+        { tag: 10, weight: 0.5 },
+        { tag: 0, weight: 1 },
+      ],
+    });
 
     await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
       { data: { workspaceId: 'ws-1' } },
@@ -590,7 +600,10 @@ describe('BullMQDriver fair tickets', () => {
   });
 
   it('keeps priority 1 ahead of the fair tickets while still charging its group keys', async () => {
-    mockAllocateTickets.mockResolvedValue([{ tag: 7, weight: 1 }]);
+    mockAllocateTickets.mockResolvedValue({
+      base: 0,
+      tickets: [{ tag: 7, weight: 1 }],
+    });
 
     await driver.add(
       MessageQueue.workspaceQueue,
