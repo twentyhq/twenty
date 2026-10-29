@@ -1,4 +1,5 @@
 import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
+import { isDefined } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const buildApplication = (
@@ -6,7 +7,7 @@ const buildApplication = (
   sourceType?: ApplicationRegistrationSourceType,
 ) => ({
   id,
-  applicationRegistration: sourceType ? { sourceType } : null,
+  applicationRegistration: isDefined(sourceType) ? { sourceType } : null,
 });
 
 describe('sortApplicationsWithOAuthOnlyLast', () => {
