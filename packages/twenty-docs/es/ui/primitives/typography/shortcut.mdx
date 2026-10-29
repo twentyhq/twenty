@@ -1,0 +1,79 @@
+---
+title: Atajo
+description: Muestra combinaciones de teclas simultáneas y atajos secuenciales.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+## Resumen
+
+Importa `Shortcut` y `formatShortcut` desde `twenty-ui/primitives/typography`. Ambos comparten el mismo modelo, símbolos y separadores. Registra atajos en tu aplicación. `Shortcut` solo da formato a la indicación; no registra acciones del teclado. Los atributos nativos, controladores de eventos, estilos, nombres de clase y refs se dirigen a su span externo. `ShortcutProps` y `ShortcutFormatOptions` son tipos públicos.
+
+<StoryEmbed storyId="ui-typography-shortcut--display" title="Presentaciones de atajos" height={90} />
+
+## "Uso"
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## Combinaciones y secuencias
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+Una matriz plana es una combinación simultánea: `['Mod', 'K']` significa pulsar Mod y K a la vez. Una matriz anidada es una secuencia ordenada: `[['G'], ['P']]` significa pulsar G y luego P. Cada matriz anidada es una combinación, por lo que `[['Mod', 'K'], ['Mod', 'C']]` significa pulsar Mod y K, y luego Mod y C. Usa una matriz de un elemento para una sola tecla. Ambas formas de matriz pueden ser de solo lectura.
+
+`Mod` y `CommandOrControl` muestran Command en macOS e iOS, y Control en otros sistemas. Las teclas explícitas `Command`, `Control`, `Alt` y `Enter` también tienen etiquetas de visualización. Las demás cadenas se muestran tal como se proporcionan. La detección de dispositivos es segura sin globales del navegador; `platform` puede sustituirla opcionalmente por `mac` u `other`.
+
+Usa `sequenceJoinLabel` para texto de unión localizado. `combinationSeparator` puede conservar una convención del host, como `+`. El separador de texto predeterminado está vacío en los dispositivos Apple y es un espacio en otros sistemas. `variant` selecciona `keys`, `text` o `button`. `visibility="desktop"` oculta la indicación en anchos de ventana móvil, mientras que `always` permanece visible.
+
+Los símbolos de teclas tienen nombres accesibles legibles. Use `accessibleKeyLabels` para localizar los nombres de teclas individuales en la salida del lector de pantalla. Proporcione `aria-label` o `aria-labelledby` para un nombre localizado de todo el atajo, o `aria-hidden` para una indicación decorativa. Los botones conservan los nombres de sus acciones y ocultan sus indicaciones decorativas en dispositivos móviles. Las filas de menú y lista mantienen visibles sus indicaciones.
+
+## Apariencia
+
+Usa `keys` para teclas individuales, `text` para una indicación en línea o `button` para la indicación compacta dentro de una acción. Estas variantes solo cambian la presentación.
+
+<StoryEmbed storyId="ui-typography-shortcut--catalog" title="Variantes de apariencia de los atajos de teclado" height={160} />
+
+## Migración
+
+| Propiedad anterior                                               | Reemplazo                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| Botón `hotkeys={['⌘', 'K']}`                                     | `shortcut={['Mod', 'K']}`                                     |
+| ListItem secuencial `hotkeys` / `hotKeys`                        | `shortcut={[['G'], ['P']]}`                                   |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`                          | `shortcutJoinLabel` en las partes Button, ListItem y Dropdown |
+| Concatenación manual de teclas de información sobre herramientas | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`              |
+
+Las matrices planas almacenadas que representan pulsaciones de teclas sucesivas deben anidarse antes de pasarlas a `shortcut`: `hotKeys.map((key) => [key])`. Las matrices que representan teclas simultáneas se pueden pasar directamente. Las cadenas de teclas siguen siendo tokens literales, por lo que `['Mod', '+']` contiene una tecla de signo más y `['Space']` contiene la tecla Espacio; no se requiere analizar cadenas de atajos.
+
+## "Props"
+
+<ShortcutReference />
+
+<PageBanner illustration="card-page-command-menu" />

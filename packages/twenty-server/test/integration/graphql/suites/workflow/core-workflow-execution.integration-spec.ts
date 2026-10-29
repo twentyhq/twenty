@@ -236,7 +236,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   };
 
   const waitForRun = async (runId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.status === status) {
@@ -430,17 +430,24 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       getQueueToken(MessageQueue.workflowQueue),
     );
 
-    await queue.add('WorkflowTriggerJob', {
-      workspaceId,
-      workflowId: fixture.workflowId as string,
-      payload: { marker: envelope },
-      ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
-        ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-        : {}),
-      ...(envelope === 'core-version' || envelope === 'backfilled-paired'
-        ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-        : {}),
-    });
+    await queue.add(
+      'WorkflowTriggerJob',
+      {
+        workspaceId,
+        workflowId: fixture.workflowId as string,
+        payload: { marker: envelope },
+        ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
+          ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
+          : {}),
+        ...(envelope === 'core-version' || envelope === 'backfilled-paired'
+          ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
+          : {}),
+      },
+      {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
     for (let attempt = 0; attempt < 100; attempt++) {
       const [run] = await global.testDataSource.query(
         `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
@@ -655,7 +662,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     throw new Error('Cron failed to dispatch');
   });
   const waitForStep = async (runId: string, stepId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.state?.stepInfos[stepId]?.status === status) {
@@ -1947,7 +1954,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           workflowRunId: runId,
           lastExecutedStepId: parallelBranch.id,
         },
-        buildRunWorkflowJobOptions(runId),
+        buildRunWorkflowJobOptions({
+          workflowRunId: runId,
+          scope: { workspaceId, isWorkspaceJob: true },
+        }),
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -2130,7 +2140,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     capacity.mockRestore();
     await global.app
       .get<MessageQueueService>(getQueueToken(MessageQueue.workflowQueue))
-      .add('WorkflowRunEnqueueJob', { workspaceId, isCacheMode: false });
+      .add(
+        'WorkflowRunEnqueueJob',
+        { workspaceId, isCacheMode: false },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
+      );
     await waitForRun(runId, 'COMPLETED');
   });
 

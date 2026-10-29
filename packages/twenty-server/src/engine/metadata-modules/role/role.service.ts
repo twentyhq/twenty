@@ -624,13 +624,6 @@ export class RoleService {
 
     const activeApiKeyIds = new Set(activeApiKeys.flat().map(({ id }) => id));
 
-    const softDeletedAgentIds = new Set(
-      Object.values(flatAgentMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(({ deletedAt }) => isDefined(deletedAt))
-        .map(({ id }) => id),
-    );
-
     const flatRoleTargetsToDelete = Object.values(
       flatRoleTargetMaps.byUniversalIdentifier,
     ).filter(
@@ -647,9 +640,7 @@ export class RoleService {
             if (
               !isDefined(targetId) ||
               (targetMetadataForeignKey === 'apiKeyId' &&
-                !activeApiKeyIds.has(targetId)) ||
-              (targetMetadataForeignKey === 'agentId' &&
-                softDeletedAgentIds.has(targetId))
+                !activeApiKeyIds.has(targetId))
             ) {
               return [];
             }

@@ -76,7 +76,9 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
   'public/images/logo-bar/zabka.svg',
   'public/images/logo-bar/faz.svg',
   'public/images/logo-bar/wazoku.svg',
+  'public/images/pricing/plans/apps/call-recorder.svg',
   'public/images/shared/companies/logos/linear.svg',
+  'public/images/shared/companies/logos/microsoft.svg',
   'public/images/shared/companies/logos/twenty.svg',
   // The halftone studio's default image input: fetched at runtime as an
   // <img> and fed through the halftone shader, not rendered as an icon glyph.

@@ -1,0 +1,105 @@
+---
+title: عنصر التحكم المُقسَّم
+description: اختر قيمة واحدة من مجموعة مضغوطة من الخيارات المسمّاة أو خيارات الأيقونات.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
+
+## نظرة عامة
+
+`SegmentedControl` هو إعداد مسبق مكوَّن من [Radio](/ar/ui/primitives/input/radio) و[RadioGroup](/ar/ui/primitives/input/radio-group)، مع خيارات متصلة. استخدمه لاختيار قصير ومتبادل الاستبعاد. للتنقل بين لوحات المحتوى، استخدم [Tabs](/ar/ui/primitives/navigation/tabs).
+
+<StoryEmbed storyId="components-input-segmentedcontrol--display" title="مثال على SegmentedControl" height={110} />
+
+## استخدام
+
+وفّر اسمًا يمكن الوصول إليه للمجموعة باستخدام `aria-label` أو `aria-labelledby`. يحتاج كل خيار إلى سلسلة `value` فريدة. ينتمي التحديد إلى المجموعة؛ ولا تملك الخيارات حالة تحديد مستقلة.
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => (
+  <SegmentedControl
+    aria-label="Billing period"
+    name="billingPeriod"
+    defaultValue="annual"
+    options={[
+      { label: 'Annual', value: 'annual' },
+      { label: 'Monthly', value: 'monthly' },
+    ]}
+  />
+);
+```
+
+تُهيّئ `defaultValue` التحديد. تمتلك المجموعة التغييرات اللاحقة. أضف `onValueChange` إذا كنت بحاجة إلى مراقبتها دون التحكم في القيمة.
+
+## الحالة المتحكَّم بها
+
+```tsx
+import { useState } from 'react';
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => {
+  const [period, setPeriod] = useState('annual');
+
+  return (
+    <SegmentedControl
+      aria-label="Billing period"
+      name="billingPeriod"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { label: 'Annual', value: 'annual' },
+        { label: 'Monthly', value: 'monthly' },
+      ]}
+    />
+  );
+};
+```
+
+احتفِظ بـ `value` في حالة التطبيق وحدِّثها في `onValueChange`. لا تجمع بين `value` و`defaultValue` ولا تبدّل أوضاع الملكية بعد التركيب.
+
+## خيارات الأيقونة
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
+
+export const RecordLayout = () => (
+  <SegmentedControl
+    aria-label="Record layout"
+    defaultValue="list"
+    itemWidth="content"
+    options={[
+      { value: 'list', startIcon: <IconList />, 'aria-label': 'List' },
+      {
+        value: 'kanban',
+        startIcon: <IconLayoutKanban />,
+        'aria-label': 'Kanban',
+      },
+    ]}
+  />
+);
+```
+
+يتطلب الخيار الذي يحتوي على أيقونة فقط `aria-label`. `startIcon` للزينة ومخفي عن التقنية المساعدة. تستخدم الخيارات ذات النص المرئي `label` ويمكنها أيضاً توفير `startIcon`. عيّن `disabled` على خيار لمنع تحديده، أو على المجموعة لتعطيل كل خيار.
+
+## لوحة المفاتيح والنماذج والاتجاه
+
+يدخل Tab إلى المجموعة؛ وتنقلك مفاتيح الأسهم بين الخيارات الممكّنة وتحدّث التحديد. يتبع هذا سلوك زر الاختيار. تنقل مجموعات تحديد القائمة المنسدلة التركيز باستخدام مفاتيح الأسهم وتحدّد عند التنشيط. `itemWidth="equal"` هو الإعداد الافتراضي؛ استخدم `content` عندما ينبغي أن تحدد التسميات العروض. عيّن `name` لتضمين القيمة المحددة في إرسال النموذج الأصلي. يحافظ الإعداد المسبق على `required` و`readOnly` وحالة التعطيل والتكامل مع النموذج الأصلي في RadioGroup. يتلقى `onValueChange` القيمة المحددة وتفاصيل حدث Base UI، بما في ذلك `reason` و`cancel()`.
+
+للمحتوى من اليمين إلى اليسار، اجمع [DirectionProvider](/ar/ui/primitives/layout/direction-provider) مع سمة `dir` مطابقة. يتحكم الموفّر في التفاعل الاتجاهي؛ وتتحكم `dir` في تخطيط المستند.
+
+## التكوين والخصائص الأصلية
+
+تستهدف الخصائص الأصلية و`className` و`style` و`render` و`ref` عنصر `div` الخاص بالمجموعة. استخدم `render` لتكوين تلك المجموعة مع عنصر آخر؛ وحافظ على اسمها المتاح ودلالات مجموعة أزرار الاختيار. تعرض الخيارات عناصر `span` ذات `role="radio"` ومدخلات أزرار اختيار أصلية مخفية. لا يعيّن الإعداد المسبق أدوار علامة التبويب أو لوحة علامة التبويب. للمحتوى المخصص لأزرار الاختيار، أو الخصائص الأصلية لكل خيار، أو هدف عرض مختلف لأزرار الاختيار، كوّن `Radio.Root` و`RadioGroup` مباشرةً.
+
+## الإزاحة
+
+<SegmentedControlReference />
+
+<PageBanner illustration="page-cover-switch" />

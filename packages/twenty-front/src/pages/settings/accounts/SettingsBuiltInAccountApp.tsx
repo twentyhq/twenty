@@ -1,6 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { AppChip } from '@/applications/components/AppChip';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
-import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
@@ -10,6 +10,9 @@ import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/u
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
+import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
+import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -22,13 +25,12 @@ import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsBuiltInAccountApp = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -83,6 +85,7 @@ export const SettingsBuiltInAccountApp = () => {
   }
 
   const appName = t(app.name);
+  const logoUrl = getBuiltInAccountAppLogoUrl(app);
 
   const getSelectedAccount = (
     accounts: ConnectedAccount[],
@@ -109,16 +112,10 @@ export const SettingsBuiltInAccountApp = () => {
 
   const renderContent = () => {
     if (activeTabId === 'emails') {
-      if (loading && emailAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(emailAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { messageChannel } =
@@ -137,16 +134,10 @@ export const SettingsBuiltInAccountApp = () => {
     }
 
     if (activeTabId === 'calendar') {
-      if (loading && calendarAccounts.length === 0) {
-        return <SettingsSectionSkeletonLoader />;
-      }
-
       const selectedAccount = getSelectedAccount(calendarAccounts);
 
       if (!isDefined(selectedAccount)) {
-        return (
-          <SettingsAppPreferencesListEmptyStateCard provider={app.provider} />
-        );
+        return <SettingsSectionSkeletonLoader />;
       }
 
       const { calendarChannel } =
@@ -166,6 +157,14 @@ export const SettingsBuiltInAccountApp = () => {
 
     return (
       <>
+        <Section.Root>
+          <SettingsApplicationOverviewCard
+            logoUrl={logoUrl}
+            displayName={appName}
+            description={t(app.description)}
+            coverImageUrl={app.coverImage}
+          />
+        </Section.Root>
         <SettingsAccountGroupsSection builtInAccountApp={app} />
         <SettingsAccountsBlocklistSection />
       </>
@@ -175,26 +174,36 @@ export const SettingsBuiltInAccountApp = () => {
   return (
     <SettingsPageLayout
       title={appName}
-      icon={<app.Icon size={theme.icon.size.md} />}
+      icon={
+        <AppChip
+          logoUrl={logoUrl}
+          fallbackApplicationData={{ name: appName }}
+          size="md"
+          chipOnly
+        />
+      }
       links={[
         {
           children: t`User`,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
+          children: t`Apps preferences`,
           href: getSettingsPath(SettingsPath.Accounts),
         },
         { children: appName },
       ]}
       secondaryBar={
-        <SettingsTabBar
-          aria-label={t`${appName} preferences`}
-          tabs={tabs}
-          componentInstanceId={tabListComponentInstanceId}
-        />
+        tabs.length > 1 ? (
+          <SettingsTabBar
+            aria-label={t`${appName} preferences`}
+            tabs={tabs}
+            componentInstanceId={tabListComponentInstanceId}
+          />
+        ) : undefined
       }
     >
+      <SettingsAccountsMessageChannelsSSEEffect />
       <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );

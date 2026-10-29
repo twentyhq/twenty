@@ -8,9 +8,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { createHash } from 'crypto';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { text } from 'stream/consumers';
 
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
@@ -31,7 +28,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
@@ -46,20 +42,17 @@ const DRAFT_TTL = 24 * 60 * 60 * 1000;
 @Injectable()
 export class AiFrontComponentService {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    private readonly cache: CacheStorageService,
-    private readonly locks: CacheLockService,
     private readonly featureFlags: FeatureFlagService,
-    private readonly permissions: PermissionsService,
     private readonly applications: ApplicationService,
     private readonly files: FileStorageService,
     private readonly components: FrontComponentService,
-    private readonly flatMaps: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly queryContext: CommonApiContextBuilderService,
     private readonly records: FindRecordsService,
-    @InjectWorkspaceScopedRepository(FrontComponentEntity)
-    private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly compiler: FrontComponentCompilerService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
+    private readonly cache: CacheStorageService,
+    private readonly locks: CacheLockService,
+    private readonly permissions: PermissionsService,
   ) {}
 
   private isEnabled(workspaceId: string) {

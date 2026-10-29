@@ -10,6 +10,8 @@ import {
   Req,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -163,6 +165,7 @@ export class ViewController {
 
   @Patch(':id')
   @UseGuards(ViewPermissionGuard)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -208,14 +211,6 @@ export class ViewController {
     workspaceId: string,
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
-    const hasTemplates = views.some((view) =>
-      hasObjectMetadataLabelPlaceholder(view.name),
-    );
-
-    if (!hasTemplates && views.every((view) => view.isCustom)) {
-      return views;
-    }
-
     const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

@@ -2,6 +2,7 @@ import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigat
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -12,7 +13,6 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import {
   type NavigationDrawerActiveTab,
   NAVIGATION_DRAWER_TABS,
@@ -21,6 +21,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
+
+const MAX_DISPLAYED_UNREAD_COUNT = 99;
 
 // Expanded, the row matches the page card header so their borders read as one line.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
@@ -118,6 +120,13 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
+const StyledUnreadBadge = styled.span`
+  pointer-events: none;
+  position: absolute;
+  right: calc(-1 * ${themeCssVariables.spacing['1.5']});
+  top: calc(-1 * ${themeCssVariables.spacing['1.5']});
+`;
+
 export const MainNavigationDrawerModeSwitcher = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -131,7 +140,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
   const shouldReduceMotion = useReducedMotion();
-  const { hasUnreadOpenThread } = useAgentChatOpenThreadsSummary();
+  const { unreadOpenThreadCount } = useAgentChatOpenThreadsSummary();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -164,7 +173,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         const isUnread =
           isAiChatInboxEnabled &&
           mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
-          hasUnreadOpenThread &&
+          unreadOpenThreadCount > 0 &&
           !isActive;
         const isDisabled =
           mode !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
@@ -183,7 +192,9 @@ export const MainNavigationDrawerModeSwitcher = () => {
               type="button"
               isActive={isActive}
               isExpanded={isExpanded}
-              aria-label={isUnread ? t`${label}, unread` : label}
+              aria-label={
+                isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
+              }
               aria-current={isActive || undefined}
               aria-disabled={isDisabled}
               onClick={() => {
@@ -196,7 +207,19 @@ export const MainNavigationDrawerModeSwitcher = () => {
             >
               <StyledModeIcon>
                 <Icon size={theme.icon.size.md} />
-                {isUnread && <StyledNavigationDrawerUnreadDot />}
+                {isUnread && (
+                  <Badge
+                    render={<StyledUnreadBadge />}
+                    aria-hidden="true"
+                    size="xs"
+                    color="primary"
+                    shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+                  >
+                    {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+                      ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+                      : unreadOpenThreadCount}
+                  </Badge>
+                )}
               </StyledModeIcon>
               <StyledModeLabel
                 initial={false}

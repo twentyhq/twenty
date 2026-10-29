@@ -143,6 +143,8 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
 export type { ConnectionProviderScope } from 'twenty-shared/application';
+export { defineMessagingProvider } from '@/sdk/define/messaging-providers/define-messaging-provider';
+export { defineMcpServer } from '@/sdk/define/mcp-servers/define-mcp-server';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
@@ -188,7 +190,7 @@ export {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
-export { SystemPermissionFlag } from 'twenty-shared/constants';
+export { SystemPermissionFlag } from '@/sdk/define/roles/system-permission-flag.constant';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 

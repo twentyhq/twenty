@@ -1,51 +1,63 @@
-import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
 export const buildRowAccessPolicy = ({
   subject,
   environment,
+  hypotheticalRecordShareAccessLevel,
   ...target
-}: RowAccessPolicyContext & RowAccessPolicyTarget): RowAccessPolicy => {
+}: RowAccessPolicyContext &
+  RowAccessPolicyTarget & {
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  }): RowAccessPolicy => {
   if (subject.isSystemContext) {
     return { kind: 'open' };
   }
 
   const context = { subject, environment };
-  // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
+
   if (
-    target.operationType !== 'select' &&
-    !isMetadataWritePermitted({
-      writability: target.flatObjectMetadata.writability,
-      isSystemContext: false,
-      isOwningApplication: subject.isOwningApplication(
-        target.flatObjectMetadata,
-      ),
-    })
+    isObjectOperationDisabled({
+      objectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+    }) &&
+    !subject.isOwningApplication(target.flatObjectMetadata)
   ) {
     return { kind: 'denied' };
   }
 
-  const namedRecordGrant = resolveObjectSharing({
+  const canGrantOperationBeyondRole = resolveObjectSharing({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
-  }).operationTypesGrantedBeyondRole.includes(target.operationType)
+  }).operationTypesGrantedBeyondRole.includes(target.operationType);
+  const hasHypotheticalRecordShare =
+    isDefined(hypotheticalRecordShareAccessLevel) &&
+    resolveRequiredRecordShareAccessLevels(target.operationType).includes(
+      hypotheticalRecordShareAccessLevel,
+    );
+  const isHypotheticalRecordShareBeyondRole =
+    hasHypotheticalRecordShare && canGrantOperationBeyondRole;
+  const namedRecordGrant = canGrantOperationBeyondRole
     ? buildNamedRecordGrantExpression(context, target)
     : undefined;
 
   if (
     isDefined(subject.objectsPermissions) &&
+    !isHypotheticalRecordShareBeyondRole &&
     !isObjectOperationPermitted({
       objectMetadata: target.flatObjectMetadata,
       operationType: target.operationType,
@@ -57,21 +69,18 @@ export const buildRowAccessPolicy = ({
       : { kind: 'denied' };
   }
 
-  const recordShareGate = buildRecordShareGate({
-    context,
-    target,
-    buildParentPolicy: (parentTarget) =>
-      buildRowAccessPolicy({ ...context, ...parentTarget }),
-  });
-
-  if (recordShareGate.kind === 'denied') {
-    return { kind: 'denied' };
+  if (isHypotheticalRecordShareBeyondRole) {
+    return { kind: 'open' };
   }
+
+  const recordShareGate = buildRecordShareGate({ ...context, ...target });
 
   const roleFilter = buildRoleFilterExpression(context, target);
   const operands = [
     roleFilter,
-    recordShareGate.kind === 'gated' ? recordShareGate.expression : undefined,
+    !hasHypotheticalRecordShare && recordShareGate.kind === 'gated'
+      ? recordShareGate.expression
+      : undefined,
   ].filter(isDefined);
 
   if (operands.length === 0) {

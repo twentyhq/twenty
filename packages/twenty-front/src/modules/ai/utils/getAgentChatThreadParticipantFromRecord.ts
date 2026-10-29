@@ -5,6 +5,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 export const getAgentChatThreadParticipantFromRecord = (
   record: ObjectRecord,
 ): AgentChatThreadParticipantFieldsFragment => ({
+  __typename: 'AgentChatThreadParticipant',
   id: record.id,
   threadId: record.threadId,
   lastReadAt: record.lastReadAt ?? null,

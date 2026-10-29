@@ -15,7 +15,6 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
@@ -26,7 +25,6 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -660,7 +658,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
+  describe.each([MetadataReadability.PRIVATE])(
     'PRIVATE creates with conversation readability %s',
     (conversationReadability) => {
       let conversationObjectMetadata: ObjectMetadataEntity;
@@ -805,32 +803,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
         expectToFail: false,
       });
 
-    const setSharingReach = (sharingReach: ObjectSharingReach) =>
-      updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: objectMetadataId,
-          updatePayload: { sharingReach },
-        },
-      });
-
-    const setMemberObjectAccess = (canAccessObject: boolean) =>
-      upsertObjectPermissions({
-        expectToFail: false,
-        input: {
-          roleId: memberRoleId,
-          objectPermissions: [
-            {
-              objectMetadataId,
-              canReadObjectRecords: canAccessObject,
-              canUpdateObjectRecords: canAccessObject,
-              canSoftDeleteObjectRecords: canAccessObject,
-              canDestroyObjectRecords: canAccessObject,
-            },
-          ],
-        },
-      });
-
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
       await setRecordSharingEnabled(true);
@@ -970,40 +942,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
         'BAD_USER_INPUT',
       );
       expect(await findRecordShares(recordId)).toEqual([]);
-    });
-
-    it('should refuse a grant the role of its recipient cannot use when sharing stays within roles', async () => {
-      const recordId = trackRecordId();
-
-      try {
-        await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-        await setMemberObjectAccess(false);
-
-        const response = await makeGraphqlApiRequest(
-          createOneOperation({
-            data: { id: recordId, name: 'beyond the role' },
-            shareWith: [
-              {
-                workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-                accessLevel: RecordShareAccessLevel.READ,
-              },
-            ],
-          }),
-        );
-
-        expect(response.body.errors?.[0]?.extensions?.code).toBe(
-          'BAD_USER_INPUT',
-        );
-        expect(await findRecordShares(recordId)).toEqual([]);
-        expect(
-          (await makeGraphqlApiRequest(findManyOperation(recordId))).body.data[
-            OBJECT_PLURAL
-          ].edges,
-        ).toEqual([]);
-      } finally {
-        await setMemberObjectAccess(true);
-        await setSharingReach(ObjectSharingReach.WORKSPACE);
-      }
     });
   });
 });

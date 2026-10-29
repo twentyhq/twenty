@@ -14,6 +14,7 @@ const radiusLeaf = (
 const roundRadiusLeaves = [
   radiusLeaf('smRound', '4px'),
   radiusLeaf('mdRound', '8px'),
+  radiusLeaf('lgRound', '12px'),
   radiusLeaf('pill', '999px'),
   radiusLeaf('rounded', '100%'),
 ];
@@ -65,6 +66,7 @@ describe('buildThemeCss', () => {
     );
     expect(squircleBlock).not.toContain('--t-border-radius-sm-round');
     expect(squircleBlock).not.toContain('--t-border-radius-md-round');
+    expect(squircleBlock).not.toContain('--t-border-radius-lg-round');
     expect(squircleBlock).not.toContain('--t-border-radius-pill');
     expect(squircleBlock).not.toContain('--t-border-radius-rounded');
   });

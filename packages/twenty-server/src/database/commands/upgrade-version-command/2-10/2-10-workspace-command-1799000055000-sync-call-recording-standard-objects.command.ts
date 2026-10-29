@@ -144,6 +144,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isAuditLogged: true,
   isUIEditable: true,
   writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   overrides: null,
   defaultValue: "'AUTO'",
@@ -510,6 +511,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
       const renameResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             applicationUniversalIdentifier,
             workspaceId,
@@ -531,6 +533,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

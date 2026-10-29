@@ -11,6 +11,7 @@ import { ApplicationUninstallService } from 'src/engine/core-modules/application
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationHealthModule } from 'src/engine/core-modules/application/application-health/application-health.module';
+import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
@@ -28,6 +29,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationLookupModule,
     ApplicationModule,
     ApplicationHealthModule,
+    ApplicationPackageModule,
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,

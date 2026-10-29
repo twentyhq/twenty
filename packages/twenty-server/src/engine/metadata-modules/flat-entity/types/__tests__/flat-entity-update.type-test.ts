@@ -26,6 +26,7 @@ type Assertions = [
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
       | 'writability'
+      | 'disabledFieldPermissionActions'
       | 'isNullable'
       | 'universalSettings'
     >
@@ -63,6 +64,7 @@ type Assertions = [
       | 'writability'
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
+      | 'disabledObjectPermissionActions'
       | 'sharingReach'
     >
   >,

@@ -1,0 +1,221 @@
+---
+title: Карточка
+description: Сгруппируйте связанную информацию внутри поверхности с рамкой.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+## Обзор
+
+`Card` объединяет связанную информацию и действия в рамках одного именованного экспорта. Используйте `Card.Root`, `Card.Header`, `Card.Content` и `Card.Footer` совместно, чтобы разделить заголовок, содержимое и вспомогательные действия. Эти части не управляют выбором, фокусом или состоянием приложения. Приложение управляет поведением любых элементов управления, размещенных внутри них.
+
+<StoryEmbed storyId="ui-surfaces-card--display" title="Пример Card" height={200} />
+
+## Использование
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSummary = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+Используйте [Заголовок](/ru/ui/primitives/typography/heading) уровня, требуемого окружающей страницей. Размещайте действия в [Кнопке](/ru/ui/primitives/input/button) или нативной ссылке, чтобы пользователи клавиатуры и вспомогательных технологий могли их активировать.
+
+## Структура
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+├── Card.Footer (optional)
+├── Card.Action (optional, inside an action area)
+└── Card.Control (optional, independent control or tooltip target)
+```
+
+Импортируйте `Card` из `twenty-ui/primitives/surfaces`. `Card.Root` предоставляет внешнюю границу и обрезку, но не создает внутренних секций. Ни одна часть не требует другой части или определенного порядка секций. Секции также работают независимо, без `Card.Root` или контекста.
+
+Root, Header, Content и Footer по умолчанию отображают `div` и принимают нативные атрибуты div, обработчики событий, `className`, `style` и DOM `ref`. Action отображает нативную кнопку с `type="button"`, а Control отображает span. Используйте `render` с элементом или обратным вызовом, чтобы выбрать семантический целевой элемент. Ни одна часть не определяет элемент или роль по `onClick`.
+
+`CardRootProps`, `CardHeaderProps`, `CardContentProps`, `CardFooterProps`, `CardActionProps` и `CardControlProps` экспортируются из `twenty-ui/primitives/surfaces`, `twenty-ui/primitives` и корневого пакета.
+
+## Внешний вид и разделители
+
+`Card.Root` по умолчанию имеет прозрачный фон. `fullWidth` заполняет свой контейнер, а `backgroundColor` изменяет внешний фон. Дочерние разделы имеют собственные фоны.
+
+`Card.Header` имеет основной фон, внутренние отступы и нижнюю границу. `Card.Content` имеет вторичный фон и внутренние отступы; его необязательный `divider` добавляет нижнюю границу. `Card.Footer` имеет основной фон, внутренние отступы и верхнюю границу, если не указано `divider={false}`. Не добавляйте две границы на одной границе разделов.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+## Интерактивная композиция
+
+Для действия выберите нативную кнопку, а для навигации — якорь через `render`. Укажите для этого элемента атрибуты, специфичные для целевого элемента, например `type`, `disabled`, `href` и `target`. Фактический владелец предоставляет поведение клавиатуры, фокуса, отключенного состояния и ссылки. Card не добавляет это поведение к отображающему `div`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+Кнопка действия и кнопка закрытия являются соседними элементами внутри отображающей карточки. Не размещайте другую кнопку, ссылку, поле ввода или другой интерактивный элемент управления внутри владельца-кнопки или владельца-ссылки. Если кнопка содержит части Card, отрисовывайте эти части как строчные элементы, например `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Нативные владельцы-кнопки и владельцы-ссылки сохраняют макет карточки и получают видимый контур фокуса. Явные владельцы-кнопки и владельцы-ссылки выделяются при наведении. Отключенные владельцы сохраняют свой отключенный вид. Пользовательские владельцы должны предоставлять свое поведение взаимодействия, включая активацию с клавиатуры и обработку отключенного состояния, где это применимо.
+
+## Растянутые действия и независимые элементы управления
+
+Используйте `Card.Action`, когда одно основное действие охватывает раздел карточки, который также содержит независимые элементы управления. Разместите действие непосредственно внутри Card.Root, Card.Header, Card.Content или Card.Footer. Этот непосредственный раздел определяет растянутую область. Оставляйте одно основное действие для каждой области, а развёрнутые формы или другие независимые разделы размещайте за её пределами.
+
+По умолчанию `Card.Action` является нативной кнопкой. Задайте пустому действию доступное имя с помощью `aria-label` или `aria-labelledby`, а для вспомогательного текста используйте `aria-describedby`. Нативная ссылка-якорь или ссылка маршрутизатора, переданная через `render`, сохраняет собственное поведение навигации, цели, клика с модификатором и контекстного меню. Пользовательские владельцы не получают синтетическую роль кнопки, обработчик клавиатуры или остановку табуляции. Добавляйте нативные атрибуты, специфичные для цели, к отрисованному элементу.
+
+`Card.Control` поднимает независимый элемент управления или цель всплывающей подсказки над растянутым действием. Комбинируйте существующий элемент через `render`, чтобы сохранить его компоновку и атрибуты. Элементы управления остаются соседними элементами основного действия, а не дочерними элементами кнопки или ссылки. Card не определяет, какие дочерние элементы являются интерактивными, и не перенаправляет их клики основному действию. Приложения самостоятельно обеспечивают любую дополнительную обработку, необходимую для приподнятого обычного текста.
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CustomerImportActions = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root>
+      <Card.Content>
+        <Card.Action
+          aria-labelledby={titleId}
+          render={<a href="/imports/review" />}
+        />
+        <Text id={titleId}>Review customer import</Text>
+        <Card.Control render={<Button variant="ghost" />}>
+          Import options
+        </Card.Control>
+      </Card.Content>
+    </Card.Root>
+  );
+};
+```
+
+Включённые области действий используют общий цвет при наведении Card, в том числе при наведении на независимый элемент управления. Вложенная область действия управляет собственной подсветкой и не подсвечивает родительские элементы. Нативные действия-кнопки и действия-ссылки отображают внутренний контур фокуса толщиной 2px вокруг растянутой области. Отключённая нативная кнопка исключается из клавиатурной навигации, а её область не подсвечивается, включая кнопку, переданную через `render`. Ссылки и элементы управления, связанные через метки, по-прежнему сами отвечают за своё отключённое поведение; свойство `disabled` Action также отключает общее оформление области действия.
+
+Для строки Switch или Radio отрисуйте Action как `<label htmlFor={controlId} />` и присвойте фактическому элементу управления этот ID. Сохраняйте связь между его видимой меткой и доступным описанием и элементом управления. Метка не создаёт дополнительную цель для клавиатуры или контур фокуса. Switch и Radio сохраняют собственное поведение фокуса и клавиатуры. Разместите развёрнутую форму варианта Radio в отдельном Card.Content, чтобы метка охватывала только заголовок выбора.
+
+<StoryEmbed storyId="ui-surfaces-card-interactions--stretched-actions" title="Растянутые действия с независимыми элементами управления" height={360} />
+
+## Независимые части и пользовательские обертки
+
+Раздел можно использовать без внешней поверхности. Обертки могут использовать экспортируемый тип его свойств и распространять его, чтобы сохранить нативные атрибуты, обработчики событий, ссылки, композицию render, классы и стили. При использовании пользовательского целевого элемента поместите его специфичную для целевого элемента ссылку на предоставленный элемент. Base UI объединяет эту ссылку со ссылкой части и скомпонованными свойствами.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## Миграция
+
+Замените четыре отдельных импорта на `import { Card } from 'twenty-ui/primitives/surfaces'`. Корневой пакет и `twenty-ui/primitives` также экспортируют тот же объект `Card`.
+
+| Предыдущий API                                  | Составной API                                        |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `Card` как компонент                            | `Card.Root`                                          |
+| `CardHeader`                                    | `Card.Header`                                        |
+| `CardContent`                                   | `Card.Content`                                       |
+| `CardFooter`                                    | `Card.Footer`                                        |
+| `ComponentProps\<typeof Card>` | `ComponentProps\<typeof Card.Root>` |
+| `styled(Card)`                                  | `styled(Card.Root)`                                  |
+
+Применяйте те же имена членов к тегам JSX, стилизованным оберткам и типам свойств. Экспорт автономных частей удален без псевдонимов совместимости. Свойства макета, значения стилей по умолчанию и независимое использование разделов сохраняются. Замените `isClickable` и `hasHoverHighlight` явным нативным владельцем через `render`. Перенесите обработчики действий из оберток только для отображения, сохраните доступные имена и оставьте вложенные элементы управления за пределами основного действия. Используйте `render={<button type="button" disabled={disabled} />}` для действия и `render={<a href="/imports" />}` для навигации. Ссылки DOM теперь указывают на фактически отрисованную часть.
+
+## Свойства
+
+<CardReference />
+
+<PageBanner illustration="section-ui-primitives" />

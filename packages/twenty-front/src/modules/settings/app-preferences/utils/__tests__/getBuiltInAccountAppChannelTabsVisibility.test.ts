@@ -22,19 +22,6 @@ const PENDING_CALENDAR = {
 const OUTLOOK = { hasEmails: true, hasCalendar: true };
 
 describe('getBuiltInAccountAppChannelTabsVisibility', () => {
-  it('shows the tabs the app supports when there are no accounts', () => {
-    expect(
-      getBuiltInAccountAppChannelTabsVisibility({
-        app: OUTLOOK,
-        accounts: [],
-        isLoading: false,
-      }),
-    ).toEqual({
-      isEmailsTabVisible: true,
-      isCalendarTabVisible: true,
-    });
-  });
-
   it('hides the tabs the app does not support', () => {
     expect(
       getBuiltInAccountAppChannelTabsVisibility({

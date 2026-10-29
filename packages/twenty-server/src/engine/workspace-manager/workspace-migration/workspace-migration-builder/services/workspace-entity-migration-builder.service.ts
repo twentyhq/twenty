@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   isValidUniversalIdentifier,
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
@@ -341,9 +342,27 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
       });
+      const divergenceErrors = this.validateNoNonUpdatablePropertyDivergence(
+        flatEntityUpdate.nonUpdatablePropertyDivergences,
+      );
 
       if (validationResult.status === 'fail') {
-        allValidationResult.push(validationResult);
+        allValidationResult.push({
+          ...validationResult,
+          errors: [...validationResult.errors, ...divergenceErrors],
+        });
+        continue;
+      }
+
+      if (divergenceErrors.length > 0) {
+        allValidationResult.push({
+          flatEntityMinimalInformation: {
+            universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+          } as Partial<MetadataFlatEntity<T>>,
+          errors: divergenceErrors,
+          metadataName: this.metadataName,
+          type: 'update',
+        });
         continue;
       }
 
@@ -474,6 +493,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       attributes: { metadataName: this.metadataName, phase },
       bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
     });
+  }
+
+  private validateNoNonUpdatablePropertyDivergence(
+    nonUpdatablePropertyDivergences: string[],
+  ): FlatEntityValidationError[] {
+    return nonUpdatablePropertyDivergences.map((property) => ({
+      code: 'NON_UPDATABLE_PROPERTY_DIVERGENCE',
+      message: `${this.metadataName} property "${property}" cannot be updated`,
+      userFriendlyMessage: msg`Property ${property} cannot be updated`,
+    }));
   }
 
   private validateUniversalIdentifier({

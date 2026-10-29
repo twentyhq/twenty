@@ -27,6 +27,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
@@ -311,6 +312,28 @@ export class ConnectedAccountMetadataService {
     }
 
     return connectedAccount;
+  }
+
+  async findAllForWorkflowStepResolution({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<ConnectedAccountForWorkflowStepResolution[]> {
+    return this.repository.find({
+      where: { workspaceId },
+      relations: { calendarChannels: true },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        connectionParameters: true,
+        archivedAt: true,
+        scopes: true,
+        scope: true,
+        calendarChannels: { id: true, isSyncEnabled: true },
+      },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   }
 
   async getUserConnectedAccountIds({

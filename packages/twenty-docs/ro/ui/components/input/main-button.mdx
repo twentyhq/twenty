@@ -1,0 +1,77 @@
+---
+title: MainButton
+description: Prezentați acțiuni importante cu valori implicite de design partajate.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## Prezentare generală
+
+Utilizați componenta partajată `MainButton` pentru o acțiune importantă. Aceasta compune
+[Button](/ro/ui/primitives/input/button) cu o suprafață solidă, elevație, text semibold
+și padding orizontal de 12px. Culoarea sa implicită este neutră, iar dimensiunea este `md`.
+
+<StoryEmbed storyId="ui-components-mainbutton--display" title="Exemplu MainButton" height={110} />
+
+## Utilizare
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveAction = () => <MainButton>Save changes</MainButton>;
+```
+
+## Opțiuni vizuale
+
+Comparați aspectele plin și conturat în dimensiunile implicite și mici, precum și stările dezactivată și de încărcare.
+
+<StoryEmbed storyId="ui-components-mainbutton--catalog" title="Variantele și stările butonului principal" height={230} />
+
+## Gestionarea stării
+
+`MainButton` utilizează modelul de stare al Button și nu adaugă nicio stare proprie. Aplicația dvs. furnizează `loading` și `disabled`; nu există moduri de selectare controlate și necontrolate. Consultați [exemplul de gestionare a stării pentru Button](/ro/ui/primitives/input/button#state-ownership) pentru gestionarea unei acțiuni asincrone.
+
+## Forme și lățime
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveProfile = () => (
+  <MainButton type="submit" fullWidth>
+    Save profile
+  </MainButton>
+);
+```
+
+Lățimea urmează conținutul, cu excepția cazului în care setați `fullWidth` sau furnizați stiluri
+pentru aspectul aplicației. Suprascrieți `variant`, `color`, `size` și `elevated` după necesități;
+de exemplu, utilizați `variant="outline"` și `elevated={false}` pentru o acțiune conturată.
+
+Cu `color="inherit"`, alegeți în mod explicit o variantă non-solid sau moșteniți una de la ButtonGroup. Valoarea implicită solidă autonomă cu culoare moștenită generează o eroare la rulare.
+
+Păstrați aspectul paginii în stilurile aplicației dvs.
+
+## Interacțiune
+
+`MainButton` acceptă atributele native, gestionarii de evenimente, referințele, sloturile pentru pictograme ale Button,
+precum și proprietățile `loading` și `disabled`. Butoanele au implicit `type="button"`;
+setați explicit `type="submit"` pentru trimiterea formularului.
+
+Utilizați `href` pentru un link. Furnizați `render` pentru a alege o rădăcină personalizată, inclusiv un
+link de rutare deținut de aplicație. Setați `nativeButton={false}` și `role="link"` pentru
+un renderer de navigare. Butoanele native personalizate păstrează `nativeButton` pe true.
+
+[ButtonGroup](/ro/ui/primitives/input/button-group) poate seta o dimensiune, o suprafață
+și o culoare partajate. Aspectul explicit al elementului copil are prioritate față de grup, urmat de
+valorile implicite ale componentei. Clasele consumatorului, inclusiv funcțiile de stare, sunt transmise mai departe
+către elementul rădăcină.
+
+## Proprietăți
+
+<MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

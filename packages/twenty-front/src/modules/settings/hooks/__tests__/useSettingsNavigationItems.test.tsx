@@ -219,7 +219,7 @@ describe('useSettingsNavigationItems', () => {
     ]);
   });
 
-  it('should show App preferences without sub-items when app preferences are on', () => {
+  it('should show Apps preferences without sub-items when app preferences are on', () => {
     setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
@@ -230,7 +230,7 @@ describe('useSettingsNavigationItems', () => {
 
     const accountsItem = getAccountsItem();
 
-    expect(accountsItem?.label).toBe('App preferences');
+    expect(accountsItem?.label).toBe('Apps preferences');
     expect(accountsItem?.Icon).toBe(IconApps);
     expect(accountsItem?.isHidden).toBe(false);
     expect(accountsItem?.subItems).toBeUndefined();

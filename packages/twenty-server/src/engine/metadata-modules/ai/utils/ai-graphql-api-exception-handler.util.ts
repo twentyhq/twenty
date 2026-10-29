@@ -51,6 +51,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.CHAT_CHANNEL_BUSY:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
+      case AiExceptionCode.AGENT_IS_INACTIVE:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:

@@ -1,0 +1,230 @@
+---
+title: Pestañas
+description: Cambia entre paneles relacionados con navegación accesible mediante pestañas.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Resumen
+
+`Tabs` conecta cada pestaña con un panel de contenido relacionado mediante un `value` compartido. Mantén los valores únicos dentro de una raíz. Usa [TabButton](/es/ui/components/navigation/tab-button) para enlaces de ruta y acciones adyacentes.
+
+<StoryEmbed storyId="ui-navigation-tabs--display" title="Ejemplo de pestañas" height={160} />
+
+## "Uso"
+
+Usa `defaultValue` para establecer la selección inicial. La raíz gestiona los cambios posteriores.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` acepta `startIcon`, `endIcon`, `badge` y un `size` de `compact`, `sm` o `md` (el valor predeterminado es `sm`). Las propiedades restantes conservan el contrato de Base UI instalado. Los valores no se limitan a cadenas ni números. Los valores de referencia deben usar la misma identidad en su pestaña, panel y raíz. Un valor de raíz de `null` no selecciona ningún panel.
+
+### Pestañas compactas
+
+Use `size="compact"` en cada pestaña para controles de entrada/salida cortos dentro de una tarjeta. Las pestañas compactas tienen una altura mínima de fila de 24px, texto pequeño y relleno de contenido de 4px a cada lado. Los tamaños existentes `sm` y `md` mantienen su altura mínima de 40px. Las pestañas compactas usan el mismo indicador, anillo de enfoque y activación mediante teclado que los otros tamaños.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-tabs--compact" title="Pestañas compactas de entrada y salida" height={110} />
+
+## Anatomía
+
+Coloca las pestañas y un indicador opcional dentro de `Tabs.List`. Coloca sus paneles junto a la lista, todos dentro del mismo `Tabs.Root`.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| Parte       | Requisito                  | Propósito                                                                  |
+| ----------- | -------------------------- | -------------------------------------------------------------------------- |
+| `Root`      | Obligatorio                | Gestiona el valor seleccionado y la orientación.                           |
+| `Lista`     | Obligatorio                | Agrupa las pestañas y proporciona navegación del foco mediante el teclado. |
+| `Pestaña`   | Uno por panel              | Activa el panel con el mismo `value`.                                      |
+| `Panel`     | Uno por vista de contenido | Muestra su contenido cuando su `value` está activo.                        |
+| `Indicator` | Opcional                   | Muestra la posición de la pestaña activa con estilos temáticos.            |
+
+Asigna a la lista un nombre accesible y haz que el `value` de cada pestaña coincida con el `value` de su panel. Base UI proporciona los ID de la pestaña y el panel, así como las relaciones `aria-controls` y `aria-labelledby`.
+
+Cuando proporciones un `id` personalizado en `Tabs.Panel`, establece `aria-controls` en el `Tabs.Tab` correspondiente con ese mismo ID. La implementación instalada de Base UI 1.8.0 requiere esta relación explícita. Los ID personalizados de las pestañas se registran correctamente para el `aria-labelledby` del panel.
+
+Añade un `Tabs.Indicator` cuando quieras el subrayado activo. `List` no inserta un indicador.
+
+## Estado controlado y detalles de eventos
+
+Pasa `value` y actualízalo con `onValueChange` para gestionar la selección. La devolución de llamada recibe el valor siguiente y los detalles del evento de Base UI, incluidos el `event`, `reason`, `activationDirection` y `cancel()`, que lo originaron.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+La activación por parte del usuario tiene el motivo `none`. En las raíces no controladas, la alternativa automática puede tener el motivo `initial`, `disabled` o `missing`. La alternativa automática puede seleccionar `null` cuando no queda ninguna pestaña habilitada. Estos cambios automáticos no se pueden cancelar. Las raíces controladas mantienen la selección bajo el control de la aplicación.
+
+Cancela un cambio de usuario antes de actualizar el estado controlado o usa la misma devolución de llamada con una raíz no controlada:
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## Activación con teclado, orientación y dirección
+
+`Tabs.List` usa la activación manual de forma predeterminada (`activateOnFocus={false}`). Las teclas de flecha mueven el foco; Intro o Espacio activan la pestaña enfocada. Establece `activateOnFocus` para seleccionar una pestaña cuando el foco del teclado llegue a ella. Ambas políticas funcionan con estado controlado y no controlado.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+Las listas horizontales usan Izquierda y Derecha; las listas verticales usan Arriba y Abajo. Inicio y Fin enfocan la primera y la última pestaña habilitadas. Se omiten las pestañas deshabilitadas. `loopFocus` tiene como valor predeterminado `true`; establécelo en `false` para detenerte en cualquiera de los límites.
+
+Usa [DirectionProvider](/es/ui/primitives/layout/direction-provider) para la dirección del teclado RTL y `dir="rtl"` en la raíz para el diseño. Establece `orientation="vertical"` en `Root` para una lista y un indicador verticales.
+
+## Ciclo de vida del panel
+
+Usa `keepMounted` cuando el contenido de los paneles deba conservar su estado mientras está inactivo. Los paneles inactivos montados permanecen ocultos y no ocupan espacio de diseño.
+
+## Diseño del panel
+
+`Panel` ocupa el espacio que deja la lista y puede reducirse por debajo de su contenido en ambos ejes, por lo que se mantiene dentro de una raíz de altura fija. Para desplazar su contenido, establece `overflow: auto` en el panel o en un elemento secundario que lo ocupe, como un elemento secundario `flex: 1` de un panel flex de columna.
+
+## Propiedades nativas, composición de renderizado y referencias
+
+Las cinco partes conservan las propiedades nativas, los controladores de eventos, las referencias y la composición de `render` de Base UI. Sus `className` y `style` también pueden ser funciones del estado de la parte. Los elementos predeterminados son un `div` para Root, List y Panel, un `button` para Tab y un `span` para Indicator. Las referencias apuntan a los elementos renderizados reales.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
+
+  return (
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
+        </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
+      </Tabs.List>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Mantén `nativeButton` coherente con el elemento compuesto para una pestaña. Usa `nativeButton={false}` para un elemento interactivo personalizado que no sea un botón nativo y reenvíe las propiedades y la referencia proporcionadas. Un ancla de ruta pertenece a `TabButton`, donde la ruta gestiona la navegación y `aria-current`.
+
+## Énfasis visual
+
+Usa `highlighted` en `Tabs.Tab` para resaltar visualmente su contenido de forma independiente de la selección, por ejemplo, cuando su configuración está abierta. La selección sigue estando controlada por `Tabs.Root`.
+
+## "Props"
+
+La referencia generada incluye las propiedades públicas de cada parte. Los tipos de estado de las partes públicas y los tipos de detalles/motivos de cambio de Root están disponibles en `twenty-ui/primitives/navigation`.
+
+<TabsReference />
+
+## Migración
+
+Añade un `Tabs.Indicator` explícito a las listas que deban conservar el subrayado activo. Elimina los indicadores duplicados de las composiciones que antes dependían de que `List` insertara uno. Mantén los enlaces de ruta, los controles de creación y los controles de desbordamiento fuera de `Tabs.List`, cuyos elementos secundarios seleccionan paneles relacionados.
+
+<PageBanner illustration="layout" />

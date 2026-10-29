@@ -39,6 +39,10 @@ export class CalendarEventCleanerCalendarChannelListener {
             workspaceId,
             calendarChannelId: event.calendarChannelId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       ),
     );

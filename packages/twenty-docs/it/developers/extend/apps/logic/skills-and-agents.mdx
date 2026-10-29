@@ -3,6 +3,10 @@ title: Skill e agenti
 description: Definisci skill e agenti di IA per la tua app.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 <Warning>
   Le skill e gli agenti sono attualmente in fase alfa. La funzionalità funziona ma è ancora in evoluzione.
 </Warning>
@@ -63,7 +67,10 @@ Punti chiave:
 * `description` (opzionale) fornisce contesto su ciò che fa l'agente.
 * `icon` (opzionale) imposta l'icona visualizzata nell'UI.
 * `modelId` (opzionale) sostituisce il modello di IA predefinito utilizzato dall'agente.
-* `responseFormat` (facoltativo) controlla la forma dell'output dell'agente. Per il testo in formato libero, il valore predefinito è `{ type: 'text' }`. Usa `{ type: 'json', schema }` per forzare un output JSON strutturato.
+* `responseFormat` (facoltativo) imposta il formato di output predefinito dell'agente. Per il testo in formato libero, il valore predefinito è `{ type: 'text' }`. Usa `{ type: 'json', schema }` per forzare un output JSON strutturato. Una chiamata a `runAgent()` o un passaggio AI di un workflow può richiedere un formato diverso, che ha la precedenza.
+* `roleUniversalIdentifier` (facoltativo) associa l'agente a un ruolo definito dalla tua app. Quel ruolo non deve concedere più del ruolo dell'applicazione, altrimenti la build non riesce; vedi [Ruoli degli agenti](/it/developers/extend/apps/config/roles#agent-roles).
+* `modelConfiguration` (facoltativo) attiva gli strumenti nativi del modello, come fa la pagina delle impostazioni dell'agente: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Ogni strumento funziona solo con i modelli che lo supportano. Omettilo per mantenerli disattivati.
+* `isSystem` (facoltativo, il valore predefinito è `false`) nasconde l'agente dagli elenchi di agenti, come gli agenti che Twenty crea per i passaggi IA dei workflow. Modifica solo ciò che viene visualizzato: gli agenti di un'app possono essere modificati solo tramite l'app, indipendentemente da quanto indica questo flag.
 
 Per impostazione predefinita, un agente restituisce testo in formato libero. Per ottenere un output strutturato, imposta `responseFormat` su `{ type: 'json' }` e fornisci uno `schema`:
 
@@ -99,41 +106,45 @@ Note sullo schema:
 </Accordion>
 <Accordion title="runAgent" description="Esegui un agente da una funzione di logica">
 
-`runAgent()` permette a una funzione di logica di eseguire uno degli agenti della tua app (con le sue skill e i suoi strumenti). Identifica l'agente tramite l'`universalIdentifier` che hai passato a `defineAgent()`. Passa una stringa `prompt` oppure una cronologia di conversazione `messages`, ma non entrambe:
+`runAgent()` permette a una funzione di logica di eseguire uno degli agenti della tua app (con le sue skill e i suoi strumenti). Identifica l'agente tramite l'`universalIdentifier` che hai passato a `defineAgent()` e passa ciò su cui vuoi che lavori come `input`:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, error, success } = await runAgent({
+const { threadId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
-});
-```
-
-Per bot multi-turno (Slack, Discord, Teams, …), passa la cronologia del thread come `messages` invece di un singolo `prompt`:
-
-```ts src/logic-functions/reply-in-thread.ts
-import { runAgent } from 'twenty-sdk/logic-function';
-
-const { result, error, success } = await runAgent({
-  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  messages: [
-    { role: 'user', content: 'Who owns Acme?' },
-    { role: 'assistant', content: 'Sarah owns the Acme account.' },
-    { role: 'user', content: 'What was the last touchpoint?' },
-  ],
+  input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
 ```
 
 Punti chiave:
-* Fornisci **esattamente uno** tra `prompt` (string) o `messages` (da 1 a 100 elementi
-  di `{ role: 'user' | 'assistant', content: string }`).
-* L'agente viene eseguito in modo **sincrono** e può leggere/aggiornare direttamente i record tramite i propri strumenti — `runAgent()` viene risolta una volta completata l'esecuzione.
+* `input` è una stringa o un elenco da 1 a 100 messaggi
+  (`{ role: 'user' | 'assistant', content: string }`). Un messaggio `user` può
+  anche includere allegati di file (vedi sotto). Per mantenere una conversazione, passa un
+  `thread` invece di riprodurre tu stesso i turni precedenti.
+* Per impostazione predefinita, la chiamata attende l'agente, che può leggere/aggiornare i record
+  autonomamente tramite i propri strumenti — `runAgent()` viene risolta una volta completata l'esecuzione.
+  Passa `waitForCompletion: false` per risolvere non appena l'esecuzione si avvia:
+  `status` è quindi `RUNNING` e `result: null`, e la risposta arriva nella
+  conversazione `threadId`. Un'esecuzione che supera i 15 minuti restituisce anch'essa
+  `RUNNING`.
+* L'agente può anche sospendersi finché un record non cambia o non è trascorso del tempo.
+  `runAgent()` viene quindi risolto con `success: true`, `status: 'SUSPENDED'` e
+  `result: null`; l'agente prosegue autonomamente in seguito e la sua risposta arriva nella
+  conversazione `threadId`. Una chiamata a un `thread` il cui agente è ancora in attesa
+  non riesce finché non termina.
+* Ogni chiamata viene archiviata con il relativo input e stato, oltre alla risposta e all'utilizzo
+  al completamento, così da comparire nelle esecuzioni dell'agente. Senza un `thread`, una chiamata riceve una conversazione
+  propria: `threadId` la denomina e una chiamata successiva non la vede mai.
 * Un'app può eseguire solo i propri agenti.
 * Il [ruolo predefinito](/it/developers/extend/apps/config/roles) dell'app deve concedere il flag di autorizzazione `AI` — aggiungi `SystemPermissionFlag.AI` ai suoi `permissionFlagUniversalIdentifiers` (oppure imposta `canAccessAllTools: true`).
   In mancanza di ciò, `runAgent()` non riesce con un errore di autorizzazione.
 * Imposta un valore generoso per `timeoutSeconds` sulla funzione di logica — l'esecuzione degli agenti può richiedere diversi secondi.
-* `success` è `true` e `result` è non nullo quando l'esecuzione viene completata; in caso di errore `success` è `false`, `result` è `null` ed `error` contiene il motivo (ad esempio, quando lo spazio di lavoro esaurisce i crediti AI durante l'esecuzione).
+* `status` è `COMPLETED` con un `result` non null quando l'esecuzione viene completata
+  senza attendere; `SUSPENDED` con `success: true` e `result: null` mentre
+  attende; `RUNNING` con `success: true` e `result: null` quando la chiamata non
+  ha atteso l'esecuzione; `FAILED` con `success: false` e `error` che contiene il
+  motivo (ad esempio, quando lo spazio di lavoro esaurisce i crediti AI durante l'esecuzione).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
@@ -150,6 +161,90 @@ export default defineApplicationRole({
   **Evita i loop:** se chiami `runAgent()` da un trigger di evento del database `*.updated` e l'agente aggiorna lo stesso record, limita il trigger con `updatedFields` a un campo che l'agente non scrive mai (ad esempio l'URL di origine), oppure controlla che almeno uno dei campi di destinazione sia ancora vuoto prima di chiamare `runAgent()`.
 </Warning>
 
+### Invio di file con un messaggio
+
+Un messaggio `user` può includere `attachments`, quindi l'agente vede uno screenshot o un
+PDF anziché solo il relativo nome. Ogni voce fa riferimento a un file che la tua app ha già
+caricato nella cartella `agent-chat`:
+
+```ts src/logic-functions/describe-screenshot.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: [
+    {
+      role: 'user',
+      content: 'What does this error screen say?',
+      attachments: [{ fileId: uploadedFileId, filename: 'error.png' }],
+    },
+  ],
+});
+```
+
+Il caricamento richiede il flag di autorizzazione `UPLOAD_FILE` nel ruolo predefinito dell'app,
+insieme ad `AI`. `filename` è facoltativo e serve solo a etichettare il file per il modello.
+
+* Solo i messaggi `user` possono contenere allegati. Non possono essere rappresentati in un
+  turno dell'assistente, quindi `runAgent()` li rifiuta lì anziché eliminarli.
+* Al massimo **10** allegati per messaggio.
+* Il `fileId` deve indicare un file completamente caricato nello stesso spazio di lavoro, nella
+  cartella `agent-chat`. Qualsiasi altra cosa fa fallire la chiamata anziché rispondere silenziosamente
+  senza il file.
+
+### Richiedere un risultato strutturato
+
+Passa `responseFormat` per ottenere un formato solo per questa chiamata. Ha la precedenza su
+`responseFormat` dell'agente stesso, quindi un agente può servire chiamanti che necessitano di
+output diversi. Utilizza lo stesso schema di `defineAgent()`:
+
+```ts src/logic-functions/score-lead.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: `Score this lead: ${JSON.stringify(lead)}`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+      },
+      required: ['score'],
+    },
+  },
+});
+```
+
+### Proseguire una conversazione
+
+Passa un `thread` e Twenty mantiene la conversazione per te: ogni chiamata invia solo
+il nuovo input e l'agente vede i turni precedenti, inclusi i risultati restituiti
+dai suoi strumenti. Usa come chiave qualsiasi identificatore stabile dal tuo lato, ad esempio un canale
+Slack e il timestamp del thread:
+
+```ts src/logic-functions/reply-in-thread.ts
+const { result, threadId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'What was the last touchpoint?',
+  additionalInstructions: 'Answer in Slack markdown.',
+  thread: { key: `${channelId}:${threadTs}`, title: 'Acme renewal' },
+});
+```
+
+* Le chiavi hanno ambito limitato alla tua app e al tuo agente, quindi due app non condividono mai una
+  conversazione. Solo i token di accesso dell'app possono passare un `thread`.
+* `input` può contenere solo messaggi `user`: la conversazione contiene già le
+  risposte dell'agente.
+* `additionalInstructions` vengono fornite al modello solo per questa chiamata e non vengono
+  archiviate, il che è adatto per indicazioni specifiche per richiesta, come regole di formattazione o una
+  scadenza. Funzionano anche senza un `thread`.
+* Ogni esecuzione viene archiviata come turno con il relativo stato, incluse quelle non riuscite. Il suo
+  utilizzo viene archiviato quando l'agente restituisce il controllo, anche se ha esaurito i crediti. Un'
+  esecuzione non riuscita non fa parte della conversazione, quindi la chiamata successiva non la vede.
+* Le chiamate sullo stesso thread vengono eseguite una alla volta: una seconda chiamata attende che la
+  prima termini, così ciascuna vede i turni precedenti.
+* Quando i turni vengono eseguiti come membri diversi (vedi sotto), ciascuno vede solo il testo
+  dei turni degli altri, mai i risultati dei loro strumenti, poiché questi sono stati letti con le
+  autorizzazioni di qualcun altro.
+
 ### Esecuzione per conto di un membro dello spazio di lavoro
 
 Passa `runAsWorkspaceMemberId` quando l'esecuzione viene attivata da una persona — ad esempio un chatbot che risponde a un messaggio — in modo che l'agente agisca come quel membro invece che come l'app:
@@ -157,7 +252,7 @@ Passa `runAsWorkspaceMemberId` quando l'esecuzione viene attivata da una persona
 ```ts src/logic-functions/answer-question.ts
 const { result } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
-  prompt: 'How many open opportunities do we have?',
+  input: 'How many open opportunities do we have?',
   runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
 });
 ```
@@ -182,4 +277,14 @@ Qualsiasi altra cosa — una semplice sessione utente, una chiave API senza un t
 </Warning>
 
 </Accordion>
+<Accordion title="sendInboxMessage" description="Avvia o continua una conversazione nelle chat dei membri">
+
+`sendInboxMessage()` pubblica un messaggio dalla tua app nelle chat di uno o più
+membri dello spazio di lavoro. Può terminare con una chiamata di strumento a cui il membro risponde dalla chat,
+dopo la quale la conversazione continua con l'assistente di Twenty. Consulta
+[Posta in arrivo](/it/developers/extend/apps/logic/inbox) per le relative opzioni, gli helper per le menzioni e come pubblicare da un componente front-end.
+
+</Accordion>
 </AccordionGroup>
+
+<PageBanner illustration="card-page-skills-agents" />

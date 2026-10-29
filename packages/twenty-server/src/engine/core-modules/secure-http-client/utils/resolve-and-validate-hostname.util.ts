@@ -7,14 +7,15 @@ export const resolveAndValidateHostname = async (
   allowedInternalHosts: string[] = [],
   dnsLookup: typeof dns.lookup = dns.lookup,
 ): Promise<string> => {
+  const trimmedHostnameOrUrl = hostnameOrUrl.trim();
   let hostname: string;
 
   try {
-    const url = new URL(hostnameOrUrl);
+    const url = new URL(trimmedHostnameOrUrl);
 
     hostname = url.hostname;
   } catch {
-    hostname = hostnameOrUrl;
+    hostname = trimmedHostnameOrUrl;
   }
 
   const isBlockedIp = getIsBlockedIp(hostname, allowedInternalHosts);

@@ -535,6 +535,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  mcpServer: {
+    workspace: null,
+    application: null,
+    connectionProvider: {
+      metadataName: 'connectionProvider',
+      foreignKey: 'connectionProviderId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'connectionProviderUniversalIdentifier',
+    },
+  },
   applicationVariable: {
     workspace: null,
     application: null,
@@ -558,6 +569,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
   },
   connectionProvider: {
+    workspace: null,
+    application: null,
+  },
+  messagingProvider: {
     workspace: null,
     application: null,
   },
@@ -599,6 +614,38 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: null,
       isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
+    },
+  },
+  relatedRecordPath: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    firstFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'firstFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'firstFieldMetadataUniversalIdentifier',
+    },
+    secondFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'secondFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'secondFieldMetadataUniversalIdentifier',
+    },
+    thirdFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'thirdFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'thirdFieldMetadataUniversalIdentifier',
     },
   },
   validationRule: {

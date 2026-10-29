@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 import { type AdminApplicationMonitoringWorkspace } from '@/settings/admin-panel/apps/types/AdminApplicationMonitoringWorkspace';
-import { getAdminApplicationMonitoringWorkspaceLabel } from '@/settings/admin-panel/apps/utils/getAdminApplicationMonitoringWorkspaceLabel';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 
 export const buildAdminApplicationMonitoringWorkspaceOptions = ({
   allWorkspacesLabel,
@@ -26,7 +26,10 @@ export const buildAdminApplicationMonitoringWorkspaceOptions = ({
     { value: '', label: allWorkspacesLabel },
     ...listedWorkspaces.map((workspace) => ({
       value: workspace.workspaceId,
-      label: getAdminApplicationMonitoringWorkspaceLabel(workspace),
+      label: getAdminWorkspaceLabel({
+        id: workspace.workspaceId,
+        name: workspace.workspaceName,
+      }),
     })),
   ];
 };

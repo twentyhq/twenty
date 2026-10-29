@@ -1,0 +1,43 @@
+---
+title: Titlu
+description: Afișați titluri semantice cu dimensiuni vizuale independente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## Prezentare generală
+
+`Heading` redă implicit un `h2`. Folosiți `children` pentru conținutul său, `level` pentru structura documentului și `size` pentru aspect.
+
+<StoryEmbed storyId="ui-typography-heading--display" title="Exemplu de titlu" height={90} />
+
+## Utilizare
+
+Alegeți nivelurile în ordinea documentului. O dimensiune vizuală mai mică nu modifică nivelul anunțat de tehnologia de asistență.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
+```
+
+Dimensiunile `xs`, `sm`, `md`, `lg`, `xl` și `xxl` utilizează tokenurile de font corespunzătoare. Dimensiunile mai mari utilizează `1.54rem` și, respectiv, `1.85rem`. Toate dimensiunile păstrează grosimea semibold și o înălțime a liniei de `1.1`. `Section.Header` și `Dialog.Title` acceptă aceleași valori pentru dimensiune. Titlurile nu au margine exterioară; aspectul din jur gestionează spațierea.
+
+## Culoare și compoziție
+
+<StoryEmbed storyId="ui-typography-heading--catalog" title="Dimensiuni și culori ale titlurilor" height={480} />
+
+Folosiți `color="secondary"` pentru titluri mai puțin proeminente. `tertiary` este de asemenea disponibil, dar contrastul său depinde de dimensiunea fontului, temă și fundal. Verificați lizibilitatea atunci când îl folosiți.
+
+Atributele native, stilurile, numele claselor și referințele sunt transmise titlului. Folosiți `render` pentru a compune cu un element sau o componentă personalizată; acel element este responsabil pentru păstrarea semanticii titlului.
+
+Pentru un titlu cu text de susținere sau acțiuni, utilizați [Section](/ro/ui/components/layout/section).
+
+## Proprietăți
+
+<HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

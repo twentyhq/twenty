@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { CampaignSentEnvelope } from '@/activities/emails/components/CampaignSentEnvelope';
@@ -7,13 +6,7 @@ import { EmailEditorCanvas } from '@/activities/emails/editor/components/EmailEd
 import { CAMPAIGN_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/CampaignBodyEditorProfile';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-
-const StyledBody = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-`;
+import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 
 type CampaignSentPreviewProps = {
   campaign: MessageCampaign;
@@ -22,7 +15,7 @@ type CampaignSentPreviewProps = {
 export const CampaignSentPreview = ({ campaign }: CampaignSentPreviewProps) => (
   <StyledCampaignWidgetContainer>
     <CampaignSentEnvelope campaign={campaign} />
-    <StyledBody>
+    <StyledWidgetScrollContainer>
       <FormAdvancedTextFieldInput
         defaultValue={campaign.bodyTemplate}
         readonly
@@ -30,6 +23,6 @@ export const CampaignSentPreview = ({ campaign }: CampaignSentPreviewProps) => (
         EditorComponent={EmailEditorCanvas}
         placeholder={t`No content`}
       />
-    </StyledBody>
+    </StyledWidgetScrollContainer>
   </StyledCampaignWidgetContainer>
 );

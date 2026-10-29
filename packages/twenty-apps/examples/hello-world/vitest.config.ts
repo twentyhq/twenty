@@ -1,8 +1,11 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
     tsconfigPaths: true,
+    // tsconfig.json excludes the tests, and since vite 8.1 its paths no longer apply to them
+    alias: { src: fileURLToPath(new URL('./src', import.meta.url)) },
   },
   test: {
     testTimeout: 120_000,

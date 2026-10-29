@@ -1,8 +1,18 @@
 ---
-title: Почему Twenty
+title: Знакомство с Twenty
+description: Узнайте, чем Twenty отличается, настройте своё рабочее пространство и изучите основные концепции.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<LandingActions>
+  <LandingButton href="/ru/getting-started/quickstart">Быстрый старт</LandingButton>
+  <LandingButton href="/ru/getting-started/key-features" outlined>Ключевые возможности</LandingButton>
+</LandingActions>
+
+## Почему Twenty
 
 Вы выбирали между программным обеспечением, которое легко запустить, но невозможно менять, и программным обеспечением, которое гибкое, но требует месяцев на настройку. Twenty — это третий вариант: **готовая к промышленной эксплуатации CRM, которую вы можете менять по ходу дела.**
 
@@ -11,19 +21,19 @@ import { CardTitle } from "/snippets/card-title.mdx"
 Twenty — это платформа, на основе которой вы можете строить решения, а не продукт, который вы просто настраиваете.
 
 <CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
-  <Card img="/images/documentation/banner-icons-v2/ai.svg">
+  <Card href="/ru/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>Создано для агентов</CardTitle>
     Агенты работают внутри вашей модели данных с реальными правами доступа. Навыки, инструменты, MCP.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <Card href="/ru/getting-started/core-concepts/apps" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Безопасная расширяемость</CardTitle>
     Гибкость vibe-coded инструментов на защищённой основе.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-api.svg">
+  <Card href="/ru/developers/introduction" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>Современный стек</CardTitle>
     React, TypeScript. Ваша команда уже знает, как расширять Twenty. Никаких проприетарных языков, никакого гейткипинга.
   </Card>
-  <Card img="/images/user-guide/halftone/no-lock-in.png">
+  <Card href="/ru/user-guide/data-migration/how-tos/export-your-data" img="/images/user-guide/halftone/no-lock-in.png">
     <CardTitle>Без привязки</CardTitle>
     Ядро с открытым исходным кодом, можно развернуть у себя, экспортируйте свои данные в любой момент.
   </Card>
@@ -66,6 +76,15 @@ Twenty — это платформа, на основе которой вы мо
   и executive-брифинги. Мы побеждаем с командами, у которых
   есть полномочия выбирать собственные инструменты.
 
-<Card title="Готовы начать?" icon="rocket" href="/ru/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/getting-started/quickstart" img="/images/documentation/getting-started-icons-v1/quickstart.svg">
+  <CardTitle>Готовы начать?</CardTitle>
   Настройте Twenty менее чем за 5 минут — в облаке или на собственном сервере.
 </Card>
+<Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+  <CardTitle>Discord</CardTitle>
+  Задавайте вопросы и делитесь тем, что вы создаёте, с сообществом Twenty.
+</Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

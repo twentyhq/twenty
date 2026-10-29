@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Fragment, useId } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { Radio } from 'src/front-components/components/Radio';
 import { Separator } from 'src/front-components/components/Separator';

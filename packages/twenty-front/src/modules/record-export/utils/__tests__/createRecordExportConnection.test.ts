@@ -26,9 +26,12 @@ const update = (values: Partial<ExportRecordsSubscription['exportRecords']>) =>
   mockSink.next({
     data: {
       exportRecords: {
+        __typename: 'RecordExport',
         id: 'export',
         filename: 'person.csv',
         progress: 42,
+        errorMessage: null,
+        downloadPath: null,
         ...values,
       },
     },

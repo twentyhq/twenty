@@ -3,25 +3,31 @@ title: Компоненты фронтенда
 description: Создавайте компоненты React, которые отображаются внутри интерфейса Twenty в изолированной песочнице.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
 Фронтенд-компоненты — это компоненты React, которые отображаются непосредственно внутри интерфейса Twenty. Они выполняются в **изолированном Web Worker** с использованием Remote DOM — ваш код исполняется внутри изолированного iframe с непрозрачным источником (opaque-origin), но его UI всё равно нативно рендерится на странице, а не ограничивается этим iframe.
 
 <Warning>
-Конструкции передней части все еще активно развиваются. Ваш код запускается с частичным DOM, а не с реальной страницей браузера, так что использование расширенного кода может привести к ошибке, часто молчанию. См. [Текущие ограничения](#current-limitations).
+  Конструкции передней части все еще активно развиваются. Ваш код выполняется в частичном DOM, а не на реальной странице браузера, поэтому расширенные сценарии использования могут завершаться сбоем, зачастую без каких-либо сообщений. См. [Текущие ограничения](#current-limitations).
 </Warning>
 
 ## Где можно использовать фронт-компоненты
 
-Фронт-компоненты могут отображаться в трёх местах внутри Twenty:
+Фронт-компоненты могут отображаться в четырех местах внутри Twenty:
 
 * **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
 * **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в [макеты страниц](/ru/developers/extend/apps/layout/page-layouts). При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
-* **Настройки приложения (App settings)** — если определить фронт-компонент с помощью [`defineSettingsFrontComponent()`](#custom-settings-component), он будет отображаться как раздел на вкладке **Settings** приложения, заменяя стандартный интерфейс настройки переменных.
+* **Настройки приложения** — на неё указывает объявление [`defineSettingsMenuItem()`](#settings-menu-items), а фронтенд-компонент отображает страницу за одним из пунктов меню настроек приложения. Приложение может объявить несколько таких компонентов.
+* **Чат AI** — [Логическая функция, предоставленная как инструмент AI](/ru/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) может задать фронт-компонент по имени, после чего он отображает вызовы этого инструмента непосредственно в чате вместо строки шага по умолчанию.
 
-Сам по себе фронт-компонент недоступен из интерфейса — его нужно *сделать доступным*. Сделать это можно тремя способами:
+Сам по себе фронт-компонент недоступен из интерфейса — его нужно *сделать доступным*. Сделать это можно четырьмя способами:
 
 * **Связать его с [элементом командного меню](/ru/developers/extend/apps/layout/command-menu-items)** — регистрирует его в командном меню (Cmd+K) и, при необходимости, как закреплённое быстрое действие.
 * **Встроить его как виджет в [макет страницы](/ru/developers/extend/apps/layout/page-layouts)** — размещает его на странице деталей записи или на дашборде.
-* **Определить его с помощью [`defineSettingsFrontComponent()`](#custom-settings-component)** — отображает его как раздел на вкладке **Settings** приложения, заменяя стандартный интерфейс настройки переменных.
+* **Укажите на неё с помощью [`defineSettingsMenuItem()`](#settings-menu-items)** — отображает её за одним из пунктов меню настроек приложения.
+* **Задайте имя в [параметре `toolTriggerSettings` логической функции](/ru/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — отображает вызовы инструмента в чате AI.
 
 ## Простой пример
 
@@ -60,9 +66,9 @@ export default defineCommandMenuItem({
 });
 ```
 
-После синхронизации с помощью `yarn twenty dev` (или однократного запуска `yarn twenty apply`) быстрое действие появится в правом верхнем углу страницы:
+После синхронизации с `twenty app dev` (или однократного запуска `twenty app apply`) быстрое действие появится в правом верхнем углу страницы:
 
-<div style={{textAlign: 'center'}}>
+<div style={{ textAlign: 'center' }}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Кнопка быстрого действия в правом верхнем углу" />
 </div>
 
@@ -70,45 +76,108 @@ export default defineCommandMenuItem({
 
 ## Поля конфигурации
 
-| Поле                  | Обязательно | Описание                                                                                           |
-| --------------------- | ----------- | -------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Да          | Стабильный уникальный идентификатор для этого компонента                                           |
-| `component`           | Да          | Функция компонента React                                                                           |
-| `name`                | Нет         | Отображаемое имя                                                                                   |
-| `description`         | Нет         | Описание того, что делает компонент                                                                |
-| `isHeadless`          | Нет         | Установите значение `true`, если у компонента нет видимого пользовательского интерфейса (см. ниже) |
+| Поле                  | Обязательно | Описание                                                                                                                                      |
+| --------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Да          | Стабильный уникальный идентификатор для этого компонента                                                                                      |
+| `component`           | Да          | Функция компонента React                                                                                                                      |
+| `name`                | Нет         | Отображаемое имя                                                                                                                              |
+| `description`         | Нет         | Описание того, что делает компонент                                                                                                           |
+| `isHeadless`          | Нет         | Установите значение `true`, если у компонента нет видимого пользовательского интерфейса (см. ниже)                                            |
+| `widgetAvailability`  | Нет         | Средство выбора виджетов, предлагающее компонент: для страниц записей, при необходимости ограниченных объектами, или для дашбордов (см. ниже) |
 
 ## Размещение фронт-компонента на странице
 
 Помимо команд, вы можете встроить фронт-компонент непосредственно на страницу записи, добавив его как виджет в **макет страницы**. См. [макеты страниц](/ru/developers/extend/apps/layout/page-layouts) для подробностей.
 
-## Пользовательский компонент настроек
+`widgetAvailability` определяет, какое средство выбора виджетов предлагает компонент во время редактирования макета страницы. Фронтальный компонент создаётся либо для страниц записей, где он работает с отображаемой записью, либо для дашбордов, поэтому он объявляет один `pageLayoutType`:
 
-Чтобы заменить автоматически сгенерированный интерфейс настройки переменных на вкладке **Settings** вашего приложения собственным компонентом, определите его с помощью `defineSettingsFrontComponent` вместо `defineFrontComponent`. Он использует те же [поля конфигурации](#configuration-fields) (за исключением `isHeadless`, которое не принимается, поскольку компонент настроек всегда отрисовывает видимый интерфейс пользователя) и дополнительно помечает компонент как интерфейс настроек приложения.
+| `widgetAvailability`                                                                | Доступен в                     |
+| ----------------------------------------------------------------------------------- | ------------------------------ |
+| не указано                                                                          | нет средства выбора виджетов   |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | каждая страница записи         |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | страницы записей этих объектов |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | панели управления              |
 
-Компонент отрисовывается как раздел **внутри** вкладки Settings, а не как замена всей вкладки. Управляемые системой Twenty разделы — автообновление, App URL и подключения — всегда отрисовываются над ним и не могут быть переопределены приложением.
+```tsx
+import {
+  defineFrontComponent,
+  PageLayoutType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-notes',
+  component: CompanyNotes,
+  widgetAvailability: {
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    objectUniversalIdentifiers: [
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    ],
+  },
 });
 ```
 
-Для каждого приложения допускается только один фронт-компонент настроек; объявление более одного приведет к ошибке сборки. Если он присутствует, вкладка **Settings** приложения отрисовывает этот компонент вместо стандартного интерфейса конфигурации переменных.
+Не указывайте `widgetAvailability` для компонента, который открывается только из команды, [пункта меню настроек](#settings-menu-items) или строки временной шкалы. Он никогда не ограничивает место отображения компонента: команды, пункты меню настроек и макеты страниц, объявляемые вашим приложением, отображают его независимо от его значения. Сборка выдаёт предупреждение о видимом компоненте, который ничего не объявляет и не открывается ниоткуда больше.
+
+## Пункты меню настроек
+
+Приложение может добавлять собственные пункты в меню настроек, каждый из которых отображает фронтенд-компонент. Объявите пункт с помощью `defineSettingsMenuItem()` в отдельном файле, указав компонент, который его отображает:
+
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
+
+export default defineSettingsMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
+});
+```
+
+Пункт меню указывает на фронтенд-компонент, а не на компонент, который объявляет себя пунктом настроек. Поэтому один компонент может обслуживать несколько пунктов меню, а пункт можно перенаправить на другой компонент, не изменяя ни один из них.
+
+Каждый пункт отображается как вкладка на странице приложения в разделе **Настройки > Приложения**, после **Общие**, в порядке `position`.
+
+Объявите столько, сколько нужно. Собственный элемент Twenty **Общие** — автоматическое обновление, URL приложения и подключения — всегда отображается первым и не может быть переопределен приложением; URL приложения отображается, только если у приложения есть функции, запускаемые по HTTP.
+
+### Поля
+
+| Поле                                | Описание                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| `universalIdentifier`               | UUID, который вы создаёте один раз и которым владеете, неизменный между синхронизациями     |
+| `frontComponentUniversalIdentifier` | `universalIdentifier` фронтенд-компонента, который отображает этот пункт                    |
+| `заголовок`                         | Метка пункта. `General` зарезервирован и приводит к ошибке сборки                           |
+| `icon` *(необязательно)*            | Имя значка, разрешаемое на стороне клиента; неизвестное имя заменяется значком по умолчанию |
+| `position` *(необязательно)*        | Порядок сортировки, по возрастанию. По умолчанию — `0`                                      |
+| `scope` *(необязательно)*           | `WORKSPACE` (по умолчанию) или `USER`                                                       |
+
+`position` — десятичное число, поэтому пункт можно разместить между двумя существующими без перенумерации. Пункты сортируются по возрастанию `position`; при совпадении используется `universalIdentifier`, поэтому порядок одинаков во всех рабочих пространствах. Два пункта одного приложения не могут иметь одинаковую позицию в одной области видимости — синхронизация отклонит это, а не позволит порядку установки определять, какой из них отобразится первым.
+
+### Область видимости рабочего пространства и пользователя
+
+`scope` указывает, кем настраивается пункт:
+
+* **`WORKSPACE`** (по умолчанию) — настраивается один раз для всего рабочего пространства вместе с другими настройками рабочего пространства. Именно эти пункты отображаются как вкладки на странице приложения.
+* **`USER`** — настраивается каждым участником для себя в его собственных пользовательских настройках.
+
+<Note>
+  Элемент `USER` отображается как вкладка на странице приложения в разделе **Настройки > Настройки
+  приложения**, где его видит только вошедший в систему участник и только если его
+  роль предоставляет разрешение `CONNECTED_ACCOUNTS`. Эта страница пока включена не в
+  каждой рабочей области: там, где она не включена, элемент `USER` сохраняется и синхронизируется,
+  но ничто его не отображает.
+</Note>
+
+Пункт `USER` выполняется от имени участника, который его просматривает. Чтобы хранить данные для каждого пользователя, объявите переменную с `scope: 'USER'`: `getApplicationVariable` возвращает значение просматривающего участника, а ваш компонент сохраняет его с помощью `updateMyUserApplicationVariable`, которая записывает только значение этого участника и требует `SystemPermissionFlag.CONNECTED_ACCOUNTS` в роли вашего приложения, если она объявлена (см. [Чтение и обновление переменных во время выполнения](#reading-and-updating-variables-at-runtime)). Как и элемент `WORKSPACE`, элемент `USER` заменяет созданную форму **Переменные**, поэтому он должен позволять участнику задавать все пользовательские переменные, необходимые вашему приложению. Переменная рабочей области хранит одно значение, общее для всех, поэтому сохранение одним участником перезапишет значение другого.
+
+<Note>
+  `defineSettingsFrontComponent()` устарела в пользу
+  `defineSettingsMenuItem()`. Приложение, всё ещё использующее её, продолжает работать — его
+  компонент рассматривается как единственный пункт меню **Настройки** — однако оно может
+  объявить только один такой пункт, и именно это ограничение снимает `defineSettingsMenuItem()`.
+</Note>
 
 ## Headless и non-headless
 
@@ -120,14 +189,20 @@ export default defineSettingsFrontComponent({
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  enqueueSnackbar,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
   const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -153,7 +228,7 @@ export default defineFrontComponent({
 * **`Command`** — запускает асинхронный колбэк через проп `execute`.
 * **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
 * **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — открывает страницу боковой панели. Пропсы зависят от `page` — например, `ViewRecord` принимает `recordId` + `objectNameSingular` (а также необязательный id `tab`, чтобы открыть запись на определённой вкладке), другие страницы принимают `pageTitle` + `pageIcon`.
+* **`CommandOpenSidePanelPage`** — открывает содержимое в боковой панели. Страницы с маршрутами используют те же типизированные свойства `to`, `params` и `queryParams`, что и `CommandLink`, а также необязательные свойства `hash`, `pageTitle` и `resetNavigationStack`. Реестр маршрутов рабочей области определяет, поддерживает ли запрошенный `AppPath` боковую панель. `pageTitle` переопределяет заголовок в шапке панели, а `resetNavigationStack` очищает ранее открытые страницы панели перед открытием маршрута. Специализированные инструменты панели используют собственные свойства, специфичные для страниц.
 
 Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
 
@@ -227,13 +302,13 @@ export default defineFrontComponent({
 });
 ```
 
-И пример использования `CommandOpenSidePanelPage` для открытия текущей записи в боковой панели на определённой вкладке. `tab` — это id вкладки в макете страницы (в стандартных макетах используются id вроде `company-tab-emails` или `company-tab-timeline`; в пользовательских макетах используется собственный id вкладки). Если такого id нет в макете записи, откроется вкладка по умолчанию:
+И пример использования `CommandOpenSidePanelPage` для открытия текущей записи в боковой панели на определённой вкладке. `hash` — это id вкладки в макете страницы без начального символа `#` (в стандартных макетах используются id вроде `company-tab-emails` или `company-tab-timeline`; в пользовательских макетах используется собственный id вкладки). Если такого id нет в макете записи, откроется вкладка по умолчанию:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -247,10 +322,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );
@@ -325,7 +402,10 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_APP_ACCESS_TOKEN` внедряется автоматически — см. [переменные приложения](#application-variables). Поскольку секретные переменные приложения никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в логической функции, а не во front-компоненте.
+  `TWENTY_APP_ACCESS_TOKEN` внедряется автоматически — см. переменные
+  приложения. Поскольку секретные переменные приложения
+  никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в
+  логической функции, а не во front-компоненте.
 </Note>
 
 ### Вызов REST API Twenty
@@ -373,6 +453,34 @@ try {
 }
 ```
 
+## Отправка во входящие
+
+`sendInboxMessage` и вспомогательные функции упоминаний [входящих](/ru/developers/extend/apps/logic/inbox) также экспортируются из `twenty-sdk/front-component`, поэтому компонент может отправить сообщение без промежуточной логической функции. Сообщение отправлено из вашего приложения, а вызов содержит токен компонента, поэтому участнику, просматривающему страницу, как и каждому получателю, требуется разрешение `AI`.
+
+Чтобы затем показать беседу, перейдите к ней с помощью `threadId`, который возвращает вызов:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* `workspaceMemberIds` принимает идентификаторы участников рабочего пространства, а не идентификатор пользователя, который возвращает `useUserId()`.
+* Беседа открывается только для её участников, поэтому переходите к ней, когда участник, просматривающий страницу, является одним из получателей.
+* Входящие — это маршрут главной страницы: `navigate` открывает их там, а `openSidePanelPage` не может открыть их на боковой панели.
+
 ## Доступ к контексту времени выполнения
 
 Внутри вашего компонента используйте хуки SDK для доступа к текущему пользователю, записи и экземпляру компонента:
@@ -408,15 +516,69 @@ export default defineFrontComponent({
 
 Доступные хуки:
 
-| Хук                                           | Возвращает             | Описание                                                                                                  |
-| --------------------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` или `null`    | ID текущего пользователя                                                                                  |
-| `useSelectedRecordIds()`                      | `string[]`             | Все выбранные идентификаторы записей (пустой массив, если ничего не выбрано)                              |
-| `useRecordId()`                               | `string` или `null`    | **Устарело.** Используйте `useSelectedRecordIds()` вместо этого                                           |
-| `useFrontComponentId()`                       | `string`               | ID этого экземпляра компонента                                                                            |
-| `useTimelineActivityId()`                     | `string` или `null`    | Идентификатор текущего действия на временной шкале при рендеринге пользовательской строки временной шкалы |
-| `useColorScheme()`                            | `'light'` или `'dark'` | Активная цветовая схема интерфейса хоста (значение `System` уже определено)                               |
-| `useFrontComponentExecutionContext(selector)` | различается            | Доступ к полному контексту выполнения с помощью функции-селектора                                         |
+| Хук                                           | Возвращает                                        | Описание                                                                                                             |
+| --------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` или `null`                               | ID текущего пользователя                                                                                             |
+| `useSelectedRecordIds()`                      | `string[]`                                        | Все выбранные идентификаторы записей (пустой массив, если ничего не выбрано)                                         |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` или `null`             | Фильтр, точно соответствующий выбранным записям, включая режим «Выбрать все»                                         |
+| `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` или `null` | Метаданные объекта, связанные с контекстом записи этого фронт-компонента                                             |
+| `useRecordId()`                               | `string` или `null`                               | **Устарело.** Используйте `useSelectedRecordIds()` вместо этого                                                      |
+| `useFrontComponentId()`                       | `string`                                          | ID этого экземпляра компонента                                                                                       |
+| `useTimelineActivityId()`                     | `string` или `null`                               | Идентификатор текущего действия на временной шкале при рендеринге пользовательской строки временной шкалы            |
+| `useColorScheme()`                            | `'light'` или `'dark'`                            | Активная цветовая схема интерфейса хоста (значение `System` уже определено)                                          |
+| `useLocation()`                               | `FrontComponentLocation` или `null`               | Имя пути, строка запроса и хеш маршрута хоста, а также источник приложения-хоста                                     |
+| `useToolCall()`                               | `FrontComponentToolCall` или `null`               | Вызов инструмента ИИ, который отображает этот компонент, если он был получен из `toolTriggerSettings` функции логики |
+| `useFrontComponentExecutionContext(selector)` | различается                                       | Доступ к полному контексту выполнения с помощью функции-селектора                                                    |
+
+### Метаданные объекта.
+
+Используйте `useSelectedObjectMetadata()` для определения объекта, связанного с виджетом страницы записи, пользовательской строкой временной шкалы, командой в области объекта или фронт-компонентом, открытым в боковой панели с объектом (из команды или через `openSidePanelPage` с `objectNameSingular`). Это позволяет интеграции выбирать шаблоны или другую конфигурацию для текущего объекта без поиска идентификатора записи среди объектов.
+
+```tsx
+import {
+  useSelectedObjectMetadata,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const TemplatePicker = () => {
+  const objectMetadata = useSelectedObjectMetadata();
+  const selectedRecordIds = useSelectedRecordIds();
+
+  if (!objectMetadata) {
+    return <p>Open a record to select a template.</p>;
+  }
+
+  return (
+    <p>
+      Select a template for {objectMetadata.nameSingular}. Selected records:{' '}
+      {selectedRecordIds.length}
+    </p>
+  );
+};
+```
+
+Результат содержит `id` (UUID метаданных объекта рабочего пространства), `nameSingular` и `namePlural`. Имена являются именами метаданных, например `person` и `people`, а не отображаемыми метками.
+
+Метаданные объекта могут быть доступны, даже если не выбраны записи. Они принадлежат контексту этого фронт-компонента, поэтому боковая панель может предоставлять другой объект, отличный от объекта на основной странице. Хук обновляется при изменении этого контекста и возвращает `null`, когда объект невозможно разрешить, когда контекст объекта не предоставлен или при запуске на более старом хосте, который не предоставляет метаданные объекта.
+
+### Местоположение хоста
+
+Используйте `useLocation()`, чтобы прочитать маршрут, на котором размещён ваш фронт-компонент. Он возвращает объект `FrontComponentLocation` с четырьмя обязательными строковыми полями: `pathname`, `search`, `hash` и `origin`. Например, страница по адресу `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` предоставляет соответственно `/page/page-layout-id`, `?project=abc`, `#details` и `https://myworkspace.twenty.com`. `hash` включает начальный символ `#` и имеет значение `''`, когда фрагмент отсутствует.
+
+`pathname`, `search` и `hash` соответствуют контексту React Router компонента, включая собственный маршрут боковой панели, открытой через маршрутизацию. `origin` поступает из приложения-хоста. Хук обновляется при изменении маршрута. Старые хосты могут не включать `executionContext.location`, поэтому `useLocation()` возвращает `null`, когда местоположение недоступно.
+
+Для параметров запроса прочитайте `useLocation()?.search ?? ''` и разберите результат с помощью `URLSearchParams`. `search` включает начальный символ `?` и имеет значение `''`, когда маршрут не содержит строки запроса. Резервное значение также предоставляет `''`, когда хост не предоставляет местоположение.
+
+```tsx
+import { useLocation } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocation()?.search ?? '';
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
 
 ## Переменные приложения
 
@@ -427,7 +589,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -440,10 +603,65 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Секретные переменные (`isSecret: true`) **не** доступны фронтенд-компонентам. Они доступны только в [логических функциях](/ru/developers/extend/apps/logic/logic-functions), которые выполняются на стороне сервера. Это предотвращает отправку в браузер конфиденциальных значений, таких как ключи API.
+  Секретные переменные (`isSecret: true`) **не** доступны фронтенд-компонентам.
+  Они доступны только в логических
+  функциях, которые выполняются
+  на стороне сервера. Это предотвращает отправку конфиденциальных значений, таких как ключи API, в
+  браузер.
 </Warning>
 
 `getApplicationVariable` всегда возвращает **строку** (или `undefined`), независимо от объявленного для переменной `type`. Строка сериализуется единообразно в зависимости от типа (логические значения как `"true"` / `"false"`, числа как десятичные строки, массивы / объекты как JSON) в том же формате, который используется для логической функции `process.env` — разбирайте её самостоятельно (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). См. [типы переменных](/ru/developers/extend/apps/config/application#variable-types).
+
+### Чтение и обновление переменных во время выполнения
+
+`getApplicationVariable` возвращает значения, внедренные при загрузке компонента, поэтому записанное позднее значение появится только при следующей загрузке. Чтобы прочитать сохранённые значения или записать значение (что делает [пункт меню настроек](#settings-menu-items), когда сохраняет введённое пользователем), используйте `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+
+const saveMyLanguage = async (language: string) => {
+  await new MetadataApiClient().mutation({
+    updateMyUserApplicationVariable: {
+      __args: {
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: 'LANGUAGE',
+        value: language,
+      },
+    },
+  });
+};
+```
+
+Заметки:
+
+* Токен вашего компонента привязан к вашему собственному приложению. `updateOneApplicationVariable` нацелен на него, поэтому `applicationId` необязателен, а указание другого приложения отклоняется. Чтение `applicationVariables` другого приложения отклоняется таким же образом, а приложение из другого рабочего пространства при чтении считается не найденным.
+* Ключ должен быть объявлен вашим приложением в [`defineApplication()`](/ru/developers/extend/apps/config/application). Запись необъявленного ключа приводит к ошибке «не найдено».
+* Секретные переменные при чтении возвращаются замаскированными, а не в виде сохранённого значения. Их запись работает как обычно.
+* Для чтения `value` переменной и записи в неё требуется разрешение настроек `APPLICATIONS` как для роли вашего приложения, так и для роли вошедшего пользователя, поскольку токен компонента представляет собой пересечение этих двух разрешений. Добавьте `SystemPermissionFlag.APPLICATIONS` в `permissionFlagUniversalIdentifiers` вашей [роли приложения](/ru/developers/extend/apps/config/roles).
+* В пользовательскую переменную (`scope: 'USER'`) подставляется значение просматривающего участника, если она не является секретной. `updateOneApplicationVariable` отклоняет её: сохраните её с помощью `updateMyUserApplicationVariable`, как это делает `saveMyLanguage` выше. Она записывает только значение просматривающего участника и не позволяет указать другое приложение. Для неё не требуется разрешение `APPLICATIONS`, но требуется разрешение `CONNECTED_ACCOUNTS` в роли просматривающего участника и в роли вашего приложения, если она объявлена: добавьте `SystemPermissionFlag.CONNECTED_ACCOUNTS` в `permissionFlagUniversalIdentifiers` в вашей [роли приложения](/ru/developers/extend/apps/config/roles). См. [Переменные рабочей области и пользователя](/ru/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### Системные переменные
 
 Следующие системные переменные всегда доступны через `process.env`:
 
@@ -456,7 +674,7 @@ export default defineFrontComponent({
 
 Twenty также внедряет `TWENTY_FUNCTIONS_URL` во фронт-компоненты и логические функции: это базовый URL, по которому обслуживаются HTTP-триггерные логические функции вашего приложения.
 
-Он существует, потому что этот URL не всегда совпадает с самим сервером Twenty. В Twenty Cloud маршруты приложения обслуживаются на выделенном домене для каждого рабочего пространства (`https://\<your-workspace-subdomain>.withtwenty.com` или основном общедоступном домене приложения, если он настроен), чтобы ответы, сформированные приложением, отдавались с изолированного источника, а не с источника приложения Twenty. Самостоятельно развёрнутые и локальные экземпляры обслуживают маршруты приложения с префиксом `/s` на самом сервере и могут вовсе не задавать эту переменную. Поскольку базовый URL различается для каждого рабочего пространства и экземпляра, ваш код не может жёстко прописать его — сервер внедряет правильное значение во время выполнения.
+Он существует, потому что этот URL не всегда совпадает с самим сервером Twenty. В Twenty Cloud маршруты приложения обслуживаются на выделенном домене для каждого рабочего пространства (`https://\<your-workspace-subdomain>.withtwenty.com` или основном общедоступном домене приложения, если он настроен), чтобы ответы, созданные приложением, обрабатывались на собственном источнике, а не на источнике приложения Twenty. Самостоятельно развёрнутые и локальные экземпляры обслуживают маршруты приложения с префиксом `/s` на самом сервере и могут вовсе не задавать эту переменную. Поскольку базовый URL различается для каждого рабочего пространства и экземпляра, ваш код не может жёстко прописать его — сервер внедряет правильное значение во время выполнения.
 
 Вам редко нужно читать его напрямую. Вызывайте свои маршруты через `RestApiClient` с путём, начинающимся с `/s/`, и клиент разрешит URL за вас: он убирает префикс `/s` и обращается к `TWENTY_FUNCTIONS_URL`, а если переменная не задана, использует `\<TWENTY_API_URL>/s`. Используйте `resolveUrl('/s/\<path>')`, чтобы получить абсолютный URL без отправки запроса, например для ссылки. Читайте переменную напрямую только при ручной сборке URL:
 
@@ -466,7 +684,7 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 ## API взаимодействия с хостом
 
-Компоненты фронтенда могут вызывать навигацию, модальные окна и уведомления с помощью функций из `twenty-sdk`:
+Компоненты фронтенда могут вызывать навигацию, модальные окна и уведомления с помощью функций из `twenty-sdk/front-component`:
 
 | Функция                                            | Описание                                                                                                                                                                                |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -479,11 +697,17 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 | `updateProgress(progress)`                         | Обновить индикатор прогресса                                                                                                                                                            |
 | `uploadFile(file, { fieldMetadataId, fileName? })` | Загрузите `Blob` в поле FILES; возвращает `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` или `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
+Используйте `openCommandConfirmationModal` из `twenty-sdk/front-component` для диалогов. Принимает структурированные параметры заголовка, подзаголовка и кнопок и возвращает `'confirm'` или `'cancel'`. Twenty управляет модальным окном, управлением фокусом, закрытием и прокруткой страницы. Компоненты фронтенда не должны напрямую рендерить `Dialog`, `AlertDialog`, нативные элементы `dialog` или нативные всплывающие окна браузера. Передача локального контейнера портала не делает поддерживаемой прямую модальность, управляемую приложением.
+
 Пример, который использует API хоста для показа snackbar и закрытия боковой панели после завершения действия:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  closeSidePanel,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
@@ -540,7 +764,10 @@ const NoteDraft = () => {
   };
 
   return (
-    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+    <textarea
+      value={draft}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
 
@@ -618,6 +845,36 @@ export default defineCommandMenuItem({
 });
 ```
 
+#### Выбрать все
+
+Когда пользователь выбирает все записи представления, `useSelectedRecordIds()` возвращает пустой массив: выбор определяется фильтрами представления, поиском и неотмеченными строками и может включать гораздо больше записей, чем помещается в памяти. `useSelectedRecordsFilter()` в любом случае возвращает фильтр, точно соответствующий выбранным записям, поэтому выполняйте запрос с его помощью вместо перечисления идентификаторов:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+Для больших выборок передайте фильтр в [функцию логики](/ru/developers/extend/apps/logic/logic-functions) и обрабатывайте там записи постранично.
+
 ## Публичные ресурсы
 
 Компоненты фронтенда могут получать доступ к файлам из каталога приложения `public/` с помощью `getPublicAssetUrl`:
@@ -643,7 +900,11 @@ export default defineFrontComponent({
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
@@ -669,7 +930,7 @@ export default defineFrontComponent({
 Несколько важных моментов:
 
 * **Один общий набор зависимостей для каждого приложения.** Пакет построен из зависимостей вашего приложения, так что вы сохраняете полный контроль над версиями, которые вы поставляете.
-* **Перечислите точные спецификаторы, которые вы импортируете.** `twenty-ui/input` и `twenty-ui/display` являются двумя записями; только имя пакета не содержит подпусков. Список `react` автоматически охватывает `react/jsx-runtime`.
+* **Перечислите точные спецификаторы, которые вы импортируете.** `twenty-ui/primitives/input` и `twenty-ui/primitives/data-display` — это две отдельные записи; одного имени пакета недостаточно для охвата его подпутей. Список `react` автоматически охватывает `react/jsx-runtime`.
 * **Поделиться `react-dom/client` вместе с `react`.** Каждый компонент проделывает `createRoot`, поэтому оставив его, значит каждый компонент всё ещё объединяет React DOM.
 * \*\*Набор кэширован. \* Он обслуживается под content-hash URL с длительным неизменяемым кэшем, так что загружается один раз и повторно используется всеми компонентами приложения до тех пор, пока одна из зависимостей не изменится.
 * **Компоненты, импортирующие ни один из общих пакетов никогда не загружают его.**
@@ -687,42 +948,78 @@ export default defineFrontComponent({
 
 ## Использование компонентов Twenty UI
 
-Twenty поставляет свою библиотеку компонентов как пакет [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Компоненты фронтенда могут использовать его для кнопок, тегов, статусных плашек, чипов, аватаров, иконок, типографики и токенов темы, которые автоматически соответствуют светлой и тёмной теме рабочего пространства.
+Twenty поставляет свою библиотеку компонентов как пакет [`twenty-ui`](https://www.npmjs.com/package/twenty-ui). Используйте его элементы управления и токены темы, чтобы придать front-компонентам такой же внешний вид и взаимодействия, как и остальной части Twenty. Ознакомьтесь с [общими компонентами](/ru/ui/components/overview) и [примитивами](/ru/ui/primitives/overview), чтобы увидеть примеры, props и API композиции.
 
 ### Установка
 
-Добавьте пакет в своё приложение, зафиксировав его на версии, с которой поставляется ваш экземпляр Twenty:
+Новые приложения, созданные с помощью `twenty app init`, уже включают `twenty-ui`. Для существующего приложения добавьте его как зависимость для разработки, зафиксировав ту же версию, что и у `twenty-sdk` и `twenty-client-sdk`. Например, если ваши пакеты SDK используют версию `2.51.0`:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.51.0
 ```
 
-`twenty-ui` включается в ваш компонент фронтенда на этапе сборки, поэтому его достаточно иметь в зависимостях вашего приложения — во время выполнения ничего настраивать не нужно.
+`twenty-ui` включается во время сборки либо в каждый front-компонент, либо в [пакет общих зависимостей](#sharing-dependencies-across-front-components) вашего приложения. Twenty загружает таблицы стилей компонентов и темы и применяет активную цветовую схему рабочего пространства. Вам не нужно импортировать `twenty-ui/style.css`, таблицы стилей темы или добавлять корневой `ThemeProvider`, как в автономном приложении React.
 
 ### Импорт компонентов
 
-Импортируйте из соответствующего подпути, а не из корня пакета, чтобы в ваш бандл попали только те компоненты, которые вы используете:
+Импортируйте из соответствующего общедоступного подпути семейства, чтобы зависимости оставались целевыми:
 
-| Подпуть                     | Что экспортирует                                  |
-| --------------------------- | ------------------------------------------------- |
-| `twenty-ui/input`           | `Button` и элементы ввода формы                   |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` и другие        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` и другие              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` и другие |
-| `twenty-ui/icon`            | Компоненты `Icon*` (например, `IconCheck`)        |
-| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`              |
+Базовые элементы управления сгруппированы в `twenty-ui/primitives/\<family>`. Общие пресеты дизайна и строительные блоки приложения сгруппированы в `twenty-ui/components/\<family>`. Агрегированная точка входа `twenty-ui/components` по-прежнему доступна, но импорты семейств упрощают [совместное использование только тех зависимостей, которые вы используете](#sharing-dependencies-across-front-components).
+
+| Подпуть                              | Что экспортирует                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `twenty-ui/components/input`         | Основные и светлые кнопки, поля поиска и изображений, а также средства выбора стран и валют |
+| `twenty-ui/components/data-display`  | Группы аватаров, деревья JSON, метрики, блоки команд и плитки значков                       |
+| `twenty-ui/components/feedback`      | Выноски, встроенные баннеры и уведомления                                                   |
+| `twenty-ui/components/layout`        | Разделы, списки с переполнением и переходы значков                                          |
+| `twenty-ui/components/navigation`    | Раскрывающиеся списки, композиции меню и действия вкладок                                   |
+| `twenty-ui/components/settings`      | Строки настроек                                                                             |
+| `twenty-ui/primitives/accessibility` | Скрытые элементы                                                                            |
+| `twenty-ui/primitives/data-display`  | Аватары, чипы, теги, образцы цветов и индикаторы состояния                                  |
+| `twenty-ui/primitives/feedback`      | Баннеры, индикаторы выполнения и загрузчики                                                 |
+| `twenty-ui/primitives/input`         | Кнопки и элементы управления формы                                                          |
+| `twenty-ui/primitives/layout`        | Разворачивание, разделители, направление и изменение размера                                |
+| `twenty-ui/primitives/navigation`    | Навигационные цепочки, элементы списков и вкладки                                           |
+| `twenty-ui/primitives/surfaces`      | Карточки, немодальные всплывающие окна и подсказки                                          |
+| `twenty-ui/primitives/typography`    | Текст и заголовки                                                                           |
+| `twenty-ui/icon`                     | Компоненты `Icon*` (например, `IconCheck`)                                                  |
+| `twenty-ui/theme`                    | `useTheme`, `themeCssVariables` и `ThemeProvider`                                           |
+
+Используйте [`MainButton`](/ru/ui/components/input/main-button) для основных действий и [`LightButton`](/ru/ui/components/input/light-button) для второстепенных действий. Используйте `Button`, `Field`, `Input`, `Select` и другие примитивы из `twenty-ui/primitives/input` для базовых элементов управления и форм. Следуйте документации по частям каждого составного элемента управления, таким как `Field.Root`, `Field.Label` и `Field.Description`.
+
+Используйте [`Dropdown`](/ru/ui/components/navigation/dropdown) из `twenty-ui/components/navigation` для меню действий, средств выбора параметров и немодальных панелей форм. Используйте `enqueueSnackbar` из `twenty-sdk/front-component` для уведомлений хоста.
+
+Автономные API `Dialog` и `AlertDialog` также экспортируются Twenty UI, но их прямое использование в компонентах фронтенда запрещено. Используйте [API связи с хостом](#host-communication-api) для диалогов.
+
+Этим точкам входа не требуется Monaco. Отдельная точка входа `twenty-ui/components/code-editor` зависит от Monaco, чей загрузчик скриптов не поддерживается в песочнице фронт-компонентов, поэтому `CodeEditor` не может стать там интерактивным.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { MainButton } from 'twenty-ui/components/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledWidget = () => {
+  const theme = useTheme();
+
+  const handleClick = async () => {
+    await enqueueSnackbar({ message: 'Clicked!', variant: 'success' });
+  };
+
   return (
-    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+    <div
+      style={{
+        padding: theme.spacing[4],
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: theme.spacing[2],
+      }}
+    >
+      <MainButton onClick={handleClick}>Click me</MainButton>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };
@@ -742,13 +1039,13 @@ export default defineFrontComponent({
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Каждая именованная иконка участвует в tree-shaking, поэтому импорт нескольких иконок почти не увеличит размер вашего бандла. Избегайте `IconsProvider`, `useIcons` и `iconsState` — они подключают весь набор иконок Tabler (несколько мегабайт).
+Каждая именованная иконка участвует в tree-shaking, поэтому импорт нескольких иконок почти не увеличит размер вашего бандла. Не используйте `IconsProvider` и `useIcons` во front-компонентах. Front-компоненты собираются без разделения кода, поэтому динамический каталог иконок провайдера (полный набор Tabler, около 2 МБ в минифицированном виде) попадает в ваш бандл. Список доступных экспортов и поддерживаемых свойств см. в [справочнике иконок](/ru/ui/icons).
 
 ### Темизация и токены темы
 
-Компоненты Twenty UI автоматически подстраиваются под светлую и тёмную темы рабочего пространства — рендерер применяет активную цветовую схему на хосте, а компоненты вычисляют свои цвета относительно неё.
+Компоненты Twenty UI автоматически соответствуют светлой и темной теме рабочего пространства. Средство рендеринга применяет активную цветовую схему на хосте, а компоненты разрешают относительно нее свои переменные CSS.
 
-Чтобы использовать те же дизайн‑токены в собственных встроенных стилях, вызовите хук `useTheme()`. Он возвращает токены темы Twenty (отступы, цвета, радиусы, шрифты), привязанные к активной теме, без необходимости настраивать `ThemeProvider` в вашем компоненте:
+Чтобы использовать те же токены дизайна в собственных встроенных стилях, вызовите `useTheme()` внутри тела компонента. Во фронт-компонентах по умолчанию он возвращает ссылки на переменные CSS, поэтому стили следуют активной теме хоста без локального `ThemeProvider`:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme';
@@ -770,13 +1067,15 @@ const Card = () => {
 };
 ```
 
-Поскольку `useTheme()` — это хук, вы читаете токены внутри тела компонента, поэтому значения всегда соответствуют активной теме. Та же карта токенов также экспортируется как константа `themeCssVariables`, но в компонентах фронтенда предпочтительнее использовать `useTheme()` — модульная константа, разыменующая `themeCssVariables`, может быть `undefined`, пока извлекается манифест приложения.
+Те же ссылки CSS экспортируются как `themeCssVariables` из `twenty-ui/theme`. Считывайте их внутри тела компонента: CLI имитирует `twenty-ui` во время извлечения манифеста, поэтому разыменование импортированных констант темы на уровне модуля может привести к сбою сборки.
+
+Строки ссылок CSS не являются разрешенными числовыми значениями JavaScript, даже для токенов, таких как `theme.icon.size.md`. Не выполняйте над ними арифметические операции и не передавайте их API, которым требуются числа. См. [Темы](/ru/ui/theming) и [Токены](/ru/ui/tokens) для семантических путей и имен переменных CSS.
 
 Чтобы явно разветвлять логику по активной цветовой схеме, считайте её с помощью `useColorScheme()` из `twenty-sdk/front-component`, который возвращает `'light'` или `'dark'`.
 
 ## Нынешние ограничения
 
-Активно разрабатываются передние компоненты. Рендеринг, стилизация, обработка событий, измерение элементов и работа с хранилищем браузера работают хорошо. Все, что выходит *за рамки* этих возможностей (вызов DOM‑метода на ref, отслеживание изменения размеров элементов, порталирование за пределы вашего дерева), сегодня отсутствует или реализовано не полностью, и в большинстве случаев это тихо ломается: ни исключения, ни ошибки TypeScript, поскольку обвязка типизирована под полный DOM браузера.
+Активно разрабатываются передние компоненты. Рендеринг, стилизация, обработка событий, измерение элементов, порталы body и хранилище браузера работают хорошо. Все, что выходит *за рамки* этих возможностей (например, вызов DOM-метода на ref), сегодня отсутствует или реализовано не полностью, и в большинстве случаев это тихо ломается: ни исключения, ни ошибки TypeScript, поскольку обвязка типизирована под полный DOM браузера.
 
 Если один из этих блоков вас, [откройте задачу](https://github.com/twentyhq/twenty/issues/new/choose), чтобы получить приоритет.
 
@@ -786,39 +1085,79 @@ const Card = () => {
 
 | API                                                                                      | Что происходит                                                                                                                         |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Работают, из зеркала; присваивание `scrollTop` / `scrollLeft` не имеет эффекта                                                         |
-| `getClientRects()`, `window.matchMedia()`                                                | Бросает                                                                                                                                |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Работают, из зеркала; присваивание `scrollTop` / `scrollLeft` прокручивает элемент на странице (см. Прокрутка)                         |
+| `getClientRects()`                                                                       | Бросает                                                                                                                                |
+| `window.matchMedia()`                                                                    | Работает для фиксированного набора функций, с событиями `change` (см. ниже)                                                            |
 | `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Работают, сообщая размеры области просмотра браузера; собственный размер вашего виджета — `document.body.clientWidth` / `clientHeight` |
-| `window.getComputedStyle()`                                                              | Возвращает только встроенные (inline) стили элемента и никогда не возвращает вычисленный хостом каскад                                 |
-| `ResizeObserver`, `IntersectionObserver`                                                 | `Справочная ошибка` (защита `typeof` делает работу)                                                                                    |
+| `window.getComputedStyle()`                                                              | Значения макета хоста для измеряемых элементов и их родителей; остальное, включая переменные темы, из встроенных стилей                |
+| `ResizeObserver`                                                                         | Работает через зеркало; `document.body` сообщает размеры блока вашего виджета                                                          |
+| `IntersectionObserver`                                                                   | `Справочная ошибка` (защита `typeof` делает работу)                                                                                    |
 | `MutationObserver`                                                                       | Работает, включая `subtree`, `attributeFilter`, старые значения и `takeRecords()`                                                      |
 
-Позиционирование с использованием `getBoundingClientRect` теперь работает, но всё, что отслеживает изменение размеров через `ResizeObserver` (recharts `ResponsiveContainer`, `autoUpdate` из Floating UI), по‑прежнему не работает. В любом случае отдавайте предпочтение CSS для верстки: ваша таблица стилей применяется к реальной странице, поэтому flexbox, grid, `aspect-ratio`, `clamp()` и `@container` работают как обычно, без задержки кадра.
+Позиционирование на основе `getBoundingClientRect` и отслеживание размера через `ResizeObserver` работают через одно и то же зеркало, поэтому обратные вызовы изменения размера отстают от хоста примерно на один кадр. В любом случае отдавайте предпочтение CSS для верстки: ваша таблица стилей применяется к реальной странице, поэтому flexbox, grid, `aspect-ratio`, `clamp()` и `@container` работают как обычно, без задержки кадра.
+
+`matchMedia()` вычисляет `width`, `height`, `orientation`, `-webkit-device-pixel-ratio`, `resolution`, `hover`, `pointer` и `prefers-color-scheme` в форме `min-`/`max-`, форме диапазона уровня 4 (`(width >= 600px)`, `(400px \<= width \<= 800px)`) и форме без значения (`(width)`). Ширина, высота и `orientation` описывают **блок вашего виджета**, а не область просмотра браузера, поэтому они соответствуют `document.body.clientWidth`, а не `window.innerWidth`, а значения `em` и `rem` считаются равными 16px. `hover` и `pointer` описывают основной способ ввода на устройстве пользователя. Любое другое условие считается неизвестным, как браузеры обрабатывают неизвестные функции: элемент, разделённый запятыми, в котором оно встречается, вычисляется как `false` даже при `not`, если остальная часть этого элемента уже не определяет результат, как в `not print and (prefers-reduced-motion: reduce)`. Это относится к неизвестным функциям и синтаксису, который этот парсер не реализует внутри условия, например к вложенным группам, таким как `((min-width: 600px))`, `not` внутри группы и значениям `calc()`. `or` между условиями делает его элемент равным `false`. Конструкторы `MediaQueryList` и `MediaQueryListEvent` также недоступны, поэтому проверки `instanceof` с ними вызывают `ReferenceError`.
+
+Поскольку эта таблица стилей влияет на реальную страницу, правило `@media (min-width: ...)` вычисляется хостом относительно области просмотра браузера, тогда как `matchMedia('(min-width: ...)')` отвечает для блока вашего виджета. Чтобы CSS использовал тот же блок, который видит ваш JavaScript, объявите собственный `container-type` в обёртке и выполняйте запрос к нему: правило `@container` без него разрешается относительно ближайшего контейнера хоста, а не вашего виджета. То же различие относится к цветовой схеме: `@media (prefers-color-scheme: dark)` в таблице стилей следует настройкам браузера и ОС, тогда как `matchMedia('(prefers-color-scheme: dark)')` следует теме, выбранной в Twenty, поэтому, когда они должны совпадать, задавайте стили с помощью токенов `useTheme()`.
+
+Получаемая вами высота также относится к вашему собственному блоку, и в зависимости от места, куда вас монтирует хост, размер этого блока может определяться вашим собственным содержимым. Разветвление макета на основе `min-height`, `max-height` или `orientation` может затем влиять само на себя и колебаться. Для решений о макете предпочтительнее использовать запросы на основе ширины или `@container` с `container-type: inline-size`.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` и `queueMicrotask` работают без префикса `window.`. Только `window.requestAnimationFrame(...)` и брошенные друзья.
+  `requestAnimationFrame` работает как с префиксом `window.`, так и без него. Только
+  Chrome запускает настоящий кадр анимации внутри worker; Firefox и Safari получают
+  таймер на 16 мс, поэтому используйте его, чтобы отложить повторное чтение после записи, а не для управления
+  анимацией.
 </Note>
+
+### Прокрутка
+
+Присваивание `scrollTop` или `scrollLeft`, вызов `scrollTo()` или его псевдонима `scroll()`, а также вызов `scrollIntoView()` прокручивают соответствующий элемент на странице:
+
+* Изменения прокрутки применяются после следующей отрисовки в том порядке, в котором их выполняет ваш код. В рамках одной отрисовки сначала применяются изменения выделения ввода, поэтому вызов `setSelectionRange()` с последующей записью в `scrollLeft` сохраняет каретку видимой.
+* Чтение возвращает записанное вами значение, пока страница не сообщит фактическую позицию, которую браузер ограничивает диапазоном прокрутки. В контейнерах с направлением справа налево `scrollLeft` равен нулю или отрицателен, как в браузерах.
+* `scrollIntoView()` принимает `block` и `inline` со значениями `start`, `center`, `end` и `nearest`, выравнивая `block` по вертикали, а `inline` по горизонтали, поэтому режимы вертикального письма не сопоставляются. Прокручиваются только собственные контейнеры прокрутки вашего компонента, но никогда не фрейм виджета, страница или другой компонент. `focus()` по-прежнему отображает сфокусированный элемент так, как это делает браузер.
+* Прокрутка выполняется мгновенно: `behavior` и параметр `container` игнорируются, а `scrollBy()` недоступен.
+* Повторная запись только что прочитанной позиции, например `element.scrollTop = element.scrollTop`, ничего не делает, поэтому она не может отменить прокрутку, выполненную пользователем за это время. Это верно только после того, как страница измерила элемент; до этого запись применяется.
+* Прокрутка `document.documentElement`, `document.body` или `window` остаётся внутри песочницы и никогда не прокручивает страницу; `window.scrollTo()`, `scroll()` и `scrollBy()` ничего не делают.
+* Первое чтение контейнера, который никогда не измерялся, возвращает нули (см. «Макет и измерение»), поэтому проверка возможности прокрутки, выполненная сразу после появления контейнера, может сообщить, что его нельзя прокручивать.
+
+### Глобальная область видимости
+
+Собственные встроенные функции воркера также имеют псевдонимы в `window`, поэтому они работают как с префиксом `window.`, так и без него: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` и `TextEncoder`/`TextDecoder`.
 
 ### DOM access
 
 `ref` дает вам элемент песочницы, а не `HTMLElement`.
 
-| Что вы пишете                                                                                               | Что происходит                                                     | Использовать вместо                                                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Бросает                                                            | Контролируемые компоненты; читать значения из `event.target`                                                                                                                         |
-| `element.classList.add(...)`                                                                                | Броски (`classList` `undefined`)                                   | Создайте строку `className` самостоятельно                                                                                                                                           |
-| `document.createTreeWalker()`                                                                               | Бросает                                                            | `querySelector()` / `querySelectorAll()` и `getElementById()` работают; `getElementsByClassName()` тоже работает, но возвращает статическую коллекцию, а не «живой» `HTMLCollection` |
-| `document.activeElement`                                                                                    | Всегда `неопределённые`                                            | Отслеживать фокус с с помощью «onFocus» / «onBlur»                                                                                                                                   |
-| `canvas`                                                                                                    | Отображает ничего, без ошибок                                      | SVG или рисуйте вне экрана и показывайте результат в элементе `img`                                                                                                                  |
-| `createPortal(node, document.body)`                                                                         | Отображает ничего, в то время как «isConnected» сообщает об успехе | Наслоения в строке `position: absolute` или передайте библиотеке свой собственный элемент контейнера                                                                                 |
+| Что вы пишете                                  | Что происходит                                                                                                                               | Использовать вместо                                                                                                                                                                                                                                                                                                     |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.blur()`               | Перенаправление к соответствующему элементу на странице и обновление активного элемента песочницы                                            | `onFocus` / `onBlur` для отслеживания изменений фокуса                                                                                                                                                                                                                                                                  |
+| `ref.current.click()`                          | Инициирует `click` внутри песочницы: флажок или радиокнопка переключается и выполняется его `onChange`, но элемент на странице не нажимается | Управляемые компоненты для всего, что должна делать страница                                                                                                                                                                                                                                                            |
+| `ref.current.select()`, `.setSelectionRange()` | Работают с `input` и `textarea`, применяются к элементу на странице после следующего рендеринга                                              | Управляемые компоненты для самого значения                                                                                                                                                                                                                                                                              |
+| `ref.current.scrollTo()`, `.scrollIntoView()`  | Прокручивают собственные контейнеры прокрутки компонента на странице (см. «Прокрутка»)                                                       | `focus()`, если вы также хотите переместить фокус                                                                                                                                                                                                                                                                       |
+| `video.play()`                                 | Бросает                                                                                                                                      | Контролируемые компоненты; читать значения из `event.target`                                                                                                                                                                                                                                                            |
+| `document.createTreeWalker()`                  | Выбрасывает                                                                                                                                  | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (включая псевдоклассы, такие как `:disabled` и `:not()`), `getElementById()`, `contains()` и `compareDocumentPosition()` работают; `getElementsByClassName()` тоже работает, но возвращает статическую коллекцию, а не динамическую `HTMLCollection` |
+| `document.activeElement`                       | Отслеживает фокус страницы внутри компонента и обновляется, когда код песочницы вызывает `focus()` или `blur()`                              | `onFocus` / `onBlur` для реакции на фокус страницы                                                                                                                                                                                                                                                                      |
+| `canvas`                                       | Отображает ничего, без ошибок                                                                                                                | SVG или рисуйте вне экрана и показывайте результат в элементе `img`                                                                                                                                                                                                                                                     |
+| `createPortal(node, document.body)`            | Рендерится в слое оверлея хоста, ограниченном областью в 200px вокруг компонента                                                             | Держите оверлеи в пределах этой области или добавьте прокрутку для более крупного содержимого                                                                                                                                                                                                                           |
 
-Портал зазор поэтому всплывающие окна Radix, Headless UI, MUI и react-select не отображаются по умолчанию. Большинство из них принимают реквизиты контейнера; указывайте их на отображаемый элемент.
+`element.classList` работает на основе атрибута `class`: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` и итерация ведут себя так же, как в браузере, а `className` остаётся синхронизированным. `element.dataset` работает так же, опираясь на атрибуты `data-*`; записывайте имена `data-*` в нижнем регистре, так как песочница сохраняет имена атрибутов в исходном виде, а не приводит их к нижнему регистру, как браузер.
+
+Порталы body могут выходить за пределы каждой границы вашего компонента на расстояние до 200px, в том числе за пределы области прокрутки виджета. Более крупные оверлеи обрезаются по границам этой области, поэтому добавьте длинным меню собственный контейнер с прокруткой. Навигация с клавиатуры в списках Twenty UI, таких как Autocomplete и Select, отображает выделенный вариант внутри этого контейнера. Нативные API верхнего слоя, такие как `showModal()`, `showPopover()` и `requestFullscreen()`, заблокированы.
 
 ### События
 
 События мыши, указателя, касания, перетаскивания, клавиатуры, фокуса, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` и `animationend`/`transitionend` передаются хосту, плюс несколько на элемент: `load`/`error` на `img`, буфер обмена и композиция на `input`/`textarea`, медиа на `video`/`audio`, `toggle` на `details`/`dialog`. Все остальное (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, захват указателя, `onLoad` у `img`) отбрасывается без предупреждения.
 
-`document.addEventListener()` и `window. ddEventListener()` регистрируется без ошибок и никогда не стреляет, поэтому перетаскивание останавливается, как только указатель покидает начатый элемент. `event.preventDefault()` тоже не пересекается; форма представления, `dragover`/`drop` и ссылки уже охраняются для вас.
+Обработчики получают типизированные события, созданные на основе события страницы: `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` или `FocusEvent`; эти конструкторы доступны в песочнице для `dispatchEvent()`. Каждое перенаправленное событие также содержит интерфейс синтетического события React (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), поэтому код, написанный для событий React, продолжает работать, хотя песочница передаёт объект события непосредственно вашему обработчику.
+
+Событие страницы передаётся, когда элемент, с которым взаимодействовал пользователь, или один из его предков в вашем компоненте имеет обработчик для этого типа события. Оно передаётся один раз, а затем распространяется внутри песочницы так же, как на странице: `event.target` — элемент, с которым взаимодействовал пользователь, `currentTarget` — элемент, обработчик которого выполняется, `stopPropagation()` предотвращает выполнение обработчиков предков, а `relatedTarget` указывает на элемент песочницы, с которого или на который переместился фокус либо указатель, или имеет значение `null`, если этот элемент находится вне вашего компонента. Как и в React, `onFocus` и `onBlur` также выполняются при изменениях фокуса внутри элемента, а `onClickCapture` и другие обработчики перехвата выполняются на фазе перехвата.
+
+Обработчики, которые библиотека добавляет с помощью `React.cloneElement`, например используемые свойством `render` Base UI, выполняются после собственных обработчиков элемента, а не заменяют их, поэтому передача `onClick: undefined` в `cloneElement` не удаляет обработчик элемента. Обработчик на элементе `render` Base UI всё ещё может вызвать `event.preventBaseUIHandler()`, чтобы пропустить собственный обработчик Base UI.
+
+`event.target.value` и `checked` отражают состояние контрола после того, как браузер применил изменение пользователя: в обработчиках `input`, `change`, `click`, `blur` и `focusout`, а также в обработчиках `keyup` для `value`. В обработчиках `keydown`, `beforeinput` и указателя они содержат значение и состояние checked контрола на момент его последнего изменения, независимо от того, что отслеживает ваш компонент: обработчик `Enter` считывает введённый к этому моменту текст, но обработчик для печатной клавиши ещё не видит эту клавишу, поэтому считывайте актуальные значения из контролируемого input или обработчика `onChange`.
+
+Обработчики `document` получают события, переданные из вашего компонента, но не события, происходящие в других местах страницы, поэтому, чтобы перехватывать сочетания клавиш с помощью `document.addEventListener('keydown', ...)`, добавьте `onKeyDown` к элементу, который оборачивает ваш компонент. Обработчики `window` получают только `error` и `unhandledrejection`. Перемещения указателя передаются только над элементами, имеющими обработчик перемещения, а захват указателя остаётся на странице, поэтому перетаскивание прекращается, как только указатель покидает эти элементы. `event.preventDefault()` тоже не пересекается; форма представления, `dragover`/`drop` и ссылки уже охраняются для вас.
 
 ### Атрибуты и стиль
 
@@ -836,13 +1175,28 @@ CSS компонента, будь то из `import './styles.css'`, CSS-in-JS 
 * Другие источники оставляют песчаник с `Origin: null`, так что сторонний API отвечает, только если он посылает `Access-Control-Allow-Origin: *`. Вызовите его из логической функции.
 * `fetch('/rest/people')` никогда не совпадает с двадцать API, потому что песочница не имеет URL страницы для разрешения относительного пути.
 
+### Выбор файла
+
+Элементы выбора файлов предоставляют нативные объекты `File` с метаданными и доступным для чтения содержимым. Используйте `text()` или `arrayBuffer()` для чтения выбранного файла либо передайте его хост-функции `uploadFile`. Для открытия нативного средства выбора необходимо вызвать `input.click()` в течение одной секунды после доверенного щелчка внутри вашего компонента. Сценарии React и Preact, созданные с помощью SDK, проверены в Chromium.
+
+URL-адреса объектов, созданных Worker и назначенные `img.src`, поддерживают предварительный просмотр. Отзывайте URL-адреса при замене изображения или размонтировании компонента. Ваше приложение отвечает за проверку файлов, ход загрузки и отмену.
+
 ### Захват мультимедиа
 
-`navigator.mediaDevices.getUserMedia()` и `MediaRecorder` работают внутри фронт-компонентов благодаря полифиллам песочницы, поэтому стандартный код записи выполняется без изменений, а `MediaRecorder.isTypeSupported` возвращает true для распространенных комбинаций контейнер/кодек. Подробные объекты ограничений `getUserMedia` принимаются, но не передаются дальше — хост выполняет захват с настройками по умолчанию для запрошенных типов — и одновременно во всех приложениях может быть активен только один захват. Сохраните записанный `Blob` с помощью хост-функции `uploadFile`.
+Объявите `microphone`, `camera` или оба параметра в массиве `requestedCapabilities`, передаваемом в `defineApplication()`, чтобы эти возможности отображались при установке. Одобрение действует для всей рабочей области и требует участника, который может управлять приложениями.
+
+Если установленное приложение вызывает `navigator.mediaDevices.getUserMedia()` без необходимого доступа, Twenty приостанавливает захват и отображает диалоговое окно одобрения. Это также поддерживает более старые приложения без объявлений возможностей. Участники, которые не могут управлять приложениями, должны попросить администратора рабочей области одобрить доступ. Отмена диалогового окна отклоняет запрос до запроса разрешений браузера или операционной системы.
+
+Обновления пакета сохраняют существующие разрешения рабочего пространства и не предоставляют автоматически дополнительный доступ к медиа. Локально синхронизированные приложения для разработки получают возможности, объявленные в их манифесте. После одобрения доступа Twenty не запрашивает его снова для каждого захвата, однако разрешения браузера и операционной системы по-прежнему действуют.
+
+Оранжевая точка в заголовке рабочего пространства указывает на активный захват. Наведите указатель на точку или выберите ее, чтобы увидеть приложения, использующие микрофон или камеру, и остановить их захват. Ожидающие запросы отображаются в виде контурной точки с элементом управления отменой.
+
+`getUserMedia()` и `MediaRecorder` работают через полифилы песочницы, поэтому стандартный код записи и `MediaRecorder.isTypeSupported()` работают без изменений после одобрения. Подробные объекты ограничений принимаются, но не перенаправляются. Хост выполняет захват с настройками по умолчанию для запрошенных типов. Разные приложения могут выполнять захват одновременно, а остановка приложения влияет только на его собственные сеансы. Каждый фронт-компонент поддерживает только один ожидающий или активный захват одновременно. Сохраните записанный `Blob` с помощью хост-функции `uploadFile`.
 
 ### Другие пробелы
 
-* **Содержимое файла.** Элемент `input` с типом `file` предоставляет вашему обработчику только метаданные файла, а не байты, поэтому `FileReader` недоступен. Чтобы загрузить `Blob`, который уже есть в вашем коде (например, созданный `MediaRecorder`), используйте хост-функцию `uploadFile`.
 * **Перетащите приложения.** Перетаскивайте события, но `event.dataTransfer` `неопределённый`.
-* **Узел встроенный** `fs`, `path` и `node:crypto` не срабатывают сборки, так что переместитесь с помощью [logic функции](/ru/developers/extend/apps/logic/logic-functions). Веб-криптовалюты, `fetch`, `TextEncoder` и `URL`.
+* **Узел встроенный** `fs`, `path` и `node:crypto` не срабатывают сборки, так что переместитесь с помощью [logic функции](/ru/developers/extend/apps/logic/logic-functions). Web Crypto заменяет `node:crypto`, также доступны `fetch`, `TextEncoder` и `URL`, см. [глобальную область видимости](#global-scope) — но ничто не заменяет `fs`: в песочнице нет файловой системы.
 * **`iframe`** всегда повторно изолируется без `allow-same-origin`, поэтому встраиваемый контент, зависящий от собственной сессии, отображается как неавторизованный. У него также нет `onLoad`.
+
+<PageBanner illustration="card-page-front-components" />

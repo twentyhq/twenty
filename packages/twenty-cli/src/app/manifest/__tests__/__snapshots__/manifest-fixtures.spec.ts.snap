@@ -15,6 +15,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "logicFunctions": [
       "src/logic-functions/add-numbers.function.ts",
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
     "pageLayoutTabs": [],
@@ -51,7 +53,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
       "description": "A minimal app for testing function:execute",
       "displayName": "Function Execute Test App",
       "galleryImages": [],
-      "packageJsonChecksum": null,
+      "packageJsonChecksum": "",
       "requiredServerVersionRange": null,
       "universalIdentifier": "01e065d6-1b48-4107-86d8-b06f87420a4f",
       "yarnLockChecksum": null,
@@ -77,6 +79,8 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
         "universalIdentifier": "f9e5589c-e951-4d99-85db-0a305ab53502",
       },
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
     "pageLayoutTabs": [],
@@ -146,6 +150,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "logicFunctions": [
       "my.function.ts",
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [
       "my.object.ts",
@@ -172,7 +178,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "description": "An app with all entities at root level",
       "displayName": "Root App",
       "galleryImages": [],
-      "packageJsonChecksum": null,
+      "packageJsonChecksum": "",
       "requiredServerVersionRange": null,
       "universalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000001",
       "yarnLockChecksum": null,
@@ -209,6 +215,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000010",
       },
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [
       {
@@ -318,6 +326,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/logic-functions/test-function.function.ts",
       "src/root.function.ts",
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [
       "src/navigation-menu-items/post-card-recipients.navigation-menu-item.ts",
       "src/navigation-menu-items/post-cards.navigation-menu-item.ts",
@@ -483,7 +493,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "description": "A simple rich app",
       "displayName": "Rich App",
       "galleryImages": [],
-      "packageJsonChecksum": null,
+      "packageJsonChecksum": "",
       "requiredServerVersionRange": null,
       "serverVariables": {
         "POSTCARD_API_KEY": {
@@ -875,6 +885,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "f0f1f2f3-f4f5-4000-8000-000000000001",
       },
     ],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [
       {
         "position": 1,
@@ -1418,6 +1430,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "indexes": [],
     "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
     "pageLayoutTabs": [],
@@ -1451,7 +1465,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         ],
       },
       "galleryImages": [],
-      "packageJsonChecksum": null,
+      "packageJsonChecksum": "",
       "requiredServerVersionRange": null,
       "universalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000101",
       "yarnLockChecksum": null,
@@ -1473,6 +1487,8 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "indexes": [],
     "logicFunctions": [],
+    "mcpServers": [],
+    "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
     "pageLayoutTabs": [],

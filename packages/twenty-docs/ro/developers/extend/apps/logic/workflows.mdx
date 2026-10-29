@@ -1,0 +1,133 @@
+---
+title: Fluxuri de lucru
+description: Includeți fluxuri de lucru gata făcute în aplicația dvs.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Definiți un flux de lucru
+
+Aplicațiile pot include fluxuri de lucru. Fiecare apel `defineWorkflow()` descrie un flux de lucru: un declanșator și pașii pe care îi execută. La instalare, Twenty îl creează ca flux de lucru activ în spațiul de lucru, gata de rulare.
+
+Acest flux de lucru rulează atunci când este creată o companie. Apelează una dintre funcțiile logice ale aplicației, apoi scrie rezultatul în companie:
+
+```ts src/workflows/score-new-companies.ts
+import {
+  defineWorkflow,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const COMPANY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
+const SCORE_COMPANY_FUNCTION = '0f6c0b3e-8a4f-4f0e-9d0a-3c1e5b7a2d41';
+
+const SCORE_NEW_COMPANIES = {
+  workflow: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e81',
+  trigger: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e82',
+  score: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e83',
+  save: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e84',
+};
+
+export default defineWorkflow({
+  universalIdentifier: SCORE_NEW_COMPANIES.workflow,
+  name: 'Score new companies',
+  version: {
+    trigger: {
+      universalIdentifier: SCORE_NEW_COMPANIES.trigger,
+      type: 'DATABASE_EVENT',
+      settings: {
+        objectUniversalIdentifier: COMPANY,
+        action: 'created',
+      },
+      nextStepIds: [SCORE_NEW_COMPANIES.score],
+    },
+    steps: [
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.score,
+        name: 'Score the company',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: SCORE_COMPANY_FUNCTION,
+        input: { companyName: '{{trigger.properties.after.name}}' },
+        nextStepIds: [SCORE_NEW_COMPANIES.save],
+      },
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.save,
+        name: 'Save the score',
+        type: 'UPDATE_RECORD',
+        input: {
+          objectUniversalIdentifier: COMPANY,
+          objectRecordId: '{{trigger.recordId}}',
+          objectRecord: { leadScore: `{{${SCORE_NEW_COMPANIES.score}.score}}` },
+          fieldsToUpdate: ['leadScore'],
+        },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+Puncte cheie:
+
+* Fluxul de lucru, declanșatorul său și fiecare pas au nevoie de propriul `universalIdentifier`. Păstrați-le stabile între versiuni: astfel Twenty identifică fluxul de lucru instalat la următoarea instalare.
+* `nextStepIds` conectează graful. Declanșatorul indică spre primii pași, iar fiecare pas indică spre pașii care se execută după acesta.
+* Un pas citește rezultatul anterior cu `{{trigger.\<path>}}` sau `{{\<step universalIdentifier>.\<path>}}`.
+* Compilarea validează întreaga definiție: tipurile de declanșatoare sau pași neacceptate, legăturile de pași defecte și referințele la pași necunoscuți o fac să eșueze.
+* `isSystem` (opțional, implicit `false`) ascunde fluxul de lucru din listele care omit fluxurile de lucru de sistem. Modifică doar ceea ce este afișat.
+
+## Referirea la alte entități
+
+Pașii și declanșatoarele indică metadate prin identificator universal, niciodată prin nume sau id:
+
+* **Obiecte și câmpuri**: cele proprii ale aplicației sau cele standard prin `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. Exemplul de mai sus presupune că aplicația definește și un câmp numeric `leadScore` în Companie cu [`defineField()`](/ro/developers/extend/apps/data/extending-objects): un pas de înregistrare care scrie într-un câmp lipsă din spațiul de lucru face instalarea să eșueze.
+* **Funcții logice**: cele proprii ale aplicației, expuse ca [acțiune de flux de lucru](/ro/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) cu `workflowActionTriggerSettings`. Aplicația personalizată a spațiului de lucru poate, de asemenea, să facă referire la acțiunile fluxurilor de lucru ale celorlalte aplicații instalate în spațiul de lucru, la fel cum pot fluxurile de lucru create în aplicație.
+* **Agenți**: cei proprii ai aplicației, din [`defineAgent()`](/ro/developers/extend/apps/logic/skills-and-agents).
+
+O referință pe care Twenty nu o poate rezolva face instalarea să eșueze.
+
+## Declanșatoare
+
+| Tip              | Se execută când                                  | Setări                                                                                                                                                                                   |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MANUAL`         | Un utilizator îl lansează                        | `availability` (opțional): `GLOBAL` sau `SINGLE_RECORD` / `BULK_RECORDS` cu un `objectUniversalIdentifier`. Adaugă o intrare în meniul de comenzi, cu un `icon` și `isPinned` opționale. |
+| `CRON`           | Conform unui program                             | `type`: `DAYS`, `HOURS` sau `MINUTES` cu un `schedule`, ori `CUSTOM` cu un `pattern` cron.                                                                                               |
+| `DATABASE_EVENT` | O înregistrare se modifică                       | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), `fieldUniversalIdentifiers` opțional de urmărit (numai actualizări și upserturi) și `filter`.       |
+| `WEBHOOK`        | O cerere HTTP ajunge la URL-ul fluxului de lucru | `httpMethod` (`GET` sau `POST`) și `expectedBody` pentru `POST`.                                                                                                                         |
+
+Un flux de lucru manual fără `availability` nu primește nicio intrare în meniul de comenzi.
+
+Un flux de lucru webhook ascultă la `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, unde `workflowId` este id-ul fluxului de lucru instalat. Corpul cererii este disponibil ca `{{trigger.\<path>}}`.
+
+## Pași
+
+Fluxurile de lucru ale aplicației acceptă aceste tipuri de pași: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` și `EMPTY`.
+
+Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/user-guide/workflows/capabilities/workflow-actions), cu identificatori universali în locul numelor:
+
+* Pașii de înregistrare folosesc `objectUniversalIdentifier` în locul numelui obiectului.
+* Filtrele și sortările indică spre câmpuri cu `fieldMetadataUniversalIdentifier`.
+* Operanzii de filtrare acceptă valori `ViewFilterOperand`, exportate de `twenty-sdk/define`. Operatorii grupului de filtre acceptă valori șir de caractere precum `'AND'` sau `'OR'`.
+* Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
+* Pentru a executa propriul cod, utilizați un pas `LOGIC_FUNCTION`. Pasul Code al generatorului nu este disponibil.
+* Pașii de e-mail și calendar rulează numai dacă rolul aplicației dvs. are indicatorul de permisiune corespunzător: `SystemPermissionFlag.SEND_EMAIL_TOOL` pentru `SEND_EMAIL` și `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` pentru `CREATE_CALENDAR_EVENT`. Spațiul de lucru o acordă prin instalarea aplicației, iar pasul poate utiliza apoi orice cont conectat din spațiul de lucru, asemenea unui flux de lucru creat în aplicație.
+* id-urile conturilor conectate sunt locale pentru fiecare spațiu de lucru, deci nu includeți unul direct în cod. Denumiți contul în unul dintre următoarele două moduri:
+
+  * `connectedAccountHandle`: adresa de e-mail a contului, cum ar fi `'sales@example.com'`. Când aplicația este sincronizată, identificatorul se rezolvă într-un cont cu acea adresă, care este partajat cu spațiul de lucru (domeniul de aplicare `WORKSPACE`) și poate executa pasul. Contul privat al unui membru nu poate fi denumit după identificator: pull îl păstrează ca `connectedAccountId`. Dacă mai multe conturi partajează adresa, de exemplu o căsuță poștală conectată de doi membri sau prin doi furnizori, câștigă cel mai vechi. Dacă niciunul nu corespunde, sincronizarea eșuează și indică identificatorul. Acesta nu este `fromHandle`, care alege un alias de la care să trimită.
+  * `connectedAccountId`: o variabilă, cum ar fi `{{trigger.properties.after.connectedAccountId}}`. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
+
+  Setează exact unul dintre cele două.
+
+## După instalare
+
+* Fluxul de lucru devine activ imediat ce aplicația este instalată, iar execuțiile sale apar împreună cu celelalte execuții de fluxuri de lucru ale spațiului de lucru.
+* Instalarea unei versiuni noi a aplicației actualizează fluxul de lucru pe loc.
+* Utilizatorii nu pot edita un flux de lucru instalat. Pentru a personaliza unul, îl duplică: copia le aparține pentru editare.
+
+## Fluxurile de lucru ale aplicației personalizate a spațiului de lucru
+
+Aplicația personalizată a spațiului de lucru deține fluxurile de lucru create în constructorul de fluxuri de lucru, iar codul este la fel de autoritar pentru acestea ca și constructorul:
+
+* `twenty app pull` scrie fiecare dintre acestea din versiunea sa activă, cea publicată ultima dată de constructor. Un flux de lucru a cărui versiune activă utilizează setări pe care un fișier `defineWorkflow()` nu le poate exprima, precum un pas Code sau un declanșator redenumit de constructor, este semnalat și lăsat pe loc.
+* `twenty app apply` publică la fel ca constructorul. Un flux de lucru a cărui definiție corespunde versiunii sale active este lăsat neschimbat. În caz contrar, versiunea activă este arhivată, iar definiția devine o nouă versiune activă, astfel încât rulările anterioare păstrează versiunea pe care au rulat.
+* Utilizatorii continuă să editeze aceste fluxuri de lucru în editor, iar următorul pull readuce modificările lor.
+
+<PageBanner illustration="card-page-workflows" />
