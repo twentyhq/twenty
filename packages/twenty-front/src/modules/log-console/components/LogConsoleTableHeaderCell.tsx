@@ -1,6 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type FocusEvent, type PointerEvent, useState } from 'react';
+import {
+  type FocusEvent,
+  type MouseEvent,
+  type PointerEvent,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -64,16 +69,26 @@ export const LogConsoleTableHeaderCell = ({
 
   // The handle reads its start value on pointer down, so the rendered width
   // must be known before the gesture begins.
-  const measureWidth = (
-    event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>,
-  ) => {
-    const headerElement = event.currentTarget.closest<HTMLElement>(
+  const measureHeaderWidth = (handleElement: HTMLElement) => {
+    const headerElement = handleElement.closest<HTMLElement>(
       '[data-table-header]',
     );
 
     if (isDefined(headerElement)) {
       setWidth(headerElement.offsetWidth);
     }
+  };
+
+  const measureWidth = (
+    event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>,
+  ) => measureHeaderWidth(event.currentTarget);
+
+  const handleDoubleClick = (event: MouseEvent<HTMLDivElement>) => {
+    const handleElement = event.currentTarget;
+
+    onWidthReset();
+    // The reset width only exists once the grid re-lays out.
+    requestAnimationFrame(() => measureHeaderWidth(handleElement));
   };
 
   const handleValueChange = (nextWidth: number) => {
@@ -97,7 +112,7 @@ export const LogConsoleTableHeaderCell = ({
           onResizeEnd={onResizeEnd}
           onPointerEnter={measureWidth}
           onFocus={measureWidth}
-          onDoubleClick={onWidthReset}
+          onDoubleClick={handleDoubleClick}
           aria-label={t`Resize ${label} column`}
           scale={getUiZoom}
         >
