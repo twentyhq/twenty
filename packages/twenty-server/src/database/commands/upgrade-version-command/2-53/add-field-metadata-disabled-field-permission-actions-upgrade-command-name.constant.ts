@@ -1,0 +1,2 @@
+export const ADD_FIELD_METADATA_DISABLED_FIELD_PERMISSION_ACTIONS_UPGRADE_COMMAND_NAME =
+  '2.53.0_AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand_1793205123217';

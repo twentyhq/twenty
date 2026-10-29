@@ -72,6 +72,12 @@ msgstr "{0} mora biti polje relacije jedan-prema-više ili više-prema-jedan."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} mora biti polje relacije jedan-prema-više."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr "{action} je onemogućena za polje {0}"
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -397,6 +403,11 @@ msgstr "Uloga sa ovom oznakom već postoji."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "Tajna promenljiva ne može imati podrazumevanu vrednost."
+
+#. js-lingui-id: 0/nqSW
+#: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
+msgid "A skill installed by an application cannot be renamed."
+msgstr "Veština koju je instalirala aplikacija ne može se preimenovati."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -771,6 +782,11 @@ msgstr "Administratorski panel"
 msgid "Admin role not found."
 msgstr "Administratorska uloga nije pronađena."
 
+#. js-lingui-id: eHJEyS
+#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+msgid "Agent \"{label}\" is archived."
+msgstr "Agent \"{label}\" je arhiviran."
+
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1019,6 +1035,11 @@ msgstr "Iznos"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "Agent ne može imati više od {maxTriggers} okidača"
+
+#. js-lingui-id: gxdZLa
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "An agent installed by an application cannot be renamed."
+msgstr "Agent kog je instalirala aplikacija ne može se preimenovati."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2586,11 +2607,11 @@ msgstr "Nije moguće ažurirati standardnog agenta"
 msgid "Cannot update standard permission flag definition"
 msgstr "Ne može se ažurirati standardna definicija oznake dozvole"
 
-#. js-lingui-id: I2EmgT
+#. js-lingui-id: qmUVWp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
-msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr "Nije moguće ažurirati svojstva standardne veštine (dozvoljena je samo aktivacija/deaktivacija)"
+msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
+msgstr "Nije moguće ažurirati svojstva standardne veštine (dozvoljena su samo nadjačavanja i aktivacija/deaktivacija)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3007,6 +3028,16 @@ msgstr "Dovrši otpremanje datoteke"
 msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Završeno"
+
+#. js-lingui-id: XveQi3
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeded the 10 second time limit."
+msgstr "Izgradnja komponente premašila je vremensko ograničenje od 10 sekundi."
+
+#. js-lingui-id: fmCVqA
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeds the 5 MB output limit."
+msgstr "Izgradnja komponente premašuje ograničenje izlaza od 5 MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4168,7 +4199,7 @@ msgstr "Podrazumevani raspored verzije radnog toka"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "Podrazumevani raspored člana radnog prostora"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4333,6 +4364,16 @@ msgstr "Direktno otpremanje nije podržano za ovu vrstu datoteke."
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Smer"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr "Onemogućene radnje dozvola za polje moraju biti lista"
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr "Onemogućene radnje dozvola za polje ne smeju se ponavljati"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5095,6 +5136,11 @@ msgstr "Neuspešno"
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Failed to add people to the list."
 msgstr "Neuspešno dodavanje osoba na listu."
+
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Failed to build front component."
+msgstr "Izgradnja frontend komponente nije uspela."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6739,6 +6785,16 @@ msgstr "Neispravan filter: koristite \"{joinColumnName}\" da biste filtrirali po
 msgid "Invalid front component input."
 msgstr "Nevažeći unos frontend komponente."
 
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+msgid "Invalid front component settings."
+msgstr "Nevažeća podešavanja frontend komponente."
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Invalid front component source."
+msgstr "Nevažeći izvor frontend komponente."
+
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -8123,7 +8179,7 @@ msgstr "Članovi"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "Spoji"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10054,12 +10110,12 @@ msgstr "Trajno uništi {objectLabel}"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "Oznaka dozvole {permissionFlagName} nije dostupna u ovom radnom prostoru"
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "Oznaka dozvole {permissionFlagUniversalIdentifier} nije pronađena u ovom radnom prostoru"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12261,7 +12317,7 @@ msgstr "Standardni objekti ne mogu biti izbrisani"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "Standardna oznaka dozvole {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) nije pronađena u ovom radnom prostoru. Pokrenite nadogradnju radnog prostora da biste je kreirali."
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13529,6 +13585,11 @@ msgstr "Polje za izbor radnog toka mora upućivati na polje istog tipa."
 msgid "The workflow select field must reference an existing field."
 msgstr "Polje za izbor radnog toka mora upućivati na postojeće polje."
 
+#. js-lingui-id: go3zRL
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
+msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
+msgstr "Tok rada koristi povezani nalog {handle}, koji nije povezan i deljen u ovom radnom prostoru."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13641,6 +13702,11 @@ msgstr "Ova adresa se ne može ukloniti sa liste suzbijanja."
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
 msgstr "Ovaj agent nema izlazna polja. Dodajte najmanje jedno izlazno polje u njegov format odgovora."
+
+#. js-lingui-id: Z/oZRf
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This agent is archived."
+msgstr "Ovaj agent je arhiviran."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14111,6 +14177,11 @@ msgstr "Ovaj ključ organizacije se već koristi na drugoj serverskoj instanci. 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
 msgstr "Ova dozvola je već dodeljena ulozi"
+
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr "Ova dozvola je onemogućena za polje i ne može se dodeliti"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -14983,6 +15054,11 @@ msgstr "Univerzalni identifikator je rezervisan za sistemske metapodatke"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Nepoznato"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr "Nepoznata radnja dozvole za onemogućeno polje"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16811,7 +16887,7 @@ msgstr "Pozicija člana prostora za rad"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "Polja stranice evidencije člana radnog prostora"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

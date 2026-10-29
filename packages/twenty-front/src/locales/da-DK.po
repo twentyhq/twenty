@@ -857,10 +857,10 @@ msgstr "{label} (forældet)"
 msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}, ulæst"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr "{label}, {unreadOpenThreadCount} ulæste"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -8904,11 +8904,6 @@ msgstr "Standardvisning"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
 msgstr "Standard er trinnavnet"
-
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Udskudte handlinger for migrering af arbejdsområde"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -17166,12 +17161,12 @@ msgstr "Faner til gennemgang af fletning"
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
-msgstr ""
+msgstr "Flettet {objectLabel}"
 
 #. js-lingui-id: v4CzQ/
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merging {objectLabel}"
-msgstr ""
+msgstr "Fletter {objectLabel}"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -19365,7 +19360,7 @@ msgstr "Ikke konfigureret"
 #. js-lingui-id: S33tz3
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Not connected"
-msgstr ""
+msgstr "Ikke forbundet"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -23338,11 +23333,6 @@ msgstr "Kør kode for at analysere filer og data"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Kør funktion"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Kør de langsomme dele af ændringer af datamodellen i baggrunden, efter de er gemt."
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

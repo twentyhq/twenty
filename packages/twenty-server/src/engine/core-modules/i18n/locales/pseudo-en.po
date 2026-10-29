@@ -67,6 +67,12 @@ msgstr ""
 msgid "{0} must be a one-to-many relation field."
 msgstr ""
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr ""
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -391,6 +397,11 @@ msgstr ""
 #. js-lingui-id: qk/eV0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
+msgstr ""
+
+#. js-lingui-id: 0/nqSW
+#: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
+msgid "A skill installed by an application cannot be renamed."
 msgstr ""
 
 #. js-lingui-id: HijTmf
@@ -766,6 +777,11 @@ msgstr ""
 msgid "Admin role not found."
 msgstr ""
 
+#. js-lingui-id: eHJEyS
+#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+msgid "Agent \"{label}\" is archived."
+msgstr ""
+
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1013,6 +1029,11 @@ msgstr ""
 #. js-lingui-id: /BH1B7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "An agent cannot have more than {maxTriggers} triggers"
+msgstr ""
+
+#. js-lingui-id: gxdZLa
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "An agent installed by an application cannot be renamed."
 msgstr ""
 
 #. js-lingui-id: 4vJ4de
@@ -2581,10 +2602,10 @@ msgstr ""
 msgid "Cannot update standard permission flag definition"
 msgstr ""
 
-#. js-lingui-id: I2EmgT
+#. js-lingui-id: qmUVWp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
-msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
+msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
 msgstr ""
 
 #. js-lingui-id: YIzGJ8
@@ -3001,6 +3022,16 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Completed"
+msgstr ""
+
+#. js-lingui-id: XveQi3
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeded the 10 second time limit."
+msgstr ""
+
+#. js-lingui-id: fmCVqA
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeds the 5 MB output limit."
 msgstr ""
 
 #. js-lingui-id: a9mYsP
@@ -4329,6 +4360,16 @@ msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr ""
 
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr ""
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr ""
+
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
 msgid "Disabled object permission actions must be a list"
@@ -5089,6 +5130,11 @@ msgstr ""
 #. js-lingui-id: MIra1S
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Failed to add people to the list."
+msgstr ""
+
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Failed to build front component."
 msgstr ""
 
 #. js-lingui-id: rl11Jd
@@ -6732,6 +6778,16 @@ msgstr ""
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
 msgid "Invalid front component input."
+msgstr ""
+
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+msgid "Invalid front component settings."
+msgstr ""
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Invalid front component source."
 msgstr ""
 
 #. js-lingui-id: lPC0WB
@@ -13524,6 +13580,11 @@ msgstr ""
 msgid "The workflow select field must reference an existing field."
 msgstr ""
 
+#. js-lingui-id: go3zRL
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
+msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
+msgstr ""
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13635,6 +13696,11 @@ msgstr ""
 #. js-lingui-id: GAvcvY
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
+msgstr ""
+
+#. js-lingui-id: Z/oZRf
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This agent is archived."
 msgstr ""
 
 #. js-lingui-id: Izdz+Y
@@ -14105,6 +14171,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
+msgstr ""
+
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
 msgstr ""
 
 #. js-lingui-id: IlFhXC
@@ -14977,6 +15048,11 @@ msgstr ""
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
+msgstr ""
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
 msgstr ""
 
 #. js-lingui-id: 0CuayF

@@ -39,6 +39,8 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -84,13 +86,15 @@ export abstract class RestApiBaseHandler {
   >;
 
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
-    let roleId: string;
+    let intersectionOf: RoleIdsBySource;
 
     if (isApiKeyAuthContext(authContext)) {
-      roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
-        authContext.apiKey.id,
-        authContext.workspace.id,
-      );
+      intersectionOf = {
+        apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
+          authContext.apiKey.id,
+          authContext.workspace.id,
+        ),
+      };
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
@@ -105,12 +109,14 @@ export abstract class RestApiBaseHandler {
         );
       }
 
-      roleId = userWorkspaceRoleId;
+      intersectionOf = { userWorkspaceRoleId };
     } else if (
       isApplicationAuthContext(authContext) &&
       isDefined(authContext.application.defaultRoleId)
     ) {
-      roleId = authContext.application.defaultRoleId;
+      intersectionOf = {
+        applicationRoleId: authContext.application.defaultRoleId,
+      };
     } else {
       throw new PermissionsException(
         'Authentication context is invalid',
@@ -118,13 +124,30 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(
-        authContext.workspace.id,
-        ['rolesPermissions'],
-      );
+    const {
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      [
+        'rolesPermissions',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatApplicationMaps',
+      ],
+    );
 
-    return { objectsPermissions: rolesPermissions[roleId] };
+    return {
+      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig: { intersectionOf },
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      }),
+    };
   };
 
   async computeSelectedFields({

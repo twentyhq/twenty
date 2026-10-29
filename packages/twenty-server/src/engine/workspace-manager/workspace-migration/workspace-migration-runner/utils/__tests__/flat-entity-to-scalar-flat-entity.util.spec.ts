@@ -52,6 +52,7 @@ describe('flatEntityToScalarFlatEntity', () => {
   "createdAt": "2025-01-01T00:00:00.000Z",
   "defaultValue": "'default-value'",
   "description": "test description",
+  "disabledFieldPermissionActions": null,
   "icon": "IconTest",
   "id": "field-metadata-id",
   "isActive": true,

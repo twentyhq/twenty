@@ -1,4 +1,5 @@
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -44,4 +45,6 @@ export type WorkflowManifestReferences = {
     string,
     WorkflowManifestFieldReference
   >;
+  // Oldest first, which decides between accounts sharing a handle
+  connectedAccounts?: readonly ConnectedAccountForWorkflowStepResolution[];
 };

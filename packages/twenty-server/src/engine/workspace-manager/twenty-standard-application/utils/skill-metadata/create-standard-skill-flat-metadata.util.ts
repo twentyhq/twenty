@@ -48,6 +48,7 @@ export const createStandardSkillFlatMetadata = ({
     content,
     isSystem,
     isActive,
+    overrides: null,
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

@@ -857,10 +857,10 @@ msgstr "{label}（已弃用）"
 msgid "{label}, {statusLabel}"
 msgstr "{label}，{statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}，未读"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr "{label}，{unreadOpenThreadCount} 条未读"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -8904,11 +8904,6 @@ msgstr "默认视图"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "Defaults to the step name"
 msgstr "默认为步骤名称"
-
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "延迟的工作区迁移操作"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -17166,12 +17161,12 @@ msgstr "合并审核标签页"
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
-msgstr ""
+msgstr "已合并 {objectLabel}"
 
 #. js-lingui-id: v4CzQ/
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merging {objectLabel}"
-msgstr ""
+msgstr "正在合并 {objectLabel}"
 
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
@@ -19365,7 +19360,7 @@ msgstr "未配置"
 #. js-lingui-id: S33tz3
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 msgid "Not connected"
-msgstr ""
+msgstr "未连接"
 
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -23338,11 +23333,6 @@ msgstr "运行代码以分析文件和数据"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "运行函数"
-
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "数据模型更改保存后，在后台运行其中较慢的部分。"
 
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx

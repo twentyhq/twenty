@@ -11,6 +11,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import {
   BUILDER_FUNCTION_NAME_PREFIX,
@@ -334,16 +335,20 @@ export class LambdaToolFunctionsService {
       return this.yarnInstallFunctionName;
     }
 
-    const handlerContent = await fs.readFile(
-      YARN_INSTALL_HANDLER_PATH,
-      'utf-8',
-    );
+    const [handlerContent, installerContent] = await Promise.all([
+      fs.readFile(YARN_INSTALL_HANDLER_PATH, 'utf-8'),
+      fs.readFile(
+        join(YARN_ENGINE_DIRNAME, 'install-yarn-dependencies.cjs'),
+        'utf-8',
+      ),
+    ]);
 
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
       contents: [
         handlerContent,
+        installerContent,
         String(YARN_INSTALL_LAMBDA_MEMORY_MB),
         String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
         String(LAMBDA_EPHEMERAL_STORAGE_MB),
