@@ -15,22 +15,25 @@ const OAUTH_ONLY_APPLICATION = {
 };
 
 describe('buildAgentChatCallerOrThrow', () => {
-  it('acts as the member when the request carries one, even through an application', () => {
+  it('acts as the workspace member when the request carries one, even through an application', () => {
     expect(
       buildAgentChatCallerOrThrow({
         workspaceMemberId: 'workspace-member-id',
         callingApplication: APPLICATION,
       }),
-    ).toEqual({ type: 'member', workspaceMemberId: 'workspace-member-id' });
+    ).toEqual({
+      type: 'workspaceMember',
+      workspaceMemberId: 'workspace-member-id',
+    });
   });
 
-  it('acts as the application when no member is behind the request', () => {
+  it('acts as the application when no user is behind the request', () => {
     expect(
       buildAgentChatCallerOrThrow({
         workspaceMemberId: undefined,
         callingApplication: APPLICATION,
       }),
-    ).toEqual({ type: 'application', application: APPLICATION });
+    ).toEqual({ type: 'applicationWithoutUser', application: APPLICATION });
   });
 
   it('refuses a request with neither a member nor an application of its own', () => {

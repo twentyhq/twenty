@@ -257,7 +257,7 @@ export class AgentChatChannelService {
       channelId,
     });
     const isChannelNotOwnedByApplicationCaller =
-      caller.type === 'application' &&
+      caller.type === 'applicationWithoutUser' &&
       channel.applicationId !== caller.application.id;
 
     if (isChannelNotOwnedByApplicationCaller) {

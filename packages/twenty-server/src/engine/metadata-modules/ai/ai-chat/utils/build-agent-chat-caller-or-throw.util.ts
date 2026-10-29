@@ -18,7 +18,7 @@ export const buildAgentChatCallerOrThrow = ({
     | undefined;
 }): AgentChatCaller => {
   if (isDefined(workspaceMemberId)) {
-    return { type: 'member', workspaceMemberId };
+    return { type: 'workspaceMember', workspaceMemberId };
   }
 
   const application = getScopedCallingApplication(callingApplication);
@@ -30,5 +30,5 @@ export const buildAgentChatCallerOrThrow = ({
     );
   }
 
-  return { type: 'application', application };
+  return { type: 'applicationWithoutUser', application };
 };

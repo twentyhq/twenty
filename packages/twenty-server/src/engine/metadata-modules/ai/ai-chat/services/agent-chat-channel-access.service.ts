@@ -78,7 +78,7 @@ export class AgentChatChannelAccessService {
     workspaceId: string;
     caller: AgentChatCaller;
   }): Promise<FlatRole | undefined> {
-    if (caller.type === 'application') {
+    if (caller.type === 'applicationWithoutUser') {
       return this.findApplicationRole({
         workspaceId,
         application: caller.application,

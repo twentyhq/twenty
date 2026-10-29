@@ -1,8 +1,8 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export type AgentChatCaller =
-  | { type: 'member'; workspaceMemberId: string }
+  | { type: 'workspaceMember'; workspaceMemberId: string }
   | {
-      type: 'application';
+      type: 'applicationWithoutUser';
       application: Pick<FlatApplication, 'id' | 'defaultRoleId'>;
     };
