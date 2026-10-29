@@ -131,7 +131,6 @@ describe('computeViewRecordGqlOperationFilter', () => {
       ],
     });
   });
-
 });
 
 describe('should work as expected for the different field types', () => {
