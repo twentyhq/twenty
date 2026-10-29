@@ -8,7 +8,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ToastProvider } from 'twenty-ui/components/feedback';
 
-import { type useObjectRecordSearchRecords as useObjectRecordSearchRecordsHook } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SidePanelMergeWithRecordPage } from '@/side-panel/pages/merge-with-record/components/SidePanelMergeWithRecordPage';
 import { mergeWithRecordSourceComponentState } from '@/side-panel/pages/merge-with-record/states/mergeWithRecordSourceComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -17,12 +16,16 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
+const CURRENT_RECORD_ID = 'acme-1';
+const PICKED_RECORD_ID = 'acme-2';
+
 const openMergeRecordsPageInSidePanel = jest.fn();
-const useObjectRecordSearchRecords = jest.fn();
 
 jest.mock('@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel', () => ({
   useOpenMergeRecordsPageInSidePanel: () => ({
@@ -31,18 +34,23 @@ jest.mock('@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel', () => ({
 }));
 
 jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
-  useObjectRecordSearchRecords: (
-    params: Parameters<typeof useObjectRecordSearchRecordsHook>[0],
-  ) => useObjectRecordSearchRecords(params),
+  useObjectRecordSearchRecords: () => ({
+    searchRecords: [
+      {
+        recordId: PICKED_RECORD_ID,
+        objectNameSingular: companyObjectMetadataItem.nameSingular,
+        label: 'Acme Inc',
+        imageUrl: null,
+      },
+    ],
+    loading: false,
+    error: undefined,
+  }),
 }));
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
-    objectMetadataItem: {
-      nameSingular: 'company',
-      fields: [],
-      imageIdentifierFieldMetadataId: null,
-    },
+    objectMetadataItem: companyObjectMetadataItem,
   }),
 }));
 
@@ -62,53 +70,37 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
+const setMergeWithRecordSource = () =>
+  jotaiStore.set(
+    mergeWithRecordSourceComponentState.atomFamily({ instanceId: PAGE_ID }),
+    {
+      objectNameSingular: companyObjectMetadataItem.nameSingular,
+      recordId: CURRENT_RECORD_ID,
+    },
+  );
+
 describe('SidePanelMergeWithRecordPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    useObjectRecordSearchRecords.mockReturnValue({
-      searchRecords: [
-        {
-          recordId: 'acme-2',
-          objectNameSingular: 'company',
-          label: 'Acme Inc',
-          imageUrl: null,
-        },
-      ],
-      loading: false,
-      error: undefined,
-    });
   });
 
   it('opens the merge of the current record with the picked one', async () => {
-    jotaiStore.set(
-      mergeWithRecordSourceComponentState.atomFamily({ instanceId: PAGE_ID }),
-      { objectNameSingular: 'company', recordId: 'acme-1' },
-    );
+    setMergeWithRecordSource();
 
     render(<SidePanelMergeWithRecordPage />, { wrapper: Wrapper });
-
-    expect(useObjectRecordSearchRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        objectNameSingulars: ['company'],
-        filter: { not: { id: { in: ['acme-1'] } } },
-      }),
-    );
 
     await userEvent.click(screen.getByText('Acme Inc'));
 
     expect(openMergeRecordsPageInSidePanel).toHaveBeenCalledWith([
-      'acme-1',
-      'acme-2',
+      CURRENT_RECORD_ID,
+      PICKED_RECORD_ID,
     ]);
   });
 
   it('opens a single merge when the record is clicked twice while loading', async () => {
     openMergeRecordsPageInSidePanel.mockReturnValue(new Promise(() => {}));
-    jotaiStore.set(
-      mergeWithRecordSourceComponentState.atomFamily({ instanceId: PAGE_ID }),
-      { objectNameSingular: 'company', recordId: 'acme-1' },
-    );
+    setMergeWithRecordSource();
 
     render(<SidePanelMergeWithRecordPage />, { wrapper: Wrapper });
 

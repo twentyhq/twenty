@@ -401,7 +401,9 @@ describe('Records shared beyond the role that can access their object', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
-      expect(merged.body.errors).toBeDefined();
+      expect(merged.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
+        'Your role cannot delete some of these records, so they cannot be merged.',
+      );
       expect((await findIdsAsJony()).ids.sort()).toEqual(
         [SHARED_RECORD_ID, OTHER_RECORD_ID].sort(),
       );
