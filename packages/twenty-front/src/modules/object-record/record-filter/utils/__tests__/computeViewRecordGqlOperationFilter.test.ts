@@ -33,6 +33,18 @@ const mockFilterValueDependencies: RecordFilterValueDependencies = {
   timeZone: 'Europe/Paris',
 };
 
+const getCompanyNameFieldMetadataId = () => {
+  const nameField = companyMockObjectMetadataItem.fields.find(
+    (field) => field.name === 'name',
+  );
+
+  if (!isDefined(nameField)) {
+    throw new Error('Company mock name field is undefined');
+  }
+
+  return nameField.id;
+};
+
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
 describe('computeViewRecordGqlOperationFilter', () => {
@@ -133,19 +145,10 @@ describe('computeViewRecordGqlOperationFilter', () => {
   });
 
   it('should compile a TEXT IS filter to a case-sensitive exact match', () => {
-    const companyMockNameFieldMetadataId =
-      companyMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'name',
-      );
-
-    if (!isDefined(companyMockNameFieldMetadataId)) {
-      throw new Error('Company mock name field metadata ID is undefined');
-    }
-
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: mockedCompanyRecords[0].name,
-      fieldMetadataId: companyMockNameFieldMetadataId.id,
+      fieldMetadataId: getCompanyNameFieldMetadataId(),
       displayValue: mockedCompanyRecords[0].name,
       operand: RecordFilterOperand.IS,
       type: 'TEXT',
@@ -167,19 +170,10 @@ describe('computeViewRecordGqlOperationFilter', () => {
   });
 
   it('should compile a TEXT IS_NOT filter and keep NULL rows', () => {
-    const companyMockNameFieldMetadataId =
-      companyMockObjectMetadataItem.fields.find(
-        (field) => field.name === 'name',
-      );
-
-    if (!isDefined(companyMockNameFieldMetadataId)) {
-      throw new Error('Company mock name field metadata ID is undefined');
-    }
-
     const nameFilter: RecordFilter = {
       id: 'company-name-filter',
       value: mockedCompanyRecords[0].name,
-      fieldMetadataId: companyMockNameFieldMetadataId.id,
+      fieldMetadataId: getCompanyNameFieldMetadataId(),
       displayValue: mockedCompanyRecords[0].name,
       operand: RecordFilterOperand.IS_NOT,
       type: 'TEXT',
