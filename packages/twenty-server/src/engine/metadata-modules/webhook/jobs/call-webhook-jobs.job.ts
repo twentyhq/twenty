@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -11,7 +12,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
-import { chunkWebhookEventsByApplication } from 'src/engine/metadata-modules/webhook/utils/chunk-webhook-events-by-application.util';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
@@ -88,23 +88,19 @@ export class CallWebhookJobsJob {
         webhookEvents,
       });
 
-    const webhookEventsChunks = chunkWebhookEventsByApplication({
-      webhookEvents: admittedWebhookEvents,
-      webhooks,
-      chunkSize: WEBHOOK_JOBS_CHUNK_SIZE,
-    });
+    const webhookEventsChunks = chunk(
+      admittedWebhookEvents,
+      WEBHOOK_JOBS_CHUNK_SIZE,
+    );
 
-    for (const {
-      applicationUniversalIdentifier,
-      webhookEvents: webhookEventsChunk,
-    } of webhookEventsChunks) {
+    for (const webhookEventsChunk of webhookEventsChunks) {
       await this.messageQueueService.add<CallWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
         {
           retryLimit: 3,
           workspaceId: workspaceEventBatch.workspaceId,
-          applicationUniversalIdentifier,
+          isWorkspaceJob: true,
         },
       );
     }

@@ -1,3 +1,4 @@
+import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -8,7 +9,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
-import { chunkWebhookEventsByApplication } from 'src/engine/metadata-modules/webhook/utils/chunk-webhook-events-by-application.util';
 import { type CallMetadataWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,23 +66,19 @@ export class CallWebhookJobsForMetadataJob {
         webhookEvents,
       });
 
-    const webhookEventsChunks = chunkWebhookEventsByApplication({
-      webhookEvents: admittedWebhookEvents,
-      webhooks,
-      chunkSize: WEBHOOK_JOBS_CHUNK_SIZE,
-    });
+    const webhookEventsChunks = chunk(
+      admittedWebhookEvents,
+      WEBHOOK_JOBS_CHUNK_SIZE,
+    );
 
-    for (const {
-      applicationUniversalIdentifier,
-      webhookEvents: webhookEventsChunk,
-    } of webhookEventsChunks) {
+    for (const webhookEventsChunk of webhookEventsChunks) {
       await this.messageQueueService.add<CallMetadataWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
         {
           retryLimit: 3,
           workspaceId: metadataEventBatch.workspaceId,
-          applicationUniversalIdentifier,
+          isWorkspaceJob: true,
         },
       );
     }

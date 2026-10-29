@@ -19,8 +19,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { buildApplicationQueueJobScope } from 'src/engine/core-modules/message-queue/utils/build-application-queue-job-scope.util';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import {
   AiException,
@@ -111,39 +109,6 @@ export class AgentChatActorService {
       applicationId: message?.senderApplicationId ?? null,
     };
     return { message, sender };
-  }
-
-  async resolveSenderJobScope({
-    workspaceId,
-    threadId,
-    messageId,
-    turnId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    messageId?: string;
-    turnId: string;
-  }): Promise<QueueJobScope> {
-    const [message, { flatApplicationMaps }] = await Promise.all([
-      this.messages.findOne(workspaceId, {
-        where: {
-          threadId,
-          role: AgentMessageRole.USER,
-          ...(isDefined(messageId) ? { id: messageId } : { turnId }),
-        },
-        order: { createdAt: 'ASC', id: 'ASC' },
-        select: ['id', 'senderApplicationId'],
-      }),
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]),
-    ]);
-
-    return buildApplicationQueueJobScope({
-      workspaceId,
-      applicationId: message?.senderApplicationId,
-      flatApplicationMaps,
-    });
   }
 
   async authorize({
