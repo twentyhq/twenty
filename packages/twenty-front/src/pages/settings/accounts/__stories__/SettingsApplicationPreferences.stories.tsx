@@ -21,6 +21,7 @@ import {
   APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
   failNextApplicationPreferencesRequest,
+  stopApplicationForNextRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
   seedApplicationPreferencesStory,
@@ -50,6 +51,7 @@ const NEW_PERSONAL_API_KEY = 'sk-2abcdefghijklmnopqrstuvwxyz0123456789';
 export type Story = StoryObj<typeof SettingsApplicationPreferences>;
 
 export const VariablesTabSavesOnlyEditedValues: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -94,6 +96,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
 };
 
 export const ClearedValueFallsBackToTheDefault: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -128,6 +131,7 @@ export const ClearedValueFallsBackToTheDefault: Story = {
 };
 
 export const MissingRequiredValueShowsBannerUntilSaved: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -172,6 +176,7 @@ export const MissingRequiredValueShowsBannerUntilSaved: Story = {
 };
 
 export const SavedSecretIsReplacedNotAppended: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -214,6 +219,7 @@ export const SavedSecretIsReplacedNotAppended: Story = {
 };
 
 export const SavedSecretCanBeCleared: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -259,12 +265,22 @@ export const SavedSecretCanBeCleared: Story = {
   },
 };
 
-export const SettingsOnlyAppShowsItsSettingsWithoutTabs: Story = {
+export const SettingsOnlyAppOpensItsSettingsFromTheTabBar: Story = {
   args: {
     routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    const myNotesLink = await canvas.findByRole(
+      'link',
+      { name: 'My notes' },
+      { timeout: 3000 },
+    );
+
+    expect(canvas.getByRole('link', { name: 'General' })).toBeVisible();
+
+    await userEvent.click(myNotesLink);
 
     await waitFor(
       () =>
@@ -274,9 +290,6 @@ export const SettingsOnlyAppShowsItsSettingsWithoutTabs: Story = {
       { timeout: 3000 },
     );
     expect(
-      canvas.queryByRole('link', { name: 'My notes' }),
-    ).not.toBeInTheDocument();
-    expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
     expect(canvas.queryByText('Language')).not.toBeInTheDocument();
@@ -284,6 +297,53 @@ export const SettingsOnlyAppShowsItsSettingsWithoutTabs: Story = {
       canvas.queryByRole('button', { name: 'Save settings' }),
     ).not.toBeInTheDocument();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const MemberLandsOnGeneralWithoutWorkspaceActions: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Records, transcribes and summarizes your meetings.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      await canvas.findByText('You have no Fathom connection yet.', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Save settings' }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: /Uninstall/ }),
+    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('View in marketplace')).not.toBeInTheDocument();
+    expect(canvas.queryByText('See app page')).not.toBeInTheDocument();
+    expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const StoppedAppShowsDegradedBanner: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    stopApplicationForNextRequest();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        /We are currently encountering issues with this app/,
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
   },
 };
 
@@ -300,7 +360,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
   args: {
     routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
     searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
-    routeHash: '#connections',
+    routeHash: '#general',
   },
   decorators: [
     (Story) => (
@@ -323,7 +383,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
     ).toBeVisible();
     await waitFor(() =>
       expect(canvas.getByTestId('location-probe')).toHaveTextContent(
-        /^#connections$/,
+        /^#general$/,
       ),
     );
     expect(

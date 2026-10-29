@@ -20,6 +20,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { restoreLegacyChatMembershipColumns } from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { type DataSource } from 'typeorm';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
@@ -250,8 +251,6 @@ describe('versioned agent history upgrade (integration)', () => {
       objectNames: seededHistoryObjectNames,
     });
 
-    // Recreate the pre-2.47 state this upgrade rolls back from: the core
-    // tables, and the route 2.42 recorded on every workspace it moved
     const runner = dataSource.createQueryRunner();
     try {
       await new DropCoreAgentHistoryTablesFastInstanceCommand().down(runner);
@@ -343,6 +342,7 @@ describe('versioned agent history upgrade (integration)', () => {
        WHERE message.id = seededMessage.id`,
       [JSON.stringify(seededAgentMessageSenders)],
     );
+    await waitForDeferredWorkspaceMigrationActionsOrThrow();
     await workspaceOrmManager.executeInWorkspaceContext(
       () =>
         provisionAgentChatThreadTargetCommand.runOnWorkspace({

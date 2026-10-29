@@ -72,6 +72,12 @@ msgstr "{0} πρέπει να είναι πεδίο συσχέτισης one-to-
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0} πρέπει να είναι πεδίο συσχέτισης one-to-many."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr "Η ενέργεια {action} είναι απενεργοποιημένη στο πεδίο {0}"
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -397,6 +403,11 @@ msgstr "Η ετικέτα αυτή ήδη υπάρχει σε κάποιον ρ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "Μια μυστική μεταβλητή δεν μπορεί να έχει προεπιλεγμένη τιμή."
+
+#. js-lingui-id: 0/nqSW
+#: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
+msgid "A skill installed by an application cannot be renamed."
+msgstr "Δεν είναι δυνατή η μετονομασία μιας δεξιότητας που εγκαταστάθηκε από μια εφαρμογή."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -771,6 +782,11 @@ msgstr "Πίνακας Διαχείρισης"
 msgid "Admin role not found."
 msgstr "Ο ρόλος διαχειριστή δεν βρέθηκε."
 
+#. js-lingui-id: eHJEyS
+#: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
+msgid "Agent \"{label}\" is archived."
+msgstr "Ο πράκτορας \"{label}\" είναι αρχειοθετημένος."
+
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1019,6 +1035,11 @@ msgstr "Ποσό"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "An agent cannot have more than {maxTriggers} triggers"
 msgstr "Ένας πράκτορας δεν μπορεί να έχει περισσότερες από {maxTriggers} ενεργοποιήσεις"
+
+#. js-lingui-id: gxdZLa
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
+msgid "An agent installed by an application cannot be renamed."
+msgstr "Δεν είναι δυνατή η μετονομασία ενός πράκτορα που εγκαταστάθηκε από μια εφαρμογή."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1491,6 +1512,12 @@ msgstr "Ανατεθειμένο σε εμένα"
 msgctxt "fieldMetadata.label"
 msgid "Assignee"
 msgstr "Υπεύθυνος"
+
+#. js-lingui-id: VkxEa0
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Assistant participant"
+msgstr "Συμμετέχων βοηθός"
 
 #. js-lingui-id: 1pSE0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2580,11 +2607,11 @@ msgstr "Δεν είναι δυνατή η ενημέρωση του τυπικο
 msgid "Cannot update standard permission flag definition"
 msgstr "Δεν είναι δυνατή η ενημέρωση του τυπικού ορισμού σημαίας δικαιώματος"
 
-#. js-lingui-id: I2EmgT
+#. js-lingui-id: qmUVWp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
-msgid "Cannot update standard skill properties (only activation/deactivation allowed)"
-msgstr "Δεν είναι δυνατή η τροποποίηση ιδιοτήτων τυπικής δεξιότητας (επιτρέπεται μόνο ενεργοποίηση/απενεργοποίηση)"
+msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
+msgstr "Δεν είναι δυνατή η τροποποίηση ιδιοτήτων τυπικής δεξιότητας (επιτρέπονται μόνο παρακάμψεις και ενεργοποίηση/απενεργοποίηση)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3001,6 +3028,16 @@ msgstr "Ολοκλήρωση μεταφόρτωσης αρχείου"
 msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Ολοκληρωμένο"
+
+#. js-lingui-id: XveQi3
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeded the 10 second time limit."
+msgstr "Η δημιουργία του στοιχείου διεπαφής υπερέβη το χρονικό όριο των 10 δευτερολέπτων."
+
+#. js-lingui-id: fmCVqA
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
+msgid "Component build exceeds the 5 MB output limit."
+msgstr "Η δημιουργία του στοιχείου διεπαφής υπερβαίνει το όριο εξόδου των 5 MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3775,6 +3812,7 @@ msgstr "Στο προσαρμοσμένο αντικείμενο λείπει π
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Οι προσαρμοσμένοι ρόλοι αποτελούν μέρος του Πλάνου Οργανισμού."
 
@@ -4157,6 +4195,12 @@ msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
 msgstr "Προεπιλεγμένη Διάταξη Έκδοσης Ροής Εργασίας"
 
+#. js-lingui-id: PzuWtK
+#: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
+msgctxt "pageLayout.name"
+msgid "Default Workspace Member Layout"
+msgstr "Προεπιλεγμένη διάταξη μέλους χώρου εργασίας"
+
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4320,6 +4364,16 @@ msgstr "Η άμεση μεταφόρτωση δεν υποστηρίζεται �
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Κατεύθυνση"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr "Οι απενεργοποιημένες ενέργειες δικαιωμάτων πεδίου πρέπει να είναι λίστα"
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr "Οι απενεργοποιημένες ενέργειες δικαιωμάτων πεδίου δεν πρέπει να επαναλαμβάνονται"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5083,6 +5137,11 @@ msgstr "Απέτυχε"
 msgid "Failed to add people to the list."
 msgstr "Αποτυχία προσθήκης ατόμων στη λίστα."
 
+#. js-lingui-id: nVOUB8
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Failed to build front component."
+msgstr "Αποτυχία δημιουργίας στοιχείου διεπαφής."
+
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to build function dependencies."
@@ -5403,11 +5462,6 @@ msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να είναι πεδ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να ονομάζεται \"searchVector\""
-
-#. js-lingui-id: VkSxbb
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
-msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να έχει δυνατότητα εγγραφής από το SYSTEM"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -5916,6 +5970,7 @@ msgstr "Γενικά"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
 msgstr "Γενικά"
@@ -6730,6 +6785,16 @@ msgstr "Μη έγκυρο φίλτρο: χρησιμοποιήστε το \"{joi
 msgid "Invalid front component input."
 msgstr "Μη έγκυρη είσοδος front component."
 
+#. js-lingui-id: 5V3pAK
+#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+msgid "Invalid front component settings."
+msgstr "Μη έγκυρες ρυθμίσεις στοιχείου διεπαφής."
+
+#. js-lingui-id: r0izKL
+#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+msgid "Invalid front component source."
+msgstr "Μη έγκυρη πηγή front component."
+
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid group by parameter."
@@ -6925,12 +6990,6 @@ msgstr "Μη έγκυρο κλειδί σημαίας δικαιώματος."
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Invalid permission flag permission type."
 msgstr "Μη έγκυρος τύπος δικαιώματος για τη σημαία δικαιώματος."
-
-#. js-lingui-id: mMHHVP
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Invalid permission setting"
-msgstr "Μη έγκυρη ρύθμιση δικαιώματος"
 
 #. js-lingui-id: Pt2vVA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -7133,6 +7192,7 @@ msgid "Invalid value for address."
 msgstr "Μη έγκυρη τιμή για τη διεύθυνση."
 
 #. js-lingui-id: D9hzmE
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util.ts
 msgid "Invalid value for currency."
 msgstr "Μη έγκυρη τιμή για το νόμισμα."
@@ -8116,6 +8176,11 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Μέλη"
 
+#. js-lingui-id: UODtG8
+#: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+msgid "Merge"
+msgstr "Συγχώνευση"
+
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8132,6 +8197,11 @@ msgstr "Συγχώνευση {objectLabelPlural}"
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
 msgstr "Η συγχώνευση καταχωρίσεων λίστας αποκλεισμού δεν επιτρέπεται."
+
+#. js-lingui-id: kGsb0J
+#: src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook.ts
+msgid "Merging dashboards is not allowed."
+msgstr "Δεν επιτρέπεται η συγχώνευση πινάκων εργαλείων."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -10037,6 +10107,16 @@ msgctxt "commandMenuItem.label"
 msgid "Permanently destroy {objectLabel}"
 msgstr "Οριστική καταστροφή {objectLabel}"
 
+#. js-lingui-id: cmLTur
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagName} is not available in this workspace"
+msgstr "Η σημαία δικαιώματος {permissionFlagName} δεν είναι διαθέσιμη σε αυτόν τον χώρο εργασίας"
+
+#. js-lingui-id: h8HQA4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
+msgstr "Δεν βρέθηκε η σημαία δικαιώματος {permissionFlagUniversalIdentifier} σε αυτόν τον χώρο εργασίας"
+
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Permission flag already exists."
@@ -10113,8 +10193,6 @@ msgid "Permission flag key cannot be changed."
 msgstr "Το κλειδί της σημαίας δικαιώματος δεν μπορεί να αλλάξει."
 
 #. js-lingui-id: 2mZr45
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "Permission flag not found"
@@ -10916,6 +10994,7 @@ msgstr "Σχέσεις"
 
 #. js-lingui-id: /deTOT
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Relations"
 msgstr "Σχέσεις"
@@ -12235,6 +12314,11 @@ msgstr "Δεν είναι δυνατή η διαγραφή τυπικών καν
 msgid "Standard objects cannot be deleted"
 msgstr "Δεν είναι δυνατή η διαγραφή τυπικών αντικειμένων"
 
+#. js-lingui-id: gBQ8oE
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
+msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
+msgstr "Η τυπική σημαία δικαιώματος {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) δεν βρέθηκε σε αυτόν τον χώρο εργασίας. Εκτελέστε την αναβάθμιση του χώρου εργασίας για να τη δημιουργήσετε."
+
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Standard permission flags cannot be modified."
@@ -12486,6 +12570,7 @@ msgstr "Σύστημα"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
 msgstr "Σύστημα"
@@ -13500,6 +13585,11 @@ msgstr "Το πεδίο επιλογής ροής εργασίας πρέπει 
 msgid "The workflow select field must reference an existing field."
 msgstr "Το πεδίο επιλογής ροής εργασίας πρέπει να αναφέρεται σε υπάρχον πεδίο."
 
+#. js-lingui-id: go3zRL
+#: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
+msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
+msgstr "Η ροή εργασίας χρησιμοποιεί τον συνδεδεμένο λογαριασμό {handle}, ο οποίος δεν είναι συνδεδεμένος ούτε κοινοποιημένος σε αυτόν τον χώρο εργασίας."
+
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13582,6 +13672,11 @@ msgstr "Δεν υπάρχει προηγούμενο βήμα στη διαδι�
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Αυτά τα πεδία δεν μπορούν να ενημερωθούν πριν ενεργοποιηθεί ο χώρος εργασίας: {fieldsList}."
 
+#. js-lingui-id: 4RZeZG
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them."
+msgstr "Αυτές οι εγγραφές περιέχουν δεδομένα σε πεδία που ο ρόλος σας δεν μπορεί να δει. Ζητήστε από κάποιον με πρόσβαση σε αυτά τα πεδία να τις συγχωνεύσει."
+
 #. js-lingui-id: YZk5x6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "These two relation fields do not point to the same object"
@@ -13607,6 +13702,11 @@ msgstr "Αυτή η διεύθυνση δεν μπορεί να αφαιρεθε
 #: src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util.ts
 msgid "This agent has no output fields. Add at least one output field to its response format."
 msgstr "Αυτός ο πράκτορας δεν έχει πεδία εξόδου. Προσθέστε τουλάχιστον ένα πεδίο εξόδου στη μορφή απόκρισής του."
+
+#. js-lingui-id: Z/oZRf
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This agent is archived."
+msgstr "Αυτός ο πράκτορας έχει αρχειοθετηθεί."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14077,6 +14177,11 @@ msgstr "Αυτό το κλειδί Οργανισμού χρησιμοποιεί
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
 msgstr "Αυτό το δικαίωμα έχει ήδη οριστεί για τον ρόλο"
+
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr "Αυτό το δικαίωμα είναι απενεργοποιημένο στο πεδίο και δεν μπορεί να εκχωρηθεί"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -14949,6 +15054,11 @@ msgstr "Το καθολικό αναγνωριστικό είναι δεσμευ
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Άγνωστο"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr "Άγνωστη ενέργεια δικαιώματος απενεργοποιημένου πεδίου"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16153,6 +16263,12 @@ msgctxt "fieldMetadata.description"
 msgid "Whether new activity brings the thread back to the inbox"
 msgstr "Αν η νέα δραστηριότητα επαναφέρει το νήμα στα εισερχόμενα"
 
+#. js-lingui-id: DYv22m
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether the assistant participates in this conversation"
+msgstr "Αν ο βοηθός συμμετέχει σε αυτήν τη συνομιλία"
+
 #. js-lingui-id: shMrkl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -16767,6 +16883,12 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member position"
 msgstr "Θέση μέλους χώρου εργασίας"
 
+#. js-lingui-id: wFbHLs
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
+msgctxt "view.name"
+msgid "Workspace Member Record Page Fields"
+msgstr "Πεδία σελίδας εγγραφής μέλους χώρου εργασίας"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -16856,11 +16978,6 @@ msgstr "Το σχήμα χώρου εργασίας δεν βρέθηκε."
 #: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
 msgid "Workspace setup"
 msgstr "Ρύθμιση χώρου εργασίας"
-
-#. js-lingui-id: 5TbIzO
-#: src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util.ts
-msgid "Workspace workflows cannot be adopted by an application."
-msgstr "Οι ροές εργασίας χώρου εργασίας δεν μπορούν να υιοθετηθούν από μια εφαρμογή."
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts

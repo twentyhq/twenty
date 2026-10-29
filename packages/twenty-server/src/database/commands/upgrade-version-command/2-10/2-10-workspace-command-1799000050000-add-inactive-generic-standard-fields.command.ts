@@ -152,6 +152,7 @@ export class AddInactiveGenericStandardFieldsCommand extends ProvisionedWorkspac
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: fieldsToCreate,

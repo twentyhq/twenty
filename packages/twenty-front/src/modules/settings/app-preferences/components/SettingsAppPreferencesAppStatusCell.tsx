@@ -1,58 +1,31 @@
-import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
-import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
-import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
+import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
+import { type AppPreferencesAppStatus } from '@/settings/app-preferences/types/AppPreferencesAppStatus';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives/data-display';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 type SettingsAppPreferencesAppStatusCellProps = {
-  item: AppPreferencesRow;
+  status?: AppPreferencesAppStatus;
 };
 
 export const SettingsAppPreferencesAppStatusCell = ({
-  item,
+  status,
 }: SettingsAppPreferencesAppStatusCellProps) => {
   const { t } = useLingui();
-  const { groups, loading } = useMyAccountGroups();
 
-  if (item.type === 'installed') {
-    const { application, connectionProviders, missingRequiredVariables } =
-      item.applicationWithPreferences;
-
-    if (isNonEmptyArray(missingRequiredVariables)) {
+  switch (status?.type) {
+    case 'accountSyncIssue':
+      return <SettingsConnectedAccountSyncStatus account={status.account} />;
+    case 'reconnectNeeded':
+      return <Status color="red">{t`Reconnect needed`}</Status>;
+    case 'missingConfiguration':
       return <Status color="red">{t`Missing configuration`}</Status>;
-    }
-
-    const applicationAccounts = groups.flatMap((group) =>
-      group.appAccounts.filter(
-        (account) => account.applicationId === application.id,
-      ),
-    );
-    const hasConfiguredProvider = connectionProviders.some(
-      canStartConnectionProviderAuthorization,
-    );
-
-    if (
-      loading ||
-      !hasConfiguredProvider ||
-      isNonEmptyArray(applicationAccounts)
-    ) {
+    case 'notConnected':
+      return (
+        <Tag color="gray" weight="regular" truncate={false}>
+          {t`Not connected`}
+        </Tag>
+      );
+    default:
       return null;
-    }
-
-    return <Status color="red">{t`Missing account`}</Status>;
   }
-
-  const hasAccount = groups.some((group) =>
-    getBuiltInAccountAppsUsingAccount(group.builtInAccount).some(
-      (app) => app.id === item.builtInAccountApp.id,
-    ),
-  );
-
-  if (loading || hasAccount) {
-    return null;
-  }
-
-  return <Status color="red">{t`Missing account`}</Status>;
 };

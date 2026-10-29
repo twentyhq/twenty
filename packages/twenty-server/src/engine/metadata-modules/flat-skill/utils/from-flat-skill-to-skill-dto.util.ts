@@ -1,18 +1,25 @@
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { type SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 
-export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => ({
-  id: flatSkill.id,
-  name: flatSkill.name,
-  label: flatSkill.label,
-  icon: flatSkill.icon ?? undefined,
-  description: flatSkill.description ?? undefined,
-  content: flatSkill.content,
-  isCustom: flatSkill.isCustom,
-  isSystem: flatSkill.isSystem,
-  isActive: flatSkill.isActive,
-  workspaceId: flatSkill.workspaceId,
-  applicationId: flatSkill.applicationId ?? undefined,
-  createdAt: new Date(flatSkill.createdAt),
-  updatedAt: new Date(flatSkill.updatedAt),
-});
+export const fromFlatSkillToSkillDto = (flatSkill: FlatSkill): SkillDTO => {
+  const effectiveFlatSkill = resolveEffectiveFlatEntity({
+    metadataName: 'skill',
+    flatEntity: flatSkill,
+  });
+
+  return {
+    id: effectiveFlatSkill.id,
+    name: effectiveFlatSkill.name,
+    label: effectiveFlatSkill.label,
+    icon: effectiveFlatSkill.icon ?? undefined,
+    description: effectiveFlatSkill.description ?? undefined,
+    content: effectiveFlatSkill.content,
+    isSystem: effectiveFlatSkill.isSystem,
+    isActive: effectiveFlatSkill.isActive,
+    workspaceId: effectiveFlatSkill.workspaceId,
+    applicationId: effectiveFlatSkill.applicationId ?? undefined,
+    createdAt: new Date(effectiveFlatSkill.createdAt),
+    updatedAt: new Date(effectiveFlatSkill.updatedAt),
+  };
+};

@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Înainte de a începe
 
-Utilizați Node.js 24.5+ și Yarn 4. Instalați CLI-ul la nivel global; aplicația dvs. își păstrează propriile dependențe SDK.
+Utilizați Node.js 24.5+ sau 26.5+ și Yarn 4 (prin Corepack: `corepack enable`; pe Node 26, instalați-l mai întâi cu `npm install -g corepack`). Instalați CLI-ul la nivel global; aplicația dvs. își păstrează propriile dependențe SDK.
 
 <Note>
 Construirea aplicațiilor Twenty este acceptată oficial numai pe sistemele Unix (macOS și Linux). Pe Windows, lucrați în WSL 2.
@@ -54,7 +54,7 @@ twenty app plan
 twenty app apply
 ```
 
-`plan` previzualizează modificările. `apply` încarcă și sincronizează o singură dată. Folosiți `--no-delete` pentru a păstra entitățile la distanță absente din sursă sau `--yes` pentru a permite ștergerea obiectelor și câmpurilor fără solicitare. Toate cele trei comenzi necesită o conexiune la distanță autentificată și drepturi de proprietate asupra înregistrării.
+`plan` previzualizează modificările. `apply` încarcă și sincronizează o singură dată. Folosește `--no-prune` pentru a păstra entitățile la distanță care lipsesc din sursă sau `--yes` pentru a permite ștergerea obiectelor și a câmpurilor fără o solicitare de confirmare. Toate cele trei comenzi necesită o conexiune la distanță autentificată și drepturi de proprietate asupra înregistrării.
 
 ## Ce puteți construi
 

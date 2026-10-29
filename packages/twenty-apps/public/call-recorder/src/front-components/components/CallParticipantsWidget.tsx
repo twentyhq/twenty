@@ -7,7 +7,7 @@ import {
   useSelectedRecordIds,
   useTranslate,
 } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CallParticipantChip } from 'src/front-components/components/CallParticipantChip';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';

@@ -11,7 +11,7 @@ export type MarketplaceApp = {
 };
 
 export type MarketplaceAppDetail = MarketplaceApp & {
-  description: string;
+  aboutDescription?: string;
   screenshots: readonly string[];
   websiteUrl?: string;
   latestAvailableVersion?: string;

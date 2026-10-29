@@ -8,8 +8,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 ## المشكلات الشائعة
 
 * **أخطاء الخادم المحلي**، تحقّق من بيئة تطوير Docker أو المستودع لديك. لا تدير واجهة CLI المستقلة الحاويات.
-* **إصدار Node غير صحيح** — تحتاج إلى 24.5+ (`engines.node: ^24.5.0`). تحقّق باستخدام `node -v`.
-* **Yarn 4 غير موجود** — شغّل `corepack enable`.
+* **إصدار Node غير صحيح** — تحتاج إلى 24.5+ أو 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). تحقّق باستخدام `node -v`.
+* **Yarn 4 غير موجود** — شغّل `corepack enable` (على Node 26، نفّذ أولاً `npm install -g corepack`).
 * **تبعيات تالفة** — `rm -rf node_modules && yarn install`.
 * **ملف `yarn.lock` فارغ** — يفشل البناء مع ظهور "yarn.lock is empty" عندما يكون ملف القفل موجودًا ولكنه لا يحتوي على أي محتوى؛ شغّل `yarn install` لإعادة إنشائه.
 * **أخطاء `twenty-sdk` بعد الترقية إلى v2.8.0** — تم نقله من `dependencies` إلى `devDependencies` في الإصدار v2.8.0. انظر إلى [بنية المشروع → التبعيات](/ar/developers/extend/apps/getting-started/project-structure#dependencies).

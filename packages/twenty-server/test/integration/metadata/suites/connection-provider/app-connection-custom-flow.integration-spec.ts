@@ -1,7 +1,4 @@
 import { createHash, createHmac } from 'crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 
 import request from 'supertest';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -11,6 +8,8 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type MarkerServer } from 'test/integration/types/marker-server.type';
+import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type Manifest } from 'twenty-shared/application';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
@@ -52,12 +51,12 @@ export const handler = ({ httpMethod, headers, body, rawBody }) => {
 describe('app connection custom flow', () => {
   let provider: ConnectionProviderEntity;
   let logicFunctionManifests: Manifest['logicFunctions'];
-  let fixtureDirectory: string;
-  let onConnectExecutionsPath: string;
+  let markerServer: MarkerServer;
+  let onConnectExecutionsUrl: string;
 
   const readOnConnectExecutions = (): string[] =>
-    existsSync(onConnectExecutionsPath)
-      ? readFileSync(onConnectExecutionsPath, 'utf8').trim().split('\n')
+    markerServer.hasMarker(onConnectExecutionsUrl)
+      ? markerServer.readMarker(onConnectExecutionsUrl).trim().split('\n')
       : [];
 
   const readAccounts = (): Promise<ConnectedAccountEntity[]> =>
@@ -129,8 +128,8 @@ describe('app connection custom flow', () => {
   };
 
   beforeAll(async () => {
-    fixtureDirectory = mkdtempSync(join(tmpdir(), 'app-connection-custom-'));
-    onConnectExecutionsPath = join(fixtureDirectory, 'on-connect-executions');
+    markerServer = await startMarkerServer();
+    onConnectExecutionsUrl = markerServer.markerUrl('on-connect-executions');
 
     await setupApplicationForSync({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
@@ -154,9 +153,8 @@ describe('app connection custom flow', () => {
       {
         universalIdentifier: ON_CONNECT_IDENTIFIER,
         name: 'on-connect',
-        source: `import { appendFileSync } from 'node:fs';
-export const handler = ({ connectedAccountId }) => {
-  appendFileSync(${JSON.stringify(onConnectExecutionsPath)}, connectedAccountId + '\\n');
+        source: `export const handler = async ({ connectedAccountId }) => {
+  await fetch(${JSON.stringify(onConnectExecutionsUrl)}, { method: 'POST', body: connectedAccountId + '\\n' });
 };`,
       },
     ];
@@ -224,7 +222,7 @@ export const handler = ({ connectedAccountId }) => {
   }, 120000);
 
   beforeEach(() => {
-    rmSync(onConnectExecutionsPath, { force: true });
+    markerServer.clearMarker(onConnectExecutionsUrl);
   });
 
   afterEach(async () => {
@@ -238,7 +236,7 @@ export const handler = ({ connectedAccountId }) => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
     });
-    rmSync(fixtureDirectory, { recursive: true, force: true });
+    await markerServer.close();
   });
 
   it('stores the provider and sends the member to the URL the authorize function returns', async () => {

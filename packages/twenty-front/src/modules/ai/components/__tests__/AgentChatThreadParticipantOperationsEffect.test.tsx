@@ -43,6 +43,7 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   isSubscribed: true,
   lastMentionedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
+  __typename: 'AgentChatThreadParticipant',
 };
 
 const renderEffect = (

@@ -13,6 +13,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildAgentChatThreadStandardFlatFieldMetadatas = (
@@ -44,6 +45,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   title: {
@@ -65,6 +68,36 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.OPEN,
+    isAuditLogged: false,
+  },
+  isAssistantParticipant: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'isAssistantParticipant',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({
+            message: 'Assistant participant',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Whether the assistant participates in this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconSparkles',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: false,
+        defaultValue: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalInputTokens: {
@@ -93,6 +126,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalOutputTokens: {
@@ -121,6 +156,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   contextWindowTokens: {
@@ -148,6 +185,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   conversationSize: {
@@ -173,6 +212,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalInputCredits: {
@@ -201,6 +242,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalOutputCredits: {
@@ -229,6 +272,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalCacheReadTokens: {
@@ -257,6 +302,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   totalCacheCreationTokens: {
@@ -285,6 +332,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   activeStreamId: {
@@ -309,6 +358,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   pendingQuestionMessageId: {
@@ -336,6 +387,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -357,6 +410,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   archivedAt: {
@@ -378,6 +433,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   lastActivityAt: {
@@ -402,6 +459,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   lastMessageText: {
@@ -426,6 +485,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   lastMessageSenderWorkspaceMemberId: {
@@ -454,6 +515,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   writerWorkspaceMemberIds: {
@@ -478,6 +541,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -500,6 +565,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -522,6 +589,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   turns: {
@@ -549,6 +618,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   workspaceMember: {
@@ -581,6 +652,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   // Set through the move mutation, which also rewrites the grants the
@@ -607,6 +680,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   channelArchivedAt: {
@@ -635,6 +710,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   channelSnoozedUntil: {
@@ -662,6 +739,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   // Set through the assign mutation, which also lets the assignee reply and
@@ -695,6 +774,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   messages: {
@@ -722,6 +803,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   attachments: {
@@ -754,6 +837,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   recordTargets: {
@@ -784,6 +869,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   participants: {
@@ -814,6 +901,8 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       },
     }),
     writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });

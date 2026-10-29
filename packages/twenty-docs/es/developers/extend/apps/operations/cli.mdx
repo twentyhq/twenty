@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Ejecutar la CLI
 
-La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. Requiere **Node.js 24.5 o posterior**.
+La CLI `twenty` se conecta a espacios de trabajo de Twenty desde tu terminal. Úsala para inspeccionar metadatos, leer registros, enviar solicitudes de API y crear, sincronizar y depurar aplicaciones. Necesita **Node.js 24.5+ o 26.5+**.
 
 Ejecuta cualquier comando mediante `npx`, sin instalar nada:
 
@@ -116,7 +116,7 @@ Otros comandos de la aplicación:
 | `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo              |
 | `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                     |
 
-Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-delete` para conservarlas. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
+Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-prune` para conservarlos. La aplicación personalizada del espacio de trabajo los conserva a menos que pases `--prune`. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
 
 ## Ejecutar funciones
 

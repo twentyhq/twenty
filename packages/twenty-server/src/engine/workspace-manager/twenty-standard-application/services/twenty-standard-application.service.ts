@@ -94,6 +94,8 @@ export class TwentyStandardApplicationService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
+          // Workspace creation and seeding chain migrations right after this sync.
+          shouldDeferActions: false,
           buildOptions: {
             isSystemBuild: true,
             inferDeletionFromMissingEntities: true,

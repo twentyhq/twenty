@@ -1,4 +1,7 @@
-import { type ObjectManifest } from 'twenty-shared/application';
+import {
+  type ObjectManifest,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
 import {
   MetadataReadability,
   MetadataWritability,
@@ -136,6 +139,90 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
       expect(result.readabilityParentFieldUniversalIdentifiers).toEqual([
         PARENT_FIELD_UID,
       ]);
+    });
+  });
+
+  describe('disabledObjectPermissionActions', () => {
+    const WRITE_ACTIONS = [
+      'canUpdateObjectRecords',
+      'canSoftDeleteObjectRecords',
+      'canDestroyObjectRecords',
+    ];
+
+    it.each([MetadataWritability.APPLICATION, MetadataWritability.SYSTEM])(
+      'disables write actions when omitted and writability is %s',
+      (writability) => {
+        const result = fromObjectManifestToUniversalFlatObjectMetadata({
+          objectManifest: buildObjectManifest({ writability }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledObjectPermissionActions).toEqual(WRITE_ACTIONS);
+      },
+    );
+
+    it.each([MetadataReadability.APPLICATION, MetadataReadability.SYSTEM])(
+      'disables reads when omitted and readability is %s',
+      (readability) => {
+        const result = fromObjectManifestToUniversalFlatObjectMetadata({
+          objectManifest: buildObjectManifest({ readability }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledObjectPermissionActions).toEqual([
+          'canReadObjectRecords',
+        ]);
+      },
+    );
+
+    it('combines write and read actions when both are restricted', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          writability: MetadataWritability.APPLICATION,
+          readability: MetadataReadability.SYSTEM,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.disabledObjectPermissionActions).toEqual([
+        ...WRITE_ACTIONS,
+        'canReadObjectRecords',
+      ]);
+    });
+
+    it.each<[ObjectPermissionAction[]]>([[[]], [['canDestroyObjectRecords']]])(
+      'keeps an explicit value %j over the access defaults',
+      (disabledObjectPermissionActions) => {
+        const result = fromObjectManifestToUniversalFlatObjectMetadata({
+          objectManifest: buildObjectManifest({
+            writability: MetadataWritability.APPLICATION,
+            readability: MetadataReadability.APPLICATION,
+            disabledObjectPermissionActions,
+          }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledObjectPermissionActions).toEqual(
+          disabledObjectPermissionActions,
+        );
+      },
+    );
+
+    it('is null when omitted and access is OPEN', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          writability: MetadataWritability.OPEN,
+          readability: MetadataReadability.OPEN,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.disabledObjectPermissionActions).toBeNull();
     });
   });
 

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'twenty-sdk/front-component';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledCallRecordingRowLayout } from 'src/front-components/components/StyledCallRecordingRowLayout';
 import { StyledChipSkeleton } from 'src/front-components/components/StyledChipSkeleton';

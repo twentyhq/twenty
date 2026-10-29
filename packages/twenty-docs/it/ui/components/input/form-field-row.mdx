@@ -51,6 +51,10 @@ export const SubjectField = () => {
 
 La radice è un gruppo denominato da `label`. Fornisci `aria-label` o `aria-labelledby` quando l'etichetta visibile è omessa ed etichetta separatamente ogni input annidato. La riga non sposta lo stato attivo né disabilita i controlli annidati. Tali controlli mantengono il proprio comportamento da tastiera e lo stile dello stato attivo.
 
+`contentPaddingInline` usa per impostazione predefinita il token del tema `--t-spacing-2`, che nel tema standard corrisponde a 8 pixel, e accetta un valore CSS di padding. I valori numerici usano i pixel. Imposta `contentPaddingInline={0}` per allineare i chip dei destinatari e un input al rientro della riga quando non è presente alcuna etichetta visibile.
+
+<StoryEmbed storyId="ui-input-formfieldrow--without-label" title="Riga dei destinatari senza un'etichetta visibile" height={110} />
+
 ## Eventi e personalizzazione
 
 Gli attributi nativi, i gestori di eventi, `className`, `style`, `ref` e `render` si applicano alla radice del gruppo. Inoltra le props e il ref forniti quando sostituisci la radice tramite `render`. Un gestore `onClick` mostra un cursore a forma di puntatore. Il chiamante gestisce il comportamento di messa a fuoco al clic e, se necessario, protegge gli eventi dai controlli annidati o dai portali. `isHoverable` abilita in modo indipendente uno sfondo neutro al passaggio del mouse.

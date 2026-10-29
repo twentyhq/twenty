@@ -50,6 +50,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.AGENT_IS_STANDARD:
+      case AiExceptionCode.AGENT_IS_INACTIVE:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

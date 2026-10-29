@@ -98,6 +98,9 @@ export class FlatObjectPermissionValidatorService {
       ...validateObjectPermissionGrantsNoDisabledAction({
         flatObjectPermission: flatObjectPermissionToValidate,
         flatObjectMetadata: referencedObjectMetadata,
+        flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 
@@ -217,6 +220,9 @@ export class FlatObjectPermissionValidatorService {
             updatedFlatObjectPermission.objectMetadataUniversalIdentifier,
           flatEntityMaps: flatObjectMetadataMaps,
         }),
+        flatRole: referencedRole,
+        applicationDefaultRoleUniversalIdentifier:
+          buildOptions.applicationDefaultRoleUniversalIdentifier,
       }),
     );
 

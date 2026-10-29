@@ -1,7 +1,4 @@
 import { createHash } from 'crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 
 import { gql } from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -11,7 +8,9 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
+import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { type SendAppMessagePayload } from 'twenty-shared/application';
 import {
   ConnectedAccountProvider,
@@ -75,19 +74,20 @@ const SEND_MESSAGE_MUTATION = gql`
 `;
 
 describe('sendAppChannelMessage (e2e)', () => {
-  let fixtureDirectory: string;
-  let sendExecutionsPath: string;
+  let markerServer: MarkerServer;
+  let sendExecutionsUrl: string;
   let applicationToken: string;
   let applicationDbId: string;
   let sendingConnectionId: string;
   let silentConnectionId: string;
 
   const readSendExecutions = (): SendAppMessagePayload[] => {
-    if (!existsSync(sendExecutionsPath)) {
+    if (!markerServer.hasMarker(sendExecutionsUrl)) {
       return [];
     }
 
-    return readFileSync(sendExecutionsPath, 'utf8')
+    return markerServer
+      .readMarker(sendExecutionsUrl)
       .trim()
       .split('\n')
       .map((line) => JSON.parse(line));
@@ -222,8 +222,8 @@ describe('sendAppChannelMessage (e2e)', () => {
   };
 
   beforeAll(async () => {
-    fixtureDirectory = mkdtempSync(join(tmpdir(), 'app-channel-send-'));
-    sendExecutionsPath = join(fixtureDirectory, 'send-executions');
+    markerServer = await startMarkerServer();
+    sendExecutionsUrl = markerServer.markerUrl('send-executions');
 
     await setupApplicationForSync({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
@@ -233,9 +233,8 @@ describe('sendAppChannelMessage (e2e)', () => {
     });
     jest.useRealTimers();
 
-    const sendMessageSource = `import { appendFileSync } from 'node:fs';
-export const handler = (payload) => {
-  appendFileSync(${JSON.stringify(sendExecutionsPath)}, JSON.stringify(payload) + '\\n');
+    const sendMessageSource = `export const handler = async (payload) => {
+  await fetch(${JSON.stringify(sendExecutionsUrl)}, { method: 'POST', body: JSON.stringify(payload) + '\\n' });
   if (payload.text === 'refused') throw new Error('provider refused the message');
   return { externalId: 'sent:' + payload.text, sentAt: '2026-10-21T10:00:00.000Z' };
 };`;
@@ -339,7 +338,7 @@ export const handler = (payload) => {
   }, 180000);
 
   beforeEach(() => {
-    rmSync(sendExecutionsPath, { force: true });
+    markerServer.clearMarker(sendExecutionsUrl);
   });
 
   afterEach(async () => {
@@ -391,7 +390,7 @@ export const handler = (payload) => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
     });
-    rmSync(fixtureDirectory, { recursive: true, force: true });
+    await markerServer.close();
   }, 120000);
 
   it('sends through the app and records the reply in the same thread', async () => {

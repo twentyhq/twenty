@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "2.53.0",
+  "version": "2.54.0",
   "description": "The Twenty command line.",
   "homepage": "https://twenty.com",
   "repository": {
@@ -28,7 +28,6 @@
     "@types/lodash.startcase": "^4",
     "@types/node": "^24.0.0",
     "@types/semver": "^7.5.8",
-    "cjs-module-lexer": "^2.2.0",
     "commander": "^14.0.3",
     "execa": "^5.1.1",
     "lodash.startcase": "^4.4.0",
