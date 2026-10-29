@@ -25,26 +25,32 @@ describe('Assistant reply selection with stored conversation participants', () =
     threadId,
     isAssistantMentioned = false,
     shouldAssistantReply = true,
+    isAiChatInboxEnabled = true,
   }: {
     threadId: string;
     isAssistantMentioned?: boolean | null;
     shouldAssistantReply?: boolean;
-  }) =>
-    context.replyPolicyService.shouldReply({
-      isAiChatInboxEnabled: true,
-      shouldAssistantReply,
-      thread: await context.threadService.getWritableThread({
+    isAiChatInboxEnabled?: boolean;
+  }) => {
+    const { thread, assistantPolicy } =
+      await context.threadService.applyAssistantParticipation({
         threadId,
         workspaceId: context.workspaceId,
         workspaceMemberId: context.workspaceMemberId,
-      }),
+        isAssistantMentioned: isAssistantMentioned ?? false,
+      });
+
+    return context.replyPolicyService.shouldReply({
+      isAiChatInboxEnabled,
+      shouldAssistantReply,
+      thread,
+      assistantPolicy,
       workspaceId: context.workspaceId,
-      workspaceMemberId: context.workspaceMemberId,
       userWorkspaceId: context.userWorkspaceId,
-      candidateWorkspaceMemberIds: [],
       isAssistantMentioned,
       text: 'Can Ada help with the latest task?',
     });
+  };
   const addJonyAsParticipant = (threadId: string) =>
     context.threadService.deliverToParticipants({
       workspaceId: context.workspaceId,
@@ -64,6 +70,24 @@ describe('Assistant reply selection with stored conversation participants', () =
     const threadId = await createGroup(false);
 
     await expect(shouldReply({ threadId })).resolves.toBe(false);
+    expect(models.evaluate).not.toHaveBeenCalled();
+  });
+
+  it('keeps replying in a shared chat while the inbox is not enabled', async () => {
+    models.enableEvaluation();
+    const threadId = await createGroup(false);
+
+    await context.setAssistantModes({
+      aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
+    });
+
+    await expect(
+      shouldReply({
+        threadId,
+        shouldAssistantReply: false,
+        isAiChatInboxEnabled: false,
+      }),
+    ).resolves.toBe(true);
     expect(models.evaluate).not.toHaveBeenCalled();
   });
 
