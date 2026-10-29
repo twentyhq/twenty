@@ -139,6 +139,11 @@ describe('createHostFetchEnforcingPolicy', () => {
       [],
     ],
     [
+      'a logic function route, whose handler forwards headers to app code',
+      '/s/my-route',
+      [],
+    ],
+    [
       'a redirectable file storage URL',
       '/rest/front-components/component-id',
       ['/rest/front-components/component-id'],

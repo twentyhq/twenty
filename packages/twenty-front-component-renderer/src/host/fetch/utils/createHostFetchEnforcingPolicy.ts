@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/constants';
 import { CustomError, getUrlSafely, isDefined } from 'twenty-shared/utils';
 
-import { isTwentyServerApiPath } from '@/host/fetch/utils/isTwentyServerApiPath';
+import { isPageCookieEligiblePath } from '@/host/fetch/utils/isPageCookieEligiblePath';
 import { resolveHostFetchRedirectMode } from '@/host/fetch/utils/resolveHostFetchRedirectMode';
 import { serializeResponseToHostFetchResult } from '@/host/fetch/utils/serializeResponseToHostFetchResult';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
@@ -45,7 +45,7 @@ export const createHostFetchEnforcingPolicy = (
     // Not on followed redirects: the marker would trigger a CORS preflight the storage bucket rejects.
     const shouldSendPageCookies =
       requestUrl.origin === window.location.origin &&
-      isTwentyServerApiPath(requestUrl.pathname) &&
+      isPageCookieEligiblePath(requestUrl.pathname) &&
       redirectMode !== 'follow';
     const headers = new Headers(input.headers);
 
