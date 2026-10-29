@@ -4,18 +4,20 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type AdminPanelTopWorkspace } from '~/generated-admin/graphql';
 
-export const getAdminPanelTopWorkspaceGroups = ({
-  topWorkspaces,
-  currentWorkspace,
-  searchTerm,
-}: {
+type GetAdminPanelTopWorkspaceGroupsArgs = {
   topWorkspaces: AdminPanelTopWorkspace[];
   currentWorkspace: Pick<
     CurrentWorkspace,
     'id' | 'displayName' | 'logo' | 'subdomain' | 'workspaceMembersCount'
   > | null;
   searchTerm: string;
-}): AdminPanelTopWorkspace[][] => {
+};
+
+export const getAdminPanelTopWorkspaceGroups = ({
+  topWorkspaces,
+  currentWorkspace,
+  searchTerm,
+}: GetAdminPanelTopWorkspaceGroupsArgs): AdminPanelTopWorkspace[][] => {
   const listedCurrentWorkspace = topWorkspaces.find(
     (workspace) => workspace.id === currentWorkspace?.id,
   );
