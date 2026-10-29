@@ -21,6 +21,7 @@ import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-acc
 export type ConnectedAccountPlaintextTokens = {
   accessToken: PlaintextString;
   refreshToken: PlaintextString | null;
+  expiresAt?: Date | null;
 };
 
 export type ConnectedAccountEncryptedTokens = {
@@ -131,8 +132,14 @@ export class ConnectedAccountRefreshTokensService {
         accessToken: encryptedAccessToken,
         refreshToken: reEncryptedRefreshToken,
         lastCredentialsRefreshedAt: new Date(),
+        accessTokenExpiresAt: plaintextTokens.expiresAt ?? null,
       },
     );
+
+    connectedAccount.accessToken = encryptedAccessToken;
+    connectedAccount.refreshToken = reEncryptedRefreshToken;
+    connectedAccount.lastCredentialsRefreshedAt = new Date();
+    connectedAccount.accessTokenExpiresAt = plaintextTokens.expiresAt ?? null;
 
     return {
       accessToken: encryptedAccessToken,
@@ -153,6 +160,20 @@ export class ConnectedAccountRefreshTokensService {
           !isDefined(connectedAccount.refreshToken)
         ) {
           return true;
+        }
+
+        if (isDefined(connectedAccount.accessTokenExpiresAt)) {
+          const now = Date.now();
+          const expiresAtMs = connectedAccount.accessTokenExpiresAt.getTime();
+          const issuedAtMs =
+            connectedAccount.lastCredentialsRefreshedAt?.getTime() ?? now;
+          const lifetimeMs = Math.max(0, expiresAtMs - issuedAtMs);
+          const bufferMs = Math.min(
+            5 * 60 * 1000,
+            Math.max(10 * 1000, Math.floor(lifetimeMs * 0.1)),
+          );
+
+          return expiresAtMs - bufferMs > now;
         }
 
         if (!connectedAccount.lastCredentialsRefreshedAt) {

@@ -5,4 +5,5 @@ export type TokenExchangeResponse = {
   refreshToken: PlaintextString | null;
   idToken: PlaintextString | null;
   scopes: string[] | null;
+  expiresAt: Date | null;
 };

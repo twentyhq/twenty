@@ -1,0 +1,2 @@
+export const ADD_ACCESS_TOKEN_EXPIRES_AT_TO_CONNECTED_ACCOUNT_UPGRADE_COMMAND_NAME =
+  '2.54.0_AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand_1793295000000';

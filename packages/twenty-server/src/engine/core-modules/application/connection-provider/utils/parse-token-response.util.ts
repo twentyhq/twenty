@@ -1,13 +1,15 @@
+import { isNonEmptyString } from 'twenty-shared/utils';
+
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
+import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 export const parseTokenResponse = (
   json: Record<string, unknown>,
 ): TokenExchangeResponse => {
-  const accessToken =
-    typeof json.access_token === 'string'
-      ? (json.access_token as PlaintextString)
-      : null;
+  const accessToken = isNonEmptyString(json.access_token)
+    ? (json.access_token as PlaintextString)
+    : null;
 
   if (!accessToken) {
     throw new Error(
@@ -15,19 +17,40 @@ export const parseTokenResponse = (
     );
   }
 
+  let expiresAt: Date | null = null;
+  const rawExpiresIn = json.expires_in;
+  const expiresInNumber =
+    typeof rawExpiresIn === 'number'
+      ? rawExpiresIn
+      : isNonEmptyString(rawExpiresIn) && isNonEmptyString(rawExpiresIn.trim())
+        ? Number(rawExpiresIn)
+        : null;
+
+  if (
+    expiresInNumber !== null &&
+    Number.isFinite(expiresInNumber) &&
+    expiresInNumber > 0
+  ) {
+    expiresAt = new Date(Date.now() + expiresInNumber * 1000);
+  } else {
+    const claims = decodeJwtPayload<{ exp?: number }>(accessToken);
+
+    if (typeof claims?.exp === 'number' && Number.isFinite(claims.exp)) {
+      expiresAt = new Date(claims.exp * 1000);
+    }
+  }
+
   return {
     accessToken,
-    refreshToken:
-      typeof json.refresh_token === 'string'
-        ? (json.refresh_token as PlaintextString)
-        : null,
-    idToken:
-      typeof json.id_token === 'string'
-        ? (json.id_token as PlaintextString)
-        : null,
-    scopes:
-      typeof json.scope === 'string'
-        ? json.scope.split(/[\s,]+/).filter(Boolean)
-        : null,
+    refreshToken: isNonEmptyString(json.refresh_token)
+      ? (json.refresh_token as PlaintextString)
+      : null,
+    idToken: isNonEmptyString(json.id_token)
+      ? (json.id_token as PlaintextString)
+      : null,
+    scopes: isNonEmptyString(json.scope)
+      ? json.scope.split(/[\s,]+/).filter(Boolean)
+      : null,
+    expiresAt,
   };
 };
