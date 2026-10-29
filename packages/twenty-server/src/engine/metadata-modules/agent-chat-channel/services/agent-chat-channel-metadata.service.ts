@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
-import { assertAgentChatChannelOwnedByApplication } from 'src/engine/metadata-modules/agent-chat-channel/utils/assert-agent-chat-channel-owned-by-application.util';
+import { assertAgentChatChannelOwnedByApplicationOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/assert-agent-chat-channel-owned-by-application-or-throw.util';
 import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
 import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
 import { findFlatAgentChatChannelOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-flat-agent-chat-channel-or-throw.util';
@@ -110,7 +110,7 @@ export class AgentChatChannelMetadataService {
     });
 
     if (isDefined(existingChannel)) {
-      assertAgentChatChannelOwnedByApplication({
+      assertAgentChatChannelOwnedByApplicationOrThrow({
         channel: existingChannel,
         applicationId: ownerFlatApplication.id,
       });
@@ -136,7 +136,7 @@ export class AgentChatChannelMetadataService {
         throw error;
       }
 
-      assertAgentChatChannelOwnedByApplication({
+      assertAgentChatChannelOwnedByApplicationOrThrow({
         channel: concurrentlyCreatedChannel,
         applicationId: ownerFlatApplication.id,
       });

@@ -4,7 +4,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-export const assertAgentChatChannelOwnedByApplication = ({
+export const assertAgentChatChannelOwnedByApplicationOrThrow = ({
   channel,
   applicationId,
 }: {
