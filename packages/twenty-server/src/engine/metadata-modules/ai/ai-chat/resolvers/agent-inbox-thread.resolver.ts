@@ -71,7 +71,7 @@ export class AgentInboxThreadResolver {
   }
 
   private async authorizeThreadRecordLink(input: InboxThreadRecordInputDTO) {
-    const authContext = this.getCallerAuthContext();
+    const authContext = this.getCallerAuthContextOrThrow();
 
     await this.inboxAccessService.assertThreadIsWritableOrThrow({
       authContext,
@@ -81,7 +81,7 @@ export class AgentInboxThreadResolver {
     return { ...input, workspaceId: authContext.workspace.id, authContext };
   }
 
-  private getCallerAuthContext(): AgentInboxCallerAuthContext {
+  private getCallerAuthContextOrThrow(): AgentInboxCallerAuthContext {
     const authContext = getWorkspaceAuthContext();
 
     if (
