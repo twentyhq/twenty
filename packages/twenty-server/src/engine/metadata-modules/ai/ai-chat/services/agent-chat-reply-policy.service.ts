@@ -49,8 +49,12 @@ export class AgentChatReplyPolicyService {
     isAssistantMentioned?: boolean | null;
     text: string;
   }): Promise<boolean> {
-    if (!isAiChatInboxEnabled) {
+    if (!isAiChatInboxEnabled || assistantPolicy.isDirectAssistantChat) {
       return true;
+    }
+
+    if (!shouldAssistantReply) {
+      return false;
     }
 
     const replyDecision = resolveAgentChatReplyDecision({
@@ -61,10 +65,6 @@ export class AgentChatReplyPolicyService {
 
     if (replyDecision !== 'EVALUATE') {
       return replyDecision === 'REPLY';
-    }
-
-    if (!assistantPolicy.isDirectMessage && !shouldAssistantReply) {
-      return false;
     }
 
     if (!this.aiEvaluationService.isAvailable()) {
