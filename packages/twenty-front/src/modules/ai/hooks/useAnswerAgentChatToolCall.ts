@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { getAgentChatResolvedMentionAt } from 'twenty-shared/ai';
+import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
@@ -96,18 +96,18 @@ export const useAnswerAgentChatToolCall = () => {
             return participants;
           }
 
-          const lastResolvedMentionAt = getAgentChatResolvedMentionAt({
+          const mentionsResolvedAt = getAgentChatMentionsResolvedAt({
             lastMentionedAt,
-            lastResolvedMentionAt: participant.lastResolvedMentionAt,
+            mentionsResolvedAt: participant.mentionsResolvedAt,
           });
 
-          if (lastResolvedMentionAt === participant.lastResolvedMentionAt) {
+          if (mentionsResolvedAt === participant.mentionsResolvedAt) {
             return participants;
           }
 
           return {
             ...participants,
-            [threadId]: { ...participant, lastResolvedMentionAt },
+            [threadId]: { ...participant, mentionsResolvedAt },
           };
         });
 

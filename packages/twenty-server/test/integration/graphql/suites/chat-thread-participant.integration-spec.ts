@@ -1294,12 +1294,12 @@ describe('Chat thread participant state through the authenticated API', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(repliedParticipant!.lastResolvedMentionAt).toBe(
+    expect(repliedParticipant!.mentionsResolvedAt).toBe(
       repliedParticipant!.lastMentionedAt,
     );
     expect(await findMyParticipant(threadId)).toMatchObject({
       lastMentionedAt: expect.any(String),
-      lastResolvedMentionAt: null,
+      mentionsResolvedAt: null,
     });
   });
 
@@ -1409,7 +1409,7 @@ describe('Chat thread participant state through the authenticated API', () => {
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
-      expect(repliedParticipant!.lastResolvedMentionAt).toBe(
+      expect(repliedParticipant!.mentionsResolvedAt).toBe(
         repliedParticipant!.lastMentionedAt,
       );
 
@@ -1418,7 +1418,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       expect(
         await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).toMatchObject({
-        lastResolvedMentionAt: repliedParticipant!.lastMentionedAt,
+        mentionsResolvedAt: repliedParticipant!.lastMentionedAt,
       });
     });
 
@@ -1521,7 +1521,7 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ lastResolvedMentionAt: null });
+    ).toMatchObject({ mentionsResolvedAt: null });
   });
 
   it('preserves a newer mention when an older response finishes first', async () => {
@@ -1562,7 +1562,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(new Date(participant!.lastMentionedAt!).getTime()).toBeGreaterThan(
-      new Date(participant!.lastResolvedMentionAt!).getTime(),
+      new Date(participant!.mentionsResolvedAt!).getTime(),
     );
   });
 

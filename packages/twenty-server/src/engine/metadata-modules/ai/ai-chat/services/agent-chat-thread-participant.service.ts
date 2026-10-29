@@ -147,7 +147,7 @@ const buildMentionResolutionQuery = ({
   participantTable: string;
 }) =>
   `UPDATE ${participantTable} AS participant
-   SET "lastResolvedMentionAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    WHERE "threadId" = $1 AND "workspaceMemberId" = $2
      AND ${HAS_UNRESOLVED_MENTION}
    RETURNING ${PARTICIPANT_COLUMNS}`;

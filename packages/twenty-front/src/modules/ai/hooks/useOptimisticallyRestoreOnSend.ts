@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { getAgentChatResolvedMentionAt } from 'twenty-shared/ai';
+import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
@@ -46,7 +46,7 @@ export const useOptimisticallyRestoreOnSend = () => {
               ...participants[threadId],
               threadId,
               lastReadAt: optimisticUpdatedAt,
-              lastResolvedMentionAt: getAgentChatResolvedMentionAt(
+              mentionsResolvedAt: getAgentChatMentionsResolvedAt(
                 previousParticipant ?? {},
               ),
               archivedAt: null,
