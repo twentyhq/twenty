@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { EmailOperation, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -118,7 +119,7 @@ export class GettingStartedService {
       steps,
       completedSteps,
       selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
-      snoozedUntil: typeof snoozedUntil === 'string' ? snoozedUntil : null,
+      snoozedUntil: isNonEmptyString(snoozedUntil) ? snoozedUntil : null,
       isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) === true,
     };
   }
