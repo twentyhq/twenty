@@ -93,6 +93,10 @@ export class ChannelSyncService {
             workspaceId,
             messageChannelId: messageChannel.id,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
 
         if (
@@ -111,7 +115,11 @@ export class ChannelSyncService {
               channelId: messageChannel.id,
               workspaceId,
             },
-            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+            {
+              retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         } catch (error) {
           this.logger.warn(
@@ -154,6 +162,10 @@ export class ChannelSyncService {
             workspaceId,
             calendarChannelId: calendarChannel.id,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
 
         if (
@@ -172,7 +184,11 @@ export class ChannelSyncService {
               channelId: calendarChannel.id,
               workspaceId,
             },
-            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+            {
+              retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         } catch (error) {
           this.logger.warn(

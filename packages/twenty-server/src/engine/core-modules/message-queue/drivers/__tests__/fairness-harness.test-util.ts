@@ -7,7 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import {
+  type QueueJobScope,
+  type QueueJobSettings,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type ScenarioJobData = { label: string; workspaceId?: string };
@@ -305,10 +308,31 @@ const createRedisClientDouble = (redis: Redis): RedisClientDouble => ({
   },
 });
 
-type EnqueueInput = { label: string; workspaceId?: string } & Pick<
-  QueueJobOptions,
-  'groupKeys' | 'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
->;
+type ScenarioJobScope = {
+  workspaceId?: string;
+  applicationUniversalIdentifier?: string;
+};
+
+type EnqueueInput = { label: string } & ScenarioJobScope &
+  Pick<
+    QueueJobSettings,
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
+  >;
+
+const buildScenarioJobScope = ({
+  workspaceId,
+  applicationUniversalIdentifier,
+}: ScenarioJobScope): QueueJobScope => {
+  if (!isDefined(workspaceId)) {
+    return { isSystemJob: true };
+  }
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    return { workspaceId, isWorkspaceJob: true };
+  }
+
+  return { workspaceId, applicationUniversalIdentifier };
+};
 
 export const createFairnessHarness = async ({
   isFairnessEnabled: initialFairnessEnabled,
@@ -394,12 +418,23 @@ export const createFairnessHarness = async ({
     return true;
   };
 
-  const enqueue = async ({ label, workspaceId, ...options }: EnqueueInput) => {
+  const enqueue = async ({
+    label,
+    workspaceId,
+    applicationUniversalIdentifier,
+    ...options
+  }: EnqueueInput) => {
     await driver.add<ScenarioJobData>(
       QUEUE,
       JOB_NAME,
       { label, workspaceId },
-      options,
+      {
+        ...options,
+        ...buildScenarioJobScope({
+          workspaceId,
+          applicationUniversalIdentifier,
+        }),
+      },
     );
   };
 
@@ -417,17 +452,22 @@ export const createFairnessHarness = async ({
     enqueueBulk: async ({
       labels,
       workspaceId,
-      groupKeys,
+      applicationUniversalIdentifier,
     }: {
       labels: string[];
       workspaceId: string;
-      groupKeys?: string[];
+      applicationUniversalIdentifier?: string;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
-        labels.map((label) => ({ data: { label, workspaceId } })),
-        isDefined(groupKeys) ? { groupKeys } : undefined,
+        labels.map((label) => ({
+          data: { label, workspaceId },
+          ...buildScenarioJobScope({
+            workspaceId,
+            applicationUniversalIdentifier,
+          }),
+        })),
       );
     },
     scheduleCron: async ({
