@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isArray } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
@@ -38,6 +39,7 @@ import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-select
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -729,7 +731,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const { ids, conflictPriorityIndex } = args;
 
-    if (!ids || ids.length < 2) {
+    if (!isArray(ids) || ids.length < 2) {
       throw new CommonQueryRunnerException(
         'At least 2 record IDs are required for merge',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
@@ -749,7 +751,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {
+    ids.forEach(assertIsValidUuid);
+
+    if (
+      !Number.isInteger(conflictPriorityIndex) ||
+      conflictPriorityIndex < 0 ||
+      conflictPriorityIndex >= ids.length
+    ) {
       throw new CommonQueryRunnerException(
         `Invalid conflict priority '${conflictPriorityIndex}'. Valid options for ${ids.length} records: 0-${ids.length - 1}`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
