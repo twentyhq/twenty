@@ -164,7 +164,7 @@ export class LambdaToolFunctionsService {
 
   async getDependenciesBuildCacheKey({
     workspaceId,
-  }: Pick<BrowserDependenciesBuildParams, 'workspaceId' | 'targetRuntime'>) {
+  }: Pick<BrowserDependenciesBuildParams, 'workspaceId'>) {
     const name = await getFrontComponentBuilderName({
       workspaceId,
       namespace: this.options.resourceNamespace,

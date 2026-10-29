@@ -1,17 +1,13 @@
 import {
-  GetFunctionCommand,
-  InvokeCommand,
   Lambda,
   type State,
-  UpdateFunctionConfigurationCommand,
   waitUntilFunctionActiveV2,
 } from '@aws-sdk/client-lambda';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
-import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 jest.mock(
@@ -36,7 +32,7 @@ const RESULT = {
 describe('LambdaDriver', () => {
   let state: State;
   let updateError: Error | undefined;
-  let commands: string[];
+  let commands: (string | undefined)[];
   let payloads: unknown[];
   let functionNames: unknown[];
   let driver: LambdaDriver;
@@ -50,63 +46,69 @@ describe('LambdaDriver', () => {
     functionNames = [];
     client = new Lambda({ region: 'eu-west-1' });
     let isLocked = false;
-    const cacheStorageService = {
-      get: jest.fn().mockResolvedValue(undefined),
-      set: jest.fn().mockResolvedValue(undefined),
-      acquireLock: async () => {
-        if (isLocked) return undefined;
+    const cacheStorageService = jest.createMockFromModule<
+      typeof import('src/engine/core-modules/cache-storage/services/cache-storage.service')
+    >('src/engine/core-modules/cache-storage/services/cache-storage.service')
+      .CacheStorageService.prototype;
+    jest
+      .spyOn(cacheStorageService, 'acquireLock')
+      .mockImplementation(async () => {
+        if (isLocked) {
+          return null;
+        }
         isLocked = true;
         return 'owner';
-      },
-      releaseLock: async () => {
+      });
+    jest
+      .spyOn(cacheStorageService, 'releaseLock')
+      .mockImplementation(async () => {
         isLocked = false;
-      },
-      extendLock: async () => true,
-    } as unknown as CacheStorageService;
+      });
+    jest.spyOn(cacheStorageService, 'extendLock').mockResolvedValue(true);
 
-    const send = jest.spyOn(
-      client as {
-        send(
-          command:
-            | GetFunctionCommand
-            | UpdateFunctionConfigurationCommand
-            | InvokeCommand,
-        ): Promise<unknown>;
-      },
-      'send',
+    client.middlewareStack.add(
+      (_next, context) =>
+        async ({ input }) => {
+          const commandName = context.commandName;
+          commands.push(commandName);
+          if (commandName === 'GetFunctionCommand') {
+            const output = { Configuration: { State: state }, $metadata: {} };
+            if (state === 'Pending') {
+              state = 'Active';
+            }
+            return { response: {}, output };
+          }
+          if (commandName === 'UpdateFunctionConfigurationCommand') {
+            if (isDefined(updateError)) {
+              throw updateError;
+            }
+            state = 'Pending';
+            return { response: {}, output: { State: state, $metadata: {} } };
+          }
+          if (commandName === 'InvokeCommand' && 'Payload' in input) {
+            expect(state).toBe('Active');
+            const payload = JSON.parse(String(input.Payload));
+            payloads.push(payload);
+            functionNames.push(input.FunctionName);
+            const response = JSON.stringify(
+              payload.sourceCode
+                ? { builtCode: 'export const handler = () => 1;' }
+                : RESULT,
+            );
+            return {
+              response: {},
+              output: {
+                Payload: Object.assign(Buffer.from(response), {
+                  transformToString: () => response,
+                }),
+                $metadata: {},
+              },
+            };
+          }
+          throw new Error('Unexpected Lambda command');
+        },
+      { step: 'initialize' },
     );
-
-    send.mockImplementation(async (command) => {
-      commands.push(command.constructor.name);
-      if (command instanceof GetFunctionCommand) {
-        const response = { Configuration: { State: state }, $metadata: {} };
-        if (state === 'Pending') state = 'Active';
-        return response;
-      }
-      if (command instanceof UpdateFunctionConfigurationCommand) {
-        if (updateError) throw updateError;
-        state = 'Pending';
-        return { State: state, $metadata: {} };
-      }
-      if (command instanceof InvokeCommand) {
-        expect(state).toBe('Active');
-        const payload = JSON.parse(String(command.input.Payload));
-        payloads.push(payload);
-        functionNames.push(command.input.FunctionName);
-        return {
-          Payload: {
-            transformToString: () =>
-              JSON.stringify(
-                payload.sourceCode
-                  ? { builtCode: 'export const handler = () => 1;' }
-                  : RESULT,
-              ),
-          },
-          $metadata: {},
-        };
-      }
-      throw new Error('Unexpected Lambda command');
-    });
     jest
       .spyOn(LambdaAwsClientService.prototype, 'getLambdaClient')
       .mockResolvedValue(client);
@@ -124,9 +126,27 @@ describe('LambdaDriver', () => {
       layerBucketRegion: 'eu-west-1',
       resourceNamespace: 'fixture',
       lambdaRole: 'fixture',
+      logicFunctionResourceService: jest.createMockFromModule<
+        typeof import('src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service')
+      >(
+        'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service',
+      ).LogicFunctionResourceService.prototype,
+      sdkClientArchiveService: jest.createMockFromModule<
+        typeof import('src/engine/core-modules/sdk-client/sdk-client-archive.service')
+      >('src/engine/core-modules/sdk-client/sdk-client-archive.service')
+        .SdkClientArchiveService.prototype,
+      workspaceCacheService: jest.createMockFromModule<
+        typeof import('src/engine/workspace-cache/services/workspace-cache.service')
+      >('src/engine/workspace-cache/services/workspace-cache.service')
+        .WorkspaceCacheService.prototype,
+      applicationDependencyFilesService: jest.createMockFromModule<
+        typeof import('src/engine/core-modules/application/application-package/application-dependency-files.service')
+      >(
+        'src/engine/core-modules/application/application-package/application-dependency-files.service',
+      ).ApplicationDependencyFilesService.prototype,
       cacheStorageService,
       cacheLockService: new CacheLockService(cacheStorageService),
-    } as LambdaDriverOptions);
+    });
   });
 
   afterEach(() => {

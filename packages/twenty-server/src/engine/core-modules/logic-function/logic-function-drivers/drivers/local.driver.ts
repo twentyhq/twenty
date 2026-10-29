@@ -124,7 +124,7 @@ export class LocalDriver implements LogicFunctionDriver {
 
   async getDependenciesBuildCacheKey({
     workspaceId,
-  }: Pick<BrowserDependenciesBuildParams, 'workspaceId' | 'targetRuntime'>) {
+  }: Pick<BrowserDependenciesBuildParams, 'workspaceId'>) {
     const name = await getFrontComponentBuilderName({
       workspaceId,
       namespace: 'local',

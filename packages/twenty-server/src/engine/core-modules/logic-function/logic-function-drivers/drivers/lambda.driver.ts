@@ -103,10 +103,7 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   async getDependenciesBuildCacheKey(
-    params: Pick<
-      BrowserDependenciesBuildParams,
-      'workspaceId' | 'targetRuntime'
-    >,
+    params: Pick<BrowserDependenciesBuildParams, 'workspaceId'>,
   ) {
     return this.toolFunctions.getDependenciesBuildCacheKey(params);
   }
