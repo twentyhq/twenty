@@ -1029,6 +1029,30 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     expect(step.outputSchema).toEqual({});
   });
 
+  it('exports an email step written without files', () => {
+    const input = {
+      connectedAccountId: '{{trigger.properties.after.accountId}}',
+      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+      subject: 'Hello',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Draft Email',
+          type: 'DRAFT_EMAIL',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'DRAFT_EMAIL', input });
+  });
+
   it('exports a step without a position as null', () => {
     const [step] = exportBuilderVersion({
       triggers: [recordCreatedTrigger()],
