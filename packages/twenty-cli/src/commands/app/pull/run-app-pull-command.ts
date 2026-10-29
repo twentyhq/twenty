@@ -1,8 +1,8 @@
-import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fetchAppExport } from '@/app/fetch-app-export';
 import { fetchWorkspace } from '@/app/fetch-workspace';
+import { createPullProject } from '@/app/pull/create-pull-project';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { parseToolingResult } from '@/app/parse-tooling-result';
 import { formatPullReport } from '@/app/pull/format-pull-report';
@@ -23,44 +23,36 @@ import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { commandText, formatSuccessLine } from '@/output/style';
 
-export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
-  options,
-  target,
-  signal,
-  output,
-  outputMode,
-}) => {
-  const project = await resolveAppProject({
+export const runAppPullCommand: CommandRun<TargetCommandContext> = async (
+  context,
+) => {
+  const { options, target, signal, output, outputMode } = context;
+  let project = await resolveAppProject({
     explicitPath: readStringOption(options, 'path'),
     workingDirectory: process.cwd(),
+  }).catch((error: unknown) => {
+    if (
+      error instanceof CliError &&
+      ['APP_NOT_FOUND', 'APP_PATH_REQUIRED'].includes(error.code)
+    ) {
+      return undefined;
+    }
+    throw error;
   });
-
-  const explicitIdentifier = readStringOption(options, 'universalIdentifier');
-
-  if (
-    isDefined(explicitIdentifier) &&
-    !isValidUniversalIdentifier(explicitIdentifier)
-  ) {
-    throw new CliError({
-      code: 'INVALID_INPUT',
-      exitCode: EXIT_CODE.USAGE,
-      message: '--universal-identifier must be a UUID of version 4 or later.',
-    });
-  }
-
-  const identity = await readAppIdentity({
-    appPath: project.path,
-    signal,
-    warn: output.warn,
-  });
-
+  const identity = isDefined(project)
+    ? await readAppIdentity({
+        appPath: project.path,
+        signal,
+        warn: output.warn,
+      })
+    : { application: null, diagnostics: [] };
   const workspace = await fetchWorkspace({
     target,
     signal,
-    shouldIncludeCustomApplication: !isDefined(explicitIdentifier),
+    shouldIncludeCustomApplication: !isDefined(identity.application),
   });
   const universalIdentifier = (
-    explicitIdentifier ??
+    identity.application?.universalIdentifier ??
     workspace.workspaceCustomApplication?.universalIdentifier
   )?.toLowerCase();
 
@@ -68,24 +60,9 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
     throw new CliError({
       code: 'APP_NOT_FOUND',
       message: 'This workspace has no custom application to pull.',
-      hint: 'Pass --universal-identifier <uuid> to pull a specific application.',
     });
   }
 
-  if (
-    isDefined(identity.application) &&
-    identity.application.universalIdentifier.toLowerCase() !==
-      universalIdentifier
-  ) {
-    throw new CliError({
-      code: 'INVALID_INPUT',
-      exitCode: EXIT_CODE.USAGE,
-      message: `This project declares application ${identity.application.universalIdentifier}, not ${universalIdentifier}. Pull it into a different directory.`,
-      hint: !isDefined(explicitIdentifier)
-        ? `Pass --universal-identifier ${identity.application.universalIdentifier} to pull this project's application.`
-        : undefined,
-    });
-  }
   output.progress({ message: `Exporting the app from ${target.apiUrl}…` });
 
   const applicationExport = await fetchAppExport({
@@ -93,6 +70,13 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
     target,
     signal,
   });
+  if (!isDefined(project)) {
+    project = await createPullProject({
+      context,
+      displayName: applicationExport.application.displayName,
+    });
+  }
+
   output.progress({
     message:
       'Reconciling local definitions. Changed workspace entities replace local edits…',

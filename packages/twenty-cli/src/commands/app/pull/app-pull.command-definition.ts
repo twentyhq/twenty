@@ -2,28 +2,29 @@ import { type TargetCommandDefinition } from '@/catalog/types/command-definition
 
 export const APP_PULL_COMMAND_DEFINITION: TargetCommandDefinition = {
   path: ['app', 'pull'],
-  description: 'Pull workspace metadata into an existing app project',
+  description:
+    'Pull an app, or create a local project for the workspace custom app',
   options: [
     {
       flags: '--path <directory>',
       description:
-        'App directory (default: the app containing the current folder)',
+        'App directory, or a new or empty directory for the workspace custom app',
     },
     {
-      flags: '--universal-identifier <uuid>',
+      flags: '--yes',
       description:
-        'Application to pull (default: the workspace custom application)',
+        'Create a missing project and install its dependencies without prompting',
     },
     { flags: '--verbose', description: 'List coverage details' },
   ],
   examples: [
     'twenty app pull --remote dev',
-    'twenty app pull --path ./workspace-app --json',
-    'twenty app pull --universal-identifier <uuid> --path ./apps/billing',
+    'twenty app pull --path ./apps/billing',
+    'twenty app pull --path ./workspace-app --yes --json',
   ],
   outputModes: ['human', 'json'],
   writes: true,
-  needsProject: true,
+  needsProject: false,
   needsTarget: true,
   requiredPermissions: ['APPLICATIONS'],
   load: async () =>

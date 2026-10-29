@@ -9,9 +9,15 @@ import {
   stat,
   writeFile,
 } from 'node:fs/promises';
+import { createStandardInputStub } from '@/__tests__/utils/create-standard-input-stub';
+import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
+import { installAppDependencies } from '@/app/install-app-dependencies';
+import { promptInTerminal } from '@/input/prompt-in-terminal';
+import { CliError } from '@/output/cli-error';
 import { MetadataWritability } from 'twenty-shared/types';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   afterAll,
   afterEach,
@@ -39,6 +45,16 @@ const launch = vi.hoisted(() => ({ modulePath: '', execArgv: [] as string[] }));
 vi.mock('@/app/get-app-worker-launch', () => ({
   getAppWorkerLaunch: () => launch,
 }));
+vi.mock('@/app/get-app-template-directory', () => ({
+  getAppTemplateDirectory: vi.fn(),
+}));
+vi.mock('@/app/install-app-dependencies', () => ({
+  installAppDependencies: vi.fn(),
+}));
+vi.mock('@/input/prompt-in-terminal', () => ({ promptInTerminal: vi.fn() }));
+const TEMPLATE_DIRECTORY = fileURLToPath(
+  new URL('../../../../app-template', import.meta.url),
+);
 const OBJECT_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const WORKSPACE_ID = 'dddddddd-dddd-4ddd-8ddd-dddddddddddd';
 const BASE_PATH = '.twenty/cli/pull-base.json';
@@ -115,6 +131,18 @@ describe('app pull command with the packaged worker', () => {
     await rm(workerPath, { recursive: true, force: true });
   });
   beforeEach(async () => {
+    vi.mocked(getAppTemplateDirectory).mockReturnValue(TEMPLATE_DIRECTORY);
+    vi.mocked(promptInTerminal).mockReset();
+    vi.mocked(installAppDependencies)
+      .mockReset()
+      .mockImplementation(async ({ appPath }) => {
+        const packageJson = await readFile(
+          join(appPath, 'package.json'),
+          'utf8',
+        );
+        await createSourceTestApp(appPath);
+        await writeFile(join(appPath, 'package.json'), packageJson);
+      });
     appPath = await mkdtemp(join(tmpdir(), 'twenty-cli-pull-'));
     sdkPath = await createSourceTestApp(appPath);
     await writeFile(join(appPath, 'app.ts'), sourceApplication());
@@ -129,6 +157,7 @@ describe('app pull command with the packaged worker', () => {
   });
   afterEach(async () => {
     vi.unstubAllEnvs();
+    vi.restoreAllMocks();
     await rm(appPath, { recursive: true, force: true });
   });
 
@@ -249,38 +278,40 @@ export default defineObject({ nameSingular: 'invalid' });`,
     ).toContain(SOURCE_TEST_APPLICATION_ID);
   });
 
-  it('uses an explicit identifier even when the workspace has no custom application', async () => {
-    await rm(join(appPath, 'app.ts'));
-    customApplication = null;
-    const result = await runJson(
-      '--universal-identifier',
-      SOURCE_TEST_APPLICATION_ID.toUpperCase(),
-    );
+  it.each([null, { universalIdentifier: OBJECT_ID }])(
+    'uses the locally declared application when the workspace custom application is %j',
+    async (customApplicationValue) => {
+      customApplication = customApplicationValue;
+      const result = await runJson();
 
-    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
-    expect(readGraphqlRequest(server.requests[0]).query).not.toContain(
-      'workspaceCustomApplication',
-    );
-    expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
-      universalIdentifier: SOURCE_TEST_APPLICATION_ID,
-    });
-  });
+      expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+      expect(readGraphqlRequest(server.requests[0]).query).not.toContain(
+        'workspaceCustomApplication',
+      );
+      expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+      });
+      expect(installAppDependencies).not.toHaveBeenCalled();
+      expect(promptInTerminal).not.toHaveBeenCalled();
+    },
+  );
 
-  it('does not fall back to the local application when the custom application is missing', async () => {
+  it('fails without creating a project when the custom application is missing', async () => {
+    await rm(appPath, { recursive: true });
     customApplication = null;
-    const original = await readFile(join(appPath, 'app.ts'), 'utf8');
-    const result = await runJson();
+    const result = await runJson('--yes');
 
     expect(result.envelope.error).toMatchObject({
       code: 'APP_NOT_FOUND',
       message: 'This workspace has no custom application to pull.',
     });
     expect(server.requests).toHaveLength(1);
-    expect(await readFile(join(appPath, 'app.ts'), 'utf8')).toBe(original);
-    expect(await readdir(appPath)).not.toContain('.twenty');
+    await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(installAppDependencies).not.toHaveBeenCalled();
   });
 
   it('rejects a malformed workspace custom application identifier before export', async () => {
+    await rm(join(appPath, 'app.ts'));
     customApplication = { universalIdentifier: 'not-a-uuid' };
 
     expect((await runJson()).envelope.error.code).toBe('INVALID_RESPONSE');
@@ -288,34 +319,132 @@ export default defineObject({ nameSingular: 'invalid' });`,
     expect(await readdir(appPath)).not.toContain('.twenty');
   });
 
-  it('requires the explicit identifier to pull a different locally declared application', async () => {
-    customApplication = { universalIdentifier: OBJECT_ID };
-    const original = await readFile(join(appPath, 'app.ts'), 'utf8');
-    const result = await runJson();
-
-    expect(result.envelope.error).toMatchObject({
-      code: 'INVALID_INPUT',
-      hint: expect.stringContaining(
-        `--universal-identifier ${SOURCE_TEST_APPLICATION_ID}`,
-      ),
-    });
-    expect(server.requests).toHaveLength(1);
-    expect(await readFile(join(appPath, 'app.ts'), 'utf8')).toBe(original);
-    expect(await readdir(appPath)).not.toContain('.twenty');
-    expect(
-      (await runJson('--universal-identifier', SOURCE_TEST_APPLICATION_ID))
-        .exitCode,
-    ).toBe(0);
+  it('rejects the removed identifier option before contacting the workspace', async () => {
+    expect((await runJson('--universal-identifier', OBJECT_ID)).exitCode).toBe(
+      2,
+    );
+    expect(server.requests).toHaveLength(0);
   });
 
-  it('rejects a different explicit app before requesting the export', async () => {
+  it('creates and pulls a clean project into a new directory with --yes', async () => {
+    await rm(appPath, { recursive: true });
+    const result = await runJson('--yes');
+
+    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+    expect(result.envelope.data.pulled).toBe(true);
+    expect(installAppDependencies).toHaveBeenCalledOnce();
+    expect(promptInTerminal).not.toHaveBeenCalled();
+    expect(await readdir(join(appPath, 'src'))).toEqual([
+      'application.config.ts',
+      'objects',
+    ]);
     expect(
-      (await runJson('--universal-identifier', OBJECT_ID)).envelope.error.code,
-    ).toBe('INVALID_INPUT');
-    expect(server.requests).toHaveLength(1);
-    expect(readGraphqlRequest(server.requests[0]).query).toContain(
-      'currentWorkspace',
+      await readFile(join(appPath, 'src/application.config.ts'), 'utf8'),
+    ).toContain(SOURCE_TEST_APPLICATION_ID);
+    expect(
+      await readFile(join(appPath, 'src/objects/pet.object.ts'), 'utf8'),
+    ).toContain(OBJECT_ID);
+    expect(
+      JSON.parse(await readFile(join(appPath, 'package.json'), 'utf8')).scripts
+        .typecheck,
+    ).toBe('tsgo --noEmit -p tsconfig.json');
+    expect(await readdir(appPath)).not.toContain('public');
+    const second = await runJson();
+    expect(second.exitCode, JSON.stringify(second.envelope)).toBe(0);
+    expect(second.envelope.data.base.status).toBe('used');
+    expect(installAppDependencies).toHaveBeenCalledOnce();
+  });
+
+  it('asks for the directory and confirmation outside an app', async () => {
+    await rm(appPath, { recursive: true });
+    await mkdir(appPath);
+    vi.spyOn(process, 'cwd').mockReturnValue(appPath);
+    vi.stubEnv('CI', 'false');
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ isTerminal: true }),
     );
+    vi.mocked(promptInTerminal)
+      .mockResolvedValueOnce('workspace-app')
+      .mockResolvedValueOnce('yes');
+
+    const result = await runCliForTest(['app', 'pull']);
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(promptInTerminal).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(promptInTerminal).mock.calls[1][0].question).toContain(
+      'install its dependencies',
+    );
+    expect(await readdir(appPath)).toEqual(['workspace-app']);
+    expect(
+      await readFile(
+        join(appPath, 'workspace-app/src/application.config.ts'),
+        'utf8',
+      ),
+    ).toContain(SOURCE_TEST_APPLICATION_ID);
+  });
+
+  it('does not create anything when the user declines', async () => {
+    await rm(appPath, { recursive: true });
+    vi.stubEnv('CI', 'false');
+    vi.spyOn(process, 'stdin', 'get').mockReturnValue(
+      createStandardInputStub({ isTerminal: true }),
+    );
+    vi.mocked(promptInTerminal).mockResolvedValueOnce('no');
+
+    const result = await run();
+
+    expect(result.exitCode).toBe(2);
+    expect(installAppDependencies).not.toHaveBeenCalled();
+    await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('requires approval in noninteractive mode before creating files', async () => {
+    await rm(appPath, { recursive: true });
+    const result = await runJson('--no-input');
+
+    expect(result.envelope.error.code).toBe('CONFIRMATION_REQUIRED');
+    expect(promptInTerminal).not.toHaveBeenCalled();
+    expect(installAppDependencies).not.toHaveBeenCalled();
+    await expect(stat(appPath)).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+
+  it('requires a destination when creating without prompts', async () => {
+    await rm(appPath, { recursive: true });
+    await mkdir(appPath);
+    vi.spyOn(process, 'cwd').mockReturnValue(appPath);
+
+    const result = await runCliForTest(['app', 'pull', '--yes', '--json']);
+
+    expect(parseSingleJsonLine(result.stdout).error.code).toBe(
+      'APP_PATH_REQUIRED',
+    );
+    expect(await readdir(appPath)).toEqual([]);
+    expect(installAppDependencies).not.toHaveBeenCalled();
+  });
+
+  it('preserves files in an unrelated nonempty directory', async () => {
+    await rm(appPath, { recursive: true });
+    await mkdir(appPath);
+    await writeFile(join(appPath, 'notes.txt'), 'keep me');
+    const result = await runJson('--yes');
+
+    expect(result.envelope.error.code).toBe('APP_PATH_UNAVAILABLE');
+    expect(await readdir(appPath)).toEqual(['notes.txt']);
+    expect(await readFile(join(appPath, 'notes.txt'), 'utf8')).toBe('keep me');
+    expect(installAppDependencies).not.toHaveBeenCalled();
+  });
+
+  it('does not write pulled definitions after an installation failure', async () => {
+    await rm(appPath, { recursive: true });
+    vi.mocked(installAppDependencies).mockRejectedValue(
+      new CliError({ code: 'APP_INIT_FAILED', message: 'Yarn failed' }),
+    );
+    const result = await runJson('--yes');
+
+    expect(result.envelope.error.code).toBe('APP_INIT_FAILED');
+    expect(await readdir(appPath)).toContain('package.json');
+    expect(await readdir(appPath)).not.toContain('src');
+    expect(await readdir(appPath)).not.toContain('.twenty');
   });
 
   it('leaves local files untouched when server authorization fails', async () => {

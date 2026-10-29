@@ -113,14 +113,14 @@ A plan:
 
 ```bash
 twenty app pull --remote dev
-twenty app pull --universal-identifier <universalIdentifier>
+twenty app pull --path ./workspace-app --yes --no-input
 ```
 
-Pull needs an existing project with `package.json` depending on an installed `twenty-sdk`. Without `--universal-identifier`, pull targets the selected workspace's custom application. Pass the flag to pull another application, even when its identifier is declared in your local `defineApplication()` file.
+Inside an app, pull reads its local `defineApplication()` identifier and retrieves that application. Outside an app, it asks for a directory and confirmation, creates a local project for the selected workspace's custom application, installs dependencies with Yarn, then pulls the definitions. The new project includes package and configuration files, without the initializer's demo entities.
 
-For a first custom-app pull, use a project without an application definition. If you scaffold a new project with `twenty app init`, remove its generated `src/application-config.ts` before pulling. Pull writes the custom application's definition. If an existing local definition names a different application, pull refuses before export or writing and suggests the explicit identifier for that local app. A workspace without a custom application produces an error instead of pulling the local app.
+Use `--path` to select an existing app or a new or empty directory. Noninteractive creation requires `--path` and `--yes`; pull refuses to overwrite an unrelated nonempty directory. Creating a project does not register an application or change the workspace. An existing SDK project without an application definition also pulls the custom application. There is no `--universal-identifier` option.
 
-If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
+If dependency installation fails for a new project, the scaffold is kept. Run `yarn install` inside it, then retry pull. Existing projects do not install dependencies automatically. If their application identifier cannot be read, pull reports that error instead of creating another app. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
 
 **What it writes:**
 
