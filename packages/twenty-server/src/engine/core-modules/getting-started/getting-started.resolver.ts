@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -8,8 +8,12 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
+import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
+import { buildGettingStartedStepDefinition } from 'src/engine/core-modules/getting-started/utils/build-getting-started-step-definition.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -37,20 +41,26 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class GettingStartedResolver {
-  constructor(private readonly gettingStartedService: GettingStartedService) {}
+  constructor(
+    private readonly gettingStartedService: GettingStartedService,
+    private readonly i18nService: I18nService,
+  ) {}
 
   @Query(() => GettingStartedProgressDTO)
   async gettingStartedProgress(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Context() context: I18nContext,
   ): Promise<GettingStartedProgressDTO> {
-    return this.gettingStartedService.getProgress({
+    const progress = await this.gettingStartedService.getProgress({
       userId: user.id,
       userEmail: user.email,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
+
+    return this.buildProgressDTO(progress, context);
   }
 
   @Mutation(() => GettingStartedProgressDTO)
@@ -59,13 +69,33 @@ export class GettingStartedResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input') input: UpdateGettingStartedInput,
+    @Context() context: I18nContext,
   ): Promise<GettingStartedProgressDTO> {
-    return this.gettingStartedService.updateProgress({
+    const progress = await this.gettingStartedService.updateProgress({
       userId: user.id,
       userEmail: user.email,
       workspaceId: workspace.id,
       userWorkspaceId,
       input,
     });
+
+    return this.buildProgressDTO(progress, context);
+  }
+
+  private buildProgressDTO(
+    progress: GettingStartedProgress,
+    context: I18nContext,
+  ): GettingStartedProgressDTO {
+    const i18nInstance = this.i18nService.getI18nInstance(context.req.locale);
+
+    return {
+      ...progress,
+      steps: progress.steps.map((step) =>
+        buildGettingStartedStepDefinition({
+          step,
+          translate: (descriptor) => i18nInstance._(descriptor),
+        }),
+      ),
+    };
   }
 }

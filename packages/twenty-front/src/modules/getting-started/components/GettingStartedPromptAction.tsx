@@ -2,17 +2,15 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { GETTING_STARTED_PROMPTS } from '@/getting-started/constants/GettingStartedPrompts';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
 const StyledColumn = styled.div`
   display: flex;
@@ -21,17 +19,14 @@ const StyledColumn = styled.div`
 `;
 
 type GettingStartedPromptActionProps = {
-  step: GettingStartedStep;
+  stepDefinition: GettingStartedStepDefinition;
 };
 
 export const GettingStartedPromptAction = ({
-  step,
+  stepDefinition: { step, prompt: defaultPrompt, promptLabel },
 }: GettingStartedPromptActionProps) => {
   const { t } = useLingui();
-  const stepPrompt = GETTING_STARTED_PROMPTS[step];
-  const [prompt, setPrompt] = useState(
-    isDefined(stepPrompt) ? t(stepPrompt.prompt) : '',
-  );
+  const [prompt, setPrompt] = useState(defaultPrompt ?? '');
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { updateGettingStarted } = useUpdateGettingStarted();
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
@@ -50,7 +45,7 @@ export const GettingStartedPromptAction = ({
     <StyledColumn>
       <TextArea
         textAreaId={`getting-started-${step}-prompt`}
-        label={isDefined(stepPrompt) ? t(stepPrompt.label) : undefined}
+        label={promptLabel ?? undefined}
         minRows={3}
         value={prompt}
         onChange={setPrompt}

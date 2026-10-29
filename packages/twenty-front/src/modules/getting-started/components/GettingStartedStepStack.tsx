@@ -1,14 +1,16 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
 import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
-import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { parseThemeColor } from 'twenty-ui/utilities';
 
 import {
   type GettingStartedStep,
+  type GettingStartedStepDefinition,
   type GettingStartedStepReward,
 } from '~/generated-metadata/graphql';
 
@@ -105,7 +107,7 @@ const StyledStackedStepTitle = styled.span`
 `;
 
 type GettingStartedStepStackProps = {
-  steps: GettingStartedStep[];
+  steps: GettingStartedStepDefinition[];
   selectedStep: GettingStartedStep;
   completedSteps: GettingStartedStep[];
   stepRewards: GettingStartedStepReward[];
@@ -125,6 +127,7 @@ export const GettingStartedStepStack = ({
 }: GettingStartedStepStackProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const shouldReduceMotion = useReducedMotion();
   const stepTransition = {
     duration: theme.animation.duration.normal,
@@ -133,19 +136,23 @@ export const GettingStartedStepStack = ({
   const stackOffset = shouldReduceMotion ? 0 : 8;
   const cardOffset = shouldReduceMotion ? 0 : 16;
 
-  const selectedStepIndex = steps.indexOf(selectedStep);
+  const selectedStepIndex = steps.findIndex(
+    ({ step }) => step === selectedStep,
+  );
+  const selectedStepDefinition = steps[selectedStepIndex];
   const stackedSteps = [3, 2, 1]
     .filter((depth) => depth < steps.length)
     .map((depth) => ({
       depth,
-      step: steps[(selectedStepIndex + depth) % steps.length],
+      stepDefinition: steps[(selectedStepIndex + depth) % steps.length],
     }));
 
   return (
     <div>
       <AnimatePresence initial={false} mode="popLayout">
-        {stackedSteps.map(({ depth, step }) => {
-          const { Icon, iconColor, title } = GETTING_STARTED_STEP_CONTENT[step];
+        {stackedSteps.map(({ depth, stepDefinition }) => {
+          const { step, icon, iconColor, title } = stepDefinition;
+          const StepIcon = getIcon(icon);
 
           return (
             <StyledStackedStep
@@ -160,8 +167,11 @@ export const GettingStartedStepStack = ({
               disabled={isSaving}
               onClick={() => onSelectStep(step)}
             >
-              <Icon size={theme.icon.size.md} color={iconColor} />
-              <StyledStackedStepTitle>{t(title)}</StyledStackedStepTitle>
+              <StepIcon
+                size={theme.icon.size.md}
+                color={themeCssVariables.tag.text[parseThemeColor(iconColor)]}
+              />
+              <StyledStackedStepTitle>{title}</StyledStackedStepTitle>
               <GettingStartedStepRewardChip
                 stepReward={stepRewards.find(
                   (stepReward) => stepReward.step === step,
@@ -173,11 +183,11 @@ export const GettingStartedStepStack = ({
       </AnimatePresence>
       <StyledActiveStep>
         <StyledSteps aria-label={t`Getting started steps`}>
-          {steps.map((step) => (
+          {steps.map(({ step, title }) => (
             <StyledTick
               key={step}
               type="button"
-              aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
+              aria-label={title}
               aria-current={step === selectedStep ? 'step' : undefined}
               data-completed={completedSteps.includes(step) || undefined}
               disabled={isSaving}
@@ -202,7 +212,7 @@ export const GettingStartedStepStack = ({
             transition={stepTransition}
           >
             <GettingStartedStepCard
-              step={selectedStep}
+              stepDefinition={selectedStepDefinition}
               stepReward={stepRewards.find(
                 (stepReward) => stepReward.step === selectedStep,
               )}

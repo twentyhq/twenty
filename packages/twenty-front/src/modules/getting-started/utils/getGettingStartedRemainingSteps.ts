@@ -1,10 +1,13 @@
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import {
+  type GettingStartedStep,
+  type GettingStartedStepDefinition,
+} from '~/generated-metadata/graphql';
 
 export const getGettingStartedRemainingSteps = ({
   steps,
   completedSteps,
 }: {
-  steps: GettingStartedStep[];
+  steps: GettingStartedStepDefinition[];
   completedSteps: GettingStartedStep[];
-}): GettingStartedStep[] =>
-  steps.filter((step) => !completedSteps.includes(step));
+}): GettingStartedStepDefinition[] =>
+  steps.filter(({ step }) => !completedSteps.includes(step));

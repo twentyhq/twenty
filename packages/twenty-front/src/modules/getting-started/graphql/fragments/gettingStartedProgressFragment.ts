@@ -8,7 +8,17 @@ export const GETTING_STARTED_PROGRESS_FRAGMENT = gql`
       creditsEach
       remainingCount
     }
-    steps
+    steps {
+      step
+      kind
+      title
+      doneTitle
+      description
+      icon
+      iconColor
+      promptLabel
+      prompt
+    }
     completedSteps
     selectedStep
     snoozedUntil

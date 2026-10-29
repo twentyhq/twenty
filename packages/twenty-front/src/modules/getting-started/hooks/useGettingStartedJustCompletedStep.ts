@@ -20,7 +20,7 @@ export const useGettingStartedJustCompletedStep = ({
     if (isDefined(seenProgress)) {
       const { selectedStep: previouslyDisplayedStep } =
         getGettingStartedStepSelection({
-          steps: seenProgress.steps,
+          steps: seenProgress.steps.map(({ step }) => step),
           completedSteps: seenProgress.completedSteps,
           selectedStep: seenProgress.selectedStep,
         });

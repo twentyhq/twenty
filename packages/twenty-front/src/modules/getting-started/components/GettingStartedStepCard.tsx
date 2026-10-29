@@ -1,17 +1,16 @@
-import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
-import { GETTING_STARTED_STEP_ACTIONS } from '@/getting-started/constants/GettingStartedStepActions';
-import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
+import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
+import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { IconCheck } from 'twenty-ui/icon';
+import { IconCheck, useIcons } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { parseThemeColor } from 'twenty-ui/utilities';
 
 import {
-  type GettingStartedStep,
+  type GettingStartedStepDefinition,
   type GettingStartedStepReward,
 } from '~/generated-metadata/graphql';
 
@@ -55,30 +54,29 @@ const StyledBody = styled.div`
 `;
 
 type GettingStartedStepCardProps = {
-  step: GettingStartedStep;
+  stepDefinition: GettingStartedStepDefinition;
   stepReward: GettingStartedStepReward | undefined;
   isCompleted: boolean;
   isJustCompleted: boolean;
 };
 
 export const GettingStartedStepCard = ({
-  step,
+  stepDefinition,
   stepReward,
   isCompleted,
   isJustCompleted,
 }: GettingStartedStepCardProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
-  const content = GETTING_STARTED_STEP_CONTENT[step];
-  const StepAction = GETTING_STARTED_STEP_ACTIONS[step];
+  const StepIcon = getIcon(stepDefinition.icon);
 
   return (
     <Card.Root
       fullWidth
       backgroundColor={themeCssVariables.background.primary}
       render={<section />}
-      aria-label={t(content.title)}
+      aria-label={stepDefinition.title}
     >
       <StyledHeading isCompleted={isCompleted}>
         {isCompleted && isJustCompleted ? (
@@ -88,20 +86,29 @@ export const GettingStartedStepCard = ({
         ) : isCompleted ? (
           <IconCheck size={theme.icon.size.lg} />
         ) : (
-          <content.Icon size={theme.icon.size.lg} color={content.iconColor} />
+          <StepIcon
+            size={theme.icon.size.lg}
+            color={
+              themeCssVariables.tag.text[
+                parseThemeColor(stepDefinition.iconColor)
+              ]
+            }
+          />
         )}
         <StyledTitle>
           <Heading size="lg">
             <GettingStartedRollingText
-              text={t(isCompleted ? content.doneTitle : content.title)}
+              text={
+                isCompleted ? stepDefinition.doneTitle : stepDefinition.title
+              }
             />
           </Heading>
-          <StyledDescription>{t(content.description)}</StyledDescription>
+          <StyledDescription>{stepDefinition.description}</StyledDescription>
         </StyledTitle>
         <GettingStartedStepRewardChip stepReward={stepReward} />
       </StyledHeading>
       <StyledBody>
-        <StepAction step={step} />
+        <GettingStartedStepAction stepDefinition={stepDefinition} />
       </StyledBody>
     </Card.Root>
   );

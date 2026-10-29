@@ -2561,7 +2561,7 @@ type GettingStartedProgress {
   selectedStep: GettingStartedStep
   snoozedUntil: String
   stepRewards: [GettingStartedStepReward!]!
-  steps: [GettingStartedStep!]!
+  steps: [GettingStartedStepDefinition!]!
 }
 
 enum GettingStartedStep {
@@ -2571,6 +2571,24 @@ enum GettingStartedStep {
   IMPORT_DATA
   INSTALL_APP
   INVITE_TEAM
+}
+
+type GettingStartedStepDefinition {
+  description: String!
+  doneTitle: String!
+  icon: String!
+  iconColor: String!
+  kind: GettingStartedStepKind!
+  prompt: String
+  promptLabel: String
+  step: GettingStartedStep!
+  title: String!
+}
+
+enum GettingStartedStepKind {
+  CUSTOM
+  PROMPT
+  WORKFLOW
 }
 
 type GettingStartedStepReward {

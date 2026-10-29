@@ -26,7 +26,10 @@ import {
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
-import { mockGettingStartedSteps } from '~/testing/mock-data/gettingStartedSteps';
+import {
+  mockGettingStartedStepDefinitions,
+  mockGettingStartedSteps,
+} from '~/testing/mock-data/gettingStartedSteps';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
@@ -57,7 +60,7 @@ const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
       remainingCount: 1,
     },
   ],
-  steps: mockGettingStartedSteps,
+  steps: mockGettingStartedStepDefinitions,
   completedSteps: [],
   selectedStep: null,
   snoozedUntil: null,
@@ -273,7 +276,7 @@ const GettingStartedAnimationPreview = () => {
     const stepToComplete =
       isDefined(selectedStep) && !completedSteps.includes(selectedStep)
         ? selectedStep
-        : steps.find((step) => !completedSteps.includes(step));
+        : steps.find(({ step }) => !completedSteps.includes(step))?.step;
 
     if (!isDefined(stepToComplete)) {
       return;

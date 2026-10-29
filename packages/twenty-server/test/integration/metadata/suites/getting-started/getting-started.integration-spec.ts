@@ -16,7 +16,10 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 const GETTING_STARTED_PROGRESS_QUERY = gql`
   query GettingStartedProgress {
     gettingStartedProgress {
-      steps
+      steps {
+        step
+        kind
+      }
       completedSteps
     }
   }
@@ -121,12 +124,12 @@ describe('gettingStarted (e2e)', () => {
         response.body.data.gettingStartedProgress;
 
       expect(steps).toEqual([
-        'CONNECT_MAILBOX',
-        'IMPORT_DATA',
-        'INSTALL_APP',
-        'INVITE_TEAM',
-        'HANDOVER_DEALS',
-        'FOLLOW_UP_DEALS',
+        { step: 'CONNECT_MAILBOX', kind: 'CUSTOM' },
+        { step: 'IMPORT_DATA', kind: 'CUSTOM' },
+        { step: 'INSTALL_APP', kind: 'CUSTOM' },
+        { step: 'INVITE_TEAM', kind: 'CUSTOM' },
+        { step: 'HANDOVER_DEALS', kind: 'WORKFLOW' },
+        { step: 'FOLLOW_UP_DEALS', kind: 'PROMPT' },
       ]);
       expect(completedSteps).toContain('CONNECT_MAILBOX');
       expect(
@@ -153,8 +156,10 @@ describe('gettingStarted (e2e)', () => {
         });
 
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.gettingStartedProgress.steps).not.toContain(
-          'HANDOVER_DEALS',
+        expect(
+          response.body.data.gettingStartedProgress.steps,
+        ).not.toContainEqual(
+          expect.objectContaining({ step: 'HANDOVER_DEALS' }),
         );
       } finally {
         await globalThis.testDataSource.query(

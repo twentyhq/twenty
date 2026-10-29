@@ -8,7 +8,6 @@ import { In } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { GETTING_STARTED_STEP_REWARDS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-rewards.constant';
-import { type GettingStartedProgressDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-progress.dto';
 import { type GettingStartedStepRewardDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-step-reward.dto';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
@@ -20,6 +19,7 @@ import {
   GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
+import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
 import { getGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/get-getting-started-steps.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -62,7 +62,7 @@ export class GettingStartedService {
     userEmail,
     workspaceId,
     userWorkspaceId,
-  }: GettingStartedScope): Promise<GettingStartedProgressDTO> {
+  }: GettingStartedScope): Promise<GettingStartedProgress> {
     const [
       userVars,
       creditsEarnedMicro,
@@ -141,7 +141,7 @@ export class GettingStartedService {
     input,
   }: GettingStartedScope & {
     input: UpdateGettingStartedInput;
-  }): Promise<GettingStartedProgressDTO> {
+  }): Promise<GettingStartedProgress> {
     if (isDefined(input.selectedStep)) {
       await this.userVarsService.set({
         userId,

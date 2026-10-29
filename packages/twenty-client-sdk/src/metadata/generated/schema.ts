@@ -1710,11 +1710,26 @@ export interface GettingStartedProgress {
     selectedStep?: GettingStartedStep
     snoozedUntil?: Scalars['String']
     stepRewards: GettingStartedStepReward[]
-    steps: GettingStartedStep[]
+    steps: GettingStartedStepDefinition[]
     __typename: 'GettingStartedProgress'
 }
 
 export type GettingStartedStep = 'CONNECT_MAILBOX' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+
+export interface GettingStartedStepDefinition {
+    description: Scalars['String']
+    doneTitle: Scalars['String']
+    icon: Scalars['String']
+    iconColor: Scalars['String']
+    kind: GettingStartedStepKind
+    prompt?: Scalars['String']
+    promptLabel?: Scalars['String']
+    step: GettingStartedStep
+    title: Scalars['String']
+    __typename: 'GettingStartedStepDefinition'
+}
+
+export type GettingStartedStepKind = 'CUSTOM' | 'PROMPT' | 'WORKFLOW'
 
 export interface GettingStartedStepReward {
     creditsEach: Scalars['Float']
@@ -6239,7 +6254,21 @@ export interface GettingStartedProgressGenqlSelection{
     selectedStep?: boolean | number
     snoozedUntil?: boolean | number
     stepRewards?: GettingStartedStepRewardGenqlSelection
-    steps?: boolean | number
+    steps?: GettingStartedStepDefinitionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedStepDefinitionGenqlSelection{
+    description?: boolean | number
+    doneTitle?: boolean | number
+    icon?: boolean | number
+    iconColor?: boolean | number
+    kind?: boolean | number
+    prompt?: boolean | number
+    promptLabel?: boolean | number
+    step?: boolean | number
+    title?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10489,6 +10518,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const GettingStartedStepDefinition_possibleTypes: string[] = ['GettingStartedStepDefinition']
+    export const isGettingStartedStepDefinition = (obj?: { __typename?: any } | null): obj is GettingStartedStepDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedStepDefinition"')
+      return GettingStartedStepDefinition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const GettingStartedStepReward_possibleTypes: string[] = ['GettingStartedStepReward']
     export const isGettingStartedStepReward = (obj?: { __typename?: any } | null): obj is GettingStartedStepReward => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedStepReward"')
@@ -12490,6 +12527,12 @@ export const enumGettingStartedStep = {
    IMPORT_DATA: 'IMPORT_DATA' as const,
    INSTALL_APP: 'INSTALL_APP' as const,
    INVITE_TEAM: 'INVITE_TEAM' as const
+}
+
+export const enumGettingStartedStepKind = {
+   CUSTOM: 'CUSTOM' as const,
+   PROMPT: 'PROMPT' as const,
+   WORKFLOW: 'WORKFLOW' as const
 }
 
 export const enumGraphOrderBy = {

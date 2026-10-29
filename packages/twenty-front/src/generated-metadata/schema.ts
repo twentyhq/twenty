@@ -2712,7 +2712,7 @@ export type GettingStartedProgress = {
   selectedStep?: Maybe<GettingStartedStep>;
   snoozedUntil?: Maybe<Scalars['String']['output']>;
   stepRewards: Array<GettingStartedStepReward>;
-  steps: Array<GettingStartedStep>;
+  steps: Array<GettingStartedStepDefinition>;
 };
 
 export enum GettingStartedStep {
@@ -2722,6 +2722,25 @@ export enum GettingStartedStep {
   IMPORT_DATA = 'IMPORT_DATA',
   INSTALL_APP = 'INSTALL_APP',
   INVITE_TEAM = 'INVITE_TEAM'
+}
+
+export type GettingStartedStepDefinition = {
+  __typename?: 'GettingStartedStepDefinition';
+  description: Scalars['String']['output'];
+  doneTitle: Scalars['String']['output'];
+  icon: Scalars['String']['output'];
+  iconColor: Scalars['String']['output'];
+  kind: GettingStartedStepKind;
+  prompt?: Maybe<Scalars['String']['output']>;
+  promptLabel?: Maybe<Scalars['String']['output']>;
+  step: GettingStartedStep;
+  title: Scalars['String']['output'];
+};
+
+export enum GettingStartedStepKind {
+  CUSTOM = 'CUSTOM',
+  PROMPT = 'PROMPT',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export type GettingStartedStepReward = {

@@ -133,7 +133,8 @@ export const GettingStartedPageContent = () => {
     skip: !hasWorkflowsPermission,
   });
 
-  const steps = progress?.steps ?? [];
+  const stepDefinitions = progress?.steps ?? [];
+  const steps = stepDefinitions.map(({ step }) => step);
   const completedSteps = progress?.completedSteps ?? [];
   const remainingSteps = steps.filter((step) => !completedSteps.includes(step));
   const isComplete = remainingSteps.length === 0;
@@ -256,7 +257,7 @@ export const GettingStartedPageContent = () => {
             </StyledGoal>
             {isNonEmptyArray(steps) && (
               <GettingStartedStepStack
-                steps={steps}
+                steps={stepDefinitions}
                 selectedStep={selectedStep}
                 completedSteps={completedSteps}
                 stepRewards={stepRewards}
