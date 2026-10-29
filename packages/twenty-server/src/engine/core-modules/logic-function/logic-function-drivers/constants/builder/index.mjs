@@ -54,7 +54,7 @@ export const handler = async (event) => {
       outfile: outFilePath,
       platform: 'node',
       format: 'esm',
-      target: targetRuntime === 'nodejs18.x' ? 'node18' : 'node22',
+      target: 'esnext',
       bundle: true,
       sourcemap: true,
       packages: 'external',
