@@ -28,7 +28,7 @@
         "src/database/clickhouse/migrations/run-migrations.ts",
         "src/database/clickhouse/seeds/run-seeds.ts",
         "src/instrument.ts",
-        "src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler.ts",
+        "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/front-component-driver.factory.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
         "lingui.config.ts",

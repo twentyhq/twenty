@@ -9,7 +9,7 @@ import {
   LAMBDA_EPHEMERAL_STORAGE_MB,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
-import { FRONT_COMPONENT_BUILDER_DIRECTORY } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-directory.constant';
+import { getFrontComponentBuilderFiles } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/get-front-component-builder-files.util';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 
 export const getFrontComponentBuilderName = async ({
@@ -22,10 +22,7 @@ export const getFrontComponentBuilderName = async ({
   action: FrontComponentBuilderRequest['action'];
 }) => {
   const buildsDependencies = action === 'buildDependencies';
-  const handlerSource = await readFile(
-    join(FRONT_COMPONENT_BUILDER_DIRECTORY, 'index.js'),
-    'utf8',
-  );
+  const builderFiles = await getFrontComponentBuilderFiles();
   const yarnEngineFiles = buildsDependencies
     ? await Promise.all(
         ['.yarnrc.yml', '.yarn/releases/yarn-4.9.2.cjs'].map((file) =>
@@ -41,7 +38,7 @@ export const getFrontComponentBuilderName = async ({
     namespace,
     contents: [
       workspaceId,
-      handlerSource,
+      ...Object.values(builderFiles),
       ...yarnEngineFiles,
       String(
         buildsDependencies

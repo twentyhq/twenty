@@ -70,7 +70,7 @@
         "outDir": "dist"
       },
       {
-        "include": "engine/metadata-modules/ai/ai-front-component/generated/**",
+        "include": "engine/metadata-modules/ai/ai-front-component/front-component-drivers/constants/builder/**",
         "outDir": "dist/assets"
       },
       {
