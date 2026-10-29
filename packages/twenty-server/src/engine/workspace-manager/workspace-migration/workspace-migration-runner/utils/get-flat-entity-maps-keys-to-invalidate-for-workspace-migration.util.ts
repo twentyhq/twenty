@@ -13,10 +13,6 @@ type ManyToOneRelation = {
   universalForeignKey: string | null;
 };
 
-// Maps that read an entity's rows outside the many-to-one/one-to-many graph,
-// so any change to that entity must refresh them. flatObjectMetadataMaps and
-// flatFieldMetadataMaps both read index rows (object indexMetadataIds, field
-// isUnique), and an index update re-keys the row with a new id.
 const EXTRA_AFFECTED_METADATA_NAMES: Partial<
   Record<AllMetadataName, AllMetadataName[]>
 > = {
