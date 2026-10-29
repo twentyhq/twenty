@@ -265,7 +265,9 @@ import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/u
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
 import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793203146887-agent-and-skill-overridable-entity';
 import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793139794914-drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel';
-import { UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793268192113-unlist-unreviewed-application-registrations';
+import { UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793278636737-unlist-unreviewed-application-registrations';
+import { PurgeSoftDeletedAgentsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793272266091-purge-soft-deleted-agents';
+import { AddGeolocationToUserSessionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793274494191-add-geolocation-to-user-session';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -534,4 +536,6 @@ export const INSTANCE_COMMANDS = [
   DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand,
   UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand,
   AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand,
+  PurgeSoftDeletedAgentsSlowInstanceCommand,
+  AddGeolocationToUserSessionFastInstanceCommand,
 ];

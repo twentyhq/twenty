@@ -5799,6 +5799,8 @@ enum UserCreditsFallback {
 
 type UserSession {
   authProvider: String!
+  city: String
+  country: String
   createdAt: DateTime!
   expiresAt: DateTime!
   id: UUID!
@@ -5806,6 +5808,7 @@ type UserSession {
   isCurrent: Boolean!
   isImpersonating: Boolean!
   lastActiveAt: DateTime!
+  region: String
   userAgent: String
   workspaceId: UUID
 }

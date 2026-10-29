@@ -15041,6 +15041,12 @@ export default {
             "authProvider": [
                 1
             ],
+            "city": [
+                1
+            ],
+            "country": [
+                1
+            ],
             "createdAt": [
                 209
             ],
@@ -15061,6 +15067,9 @@ export default {
             ],
             "lastActiveAt": [
                 209
+            ],
+            "region": [
+                1
             ],
             "userAgent": [
                 1

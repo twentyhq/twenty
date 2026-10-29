@@ -8065,6 +8065,8 @@ export enum UserCreditsFallback {
 export type UserSession = {
   __typename?: 'UserSession';
   authProvider: Scalars['String']['output'];
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   expiresAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
@@ -8072,6 +8074,7 @@ export type UserSession = {
   isCurrent: Scalars['Boolean']['output'];
   isImpersonating: Scalars['Boolean']['output'];
   lastActiveAt: Scalars['DateTime']['output'];
+  region?: Maybe<Scalars['String']['output']>;
   userAgent?: Maybe<Scalars['String']['output']>;
   workspaceId?: Maybe<Scalars['UUID']['output']>;
 };
