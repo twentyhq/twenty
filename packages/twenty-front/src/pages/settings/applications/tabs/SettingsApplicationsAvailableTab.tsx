@@ -185,7 +185,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
           {showUnlisted && unlistedApplications.length > 0 && (
             <StyledUnlistedContainer>
-              <InlineBanner status="warning">{t`Applications below are not listed on the marketplace and have not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
+              <InlineBanner status="warning">{t`Applications below have not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
                 {unlistedApplications.map((application) => (
                   <SettingsAvailableApplicationCard

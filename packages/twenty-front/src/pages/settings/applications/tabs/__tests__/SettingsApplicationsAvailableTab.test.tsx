@@ -50,7 +50,7 @@ jest.mock(
 );
 
 const UNLISTED_WARNING =
-  'Applications below are not listed on the marketplace and have not been reviewed by Twenty. Use at your own risk.';
+  'Applications below have not been reviewed by Twenty. Use at your own risk.';
 
 const renderTab = () =>
   render(
