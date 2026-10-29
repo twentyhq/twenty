@@ -32,7 +32,6 @@ const NESTED_GROUP_ROLE_ID = 'nested-group-role-1';
 const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
 const TEXT_IS_ROLE_ID = 'text-is-role-1';
 const SELECT_CONTAINS_ROLE_ID = 'select-contains-role-1';
-const OR_GROUP_INCOMPATIBLE_ROLE_ID = 'or-group-incompatible-role-1';
 const COMPANY_OBJECT_ID = 'company-object';
 const PERSON_OBJECT_ID = 'person-object';
 const OWNER_MORPH_ID = 'owner-morph';
@@ -240,15 +239,6 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     operand: 'CONTAINS',
     value: 'OPEN',
   }),
-  buildPredicate('predicate-or-incompatible', OR_GROUP_INCOMPATIBLE_ROLE_ID, {
-    operand: 'IS',
-    value: 'stale-value',
-    rowLevelPermissionPredicateGroupId: 'or-group-incompatible',
-  }),
-  buildPredicate('predicate-or-kept', OR_GROUP_INCOMPATIBLE_ROLE_ID, {
-    value: 'kept-branch-text',
-    rowLevelPermissionPredicateGroupId: 'or-group-incompatible',
-  }),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
 const buildPredicateGroup = (
@@ -290,11 +280,6 @@ const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
   buildPredicateGroup(
     'or-group-only-member',
     OR_GROUP_ONLY_MEMBER_ROLE_ID,
-    RowLevelPermissionPredicateGroupLogicalOperator.OR,
-  ),
-  buildPredicateGroup(
-    'or-group-incompatible',
-    OR_GROUP_INCOMPATIBLE_ROLE_ID,
     RowLevelPermissionPredicateGroupLogicalOperator.OR,
   ),
 ]) as unknown as FlatRowLevelPermissionPredicateGroupMaps;
@@ -349,21 +334,17 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     });
   });
 
-  describe('predicate whose operand no longer fits the field type', () => {
-    it('should match nothing rather than throw for an IS operand on a text field', () => {
-      expect(build([TEXT_IS_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
-    });
-
-    it('should match nothing rather than throw for a contains operand on a select field', () => {
-      expect(build([SELECT_CONTAINS_ROLE_ID])).toEqual(
-        UNSATISFIABLE_RECORD_FILTER,
+  describe('predicate whose operand is invalid for the field type', () => {
+    it('should throw a meaningful error for an IS operand on a text field', () => {
+      expect(() => build([TEXT_IS_ROLE_ID])).toThrow(
+        /Operand IS is not supported for field name of type TEXT/,
       );
     });
 
-    it('should drop the incompatible branch of an OR group and keep its sibling', () => {
-      expect(build([OR_GROUP_INCOMPATIBLE_ROLE_ID])).toEqual({
-        or: [{ name: { ilike: '%kept-branch-text%' } }],
-      });
+    it('should throw a meaningful error for a contains operand on a select field', () => {
+      expect(() => build([SELECT_CONTAINS_ROLE_ID])).toThrow(
+        /Operand CONTAINS is not supported for field status of type SELECT/,
+      );
     });
   });
 

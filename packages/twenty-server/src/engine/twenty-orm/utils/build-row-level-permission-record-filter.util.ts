@@ -166,7 +166,10 @@ const buildRecordFilterForRole = ({
         subFieldName: effectiveSubFieldName,
       })
     ) {
-      unsatisfiableRecordFilterIds.add(predicate.id);
+      throw new PermissionsException(
+        `Operand ${operand} is not supported for field ${fieldMetadata.name} of type ${fieldMetadata.type} in row-level permission predicate ${predicate.id}`,
+        PermissionsExceptionCode.INVALID_ARG,
+      );
     }
 
     recordFilters.push({
