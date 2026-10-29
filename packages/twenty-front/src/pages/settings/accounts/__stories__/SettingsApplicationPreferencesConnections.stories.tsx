@@ -32,9 +32,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsApplicationPreferences,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/applications/:applicationId',
-    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
-    additionalRoutes: ['/settings/accounts'],
+    routePath: '/settings/app-preferences/:appId',
+    routeParams: { ':appId': LINEAR_APPLICATION_ID },
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {

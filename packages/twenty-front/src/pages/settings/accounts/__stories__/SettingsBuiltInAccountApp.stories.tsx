@@ -32,9 +32,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsBuiltInAccountApp,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/apps/:builtInAccountAppId',
-    routeParams: { ':builtInAccountAppId': 'google' },
-    additionalRoutes: ['/settings/accounts'],
+    routePath: '/settings/app-preferences/:appId',
+    routeParams: { ':appId': 'google' },
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -146,7 +146,7 @@ export const GoogleCalendarTabShowsCalendarSettings: Story = {
 
 export const OutlookHasEmailsAndCalendarTabs: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':appId': 'outlook' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -172,7 +172,7 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 
 export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':appId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -203,7 +203,7 @@ export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
 
 export const CalendarPendingSetupHidesCalendarTab: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':appId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -234,24 +234,28 @@ export const CalendarPendingSetupHidesCalendarTab: Story = {
   },
 };
 
-export const DisabledAppGoesBackToAccounts: Story = {
+export const DisabledAppGoesBackToAppPreferences: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'imap' },
+    routeParams: { ':appId': 'imap' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };
 
 export const OutlookWithoutAccountOffersOutlookOnly: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':appId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -352,7 +356,7 @@ export const ReconnectReturnsToTheAppPage: Story = {
     );
 
     expect(redirectUrl.searchParams.get('redirectLocation')).toBe(
-      '/settings/accounts/apps/google#general',
+      '/settings/app-preferences/google#general',
     );
   },
 };

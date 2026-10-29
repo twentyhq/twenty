@@ -98,9 +98,12 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
                 startIcon={<IconAt />}
                 render={
                   <Link
-                    to={getSettingsPath(SettingsPath.AccountDetail, {
-                      connectedAccountId: group.id,
-                    })}
+                    to={getSettingsPath(
+                      SettingsPath.AppPreferencesAccountDetail,
+                      {
+                        connectedAccountId: group.id,
+                      },
+                    )}
                   />
                 }
               >{t`Account settings`}</Dropdown.ActionItem>
@@ -110,9 +113,12 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
                 startIcon={<IconPlayerPlay />}
                 render={
                   <Link
-                    to={getSettingsPath(SettingsPath.AccountsConfiguration, {
-                      connectedAccountId: builtInAccount.id,
-                    })}
+                    to={getSettingsPath(
+                      SettingsPath.AppPreferencesAccountConfiguration,
+                      {
+                        connectedAccountId: builtInAccount.id,
+                      },
+                    )}
                   />
                 }
               >{t`Complete setup`}</Dropdown.ActionItem>
@@ -125,7 +131,7 @@ export const SettingsAppPreferencesRowDropdownMenu = ({
                   render={
                     <Link
                       to={getSettingsPath(
-                        SettingsPath.EditImapSmtpCaldavConnection,
+                        SettingsPath.AppPreferencesEditImapSmtpCaldavConnection,
                         {
                           connectedAccountId: builtInAccount.id,
                         },

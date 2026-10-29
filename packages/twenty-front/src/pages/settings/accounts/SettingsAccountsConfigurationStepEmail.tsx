@@ -2,12 +2,15 @@ import { Trans, useLingui } from '@lingui/react/macro';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
+import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsAccountsConfigurationStepEmailProps = {
   messageChannel: MessageChannel;
@@ -25,6 +28,10 @@ export const SettingsAccountsConfigurationStepEmail = ({
   onAddAccount,
 }: SettingsAccountsConfigurationStepEmailProps) => {
   const { t } = useLingui();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
 
   return (
     <SettingsPageLayout
@@ -35,8 +42,14 @@ export const SettingsAccountsConfigurationStepEmail = ({
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: <Trans>Account</Trans>,
-          href: getSettingsPath(SettingsPath.Accounts),
+          children: isAppPreferencesEnabled ? (
+            <Trans>Apps preferences</Trans>
+          ) : (
+            <Trans>Account</Trans>
+          ),
+          href: getSettingsPath(
+            resolveAccountsSettingsPath(SettingsPath.Accounts),
+          ),
         },
         {
           children: t`1. Email`,

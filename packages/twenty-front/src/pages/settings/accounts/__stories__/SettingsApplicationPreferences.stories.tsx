@@ -6,10 +6,8 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { useLocation } from 'react-router-dom';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import { Toaster } from 'twenty-ui/components/feedback';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
@@ -33,9 +31,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsApplicationPreferences,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/applications/:applicationId',
-    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
-    additionalRoutes: ['/settings/accounts'],
+    routePath: '/settings/app-preferences/:appId',
+    routeParams: { ':appId': FATHOM_APPLICATION_ID },
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
@@ -267,7 +265,7 @@ export const SavedSecretCanBeCleared: Story = {
 
 export const SettingsOnlyAppOpensItsSettingsFromTheTabBar: Story = {
   args: {
-    routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
+    routeParams: { ':appId': GRANOLA_APPLICATION_ID },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -358,7 +356,7 @@ const LocationProbe = () => {
 
 export const FailedOAuthReturnShowsItsMessage: Story = {
   args: {
-    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
+    routeParams: { ':appId': FATHOM_APPLICATION_ID },
     searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
     routeHash: '#general',
   },
@@ -397,17 +395,21 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
   },
 };
 
-export const UnknownAppGoesBackToAccounts: Story = {
+export const UnknownAppGoesBackToAppPreferences: Story = {
   args: {
-    routeParams: { ':applicationId': '20202020-1a2b-4c3d-8e4f-000000000099' },
+    routeParams: { ':appId': '20202020-1a2b-4c3d-8e4f-000000000099' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };
@@ -440,29 +442,5 @@ export const LoadErrorOffersRetryInsteadOfGoingBack: Story = {
       ),
     ).not.toBeInTheDocument();
     expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
-  },
-};
-
-export const FlagOffGoesBackToAccounts: Story = {
-  beforeEach: async () => {
-    await seedApplicationPreferencesStory();
-
-    const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-
-    if (isDefined(currentWorkspace)) {
-      jotaiStore.set(currentWorkspaceState.atom, {
-        ...currentWorkspace,
-        featureFlags: [],
-      });
-    }
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeVisible();
   },
 };

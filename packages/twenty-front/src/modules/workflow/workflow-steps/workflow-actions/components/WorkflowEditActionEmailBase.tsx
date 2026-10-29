@@ -25,6 +25,7 @@ import { WorkflowSendEmailAttachments } from '@/workflow/workflow-steps/workflow
 import { WORKFLOW_EMAIL_BODY_EDITOR_PROFILE } from '@/workflow/workflow-steps/workflow-actions/constants/WorkflowEmailBodyEditorProfile';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -121,6 +122,7 @@ export const WorkflowEditActionEmailBase = ({
   const apolloCoreClient = useApolloCoreClient();
 
   const navigate = useNavigateSettings();
+  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -245,7 +247,9 @@ export const WorkflowEditActionEmailBase = ({
                 ? {
                     onClick: () => {
                       closeSidePanelMenu();
-                      navigate(SettingsPath.NewAccount);
+                      navigate(
+                        resolveAccountsSettingsPath(SettingsPath.NewAccount),
+                      );
                     },
                     Icon: IconPlus,
                     text: t`Add account`,

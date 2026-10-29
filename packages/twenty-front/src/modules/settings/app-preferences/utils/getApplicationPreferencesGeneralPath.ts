@@ -4,8 +4,8 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 export const getApplicationPreferencesGeneralPath = (applicationId: string) =>
   getSettingsPath(
-    SettingsPath.ApplicationPreferences,
-    { applicationId },
+    SettingsPath.AppPreferencesApp,
+    { appId: applicationId },
     undefined,
     APPLICATION_PREFERENCES_GENERAL_TAB_ID,
   );

@@ -2,6 +2,7 @@ import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConn
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
+import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -11,6 +12,7 @@ export const useComposeEmailForTargetRecord = (
 ) => {
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
+  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
   const { connectedAccountId, loading: accountLoading } =
     useFirstConnectedAccount();
 
@@ -22,7 +24,7 @@ export const useComposeEmailForTargetRecord = (
 
   const openComposer = () => {
     if (!isDefined(connectedAccountId)) {
-      navigateSettings(SettingsPath.NewAccount);
+      navigateSettings(resolveAccountsSettingsPath(SettingsPath.NewAccount));
 
       return;
     }

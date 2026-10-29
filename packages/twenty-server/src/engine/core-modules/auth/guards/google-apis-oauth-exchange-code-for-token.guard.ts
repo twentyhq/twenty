@@ -2,6 +2,8 @@ import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import {
   AuthException,
@@ -78,7 +80,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
               customDomain: workspace.customDomain,
               isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
             },
-            pathname: '/settings/accounts',
+            pathname: getSettingsPath(SettingsPath.Accounts),
           });
 
         context.switchToHttp().getResponse().redirect(redirectErrorUrl);

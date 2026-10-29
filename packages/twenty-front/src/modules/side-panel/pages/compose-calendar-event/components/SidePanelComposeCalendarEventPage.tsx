@@ -9,6 +9,7 @@ import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pa
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
@@ -33,6 +34,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
+  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const hasConnectedAccountsPermission = useHasPermissionFlag(
     PermissionFlagType.CONNECTED_ACCOUNTS,
@@ -53,9 +55,14 @@ export const SidePanelComposeCalendarEventPage = () => {
 
   const handleAddAccount = () => {
     closeSidePanelMenu();
-    navigateSettings(SettingsPath.NewAccount, undefined, undefined, {
-      surface: 'main',
-    });
+    navigateSettings(
+      resolveAccountsSettingsPath(SettingsPath.NewAccount),
+      undefined,
+      undefined,
+      {
+        surface: 'main',
+      },
+    );
   };
 
   const handleReauthorize = async () => {
