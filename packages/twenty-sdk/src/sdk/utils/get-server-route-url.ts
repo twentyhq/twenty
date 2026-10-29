@@ -4,7 +4,6 @@ import {
   DEFAULT_SERVER_ROUTE_IDS_NAME,
 } from 'twenty-shared/application-runtime';
 
-// Server routes are reached by the id assigned in the app owner's workspace, not by universalIdentifier.
 export const getServerRouteUrl = (
   logicFunctionUniversalIdentifier: string,
 ): string => {
