@@ -139,6 +139,10 @@ describe('LambdaDriver', () => {
         typeof import('src/engine/workspace-cache/services/workspace-cache.service')
       >('src/engine/workspace-cache/services/workspace-cache.service')
         .WorkspaceCacheService.prototype,
+      coreEntityCacheService: jest.createMockFromModule<
+        typeof import('src/engine/core-entity-cache/services/core-entity-cache.service')
+      >('src/engine/core-entity-cache/services/core-entity-cache.service')
+        .CoreEntityCacheService.prototype,
       applicationDependencyFilesService: jest.createMockFromModule<
         typeof import('src/engine/core-modules/application/application-package/application-dependency-files.service')
       >(
