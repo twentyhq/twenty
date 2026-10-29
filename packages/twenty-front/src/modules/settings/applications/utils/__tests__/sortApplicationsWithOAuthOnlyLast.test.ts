@@ -1,11 +1,16 @@
 import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
 import { isDefined } from 'twenty-shared/utils';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  type ApplicationRegistrationSummary,
+} from '~/generated-metadata/graphql';
 
-const buildApplication = (
-  id: string,
-  sourceType?: ApplicationRegistrationSourceType,
-) => ({
+const buildApplication = ({
+  id,
+  sourceType,
+}: { id: string } & Partial<
+  Pick<ApplicationRegistrationSummary, 'sourceType'>
+>) => ({
   id,
   applicationRegistration: isDefined(sourceType) ? { sourceType } : null,
 });
@@ -13,10 +18,19 @@ const buildApplication = (
 describe('sortApplicationsWithOAuthOnlyLast', () => {
   it('moves OAuth-only applications last and keeps the other order', () => {
     const applications = [
-      buildApplication('zapier', ApplicationRegistrationSourceType.OAUTH_ONLY),
-      buildApplication('acme', ApplicationRegistrationSourceType.NPM),
-      buildApplication('standard'),
-      buildApplication('make', ApplicationRegistrationSourceType.OAUTH_ONLY),
+      buildApplication({
+        id: 'zapier',
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      }),
+      buildApplication({
+        id: 'acme',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      }),
+      buildApplication({ id: 'standard' }),
+      buildApplication({
+        id: 'make',
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      }),
     ];
 
     expect(
@@ -26,8 +40,14 @@ describe('sortApplicationsWithOAuthOnlyLast', () => {
 
   it('does not reorder the given applications', () => {
     const applications = [
-      buildApplication('zapier', ApplicationRegistrationSourceType.OAUTH_ONLY),
-      buildApplication('acme', ApplicationRegistrationSourceType.NPM),
+      buildApplication({
+        id: 'zapier',
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      }),
+      buildApplication({
+        id: 'acme',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      }),
     ];
 
     sortApplicationsWithOAuthOnlyLast(applications);

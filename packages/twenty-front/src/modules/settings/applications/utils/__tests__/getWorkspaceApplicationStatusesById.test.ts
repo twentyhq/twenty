@@ -1,19 +1,24 @@
 import { getWorkspaceApplicationStatusesById } from '@/settings/applications/utils/getWorkspaceApplicationStatusesById';
 import {
   ApplicationRegistrationSourceType,
+  type ApplicationRegistrationSummary,
+  type ApplicationVariable,
   ApplicationVariableScope,
 } from '~/generated-metadata/graphql';
 
 const APPLICATION_ID = 'acme-application-id';
 
+type ApplicationRegistrationOverrides = Partial<
+  Pick<ApplicationRegistrationSummary, 'sourceType' | 'latestAvailableVersion'>
+>;
+
 const buildVariable = (
-  overrides: Partial<{
-    key: string;
-    value: string;
-    isRequired: boolean;
-    isDeprecated: boolean;
-    scope: ApplicationVariableScope;
-  }> = {},
+  overrides: Partial<
+    Pick<
+      ApplicationVariable,
+      'key' | 'value' | 'isRequired' | 'isDeprecated' | 'scope'
+    >
+  > = {},
 ) => ({
   key: 'API_KEY',
   label: 'API key',
@@ -27,10 +32,7 @@ const buildVariable = (
 const buildApplication = ({
   sourceType = ApplicationRegistrationSourceType.NPM,
   latestAvailableVersion = '1.0.0',
-}: {
-  sourceType?: ApplicationRegistrationSourceType;
-  latestAvailableVersion?: string;
-} = {}) => ({
+}: ApplicationRegistrationOverrides = {}) => ({
   id: APPLICATION_ID,
   version: '1.0.0',
   applicationRegistration: { sourceType, latestAvailableVersion },
@@ -41,9 +43,7 @@ const getStatusesById = ({
   latestAvailableVersion,
   applicationVariables = [],
   applicationVariablesApplicationId = APPLICATION_ID,
-}: {
-  sourceType?: ApplicationRegistrationSourceType;
-  latestAvailableVersion?: string;
+}: ApplicationRegistrationOverrides & {
   applicationVariables?: ReturnType<typeof buildVariable>[];
   applicationVariablesApplicationId?: string;
 } = {}) =>
