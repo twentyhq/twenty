@@ -104,14 +104,18 @@ const setupApplicationUnderTest = async ({
   return { application, token, roleId: defaultRoleId };
 };
 
-const findGeneralChannelId = async (): Promise<string> => {
-  const [{ id }]: { id: string }[] = await global.testDataSource.query(
-    `SELECT id FROM core."agentChatChannel"
+const readChannelsWithUniversalIdentifier = async (
+  universalIdentifier: string,
+): Promise<{ id: string; applicationId: string }[]> =>
+  global.testDataSource.query(
+    `SELECT id, "applicationId" FROM core."agentChatChannel"
      WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
-    [
-      SEED_APPLE_WORKSPACE_ID,
-      STANDARD_AGENT_CHAT_CHANNEL.general.universalIdentifier,
-    ],
+    [SEED_APPLE_WORKSPACE_ID, universalIdentifier],
+  );
+
+const findGeneralChannelId = async (): Promise<string> => {
+  const [{ id }] = await readChannelsWithUniversalIdentifier(
+    STANDARD_AGENT_CHAT_CHANNEL.general.universalIdentifier,
   );
 
   return id;
@@ -127,15 +131,6 @@ const findWorkspaceCustomApplicationId = async (): Promise<string> => {
 
   return workspaceCustomApplicationId;
 };
-
-const readChannelsWithUniversalIdentifier = async (
-  universalIdentifier: string,
-): Promise<{ id: string; applicationId: string }[]> =>
-  global.testDataSource.query(
-    `SELECT id, "applicationId" FROM core."agentChatChannel"
-     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
-    [SEED_APPLE_WORKSPACE_ID, universalIdentifier],
-  );
 
 const readChannelApplicationId = async (
   channelId: string,
