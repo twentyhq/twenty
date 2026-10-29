@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import {
+  type BillableOperations,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type Manifest,
 } from 'twenty-shared/application';
@@ -1345,6 +1346,24 @@ export class ApplicationRegistrationService {
       .orderBy('application.workspaceId')
       .addOrderBy('application.id')
       .getRawMany<ApplicationInstallation>();
+  }
+
+  // Reads only the jsonb path: the full manifest can be large
+  async findBillableOperations(
+    applicationRegistrationId: string,
+  ): Promise<BillableOperations> {
+    const row = await this.applicationRegistrationRepository
+      .createQueryBuilder('registration')
+      .select(
+        "registration.manifest -> 'application' -> 'billing' -> 'operations'",
+        'operations',
+      )
+      .where('registration.id = :applicationRegistrationId', {
+        applicationRegistrationId,
+      })
+      .getRawOne<{ operations: BillableOperations | null }>();
+
+    return row?.operations ?? {};
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

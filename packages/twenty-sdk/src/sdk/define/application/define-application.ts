@@ -73,7 +73,10 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
       continue;
     }
 
-    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+    if (
+      isDefined(billableOperation.operationType) &&
+      !isUsageOperationTypeValue(billableOperation.operationType)
+    ) {
       errors.push(
         `Billable operation "${operationName}" must map to a known operationType (${USAGE_OPERATION_TYPES.join(
           ', ',

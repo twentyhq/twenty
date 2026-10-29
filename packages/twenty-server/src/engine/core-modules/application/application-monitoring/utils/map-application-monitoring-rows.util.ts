@@ -1,14 +1,62 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { type BillableOperations } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
-import { type ApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
+import {
+  type ApplicationMonitoringCreditUsageRow,
+  type ApplicationMonitoringRows,
+} from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const toNumber = (value: number | string | undefined): number =>
   Number(value ?? 0);
+
+// Resolved against the latest manifest, so an operation renamed or dropped since falls back to its operationType
+const groupCreditUsageByOperationLabel = ({
+  rows,
+  billableOperations,
+}: {
+  rows: ApplicationMonitoringCreditUsageRow[];
+  billableOperations: BillableOperations;
+}) => {
+  const bucketsByKey = new Map<
+    string,
+    {
+      bucketStart: Date;
+      operationType: string;
+      operationLabel: string | null;
+      creditsUsedMicro: number;
+    }
+  >();
+
+  for (const row of rows) {
+    // Own-property only: an operation named `constructor` must not resolve to an inherited value
+    const operationLabel = Object.prototype.hasOwnProperty.call(
+      billableOperations,
+      row.operation,
+    )
+      ? (billableOperations[row.operation]?.label ?? null)
+      : null;
+    const key = `${row.bucketStart.toISOString()}|${row.operationType}|${operationLabel ?? ''}`;
+    const bucket = bucketsByKey.get(key);
+
+    if (isDefined(bucket)) {
+      bucket.creditsUsedMicro += row.creditsUsedMicro;
+    } else {
+      bucketsByKey.set(key, {
+        bucketStart: row.bucketStart,
+        operationType: row.operationType,
+        operationLabel,
+        creditsUsedMicro: row.creditsUsedMicro,
+      });
+    }
+  }
+
+  return [...bucketsByKey.values()];
+};
 
 export const mapApplicationMonitoringRows = ({
   period,
@@ -19,15 +67,15 @@ export const mapApplicationMonitoringRows = ({
   period: ApplicationMonitoringPeriod;
   lookbackInHours: number;
   rows: ApplicationMonitoringRows;
-  creditUsage:
-    | {
-        bucketStart: Date;
-        operationType: string;
-        creditsUsedMicro: number;
-      }[]
-    | null;
+  creditUsage: {
+    rows: ApplicationMonitoringCreditUsageRow[];
+    billableOperations: BillableOperations;
+  } | null;
 }): ApplicationMonitoringDTO => {
   const [totals] = rows.totals;
+  const creditUsageBuckets = isDefined(creditUsage)
+    ? groupCreditUsageByOperationLabel(creditUsage)
+    : null;
 
   return {
     ...period,
@@ -36,9 +84,9 @@ export const mapApplicationMonitoringRows = ({
     failedRunCount: toNumber(totals?.failedRunCount),
     lifecycleFailureCount: toNumber(totals?.lifecycleFailureCount),
     rateLimitEventCount: toNumber(totals?.rateLimitEventCount),
-    creditsUsed: isDefined(creditUsage)
+    creditsUsed: isDefined(creditUsageBuckets)
       ? toDisplayCredits(
-          creditUsage.reduce(
+          creditUsageBuckets.reduce(
             (total, bucket) => total + bucket.creditsUsedMicro,
             0,
           ),
@@ -58,9 +106,10 @@ export const mapApplicationMonitoringRows = ({
       failedCount: toNumber(row.failedCount),
     })),
     creditUsage:
-      creditUsage?.map((bucket) => ({
+      creditUsageBuckets?.map((bucket) => ({
         bucketStart: bucket.bucketStart,
         operationType: bucket.operationType,
+        operationLabel: bucket.operationLabel,
         creditsUsed: toDisplayCredits(bucket.creditsUsedMicro),
       })) ?? null,
     issues: rows.issues.map((row) => ({

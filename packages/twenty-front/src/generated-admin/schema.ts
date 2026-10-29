@@ -299,6 +299,7 @@ export type ApplicationMonitoringCreditBucket = {
   __typename?: 'ApplicationMonitoringCreditBucket';
   bucketStart: Scalars['DateTime']['output'];
   creditsUsed: Scalars['Float']['output'];
+  operationLabel?: Maybe<Scalars['String']['output']>;
   operationType: Scalars['String']['output'];
 };
 
@@ -1175,6 +1176,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
+  APP_OPERATION = 'APP_OPERATION',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',

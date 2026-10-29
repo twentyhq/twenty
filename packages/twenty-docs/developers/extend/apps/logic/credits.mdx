@@ -82,24 +82,25 @@ How they are raised:
 
 ## Billable operations
 
-An operation is what your app charges for as it works. Each entry maps an operation name you choose onto the billing category the platform meters, plus the label shown to workspace admins in **Settings > Usage**.
+An operation is what your app charges for as it works. Each entry names an operation you choose and the label shown to workspace admins in **Settings > Usage** and to you in your app's monitoring **Credits used** chart. It can optionally map onto one of the platform's billing categories.
 
 ```ts src/application-config.ts
 billing: {
   operations: {
+    enrichPerson: {
+      label: 'Person enrichment',
+    },
     recordMeeting: {
       operationType: 'CALL_RECORDING',
       label: 'Meeting recording',
-    },
-    summarizeMeeting: {
-      operationType: 'AI_CHAT_TOKEN',
-      label: 'Meeting summary',
     },
   },
 },
 ```
 
-`operationType` must be one of the platform's billing categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
+`operationType` is optional and defaults to `APP_OPERATION`, the dedicated category for app charges. Set it only when the spend really is one of the platform's categories: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`, `APP_OPERATION`. It decides how the spend is metered and which counting unit applies (tokens, invocations, minutes) — it is not what admins read. The `label` is.
+
+`CODE_EXECUTION` is where the platform meters your functions' own runs, so charges filed there are mixed with them; prefer the default.
 
 The build rejects an unknown `operationType`, an empty `label`, and a name used by both a recurring charge and an operation.
 
@@ -123,8 +124,8 @@ Notes:
 
 - Declaring operations is what lets Usage split your app's spend by what it charged for. An app that declares nothing is still reported, as a single slice under its display name.
 - Charging an operation your manifest does not declare is rejected. Add it to `billing.operations` and sync.
-- Several operations may share one `operationType`. Two enrichment operations both metered as `CODE_EXECUTION` still show as two labelled slices.
-- Without `operation`, name the billing category directly with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
+- Several operations may share one `operationType`. Two enrichment operations both metered as `APP_OPERATION` still show as two labelled slices.
+- Without `operation`, the charge lands in `APP_OPERATION`, or in the category you name with `operationType`, optionally with a free-form `resourceContext`. The two forms are mutually exclusive: `operation` carries the label, `operationType` does not.
 - Charging never fails your function. A billing error is logged and swallowed, and the call no-ops outside the logic function runtime so local runs and tests do not crash.
 
 ## Checking before you spend

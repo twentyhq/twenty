@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type BillableOperations } from 'twenty-shared/application';
 import { In, Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -12,6 +13,7 @@ import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/applicati
 import {
   type ApplicationMonitoringActiveWorkspaceCountRow,
   type ApplicationMonitoringActivityRow,
+  type ApplicationMonitoringCreditUsageRow,
   type ApplicationMonitoringFunctionRow,
   type ApplicationMonitoringIssueRow,
   type ApplicationMonitoringLifecycleRow,
@@ -218,26 +220,29 @@ export class ApplicationMonitoringService {
       'applicationRegistrationId' | 'workspaceId'
     >;
     period: ApplicationMonitoringPeriod;
-  }): Promise<
-    | {
-        bucketStart: Date;
-        operationType: string;
-        creditsUsedMicro: number;
-      }[]
-    | null
-  > {
+  }): Promise<{
+    rows: ApplicationMonitoringCreditUsageRow[];
+    billableOperations: BillableOperations;
+  } | null> {
     try {
-      const installations =
-        await this.applicationRegistrationService.findInstallations({
+      const [installations, billableOperations] = await Promise.all([
+        this.applicationRegistrationService.findInstallations({
           applicationRegistrationId: params.applicationRegistrationId,
           workspaceId: isNonEmptyString(params.workspaceId)
             ? params.workspaceId
             : undefined,
-        });
+        }),
+        this.applicationRegistrationService.findBillableOperations(
+          params.applicationRegistrationId,
+        ),
+      ]);
 
-      return await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
-        { installations, ...period },
-      );
+      const rows =
+        await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
+          { installations, ...period },
+        );
+
+      return { rows, billableOperations };
     } catch (error) {
       this.logger.warn(
         `Failed to load credits used for registration ${params.applicationRegistrationId}`,

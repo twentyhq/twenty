@@ -173,6 +173,7 @@ export class UsageAnalyticsService {
     {
       bucketStart: Date;
       operationType: string;
+      operation: string;
       creditsUsedMicro: number;
     }[]
   > {
@@ -183,20 +184,23 @@ export class UsageAnalyticsService {
     const rows = await this.clickHouseService.selectOrThrow<{
       bucketStart: string;
       operationType: string;
+      operation: string;
       creditsUsedMicro: string | number;
     }>(
+      // Only app-raised rows carry the app's declared operation name in resourceContext
       `SELECT
          toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32})) AS bucketStart,
          operationType,
+         if(resourceType = 'APP', resourceContext, '') AS operation,
          sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
          AND applicationId IN {applicationIds:Array(String)}
          AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
          AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-       GROUP BY bucketStart, operationType
+       GROUP BY bucketStart, operationType, operation
        HAVING creditsUsedMicro != 0
-       ORDER BY bucketStart, operationType
+       ORDER BY bucketStart, operationType, operation
        SETTINGS max_execution_time = 10`,
       {
         ...buildInstallationFilterParams(installations),
@@ -206,11 +210,14 @@ export class UsageAnalyticsService {
       },
     );
 
-    return rows.map(({ bucketStart, operationType, creditsUsedMicro }) => ({
-      bucketStart: parseClickHouseDateTime(bucketStart),
-      operationType,
-      creditsUsedMicro: Number(creditsUsedMicro),
-    }));
+    return rows.map(
+      ({ bucketStart, operationType, operation, creditsUsedMicro }) => ({
+        bucketStart: parseClickHouseDateTime(bucketStart),
+        operationType,
+        operation,
+        creditsUsedMicro: Number(creditsUsedMicro),
+      }),
+    );
   }
 
   async getConsumptionRowsForAllScopes({

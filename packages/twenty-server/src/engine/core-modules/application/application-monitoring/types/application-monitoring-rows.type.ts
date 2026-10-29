@@ -68,3 +68,10 @@ export type ApplicationMonitoringWorkspaceRow = {
   rateLimitEventCount: ClickHouseCount;
   lastEventAt: string;
 };
+
+export type ApplicationMonitoringCreditUsageRow = {
+  bucketStart: Date;
+  operationType: string;
+  operation: string;
+  creditsUsedMicro: number;
+};
