@@ -54,6 +54,10 @@ describe('ApplicationRegistrationVariableService', () => {
       });
 
       expect(envVariables).toEqual({ APP_API_KEY: 'key' });
+      expect(findVariables).toHaveBeenCalledTimes(1);
+      expect(findVariables).toHaveBeenCalledWith({
+        where: { applicationRegistrationId: APPLICATION_REGISTRATION_ID },
+      });
     });
 
     it('should give no server variables to an application without a registration', async () => {

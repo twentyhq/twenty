@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -90,7 +91,7 @@ export class ApplicationRegistrationVariableService {
 
       const plaintextValue = this.decryptValue(variable);
 
-      if (plaintextValue !== '') {
+      if (isNonEmptyString(plaintextValue)) {
         envVariables[variable.key] = plaintextValue;
       }
     }
