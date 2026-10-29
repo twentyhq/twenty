@@ -4,6 +4,7 @@ import { join } from 'node:path';
 
 import { afterEach, describe, expect, it } from 'vitest';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { resolvePullSystemPermissionFlag } from '@/app/pull/resolve-pull-system-permission-flag';
 import {
@@ -37,9 +38,9 @@ const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
   );
   await writeFile(
     join(sdkPath, 'define.cjs'),
-    appSystemPermissionFlag === undefined
-      ? ''
-      : `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`,
+    isDefined(appSystemPermissionFlag)
+      ? `exports.SystemPermissionFlag = ${JSON.stringify(appSystemPermissionFlag)};`
+      : '',
   );
 
   return appPath;
