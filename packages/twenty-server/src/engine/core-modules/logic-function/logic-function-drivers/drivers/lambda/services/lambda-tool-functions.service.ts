@@ -7,6 +7,7 @@ import {
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
+  UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -227,7 +228,7 @@ export class LambdaToolFunctionsService {
     }
   }
 
-  async ensureToolLambdaExists({
+  async ensureBuildToolLambdaIsActive({
     functionName,
     memoryMb,
     timeoutSeconds,
@@ -246,7 +247,21 @@ export class LambdaToolFunctionsService {
 
     await this.cacheLockService.withLock(
       async () => {
-        if (isDefined(await this.awsClient.getFunction(functionName))) {
+        const existingFunction = await this.awsClient.getFunction(functionName);
+
+        if (isDefined(existingFunction)) {
+          if (existingFunction.Configuration?.State === 'Inactive') {
+            const lambdaClient = await this.awsClient.getLambdaClient();
+
+            await lambdaClient.send(
+              new UpdateFunctionConfigurationCommand({
+                FunctionName: functionName,
+                MemorySize: memoryMb,
+                Timeout: timeoutSeconds,
+              }),
+            );
+          }
+
           await this.awsClient.waitFunctionActive(functionName);
 
           return;
@@ -292,7 +307,7 @@ export class LambdaToolFunctionsService {
   }
 
   private async ensureYarnInstallLambdaExists(): Promise<void> {
-    await this.ensureToolLambdaExists({
+    await this.ensureBuildToolLambdaIsActive({
       functionName: await this.getYarnInstallFunctionName(),
       memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
       timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
@@ -301,7 +316,7 @@ export class LambdaToolFunctionsService {
   }
 
   private async ensureBuilderLambdaExists(): Promise<void> {
-    await this.ensureToolLambdaExists({
+    await this.ensureBuildToolLambdaIsActive({
       functionName: await this.getBuilderFunctionName(),
       memoryMb: BUILDER_LAMBDA_MEMORY_MB,
       timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,

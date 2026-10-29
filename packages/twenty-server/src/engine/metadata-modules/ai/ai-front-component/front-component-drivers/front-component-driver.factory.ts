@@ -6,8 +6,8 @@ import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { type ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { LambdaDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/lambda.driver';
-import { LocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/local.driver';
+import { FrontComponentLambdaDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/front-component-lambda.driver';
+import { FrontComponentLocalDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/drivers/front-component-local.driver';
 import { type FrontComponentDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/types/front-component-driver.type';
 
 export class FrontComponentDriverFactory extends DriverFactoryBase<FrontComponentDriver> {
@@ -31,9 +31,9 @@ export class FrontComponentDriverFactory extends DriverFactoryBase<FrontComponen
     const driverType = this.twentyConfigService.get('LOGIC_FUNCTION_TYPE');
     switch (driverType) {
       case LogicFunctionDriverType.LOCAL:
-        return new LocalDriver();
+        return new FrontComponentLocalDriver();
       case LogicFunctionDriverType.LAMBDA:
-        return new LambdaDriver({
+        return new FrontComponentLambdaDriver({
           ...getLambdaConnectionOptions(this.twentyConfigService),
           cacheLockService: this.cacheLockService,
           cacheStorageService: this.cacheStorageService,

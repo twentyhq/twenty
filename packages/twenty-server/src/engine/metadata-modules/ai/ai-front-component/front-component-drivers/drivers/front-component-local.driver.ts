@@ -18,7 +18,7 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
-export class LocalDriver implements FrontComponentDriver {
+export class FrontComponentLocalDriver implements FrontComponentDriver {
   private readonly childProcessRunner = new LocalChildProcessRunnerService();
 
   async getDependenciesBuildCacheKey(workspaceId: string) {
