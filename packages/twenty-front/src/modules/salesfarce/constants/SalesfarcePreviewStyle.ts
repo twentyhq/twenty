@@ -5,5 +5,4 @@ export const SALESFARCE_PREVIEW_STYLE = {
   '--appearance-preview-border': GRAY_SCALE_LIGHT.gray7,
   '--appearance-preview-content-background': GRAY_SCALE_LIGHT.gray1,
   '--appearance-preview-content-color': THEME_LIGHT.color.cyan9,
-  overflow: 'hidden',
 };

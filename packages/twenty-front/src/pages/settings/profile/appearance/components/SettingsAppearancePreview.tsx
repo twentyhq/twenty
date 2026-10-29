@@ -28,6 +28,7 @@ const StyledSegment = styled.div`
   display: flex;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   padding-inline-start: ${themeCssVariables.spacing[6]};
   padding-top: ${themeCssVariables.spacing[6]};
 
