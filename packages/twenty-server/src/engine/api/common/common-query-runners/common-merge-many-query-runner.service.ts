@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isArray, isString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
@@ -13,7 +14,7 @@ import {
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -729,7 +730,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const { ids, conflictPriorityIndex } = args;
 
-    if (!ids || ids.length < 2) {
+    if (!isArray(ids) || ids.length < 2) {
       throw new CommonQueryRunnerException(
         'At least 2 record IDs are required for merge',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
@@ -749,7 +750,19 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {
+    if (!ids.every((id) => isString(id) && isValidUuid(id))) {
+      throw new CommonQueryRunnerException(
+        'Record IDs to merge must be UUIDs',
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    if (
+      !Number.isInteger(conflictPriorityIndex) ||
+      conflictPriorityIndex < 0 ||
+      conflictPriorityIndex >= ids.length
+    ) {
       throw new CommonQueryRunnerException(
         `Invalid conflict priority '${conflictPriorityIndex}'. Valid options for ${ids.length} records: 0-${ids.length - 1}`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
