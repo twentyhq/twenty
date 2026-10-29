@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef, useState } from 'react';
+import { type FocusEvent, type PointerEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -60,14 +60,19 @@ export const LogConsoleTableHeaderCell = ({
   onResizeEnd,
 }: LogConsoleTableHeaderCellProps) => {
   const { t } = useLingui();
-  const headerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
 
   // The handle reads its start value on pointer down, so the rendered width
   // must be known before the gesture begins.
-  const measureWidth = () => {
-    if (isDefined(headerRef.current)) {
-      setWidth(headerRef.current.offsetWidth);
+  const measureWidth = (
+    event: PointerEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>,
+  ) => {
+    const headerElement = event.currentTarget.closest<HTMLElement>(
+      '[data-table-header]',
+    );
+
+    if (isDefined(headerElement)) {
+      setWidth(headerElement.offsetWidth);
     }
   };
 
@@ -79,7 +84,7 @@ export const LogConsoleTableHeaderCell = ({
   const label = t(column.label);
 
   return (
-    <StyledTableHeader ref={headerRef} align={column.align}>
+    <StyledTableHeader align={column.align}>
       {label}
       <StyledResizeHandleContainer>
         <ResizeHandle

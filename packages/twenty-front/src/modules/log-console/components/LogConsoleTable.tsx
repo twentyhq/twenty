@@ -1,6 +1,6 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { Fragment, useRef } from 'react';
+import { Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -8,9 +8,12 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LogConsoleTableHeaderCell } from '@/log-console/components/LogConsoleTableHeaderCell';
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
+import { LOG_CONSOLE_TABLE_HTML_ID } from '@/log-console/constants/LogConsoleTableHtmlId';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
 import { logConsoleColumnWidthsFamilyState } from '@/log-console/states/logConsoleColumnWidthsFamilyState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { getLogConsoleColumnWidthCSSVariableName } from '@/log-console/utils/getLogConsoleColumnWidthCSSVariableName';
+import { updateLogConsoleTableCSSVariable } from '@/log-console/utils/updateLogConsoleTableCSSVariable';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -21,9 +24,6 @@ import { type EventLogRecord } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const SKELETON_ROW_COUNT = 8;
-
-const getColumnWidthCssVariable = (columnId: string) =>
-  `--log-console-column-${columnId}-width`;
 
 const StyledHeaderRow = styled(TableRow)`
   background-color: ${themeCssVariables.background.primary};
@@ -121,8 +121,6 @@ export const LogConsoleTable = ({
     },
   });
 
-  const tableRef = useRef<HTMLDivElement>(null);
-
   const [columnWidths, setColumnWidths] = useAtomFamilyState(
     logConsoleColumnWidthsFamilyState,
     source.id,
@@ -138,17 +136,20 @@ export const LogConsoleTable = ({
         ? `${storedWidth}px`
         : column.gridTrack;
 
-      return `var(${getColumnWidthCssVariable(column.id)}, ${track})`;
+      return `var(${getLogConsoleColumnWidthCSSVariableName(column.id)}, ${track})`;
     })
     .join(' ');
 
   const clearColumnWidthPreview = (columnId: string) => {
-    tableRef.current?.style.removeProperty(getColumnWidthCssVariable(columnId));
+    updateLogConsoleTableCSSVariable(
+      getLogConsoleColumnWidthCSSVariableName(columnId),
+      null,
+    );
   };
 
   const handleColumnWidthPreview = (columnId: string, width: number) => {
-    tableRef.current?.style.setProperty(
-      getColumnWidthCssVariable(columnId),
+    updateLogConsoleTableCSSVariable(
+      getLogConsoleColumnWidthCSSVariableName(columnId),
       `${width}px`,
     );
   };
@@ -202,7 +203,7 @@ export const LogConsoleTable = ({
 
   return (
     <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
-      <StyledTable ref={tableRef}>
+      <StyledTable id={LOG_CONSOLE_TABLE_HTML_ID}>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
           hoverBackgroundColor={themeCssVariables.background.primary}
