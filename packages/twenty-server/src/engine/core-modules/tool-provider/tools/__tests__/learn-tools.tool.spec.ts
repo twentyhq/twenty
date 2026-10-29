@@ -76,15 +76,17 @@ describe('createLearnToolsTool', () => {
     );
   });
 
-  it('does not report disallowed tools as not found or suggest alternatives', async () => {
-    const suggestSimilarToolNames = jest.fn();
+  it('reports disallowed names as not found without suggesting disallowed tools', async () => {
+    const suggestSimilarToolNames = jest.fn().mockResolvedValue({
+      code_interpreter: ['code_interpreter_v2'],
+    });
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([]),
       suggestSimilarToolNames,
     } as unknown as ToolRegistryService;
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => toolName !== 'code_interpreter',
+      isToolAllowed: (toolName) => !toolName.startsWith('code_interpreter'),
     });
 
     const result = await learnTools.execute({
@@ -95,17 +97,47 @@ describe('createLearnToolsTool', () => {
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith([], context, [
       'description',
     ]);
-    expect(result.notFound).toEqual([]);
+    expect(result.notFound).toEqual(['code_interpreter']);
     expect(result.suggestions).toBeUndefined();
-    expect(suggestSimilarToolNames).not.toHaveBeenCalled();
-    expect(result.message).toBe('No matching tools found.');
+    expect(result.message).toBe('Could not find: code_interpreter.');
+  });
+
+  it('reports a misspelled name outside the allowed set with allowed suggestions only', async () => {
+    const toolRegistry = {
+      getToolInfo: jest.fn().mockResolvedValue([{ name: 'create_one_note' }]),
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({
+        create_one_noteTarget: ['create_one_note_target', 'delete_one_note'],
+      }),
+    } as unknown as ToolRegistryService;
+
+    const allowed = new Set(['create_one_note', 'create_one_note_target']);
+    const learnTools = createLearnToolsTool(toolRegistry, context, {
+      isToolAllowed: (toolName) => allowed.has(toolName),
+    });
+
+    const result = await learnTools.execute({
+      toolNames: ['create_one_note', 'create_one_noteTarget'],
+      aspects: ['description'],
+    });
+
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledWith(
+      ['create_one_note'],
+      context,
+      ['description'],
+    );
+    expect(result.notFound).toEqual(['create_one_noteTarget']);
+    expect(result.suggestions).toEqual({
+      create_one_noteTarget: ['create_one_note_target'],
+    });
+    expect(result.message).toContain(
+      'create_one_noteTarget (did you mean: create_one_note_target?)',
+    );
   });
 
   it('only learns tools the predicate allows', async () => {
-    const suggestSimilarToolNames = jest.fn();
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([{ name: 'find_many_people' }]),
-      suggestSimilarToolNames,
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
     } as unknown as ToolRegistryService;
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
@@ -122,8 +154,9 @@ describe('createLearnToolsTool', () => {
       context,
       ['description'],
     );
-    expect(result.notFound).toEqual([]);
-    expect(suggestSimilarToolNames).not.toHaveBeenCalled();
+    expect(result.tools).toEqual([{ name: 'find_many_people' }]);
+    expect(result.notFound).toEqual(['create_one_workflow']);
+    expect(result.suggestions).toBeUndefined();
   });
 
   it('does not consult the spill service when spillLargeOutput is not set', async () => {

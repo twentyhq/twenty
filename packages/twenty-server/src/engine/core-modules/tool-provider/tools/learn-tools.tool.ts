@@ -71,14 +71,30 @@ export const createLearnToolsTool = (
     );
 
     const foundNames = new Set(toolInfos.map((toolInfo) => toolInfo.name));
-    // Base notFound on allowedNames so excluded tools aren't surfaced as
-    // missing (which would also trigger misleading suggestions).
-    const notFound = allowedNames.filter((name) => !foundNames.has(name));
+    // Report every requested name that was not learned, including names
+    // isToolAllowed rejects: a misspelled name must not vanish silently, or
+    // the agent concludes it lacks permission. Suggestions only ever point
+    // at allowed tools, so excluded tools are never surfaced as alternatives.
+    const notFound = toolNames.filter((name) => !foundNames.has(name));
 
-    const suggestions: Record<string, string[]> =
-      notFound.length > 0
-        ? await toolRegistry.suggestSimilarToolNames(notFound, context)
-        : {};
+    const suggestions: Record<string, string[]> = {};
+
+    if (notFound.length > 0) {
+      const suggestedNames = await toolRegistry.suggestSimilarToolNames(
+        notFound,
+        context,
+      );
+
+      for (const [name, similarToolNames] of Object.entries(suggestedNames)) {
+        const allowedSimilarToolNames = isToolAllowed
+          ? similarToolNames.filter((similarName) => isToolAllowed(similarName))
+          : similarToolNames;
+
+        if (allowedSimilarToolNames.length > 0) {
+          suggestions[name] = allowedSimilarToolNames;
+        }
+      }
+    }
 
     const messageParts: string[] = [];
 
