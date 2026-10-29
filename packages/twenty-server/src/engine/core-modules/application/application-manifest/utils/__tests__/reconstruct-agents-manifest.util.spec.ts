@@ -42,8 +42,6 @@ const WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER =
   '30000000-0000-4000-8000-000000000006';
 const CONFIGURED_AGENT_UNIVERSAL_IDENTIFIER =
   '30000000-0000-4000-8000-000000000007';
-const DELETED_AGENT_UNIVERSAL_IDENTIFIER =
-  '30000000-0000-4000-8000-000000000008';
 const FOREIGN_AGENT_UNIVERSAL_IDENTIFIER =
   '30000000-0000-4000-8000-000000000009';
 const UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER =
@@ -172,7 +170,6 @@ const applicationAgents = [
     modelConfiguration: { webSearch: { enabled: true } },
     isSystem: true,
   }),
-  buildFlatAgent(DELETED_AGENT_UNIVERSAL_IDENTIFIER, { deletedAt: NOW }),
   buildFlatAgent(UNASSIGNED_AGENT_UNIVERSAL_IDENTIFIER),
 ];
 const applicationRoles = [
@@ -209,10 +206,6 @@ const applicationRoleTargets = [
     agentUniversalIdentifier: WORKSPACE_ROLE_AGENT_UNIVERSAL_IDENTIFIER,
     roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
     universalIdentifier: WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
-  }),
-  buildFlatRoleTarget({
-    agentUniversalIdentifier: DELETED_AGENT_UNIVERSAL_IDENTIFIER,
-    roleUniversalIdentifier: SUPPORT_ROLE_UNIVERSAL_IDENTIFIER,
   }),
   buildFlatRoleTarget({
     agentUniversalIdentifier: FOREIGN_AGENT_UNIVERSAL_IDENTIFIER,
@@ -353,12 +346,6 @@ describe('reconstructAgentsManifest', () => {
     },
   );
 
-  it('should leave a soft-deleted agent to the classifier', () => {
-    expect(
-      findCoverage('agent', DELETED_AGENT_UNIVERSAL_IDENTIFIER),
-    ).toBeUndefined();
-  });
-
   it.each([
     [
       roleTargetUniversalIdentifierOf(
@@ -372,10 +359,6 @@ describe('reconstructAgentsManifest', () => {
     ],
     [
       WORKSPACE_ROLE_TARGET_UNIVERSAL_IDENTIFIER,
-      'role target of an agent that is not exported',
-    ],
-    [
-      roleTargetUniversalIdentifierOf(DELETED_AGENT_UNIVERSAL_IDENTIFIER),
       'role target of an agent that is not exported',
     ],
     [

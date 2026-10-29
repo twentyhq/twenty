@@ -6,7 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationVariableEntityExceptionCode } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
-import { ENGINE_INJECTED_ENV_VARIABLE_NAMES } from 'src/engine/core-modules/logic-function/logic-function-executor/constants/engine-injected-env-variable-names.constant';
+import { isReservedEnvVariableName } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-reserved-env-variable-name.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -42,7 +42,7 @@ export class FlatApplicationVariableValidatorService {
       });
     }
 
-    if (ENGINE_INJECTED_ENV_VARIABLE_NAMES.has(flatApplicationVariable.key)) {
+    if (isReservedEnvVariableName(flatApplicationVariable.key)) {
       const key = flatApplicationVariable.key;
 
       validationResult.errors.push({
@@ -145,10 +145,7 @@ export class FlatApplicationVariableValidatorService {
 
     const keyUpdate = flatEntityUpdate.key;
 
-    if (
-      isDefined(keyUpdate) &&
-      ENGINE_INJECTED_ENV_VARIABLE_NAMES.has(keyUpdate)
-    ) {
+    if (isDefined(keyUpdate) && isReservedEnvVariableName(keyUpdate)) {
       validationResult.errors.push({
         code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
         message: t`Application variable key ${keyUpdate} is reserved`,

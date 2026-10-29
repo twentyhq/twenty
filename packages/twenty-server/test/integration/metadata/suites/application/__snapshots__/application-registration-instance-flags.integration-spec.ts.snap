@@ -61,17 +61,3 @@ exports[`Application registration instance flags (integration) updateApplication
   "name": "GraphQLError",
 }
 `;
-
-exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isVetted 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Field "isVetted" is not defined by type "UpdateApplicationRegistrationPayload".",
-  "name": "GraphQLError",
-}
-`;

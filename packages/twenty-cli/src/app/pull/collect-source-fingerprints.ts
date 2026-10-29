@@ -13,15 +13,20 @@ import {
 export const collectSourceFingerprints = async (
   appPath: string,
 ): Promise<Record<string, string>> => {
-  const localeFilePaths = await glob(
-    [`${LOCALES_DIR}/*.json`, `${COMPILED_LOCALES_DIR}/*.json`],
+  const additionalFilePaths = await glob(
+    [
+      `${LOCALES_DIR}/*.json`,
+      `${COMPILED_LOCALES_DIR}/*.json`,
+      'package.json',
+      'yarn.lock',
+    ],
     { cwd: appPath, absolute: true, onlyFiles: true },
   );
   const fingerprints: Record<string, string> = {};
 
   for (const filePath of [
     ...(await listApplicationSourceFiles(appPath)),
-    ...localeFilePaths.sort(),
+    ...additionalFilePaths.sort(),
   ]) {
     fingerprints[relative(appPath, filePath).split(sep).join('/')] =
       hashContent(await readFile(filePath));

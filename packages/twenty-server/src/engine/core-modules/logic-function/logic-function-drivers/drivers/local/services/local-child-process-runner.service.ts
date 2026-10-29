@@ -28,16 +28,12 @@ export class LocalChildProcessRunnerService {
   async assembleNodeModules({
     sourceTemporaryDir,
     flatApplication,
-    applicationUniversalIdentifier,
   }: {
     sourceTemporaryDir: string;
     flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const { depsLayerDirectory, sdkLayerDirectory } = this.getLayerDirectories({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    const { depsLayerDirectory, sdkLayerDirectory } =
+      this.getLayerDirectories(flatApplication);
     const depsNodeModules = join(depsLayerDirectory, 'node_modules');
     const sdkNodeModules = join(sdkLayerDirectory, 'node_modules');
     const execNodeModules = join(sourceTemporaryDir, 'node_modules');
@@ -157,7 +153,6 @@ export class LocalChildProcessRunnerService {
     runnerPath: string;
     executionDirectory: string;
     flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
     env: Record<string, string>;
     payload: unknown;
     context: LogicFunctionExecutionContext;
@@ -167,7 +162,6 @@ export class LocalChildProcessRunnerService {
       runnerPath,
       executionDirectory,
       flatApplication,
-      applicationUniversalIdentifier,
       env,
       payload,
       context,
@@ -181,12 +175,7 @@ export class LocalChildProcessRunnerService {
     const nodeFlags = buildLocalChildProcessNodeFlags({
       readableDirectories: [
         executionDirectory,
-        ...Object.values(
-          this.getLayerDirectories({
-            flatApplication,
-            applicationUniversalIdentifier,
-          }),
-        ),
+        ...Object.values(this.getLayerDirectories(flatApplication)),
       ],
       writableDirectory: temporaryDirectory,
       // Node 25+ denies network access under --permission unless --allow-net is passed.
@@ -317,18 +306,12 @@ export class LocalChildProcessRunnerService {
     return { ...result, stdout, stderr };
   }
 
-  private getLayerDirectories({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
-  }) {
+  private getLayerDirectories(flatApplication: FlatApplication) {
     return {
       depsLayerDirectory: getLocalDepsLayerPath(flatApplication),
       sdkLayerDirectory: getLocalSdkLayerPath({
         workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
       }),
     };
   }

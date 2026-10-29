@@ -8,6 +8,7 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { AppChip } from '@/applications/components/AppChip';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
 import { APPLICATION_LOG_SOURCE_LABELS } from '@/settings/application-monitoring/constants/ApplicationLogSourceLabels';
@@ -54,7 +55,13 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
         logicFunctions.map((logicFunction) => ({
           label: logicFunction.name,
           values: [logicFunction.id],
-          startIcon: <IconBrandTypescript />,
+          startIcon: (
+            <ApplicationStackIcon
+              Icon={IconBrandTypescript}
+              applicationId={logicFunction.applicationId}
+              showFirstPartyApplication
+            />
+          ),
         })),
     },
     {

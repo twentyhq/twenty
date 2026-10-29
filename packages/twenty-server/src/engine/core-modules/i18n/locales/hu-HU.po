@@ -72,6 +72,12 @@ msgstr "A(z) {0} egy egy-sok vagy sok-egy relációs mező kell, hogy legyen."
 msgid "{0} must be a one-to-many relation field."
 msgstr "A(z) {0} egy egy-sok relációs mező kell, hogy legyen."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr "{action} le van tiltva a {0} mezőn"
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -401,7 +407,7 @@ msgstr "Egy titkos változó nem rendelkezhet alapértelmezett értékkel."
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
-msgstr ""
+msgstr "Egy alkalmazás által telepített készség nem nevezhető át."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -779,7 +785,7 @@ msgstr "Adminisztrátori szerepkör nem található."
 #. js-lingui-id: eHJEyS
 #: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
 msgid "Agent \"{label}\" is archived."
-msgstr ""
+msgstr "A(z) „{label}” ügynök archiválva van."
 
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1033,7 +1039,7 @@ msgstr "Egy ügynöknek nem lehet több mint {maxTriggers} indítója"
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
-msgstr ""
+msgstr "Egy alkalmazás által telepített ügynök nem nevezhető át."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2379,6 +2385,12 @@ msgctxt "fieldMetadata.label"
 msgid "Campaigns"
 msgstr "Kampányok"
 
+#. js-lingui-id: ig79t+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Campaigns"
+msgstr "Kampányok"
+
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -2605,7 +2617,7 @@ msgstr "A szabványos jogosultsági jelző-definíció nem frissíthető"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
-msgstr ""
+msgstr "A szabványos készség tulajdonságai nem módosíthatók (csak a felülbírálások és az aktiválás/inaktiválás engedélyezett)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3026,12 +3038,12 @@ msgstr "Kész"
 #. js-lingui-id: XveQi3
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeded the 10 second time limit."
-msgstr ""
+msgstr "A komponens fordítása túllépte a 10 másodperces időkorlátot."
 
 #. js-lingui-id: fmCVqA
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeds the 5 MB output limit."
-msgstr ""
+msgstr "A komponens fordítása túllépi az 5 MB-os kimeneti korlátot."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4193,7 +4205,7 @@ msgstr "Alapértelmezett munkafolyamat-verzió elrendezés"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "Alapértelmezett munkaterület-tag elrendezés"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4358,6 +4370,16 @@ msgstr "Közvetlen feltöltés nem támogatott ehhez a fájltípushoz."
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Irány"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr "A letiltott mezőengedély-műveleteknek listának kell lenniük"
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr "A letiltott mezőengedély-műveletek nem ismétlődhetnek"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5124,7 +5146,7 @@ msgstr "Nem sikerült személyeket hozzáadni a listához."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Nem sikerült lefordítani a front komponenst."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6772,12 +6794,12 @@ msgstr "Érvénytelen a front komponens bemenete."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Érvénytelenek a front komponens beállításai."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Érvénytelen front komponensforrás."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -8163,9 +8185,10 @@ msgstr "Tagok"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "Összevonás"
 
 #. js-lingui-id: uHk5U2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
@@ -8176,6 +8199,12 @@ msgstr "Összevonás"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "{objectLabelPlural} egyesítése"
+
+#. js-lingui-id: pp414+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Merge with Another {objectLabelSingular}"
+msgstr "Egyesítés egy másik {objectLabelSingular} elemmel"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -9581,6 +9610,11 @@ msgstr "Az \"{operand}\" operandus értéket igényel, egy üres predikátum tel
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
 msgstr "A(z) \"{widgetTitle}\" widget diagram szűrőjének \"{rawOperand}\" operandusa nem támogatott a(z) \"{effectiveFieldType}\" mezőtípuson. Támogatott operandusok: {allowedOperandsText}."
 
+#. js-lingui-id: XBLJbc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand {operand} is not supported for field type {filterType}"
+msgstr ""
+
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -10094,12 +10128,12 @@ msgstr "A(z) {objectLabel} végleges megsemmisítése"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "A(z) {permissionFlagName} engedélyjelző nem érhető el ebben a munkaterületen"
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "A(z) {permissionFlagUniversalIdentifier} engedélyjelző nem található ebben a munkaterületen"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12002,6 +12036,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Rövid hivatkozások"
 
+#. js-lingui-id: XcRf2D
+#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
+msgid "Sign in as a workspace member or use an application token to change this conversation."
+msgstr "Jelentkezzen be munkaterület-tagként, vagy használjon alkalmazástokent a beszélgetés módosításához."
+
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -12301,7 +12340,7 @@ msgstr "A szabványos objektumok nem törölhetők"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "A(z) {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) szabványos engedélyjelző nem található ebben a munkaterületen. Futtassa a munkaterület frissítését a létrehozásához."
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13572,7 +13611,7 @@ msgstr "A munkafolyamat kiválasztási mezőjének létező mezőre kell hivatko
 #. js-lingui-id: go3zRL
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
-msgstr ""
+msgstr "A munkafolyamat a {handle} csatlakoztatott fiókot használja, amely nincs csatlakoztatva és megosztva ebben a munkaterületen."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13690,7 +13729,7 @@ msgstr "Ennek az ügynöknek nincsenek kimeneti mezői. Adjon hozzá legalább e
 #. js-lingui-id: Z/oZRf
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This agent is archived."
-msgstr ""
+msgstr "Ez az ügynök archiválva van."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14131,6 +14170,11 @@ msgstr "Ennek az objektumnak nincs keresési vektora"
 msgid "This object permission is already set for the role"
 msgstr "Ez az objektumengedély már be van állítva a szerepkör számára"
 
+#. js-lingui-id: JHfGIK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this field"
+msgstr ""
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -14161,6 +14205,11 @@ msgstr "Ez a szervezeti kulcs már használatban van egy másik kiszolgálópél
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
 msgstr "Ez a jogosultság már be van állítva a szerepkör számára"
+
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr "Ez az engedély le van tiltva a mezőn, és nem adható meg"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -15033,6 +15082,11 @@ msgstr "Az univerzális azonosító a rendszer által kezelt metaadatok számár
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Ismeretlen"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr "Ismeretlen letiltott mezőengedély-művelet"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16861,7 +16915,7 @@ msgstr "Munkaterület tagjának beosztása"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "Munkaterület-tag rekordoldalának mezői"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -17350,6 +17404,11 @@ msgstr "A fizetési módját elutasították. Kérjük, frissítse, majd próbá
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "A megvásárolt krediteket nem sikerült hozzáadni. Kérjük, lépjen kapcsolatba az ügyfélszolgálattal."
+
+#. js-lingui-id: vAscP2
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Your role cannot delete some of these records, so they cannot be merged."
+msgstr "A szerepköröd nem törölhet néhányat ezek közül a rekordok közül, ezért nem egyesíthetők."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

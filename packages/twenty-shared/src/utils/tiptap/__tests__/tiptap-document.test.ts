@@ -205,6 +205,106 @@ describe('TipTap document primitives', () => {
     ).toBe(['- Parent', '', '  3. Child'].join('\n'));
   });
 
+  it('indents nested task item content to the task content column', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        content: [
+          {
+            type: 'taskList',
+            content: [
+              {
+                type: 'taskItem',
+                attrs: { checked: true },
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Done top' }],
+                  },
+                  {
+                    type: 'taskList',
+                    content: [
+                      {
+                        type: 'taskItem',
+                        attrs: { checked: false },
+                        content: [
+                          {
+                            type: 'paragraph',
+                            content: [{ type: 'text', text: 'Open child' }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: 'taskItem',
+                attrs: { checked: false },
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Plan launch' }],
+                  },
+                  {
+                    type: 'bulletList',
+                    content: [
+                      {
+                        type: 'listItem',
+                        content: [
+                          {
+                            type: 'paragraph',
+                            content: [{ type: 'text', text: 'Draft email' }],
+                          },
+                        ],
+                      },
+                      {
+                        type: 'listItem',
+                        content: [
+                          {
+                            type: 'paragraph',
+                            content: [{ type: 'text', text: 'Book room' }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: 'taskItem',
+                attrs: { checked: false },
+                content: [
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Call Ada' }],
+                  },
+                  {
+                    type: 'paragraph',
+                    content: [{ type: 'text', text: 'Ask about the renewal' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    ).toBe(
+      [
+        '- [x] Done top',
+        '',
+        '  - [ ] Open child',
+        '- [ ] Plan launch',
+        '',
+        '  - Draft email',
+        '  - Book room',
+        '- [ ] Call Ada',
+        '',
+        '  Ask about the renewal',
+      ].join('\n'),
+    );
+  });
+
   it('escapes literal Markdown text and link destinations', () => {
     expect(
       tipTapDocumentToMarkdown({

@@ -234,15 +234,13 @@ export class DataloaderService {
           return {
             flatEntityMaps: flatAgentMaps,
             toDtos: (flatAgents: FlatAgent[]) =>
-              flatAgents
-                .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
-                .map((flatAgent) =>
-                  fromFlatAgentWithRoleIdToAgentDto({
-                    ...flatAgent,
-                    roleId:
-                      flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId ?? null,
-                  }),
-                ),
+              flatAgents.map((flatAgent) =>
+                fromFlatAgentWithRoleIdToAgentDto({
+                  ...flatAgent,
+                  roleId:
+                    flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId ?? null,
+                }),
+              ),
           };
         },
       });
@@ -1180,10 +1178,8 @@ export class DataloaderService {
             flatEntityIds: agentIds,
             flatEntityMaps: flatAgentMaps,
           })
-            .filter(
-              (flatAgent) =>
-                !isDefined(flatAgent.deletedAt) &&
-                isDefined(flatApplicationMaps.byId[flatAgent.applicationId]),
+            .filter((flatAgent) =>
+              isDefined(flatApplicationMaps.byId[flatAgent.applicationId]),
             )
             .map((flatAgent) =>
               fromFlatAgentWithRoleIdToAgentDto({ ...flatAgent, roleId }),

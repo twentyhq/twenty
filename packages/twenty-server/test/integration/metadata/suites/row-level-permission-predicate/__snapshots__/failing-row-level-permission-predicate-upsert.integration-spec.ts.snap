@@ -177,3 +177,38 @@ exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissi
   "name": "UserInputError",
 }
 `;
+
+exports[`Row Level Permission Predicate upsert should fail when the operand is not supported for the field type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Operand IS is not supported for field type TEXT",
+              "userFriendlyMessage": "This operand is not supported for this field",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This operand is not supported for this field",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
