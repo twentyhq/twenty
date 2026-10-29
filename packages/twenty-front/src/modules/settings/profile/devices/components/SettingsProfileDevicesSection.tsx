@@ -95,12 +95,11 @@ export const SettingsProfileDevicesSection = () => {
       country: session.country,
       locale: i18n.locale,
     });
-    const details = [location, session.ipAddress]
-      .filter(isNonEmptyString)
-      .join(' · ');
+    const details = [location, session.ipAddress].filter(isNonEmptyString);
 
-    return isNonEmptyString(details)
-      ? t`Last active ${lastActive} · ${details}`
+    // An expression, not a variable, keeps the "{0}" placeholder and so the existing translations.
+    return isNonEmptyArray(details)
+      ? t`Last active ${lastActive} · ${details.join(' · ')}`
       : t`Last active ${lastActive}`;
   };
 
