@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type CookieOptions, type Request, type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -14,6 +15,15 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { resolveSessionCookieAccess } from 'src/engine/core-modules/user-session/utils/resolve-session-cookie-access.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const API_PATHS = new Set<string>(Object.values(ApiPath));
+
+// Bounded so the metric can show which callers still rely on legacy access.
+const getApiPathLabel = (request: Request): string => {
+  const firstSegment = request.path?.split('/')[1] ?? '';
+
+  return API_PATHS.has(firstSegment) ? firstSegment : 'other';
+};
 
 const isHttpsUrl = (url: string | undefined): boolean => {
   if (!isNonEmptyString(url)) {
@@ -27,7 +37,7 @@ const isHttpsUrl = (url: string | undefined): boolean => {
   }
 };
 
-// Every read and write of the session cookies goes through here, gated by resolveSessionCookieAccess.
+// Keep every session-cookie read and write in this service: it is the only place resolveSessionCookieAccess is enforced.
 @Injectable()
 export class UserSessionCookieService {
   constructor(
@@ -49,10 +59,15 @@ export class UserSessionCookieService {
     );
   }
 
-  private extractAllowedSessionToken(
-    request: Request,
-    cookieNames: { secureCookieName: string; insecureCookieName: string },
-  ): string | undefined {
+  private extractAllowedSessionToken({
+    request,
+    secureCookieName,
+    insecureCookieName,
+  }: {
+    request: Request;
+    secureCookieName: string;
+    insecureCookieName: string;
+  }): string | undefined {
     const access = resolveSessionCookieAccess(request);
 
     if (access === 'denied') {
@@ -60,7 +75,8 @@ export class UserSessionCookieService {
     }
 
     const sessionToken = extractUserSessionTokenFromRequestCookie(request, {
-      ...cookieNames,
+      secureCookieName,
+      insecureCookieName,
       allowInsecureCookieName: !this.isSecureDeployment(),
     });
 
@@ -68,6 +84,7 @@ export class UserSessionCookieService {
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.UserSessionCookieLegacyAccess,
         amount: 1,
+        attributes: { apiPath: getApiPathLabel(request) },
       });
     }
 
@@ -75,7 +92,8 @@ export class UserSessionCookieService {
   }
 
   extractSessionTokenFromRequest(request: Request): string | undefined {
-    return this.extractAllowedSessionToken(request, {
+    return this.extractAllowedSessionToken({
+      request,
       secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_COOKIE_NAME,
     });
@@ -84,7 +102,8 @@ export class UserSessionCookieService {
   extractImpersonatorSessionTokenFromRequest(
     request: Request,
   ): string | undefined {
-    return this.extractAllowedSessionToken(request, {
+    return this.extractAllowedSessionToken({
+      request,
       secureCookieName: USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_IMPERSONATOR_COOKIE_NAME,
     });

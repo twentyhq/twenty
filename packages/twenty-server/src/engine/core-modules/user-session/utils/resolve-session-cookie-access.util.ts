@@ -24,7 +24,7 @@ export const resolveSessionCookieAccess = (
     return 'navigation';
   }
 
-  // Bundles that predate the opt-in header; removed once enforcement ships.
+  // TODO(@FelixMalfait): bundles that predate the opt-in header; remove with twentyhq/core-team-issues#3126.
   if (!isDefined(request.headers[FRONT_COMPONENT_HOST_FETCH_HEADER_NAME])) {
     return 'legacy';
   }

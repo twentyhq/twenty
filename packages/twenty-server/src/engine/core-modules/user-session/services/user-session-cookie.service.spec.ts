@@ -62,13 +62,17 @@ describe('UserSessionCookieService', () => {
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
   });
 
-  it('should still read the session cookie on legacy requests and count them', () => {
-    const request = buildRequest({ 'sec-fetch-mode': 'cors' });
+  it('should still read the session cookie on legacy requests and count them by API path', () => {
+    const request = {
+      ...buildRequest({ 'sec-fetch-mode': 'cors' }),
+      path: '/file-upload/upload-id',
+    } as Request;
 
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
     expect(incrementCounterBy).toHaveBeenCalledWith({
       key: MetricsKeys.UserSessionCookieLegacyAccess,
       amount: 1,
+      attributes: { apiPath: 'file-upload' },
     });
   });
 
