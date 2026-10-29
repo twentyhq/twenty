@@ -2,21 +2,16 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { Collapsible } from 'twenty-ui/primitives/layout';
-import {
-  IconChevronRight,
-  IconCpu,
-  ThinkingOrbitLoaderIcon,
-} from 'twenty-ui/icon';
+import { IconChevronRight, ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { getToolName, type ReasoningUIPart } from 'ai';
+import { getToolName } from 'ai';
 
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ThinkingReasoningStepRow } from '@/ai/components/ThinkingReasoningStepRow';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getLatestReasoningTitle } from '@/ai/utils/getLatestReasoningTitle';
+import { getReasoningStepLabel } from '@/ai/utils/getReasoningStepLabel';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMessage';
 import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
@@ -100,52 +95,6 @@ const StyledStepCount = styled.span`
   white-space: nowrap;
 `;
 
-const StyledReasoningStepContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRow = styled.div<{ isExpandable: boolean }>`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ isExpandable }) => (isExpandable ? 'pointer' : 'default')};
-  display: flex;
-  font-family: inherit;
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
-  padding: 0;
-  text-align: left;
-  width: 100%;
-
-  &:hover {
-    color: ${({ isExpandable }) =>
-      isExpandable
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.tertiary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
-  }
-`;
-
-const StyledRowLabel = styled.span`
-  color: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-  white-space: nowrap;
-`;
-
 const StyledShimmeringRowLabel = styled(ShimmeringText)`
   font-size: ${themeCssVariables.font.size.md};
   line-height: ${themeCssVariables.text.lineHeight.md};
@@ -153,24 +102,6 @@ const StyledShimmeringRowLabel = styled(ShimmeringText)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const StyledReasoningContainer = styled.div`
-  padding-left: calc(
-    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
-  );
-`;
-
-const StyledReasoningText = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-
-  // reasoning uses single newlines as line breaks, which markdown would collapse
-  ${StyledParagraph} {
-    white-space: pre-line;
-  }
 `;
 
 const StyledIconContainer = styled.div`
@@ -181,78 +112,6 @@ const StyledIconContainer = styled.div`
   justify-content: center;
   min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
 `;
-
-const StyledRowLabelContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-`;
-
-const getReasoningStepLabel = ({
-  text,
-  isActive,
-}: {
-  text: string;
-  isActive: boolean;
-}) => getLatestReasoningTitle(text) ?? (isActive ? t`Thinking` : t`Thought`);
-
-const ThinkingReasoningStepRow = ({
-  isActive,
-  part,
-}: {
-  isActive: boolean;
-  part: ReasoningUIPart;
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const isExpandable = part.text.trim().length > 0;
-  const label = getReasoningStepLabel({ text: part.text, isActive });
-
-  const rowContent = (
-    <>
-      <StyledIconContainer>
-        {isActive ? <ThinkingOrbitLoaderIcon /> : <IconCpu size={14} />}
-      </StyledIconContainer>
-      <StyledRowLabelContainer>
-        {isActive ? (
-          <StyledShimmeringRowLabel>{label}</StyledShimmeringRowLabel>
-        ) : (
-          <StyledRowLabel>{label}</StyledRowLabel>
-        )}
-        {isExpandable && (
-          <StyledChevronContainer>
-            <IconChevronRight size={14} />
-          </StyledChevronContainer>
-        )}
-      </StyledRowLabelContainer>
-    </>
-  );
-
-  if (!isExpandable) {
-    return <StyledRow isExpandable={false}>{rowContent}</StyledRow>;
-  }
-
-  return (
-    <Collapsible.Root
-      open={isExpanded}
-      onOpenChange={setIsExpanded}
-      render={<StyledReasoningStepContainer />}
-    >
-      <Collapsible.Trigger render={<StyledRow as="button" isExpandable />}>
-        {rowContent}
-      </Collapsible.Trigger>
-      <Collapsible.Panel>
-        <StyledReasoningContainer>
-          <StyledReasoningText>
-            <LazyMarkdownRenderer text={part.text} />
-          </StyledReasoningText>
-        </StyledReasoningContainer>
-      </Collapsible.Panel>
-    </Collapsible.Root>
-  );
-};
 
 const ThinkingStepRow = ({
   isActive,
