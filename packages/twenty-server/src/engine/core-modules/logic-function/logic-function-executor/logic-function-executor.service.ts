@@ -522,7 +522,10 @@ export class LogicFunctionExecutorService {
     flatApplication,
     flatLogicFunctionMaps,
   }: {
-    flatApplication: Pick<FlatApplication, 'id' | 'applicationRegistrationId'>;
+    flatApplication: Pick<
+      FlatApplication,
+      'id' | 'universalIdentifier' | 'applicationRegistrationId'
+    >;
     flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
   }): Promise<Record<string, string>> {
     const doesApplicationDeclareServerRoutes = (
@@ -560,15 +563,18 @@ export class LogicFunctionExecutorService {
       'flatLogicFunctionMaps',
     ]);
 
-    const ownerFlatApplication = Object.values(
-      ownerFlatApplicationMaps.byId,
-    ).find(
-      (ownerApplication) =>
-        ownerApplication?.applicationRegistrationId ===
-        flatApplication.applicationRegistrationId,
-    );
+    const ownerFlatApplicationId =
+      ownerFlatApplicationMaps.idByUniversalIdentifier[
+        flatApplication.universalIdentifier
+      ];
+    const ownerFlatApplication = isDefined(ownerFlatApplicationId)
+      ? ownerFlatApplicationMaps.byId[ownerFlatApplicationId]
+      : undefined;
 
-    if (!isDefined(ownerFlatApplication)) {
+    if (
+      ownerFlatApplication?.applicationRegistrationId !==
+      flatApplication.applicationRegistrationId
+    ) {
       return {};
     }
 
