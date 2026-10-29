@@ -14,7 +14,7 @@ const DEFAULT_AGENT_CHAT_INBOX_STATE: AgentChatInboxState = {
   mentionsResolvedAt: null,
 };
 
-// Optimistic copy of AgentChatThreadParticipantService's write
+// Optimistic copy of AgentChatThreadParticipantService's write, except ARCHIVE_IF_SETTLED
 export const applyAgentChatInboxAction = ({
   participant,
   action,
@@ -54,6 +54,8 @@ export const applyAgentChatInboxAction = ({
         snoozedUntil: null,
         isSubscribed: true,
       };
+    case 'ARCHIVE_IF_SETTLED':
+      return state;
     // A snooze already due is saved as ended, and a snoozed chat is followed
     // again since it is meant to come back
     case 'SNOOZE':

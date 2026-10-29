@@ -131,6 +131,7 @@ describe('applyAgentChatInboxAction', () => {
     'SNOOZE',
     'MOVE_TO_INBOX',
     'SUBSCRIBE',
+    'ARCHIVE_IF_SETTLED',
   ])('preserves unresolved mentions on %s', (action) => {
     expect(
       applyAgentChatInboxAction({

@@ -4,6 +4,7 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
+// Re-checked by AgentChatThreadParticipantService's ARCHIVE_IF_SETTLED write, so both change together
 export const isAgentChatThreadSettledForMember = ({
   thread,
   participant,
@@ -21,7 +22,7 @@ export const isAgentChatThreadSettledForMember = ({
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
   workspaceMemberId: string;
 }) => {
-  const { scope, isUnread } = getAgentChatThreadInboxStatus({
+  const { scope, isUnread, isMentioned } = getAgentChatThreadInboxStatus({
     lastActivityAt: thread.lastActivityAt,
     participant,
   });
@@ -29,6 +30,7 @@ export const isAgentChatThreadSettledForMember = ({
   return (
     scope === 'INBOX' &&
     !isUnread &&
+    !isMentioned &&
     !isDefined(thread.deletedAt) &&
     isDefined(thread.lastActivityAt) &&
     thread.workspaceMemberId === workspaceMemberId &&

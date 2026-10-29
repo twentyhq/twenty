@@ -2,6 +2,7 @@ import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { useArchiveAgentChatThreadIfSettled } from '@/ai/hooks/useArchiveAgentChatThreadIfSettled';
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
@@ -12,8 +13,6 @@ import {
 } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
-import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
@@ -41,6 +40,8 @@ export const AgentChatThreadMarkAsReadEffect = () => {
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
   const { updateAgentChatThreadInboxState } =
     useUpdateAgentChatThreadInboxState();
+  const { archiveAgentChatThreadIfSettled } =
+    useArchiveAgentChatThreadIfSettled();
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
@@ -70,29 +71,9 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       );
 
       // Filed on leave, not on read, so the chat stays put while being read
-      const thread = store.get(
-        agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-      );
-      const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
-
-      if (
-        isDefined(thread) &&
-        isDefined(workspaceMemberId) &&
-        isAgentChatThreadSettledForMember({
-          thread,
-          participant: store.get(agentChatThreadParticipantsState.atom)?.[
-            threadId
-          ],
-          workspaceMemberId,
-        })
-      ) {
-        void updateAgentChatThreadInboxState({
-          threadIds: [threadId],
-          action: AgentChatInboxAction.ARCHIVE,
-        });
-      }
+      archiveAgentChatThreadIfSettled(threadId);
     };
-  }, [store, threadId, updateAgentChatThreadInboxState]);
+  }, [store, threadId, archiveAgentChatThreadIfSettled]);
 
   useEffect(() => {
     if (
@@ -148,12 +129,18 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     void updateAgentChatThreadInboxState({
       threadIds: [threadId],
       action: AgentChatInboxAction.READ,
+    }).then(() => {
+      // Left before the read was saved, which the filing on leave needed
+      if (store.get(agentChatThreadVisitState.atom)?.threadId !== threadId) {
+        archiveAgentChatThreadIfSettled(threadId);
+      }
     });
   }, [
     isVisible,
     lastActivityAt,
     agentChatThreadParticipants,
     updateAgentChatThreadInboxState,
+    archiveAgentChatThreadIfSettled,
     store,
     threadId,
   ]);

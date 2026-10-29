@@ -53,6 +53,23 @@ describe('isAgentChatThreadSettledForMember', () => {
     ).toBe(false);
   });
 
+  it('keeps a read chat with an unresolved mention', () => {
+    expect(
+      isSettled({ participant: { lastMentionedAt: LAST_ACTIVITY_AT } }),
+    ).toBe(false);
+  });
+
+  it('settles a read chat after its mention was resolved', () => {
+    expect(
+      isSettled({
+        participant: {
+          lastMentionedAt: LAST_ACTIVITY_AT,
+          lastResolvedMentionAt: LAST_ACTIVITY_AT,
+        },
+      }),
+    ).toBe(true);
+  });
+
   it('keeps a chat waiting on an answer from the member', () => {
     expect(isSettled({ thread: { pendingQuestionMessageId: 'message' } })).toBe(
       false,
