@@ -19,7 +19,6 @@ import { SettingsApplicationTableRow } from '@/settings/applications/components/
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
-import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const StyledTableRowsContainer = styled.div`
@@ -140,12 +139,7 @@ export const SettingsApplicationsTable = ({
   ) => {
     const shouldShowUpdateTag =
       middleColumn === 'type' &&
-      hasApplicationUpdate({
-        sourceType: application.applicationRegistration?.sourceType,
-        currentVersion: application.version,
-        latestAvailableVersion:
-          application.applicationRegistration?.latestAvailableVersion,
-      });
+      statusById?.[application.id]?.type === 'updateAvailable';
 
     return (
       <SettingsApplicationTableRow
