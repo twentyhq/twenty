@@ -244,8 +244,11 @@ export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(canvas.getAllByText('Recorder Pro').length).toBeGreaterThan(0);
-    expect(canvas.getByRole('link', { name: 'Apps' })).toBeVisible();
+    const breadcrumb = within(canvas.getByLabelText('Breadcrumb'));
+
+    expect(breadcrumb.getByRole('link', { name: 'Apps' })).toBeVisible();
+    expect(breadcrumb.getByText('Recorder Pro')).toBeVisible();
+    expect(canvas.getAllByText('Recorder Pro')).toHaveLength(3);
     expect(
       canvasElement.querySelector(
         'img[src="https://example.com/recorder-cover.png"]',
