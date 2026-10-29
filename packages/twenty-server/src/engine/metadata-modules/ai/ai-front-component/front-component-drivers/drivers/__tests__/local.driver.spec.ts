@@ -1,11 +1,18 @@
-import { build } from 'esbuild';
-import { access, mkdir, mkdtemp, readFile, rm, writeFile } from 'fs/promises';
+import {
+  access,
+  copyFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from 'fs/promises';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { PageLayoutType } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 
-import { handler } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-builder.handler';
+import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
@@ -120,27 +127,15 @@ describe('LocalDriver', () => {
     await mkdir(join(yarnEngineDirectory, '.yarn/releases'), {
       recursive: true,
     });
-    await build({
-      entryPoints: [
-        resolve(__dirname, '../../../front-component-builder.handler.ts'),
-      ],
-      outfile: join(buildAssetsDirectory, 'index.js'),
-      bundle: true,
-      platform: 'node',
-      format: 'cjs',
-      tsconfig: resolve(process.cwd(), 'tsconfig.json'),
-      plugins: [
-        {
-          name: 'installed-esbuild',
-          setup(pluginBuild) {
-            pluginBuild.onResolve({ filter: /^esbuild$/ }, () => ({
-              path: require.resolve('esbuild'),
-              external: true,
-            }));
-          },
-        },
-      ],
-    });
+    await mkdir(buildAssetsDirectory);
+    await copyFile(
+      resolve(__dirname, '../../constants/builder/index.mjs'),
+      join(buildAssetsDirectory, 'index.mjs'),
+    );
+    await copyFile(
+      require.resolve('src/engine/core-modules/application/application-package/constants/yarn-engine/install-yarn-dependencies.cjs'),
+      join(yarnEngineDirectory, 'install-yarn-dependencies.cjs'),
+    );
     await writeFile(
       join(yarnEngineDirectory, '.yarn/releases/yarn-4.9.2.cjs'),
       `const fs = require('node:fs');
@@ -180,7 +175,12 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     };
     const result = frontComponentBuildResultSchema.parse(await invoke(request));
 
-    expect(result).toEqual(await handler(request));
+    expect(result).toEqual(
+      await executeFrontComponentBuilderRequest({
+        input: request,
+        yarnEngineDirectory,
+      }),
+    );
     expect(result).toMatchObject({
       success: true,
       sharedDependenciesChecksum: vendor.checksum,
@@ -203,7 +203,12 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     };
     const result = await invoke(request);
 
-    expect(result).toEqual(await handler(request));
+    expect(result).toEqual(
+      await executeFrontComponentBuilderRequest({
+        input: request,
+        yarnEngineDirectory,
+      }),
+    );
     expect(result).not.toHaveProperty('userFriendlyMessage');
     expect(result).toMatchObject({
       success: false,
@@ -221,8 +226,10 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
     await mkdir(assets);
     await writeFile(
-      join(assets, 'index.js'),
-      `exports.handler = () => {
+      join(assets, 'index.mjs'),
+      `import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+export const handler = () => {
   require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
   return { success: true, builtCode: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {} };
 };`,
@@ -288,8 +295,10 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
       await mkdir(assets);
       await writeFile(
-        join(assets, 'index.js'),
-        `exports.handler = () => {
+        join(assets, 'index.mjs'),
+        `import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+export const handler = () => {
   require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
   return ${JSON.stringify(response)};
 };`,
@@ -330,8 +339,10 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 
     await mkdir(assets);
     await writeFile(
-      join(assets, 'index.js'),
-      `exports.handler = () => new Promise(() => {
+      join(assets, 'index.mjs'),
+      `import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+export const handler = () => new Promise(() => {
 require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
 if (process.platform !== 'win32') {
   require('node:child_process').spawn(process.execPath, ['-e', ${JSON.stringify(descendantSource)}]);

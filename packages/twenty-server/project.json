@@ -16,7 +16,7 @@
           "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
         ]
       },
-      "dependsOn": ["^build", "build:front-component-builder"]
+      "dependsOn": ["^build"]
     },
     "test:integration:secure": {
       "executor": "nx:run-commands",
@@ -70,7 +70,7 @@
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
-      "dependsOn": ["^build", "build:front-component-builder"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "rimraf dist && NODE_ENV=development nest start --watch"
@@ -81,8 +81,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "NODE_ENV=development nest start"
-      },
-      "dependsOn": ["build:front-component-builder"]
+      }
     },
     "start:ci-if-needed": {
       "executor": "nx:run-commands",
@@ -94,7 +93,7 @@
     },
     "start:debug": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "build:front-component-builder"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
@@ -137,7 +136,7 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "build:front-component-builder"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
@@ -330,18 +329,6 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx tsx scripts/bump-version.ts"
-      }
-    },
-    "build:front-component-builder": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "dependsOn": ["^build"],
-      "outputs": [
-        "{projectRoot}/src/engine/metadata-modules/ai/ai-front-component/generated"
-      ],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "tsx --tsconfig tsconfig.json scripts/build-front-component-builder.ts"
       }
     }
   }

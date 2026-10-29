@@ -1,5 +1,5 @@
 import { InvokeCommand } from '@aws-sdk/client-lambda';
-import { copyFile, cp } from 'fs/promises';
+import { cp } from 'fs/promises';
 import { join } from 'path';
 import { isDefined } from 'twenty-shared/utils';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
@@ -14,7 +14,7 @@ import {
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
 import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
-import { FRONT_COMPONENT_BUILDER_DIRECTORY } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-directory.constant';
+import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/copy-front-component-builder.util';
 import { type FrontComponentDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/types/front-component-driver.type';
 import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/get-front-component-builder-name.util';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -86,10 +86,7 @@ export class LambdaDriver implements FrontComponentDriver {
         : BUILDER_LAMBDA_MEMORY_MB,
       timeoutSeconds,
       copyFiles: async (directory) => {
-        await copyFile(
-          join(FRONT_COMPONENT_BUILDER_DIRECTORY, 'index.js'),
-          join(directory, 'index.js'),
-        );
+        await copyFrontComponentBuilder(directory);
         if (buildsDependencies) {
           await cp(YARN_ENGINE_DIRNAME, join(directory, 'yarn-engine'), {
             recursive: true,

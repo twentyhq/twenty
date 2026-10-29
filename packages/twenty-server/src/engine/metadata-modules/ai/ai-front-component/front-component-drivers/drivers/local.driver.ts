@@ -1,13 +1,13 @@
-import { cp, mkdtemp, rm } from 'fs/promises';
+import { cp, mkdir, mkdtemp, rm, symlink } from 'fs/promises';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
 import {
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
-import { FRONT_COMPONENT_BUILDER_DIRECTORY } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-directory.constant';
+import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/copy-front-component-builder.util';
 import { type FrontComponentDriver } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/types/front-component-driver.type';
 import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-drivers/utils/get-front-component-builder-name.util';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
@@ -47,6 +47,13 @@ export class LocalDriver implements FrontComponentDriver {
   private async invoke(input: FrontComponentBuilderRequest) {
     const directory = await mkdtemp(join(tmpdir(), 'front-component-builder-'));
     try {
+      await copyFrontComponentBuilder(directory);
+      await mkdir(join(directory, 'node_modules'));
+      await symlink(
+        dirname(require.resolve('esbuild/package.json')),
+        join(directory, 'node_modules/esbuild'),
+        'junction',
+      );
       if (input.action === 'buildDependencies') {
         await cp(YARN_ENGINE_DIRNAME, join(directory, 'yarn-engine'), {
           recursive: true,
@@ -54,7 +61,7 @@ export class LocalDriver implements FrontComponentDriver {
       }
       const runnerPath = await this.childProcessRunner.writeBootstrapRunner({
         dir: directory,
-        builtFileAbsPath: join(FRONT_COMPONENT_BUILDER_DIRECTORY, 'index.js'),
+        builtFileAbsPath: join(directory, 'index.mjs'),
         handlerName: 'handler',
       });
       const { NODE_OPTIONS: _nodeOptions, ...environment } = process.env;
