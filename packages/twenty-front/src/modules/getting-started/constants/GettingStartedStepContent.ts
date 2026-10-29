@@ -33,7 +33,7 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
   [GettingStartedStep.IMPORT_DATA]: {
     title: msg`Import your data`,
     doneTitle: msg`Spreadsheet uploaded`,
-    description: msg`Bring your contacts into Twenty from a spreadsheet.`,
+    description: msg`Bring your companies, contacts and deals from any CRM export.`,
     Icon: IconFileImport,
     iconColor: themeCssVariables.tag.text.gray,
   },
