@@ -10,11 +10,13 @@ export const preparePullEntities = ({
   baseManifest,
   scannedFiles,
   unreconciledUniversalIdentifiers,
+  systemPermissionFlag,
 }: {
   manifest: Manifest;
   baseManifest: Manifest | null;
   scannedFiles: ScannedSourceFile[];
   unreconciledUniversalIdentifiers?: ReadonlySet<string>;
+  systemPermissionFlag?: Record<string, unknown>;
 }) => {
   const sourceFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
 
@@ -30,11 +32,15 @@ export const preparePullEntities = ({
   const { entities, skipped } = buildPullEntities(
     manifest,
     sourceFileByUniversalIdentifier,
+    systemPermissionFlag,
   );
   const baseEntities = buildPullBaseEntities({
     entities: isDefined(baseManifest)
-      ? buildPullEntities(baseManifest, sourceFileByUniversalIdentifier)
-          .entities
+      ? buildPullEntities(
+          baseManifest,
+          sourceFileByUniversalIdentifier,
+          systemPermissionFlag,
+        ).entities
       : [],
     unreconciledUniversalIdentifiers,
   });
