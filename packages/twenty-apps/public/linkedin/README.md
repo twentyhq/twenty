@@ -1,41 +1,27 @@
-# LinkedIn for Twenty
+# LinkedIn
 
-Bring LinkedIn conversations into Twenty. Each workspace member connects their
-own LinkedIn account; new messages they send or receive land in Twenty as
-message threads on the matching People and Companies, next to their emails.
+**Your LinkedIn conversations, on the people and companies they're about.**
 
-This first version is read-only: conversations are imported as they happen,
-replies are sent from LinkedIn.
+## ✨ What you get
 
-## Connecting LinkedIn
+- **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
+- **Private by default**: teammates see who you talked to and when, never what was said
+- **Matched on the LinkedIn field**: a conversation links to the Person whose LinkedIn profile URL matches
+- **One connection per member**: each teammate connects their own LinkedIn account in a few clicks
+
+## 💳 Billing
+
+**$10 per month** per workspace, billed to your Twenty credits.
+
+## 🚀 Get started
 
 1. Install **LinkedIn** from **Settings → Applications**.
-2. Open **Settings → Apps preferences → LinkedIn** and click **Add connection**.
-3. Sign in to LinkedIn on the page that opens.
+2. Each member opens **Settings → App preferences → LinkedIn**, clicks **Add connection** and signs in to LinkedIn.
 
-Conversations are private to the member who connected them: other members only
-see who took part and when. A participant is linked to a Person when the
-Person's **LinkedIn** field holds their profile URL.
+## 📌 Heads up
 
-## Self-hosting setup
+- **Read-only for now.** Messages are imported as they happen; reply from LinkedIn.
+- **New messages only.** Conversations from before you connected are not imported yet.
+- **No contacts created.** A sender with no matching Person is kept on the message but appears on no record until you add their LinkedIn URL to a Person.
 
-LinkedIn accounts are connected through [Unipile](https://www.unipile.com)
-(API v2). On Twenty Cloud this is already configured.
-
-1. Create an application on [dashboardv2.unipile.com](https://dashboardv2.unipile.com)
-   and an **Account API key** for it.
-2. Add a webhook endpoint on that application:
-   - URL: `<SERVER_URL>/webhooks/server/<id>`, where `<id>` is the `id` of the
-     `linkedin-webhook-resolver` logic function in the owner workspace
-     (`findManyLogicFunctions` on the `/metadata` API)
-   - Events: `message.new`, `account.status.disconnected`, `account.status.errored`
-3. In **Settings → Applications → LinkedIn → Application registration**, set
-   `UNIPILE_API_KEY` to the API key and `UNIPILE_WEBHOOK_SECRET` to the
-   endpoint's signing secret.
-
-The app must be installed on its owner workspace for the webhook URL to answer.
-
-## Code layout
-
-Everything that talks to Unipile lives in `src/unipile`, with no dependency on
-the rest of the app, so it can be shared with other Unipile-backed apps.
+Self-hosting or developing the app? See [SETUP.md](./SETUP.md).

@@ -6,13 +6,23 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'LinkedIn',
   description:
-    'Bring LinkedIn conversations into Twenty. Each member connects their own LinkedIn account and their messages appear on the matching People and Companies.',
+    'Your LinkedIn conversations, on the people and companies they are about.',
   logo: 'public/linkedin-logomark.svg',
   author: 'Twenty',
   category: 'Communication',
   emailSupport: 'contact@twenty.com',
   termsUrl: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
   websiteUrl: 'https://www.twenty.com',
+  billing: {
+    description: '$10 per month per workspace. Billed to your Twenty credits.',
+    recurring: {
+      subscription: {
+        period: 'MONTH',
+        amountMicroCredits: 10_000_000,
+        label: 'LinkedIn subscription',
+      },
+    },
+  },
   serverVariables: {
     UNIPILE_API_KEY: {
       description:
