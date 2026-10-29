@@ -1,78 +1,45 @@
-import { useEffect, useState } from 'react';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
-import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AgentChatStreamingAutoScrollEffect = () => {
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+
+  const agentChatMessages = useAtomFamilyStateValue(
+    agentChatMessagesFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
     agentChatIsScrolledToBottomComponentSelector,
   );
-  const [isPausedByReader, setIsPausedByReader] = useState(false);
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
-  useListenToBrowserEvent({
-    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
-    onBrowserEvent: () => setIsPausedByReader(false),
-  });
-
   useEffect(() => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-    const messageListElement = scrollWrapperElement?.firstElementChild;
-
-    if (!isDefined(scrollWrapperElement) || !isDefined(messageListElement)) {
+    if (!isNonEmptyArray(agentChatMessages)) {
       return;
     }
 
-    const pauseFollowing = () => setIsPausedByReader(true);
-    const resumeFollowingAtBottom = () => {
-      if (getScrollBottomInPx(scrollWrapperElement) <= 1) {
-        setIsPausedByReader(false);
-      }
-    };
-
-    messageListElement.addEventListener('pointerdown', pauseFollowing);
-    messageListElement.addEventListener('keydown', pauseFollowing);
-    scrollWrapperElement.addEventListener('scroll', resumeFollowingAtBottom, {
-      passive: true,
-    });
-
-    return () => {
-      messageListElement.removeEventListener('pointerdown', pauseFollowing);
-      messageListElement.removeEventListener('keydown', pauseFollowing);
-      scrollWrapperElement.removeEventListener(
-        'scroll',
-        resumeFollowingAtBottom,
-      );
-    };
-  }, [getScrollWrapperElement]);
-
-  useEffect(() => {
-    if (!agentChatIsScrolledToBottom || isPausedByReader) {
+    if (!agentChatIsScrolledToBottom) {
       return;
     }
 
     const { scrollWrapperElement } = getScrollWrapperElement();
-    const messageListElement = scrollWrapperElement?.firstElementChild;
 
-    if (!isDefined(scrollWrapperElement) || !isDefined(messageListElement)) {
-      return;
+    if (isDefined(scrollWrapperElement)) {
+      scrollAiChatToBottom(scrollWrapperElement);
     }
-
-    const resizeObserver = new ResizeObserver(() =>
-      scrollAiChatToBottom(scrollWrapperElement),
-    );
-
-    resizeObserver.observe(messageListElement);
-
-    return () => resizeObserver.disconnect();
-  }, [agentChatIsScrolledToBottom, isPausedByReader, getScrollWrapperElement]);
+  }, [agentChatMessages, agentChatIsScrolledToBottom, getScrollWrapperElement]);
 
   return null;
 };
