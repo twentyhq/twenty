@@ -59,6 +59,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS: LogConsoleFilterField[] 
             <ApplicationStackIcon
               Icon={IconBrandTypescript}
               applicationId={logicFunction.applicationId}
+              showFirstPartyApplication
             />
           ),
         })),
