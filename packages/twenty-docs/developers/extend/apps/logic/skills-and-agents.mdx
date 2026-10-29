@@ -104,6 +104,39 @@ Schema notes:
 - `additionalProperties: false` (optional) forbids any property not declared in `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Expose an external MCP server to the workspace's AI (beta)">
+
+<Warning>
+  MCP servers are in beta and not live yet: you can declare them, but workspaces cannot use their tools until the feature ships.
+</Warning>
+
+Use `defineMcpServer()` to ship a remote MCP server (Streamable HTTP) with your app, so the workspace's AI can use its tools without syncing that data into Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Key points:
+- `name` is snake_case (lowercase letters, digits and underscores, starting with a letter, at most 32 characters) and unique in the workspace. It prefixes the server's tool names.
+- `url` must be an HTTP or HTTPS URL.
+- `connectionProvider` (optional) references a [connection provider](/developers/extend/apps/logic/connections) declared by the same app. Calls send that connection's access token as a Bearer token. Omit it for a public server.
+- The URL cannot change in a later version while a connection provider is linked, so tokens are never sent to another host.
+- Workspaces can deactivate the server; a later app version keeps that choice.
+- Requires `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Run an agent from a logic function">
 
 `runAgent()` lets a logic function run one of your app's agents (with its

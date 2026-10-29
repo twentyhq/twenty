@@ -4,10 +4,10 @@ import { join, resolve } from 'path';
 
 import archiver from 'archiver';
 import { pipeline } from 'stream/promises';
+import { installYarnDependencies } from './yarn-engine/install-yarn-dependencies.cjs';
 
 const YARN_INSTALL_TIMEOUT_MS = 240_000;
 const YARN_ENGINE_DIR = resolve('yarn-engine');
-const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
 
 const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   await fs.mkdir(nodejsDir, { recursive: true });
@@ -17,31 +17,16 @@ const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   ]);
 };
 
-const copyYarnEngine = async (nodejsDir) => {
-  await fs.cp('yarn-engine', nodejsDir, { recursive: true });
-};
-
 const runYarnInstall = async (nodejsDir) => {
-  const { execFile } = await import('child_process');
-  const { promisify } = await import('util');
-  const execFilePromise = promisify(execFile);
-
-  const { NODE_OPTIONS: _nodeOptions, ...cleanEnv } = process.env;
-
-  // Lambda runs as a sandboxed user whose $HOME doesn't exist.
-  // Yarn needs a writable HOME for its global cache/config.
-  cleanEnv.HOME = '/tmp';
-
   try {
-    await execFilePromise(
-      process.execPath,
-      [YARN_ENGINE_PATH, 'workspaces', 'focus', '--all', '--production'],
-      {
-        cwd: nodejsDir,
-        env: cleanEnv,
-        timeout: YARN_INSTALL_TIMEOUT_MS,
-      },
-    );
+    await installYarnDependencies({
+      directory: nodejsDir,
+      yarnEngineDirectory: YARN_ENGINE_DIR,
+      args: ['workspaces', 'focus', '--all', '--production'],
+      // The Lambda user's HOME does not exist.
+      env: { HOME: '/tmp' },
+      timeout: YARN_INSTALL_TIMEOUT_MS,
+    });
   } catch (error) {
     const details = [error?.stdout, error?.stderr].filter(Boolean).join('\n');
 
@@ -114,7 +99,6 @@ export const handler = async (event) => {
 
   try {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
-    await copyYarnEngine(nodejsDir);
     await runYarnInstall(nodejsDir);
     await createZip(buildDir, zipPath);
 

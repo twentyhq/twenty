@@ -93,6 +93,7 @@ When adding AI behavior:
 - The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
 - Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 
 ## Connection Providers
 
@@ -112,6 +113,16 @@ To let members reply to an app's message channels, declare `defineMessagingProvi
 - Bind each channel to it with `messagingProvider: { universalIdentifier }` on `createMessageChannel` or `updateMessageChannel` (`null` unbinds). The provider must use the channel account's connection provider. A channel without one, or whose provider or function is gone, only ingests.
 - The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends.
 - Declare one messaging provider per kind of messaging (LinkedIn, WhatsApp) even when they share a connection provider. Its connection provider cannot change after the first sync; declare a new one with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
+
+## MCP Servers
+
+Beta: MCP servers are not live yet. Workspaces cannot use their tools until the feature ships, so do not build a feature that depends on them.
+
+To let the workspace's AI call a remote MCP server (Streamable HTTP) without syncing its data into Twenty, declare `defineMcpServer` with a snake_case `name` (lowercase letters, digits and underscores, starting with a letter, at most 32 characters; it prefixes the server's tool names), a `label` and an HTTP(S) `url`:
+
+- To authenticate, set `connectionProvider: { universalIdentifier }` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server.
+- The `url` cannot change in a later version while a connection provider is linked; declare a new server with a new `universalIdentifier` instead.
+- Workspaces can deactivate a server and a later app version keeps that choice. Requires `"engines": { "twenty": ">=2.53.0" }`.
 
 ## Post-Install Hooks
 

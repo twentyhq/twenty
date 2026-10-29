@@ -88,8 +88,11 @@ export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
 export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
 export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
 export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
+export { attachRecordToInboxThread } from '@/sdk/inbox/attach-record-to-inbox-thread';
+export { detachRecordFromInboxThread } from '@/sdk/inbox/detach-record-from-inbox-thread';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';
+export type { InboxThreadRecordInput } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';

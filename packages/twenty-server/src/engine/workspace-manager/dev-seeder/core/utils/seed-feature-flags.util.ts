@@ -4,7 +4,6 @@ import { type QueryRunner } from 'typeorm';
 const tableName = 'featureFlag';
 
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
-  [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: true,

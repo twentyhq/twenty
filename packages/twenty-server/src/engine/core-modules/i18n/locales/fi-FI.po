@@ -72,6 +72,12 @@ msgstr "{0}:n on oltava yksi-moneen- tai moni-yhteen-relaatiokenttä."
 msgid "{0} must be a one-to-many relation field."
 msgstr "{0}:n on oltava yksi-moneen-relaatiokenttä."
 
+#. js-lingui-id: Z9bcKa
+#. placeholder {0}: flatFieldPermission.fieldMetadataUniversalIdentifier
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "{action} is disabled on field {0}"
+msgstr "{action} on poistettu käytöstä kentässä {0}"
+
 #. js-lingui-id: LP7rtP
 #. placeholder {0}: flatObjectPermission.objectMetadataUniversalIdentifier
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -401,7 +407,7 @@ msgstr "Salaisella muuttujalla ei voi olla oletusarvoa."
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
-msgstr ""
+msgstr "Sovelluksen asentamaa taitoa ei voi nimetä uudelleen."
 
 #. js-lingui-id: HijTmf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util.ts
@@ -779,7 +785,7 @@ msgstr "Ylläpitäjäroolia ei löytynyt."
 #. js-lingui-id: eHJEyS
 #: src/modules/workflow/workflow-executor/workflow-actions/ai-agent/ai-agent.workflow-action.ts
 msgid "Agent \"{label}\" is archived."
-msgstr ""
+msgstr "Agentti \"{label}\" on arkistoitu."
 
 #. js-lingui-id: xPBilO
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1033,7 +1039,7 @@ msgstr "Agentilla ei voi olla enempää kuin {maxTriggers} laukaisinta"
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
 msgid "An agent installed by an application cannot be renamed."
-msgstr ""
+msgstr "Sovelluksen asentamaa agenttia ei voi nimetä uudelleen."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -2605,7 +2611,7 @@ msgstr "Vakiokäyttöoikeuslipun määritelmää ei voi päivittää"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-skill-validator.service.ts
 msgid "Cannot update standard skill properties (only overrides and activation/deactivation allowed)"
-msgstr ""
+msgstr "Vakiotaidon ominaisuuksia ei voi päivittää (vain ohitukset sekä aktivointi tai käytöstä poistaminen sallittu)"
 
 #. js-lingui-id: YIzGJ8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -3026,12 +3032,12 @@ msgstr "Valmis"
 #. js-lingui-id: XveQi3
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeded the 10 second time limit."
-msgstr ""
+msgstr "Komponentin koonti ylitti 10 sekunnin aikarajan."
 
 #. js-lingui-id: fmCVqA
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
 msgid "Component build exceeds the 5 MB output limit."
-msgstr ""
+msgstr "Komponentin koonti ylittää 5 Mt:n tulosterajan."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4193,7 +4199,7 @@ msgstr "Työnkulun version oletusasettelu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-workspace-member-page-layout.config.ts
 msgctxt "pageLayout.name"
 msgid "Default Workspace Member Layout"
-msgstr ""
+msgstr "Työtilan jäsenten oletusasettelu"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4358,6 +4364,16 @@ msgstr "Suoraa latausta ei tueta tälle tiedostotyypille."
 msgctxt "fieldMetadata.label"
 msgid "Direction"
 msgstr "Suunta"
+
+#. js-lingui-id: jJ0ehq
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must be a list"
+msgstr "Käytöstä poistettujen kenttäkäyttöoikeustoimintojen on oltava luettelo"
+
+#. js-lingui-id: 7ZwQ9I
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Disabled field permission actions must not repeat"
+msgstr "Käytöstä poistetut kenttäkäyttöoikeustoiminnot eivät saa toistua"
 
 #. js-lingui-id: jPdYe/
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -5124,7 +5140,7 @@ msgstr "Henkilöiden lisääminen listaan epäonnistui."
 #. js-lingui-id: nVOUB8
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Failed to build front component."
-msgstr ""
+msgstr "Front-komponentin koonti epäonnistui."
 
 #. js-lingui-id: rl11Jd
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -6772,12 +6788,12 @@ msgstr "Virheellinen front-komponentin syöte."
 #. js-lingui-id: 5V3pAK
 #: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
 msgid "Invalid front component settings."
-msgstr ""
+msgstr "Virheelliset front-komponentin asetukset."
 
 #. js-lingui-id: r0izKL
 #: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
 msgid "Invalid front component source."
-msgstr ""
+msgstr "Virheellinen front-komponentin lähde."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -8163,7 +8179,7 @@ msgstr "Jäsenet"
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
-msgstr ""
+msgstr "Yhdistä"
 
 #. js-lingui-id: uHk5U2
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10094,12 +10110,12 @@ msgstr "Tuhoa {objectLabel} pysyvästi"
 #. js-lingui-id: cmLTur
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagName} is not available in this workspace"
-msgstr ""
+msgstr "Käyttöoikeuslippu {permissionFlagName} ei ole käytettävissä tässä työtilassa"
 
 #. js-lingui-id: h8HQA4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Permission flag {permissionFlagUniversalIdentifier} not found in this workspace"
-msgstr ""
+msgstr "Käyttöoikeuslippua {permissionFlagUniversalIdentifier} ei löytynyt tästä työtilasta"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -12301,7 +12317,7 @@ msgstr "Vakio kohteita ei voi poistaa"
 #. js-lingui-id: gBQ8oE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util.ts
 msgid "Standard permission flag {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) not found in this workspace. Run the workspace upgrade to create it."
-msgstr ""
+msgstr "Vakiokäyttöoikeuslippua {standardPermissionFlagKey} ({permissionFlagUniversalIdentifier}) ei löytynyt tästä työtilasta. Luo se suorittamalla työtilan päivitys."
 
 #. js-lingui-id: Xn/1qY
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -13572,7 +13588,7 @@ msgstr "Työnkulun valintakentän on viitattava olemassa olevaan kenttään."
 #. js-lingui-id: go3zRL
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
-msgstr ""
+msgstr "Työnkulku käyttää yhdistettyä tiliä {handle}, jota ei ole yhdistetty eikä jaettu tässä työtilassa."
 
 #. js-lingui-id: 3uACdY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -13690,7 +13706,7 @@ msgstr "Tällä agentilla ei ole tulostekenttiä. Lisää vähintään yksi tulo
 #. js-lingui-id: Z/oZRf
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This agent is archived."
-msgstr ""
+msgstr "Tämä agentti on arkistoitu."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -14161,6 +14177,11 @@ msgstr "Tämä Organisaatioavain on jo käytössä toisessa palvelininstanssissa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 msgid "This permission is already set for the role"
 msgstr "Tämä käyttöoikeus on jo asetettu roolille"
+
+#. js-lingui-id: AwqjFF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-grants-no-disabled-action.util.ts
+msgid "This permission is disabled on the field and cannot be granted"
+msgstr "Tämä käyttöoikeus on poistettu käytöstä kentässä, eikä sitä voi myöntää"
 
 #. js-lingui-id: IlFhXC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util.ts
@@ -15033,6 +15054,11 @@ msgstr "Universaalitunniste on varattu järjestelmän hallitsemille metatiedoill
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
 msgstr "Tuntematon"
+
+#. js-lingui-id: aHCw//
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util.ts
+msgid "Unknown disabled field permission action"
+msgstr "Tuntematon käytöstä poistetun kentän käyttöoikeustoiminto"
 
 #. js-lingui-id: 0CuayF
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-disabled-object-permission-actions.util.ts
@@ -16861,7 +16887,7 @@ msgstr "Työtilan jäsenen asema"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workspace-member-views.util.ts
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
-msgstr ""
+msgstr "Työtilan jäsenen tietuesivun kentät"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
