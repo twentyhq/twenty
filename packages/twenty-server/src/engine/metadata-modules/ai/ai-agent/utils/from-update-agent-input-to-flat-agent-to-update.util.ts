@@ -18,6 +18,8 @@ import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/fl
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
@@ -91,10 +93,32 @@ const computeAgentFlatRoleTargetToUpdate = ({
   };
 };
 
+const computeUpdatedAgentName = ({
+  shouldOverride,
+  name,
+  label,
+}: {
+  shouldOverride: boolean;
+  name: string | undefined;
+  label: string | undefined;
+}): string | undefined => {
+  if (shouldOverride) {
+    return undefined;
+  }
+
+  if (isDefined(name) || !isDefined(label)) {
+    return name;
+  }
+
+  return computeMetadataNameFromLabelOrThrow(label);
+};
+
 export type FromUpdateAgentInputToFlatAgentToUpdateArgs = {
   updateAgentInput: UpdateAgentInput;
   flatAgentMaps: FlatAgentMaps;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
+  callerApplicationUniversalIdentifier: string;
+  workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<AllFlatEntityMaps, 'flatRoleMaps'>;
 
 export const fromUpdateAgentInputToFlatAgentToUpdate = ({
@@ -102,6 +126,8 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   flatAgentMaps,
   flatRoleTargetByAgentIdMaps,
   flatRoleMaps,
+  callerApplicationUniversalIdentifier,
+  workspaceCustomApplicationUniversalIdentifier,
 }: FromUpdateAgentInputToFlatAgentToUpdateArgs): {
   flatAgentToUpdate: FlatAgent;
 } & FlatRoleTargetToUpdateCreateDelete => {
@@ -122,25 +148,63 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
     });
   }
 
-  const updatedEditableAgentProperties = extractAndSanitizeObjectStringFields(
-    rawUpdateAgentInput,
-    FLAT_AGENT_EDITABLE_PROPERTIES,
-  );
+  const { name, isActive, ...otherEditableAgentProperties } =
+    extractAndSanitizeObjectStringFields(
+      rawUpdateAgentInput,
+      FLAT_AGENT_EDITABLE_PROPERTIES,
+    );
+  // GraphQL accepts an explicit null for any optional input, but isActive is never null
+  const updatedEditableAgentProperties = {
+    ...otherEditableAgentProperties,
+    ...(isDefined(isActive) ? { isActive } : {}),
+  };
 
-  if (
-    isDefined(updatedEditableAgentProperties.label) &&
-    !isDefined(updatedEditableAgentProperties.name)
-  ) {
-    updatedEditableAgentProperties.name = computeMetadataNameFromLabelOrThrow(
-      updatedEditableAgentProperties.label,
+  const shouldOverride = isCallerOverridingEntity({
+    callerApplicationUniversalIdentifier,
+    entityApplicationUniversalIdentifier:
+      existingFlatAgent.applicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
+    isSystemSideEffect: false,
+  });
+
+  // The name identifies the agent to its application, so overriding the label keeps it
+  if (shouldOverride && isDefined(name) && name !== existingFlatAgent.name) {
+    throw new AiException(
+      'Cannot rename an agent owned by another application',
+      AiExceptionCode.INVALID_AGENT_INPUT,
+      {
+        userFriendlyMessage: msg`An agent installed by an application cannot be renamed.`,
+      },
     );
   }
 
-  const flatAgentToUpdate: FlatAgent = mergeUpdateInExistingRecord({
-    existing: existingFlatAgent,
-    properties: FLAT_AGENT_EDITABLE_PROPERTIES,
-    update: updatedEditableAgentProperties,
+  const updatedName = computeUpdatedAgentName({
+    shouldOverride,
+    name,
+    label: updatedEditableAgentProperties.label,
   });
+
+  const { overrides, updatedEditableProperties } =
+    sanitizeOverridableEntityInput({
+      metadataName: 'agent',
+      existingFlatEntity: existingFlatAgent,
+      updatedEditableProperties: {
+        ...updatedEditableAgentProperties,
+        ...(isDefined(updatedName) ? { name: updatedName } : {}),
+      },
+      shouldOverride,
+      callerApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+    });
+
+  const flatAgentToUpdate: FlatAgent = {
+    ...mergeUpdateInExistingRecord({
+      existing: existingFlatAgent,
+      properties: FLAT_AGENT_EDITABLE_PROPERTIES,
+      update: updatedEditableProperties,
+    }),
+    overrides,
+  };
 
   const {
     flatRoleTargetToUpdate,

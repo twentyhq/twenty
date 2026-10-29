@@ -8,6 +8,7 @@ export enum AiExceptionCode {
   AGENT_NOT_FOUND = 'AGENT_NOT_FOUND',
   AGENT_ALREADY_EXISTS = 'AGENT_ALREADY_EXISTS',
   AGENT_IS_STANDARD = 'AGENT_IS_STANDARD',
+  AGENT_IS_INACTIVE = 'AGENT_IS_INACTIVE',
   AGENT_EXECUTION_FAILED = 'AGENT_EXECUTION_FAILED',
   INVALID_AGENT_INPUT = 'INVALID_AGENT_INPUT',
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
@@ -56,6 +57,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`An agent with this name already exists.`;
     case AiExceptionCode.AGENT_IS_STANDARD:
       return msg`Standard agents cannot be modified.`;
+    case AiExceptionCode.AGENT_IS_INACTIVE:
+      return msg`This agent is archived.`;
     case AiExceptionCode.AGENT_EXECUTION_FAILED:
       return msg`Agent execution failed.`;
     case AiExceptionCode.INVALID_AGENT_INPUT:

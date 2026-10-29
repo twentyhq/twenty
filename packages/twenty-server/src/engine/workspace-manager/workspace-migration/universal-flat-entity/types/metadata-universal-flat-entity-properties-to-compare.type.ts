@@ -44,6 +44,7 @@ type Assertions = [
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
       | 'writability'
+      | 'disabledFieldPermissionActions'
       | 'isNullable'
       | 'universalSettings'
     >

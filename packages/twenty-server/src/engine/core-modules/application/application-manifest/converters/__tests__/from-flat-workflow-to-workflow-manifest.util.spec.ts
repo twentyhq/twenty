@@ -20,10 +20,8 @@ import {
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type StoredWorkflowNode } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
-import {
-  type WorkflowManifestConnectedAccountReference,
-  type WorkflowManifestReferences,
-} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
@@ -45,8 +43,8 @@ const SALES_HANDLE = 'sales@example.com';
 const WORKSPACE_MEMBER_ID = 'a0000000-0000-4000-8000-000000000000';
 
 const connectedAccount = (
-  overrides: Partial<WorkflowManifestConnectedAccountReference>,
-): WorkflowManifestConnectedAccountReference => ({
+  overrides: Partial<ConnectedAccountForWorkflowStepResolution>,
+): ConnectedAccountForWorkflowStepResolution => ({
   id: 'sales-account-id',
   handle: SALES_HANDLE,
   provider: ConnectedAccountProvider.GOOGLE,

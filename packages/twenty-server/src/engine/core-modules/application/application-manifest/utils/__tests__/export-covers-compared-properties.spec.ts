@@ -481,6 +481,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           type: FieldMetadataType.TEXT,
           description: 'A field',
           icon: 'IconAbc',
+          disabledFieldPermissionActions: ['canUpdateFieldValue'],
           defaultValue: "'x'",
           options: null,
           universalSettings: null,
@@ -858,7 +859,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
@@ -890,10 +891,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
-      isActive:
-        'no manifest slot and no overrides; a deactivated skill is reported as unsupported',
       isSystem:
         'always false for application skills; any other value is reported as unsupported',
     },

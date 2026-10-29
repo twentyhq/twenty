@@ -296,6 +296,8 @@ export class ApplicationManifestMigrationService {
         isSystemBuild: false,
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
+        applicationDefaultRoleUniversalIdentifier:
+          manifest.application.defaultRoleUniversalIdentifier,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
         shouldDeferActions,

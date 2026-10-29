@@ -174,6 +174,8 @@ export type {
   RelationFieldManifest,
   FieldManifest,
 } from './fieldManifestType';
+export type { FieldPermissionAction } from './fieldPermissionActionType';
+export { FIELD_PERMISSION_ACTIONS } from './fieldPermissionActionType';
 export type {
   CommandMenuItemManifest,
   FrontComponentWidgetPageLayoutType,
