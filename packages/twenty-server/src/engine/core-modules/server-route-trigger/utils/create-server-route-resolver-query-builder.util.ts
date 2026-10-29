@@ -3,7 +3,6 @@ import { type SelectQueryBuilder } from 'typeorm';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// A server route only resolves to a function in its registration owner's workspace.
 export const createServerRouteResolverQueryBuilder = (
   logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
 ): SelectQueryBuilder<LogicFunctionEntity> =>

@@ -525,7 +525,7 @@ export class LogicFunctionExecutorService {
     flatApplication,
     flatLogicFunctionMaps,
   }: {
-    flatApplication: FlatApplication;
+    flatApplication: Pick<FlatApplication, 'id' | 'applicationRegistrationId'>;
     flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
   }): Promise<Record<string, string>> {
     const doesApplicationDeclareServerRoutes = (

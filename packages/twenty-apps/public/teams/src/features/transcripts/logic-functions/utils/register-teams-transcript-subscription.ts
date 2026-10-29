@@ -6,7 +6,7 @@ import { GraphRequestError } from 'src/features/transcripts/logic-functions/type
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
 import { buildTeamsTranscriptsConnectionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-connection-kv-key';
-import { buildTeamsTranscriptsWebhookUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-webhook-url';
+import { buildTeamsTranscriptsWebhookUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-webhook-url-or-throw';
 import { createTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/create-teams-transcript-subscription';
 import { deleteTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-subscription';
 import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
@@ -87,7 +87,7 @@ export const registerTeamsTranscriptSubscription = async ({
 
   const subscription = await createTeamsTranscriptSubscription({
     accessToken,
-    notificationUrl: buildTeamsTranscriptsWebhookUrl({
+    notificationUrl: buildTeamsTranscriptsWebhookUrlOrThrow({
       apiUrl,
       connectedAccountId,
     }),

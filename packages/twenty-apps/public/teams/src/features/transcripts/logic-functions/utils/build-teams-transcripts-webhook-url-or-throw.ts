@@ -1,8 +1,8 @@
 import { TEAMS_TRANSCRIPTS_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { TEAMS_TRANSCRIPTS_WEBHOOK_CONNECTION_QUERY_PARAMETER } from 'src/features/transcripts/logic-functions/constants/teams-transcripts-webhook-connection-query-parameter';
-import { getServerRouteIdentifier } from 'src/utils/get-server-route-identifier';
+import { getServerRouteIdentifierOrThrow } from 'src/utils/get-server-route-identifier-or-throw';
 
-export const buildTeamsTranscriptsWebhookUrl = ({
+export const buildTeamsTranscriptsWebhookUrlOrThrow = ({
   apiUrl,
   connectedAccountId,
 }: {
@@ -12,7 +12,7 @@ export const buildTeamsTranscriptsWebhookUrl = ({
   const webhookUrl = new URL(apiUrl);
   const apiBasePath = webhookUrl.pathname.replace(/\/+$/, '');
 
-  webhookUrl.pathname = `${apiBasePath}/webhooks/server/${getServerRouteIdentifier(TEAMS_TRANSCRIPTS_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER)}`;
+  webhookUrl.pathname = `${apiBasePath}/webhooks/server/${getServerRouteIdentifierOrThrow(TEAMS_TRANSCRIPTS_WEBHOOK_RESOLVER_UNIVERSAL_IDENTIFIER)}`;
   webhookUrl.searchParams.set(
     TEAMS_TRANSCRIPTS_WEBHOOK_CONNECTION_QUERY_PARAMETER,
     connectedAccountId,

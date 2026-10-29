@@ -12,7 +12,7 @@ import { createFathomClient } from 'src/logic-functions/utils/create-fathom-clie
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { enqueueFathomBackfillWorker } from 'src/logic-functions/utils/enqueue-fathom-backfill-worker.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
-import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
+import { getFathomWebhookDestinationUrlOrThrow } from 'src/logic-functions/utils/get-fathom-webhook-destination-url-or-throw.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { isTransientFathomError } from 'src/logic-functions/utils/is-transient-fathom-error.util';
 import { storeFathomWebhookRegistration } from 'src/logic-functions/utils/store-fathom-webhook-registration.util';
@@ -88,7 +88,7 @@ export const fathomRegisterConnectionHandler = async (
 
   const webhook = await fathomClient
     .createWebhook({
-      destinationUrl: getFathomWebhookDestinationUrl({
+      destinationUrl: getFathomWebhookDestinationUrlOrThrow({
         apiUrl,
         connectedAccountId: payload.connectedAccountId,
       }),

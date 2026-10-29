@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
+import { getFathomWebhookDestinationUrlOrThrow } from 'src/logic-functions/utils/get-fathom-webhook-destination-url-or-throw.util';
 
-describe('getFathomWebhookDestinationUrl', () => {
+describe('getFathomWebhookDestinationUrlOrThrow', () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
@@ -17,7 +17,7 @@ describe('getFathomWebhookDestinationUrl', () => {
     );
 
     expect(
-      getFathomWebhookDestinationUrl({
+      getFathomWebhookDestinationUrlOrThrow({
         apiUrl: 'https://twenty.example.com',
         connectedAccountId: 'connection-id',
       }),
@@ -28,7 +28,7 @@ describe('getFathomWebhookDestinationUrl', () => {
 
   it('builds the server route with the connection identifier', () => {
     expect(
-      getFathomWebhookDestinationUrl({
+      getFathomWebhookDestinationUrlOrThrow({
         apiUrl: 'https://twenty.example.com',
         connectedAccountId: 'connection-id',
       }),
@@ -39,7 +39,7 @@ describe('getFathomWebhookDestinationUrl', () => {
 
   it('preserves a base path on the API URL', () => {
     expect(
-      getFathomWebhookDestinationUrl({
+      getFathomWebhookDestinationUrlOrThrow({
         apiUrl: 'https://twenty.example.com/api/',
         connectedAccountId: 'connection-id',
       }),
