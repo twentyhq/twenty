@@ -16,6 +16,7 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -38,7 +39,10 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       WorkspaceEntity,
     ]),
   ],
-  providers: [LogicFunctionExecutorService],
+  providers: [
+    provideWorkspaceScopedRepository(LogicFunctionEntity),
+    LogicFunctionExecutorService,
+  ],
   exports: [LogicFunctionExecutorService],
 })
 export class LogicFunctionExecutorModule {}

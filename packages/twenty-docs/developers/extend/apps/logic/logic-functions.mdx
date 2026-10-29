@@ -3,7 +3,7 @@ title: Logic Functions
 description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Overview
 
@@ -296,7 +296,17 @@ The endpoint is reachable at:
 POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
+The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. When your app registers the webhook itself, build the URL from inside a logic function with `getServerRouteUrl`; Twenty injects the ids of the app's server routes as `TWENTY_SERVER_ROUTE_IDS`:
+
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
+```
+
+For a provider you configure by hand, read the id back from the `/metadata` API of the owner workspace, then register that URL with the provider:
 
 ```graphql
 query {

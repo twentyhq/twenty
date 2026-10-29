@@ -44,6 +44,7 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
+import { createServerRouteResolverQueryBuilder } from 'src/engine/core-modules/server-route-trigger/utils/create-server-route-resolver-query-builder.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ThrottlerException,
@@ -57,6 +58,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   LogicFunctionEntity,
@@ -67,6 +69,8 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -125,8 +129,8 @@ export class LogicFunctionExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
   ) {}
 
   async executeOrThrow({
@@ -175,11 +179,15 @@ export class LogicFunctionExecutorService {
     retry?: LogicFunctionRetryContext;
     shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
-    const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
-      await this.getFlatEntitiesOrThrow({
-        workspaceId,
-        logicFunctionId,
-      });
+    const {
+      flatApplication,
+      flatLogicFunction,
+      flatApplicationVariableMaps,
+      flatLogicFunctionMaps,
+    } = await this.getFlatEntitiesOrThrow({
+      workspaceId,
+      logicFunctionId,
+    });
 
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
@@ -198,6 +206,7 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariableMaps,
+      flatLogicFunctionMaps,
       userId,
       userWorkspaceId,
       workspaceDeletionRequestTimestamp,
@@ -377,7 +386,12 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    return { flatApplication, flatLogicFunction, flatApplicationVariableMaps };
+    return {
+      flatApplication,
+      flatLogicFunction,
+      flatApplicationVariableMaps,
+      flatLogicFunctionMaps,
+    };
   }
 
   private async buildExecutionContext({
@@ -420,6 +434,7 @@ export class LogicFunctionExecutorService {
     workspaceId,
     flatApplication,
     flatApplicationVariableMaps,
+    flatLogicFunctionMaps,
     userId,
     userWorkspaceId,
     workspaceDeletionRequestTimestamp,
@@ -427,6 +442,7 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatApplicationVariableMaps: FlatApplicationVariableMaps;
+    flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
     userId?: string;
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
@@ -466,9 +482,10 @@ export class LogicFunctionExecutorService {
     const serverVariables = await this.buildServerVariableEnvMap(
       flatApplication.applicationRegistrationId,
     );
-    const serverRouteIds = await this.buildServerRouteIdsByUniversalIdentifier(
-      flatApplication.applicationRegistrationId,
-    );
+    const serverRouteIds = await this.buildServerRouteIdsByUniversalIdentifier({
+      flatApplication,
+      flatLogicFunctionMaps,
+    });
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -503,33 +520,41 @@ export class LogicFunctionExecutorService {
     };
   }
 
-  // Server routes resolve to the resolver rows in the registration owner's
-  // workspace, so the ids an app must register come from there, not from the
-  // workspace the function runs in.
-  private async buildServerRouteIdsByUniversalIdentifier(
-    applicationRegistrationId: string | null,
-  ): Promise<Record<string, string>> {
-    if (!isDefined(applicationRegistrationId)) {
+  // The ids come from the registration owner's workspace, where routes resolve,
+  // not from the workspace the function runs in.
+  private async buildServerRouteIdsByUniversalIdentifier({
+    flatApplication,
+    flatLogicFunctionMaps,
+  }: {
+    flatApplication: FlatApplication;
+    flatLogicFunctionMaps: FlatEntityMaps<FlatLogicFunction>;
+  }): Promise<Record<string, string>> {
+    const doesApplicationDeclareServerRoutes = (
+      flatLogicFunctionMaps.universalIdentifiersByApplicationId[
+        flatApplication.id
+      ] ?? []
+    ).some((universalIdentifier) =>
+      isDefined(
+        flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier]
+          ?.serverRouteTriggerSettings,
+      ),
+    );
+
+    if (
+      !doesApplicationDeclareServerRoutes ||
+      !isDefined(flatApplication.applicationRegistrationId)
+    ) {
       return {};
     }
 
-    const resolvers = await this.logicFunctionRepository
-      .createQueryBuilder('logicFunction')
-      .select(['logicFunction.id', 'logicFunction.universalIdentifier'])
-      .innerJoin('logicFunction.application', 'application')
-      .innerJoin(
-        'application.applicationRegistration',
-        'applicationRegistration',
-      )
-      .where(
+    const resolvers = await createServerRouteResolverQueryBuilder(
+      this.logicFunctionRepository,
+    )
+      .andWhere(
         'application.applicationRegistrationId = :applicationRegistrationId',
         {
-          applicationRegistrationId,
+          applicationRegistrationId: flatApplication.applicationRegistrationId,
         },
-      )
-      .andWhere('logicFunction.serverRouteTriggerSettings IS NOT NULL')
-      .andWhere(
-        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
       )
       .getMany();
 

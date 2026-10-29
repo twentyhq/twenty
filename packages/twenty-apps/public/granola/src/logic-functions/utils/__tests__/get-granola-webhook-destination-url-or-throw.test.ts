@@ -1,17 +1,20 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { getGranolaWebhookDestinationUrlOrThrow } from 'src/logic-functions/utils/get-granola-webhook-destination-url-or-throw.util';
 
 describe('getGranolaWebhookDestinationUrlOrThrow', () => {
   afterEach(() => {
-    delete process.env.TWENTY_SERVER_ROUTE_IDS;
+    vi.unstubAllEnvs();
   });
 
   it('uses the resolver id the server injected', () => {
-    process.env.TWENTY_SERVER_ROUTE_IDS = JSON.stringify({
-      '91dd18b2-ddfd-4516-bda6-db0e3a2d3e33':
-        '4f0e2a51-9c3b-4d8e-a1f7-6b2c9d0e3a14',
-    });
+    vi.stubEnv(
+      'TWENTY_SERVER_ROUTE_IDS',
+      JSON.stringify({
+        '91dd18b2-ddfd-4516-bda6-db0e3a2d3e33':
+          '4f0e2a51-9c3b-4d8e-a1f7-6b2c9d0e3a14',
+      }),
+    );
 
     expect(
       getGranolaWebhookDestinationUrlOrThrow({

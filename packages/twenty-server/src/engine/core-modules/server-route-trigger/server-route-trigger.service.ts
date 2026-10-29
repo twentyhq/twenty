@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
@@ -33,6 +32,7 @@ import {
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
+import { createServerRouteResolverQueryBuilder } from 'src/engine/core-modules/server-route-trigger/utils/create-server-route-resolver-query-builder.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
@@ -212,24 +212,12 @@ export class ServerRouteTriggerService {
     });
   }
 
-  private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {
-    return this.logicFunctionRepository
-      .createQueryBuilder('logicFunction')
-      .innerJoinAndSelect('logicFunction.application', 'application')
-      .innerJoinAndSelect(
-        'application.applicationRegistration',
-        'applicationRegistration',
-      )
-      .where('logicFunction.serverRouteTriggerSettings IS NOT NULL')
-      .andWhere(
-        'logicFunction.workspaceId = applicationRegistration.ownerWorkspaceId',
-      );
-  }
-
   private async findResolverOrThrow(
     identifier: string,
   ): Promise<ResolvedServerRouteResolver> {
-    const resolverById = await this.createResolverQueryBuilder()
+    const resolverById = await createServerRouteResolverQueryBuilder(
+      this.logicFunctionRepository,
+    )
       .andWhere('logicFunction.id = :id', { id: identifier })
       .getOne();
 
@@ -240,7 +228,9 @@ export class ServerRouteTriggerService {
       };
     }
 
-    const legacyCandidates = await this.createResolverQueryBuilder()
+    const legacyCandidates = await createServerRouteResolverQueryBuilder(
+      this.logicFunctionRepository,
+    )
       .andWhere('logicFunction.universalIdentifier = :universalIdentifier', {
         universalIdentifier: identifier,
       })

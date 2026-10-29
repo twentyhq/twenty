@@ -1,16 +1,26 @@
-// Servers that predate TWENTY_SERVER_ROUTE_IDS still route by universalIdentifier.
+import { isNonEmptyString, isObject } from '@sniptt/guards';
+
+// Stopgap until the app's twenty-sdk ships getServerRouteUrl.
 export const getServerRouteIdentifier = (
   logicFunctionUniversalIdentifier: string,
 ): string => {
   const serverRouteIds = process.env.TWENTY_SERVER_ROUTE_IDS;
 
-  if (!serverRouteIds) {
+  // Servers that predate TWENTY_SERVER_ROUTE_IDS still route by universalIdentifier.
+  if (!isNonEmptyString(serverRouteIds)) {
     return logicFunctionUniversalIdentifier;
   }
 
-  return (
-    (JSON.parse(serverRouteIds) as Record<string, string>)[
-      logicFunctionUniversalIdentifier
-    ] ?? logicFunctionUniversalIdentifier
-  );
+  const parsedServerRouteIds: unknown = JSON.parse(serverRouteIds);
+  const logicFunctionId: unknown = isObject(parsedServerRouteIds)
+    ? Reflect.get(parsedServerRouteIds, logicFunctionUniversalIdentifier)
+    : undefined;
+
+  if (!isNonEmptyString(logicFunctionId)) {
+    throw new Error(
+      `No server route found for logic function ${logicFunctionUniversalIdentifier}`,
+    );
+  }
+
+  return logicFunctionId;
 };
