@@ -45,7 +45,7 @@ const createApp = async (appSystemPermissionFlag?: Record<string, string>) => {
   return appPath;
 };
 
-const writeRoleFile = (appPath: string) =>
+const buildRoleFileContent = (appPath: string) =>
   writeDefineFile({
     definer: 'defineRole',
     config: {
@@ -68,7 +68,7 @@ describe('resolvePullSystemPermissionFlag', () => {
       ...SystemPermissionFlag,
     });
 
-    const content = writeRoleFile(appPath);
+    const content = buildRoleFileContent(appPath);
 
     expect(content).toContain('SystemPermissionFlag.USER_APPS');
     expect(content).toContain('SystemPermissionFlag.WORKSPACE_APPS');
@@ -83,7 +83,7 @@ describe('resolvePullSystemPermissionFlag', () => {
       APPLICATIONS: SystemPermissionFlag.APPLICATIONS,
     });
 
-    const content = writeRoleFile(appPath);
+    const content = buildRoleFileContent(appPath);
 
     expect(content).toContain('SystemPermissionFlag.CONNECTED_ACCOUNTS');
     expect(content).toContain('SystemPermissionFlag.APPLICATIONS');
