@@ -11,6 +11,7 @@ import {
   agentChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   AgentChatInboxAction,
@@ -99,7 +100,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
       );
 
       try {
-        await client.mutate({
+        const { data } = await client.mutate({
           mutation: UpdateAgentChatThreadInboxStateDocument,
           variables: {
             threadIds,
@@ -107,6 +108,18 @@ export const useUpdateAgentChatThreadInboxState = () => {
             snoozedUntil: snoozedUntil?.toISOString(),
           },
         });
+        const writtenParticipants = data?.updateAgentChatThreadInboxState;
+
+        if (isDefined(writtenParticipants)) {
+          store.set(agentChatThreadParticipantsState.atom, (participants) =>
+            isDefined(participants)
+              ? mergeAgentChatThreadParticipants(
+                  participants,
+                  writtenParticipants,
+                )
+              : participants,
+          );
+        }
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
