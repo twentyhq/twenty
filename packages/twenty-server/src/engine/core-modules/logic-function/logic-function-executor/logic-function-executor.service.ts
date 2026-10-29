@@ -224,7 +224,6 @@ export class LogicFunctionExecutorService {
       resultLogicFunction = await driver.execute({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         payload,
         context,
         env: envVariables,

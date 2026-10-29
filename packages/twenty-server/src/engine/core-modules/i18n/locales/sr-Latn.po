@@ -2389,7 +2389,7 @@ msgstr "Kampanje"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Campaigns"
-msgstr ""
+msgstr "Kampanje"
 
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8204,7 +8204,7 @@ msgstr "Spoji {objectLabelPlural}"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge with Another {objectLabelSingular}"
-msgstr ""
+msgstr "Spoji sa drugim {objectLabelSingular}"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -9609,6 +9609,11 @@ msgstr "Operand \"{operand}\" zahteva vrednost, prazan predikat bi u potpunosti 
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
 msgstr "Operand \"{rawOperand}\" filtera dijagrama vidžeta \"{widgetTitle}\" nije podržan za tip polja \"{effectiveFieldType}\". Podržani operandi: {allowedOperandsText}."
+
+#. js-lingui-id: XBLJbc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand {operand} is not supported for field type {filterType}"
+msgstr ""
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -12034,7 +12039,7 @@ msgstr "Kratke veze"
 #. js-lingui-id: XcRf2D
 #: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
 msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr ""
+msgstr "Prijavite se kao član radnog prostora ili koristite token aplikacije da biste promenili ovaj razgovor."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -14164,6 +14169,11 @@ msgstr "Ovaj objekat nema vektor pretrage"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
 msgid "This object permission is already set for the role"
 msgstr "Ova dozvola objekta je već dodeljena ulozi"
+
+#. js-lingui-id: JHfGIK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this field"
+msgstr ""
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -17398,7 +17408,7 @@ msgstr "Vaši kupljeni krediti nisu mogli biti dodati. Obratite se podršci."
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
-msgstr ""
+msgstr "Vaša uloga ne može da obriše neke od ovih zapisa, pa se ne mogu spojiti."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

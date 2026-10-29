@@ -22,6 +22,15 @@ export class UserSessionDTO {
   @Field(() => String, { nullable: true })
   ipAddress: string | null;
 
+  @Field(() => String, { nullable: true })
+  country: string | null;
+
+  @Field(() => String, { nullable: true })
+  region: string | null;
+
+  @Field(() => String, { nullable: true })
+  city: string | null;
+
   @Field(() => Date)
   createdAt: Date;
 
