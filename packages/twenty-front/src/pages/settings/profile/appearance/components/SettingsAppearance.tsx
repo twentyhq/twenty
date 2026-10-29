@@ -1,12 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { SalesfarceBadge } from '@/salesfarce/components/SalesfarceBadge';
+// Salesfarce: on removal, import useColorScheme from '@/workspace-member/hooks/useColorScheme'
+import { useSalesfarceColorScheme } from '@/salesfarce/hooks/useSalesfarceColorScheme';
+// Salesfarce: remove with the theme
 import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
-import { useAppearanceValue } from '@/salesfarce/hooks/useAppearanceValue';
-import { type AppearanceValue } from '@/salesfarce/types/AppearanceValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -14,6 +13,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAppearanceOption } from '~/pages/settings/profile/appearance/components/SettingsAppearanceOption';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledChoices = styled.div`
   gap: ${themeCssVariables.spacing[4]};
@@ -26,21 +26,19 @@ const StyledChoices = styled.div`
 
 export const SettingsAppearance = () => {
   const { t } = useLingui();
-  const { appearanceValue, setAppearanceValue } = useAppearanceValue();
+  // Salesfarce: on removal, call useColorScheme() instead
+  const { colorScheme, setColorScheme } = useSalesfarceColorScheme();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const choices: {
-    value: AppearanceValue;
+    // Salesfarce: on removal, drop the Salesfarce union
+    value: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE;
     label: string;
-    badge?: ReactNode;
   }[] = [
     { value: doNotTranslate('Light'), label: t`Light` },
     { value: doNotTranslate('Dark'), label: t`Dark` },
     { value: doNotTranslate('System'), label: t`System settings` },
-    {
-      value: SALESFARCE_APPEARANCE_VALUE,
-      label: t`Salesfarce`,
-      badge: <SalesfarceBadge>{t`Enterprise only`}</SalesfarceBadge>,
-    },
+    // Salesfarce: remove with the theme
+    { value: SALESFARCE_APPEARANCE_VALUE, label: t`Salesfarce` },
   ];
 
   return (
@@ -50,16 +48,20 @@ export const SettingsAppearance = () => {
         orientation="horizontal"
         render={<StyledChoices />}
         aria-label={t`Appearance`}
-        value={appearanceValue}
+        value={colorScheme}
         disabled={!isDefined(currentWorkspaceMember)}
-        onValueChange={setAppearanceValue}
+        // Salesfarce: on removal, drop the Salesfarce union
+        onValueChange={(
+          value: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE,
+        ) => {
+          void setColorScheme(value);
+        }}
       >
-        {choices.map(({ value, label, badge }) => (
+        {choices.map(({ value, label }) => (
           <SettingsAppearanceOption
             key={value}
-            appearance={value}
+            colorScheme={value}
             label={label}
-            badge={badge}
           />
         ))}
       </RadioGroup>

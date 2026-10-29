@@ -1,10 +1,16 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { themeCssVariables } from 'twenty-ui/theme';
+import {
+  GRAY_SCALE_DARK,
+  GRAY_SCALE_LIGHT,
+  themeCssVariables,
+} from 'twenty-ui/theme';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { type AppearanceValue } from '@/salesfarce/types/AppearanceValue';
-import { getAppearancePreviewColors } from '~/pages/settings/profile/appearance/utils/getAppearancePreviewColors';
+// Salesfarce: remove with the theme
+import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
+import { SALESFARCE_PREVIEW_STYLE } from '@/salesfarce/constants/SalesfarcePreviewStyle';
 
 const StyledPreview = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -65,32 +71,35 @@ const StyledContent = styled.div`
 `;
 
 type SettingsAppearancePreviewProps = {
-  appearance: AppearanceValue;
+  // Salesfarce: on removal, drop the Salesfarce union
+  colorScheme: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE;
 };
 
 export const SettingsAppearancePreview = ({
-  appearance,
+  colorScheme,
 }: SettingsAppearancePreviewProps) => {
-  const segments = doNotTranslate<AppearanceValue[]>(
-    appearance === 'System' ? ['Light', 'Dark'] : [appearance],
+  const segments = doNotTranslate(
+    colorScheme === 'System' ? ['Light', 'Dark'] : [colorScheme],
   );
 
   return (
     <StyledPreview aria-hidden>
       {segments.map((segment) => {
-        const previewColors = getAppearancePreviewColors(segment);
+        const grayScale =
+          segment === 'Dark' ? GRAY_SCALE_DARK : GRAY_SCALE_LIGHT;
 
         return (
           <StyledSegment
             key={segment}
             style={
               {
-                '--appearance-preview-background': previewColors.background,
-                '--appearance-preview-border': previewColors.border,
-                '--appearance-preview-content-background':
-                  previewColors.contentBackground,
-                '--appearance-preview-content-color':
-                  previewColors.contentColor,
+                '--appearance-preview-background': grayScale.gray4,
+                '--appearance-preview-border': grayScale.gray5,
+                '--appearance-preview-content-background': grayScale.gray1,
+                '--appearance-preview-content-color': grayScale.gray12,
+                // Salesfarce: remove with the theme
+                ...(segment === SALESFARCE_APPEARANCE_VALUE &&
+                  SALESFARCE_PREVIEW_STYLE),
               } as CSSProperties
             }
           >

@@ -10,7 +10,11 @@
   font-size: 11px;
   font-weight: 700;
   height: 20px;
+  inset-inline-end: 4px;
   padding: 0 6px;
+  pointer-events: none;
+  position: absolute;
   text-shadow: 0 1px 1px #00000080;
+  top: 4px;
   white-space: nowrap;
 }

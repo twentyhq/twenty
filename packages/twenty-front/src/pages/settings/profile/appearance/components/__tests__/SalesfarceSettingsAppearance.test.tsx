@@ -8,8 +8,8 @@ import { ToastProvider } from 'twenty-ui/components/feedback';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { isSalesfarceActiveState } from '@/salesfarce/states/isSalesfarceActiveState';
-import { consumeIsSalesfarceRequested } from '@/salesfarce/utils/consumeIsSalesfarceRequested';
+import { salesfarceIsActiveState } from '@/salesfarce/states/salesfarceIsActiveState';
+import { salesfarceConsumeRequest } from '@/salesfarce/utils/salesfarceConsumeRequest';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -55,7 +55,7 @@ const renderAppearance = () => {
   );
 };
 
-describe('SettingsAppearance', () => {
+describe('SettingsAppearance with Salesfarce', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'PointerEvent', { value: MouseEvent });
   });
@@ -75,13 +75,13 @@ describe('SettingsAppearance', () => {
 
     await userEvent.click(screen.getByRole('radio', { name: 'Salesfarce' }));
 
-    expect(consumeIsSalesfarceRequested()).toBe(true);
+    expect(salesfarceConsumeRequest()).toBe(true);
     expect(reloadWindow).toHaveBeenCalledTimes(1);
     expect(updateSettings).not.toHaveBeenCalled();
   });
 
   it('saves the picked theme and reloads out of Salesfarce', async () => {
-    jotaiStore.set(isSalesfarceActiveState.atom, true);
+    jotaiStore.set(salesfarceIsActiveState.atom, true);
     renderAppearance();
 
     expect(screen.getByRole('radio', { name: 'Salesfarce' })).toBeChecked();

@@ -1,12 +1,14 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useId } from 'react';
 
 import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
-import { type AppearanceValue } from '@/salesfarce/types/AppearanceValue';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+// Salesfarce: remove with the theme
+import { SalesfarceBadge } from '@/salesfarce/components/SalesfarceBadge';
+import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
 
 const StyledChoice = styled.label`
   display: flex;
@@ -78,13 +80,6 @@ const StyledCheckmark = styled.div`
   }
 `;
 
-const StyledBadge = styled.div`
-  inset-inline-end: ${themeCssVariables.spacing[1]};
-  pointer-events: none;
-  position: absolute;
-  top: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.xs};
@@ -93,15 +88,14 @@ const StyledLabel = styled.span`
 `;
 
 type SettingsAppearanceOptionProps = {
-  appearance: AppearanceValue;
+  // Salesfarce: on removal, drop the Salesfarce union
+  colorScheme: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE;
   label: string;
-  badge?: ReactNode;
 };
 
 export const SettingsAppearanceOption = ({
-  appearance,
+  colorScheme,
   label,
-  badge,
 }: SettingsAppearanceOptionProps) => {
   const theme = useTheme();
   const labelId = useId();
@@ -109,12 +103,13 @@ export const SettingsAppearanceOption = ({
   return (
     <StyledChoice>
       <Radio.Root
-        value={appearance}
+        value={colorScheme}
         aria-labelledby={labelId}
         render={<StyledTile />}
       >
-        <SettingsAppearancePreview appearance={appearance} />
-        {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
+        <SettingsAppearancePreview colorScheme={colorScheme} />
+        {/* Salesfarce: remove with the theme */}
+        {colorScheme === SALESFARCE_APPEARANCE_VALUE && <SalesfarceBadge />}
         <Radio.Indicator keepMounted aria-hidden render={<StyledCheckmark />}>
           <IconCheck size={theme.icon.size.sm} />
         </Radio.Indicator>

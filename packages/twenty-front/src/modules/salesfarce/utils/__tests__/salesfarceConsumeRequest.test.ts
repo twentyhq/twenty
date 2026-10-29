@@ -1,7 +1,7 @@
 import { SALESFARCE_SESSION_STORAGE_KEY } from '@/salesfarce/constants/SalesfarceSessionStorageKey';
-import { consumeIsSalesfarceRequested } from '@/salesfarce/utils/consumeIsSalesfarceRequested';
+import { salesfarceConsumeRequest } from '@/salesfarce/utils/salesfarceConsumeRequest';
 
-describe('consumeIsSalesfarceRequested', () => {
+describe('salesfarceConsumeRequest', () => {
   afterEach(() => {
     sessionStorage.clear();
   });
@@ -9,7 +9,7 @@ describe('consumeIsSalesfarceRequested', () => {
   it('honors a request once so the next refresh drops Salesfarce', () => {
     sessionStorage.setItem(SALESFARCE_SESSION_STORAGE_KEY, 'true');
 
-    expect(consumeIsSalesfarceRequested()).toBe(true);
-    expect(consumeIsSalesfarceRequested()).toBe(false);
+    expect(salesfarceConsumeRequest()).toBe(true);
+    expect(salesfarceConsumeRequest()).toBe(false);
   });
 });

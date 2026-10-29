@@ -1,7 +1,8 @@
 import { type JSX, createContext } from 'react';
 
+// Salesfarce: remove with the theme
 import { SalesfarceTheme } from '@/salesfarce/components/SalesfarceTheme';
-import { isSalesfarceActiveState } from '@/salesfarce/states/isSalesfarceActiveState';
+import { salesfarceIsActiveState } from '@/salesfarce/states/salesfarceIsActiveState';
 import { UI_SCALE_MULTIPLIERS } from '@/ui/theme/constants/UiScaleMultipliers';
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
@@ -24,7 +25,8 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
     persistedColorSchemeState,
   );
   const persistedUiScaleStep = useAtomStateValue(persistedUiScaleStepState);
-  const isSalesfarceActive = useAtomStateValue(isSalesfarceActiveState);
+  // Salesfarce: remove with the theme
+  const salesfarceIsActive = useAtomStateValue(salesfarceIsActiveState);
   const systemColorScheme = useSystemColorScheme();
   const effectiveColorScheme =
     persistedColorScheme === 'System'
@@ -33,10 +35,12 @@ export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
 
   return (
     <ThemeSchemeContext.Provider value={setPersistedColorScheme}>
-      <SalesfarceTheme isActive={isSalesfarceActive} />
+      {/* Salesfarce: remove with the theme */}
+      <SalesfarceTheme isActive={salesfarceIsActive} />
       <ThemeProvider
+        // Salesfarce: on removal, drop "&& !salesfarceIsActive"
         colorScheme={
-          !isSalesfarceActive && effectiveColorScheme === 'Dark'
+          effectiveColorScheme === 'Dark' && !salesfarceIsActive
             ? 'dark'
             : 'light'
         }

@@ -1,6 +1,6 @@
 import { SALESFARCE_SESSION_STORAGE_KEY } from '@/salesfarce/constants/SalesfarceSessionStorageKey';
 
-export const consumeIsSalesfarceRequested = () => {
+export const salesfarceConsumeRequest = () => {
   try {
     const isRequested =
       sessionStorage.getItem(SALESFARCE_SESSION_STORAGE_KEY) === 'true';
