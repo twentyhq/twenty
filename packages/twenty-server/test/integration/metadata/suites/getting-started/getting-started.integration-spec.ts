@@ -32,8 +32,11 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
 `;
 
 const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
-  mutation PrepareGettingStartedWorkflow($activate: Boolean!) {
-    prepareGettingStartedWorkflow(activate: $activate) {
+  mutation PrepareGettingStartedWorkflow(
+    $step: GettingStartedStep!
+    $activate: Boolean!
+  ) {
+    prepareGettingStartedWorkflow(step: $step, activate: $activate) {
       workflowId
       versionId
     }
@@ -45,6 +48,15 @@ const deleteGettingStartedUserVars = () =>
     `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND ("userId" = $2 OR "userId" IS NULL) AND "key" LIKE 'GETTING_STARTED_%'`,
     [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
   );
+
+const findWorkspaceUserVar = async (key: string) => {
+  const [keyValuePair] = await globalThis.testDataSource.query(
+    `SELECT "value" FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" IS NULL AND "key" = $2`,
+    [SEED_APPLE_WORKSPACE_ID, key],
+  );
+
+  return keyValuePair?.value;
+};
 
 const findJaneUserVar = async (key: string) => {
   const [keyValuePair] = await globalThis.testDataSource.query(
@@ -61,11 +73,14 @@ const updateGettingStarted = (input: Record<string, unknown>) =>
     variables: { input },
   });
 
-const prepareHandoverWorkflow = (activate: boolean) =>
+const prepareGettingStartedWorkflow = (step: string, activate: boolean) =>
   makeMetadataApiRequest({
     query: PREPARE_GETTING_STARTED_WORKFLOW_MUTATION,
-    variables: { activate },
+    variables: { step, activate },
   });
+
+const prepareHandoverWorkflow = (activate: boolean) =>
+  prepareGettingStartedWorkflow('HANDOVER_DEALS', activate);
 
 describe('gettingStarted (e2e)', () => {
   beforeAll(deleteGettingStartedUserVars);
@@ -182,6 +197,20 @@ describe('gettingStarted (e2e)', () => {
       }
     });
 
+    it('refuses a step that has no workflow', async () => {
+      const response = await prepareGettingStartedWorkflow(
+        'FOLLOW_UP_DEALS',
+        false,
+      );
+
+      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+        'INVALID_STEP',
+      );
+      expect(
+        await findWorkspaceUserVar('GETTING_STARTED_WORKFLOW_FOLLOW_UP_DEALS'),
+      ).toBeUndefined();
+    });
+
     it("refuses to turn on a draft that sends from another member's mailbox", async () => {
       const draftResponse = await prepareHandoverWorkflow(false);
 
@@ -245,6 +274,10 @@ describe('gettingStarted (e2e)', () => {
       const handover = firstResponse.body.data.prepareGettingStartedWorkflow;
 
       handoverWorkflowId = handover.workflowId;
+
+      expect(
+        await findWorkspaceUserVar('GETTING_STARTED_WORKFLOW_HANDOVER_DEALS'),
+      ).toEqual(handover);
 
       const secondResponse = await prepareHandoverWorkflow(false);
 

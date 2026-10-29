@@ -14,6 +14,7 @@ export class GettingStartedGraphqlApiExceptionFilter implements ExceptionFilter 
     switch (exception.code) {
       case GettingStartedExceptionCode.MAILBOX_NOT_CONNECTED:
       case GettingStartedExceptionCode.MAILBOX_NOT_USABLE:
+      case GettingStartedExceptionCode.INVALID_STEP:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);

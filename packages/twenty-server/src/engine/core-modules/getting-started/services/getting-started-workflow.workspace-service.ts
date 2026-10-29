@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { GETTING_STARTED_WORKFLOW_BUILDERS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflow-builders.constant';
 import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { type GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import {
   GettingStartedException,
   GettingStartedExceptionCode,
 } from 'src/engine/core-modules/getting-started/getting-started.exception';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import {
-  GETTING_STARTED_HANDOVER_WORKFLOW_USER_VAR_KEY,
+  GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { buildHandoverWorkflow } from 'src/engine/core-modules/getting-started/utils/build-handover-workflow.util';
+import { type GettingStartedWorkflowBuilder } from 'src/engine/core-modules/getting-started/types/getting-started-workflow-builder.type';
 import { getWorkflowStepConnectedAccountIds } from 'src/engine/core-modules/getting-started/utils/get-workflow-step-connected-account-ids.util';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -29,7 +29,6 @@ import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
@@ -51,18 +50,29 @@ export class GettingStartedWorkflowWorkspaceService {
     userId,
     workspaceId,
     userWorkspaceId,
+    step,
     activate,
   }: {
     userId: string;
     workspaceId: string;
     userWorkspaceId: string;
+    step: GettingStartedStep;
     activate: boolean;
   }): Promise<GettingStartedWorkflowDTO> {
+    const buildWorkflow = GETTING_STARTED_WORKFLOW_BUILDERS[step];
+
+    if (!isDefined(buildWorkflow)) {
+      throw new GettingStartedException(
+        `Step ${step} has no workflow`,
+        GettingStartedExceptionCode.INVALID_STEP,
+      );
+    }
+
     return this.cacheLockService.withLock(
       async () => {
         const savedWorkflow = await this.userVarsService.get({
           workspaceId,
-          key: GETTING_STARTED_HANDOVER_WORKFLOW_USER_VAR_KEY,
+          key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}`,
         });
 
         const savedCoreWorkflow = isDefined(savedWorkflow)
@@ -78,6 +88,8 @@ export class GettingStartedWorkflowWorkspaceService {
           : await this.createWorkflowDraft({
               workspaceId,
               userWorkspaceId,
+              step,
+              buildWorkflow,
             });
 
         if (!activate) {
@@ -106,12 +118,12 @@ export class GettingStartedWorkflowWorkspaceService {
         await this.gettingStartedService.completeStep({
           userId,
           workspaceId,
-          step: GettingStartedStep.HANDOVER_DEALS,
+          step,
         });
 
         return workflow;
       },
-      `getting-started-handover-workflow:${workspaceId}`,
+      `getting-started-workflow:${workspaceId}:${step}`,
       { ttl: 30_000 },
     );
   }
@@ -236,9 +248,13 @@ export class GettingStartedWorkflowWorkspaceService {
   private async createWorkflowDraft({
     workspaceId,
     userWorkspaceId,
+    step,
+    buildWorkflow,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
+    step: GettingStartedStep;
+    buildWorkflow: GettingStartedWorkflowBuilder;
   }): Promise<GettingStartedWorkflowDTO> {
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -248,30 +264,12 @@ export class GettingStartedWorkflowWorkspaceService {
         },
       );
 
-    const handoverWorkflow = buildHandoverWorkflow({
-      companyIdFieldId: findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.company.fields.id.universalIdentifier,
-      }).id,
-      memberIdFieldId: findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.workspaceMember.fields.id.universalIdentifier,
-      }).id,
-      opportunityStageFieldId: findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.stage.universalIdentifier,
-      }).id,
-    });
-
     const { coreWorkflow, coreWorkflowVersionId } =
       await this.coreWorkflowMutationWorkspaceService.createWorkflowWithContent(
         {
           workspaceId,
           userWorkspaceId,
-          ...handoverWorkflow,
+          ...buildWorkflow({ flatFieldMetadataMaps }),
         },
       );
 
@@ -282,7 +280,7 @@ export class GettingStartedWorkflowWorkspaceService {
 
     await this.userVarsService.set({
       workspaceId,
-      key: GETTING_STARTED_HANDOVER_WORKFLOW_USER_VAR_KEY,
+      key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}`,
       value: workflow,
     });
 

@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
+import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import { GettingStartedGraphqlApiExceptionFilter } from 'src/engine/core-modules/getting-started/filters/getting-started-graphql-api-exception.filter';
 import { GettingStartedWorkflowWorkspaceService } from 'src/engine/core-modules/getting-started/services/getting-started-workflow.workspace-service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -56,12 +57,14 @@ export class GettingStartedWorkflowResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('step', { type: () => GettingStartedStep }) step: GettingStartedStep,
     @Args('activate', { type: () => Boolean }) activate: boolean,
   ): Promise<GettingStartedWorkflowDTO> {
     return this.gettingStartedWorkflowWorkspaceService.prepareWorkflow({
       userId: user.id,
       workspaceId: workspace.id,
       userWorkspaceId,
+      step,
       activate,
     });
   }

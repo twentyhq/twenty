@@ -101,7 +101,7 @@ export const GettingStartedStepCard = ({
         <GettingStartedStepRewardChip stepReward={stepReward} />
       </StyledHeading>
       <StyledBody>
-        <StepAction />
+        <StepAction step={step} />
       </StyledBody>
     </Card.Root>
   );
