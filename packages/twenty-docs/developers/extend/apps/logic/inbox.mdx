@@ -92,4 +92,34 @@ await sendInboxMessage({
 - A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
 
+## Attaching records to a conversation
+
+`attachRecordToInboxThread()` links a conversation to a record, and `detachRecordFromInboxThread()` removes the link.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+- Both take the conversation's `threadId` and the record as `objectNameSingular` and `recordId`. A conversation can be linked to people, companies, opportunities and custom object records.
+- Both are idempotent: attaching a record twice keeps a single link, and detaching a record that is not attached changes nothing.
+- The call runs with the same access as [sending a message](#who-sends-the-message), which needs the `AI` permission. A member must be able to edit the conversation, and your application can act on a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`.
+- The record must be readable with that access, or the call fails with `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />

@@ -93,6 +93,7 @@ When adding AI behavior:
 - The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
 - Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 
 ## Connection Providers
 

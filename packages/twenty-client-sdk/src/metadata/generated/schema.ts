@@ -2222,6 +2222,7 @@ export interface Mutation {
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
+    attachRecordToInboxThread: Scalars['Boolean']
     authorizeApp: AuthorizeApp
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     cancelSwitchBillingInterval: BillingUpdate
@@ -2338,6 +2339,7 @@ export interface Mutation {
     destroyViewFilterGroup: Scalars['Boolean']
     destroyViewGroup: ViewGroup
     destroyViewSort: Scalars['Boolean']
+    detachRecordFromInboxThread: Scalars['Boolean']
     disconnectConnectedAccount: ConnectedAccountPublicDTO
     duplicateDashboard: DuplicatedDashboard
     duplicateMessageList: DuplicatedMessageList
@@ -6228,6 +6230,8 @@ export interface ImpersonateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InboxThreadRecordInput {objectNameSingular: Scalars['String'],recordId: Scalars['UUID'],threadId: Scalars['UUID']}
+
 export interface IndexGenqlSelection{
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -6708,6 +6712,7 @@ export interface MutationGenqlSelection{
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
+    attachRecordToInboxThread?: { __args: {input: InboxThreadRecordInput} }
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
@@ -6824,6 +6829,7 @@ export interface MutationGenqlSelection{
     destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
     destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
     destroyViewSort?: { __args: {input: DestroyViewSortInput} }
+    detachRecordFromInboxThread?: { __args: {input: InboxThreadRecordInput} }
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
