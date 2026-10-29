@@ -22866,6 +22866,11 @@ msgstr "정적 값으로 재설정"
 msgid "Reset variable"
 msgstr "변수 재설정"
 
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr ""
+
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"

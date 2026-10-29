@@ -22861,6 +22861,11 @@ msgstr "Reset to static value"
 msgid "Reset variable"
 msgstr "Reset variable"
 
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr "Resize {label} column"
+
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"
