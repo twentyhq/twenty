@@ -1,11 +1,16 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
@@ -29,11 +34,14 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsAssistantOffState } from '@/ai/states/agentChatIsAssistantOffState';
+import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
+import { getAgentChatInitialRecipients } from '@/ai/utils/getAgentChatInitialRecipients';
+import { getAgentChatRequestedParticipants } from '@/ai/utils/getAgentChatRequestedParticipants';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -44,6 +52,7 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
@@ -51,12 +60,16 @@ import {
 import {
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
+  FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -84,7 +97,18 @@ export const useAgentChat = () => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threadId =
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
+    const isSendingMessageAtom =
+      agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
+
+    if (store.get(isSendingMessageAtom)) {
+      return;
+    }
+
     const isNewChat = threadId === newAiChatThreadId;
+    const isNewInboxChat = isNewChat && isAiChatInboxEnabled;
+    const newThreadRecipients = store.get(
+      agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
+    );
     const serializedContentToSend =
       store.get(agentChatDraftsByThreadIdState.atom)[threadId] ?? '';
     const contentToSend = tipTapDocumentToMarkdown(
@@ -198,8 +222,20 @@ export const useAgentChat = () => {
     ).filter(
       ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
     );
+    const initialRecipients = getAgentChatInitialRecipients({
+      shouldIncludeInitialRecipients: isNewInboxChat,
+      recipientWorkspaceMemberIds:
+        newThreadRecipients.recipientWorkspaceMemberIds,
+      workspaceMembers: store.get(currentWorkspaceMembersState.atom),
+    });
+    const requestedParticipants = getAgentChatRequestedParticipants({
+      participantMentions,
+      initialRecipients,
+    });
 
     setAgentChatUploadedFiles([]);
+
+    store.set(isSendingMessageAtom, true);
 
     try {
       const { data } = await apolloClient.mutate({
@@ -221,12 +257,17 @@ export const useAgentChat = () => {
           channelId: isNewChat
             ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
             : undefined,
-          shouldAssistantReply:
-            aiModels.length > 0 &&
-            (!store.get(agentChatIsAssistantOffState.atom) ||
-              isAgentChatAssistantMentionedInSerializedDocument(
-                serializedContentToSend,
-              )),
+          shouldAssistantReply: isNonEmptyArray(aiModels),
+          isAssistantParticipant: isNewInboxChat
+            ? newThreadRecipients.isAssistantParticipant
+            : undefined,
+          isAssistantMentioned:
+            isAgentChatAssistantMentionedInSerializedDocument(
+              serializedContentToSend,
+            ),
+          recipientWorkspaceMemberIds: isNewInboxChat
+            ? newThreadRecipients.recipientWorkspaceMemberIds
+            : undefined,
         },
       });
 
@@ -255,9 +296,13 @@ export const useAgentChat = () => {
         void attachChatThreadToRecord({ threadId, ...conversationTarget });
       });
       warnAboutParticipantMentionsNotAdded({
-        participantMentions,
-        addedWorkspaceMemberIds:
-          data?.sendChatMessage.mentionedParticipantWorkspaceMemberIds ?? [],
+        participantMentions: requestedParticipants,
+        addedWorkspaceMemberIds: [
+          ...(data?.sendChatMessage.mentionedParticipantWorkspaceMemberIds ??
+            []),
+          ...(data?.sendChatMessage.recipientParticipantWorkspaceMemberIds ??
+            []),
+        ],
       });
 
       if (data?.sendChatMessage.queued === true) {
@@ -299,6 +344,8 @@ export const useAgentChat = () => {
       dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
         content: serializedContentToSend,
       });
+    } finally {
+      store.set(isSendingMessageAtom, false);
     }
   }, [
     store,
@@ -308,6 +355,7 @@ export const useAgentChat = () => {
     modelIdForRequest,
     aiModels,
     canSendAgentChatMessage,
+    isAiChatInboxEnabled,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,
