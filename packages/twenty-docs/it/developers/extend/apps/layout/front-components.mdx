@@ -453,6 +453,34 @@ try {
 }
 ```
 
+## Invio alla posta in arrivo
+
+`sendInboxMessage` e gli helper per le menzioni della [posta in arrivo](/it/developers/extend/apps/logic/inbox) sono esportati anche da `twenty-sdk/front-component`, quindi un componente può pubblicare un messaggio senza una funzione logica intermedia. Il messaggio proviene dalla tua app e la chiamata include il token del componente, quindi il membro che visualizza la pagina necessita dell'autorizzazione `AI`, come ogni destinatario.
+
+Per mostrare successivamente la conversazione, accedi a essa con il valore `threadId` restituito dalla chiamata:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+* `workspaceMemberIds` accetta gli ID dei membri dello spazio di lavoro, non l'ID utente restituito da `useUserId()`.
+* Una conversazione si apre solo per i suoi partecipanti, quindi accedi a essa quando il membro che visualizza la pagina è uno dei destinatari.
+* La posta in arrivo è una route della pagina principale: `navigate` la apre lì e `openSidePanelPage` non può aprirla nel pannello laterale.
+
 ## Accesso al contesto di runtime
 
 All'interno del tuo componente, usa gli hook dell'SDK per accedere all'utente corrente, al record e all'istanza del componente:

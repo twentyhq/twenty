@@ -13,8 +13,8 @@ const MAX_VALUE_LENGTH = 80;
 
 const MASKED_VALUE = '(secret)';
 
-const NO_DELETE_HINT =
-  'Entities missing from your source are destroyed by default. Re-run with --no-delete to keep them.';
+const NO_PRUNE_HINT =
+  'Entities missing from your source are destroyed by default. Re-run with --no-prune to keep them.';
 
 const DENIED_ATTRIBUTE_KEYS = new Set([
   'id',
@@ -231,7 +231,7 @@ export const formatAppPlanActions = ({
 }: {
   actions: AppPlanAction[];
   summary: AppPlanSummary;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
   stream?: NodeJS.WriteStream;
 }) => {
   if (actions.length === 0) {
@@ -248,8 +248,8 @@ export const formatAppPlanActions = ({
     blocks.join('\n\n'),
     '',
     `Plan: ${colorText('green', `${summary.create} to add`, stream)}, ${colorText('yellow', `${summary.update} to change`, stream)}, ${colorText('red', `${summary.delete} to destroy`, stream)}.`,
-    ...(inferDeletionFromMissingEntities && summary.delete > 0
-      ? [dimText(NO_DELETE_HINT, stream)]
+    ...(!isDefined(inferDeletionFromMissingEntities) && summary.delete > 0
+      ? [dimText(NO_PRUNE_HINT, stream)]
       : []),
     ...(summary.destructive > 0
       ? ['', formatDestructiveWarning(actions, stream)]
@@ -268,7 +268,7 @@ export const formatAppPlan = ({
   apiUrl: string;
   actions: AppPlanAction[];
   summary: AppPlanSummary;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
 }) =>
   [
     `Plan for ${formatDataValue(applicationName)} on ${apiUrl}`,

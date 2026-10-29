@@ -3,6 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { getLogicFunctionSubfolderForFromSource } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-subfolder-for-from-source';
@@ -53,8 +57,14 @@ export class DeleteLogicFunctionResourcesDeferredActionHandlerService implements
         .delete(flatLogicFunction),
     ]);
 
+    // Files already gone, e.g. with their uninstalled application, need no cleanup.
     const failure = results.find(
-      (result): result is PromiseRejectedResult => result.status === 'rejected',
+      (result): result is PromiseRejectedResult =>
+        result.status === 'rejected' &&
+        !(
+          result.reason instanceof FileStorageException &&
+          result.reason.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ),
     );
 
     if (isDefined(failure)) {

@@ -18,6 +18,7 @@ import { reconstructRolesManifest } from 'src/engine/core-modules/application/ap
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -26,6 +27,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
@@ -46,17 +48,21 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationService: ApplicationService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async exportApplication({
     workspaceId,
     applicationUniversalIdentifier,
+    shouldIncludeDependencies = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -153,14 +159,19 @@ export class ApplicationManifestExportService {
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
+        { workspaceId },
+      );
     const { workflows, coverage: workflowsCoverage } =
       reconstructWorkflowsManifest({
         applicationAllFlatEntityMaps,
         allFlatEntityMaps,
         exportedObjectUniversalIdentifiers,
         resolvableFieldUniversalIdentifiers,
-        canReferenceOtherApplicationsWorkflowActions:
+        isWorkspaceCustomApplication:
           flatApplication.id === workspaceCustomFlatApplication.id,
+        connectedAccounts,
       });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,
@@ -234,7 +245,14 @@ export class ApplicationManifestExportService {
           ...skillsCoverage,
         ],
       }),
-      files: [],
+      files: shouldIncludeDependencies
+        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+            {
+              workspaceId,
+              applicationUniversalIdentifier,
+            },
+          )
+        : [],
     };
   }
 }

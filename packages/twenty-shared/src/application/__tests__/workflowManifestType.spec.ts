@@ -160,6 +160,76 @@ describe('workflow manifest step types', () => {
     expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
   });
 
+  describe('connected account reference', () => {
+    const CALENDAR_EVENT = {
+      title: 'Kick-off',
+      startsAt: '2026-11-02T09:00:00.000Z',
+      endsAt: '2026-11-02T09:30:00.000Z',
+      isFullDay: false,
+      sendInvitations: true,
+      addConferencing: false,
+    };
+    const withStep = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: Record<string, unknown>;
+    }) => {
+      const definition = structuredClone(workflow);
+      Object.assign(getStep(definition, 2), { type, input });
+      return workflowManifestSchema.safeParse(definition);
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL', input: { recipients: { to: 'jane@example.com' } } },
+      {
+        type: 'DRAFT_EMAIL',
+        input: { recipients: { to: 'jane@example.com' } },
+      },
+      { type: 'CREATE_CALENDAR_EVENT', input: CALENDAR_EVENT },
+    ])(
+      'accepts a $type step naming its account by handle',
+      ({ type, input }) => {
+        const result = withStep({
+          type,
+          input: { ...input, connectedAccountHandle: ' sales@example.com ' },
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.version.steps[2]?.input).toMatchObject({
+          connectedAccountHandle: 'sales@example.com',
+        });
+      },
+    );
+
+    it.each([
+      {
+        case: 'both',
+        reference: {
+          connectedAccountId: ASSIGNEE,
+          connectedAccountHandle: 'sales@example.com',
+        },
+      },
+      { case: 'neither', reference: {} },
+      { case: 'an empty handle', reference: { connectedAccountHandle: ' ' } },
+    ])('rejects $case of the account id and handle', ({ reference }) => {
+      const result = withStep({
+        type: 'CREATE_CALENDAR_EVENT',
+        input: { ...CALENDAR_EVENT, ...reference },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'input',
+        'connectedAccountHandle',
+      ]);
+    });
+  });
+
   it('rejects a step type applications cannot use', () => {
     const invalid = structuredClone(workflow);
     Object.assign(getStep(invalid, 2), { type: 'CODE' });
@@ -410,6 +480,7 @@ describe('workflow manifest database event trigger', () => {
               value: 'open',
               stepFilterGroupId: 'group',
               fieldMetadataUniversalIdentifier: FIELD_ID,
+              isFullRecord: false,
             },
           ],
         },
@@ -519,6 +590,54 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest state stored by the workflow builder', () => {
+  const { universalIdentifier: _universalIdentifier, ...triggerWithoutId } =
+    workflow.version.trigger;
+
+  const withTrigger = (trigger: Record<string, unknown>) => ({
+    ...workflow,
+    version: { ...workflow.version, trigger },
+  });
+
+  it('accepts a trigger without a universal identifier, with its name, position and output schema', () => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({
+          ...triggerWithoutId,
+          name: 'Launch manually',
+          position: { x: 120, y: 26 },
+          outputSchema: {},
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('accepts a null position for a trigger or step the builder placed nowhere', () => {
+    const [firstStep, ...otherSteps] = workflow.version.steps;
+
+    expect(
+      workflowManifestSchema.safeParse({
+        ...workflow,
+        version: {
+          trigger: { ...workflow.version.trigger, position: null },
+          steps: [{ ...firstStep, position: null }, ...otherSteps],
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each([
+    { problem: 'an empty name', trigger: { name: '' } },
+    { problem: 'a position without coordinates', trigger: { position: {} } },
+  ])('rejects $problem', ({ trigger }) => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({ ...workflow.version.trigger, ...trigger }),
+      ).success,
+    ).toBe(false);
   });
 });
 

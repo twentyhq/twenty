@@ -17,6 +17,7 @@ type Agent {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
@@ -98,6 +99,7 @@ type AgentChatOpenThreadsSummary {
   hasUnreadOpenThread: Boolean!
   needsInputThreadCount: Int!
   openThreadCount: Int!
+  unreadOpenThreadCount: Int!
 }
 
 type AgentChatThread {
@@ -294,6 +296,7 @@ enum AllMetadataName {
   pageLayoutTab
   pageLayoutWidget
   permissionFlag
+  relatedRecordPath
   role
   rolePermissionFlag
   roleTarget
@@ -654,7 +657,6 @@ type ApplicationRegistration {
   isConfigured: Boolean!
   isListed: Boolean!
   isPreInstalled: Boolean!
-  isVetted: Boolean!
   latestAvailableVersion: String
   logoUrl: String
   name: String!
@@ -2111,6 +2113,7 @@ enum EngineComponentKey {
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
   MERGE_MULTIPLE_RECORDS
+  MERGE_WITH_RECORD
   NAVIGATE_TO_NEXT_RECORD
   NAVIGATE_TO_PREVIOUS_RECORD
   NAVIGATION
@@ -2286,9 +2289,7 @@ enum FeatureFlagKey {
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
   IS_MCP_SERVERS_ENABLED
-  IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
 }
@@ -2298,6 +2299,7 @@ type Field {
   createdAt: DateTime!
   defaultValue: JSON
   description: String
+  disabledFieldPermissionActions: [String!]
   icon: String
   id: UUID!
   isActive: Boolean
@@ -2607,6 +2609,12 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+input InboxThreadRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
+  threadId: UUID!
+}
+
 type Index {
   applicationId: UUID!
   createdAt: DateTime!
@@ -2868,7 +2876,7 @@ type MarketplaceApp {
   category: String!
   description: String!
   id: String!
-  isVetted: Boolean!
+  isListed: Boolean!
   logoUrl: String
   name: String!
   sourcePackage: String
@@ -2886,7 +2894,6 @@ type MarketplaceAppDetail {
   id: String!
   installCount: Int!
   isListed: Boolean!
-  isVetted: Boolean!
   issueReportUrl: String
   latestAvailableVersion: String
   logoUrl: String
@@ -3202,6 +3209,7 @@ type Mutation {
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
@@ -3318,6 +3326,7 @@ type Mutation {
   destroyViewFilterGroup(id: String!): Boolean!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
@@ -4041,7 +4050,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4154,7 +4163,7 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceApps: [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
   skill(id: UUID!): Skill
@@ -4910,6 +4919,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String
@@ -5364,6 +5374,7 @@ input UpdateViewInput {
   openRecordIn: ViewOpenRecordIn
   position: Float
   shouldHideEmptyGroups: Boolean
+  translations: [MetadataTranslationOverrideInput!]
   type: ViewType
   visibility: ViewVisibility
 }
@@ -5789,6 +5800,8 @@ enum UserCreditsFallback {
 
 type UserSession {
   authProvider: String!
+  city: String
+  country: String
   createdAt: DateTime!
   expiresAt: DateTime!
   id: UUID!
@@ -5796,6 +5809,7 @@ type UserSession {
   isCurrent: Boolean!
   isImpersonating: Boolean!
   lastActiveAt: DateTime!
+  region: String
   userAgent: String
   workspaceId: UUID
 }

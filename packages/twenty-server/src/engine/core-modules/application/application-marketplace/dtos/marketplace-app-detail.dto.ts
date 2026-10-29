@@ -51,10 +51,6 @@ export class MarketplaceAppDetailDTO {
   @Field(() => Boolean)
   isListed: boolean;
 
-  @IsBoolean()
-  @Field(() => Boolean)
-  isVetted: boolean;
-
   @IsOptional()
   @IsString()
   @Field({ nullable: true })

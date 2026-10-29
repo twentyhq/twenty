@@ -462,6 +462,7 @@
                       "developers/extend/apps/logic/workflows",
                       "developers/extend/apps/logic/connections",
                       "developers/extend/apps/logic/messaging-channels",
+                      "developers/extend/apps/logic/inbox",
                       "developers/extend/apps/logic/credits"
                     ]
                   },
@@ -485,7 +486,7 @@
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/translations",
                       "developers/extend/apps/operations/publishing",
-                      "developers/extend/apps/operations/marketplace-vetting",
+                      "developers/extend/apps/operations/marketplace-review",
                       "developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -1572,6 +1573,7 @@
                       "ar/developers/extend/apps/logic/workflows",
                       "ar/developers/extend/apps/logic/connections",
                       "ar/developers/extend/apps/logic/messaging-channels",
+                      "ar/developers/extend/apps/logic/inbox",
                       "ar/developers/extend/apps/logic/credits"
                     ]
                   },
@@ -1595,7 +1597,7 @@
                       "ar/developers/extend/apps/operations/testing",
                       "ar/developers/extend/apps/operations/translations",
                       "ar/developers/extend/apps/operations/publishing",
-                      "ar/developers/extend/apps/operations/marketplace-vetting",
+                      "ar/developers/extend/apps/operations/marketplace-review",
                       "ar/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -3134,6 +3136,7 @@
                       "es/developers/extend/apps/logic/workflows",
                       "es/developers/extend/apps/logic/connections",
                       "es/developers/extend/apps/logic/messaging-channels",
+                      "es/developers/extend/apps/logic/inbox",
                       "es/developers/extend/apps/logic/credits"
                     ]
                   },
@@ -3157,7 +3160,7 @@
                       "es/developers/extend/apps/operations/testing",
                       "es/developers/extend/apps/operations/translations",
                       "es/developers/extend/apps/operations/publishing",
-                      "es/developers/extend/apps/operations/marketplace-vetting",
+                      "es/developers/extend/apps/operations/marketplace-review",
                       "es/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -3792,6 +3795,7 @@
                       "it/developers/extend/apps/logic/workflows",
                       "it/developers/extend/apps/logic/connections",
                       "it/developers/extend/apps/logic/messaging-channels",
+                      "it/developers/extend/apps/logic/inbox",
                       "it/developers/extend/apps/logic/credits"
                     ]
                   },
@@ -3815,7 +3819,7 @@
                       "it/developers/extend/apps/operations/testing",
                       "it/developers/extend/apps/operations/translations",
                       "it/developers/extend/apps/operations/publishing",
-                      "it/developers/extend/apps/operations/marketplace-vetting",
+                      "it/developers/extend/apps/operations/marketplace-review",
                       "it/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -5806,6 +5810,7 @@
                       "ro/developers/extend/apps/logic/workflows",
                       "ro/developers/extend/apps/logic/connections",
                       "ro/developers/extend/apps/logic/messaging-channels",
+                      "ro/developers/extend/apps/logic/inbox",
                       "ro/developers/extend/apps/logic/credits"
                     ]
                   },
@@ -5829,7 +5834,7 @@
                       "ro/developers/extend/apps/operations/testing",
                       "ro/developers/extend/apps/operations/translations",
                       "ro/developers/extend/apps/operations/publishing",
-                      "ro/developers/extend/apps/operations/marketplace-vetting",
+                      "ro/developers/extend/apps/operations/marketplace-review",
                       "ro/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -6464,6 +6469,7 @@
                       "ru/developers/extend/apps/logic/workflows",
                       "ru/developers/extend/apps/logic/connections",
                       "ru/developers/extend/apps/logic/messaging-channels",
+                      "ru/developers/extend/apps/logic/inbox",
                       "ru/developers/extend/apps/logic/credits"
                     ]
                   },
@@ -6487,7 +6493,7 @@
                       "ru/developers/extend/apps/operations/testing",
                       "ru/developers/extend/apps/operations/translations",
                       "ru/developers/extend/apps/operations/publishing",
-                      "ru/developers/extend/apps/operations/marketplace-vetting",
+                      "ru/developers/extend/apps/operations/marketplace-review",
                       "ru/developers/extend/apps/operations/monitoring"
                     ]
                   }
@@ -7626,6 +7632,30 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ar/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ar/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/es/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/es/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/it/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/it/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ro/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ro/developers/extend/apps/operations/marketplace-review"
+    },
+    {
+      "source": "/ru/developers/extend/apps/operations/marketplace-vetting",
+      "destination": "/ru/developers/extend/apps/operations/marketplace-review"
+    },
     {
       "source": "/ui/components/info",
       "destination": "/ui/components/feedback/inline-banner"

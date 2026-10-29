@@ -71,6 +71,7 @@ export const getDefaultFlatFieldMetadata = ({
         ? !createFieldInput.isUIReadOnly
         : true),
     writability: MetadataWritability.OPEN,
+    disabledFieldPermissionActions: null,
     morphId: null,
     applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,

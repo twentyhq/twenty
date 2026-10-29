@@ -70,6 +70,7 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

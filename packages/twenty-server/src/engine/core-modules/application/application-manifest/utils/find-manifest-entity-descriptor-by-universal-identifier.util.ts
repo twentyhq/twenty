@@ -277,7 +277,8 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   mcpServer: {
     entityKind: 'MCP server',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      toCandidates(manifest.mcpServers, (mcpServer) => mcpServer.label),
   },
   applicationVariable: {
     entityKind: 'application variable',
@@ -293,6 +294,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   workflowVersion: {
     entityKind: 'workflow version',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  relatedRecordPath: {
+    entityKind: 'related record path',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
   validationRule: {

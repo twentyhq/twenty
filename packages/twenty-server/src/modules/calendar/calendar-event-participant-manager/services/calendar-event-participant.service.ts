@@ -136,6 +136,10 @@ export class CalendarEventParticipantService {
               })),
               source: FieldActorSource.CALENDAR,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         }
 

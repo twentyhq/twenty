@@ -1,11 +1,8 @@
-import { AppChip } from '@/applications/components/AppChip';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
@@ -13,7 +10,6 @@ export const SettingsApplicationConnectCards = () => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
 
   const connectableProviders = applicationsWithPreferences.flatMap(
     ({ application, connectionProviders }) => {
@@ -46,21 +42,11 @@ export const SettingsApplicationConnectCards = () => {
             : applicationName;
 
           return (
-            <SettingsCard
+            <SettingsApplicationConnectCard
               key={connectionProvider.id}
-              Icon={
-                <AppChip applicationId={application.id} size="md" chipOnly />
-              }
+              applicationId={application.id}
+              connectionProvider={connectionProvider}
               title={t`Connect with ${appName}`}
-              onClick={() =>
-                triggerAppOAuth({
-                  applicationId: application.id,
-                  providerName: connectionProvider.name,
-                  redirectLocation: getApplicationPreferencesConnectionsPath(
-                    application.id,
-                  ),
-                })
-              }
             />
           );
         },

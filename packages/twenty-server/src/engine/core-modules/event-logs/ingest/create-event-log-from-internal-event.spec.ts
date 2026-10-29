@@ -83,6 +83,10 @@ describe('CreateEventLogFromInternalEvent', () => {
     expect(addToQueue).toHaveBeenCalledWith(
       CreateEventLogFromInternalEvent.name,
       expect.objectContaining({ transientErrorRetryCount: 1 }),
+      {
+        workspaceId: 'workspace-1',
+        isWorkspaceJob: true,
+      },
     );
   });
 

@@ -17,9 +17,13 @@ export const runCalendarChannelWebhookSync = async (
     startingStage,
   );
 
-  await enqueueJobAndDrain(
-    MessageQueue.connectedAccountSyncWebhookQueue,
-    CalendarEventWebhookSyncJob.name,
-    { workspaceId, calendarChannelId },
-  );
+  await enqueueJobAndDrain({
+    queue: MessageQueue.connectedAccountSyncWebhookQueue,
+    jobName: CalendarEventWebhookSyncJob.name,
+    data: { workspaceId, calendarChannelId },
+    scope: {
+      workspaceId,
+      isWorkspaceJob: true,
+    },
+  });
 };

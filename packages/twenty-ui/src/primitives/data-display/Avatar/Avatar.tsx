@@ -1,11 +1,11 @@
 import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 
+import { getAvatarInitial } from '@ui/utilities/utils/getAvatarInitial';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { AvatarFallback } from './internal/AvatarFallback';
 import { AvatarImage } from './internal/AvatarImage';
 import { AvatarRoot } from './internal/AvatarRoot';
-import { getAvatarInitial } from './internal/getAvatarInitial';
 import { type AvatarProps } from './types/AvatarProps';
 
 const AvatarAssembly = ({

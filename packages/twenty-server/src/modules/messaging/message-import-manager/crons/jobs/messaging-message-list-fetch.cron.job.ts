@@ -114,6 +114,10 @@ export class MessagingMessageListFetchCronJob {
               workspaceId,
               messageChannelId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         }
       } catch (error) {

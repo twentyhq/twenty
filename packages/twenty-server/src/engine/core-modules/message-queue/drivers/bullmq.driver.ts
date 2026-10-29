@@ -23,6 +23,7 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
   type QueueJobRecipient,
+  type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -39,10 +40,12 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
+import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
+import { buildJobLogContext } from 'src/engine/core-modules/message-queue/utils/build-job-log-context.util';
 import { computeJobQueueWaitMs } from 'src/engine/core-modules/message-queue/utils/compute-job-queue-wait-ms.util';
 import { isQueueJobIdAlreadyWaiting } from 'src/engine/core-modules/message-queue/utils/is-queue-job-id-already-waiting.util';
 import { JOB_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/job-latency-ms-bucket-boundaries.constant';
@@ -55,6 +58,7 @@ export type BullMQDriverOptions = QueueOptions;
 
 type BullMQJobsOptions = JobsOptions & {
   broadcastTo?: QueueJobRecipient;
+  fairBase?: number;
 };
 
 export class BullMQDriver
@@ -73,13 +77,23 @@ export class BullMQDriver
     Record<MessageQueue, MessageQueueWorkerOptions>
   > = {};
   private workersDrain: Promise<void> | undefined;
+  private readonly fairQueueScheduler: FairQueueScheduler;
 
   constructor(
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
     private twentyConfigService: TwentyConfigService,
     private eventEmitter: EventEmitter2,
-  ) {}
+  ) {
+    this.fairQueueScheduler = new FairQueueScheduler({
+      getClient: (queueName) => this.queueMap[queueName].client,
+      getJobKey: ({ queueName, jobId }) =>
+        this.queueMap[queueName].toKey(jobId),
+      keyPrefix: options.prefix ?? 'bull',
+      metricsService,
+      twentyConfigService,
+    });
+  }
 
   onModuleInit() {
     this.metricsService.createMultiObservableGauge({
@@ -278,6 +292,10 @@ export class BullMQDriver
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
+          if (isDefined(job.id)) {
+            this.fairQueueScheduler.onJobStarted({ queueName, jobId: job.id });
+          }
+
           const queueWaitMs = computeJobQueueWaitMs({ job, now: Date.now() });
 
           if (isDefined(queueWaitMs)) {
@@ -292,28 +310,39 @@ export class BullMQDriver
 
           // TODO: Correctly support for job.id
           const timeStart = performance.now();
-          const workspaceId = job.data?.workspaceId;
-          const workspaceSuffix = workspaceId
-            ? ` [workspace=${workspaceId}]`
-            : '';
-
-          this.logger.log(
-            `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
-          );
-          await handler({
-            data: job.data,
-            id: job.id ?? '',
-            name: job.name,
-            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
-            updateData: (data) => job.updateData(data),
-            updateProgress: (progress) => job.updateProgress(progress),
-            abortSignal,
+          const logContext = buildJobLogContext({
+            jobData: job.data,
+            queueWaitMs,
           });
-          const timeEnd = performance.now();
-          const executionTime = timeEnd - timeStart;
 
           this.logger.log(
-            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+            `Processing job ${job.id} with name ${job.name} on queue ${queueName}${logContext}`,
+          );
+
+          try {
+            await handler({
+              data: job.data,
+              id: job.id ?? '',
+              name: job.name,
+              retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              updateData: (data) => job.updateData(data),
+              updateProgress: (progress) => job.updateProgress(progress),
+              abortSignal,
+            });
+          } finally {
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.JobDurationMs,
+              value: performance.now() - timeStart,
+              unit: 'ms',
+              attributes: { queue: queueName, job_name: job.name },
+              bucketBoundaries: JOB_LATENCY_MS_BUCKET_BOUNDARIES,
+            });
+          }
+
+          const executionTime = performance.now() - timeStart;
+
+          this.logger.log(
+            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${logContext}`,
           );
         }),
       workerOptions,
@@ -457,7 +486,7 @@ export class BullMQDriver
     return broadcastTo;
   }
 
-  private buildJobsOptions(options?: QueueJobOptions): BullMQJobsOptions {
+  private buildJobsOptions(options?: QueueJobSettings): BullMQJobsOptions {
     return {
       jobId: options?.id
         ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
@@ -489,7 +518,7 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobName: string,
     data: T,
-    options?: QueueJobOptions,
+    options: QueueJobOptions,
   ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
@@ -497,7 +526,7 @@ export class BullMQDriver
       );
     }
 
-    if (options?.id && !options?.doNotCheckDuplicatesBasedOnPrefix) {
+    if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
       if (
@@ -508,8 +537,18 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+    const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
+      queueName,
+      scopes: [options],
+      additionalGroupKeys: options.groupKeys,
+      delay: options.delay,
+      staticPriority: queueOptions.priority,
+    });
 
-    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, {
+      ...queueOptions,
+      ...jobOptions,
+    });
 
     return job.id;
   }
@@ -543,7 +582,7 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-    options?: QueueJobOptions,
+    options?: QueueJobSettings,
   ): Promise<string[]> {
     if (!this.queueMap[queueName]) {
       throw new Error(
@@ -560,6 +599,13 @@ export class BullMQDriver
     }
 
     const queueOptions = this.buildJobsOptions(options);
+    const jobOptions = await this.fairQueueScheduler.computeJobOptions({
+      queueName,
+      scopes: jobsToAdd,
+      additionalGroupKeys: options?.groupKeys,
+      delay: options?.delay,
+      staticPriority: queueOptions.priority,
+    });
 
     const addedJobs = await this.queueMap[queueName].addBulk(
       jobsToAdd.map(({ data, jobId }, index) => ({
@@ -567,6 +613,7 @@ export class BullMQDriver
         data,
         opts: {
           ...queueOptions,
+          ...jobOptions[index],
           jobId:
             jobId ??
             (queueOptions.jobId ? `${queueOptions.jobId}-${index}` : undefined),

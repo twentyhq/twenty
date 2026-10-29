@@ -103,13 +103,16 @@ export class ApplicationDevelopmentService {
   async exportApplication({
     universalIdentifier,
     workspaceId,
+    shouldIncludeDependencies,
   }: {
     universalIdentifier: string;
     workspaceId: string;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     return this.applicationManifestExportService.exportApplication({
       workspaceId,
       applicationUniversalIdentifier: universalIdentifier,
+      shouldIncludeDependencies,
     });
   }
 
@@ -118,15 +121,14 @@ export class ApplicationDevelopmentService {
     dryRun,
     inferDeletionFromMissingEntities,
     workspaceId,
+    workspaceCustomApplicationId,
   }: {
     manifest: ApplicationInput['manifest'];
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean | null;
     workspaceId: string;
+    workspaceCustomApplicationId: string;
   }): Promise<WorkspaceMigrationDTO> {
-    const shouldInferDeletionFromMissingEntities =
-      inferDeletionFromMissingEntities !== false;
-
     await this.throttlePerApplication(
       manifest.application.universalIdentifier,
       workspaceId,
@@ -154,6 +156,15 @@ export class ApplicationDevelopmentService {
         workspaceId,
       },
     );
+
+    const shouldInferDeletionFromMissingEntities =
+      await this.resolveDeletionInference({
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+        inferDeletionFromMissingEntities,
+        workspaceId,
+        workspaceCustomApplicationId,
+      });
 
     if (dryRun === true) {
       const { workspaceMigration } =
@@ -291,6 +302,32 @@ export class ApplicationDevelopmentService {
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
     };
+  }
+
+  // Pull cannot export everything the workspace custom application owns yet,
+  // so applying a pulled project must only delete what is missing on request.
+  private async resolveDeletionInference({
+    applicationUniversalIdentifier,
+    inferDeletionFromMissingEntities,
+    workspaceId,
+    workspaceCustomApplicationId,
+  }: {
+    applicationUniversalIdentifier: string;
+    inferDeletionFromMissingEntities?: boolean | null;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+  }): Promise<boolean> {
+    if (isDefined(inferDeletionFromMissingEntities)) {
+      return inferDeletionFromMissingEntities;
+    }
+
+    const application =
+      await this.applicationLookupService.findByUniversalIdentifier({
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      });
+
+    return application?.id !== workspaceCustomApplicationId;
   }
 
   private async throttlePerApplication(

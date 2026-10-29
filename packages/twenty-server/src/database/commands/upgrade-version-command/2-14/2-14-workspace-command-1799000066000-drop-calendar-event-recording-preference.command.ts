@@ -74,6 +74,7 @@ export class DropCalendarEventRecordingPreferenceCommand extends ProvisionedWork
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

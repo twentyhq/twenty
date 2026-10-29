@@ -1,0 +1,95 @@
+---
+title: صندوق الوارد
+description: نشر رسائل من التطبيق الخاص بك في علبة الوارد للأعضاء، من دالة منطقية أو مكون أمامي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+يمكن لتطبيقك أن يبدأ ويتابع المحادثات في صندوق الوارد الخاص بأعضاء مساحة العمل، حيث يتحدثون أيضًا مع مساعِدين. يمكن أن تنتهي الرسالة عند سؤال أو استمارة أو تغيير للموافقة عليها، التي يجيب عليها العضو من المحادثة قبل مواصلة المحادثة مع المساعد.
+
+يتم تصدير مساعدي صندوق الوارد من كل من '20sdk/logic-function' و '20sdk/front-component'، لذلك يتم تشغيل مجدول وزر في التطبيق الخاص بك بنفس الطريقة.
+
+## إرسال رسالة
+
+ينشر `sendInboxMessage()` رسالة من التطبيق الخاص بك في دردشة عضو أو أكثر من أعضاء فضاء العمل ويعيد المحادثة `threadId`.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_question',
+    input: {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  },
+});
+```
+
+النقاط الرئيسية:
+
+* "هوية العمل" قائمة بأسماء الأعضاء الذين يتلقون المحادثة، واحدة على الأقل. ويملكها أول عضو في محادثة جديدة، ويتلوها الأعضاء الآخرون بوصفهم مشاركين. ثم ترسل لاحقاً تحت نفس المفتاح الذي يسرد الأعضاء الجدد يضيفونهم؛ ويغفل الأعضاء الاحتفاظ بالمحادثة.
+* يختار "threadKey" المحادثة لهذا التطبيق، الذي يشارك فيه كل عضو يتم إرساله إليه. المفتاح الجديد يبدأ محادثة بعنوان 'title\`؛ المفتاح الذي استخدمته قبل إضافة الرسالة إلى تلك المحادثة.
+* 'idempotencyKey' يحدد الرسالة داخل المحادثة. إرسال مرة أخرى مع نفس المفاتيح لا يكتب شيئا جديدا، لذا فإن إعادة المحاولة والتشغيل المتزامن لا يكرر الرسالة أبدا.
+* \`text' مميز، ويمكن أن تحمل [الإشارات والمراجع المحفوظة](#mentions-and-record-references).
+* وينهي 'toolCall' (اختياري) الرسالة على واحد من:
+  * اتصل بالأعضاء الذين يجيبون على المحادثة: 'ask_question' (سؤال واحد متعدد الاختيار)، و 'request_form' (حقول لملء المحادثة) أو 'propose_tool_call' (دعوة للموافقة). و`إدخاله` يأخذ `اسم الأداة`، `الحججة` التي تسميها الأداة و`موجز` في جملة واحدة. يجب أن تكون الأداة واحدة من الدور الافتراضي للتطبيق الخاص بك يمكن أن يعمل بنفسه، مثل `create_one_person` أو `update_one_opportunity` (مع السجل `id`)؛ البريد الإلكتروني (`send_email` أو `draft_email`، مع `recipients`، `subject` و `body` في HTML) لا يحتاج إلى إذن من التطبيق الخاص بك. يستعرض العضو المكالمة في نفس البطاقة التي يقترحها المساعد يقوم بتحريره إذا رغب، ويدار المكالمة المعتمدة مع وصولها الخاص؛
+  * واحدة من أدوات التطبيق الخاص بك، من خلال 'logicFunctionUniversalIdentifier' ، التي تم توفيرها بواسطة مكون واجهة مع 'input` و 'خرج` تمرير. فهو لا يوقف المحادثة مؤقتا.
+* مكالمة واحدة فقط يمكن أن تنتظر إجابات الأعضاء في محادثة في كل مرة: إرسال مكالمة أخرى قبل أن يفشلوا في الإجابة مع `THREAD_AWAITING_ANSWER`. الرسائل العادية والمكالمات بأداة التطبيق لا تزال مقبولة.
+* فقط العضو الذي يملك محادثة يمكنه حذفه، ويتم إجراء محادثة محذوفة لكل عضو: لم يتم إنشاؤها، ولم يتم إضافة أي شيء إليها. يمكن للأعضاء الآخرين إلغاء الاشتراك لإخراجه من صندوق الوارد الخاص بهم.
+* ويجب أن يحصل كل عضو على إذن "AI"، وتفشل المكالمة دون كتابة الرسالة عندما لا يتمكن أحدهم من إجراء المحادثة. يجب أن يمنح تطبيقك [الدور الافتراضي](/ar/developers/extend/apps/config/roles) `SystemPermissionFlag.AI`.
+
+### من يرسل الرسالة
+
+يتم كتابة الرسالة دائمًا بواسطة التطبيق الخاص بك، أيًا ما تم تشغيل المكالمة. تعمل المكالمة نفسها مثل [عملاء API الافتراضيين](/ar/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses):
+
+* وفي وظيفة منطقية، يعمل هذا الشخص بوصفه الشخص الذي بدأ الهروب، أو كما في طلبك عندما لا يفعل أحد ذلك، على سبيل المثال في الجدول الزمني لكرون.
+* في المكون الأمامي، يعمل كعضو ينظر إلى الصفحة. عندما تنتهي صلاحية الرمز المميز، تقوم المكالمة بتنشيطه مرة إلى عشرين مرة ثم تجرب.
+
+ويحتاج الشخص الذي وراء المكالمة إلى إذن \`AI' أيضا، شأنه شأن كل متلقي.
+
+للنشر من عنصر أمامي، قم باستيراد نفس المساعدين من '20sdk/front-component'. [النشر إلى صندوق الوارد](/ar/developers/extend/apps/layout/front-components#posting-to-the-inbox) يظهر كيفية فتح المحادثة بعد ذلك.
+
+## الإشارات ومراجع السجلات
+
+صندوق الوارد يجعل الرموز المرجعية في 'text' كرقائق. اكتبهم مع هؤلاء المساعدين بدلاً من اليدى:
+
+```ts src/logic-functions/flag-idle-deal.ts
+import {
+  inboxMention,
+  inboxReferenceRecord,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+
+const dealReference = await inboxReferenceRecord({
+  objectNameSingular: 'opportunity',
+  recordId: opportunity.id,
+});
+
+await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `idle-deal-${opportunity.id}`,
+  idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
+  title: `${opportunity.name} is idle`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+});
+```
+
+* يكتب `inboxMention({ workspaceMemberId })` إشارة إلى عضو في فضاء العمل، و `inboxReferenceRecord({ objectNameSingular, recordId })` شريحة تربط بأي سجل.
+* وكلاهما يقرأ العلامة التي يظهرها الشريطة، كما يفعل الملحن: الاسم الكامل للعضو، أو بريدهم الإلكتروني عندما يكون الاسم فارغاً، ومعرّف تسمية السجل، مثل اسم الشركة. تصبح الكتل أقواس ويصبح كرات الخط مساحة، لذا فإن الرقائق دائما تمدد.
+* وقرأوا بنفس إمكانية الوصول إلى بقية المكالمة، بحيث يلزم الوصول إلى العضو أو التسجيل. مرجع سجل يقدم طلبين، واحد لحقل تسمية الكائن وواحد للسجل.
+* إشارة فقط تعطل. وهو لا يضيف العضو إلى المحادثة أو يخطر بها، ومن ثم يدرج كل من ينبغي أن يتلقى الرسالة في `workspaceMemberIds`.
+* `INBOX_ASSISTANT_MENTION` هو النص الذي يكتبه الملحن عندما يذكر أحد الأعضاء المساعد (`@Ada`)، وبالتالي فإن رسائلك تسميه بنفس الطريقة.
+
+<PageBanner illustration="card-page-inbox" />

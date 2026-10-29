@@ -1,6 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -26,7 +25,6 @@ const previewCampaignSendInputSchema = z.object({
   name: 'preview_campaign_send',
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
   description:
     'Check whether an email campaign can be sent, without sending anything. ' +
     'Returns the audience: list members, how many are sendable, and how many are skipped and why (no email, duplicate email, suppressed, globally or topic unsubscribed, tracking refused). ' +

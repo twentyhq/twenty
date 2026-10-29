@@ -5,6 +5,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
+import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -214,6 +215,19 @@ const fromActionInput = ({
         stepFilters: toArray(record.stepFilters).map(resolvers.fieldReference),
       };
     }
+    case WorkflowActionType.SEND_EMAIL:
+    case WorkflowActionType.DRAFT_EMAIL:
+    case WorkflowActionType.CREATE_CALENDAR_EVENT: {
+      const { connectedAccountId, ...rest } = toRecord(input);
+
+      return {
+        ...rest,
+        ...resolvers.connectedAccountReference({
+          stepType: action.type,
+          connectedAccountId,
+        }),
+      };
+    }
     case WorkflowActionType.HTTP_REQUEST:
     case WorkflowActionType.CLASSIFY:
     case WorkflowActionType.ITERATOR:
@@ -251,7 +265,15 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     return { reason: unsupportedReason };
   }
 
-  const { outputSchema, errorHandlingOptions } = action.settings;
+  const { outputSchema } = action.settings;
+  const errorHandlingOptions = isDefined(action.settings.errorHandlingOptions)
+    ? normalizeStoredWorkflowErrorHandlingOptions(
+        action.settings.errorHandlingOptions,
+      )
+    : undefined;
+  const position = isDefined(action.position)
+    ? { x: action.position.x, y: action.position.y }
+    : null;
   const expectedOutputSchema =
     'expectedOutputSchema' in action.settings
       ? action.settings.expectedOutputSchema
@@ -264,10 +286,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ? { logicFunctionUniversalIdentifier }
       : {}),
     nextStepIds: action.nextStepIds ?? [],
-    ...(isDefined(action.position) &&
-    !isEqual(action.position, { x: 0, y: (index + 1) * 180 })
-      ? { position: { x: action.position.x, y: action.position.y } }
-      : {}),
+    ...(isEqual(position, { x: 0, y: (index + 1) * 180 }) ? {} : { position }),
     input,
   } as WorkflowStepManifest;
   const isDefaultOutputSchema = isEqual(
@@ -299,16 +318,7 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ...(!isDefined(errorHandlingOptions) ||
       isEqual(errorHandlingOptions, DEFAULT_ERROR_HANDLING_OPTIONS)
         ? {}
-        : {
-            errorHandlingOptions: {
-              retryOnFailure: {
-                value: errorHandlingOptions.retryOnFailure.value,
-              },
-              continueOnFailure: {
-                value: errorHandlingOptions.continueOnFailure.value,
-              },
-            },
-          }),
+        : { errorHandlingOptions }),
     },
   };
 };

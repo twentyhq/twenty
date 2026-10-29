@@ -522,6 +522,32 @@ export class WorkflowRunWorkspaceService {
     }, authContext);
   }
 
+  async getWorkflowRunCoreWorkflowId({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const workflowRun =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({
+              where: { id: workflowRunId },
+              select: ['id', 'coreWorkflowId'],
+            }),
+        authContext,
+      );
+
+    return workflowRun?.coreWorkflowId ?? null;
+  }
+
   // read with the requester's own permissions, which follow the visibility of the run's workflow
   async isWorkflowRunReadableByRequester(
     workflowRunId: string,

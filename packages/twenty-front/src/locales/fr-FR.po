@@ -121,11 +121,15 @@ msgstr "\"{path}\" n'est pas une valeur"
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" n'est pas un sous-champ de \"{fieldName}\""
 
-#. js-lingui-id: TaLmrR
-#. placeholder {0}: formatNumber(currentCreditsByPeriod, { decimals: 2 })
+#. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "({0} credits)"
-msgstr "({0} crédits)"
+msgid "({currentCreditsByPeriodDisplay} credits/month)"
+msgstr ""
+
+#. js-lingui-id: M9SJOb
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({currentCreditsByPeriodDisplay} credits/year)"
+msgstr ""
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -630,7 +634,7 @@ msgstr "{cardCount, plural, one {Approuver # action ?} other {Approuver # action
 #. js-lingui-id: AnO6CC
 #: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
 msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
+msgstr "{channelStatusLabel} · {assignmentLabel}"
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -857,10 +861,10 @@ msgstr "{label} (obsolète)"
 msgid "{label}, {statusLabel}"
 msgstr "{label}, {statusLabel}"
 
-#. js-lingui-id: hr3CkB
+#. js-lingui-id: g4xrfh
 #: src/modules/navigation/components/MainNavigationDrawerModeSwitcher.tsx
-msgid "{label}, unread"
-msgstr "{label}, non lu"
+msgid "{label}, {unreadOpenThreadCount} unread"
+msgstr "{label}, {unreadOpenThreadCount} non lus"
 
 #. js-lingui-id: 1DrH/j
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -1051,6 +1055,26 @@ msgstr "{runCount, plural, one {# exécution} other {# exécutions}}"
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
 msgstr "{scopeLabel} — la valeur par défaut de l’instance est {defaultText}. L’enregistrement s’applique uniquement à cet espace de travail."
 
+#. js-lingui-id: FTxMFo
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month"
+msgstr ""
+
+#. js-lingui-id: QzeEhD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr ""
+
+#. js-lingui-id: d7aej9
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year"
+msgstr ""
+
+#. js-lingui-id: TfWeSD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr ""
+
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
@@ -1212,10 +1236,10 @@ msgstr "{visibleFieldsCount, plural, one {# champ visible} other {# champs visib
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# élément} other {# éléments}}"
 
-#. js-lingui-id: bQNjUR
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr "{workspaceCreditsSeats, plural, one {Inclut {seatCreditsDisplay} crédits pour # siège, réinitialisés à chaque période} other {Inclut {seatCreditsDisplay} crédits pour # sièges, réinitialisés à chaque période}}"
+#. js-lingui-id: imLPQY
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
+msgstr ""
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1281,7 +1305,7 @@ msgid "≈ 10,000 workflow steps"
 msgstr "≈ 10 000 étapes de workflow"
 
 #. js-lingui-id: tSb6yd
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 100 AI tasks/week"
 msgstr "≈ 100 tâches d'IA/semaine"
 
@@ -1297,7 +1321,7 @@ msgid "≈ 50,000 workflow steps"
 msgstr "≈ 50 000 étapes de workflow"
 
 #. js-lingui-id: bLGKEo
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 500 AI tasks/week"
 msgstr "≈ 500 tâches d'IA/semaine"
 
@@ -2100,7 +2124,7 @@ msgstr "Ajouter Cc"
 #. js-lingui-id: PKjhUq
 #: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
 msgid "Add channel"
-msgstr ""
+msgstr "Ajouter un canal"
 
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
@@ -3221,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Toutes les tâches ont été traitées. Maintenez l'élan."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Toutes les applications actuellement installées dans cet espace de travail"
 
@@ -3689,7 +3713,6 @@ msgstr "Apostrophe et point"
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -4955,7 +4978,7 @@ msgid "Build many-to-many relations"
 msgstr "Créer des relations plusieurs-à-plusieurs"
 
 #. js-lingui-id: +7fBMP
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Built-in"
 msgstr "Intégrés"
 
@@ -6915,27 +6938,24 @@ msgstr "Se connecter à cet espace de travail"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
 msgstr "Se connecter via IMAP/SMTP"
-
-#. js-lingui-id: Zgi9Fd
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
-msgid "Connect with Google"
-msgstr "Se connecter avec Google"
-
-#. js-lingui-id: IOfqM8
-#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
-msgid "Connect with Microsoft"
-msgstr "Se connecter avec Microsoft"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
 msgid "Connect with {appName}"
-msgstr ""
+msgstr "Se connecter avec {appName}"
+
+#. js-lingui-id: Zgi9Fd
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with Google"
+msgstr "Se connecter avec Google"
+
+#. js-lingui-id: IOfqM8
+#: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
+msgid "Connect with Microsoft"
+msgstr "Se connecter avec Microsoft"
 
 #. js-lingui-id: oduBE8
 #: src/pages/onboarding/ImportContacts.tsx
@@ -8012,6 +8032,11 @@ msgstr "Limite de crédits atteinte. Contactez votre administrateur pour reprend
 msgid "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
 msgstr "Limite de crédits atteinte. Mettez à jour votre forfait de crédits pour que les flux de travail, l’IA et les applications continuent de fonctionner."
 
+#. js-lingui-id: M9521O
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Credit pack"
+msgstr ""
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -8054,7 +8079,6 @@ msgstr "crédits"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
-#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -8909,11 +8933,6 @@ msgstr "Vue par défaut"
 msgid "Defaults to the step name"
 msgstr "Utilise par défaut le nom de l'étape"
 
-#. js-lingui-id: 6b8WDd
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Deferred workspace migration actions"
-msgstr "Actions de migration d’espace de travail différées"
-
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 msgid "Define the name and description of your object"
@@ -9341,7 +9360,7 @@ msgstr "{objectLabel} supprimé"
 #. js-lingui-id: 6T/COx
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Deleted {successfulCount} of {totalCount} connections. Could not delete: {failedLabels}."
-msgstr ""
+msgstr "Suppression de {successfulCount} connexions sur {totalCount}. Impossible de supprimer : {failedLabels}."
 
 #. js-lingui-id: +UxBoG
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
@@ -9410,6 +9429,7 @@ msgstr "Décrivez ce que vous voulez que l'IA fasse..."
 
 #. js-lingui-id: Nu4oKW
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -9420,7 +9440,6 @@ msgstr "Décrivez ce que vous voulez que l'IA fasse..."
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -9631,7 +9650,7 @@ msgstr "Déconnecté"
 #. js-lingui-id: +etBOJ
 #: src/modules/settings/app-preferences/utils/getAccountGroupActionFailureMessage.ts
 msgid "Disconnected {successfulCount} of {totalCount} connections. Could not disconnect: {failedLabels}."
-msgstr ""
+msgstr "Déconnexion de {successfulCount} connexions sur {totalCount}. Impossible de déconnecter : {failedLabels}."
 
 #. js-lingui-id: xt4a74
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -10425,11 +10444,6 @@ msgstr "E-mail et chat"
 msgid "Email and password are required"
 msgstr "L'e-mail et le mot de passe sont requis"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Campagnes par e-mail"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10704,11 +10718,6 @@ msgstr "Activer"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Activer les options de contournement"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Activez les campagnes par e-mail, les listes et la gestion des désabonnements."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11134,6 +11143,11 @@ msgstr "Saisissez votre texte"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Saisissez votre code d'authentification à deux facteurs pour confirmer."
+
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr "Enterprise uniquement"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -12211,11 +12225,6 @@ msgstr "Échec de la déconnexion de cet appareil"
 msgid "Failed to merge records"
 msgstr "Échec de la fusion des enregistrements"
 
-#. js-lingui-id: TZV+Pv
-#: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
-msgid "Failed to merge records. Please try again."
-msgstr "Échec de la fusion des enregistrements. Veuillez réessayer."
-
 #. js-lingui-id: DvNGzq
 #: src/modules/object-record/record-calendar/components/RecordCalendarDragDropContext.tsx
 msgid "Failed to move record"
@@ -12813,7 +12822,7 @@ msgstr "Filtrer par ID d'enregistrement"
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 msgid "Filter channel chats"
-msgstr ""
+msgstr "Filtrer les discussions du canal"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14600,6 +14609,11 @@ msgstr "Inclure les e-mails où tous les participants partagent le même domaine
 msgid "Included"
 msgstr "Inclus"
 
+#. js-lingui-id: 6FtcQl
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Included per seat"
+msgstr ""
+
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14847,7 +14861,7 @@ msgid "Installed"
 msgstr "Installée"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
 msgid "Installed apps"
 msgstr "Applications installées"
 
@@ -15687,7 +15701,7 @@ msgid "Last active {lastActive}"
 msgstr "Dernière activité {lastActive}"
 
 #. js-lingui-id: vmfZix
-#. placeholder {0}: session.ipAddress
+#. placeholder {0}: details.join(' · ')
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Last active {lastActive} · {0}"
 msgstr "Dernière activité {lastActive} · {0}"
@@ -16456,8 +16470,8 @@ msgstr "Chargement…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Local"
 msgstr "Local"
 
@@ -17172,6 +17186,21 @@ msgstr "Fusionner les enregistrements"
 msgid "Merge review tabs"
 msgstr "Onglets de révision de fusion"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr "Fusionner avec"
+
+#. js-lingui-id: 1uAvIV
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merged {objectLabel}"
+msgstr "{objectLabel} fusionné"
+
+#. js-lingui-id: v4CzQ/
+#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+msgid "Merging {objectLabel}"
+msgstr "Fusion de {objectLabel}"
+
 #. js-lingui-id: LuriZ0
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
@@ -17768,6 +17797,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17798,7 +17828,6 @@ msgstr "N/A"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -17807,7 +17836,6 @@ msgstr "N/A"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -18317,11 +18345,6 @@ msgstr "Aucun {objectLabelSingular} trouvé"
 msgid "No access"
 msgstr "Aucun accès"
 
-#. js-lingui-id: ETfwRt
-#: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
-msgid "No accounts yet"
-msgstr "Aucun compte pour le moment"
-
 #. js-lingui-id: IeiB4r
 #: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
@@ -18410,7 +18433,7 @@ msgid "No application found. If you just published it to npm with the \"twenty-a
 msgstr "Aucune application trouvée. Si vous venez de la publier sur npm avec le mot-clé \"twenty-app\", synchronisez le catalogue et réessayez."
 
 #. js-lingui-id: JgiGgF
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "No application matches your search"
 msgstr "Aucune application ne correspond à votre recherche"
@@ -19367,6 +19390,11 @@ msgstr "Non disponible en vue par défaut"
 msgid "Not configured"
 msgstr "Non configuré"
 
+#. js-lingui-id: S33tz3
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Not connected"
+msgstr "Non connecté"
+
 #. js-lingui-id: 4wUkDk
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Not empty"
@@ -19512,8 +19540,8 @@ msgid "now"
 msgstr "maintenant"
 
 #. js-lingui-id: hzMYNj
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "NPM"
 msgstr "NPM"
 
@@ -19596,9 +19624,9 @@ msgid "Numbered list"
 msgstr "Liste numérotée"
 
 #. js-lingui-id: b/j06W
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth"
@@ -20787,8 +20815,8 @@ msgid "Per"
 msgstr "Par"
 
 #. js-lingui-id: nU1kSZ
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "par membre"
 
@@ -20899,8 +20927,9 @@ msgid "Person ID"
 msgstr "ID de la personne"
 
 #. js-lingui-id: Lz7jRL
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
 msgstr "Utilisation personnelle de l'IA"
@@ -22876,6 +22905,11 @@ msgstr "Réinitialiser à une valeur statique"
 msgid "Reset variable"
 msgstr "Réinitialiser la variable"
 
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr "Redimensionner la colonne {label}"
+
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"
@@ -23339,11 +23373,6 @@ msgstr "Exécuter du code pour analyser des fichiers et des données"
 msgid "Run Function"
 msgstr "Exécuter la fonction"
 
-#. js-lingui-id: 1yxEhK
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Run the slow parts of data model changes in the background after they are saved."
-msgstr "Exécuter en arrière-plan les parties lentes des modifications du modèle de données après leur enregistrement."
-
 #. js-lingui-id: ++zKOb
 #: src/modules/object-core/agents/components/CoreAgentTriggersTab.tsx
 msgid "Run this agent on its own when records change or on a schedule. It runs with its role's permissions."
@@ -23420,6 +23449,11 @@ msgstr "Russe"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Ventes"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr "Farce commerciale"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -23704,7 +23738,7 @@ msgid "Search agents"
 msgstr "Rechercher des agents"
 
 #. js-lingui-id: fGTI3o
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "Search an application"
@@ -25905,8 +25939,8 @@ msgstr "Statistiques"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -26490,7 +26524,7 @@ msgstr "Synchroniser les libellés des objets et les noms des API"
 #. js-lingui-id: 4XvJjz
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "Syncing will stop and credentials will be removed for the following. Your emails and events will be retained and available after you reconnect."
-msgstr ""
+msgstr "La synchronisation va s'arrêter et les identifiants seront supprimés pour les éléments suivants. Vos e-mails et événements seront conservés et disponibles après votre reconnexion."
 
 #. js-lingui-id: F22nqP
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -26614,9 +26648,9 @@ msgstr "Parlez à notre équipe"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Tarball"
 msgstr "Tarball"
 
@@ -27495,7 +27529,7 @@ msgstr "Cette opération supprime définitivement {accountHandle} ainsi que tous
 #. js-lingui-id: vrBe2V
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
 msgid "This permanently deletes the following and all of their synced emails and events. This action cannot be undone."
-msgstr ""
+msgstr "Cela supprime définitivement les éléments suivants ainsi que tous leurs e-mails et événements synchronisés. Cette action est irréversible."
 
 #. js-lingui-id: uFl6b9
 #: src/modules/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent.ts
@@ -28434,6 +28468,7 @@ msgstr "L'authentification à deux facteurs a été réinitialisée pour cet esp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
@@ -28442,8 +28477,6 @@ msgstr "L'authentification à deux facteurs a été réinitialisée pour cet esp
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -29060,8 +29093,8 @@ msgstr "mettre à jour"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
-#: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
 msgid "Update"
 msgstr "Mettre à jour"
 
@@ -29275,7 +29308,7 @@ msgstr "Passez à l'offre Organization pour configurer le SSO."
 #. js-lingui-id: LNDff6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Upgrade to Organization to create custom roles"
-msgstr ""
+msgstr "Passez à l’offre Organization pour créer des rôles personnalisés"
 
 #. js-lingui-id: Pe/uhP
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -30314,6 +30347,7 @@ msgid "Watch members demo"
 msgstr "Voir la démo des membres"
 
 #. js-lingui-id: Rxoy7e
+#: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Nous rencontrons actuellement des problèmes avec cette application, son comportement peut être dégradé pendant que nous travaillons sur un correctif."
@@ -30958,6 +30992,7 @@ msgid "Workspace creation failed"
 msgstr "La création de l'espace de travail a échoué"
 
 #. js-lingui-id: Rg6QK1
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
 msgstr "Crédits de l'espace de travail"
@@ -31390,6 +31425,7 @@ msgid "Your card was saved, but the payment still needs attention."
 msgstr "Votre carte a été enregistrée, mais le paiement nécessite encore votre attention."
 
 #. js-lingui-id: OD3Fzl
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Vos connexions n'ont pas pu être chargées. Vérifiez votre connexion et réessayez."

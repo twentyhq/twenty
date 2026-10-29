@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { waitForTimelineActivities } from 'test/integration/utils/wait-for-timeline-activities.util';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -10,6 +11,8 @@ const TOOL_NAMES = {
   createCompany: 'create_one_company',
   createNote: 'create_one_note',
   createNoteTarget: 'create_one_note_target',
+  createPerson: 'create_one_person',
+  mergeCompanies: 'merge_many_companies',
   groupByNoteTargets: 'group_by_note_targets',
   groupByCompanies: 'group_by_companies',
 } as const;
@@ -452,6 +455,104 @@ describe('MCP tool execution (integration)', () => {
       expect(result.groups.map((group) => Number(group.value))).toEqual([
         1, 1, 1, 1,
       ]);
+    });
+  });
+
+  describe('merge_many_companies', () => {
+    const keptCompanyName = `mcp-merge-kept-${randomUUID()}`;
+    let keptCompanyId: string;
+    let duplicateCompanyId: string;
+    let relatedPersonId: string;
+
+    type MergedCompany = { id: string; name: string; employees: number };
+
+    beforeAll(async () => {
+      const keptCompany = await executeWorkspaceTool<CreatedRecord>(
+        TOOL_NAMES.createCompany,
+        { name: keptCompanyName },
+      );
+
+      keptCompanyId = keptCompany.id;
+
+      const duplicateCompany = await executeWorkspaceTool<CreatedRecord>(
+        TOOL_NAMES.createCompany,
+        { name: `mcp-merge-duplicate-${randomUUID()}`, employees: 42 },
+      );
+
+      duplicateCompanyId = duplicateCompany.id;
+
+      const relatedPerson = await executeWorkspaceTool<CreatedRecord>(
+        TOOL_NAMES.createPerson,
+        {
+          name: { firstName: 'Merge', lastName: 'Contact' },
+          companyId: duplicateCompanyId,
+        },
+      );
+
+      relatedPersonId = relatedPerson.id;
+
+      await waitForTimelineActivities('targetCompanyId', [
+        keptCompanyId,
+        duplicateCompanyId,
+      ]);
+      await waitForTimelineActivities('targetPersonId', [relatedPersonId]);
+    });
+
+    afterAll(async () => {
+      await deleteRecordsByIds('person', [relatedPersonId]);
+      await deleteRecordsByIds('company', [keptCompanyId, duplicateCompanyId]);
+    });
+
+    const findCompanyIds = async (): Promise<string[]> => {
+      const rows = (await global.testDataSource.query(
+        `SELECT id FROM "${TEST_WORKSPACE_SCHEMA}"."company" WHERE id = ANY($1)`,
+        [[keptCompanyId, duplicateCompanyId]],
+      )) as Array<{ id: string }>;
+
+      return rows.map(({ id }) => id);
+    };
+
+    const findRelatedPersonCompanyId = async (): Promise<string> => {
+      const [person] = (await global.testDataSource.query(
+        `SELECT "companyId" FROM "${TEST_WORKSPACE_SCHEMA}"."person" WHERE id = $1`,
+        [relatedPersonId],
+      )) as Array<{ companyId: string }>;
+
+      return person.companyId;
+    };
+
+    it('should preview the merged company with dryRun without changing any data', async () => {
+      const preview = await executeWorkspaceTool<MergedCompany>(
+        TOOL_NAMES.mergeCompanies,
+        {
+          ids: [keptCompanyId, duplicateCompanyId],
+          conflictPriorityIndex: 0,
+          dryRun: true,
+        },
+      );
+
+      expect(preview).toMatchObject({
+        id: keptCompanyId,
+        name: keptCompanyName,
+        employees: 42,
+      });
+      expect(await findCompanyIds()).toHaveLength(2);
+      expect(await findRelatedPersonCompanyId()).toBe(duplicateCompanyId);
+    });
+
+    it('should move the related person to the kept company and delete the duplicate', async () => {
+      const mergedCompany = await executeWorkspaceTool<MergedCompany>(
+        TOOL_NAMES.mergeCompanies,
+        { ids: [keptCompanyId, duplicateCompanyId], conflictPriorityIndex: 0 },
+      );
+
+      expect(mergedCompany).toMatchObject({
+        id: keptCompanyId,
+        name: keptCompanyName,
+        employees: 42,
+      });
+      expect(await findCompanyIds()).toEqual([keptCompanyId]);
+      expect(await findRelatedPersonCompanyId()).toBe(keptCompanyId);
     });
   });
 });

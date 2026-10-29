@@ -1604,9 +1604,9 @@ __metadata:
   linkType: hard
 
 "http-cache-semantics@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "http-cache-semantics@npm:4.1.1"
-  checksum: 10c0/ce1319b8a382eb3cbb4a37c19f6bfe14e5bb5be3d09079e885e8c513ab2d3cd9214902f8a31c9dc4e37022633ceabfc2d697405deeaf1b8f3552bb4ed996fdfc
+  version: 4.3.0
+  resolution: "http-cache-semantics@npm:4.3.0"
+  checksum: 10c0/b9668e271b4a99cba067bfa6f286b12eff1408a24e090ca16f0f5fa826ac07f67b4b8c7aa6e7458596d890683f3c172f647a00ca516a8f0158c80d7e4ebe0316
   languageName: node
   linkType: hard
 
@@ -2564,12 +2564,12 @@ __metadata:
   linkType: hard
 
 "qs@npm:~6.16.0":
-  version: 6.16.0
-  resolution: "qs@npm:6.16.0"
+  version: 6.16.1
+  resolution: "qs@npm:6.16.1"
   dependencies:
     es-define-property: "npm:^1.0.1"
     side-channel: "npm:^1.1.1"
-  checksum: 10c0/eb3e31992fbd70e31a1791e571ed817d70975de7d3bfcbbbec93d77d1dd305877e9e8fdbcc62303c228ee5c3606685622cd6231c042dbc4790bb4e7c65fcbe18
+  checksum: 10c0/84ee9124b251ab2953132fbea1d70c966aa6e6496cccabedbbb83afa412bf4177bddebc779ca3ddafe23da83b2f593d530b41be6a726e971404fabb20ff22c94
   languageName: node
   linkType: hard
 
@@ -3181,9 +3181,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-ui@npm:~2.51.0":
-  version: 2.51.3
-  resolution: "twenty-ui@npm:2.51.3"
+"twenty-ui@npm:~2.52.0":
+  version: 2.52.0
+  resolution: "twenty-ui@npm:2.52.0"
   dependencies:
     "@base-ui/react": "npm:^1.9.0"
     "@base-ui/utils": "npm:0.5.0"
@@ -3203,7 +3203,7 @@ __metadata:
       optional: true
     monaco-editor:
       optional: true
-  checksum: 10c0/a4c97bb5e29b27b99569d39928f6d671a8e8525d35a66c2a3646c493528d7116b5f7c70db0041807a9a960e9adf1cfdfd4bc93813d0fa33bfd421d4a680192a0
+  checksum: 10c0/87a16a0c4557f0e21bd6f02bea8b671abcb81f14e4828a689ec236214c1802527b5f39e639820fef678a557e611b9e88b6b6941320f41c9b04ee1bf6a0a53a79
   languageName: node
   linkType: hard
 
@@ -3416,7 +3416,7 @@ __metadata:
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
     sharp: "npm:^0.35.5"
-    twenty-ui: "npm:~2.51.0"
+    twenty-ui: "npm:~2.52.0"
     uuid: "npm:^11.1.1"
     winston: "npm:^3.14.2"
   languageName: unknown

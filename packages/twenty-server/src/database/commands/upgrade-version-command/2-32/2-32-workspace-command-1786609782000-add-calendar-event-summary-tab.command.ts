@@ -55,12 +55,15 @@ export class AddCalendarEventSummaryTabCommand extends ProvisionedWorkspaceComma
         { workspaceId },
       );
 
-    const { flatPageLayoutMaps, flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatPageLayoutMaps',
-        'flatPageLayoutTabMaps',
-        'flatPageLayoutWidgetMaps',
-      ]);
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
 
     const existingPageLayout =
       flatPageLayoutMaps.byUniversalIdentifier[
@@ -131,6 +134,7 @@ export class AddCalendarEventSummaryTabCommand extends ProvisionedWorkspaceComma
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
