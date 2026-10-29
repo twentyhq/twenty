@@ -35,7 +35,6 @@ import {
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { validateRowLevelPermissionPredicateOperandsOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-predicate-operands.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -135,11 +134,6 @@ export class RowLevelPermissionPredicateService {
       workspaceMemberObjectMetadataId: buildObjectIdByNameMaps(
         flatObjectMetadataMaps,
       ).idByNameSingular.workspaceMember,
-    });
-
-    validateRowLevelPermissionPredicateOperandsOrThrow({
-      predicates,
-      flatFieldMetadataMaps,
     });
 
     const existingPredicates = Object.values(

@@ -15,6 +15,7 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
+  isFilterOperandAvailableForFieldType,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   jsonRelationFilterValueSchema,
@@ -85,6 +86,16 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     } else {
+      const unsupportedOperandError = this.getUnsupportedOperandError({
+        fieldType: fieldMetadata.type,
+        operand: flatPredicateToValidate.operand,
+        subFieldName: flatPredicateToValidate.subFieldName,
+      });
+
+      if (isDefined(unsupportedOperandError)) {
+        validationResult.errors.push(unsupportedOperandError);
+      }
+
       const invalidValueError = this.getInvalidValueError({
         fieldType: fieldMetadata.type,
         operand: flatPredicateToValidate.operand,
@@ -301,6 +312,16 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       'subFieldName' in flatEntityUpdate ||
       'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate
     ) {
+      const unsupportedOperandError = this.getUnsupportedOperandError({
+        fieldType: fieldMetadata.type,
+        operand: updatedPredicate.operand,
+        subFieldName: updatedPredicate.subFieldName,
+      });
+
+      if (isDefined(unsupportedOperandError)) {
+        validationResult.errors.push(unsupportedOperandError);
+      }
+
       const invalidValueError = this.getInvalidValueError({
         fieldType: fieldMetadata.type,
         operand: updatedPredicate.operand,
@@ -559,6 +580,32 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }
 
     return undefined;
+  }
+
+  private getUnsupportedOperandError({
+    fieldType,
+    operand,
+    subFieldName,
+  }: {
+    fieldType: FieldMetadataType;
+    operand: RowLevelPermissionPredicateOperand;
+    subFieldName: string | null | undefined;
+  }) {
+    if (
+      isFilterOperandAvailableForFieldType({
+        fieldType,
+        operand: operand as unknown as ViewFilterOperand,
+        subFieldName,
+      })
+    ) {
+      return undefined;
+    }
+
+    return {
+      code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      message: t`Operand ${operand} is not supported for field type ${getFilterTypeFromFieldType(fieldType)}`,
+      userFriendlyMessage: msg`This operand is not supported for this field`,
+    };
   }
 
   private getInvalidValueError({
