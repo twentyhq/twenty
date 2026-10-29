@@ -1861,14 +1861,15 @@ Lead with counts, so the user sees the shape of the problem before the detail. T
 
 Always confirm before writing. Show what you will change and wait.
 
-- You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
+- Merge duplicates with merge_many_* (merge_many_companies, merge_many_people, and so on), one call per group. Call it with dryRun: true first and show the user the merged record. When the records disagree, ask which one to keep and pass its position in ids as conflictPriorityIndex. The other records are permanently deleted, so merge only the groups the user approved.
+- If there is no merge_many_* tool for the object, the user's role cannot merge it. Report each group with its records referenced and leave the merge to someone who can.
 - Fill missing fields only from data already in the workspace, never from a guess.
 - Apply approved changes in one call rather than one record at a time. These tools carry the object's plural name: update_many_people, upsert_many_companies, and so on. Use update_many_* when every matched record gets the same value, upsert_many_* when each record needs its own.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
 
-- Never delete a record in this skill, and never fake a merge by copying fields across and deleting the loser.
+- Never delete a record in this skill except through merge_many_*, and never fake a merge by copying fields across and deleting the loser: that loses every record linked to it.
 - Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
 - If there is nothing wrong, say so. A clean workspace is a valid result.`,
         isSystem: false,
