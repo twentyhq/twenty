@@ -12,7 +12,7 @@ import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultS
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenMergeRecordsPageInSidePanel } from '@/side-panel/hooks/useOpenMergeRecordsPageInSidePanel';
-import { type MergeWithRecordSource } from '@/side-panel/pages/merge-with-record/states/mergeWithRecordSourceComponentState';
+import { type MergeWithRecordSource } from '@/side-panel/pages/merge-with-record/types/MergeWithRecordSource';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';

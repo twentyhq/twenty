@@ -6,10 +6,8 @@ import { IconArrowMerge } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import {
-  type MergeWithRecordSource,
-  mergeWithRecordSourceComponentState,
-} from '@/side-panel/pages/merge-with-record/states/mergeWithRecordSourceComponentState';
+import { mergeWithRecordSourceComponentState } from '@/side-panel/pages/merge-with-record/states/mergeWithRecordSourceComponentState';
+import { type MergeWithRecordSource } from '@/side-panel/pages/merge-with-record/types/MergeWithRecordSource';
 
 export const useOpenMergeWithRecordInSidePanel = () => {
   const { t } = useLingui();

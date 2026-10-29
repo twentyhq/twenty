@@ -1,10 +1,6 @@
+import { type MergeWithRecordSource } from '@/side-panel/pages/merge-with-record/types/MergeWithRecordSource';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
-
-export type MergeWithRecordSource = {
-  objectNameSingular: string;
-  recordId: string;
-};
 
 export const mergeWithRecordSourceComponentState =
   createAtomComponentState<MergeWithRecordSource | null>({

@@ -43,7 +43,6 @@ export const useOpenMergeRecordsPageInSidePanel = ({
     objectNameSingular,
   });
 
-  // The first record is the default priority record
   const openMergeRecordsPageInSidePanel = useCallback(
     async (objectRecordIds: string[]) => {
       try {
