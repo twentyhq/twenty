@@ -40,7 +40,7 @@ describe('parsePullDependencyFiles', () => {
     expect(() => parsePullDependencyFiles(files)).toThrow();
   });
 
-  it.each(['invalid-json', 'null', '[]', '42'])(
+  it.each(['invalid-json', 'null', '[]', '42', '{}, {}'])(
     'refuses invalid package.json contents %s',
     (content) => {
       expect(() =>

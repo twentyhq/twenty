@@ -5,6 +5,14 @@ import { isPlainObject } from 'twenty-shared/utils';
 import { type AppExportFile } from '@/app/types/app-export.type';
 import { CliError } from '@/output/cli-error';
 
+const isPackageJsonObject = (content: string): boolean => {
+  try {
+    return isPlainObject(JSON.parse(content));
+  } catch {
+    return false;
+  }
+};
+
 export const parsePullDependencyFiles = (value: unknown): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
@@ -47,19 +55,11 @@ export const parsePullDependencyFiles = (value: unknown): AppExportFile[] => {
       });
     }
 
-    if (file.path === 'package.json') {
-      let packageJson: unknown;
-      try {
-        packageJson = JSON.parse(file.content);
-      } catch {
-        packageJson = null;
-      }
-      if (!isPlainObject(packageJson)) {
-        throw new CliError({
-          code: 'INVALID_RESPONSE',
-          message: 'The exported package.json must contain a JSON object.',
-        });
-      }
+    if (file.path === 'package.json' && !isPackageJsonObject(file.content)) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message: 'The exported package.json must contain a JSON object.',
+      });
     }
 
     paths.add(file.path);
