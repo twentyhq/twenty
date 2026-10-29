@@ -12,8 +12,8 @@ export const getAiChatThreadDetailsStatusAccess = ({
   scope,
   isInChannel,
 }: {
-  thread: AgentChatThreadRecord | null;
-  permissions: RecordPermissionsDto | undefined;
+  thread: Pick<AgentChatThreadRecord, 'deletedAt'> | null;
+  permissions: Pick<RecordPermissionsDto, 'canRead' | 'canUpdate'> | undefined;
   triageStatus: AiChatThreadTriageStatus | undefined;
   scope: AiChatThreadStatusScope | undefined;
   isInChannel: boolean;

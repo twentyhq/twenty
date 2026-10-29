@@ -168,7 +168,10 @@ const checkSnoozeScope = async ({
 const DEFAULT_SCENARIO: StatusScenario = {};
 
 const getScenarioParticipants = (
-  scenario: StatusScenario,
+  scenario: Pick<
+    StatusScenario,
+    'areParticipantsLoading' | 'isNotInPersonalInbox'
+  >,
 ): Record<string, AgentChatThreadParticipantFieldsFragment> | null => {
   if (scenario.areParticipantsLoading) {
     return null;
