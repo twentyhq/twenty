@@ -76,17 +76,16 @@ describe('createLearnToolsTool', () => {
     );
   });
 
-  it('reports disallowed names as not found without suggesting disallowed tools', async () => {
-    const suggestSimilarToolNames = jest.fn().mockResolvedValue({
-      code_interpreter: ['code_interpreter_v2'],
-    });
+  it('reports disallowed names as not found and scopes suggestions to allowed tools', async () => {
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([]),
-      suggestSimilarToolNames,
+      suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
     } as unknown as ToolRegistryService;
+    const isToolAllowed = (toolName: string) =>
+      !toolName.startsWith('code_interpreter');
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => !toolName.startsWith('code_interpreter'),
+      isToolAllowed,
     });
 
     const result = await learnTools.execute({
@@ -94,25 +93,33 @@ describe('createLearnToolsTool', () => {
       aspects: ['description'],
     });
 
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith([], context, [
       'description',
     ]);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['code_interpreter'],
+      context,
+      isToolAllowed,
+    );
     expect(result.notFound).toEqual(['code_interpreter']);
     expect(result.suggestions).toBeUndefined();
     expect(result.message).toBe('Could not find: code_interpreter.');
   });
 
-  it('reports a misspelled name outside the allowed set with allowed suggestions only', async () => {
+  it('reports a misspelled name outside the allowed set with its suggestions', async () => {
     const toolRegistry = {
       getToolInfo: jest.fn().mockResolvedValue([{ name: 'create_one_note' }]),
       suggestSimilarToolNames: jest.fn().mockResolvedValue({
-        create_one_noteTarget: ['create_one_note_target', 'delete_one_note'],
+        create_one_noteTarget: ['create_one_note_target'],
       }),
     } as unknown as ToolRegistryService;
 
     const allowed = new Set(['create_one_note', 'create_one_note_target']);
+    const isToolAllowed = (toolName: string) => allowed.has(toolName);
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => allowed.has(toolName),
+      isToolAllowed,
     });
 
     const result = await learnTools.execute({
@@ -120,10 +127,17 @@ describe('createLearnToolsTool', () => {
       aspects: ['description'],
     });
 
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith(
       ['create_one_note'],
       context,
       ['description'],
+    );
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['create_one_noteTarget'],
+      context,
+      isToolAllowed,
     );
     expect(result.notFound).toEqual(['create_one_noteTarget']);
     expect(result.suggestions).toEqual({
@@ -139,9 +153,10 @@ describe('createLearnToolsTool', () => {
       getToolInfo: jest.fn().mockResolvedValue([{ name: 'find_many_people' }]),
       suggestSimilarToolNames: jest.fn().mockResolvedValue({}),
     } as unknown as ToolRegistryService;
+    const isToolAllowed = (toolName: string) => toolName === 'find_many_people';
 
     const learnTools = createLearnToolsTool(toolRegistry, context, {
-      isToolAllowed: (toolName) => toolName === 'find_many_people',
+      isToolAllowed,
     });
 
     const result = await learnTools.execute({
@@ -149,10 +164,17 @@ describe('createLearnToolsTool', () => {
       aspects: ['description'],
     });
 
+    expect(toolRegistry.getToolInfo).toHaveBeenCalledTimes(1);
     expect(toolRegistry.getToolInfo).toHaveBeenCalledWith(
       ['find_many_people'],
       context,
       ['description'],
+    );
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledTimes(1);
+    expect(toolRegistry.suggestSimilarToolNames).toHaveBeenCalledWith(
+      ['create_one_workflow'],
+      context,
+      isToolAllowed,
     );
     expect(result.tools).toEqual([{ name: 'find_many_people' }]);
     expect(result.notFound).toEqual(['create_one_workflow']);

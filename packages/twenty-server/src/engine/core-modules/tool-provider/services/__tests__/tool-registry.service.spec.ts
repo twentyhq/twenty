@@ -10,8 +10,10 @@ import { type ToolOutputSpillService } from 'src/engine/core-modules/tool/servic
 const workspaceId = 'workspace-id';
 const agentRoleId = 'agent-role-id';
 
-const buildToolRegistryService = () => {
-  const generateDescriptors = jest.fn().mockResolvedValue([]);
+const buildToolRegistryService = (catalogToolNames: string[] = []) => {
+  const generateDescriptors = jest
+    .fn()
+    .mockResolvedValue(catalogToolNames.map((name) => ({ name })));
   const definedToolRegistryService = {
     getAvailableDescriptors: jest.fn().mockResolvedValue([]),
     findDefinedTool: jest.fn(),
@@ -60,6 +62,33 @@ describe('ToolRegistryService', () => {
         expect.objectContaining({ explicitObjectGrantsRoleId: agentRoleId }),
         expect.anything(),
       );
+    });
+  });
+
+  describe('suggestSimilarToolNames', () => {
+    it('should rank only allowed tools so a disallowed match never takes a suggestion slot', async () => {
+      const { toolRegistryService } = buildToolRegistryService([
+        'create_one_note',
+        'delete_one_note',
+        'update_one_note',
+        'create_one_note_target',
+      ]);
+      const allowed = new Set(['create_one_note', 'create_one_note_target']);
+
+      const suggestions = await toolRegistryService.suggestSimilarToolNames(
+        ['create_one_noteTarget'],
+        {
+          workspaceId,
+          rolePermissionConfig: {
+            intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
+          },
+        },
+        (toolName) => allowed.has(toolName),
+      );
+
+      expect(suggestions).toEqual({
+        create_one_noteTarget: ['create_one_note_target', 'create_one_note'],
+      });
     });
   });
 });

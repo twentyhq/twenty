@@ -77,24 +77,14 @@ export const createLearnToolsTool = (
     // at allowed tools, so excluded tools are never surfaced as alternatives.
     const notFound = toolNames.filter((name) => !foundNames.has(name));
 
-    const suggestions: Record<string, string[]> = {};
-
-    if (notFound.length > 0) {
-      const suggestedNames = await toolRegistry.suggestSimilarToolNames(
-        notFound,
-        context,
-      );
-
-      for (const [name, similarToolNames] of Object.entries(suggestedNames)) {
-        const allowedSimilarToolNames = isToolAllowed
-          ? similarToolNames.filter((similarName) => isToolAllowed(similarName))
-          : similarToolNames;
-
-        if (allowedSimilarToolNames.length > 0) {
-          suggestions[name] = allowedSimilarToolNames;
-        }
-      }
-    }
+    const suggestions: Record<string, string[]> =
+      notFound.length > 0
+        ? await toolRegistry.suggestSimilarToolNames(
+            notFound,
+            context,
+            isToolAllowed,
+          )
+        : {};
 
     const messageParts: string[] = [];
 
