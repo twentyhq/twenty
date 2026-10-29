@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" is geen subveld van \"{fieldName}\""
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} credits/maand)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} credits/jaar)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -1053,22 +1053,22 @@ msgstr "{scopeLabel} — de standaardinstelling voor de instantie is {defaultTex
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} van plaatsen, elke maand opnieuw ingesteld"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} van plaatsen, elke maand opnieuw ingesteld · {packageCreditsDisplay} van je creditpakket, worden meegenomen"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} via licenties, jaarlijks opnieuw ingesteld"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} via licenties, jaarlijks opnieuw ingesteld · {packageCreditsDisplay} uit uw kredietpakket, wordt overgedragen"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1213,7 +1213,7 @@ msgstr "{unitCount, plural, one {Jaar} other {Jaren}}"
 #. js-lingui-id: ojkfzC
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
-msgstr ""
+msgstr "{unlistedCount, plural, one {Geen vermelde applicatie komt overeen. # niet-vermelde applicatie is beschikbaar.} other {Geen vermelde applicatie komt overeen. # niet-vermelde applicaties zijn beschikbaar.}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} krediet/maand} other {{workspaceCreditsPerSeatPerMonthDisplay} kredieten/maand}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3837,7 +3837,7 @@ msgstr "Applicaties"
 #. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "De onderstaande applicaties zijn niet gecontroleerd door Twenty. Gebruik op eigen risico."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6935,7 +6935,7 @@ msgstr "Verbind via IMAP/SMTP"
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect with {0}"
-msgstr ""
+msgstr "Verbind met {0}"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
@@ -8031,7 +8031,7 @@ msgstr "Creditlimiet bereikt. Werk je creditabonnement bij om workflows, AI en a
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "Kredietpakket"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14603,7 +14603,7 @@ msgstr "Inbegrepen"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "Inbegrepen per licentie"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16276,7 +16276,7 @@ msgstr "Vermeld"
 #. js-lingui-id: Xf6LIi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Listed on the marketplace"
-msgstr ""
+msgstr "Vermeld op de Marketplace"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16909,7 +16909,7 @@ msgstr "Markeren als favoriet"
 #. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and show it in the marketplace"
-msgstr ""
+msgstr "Markeer deze app als beoordeeld en toon deze op de Marketplace"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -25232,7 +25232,7 @@ msgstr "Toon de records van dit object in het commandomenu ({0})."
 #. js-lingui-id: h9ze7D
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Show unlisted apps"
-msgstr ""
+msgstr "Niet-vermelde apps weergeven"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27330,7 +27330,7 @@ msgstr "Deze toepassing is niet geïnstalleerd in deze werkruimte. Mogelijk is d
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "Deze applicatie is niet vermeld op de Marketplace en is niet beoordeeld door Twenty. Gebruik op eigen risico."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx

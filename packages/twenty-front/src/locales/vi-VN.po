@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" không phải là trường con của \"{fieldName}\"
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} tín dụng/tháng)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} tín dụng/năm)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -1053,22 +1053,22 @@ msgstr "{scopeLabel} — giá trị mặc định của phiên bản là {defaul
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, được đặt lại mỗi tháng"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, được đặt lại mỗi tháng · {packageCreditsDisplay} từ gói tín dụng của bạn, được chuyển sang kỳ sau"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, đặt lại mỗi năm"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, đặt lại mỗi năm · {packageCreditsDisplay} từ gói tín dụng của bạn, được chuyển sang"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1213,7 +1213,7 @@ msgstr "{unitCount, plural, one {Năm} other {Năm}}"
 #. js-lingui-id: ojkfzC
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
-msgstr ""
+msgstr "{unlistedCount, plural, other {Không có ứng dụng nào trong danh sách khớp. Có # ứng dụng chưa được liệt kê.}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# mục}}"
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, other {{workspaceCreditsPerSeatPerMonthDisplay} tín dụng/tháng}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3837,7 +3837,7 @@ msgstr "Ứng dụng"
 #. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "Các ứng dụng bên dưới chưa được Twenty xem xét. Tự chịu rủi ro khi sử dụng."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6935,7 +6935,7 @@ msgstr "Kết nối qua IMAP/SMTP"
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect with {0}"
-msgstr ""
+msgstr "Kết nối với {0}"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
@@ -8031,7 +8031,7 @@ msgstr "Đã đạt giới hạn tín dụng. Cập nhật gói tín dụng đ�
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "Gói tín dụng"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14603,7 +14603,7 @@ msgstr "Đã bao gồm"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "Bao gồm cho mỗi chỗ ngồi"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16276,7 +16276,7 @@ msgstr "Đã niêm yết"
 #. js-lingui-id: Xf6LIi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Listed on the marketplace"
-msgstr ""
+msgstr "Được niêm yết trên chợ ứng dụng"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16909,7 +16909,7 @@ msgstr "Đánh dấu là yêu thích"
 #. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and show it in the marketplace"
-msgstr ""
+msgstr "Đánh dấu ứng dụng này là đã được xem xét và hiển thị trên chợ ứng dụng"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -25232,7 +25232,7 @@ msgstr "Hiển thị các bản ghi của đối tượng này trong menu lệnh
 #. js-lingui-id: h9ze7D
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Show unlisted apps"
-msgstr ""
+msgstr "Hiển thị các ứng dụng chưa được niêm yết"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27328,7 +27328,7 @@ msgstr "Ứng dụng này chưa được cài đặt trong không gian làm vi�
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "Ứng dụng này không được niêm yết trên chợ ứng dụng và chưa được Twenty xem xét. Hãy tự chịu rủi ro khi sử dụng."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx

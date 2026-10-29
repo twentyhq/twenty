@@ -3393,7 +3393,7 @@ msgstr "גודל השיחה"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversation type"
-msgstr ""
+msgstr "סוג שיחה"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4370,7 +4370,7 @@ msgstr "מפתחים"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Direct message"
-msgstr ""
+msgstr "הודעה ישירה"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -9625,7 +9625,7 @@ msgstr "האופרנד \"{rawOperand}\" של מסנן תרשים בווידג׳�
 #. js-lingui-id: XBLJbc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand {operand} is not supported for field type {filterType}"
-msgstr ""
+msgstr "האופרנד {operand} אינו נתמך עבור סוג השדה {filterType}"
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10933,7 +10933,7 @@ msgstr "רשום על ידי סביבת עבודה אחרת."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Regular chat"
-msgstr ""
+msgstr "צ'אט רגיל"
 
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -14191,7 +14191,7 @@ msgstr "הרשאת האובייקט הזו כבר מוגדרת עבור התפק
 #. js-lingui-id: JHfGIK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this field"
-msgstr ""
+msgstr "אופרנד זה אינו נתמך עבור שדה זה"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16325,7 +16325,7 @@ msgstr "האם המזהה חסום עבור חבר יחיד בסביבת העב�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether this is a regular chat or a canonical direct message"
-msgstr ""
+msgstr "האם זהו צ'אט רגיל או הודעה ישירה קנונית"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

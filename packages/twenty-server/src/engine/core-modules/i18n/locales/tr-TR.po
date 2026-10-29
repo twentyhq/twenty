@@ -3393,7 +3393,7 @@ msgstr "Sohbet Boyutu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Conversation type"
-msgstr ""
+msgstr "Sohbet türü"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4370,7 +4370,7 @@ msgstr "Geliştiriciler"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Direct message"
-msgstr ""
+msgstr "Doğrudan mesaj"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -9625,7 +9625,7 @@ msgstr "\"{widgetTitle}\" bileşeninin grafik filtresinin \"{rawOperand}\" işle
 #. js-lingui-id: XBLJbc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand {operand} is not supported for field type {filterType}"
-msgstr ""
+msgstr "{operand} işleneni, {filterType} alan türü için desteklenmiyor"
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10933,7 +10933,7 @@ msgstr "Başka bir çalışma alanı tarafından kaydedildi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Regular chat"
-msgstr ""
+msgstr "Normal sohbet"
 
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
@@ -14191,7 +14191,7 @@ msgstr "Bu nesne izni rol için zaten ayarlı"
 #. js-lingui-id: JHfGIK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this field"
-msgstr ""
+msgstr "Bu operand bu alan için desteklenmiyor"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16325,7 +16325,7 @@ msgstr "Tanıtıcının tek bir çalışma alanı üyesi için mi yoksa tüm ça
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Whether this is a regular chat or a canonical direct message"
-msgstr ""
+msgstr "Bunun normal bir sohbet mi yoksa kanonik bir doğrudan mesaj mı olduğu"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

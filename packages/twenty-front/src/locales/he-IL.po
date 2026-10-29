@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" אינו תת-שדה של \"{fieldName}\""
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} קרדיטים/חודש)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} קרדיטים/שנה)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -1053,22 +1053,22 @@ msgstr "{scopeLabel} — ברירת המחדל של המופע היא {defaultTe
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} ממושבים, מתאפסים בכל חודש"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} ממושבים, מתאפסים בכל חודש · {packageCreditsDisplay} מחבילת הקרדיטים שלך, עוברים לחודש הבא"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} קרדיטים ממושבים, מתאפסים בכל שנה"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} קרדיטים ממושבים, מתאפסים בכל שנה · {packageCreditsDisplay} מחבילת הקרדיטים שלך, מועברים הלאה"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1213,7 +1213,7 @@ msgstr "{unitCount, plural, one {שנה} two {שנים} many {שנים} other {�
 #. js-lingui-id: ojkfzC
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
-msgstr ""
+msgstr "{unlistedCount, plural, one {אין יישום תואם ברשימה. # יישום שאינו מופיע ברשימה זמין.} two {אין יישום תואם ברשימה. # יישומים שאינם מופיעים ברשימה זמינים.} other {אין יישום תואם ברשימה. # יישומים שאינם מופיעים ברשימה זמינים.}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# פריט} two
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} קרדיט/חודש} two {{workspaceCreditsPerSeatPerMonthDisplay} קרדיטים/חודש} other {{workspaceCreditsPerSeatPerMonthDisplay} קרדיטים/חודש}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3837,7 +3837,7 @@ msgstr "יישומים"
 #. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "היישומים הבאים לא נבדקו על ידי Twenty. השימוש באחריותך בלבד."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6935,7 +6935,7 @@ msgstr "התחבר דרך IMAP/SMTP"
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect with {0}"
-msgstr ""
+msgstr "התחבר עם {0}"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
@@ -8031,7 +8031,7 @@ msgstr "הגעת למגבלת האשראי. עדכן את תוכנית האשר�
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "חבילת קרדיטים"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14603,7 +14603,7 @@ msgstr "כלול"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "כלול לכל מושב"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16276,7 +16276,7 @@ msgstr "מופיע"
 #. js-lingui-id: Xf6LIi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Listed on the marketplace"
-msgstr ""
+msgstr "מופיעה במרקטפלייס"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16909,7 +16909,7 @@ msgstr "סמן כמועדף"
 #. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and show it in the marketplace"
-msgstr ""
+msgstr "סמנו אפליקציה זו כנבדקה והציגו אותה במרקטפלייס"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -25232,7 +25232,7 @@ msgstr "הצג את הרשומות של אובייקט זה בתפריט הפק�
 #. js-lingui-id: h9ze7D
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Show unlisted apps"
-msgstr ""
+msgstr "הצגת אפליקציות שאינן מופיעות ברשימה"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27328,7 +27328,7 @@ msgstr "יישום זה אינו מותקן בסביבת עבודה זו. יית
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "אפליקציה זו אינה מופיעה במרקטפלייס ולא נבדקה על ידי Twenty. השימוש הוא על אחריותכם בלבד."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx

@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" não é um subcampo de \"{fieldName}\""
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} créditos/mês)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} créditos/ano)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -1053,22 +1053,22 @@ msgstr "{scopeLabel} — o padrão da instância é {defaultText}. Ao salvar, ap
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} de licenças, redefinidos a cada mês"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} de licenças, redefinidos a cada mês · {packageCreditsDisplay} do seu pacote de créditos, transferidos"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} dos assentos, redefinidos a cada ano"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} dos assentos, redefinidos a cada ano · {packageCreditsDisplay} do seu pacote de créditos, acumulados"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1213,7 +1213,7 @@ msgstr "{unitCount, plural, one {Ano} other {Anos}}"
 #. js-lingui-id: ojkfzC
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
-msgstr ""
+msgstr "{unlistedCount, plural, one {Nenhuma aplicação listada corresponde. Há # aplicação não listada disponível.} other {Nenhuma aplicação listada corresponde. Há # aplicações não listadas disponíveis.}}"
 
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} crédito/mês} other {{workspaceCreditsPerSeatPerMonthDisplay} créditos/mês}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3837,7 +3837,7 @@ msgstr "Aplicações"
 #. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "As aplicações abaixo não foram revisadas pela Twenty. Use por sua conta e risco."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6935,7 +6935,7 @@ msgstr "Conectar via IMAP/SMTP"
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect with {0}"
-msgstr ""
+msgstr "Conectar com {0}"
 
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
@@ -8031,7 +8031,7 @@ msgstr "Limite de créditos atingido. Atualize seu plano de créditos para mante
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "Pacote de créditos"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14603,7 +14603,7 @@ msgstr "Incluído"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "Incluído por assento"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16276,7 +16276,7 @@ msgstr "Listada"
 #. js-lingui-id: Xf6LIi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Listed on the marketplace"
-msgstr ""
+msgstr "Listada no Marketplace"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16909,7 +16909,7 @@ msgstr "Marcar como favorito"
 #. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
 msgid "Mark this app as reviewed and show it in the marketplace"
-msgstr ""
+msgstr "Marque esta aplicação como revista e apresente-a no Marketplace"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -25232,7 +25232,7 @@ msgstr "Mostrar os registros deste objeto no menu de comandos ({0})."
 #. js-lingui-id: h9ze7D
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Show unlisted apps"
-msgstr ""
+msgstr "Mostrar aplicações não listadas"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27328,7 +27328,7 @@ msgstr "Este aplicativo não está instalado neste espaço de trabalho. Ele pode
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
-msgstr ""
+msgstr "Esta aplicação não está listada no Marketplace e não foi revista pela Twenty. Utilize por sua conta e risco."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
