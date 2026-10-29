@@ -7,6 +7,7 @@ import {
   readdir,
   rm,
   stat,
+  symlink,
   writeFile,
 } from 'node:fs/promises';
 import { MetadataWritability } from 'twenty-shared/types';
@@ -171,6 +172,166 @@ describe('app pull command with the packaged worker', () => {
     expect((await runJson()).envelope.data.writes).toEqual([]);
   });
 
+  it.each([true, false])(
+    'pulls dependencies and keeps the app usable with an exported SDK dependency: %s',
+    async (includesSdk) => {
+      const packageJson = JSON.stringify({
+        name: 'pulled-app',
+        dependencies: {
+          ...(includesSdk ? { 'twenty-sdk': '2.44.0' } : {}),
+          lodash: '4.17.21',
+        },
+      });
+      exported.files = [
+        { folder: 'dependencies', path: 'package.json', content: packageJson },
+        { folder: 'dependencies', path: 'yarn.lock', content: 'remote-lock' },
+      ];
+
+      const first = await runJson();
+      expect(first.exitCode, JSON.stringify(first.envelope)).toBe(0);
+      const pulledPackageJson = await readFile(
+        join(appPath, 'package.json'),
+        'utf8',
+      );
+      expect(JSON.parse(pulledPackageJson).dependencies).toEqual({
+        'twenty-sdk': '2.44.0',
+        lodash: '4.17.21',
+      });
+      if (includesSdk) expect(pulledPackageJson).toBe(packageJson);
+      expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+        'remote-lock',
+      );
+      expect(first.envelope.data.writes).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            kind: 'dependency',
+            relativePath: 'package.json',
+          }),
+          expect.objectContaining({
+            kind: 'dependency',
+            relativePath: 'yarn.lock',
+          }),
+        ]),
+      );
+      expect(JSON.stringify(first.envelope.data)).not.toContain('remote-lock');
+
+      await writeFile(join(appPath, 'yarn.lock'), 'local-lock');
+      const localPackageJson = JSON.stringify({
+        ...JSON.parse(pulledPackageJson),
+        description: 'local edit',
+      });
+      await writeFile(join(appPath, 'package.json'), localPackageJson);
+      const repeated = await runJson();
+      expect(repeated.exitCode, JSON.stringify(repeated.envelope)).toBe(0);
+      expect(repeated.envelope.data.writes).toEqual([]);
+      expect(await readFile(join(appPath, 'package.json'), 'utf8')).toBe(
+        localPackageJson,
+      );
+      expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+        'local-lock',
+      );
+
+      exported.files[1].content = 'updated-remote-lock';
+      const changed = await runJson();
+      expect(changed.exitCode, JSON.stringify(changed.envelope)).toBe(0);
+      expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+        'updated-remote-lock',
+      );
+      expect(changed.envelope.data.overwrittenLocalChanges).toContainEqual({
+        universalIdentifier: 'dependencies/yarn.lock',
+        relativePath: 'yarn.lock',
+      });
+
+      await rm(join(appPath, 'yarn.lock'));
+      expect((await runJson()).exitCode).toBe(0);
+      expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+        'updated-remote-lock',
+      );
+
+      exported.files[0].content = JSON.stringify({
+        ...JSON.parse(packageJson),
+        description: 'remote edit',
+      });
+      const packageChanged = await runJson();
+      expect(
+        packageChanged.exitCode,
+        JSON.stringify(packageChanged.envelope),
+      ).toBe(0);
+      expect(
+        JSON.parse(await readFile(join(appPath, 'package.json'), 'utf8')),
+      ).toMatchObject({
+        description: 'remote edit',
+        dependencies: { 'twenty-sdk': '2.44.0' },
+      });
+      expect(
+        packageChanged.envelope.data.overwrittenLocalChanges,
+      ).toContainEqual({
+        universalIdentifier: 'dependencies/package.json',
+        relativePath: 'package.json',
+      });
+    },
+  );
+
+  it.each([
+    'source',
+    'public-asset',
+    'files-field',
+    'email-attachment',
+    'agent-chat',
+  ])(
+    'rejects exported %s files without changing dependencies or metadata',
+    async (folder) => {
+      const originalPackageJson = await readFile(
+        join(appPath, 'package.json'),
+        'utf8',
+      );
+      exported.files = [
+        { folder: 'dependencies', path: 'package.json', content: '{}' },
+        { folder, path: 'package.json', content: 'private data' },
+      ];
+      expect((await runJson()).envelope.error.code).toBe('TOOLING_UNSUPPORTED');
+      expect(await readFile(join(appPath, 'package.json'), 'utf8')).toBe(
+        originalPackageJson,
+      );
+      expect((await readdir(appPath)).sort()).toEqual([
+        'app.ts',
+        'node_modules',
+        'package.json',
+      ]);
+    },
+  );
+
+  it('refuses a dependency symlink before writing either dependency file', async () => {
+    const outsidePath = `${appPath}-outside.lock`;
+    const originalPackageJson = await readFile(
+      join(appPath, 'package.json'),
+      'utf8',
+    );
+    await writeFile(outsidePath, 'outside-lock');
+    await symlink(outsidePath, join(appPath, 'yarn.lock'));
+    exported.files = [
+      { folder: 'dependencies', path: 'package.json', content: '{}' },
+      { folder: 'dependencies', path: 'yarn.lock', content: 'remote-lock' },
+    ];
+    try {
+      const result = await runJson();
+      expect(result.exitCode).not.toBe(0);
+      expect(result.envelope.error.message).toContain('symbolic links');
+      expect(await readFile(outsidePath, 'utf8')).toBe('outside-lock');
+      expect(await readFile(join(appPath, 'package.json'), 'utf8')).toBe(
+        originalPackageJson,
+      );
+      expect((await readdir(appPath)).sort()).toEqual([
+        'app.ts',
+        'node_modules',
+        'package.json',
+        'yarn.lock',
+      ]);
+    } finally {
+      await rm(outsidePath, { force: true });
+    }
+  });
+
   it('refuses incompatible writer exports before any destination changes', async () => {
     await appendFile(
       join(sdkPath, 'define.cjs'),
@@ -253,7 +414,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     ]);
   });
 
-  it('rejects exported source and dependency files before writes', async () => {
+  it('rejects files outside the dependency folder before writes', async () => {
     exported.files.push({ folder: '.', path: 'package.json', content: '{}' });
     expect((await runJson()).envelope.error.code).toBe('TOOLING_UNSUPPORTED');
     expect((await readdir(appPath)).sort()).toEqual([

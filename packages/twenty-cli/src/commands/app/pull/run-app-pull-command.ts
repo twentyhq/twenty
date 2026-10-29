@@ -241,6 +241,11 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async ({
             ),
           ]
         : []),
+      ...(data.writes.some((write) => write.kind === 'dependency')
+        ? [
+            `Run ${commandText('yarn install')} to install the pulled dependencies.`,
+          ]
+        : []),
       `Run ${commandText('twenty app typecheck')} to check the generated definitions.`,
     ]
       .filter(Boolean)

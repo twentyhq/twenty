@@ -11,7 +11,7 @@ import { writeDefineFile } from '@/app/pull/write-define-file';
 import { dirname, posix } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 
-export type PullWriteKind = PullEntityKind | 'translation';
+export type PullWriteKind = PullEntityKind | 'translation' | 'dependency';
 
 export type PullWrite = {
   kind: PullWriteKind;

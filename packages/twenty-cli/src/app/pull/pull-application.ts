@@ -19,6 +19,7 @@ import { assertPullSdkExports } from '@/app/pull/assert-pull-sdk-exports';
 import { applyPullWrites } from '@/app/pull/apply-pull-writes';
 import { buildManifestEntityLabelByUniversalIdentifier } from '@/app/pull/build-manifest-entity-label-by-universal-identifier';
 import { planPullWrites } from '@/app/pull/plan-pull-writes';
+import { planDependencyWrites } from '@/app/pull/plan-dependency-writes';
 import { planTranslationWrites } from '@/app/pull/plan-translation-writes';
 import { scanProjectSourceFiles } from '@/app/source/scan-project-source-files';
 import { updateSourceFingerprints } from '@/app/pull/update-source-fingerprints';
@@ -98,7 +99,17 @@ export const pullApplication = async (
       ),
       scannedFiles,
     });
-    const writes = [...safePlan.writes, ...translationPlan.writes];
+    const dependencyPlan = await planDependencyWrites({
+      appPath,
+      files: applicationExport.files,
+      sourceFingerprints: base.sourceFingerprints,
+      dependencyFingerprints: base.dependencyFingerprints,
+    });
+    const writes = [
+      ...safePlan.writes,
+      ...translationPlan.writes,
+      ...dependencyPlan.writes,
+    ];
     const deletions = [
       ...safePlan.deletions,
       ...translationPlan.deletions.filter(
@@ -120,8 +131,15 @@ export const pullApplication = async (
         protectedIdentifiers,
       }),
       unreconciledUniversalIdentifiers: [...unreconciledUniversalIdentifiers],
+      dependencyFingerprints: {
+        ...base.dependencyFingerprints,
+        ...dependencyPlan.fingerprints,
+      },
       sourceFingerprints: updateSourceFingerprints({
-        sourceFingerprints: base.sourceFingerprints,
+        sourceFingerprints: {
+          ...base.sourceFingerprints,
+          ...dependencyPlan.unchangedSourceFingerprints,
+        },
         writes,
         deletions,
       }),
@@ -170,7 +188,7 @@ export const pullApplication = async (
         ),
         deletions,
         overwrittenLocalChanges,
-        unchangedCount: plan.unchanged.length,
+        unchangedCount: plan.unchanged.length + dependencyPlan.unchangedCount,
         localOnlyRelativePaths: plan.localOnlyRelativePaths,
         unreadableRelativePaths: scannedFiles
           .filter((file) => !file.isReadable)

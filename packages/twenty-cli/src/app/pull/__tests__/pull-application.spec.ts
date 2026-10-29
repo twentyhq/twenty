@@ -1110,8 +1110,10 @@ export default defineField({
       ]);
     },
   );
-  it('rolls back replaced and deleted source when the final base commit fails', async () => {
+  it('rolls back dependencies and source when the final base commit fails', async () => {
+    await writeFile(join(appPath, 'yarn.lock'), 'original-lock');
     requireSuccess(await pull());
+    const originalPackageJson = await read('package.json');
     const originalObject = await read(OBJECT_PATH);
     const originalApplication = await read('src/application.config.ts');
     const originalBase = await read(BASE_PATH);
@@ -1127,7 +1129,13 @@ export default defineField({
         await originalCopy(source, destination);
       },
     );
-    const exported = createExport({ includeObject: false });
+    const exported = {
+      ...createExport({ includeObject: false }),
+      files: [
+        { folder: 'dependencies', path: 'package.json', content: '{}' },
+        { folder: 'dependencies', path: 'yarn.lock', content: 'changed-lock' },
+      ],
+    };
     exported.manifest.application.displayName = 'Changed app';
     expect(await pull(exported)).toMatchObject({
       success: false,
@@ -1136,6 +1144,8 @@ export default defineField({
     expect(await read(OBJECT_PATH)).toBe(originalObject);
     expect(await read('src/application.config.ts')).toBe(originalApplication);
     expect(await read(BASE_PATH)).toBe(originalBase);
+    expect(await read('package.json')).toBe(originalPackageJson);
+    expect(await read('yarn.lock')).toBe('original-lock');
     expect(await readdir(join(appPath, '.twenty/cli'))).toEqual([
       'pull-base.json',
     ]);
