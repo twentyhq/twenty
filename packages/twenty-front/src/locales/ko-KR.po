@@ -10106,6 +10106,11 @@ msgstr "각 멤버에게는 워크스페이스 크레딧보다 먼저 사용되�
 msgid "Each slice represents"
 msgstr "각 조각은"
 
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr ""
+
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
@@ -16327,6 +16332,11 @@ msgstr "더 불러오기"
 msgid "Load more chats"
 msgstr "채팅 더 로드"
 
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
+msgstr ""
+
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Loaded {formattedNames}"
@@ -16461,6 +16471,7 @@ msgstr "로딩 중..."
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "로드 중…"
@@ -27663,6 +27674,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "이 뷰는 객체 \"{0}\"에 {usageLabel}을(를) 사용하지만, 해당 객체에 접근할 수 없습니다."
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
