@@ -19,6 +19,7 @@ export * from './utils/compositeFieldFilterOperandsMap';
 export * from './utils/filterOperandsMap';
 export * from './utils/getFilterOperandsForFilterableFieldType';
 export * from './utils/getFilterTypeFromFieldType';
+export * from './utils/isFilterOperandAvailableForFieldType';
 export * from './utils/isExpectedSubFieldName';
 export * from './utils/isMatchingArrayFilter';
 export * from './utils/isMatchingBooleanFilter';

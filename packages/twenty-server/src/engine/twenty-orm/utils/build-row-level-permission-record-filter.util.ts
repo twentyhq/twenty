@@ -10,6 +10,7 @@ import {
 import {
   convertViewFilterValueToString,
   isDefined,
+  isFilterOperandAvailableForFieldType,
   type RecordFilter,
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
@@ -156,11 +157,25 @@ const buildRecordFilterForRole = ({
       | CompositeFieldSubFieldName
       | undefined;
 
+    const operand = predicate.operand as unknown as RecordFilter['operand'];
+
+    // A field converted to an incompatible type leaves the stored operand uncompilable;
+    // dropping the predicate would lift the restriction, so it becomes a never-matching branch
+    if (
+      !isFilterOperandAvailableForFieldType({
+        fieldType: fieldMetadata.type,
+        operand,
+        subFieldName: effectiveSubFieldName,
+      })
+    ) {
+      unsatisfiableRecordFilterIds.add(predicate.id);
+    }
+
     recordFilters.push({
       id: predicate.id,
       fieldMetadataId: predicate.fieldMetadataId,
       value: convertViewFilterValueToString(predicateValue),
-      operand: predicate.operand as unknown as RecordFilter['operand'],
+      operand,
       recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
       subFieldName: effectiveSubFieldName,
     });
