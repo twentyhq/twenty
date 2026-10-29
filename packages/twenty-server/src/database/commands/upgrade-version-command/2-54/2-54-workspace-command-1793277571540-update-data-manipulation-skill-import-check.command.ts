@@ -5,8 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX } from 'src/database/commands/upgrade-version-command/2-54/constants/data-manipulation-skill-content-before-import-check-fix.constant';
-import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-54/utils/build-skill-content-replacement.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -66,18 +64,14 @@ export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWo
       );
     }
 
-    const skillToUpdate = buildSkillContentReplacement({
-      skill:
-        flatSkillMaps.byUniversalIdentifier[
-          DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER
-        ],
-      fromContent: DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX,
-      toContent: standardContent,
-    });
+    const skill =
+      flatSkillMaps.byUniversalIdentifier[
+        DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER
+      ];
 
-    if (!isDefined(skillToUpdate)) {
+    if (!isDefined(skill) || skill.content === standardContent) {
       this.logger.log(
-        `The data-manipulation skill is missing or its content was edited in workspace ${workspaceId}, skipping`,
+        `The data-manipulation skill is missing or already up to date in workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -103,7 +97,7 @@ export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWo
             skill: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [skillToUpdate],
+              flatEntityToUpdate: [{ ...skill, content: standardContent }],
             },
           },
         },
