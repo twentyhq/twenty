@@ -10,6 +10,7 @@ const getStatus = ({
   snoozedUntil = null,
   isSubscribed = true,
   lastMentionedAt = null,
+  lastResolvedMentionAt = null,
 }: {
   lastActivityAt?: string | null;
   lastReadAt?: string | null;
@@ -17,6 +18,7 @@ const getStatus = ({
   snoozedUntil?: string | null;
   isSubscribed?: boolean;
   lastMentionedAt?: string | null;
+  lastResolvedMentionAt?: string | null;
 } = {}) =>
   getAgentChatThreadInboxStatus({
     lastActivityAt,
@@ -28,6 +30,7 @@ const getStatus = ({
       snoozedUntil,
       isSubscribed,
       lastMentionedAt,
+      lastResolvedMentionAt,
       updatedAt: ARCHIVED_AT,
       __typename: 'AgentChatThreadParticipant',
     },
@@ -163,6 +166,37 @@ describe('getAgentChatThreadInboxStatus', () => {
   it('tells when the member was mentioned', () => {
     expect(
       getStatus({ lastMentionedAt: '2026-10-01T09:00:00.000Z' }).isMentioned,
+    ).toBe(true);
+  });
+
+  it('keeps a mention unresolved after reading and snoozing', () => {
+    expect(
+      getStatus({
+        lastMentionedAt: '2026-10-01T09:00:00.000Z',
+        lastReadAt: ARCHIVED_AT,
+        archivedAt: ARCHIVED_AT,
+        snoozedUntil: '2026-10-02T09:00:00.000Z',
+      }).isMentioned,
+    ).toBe(true);
+  });
+
+  it('does not revive a resolved mention when later activity reopens the chat', () => {
+    expect(
+      getStatus({
+        lastMentionedAt: '2026-10-01T09:00:00.000Z',
+        lastResolvedMentionAt: '2026-10-01T09:00:00.000Z',
+        archivedAt: ARCHIVED_AT,
+        lastActivityAt: '2026-10-01T11:00:00.000Z',
+      }),
+    ).toMatchObject({ scope: 'INBOX', isMentioned: false });
+  });
+
+  it('requires attention again when a new mention follows the resolution', () => {
+    expect(
+      getStatus({
+        lastMentionedAt: '2026-10-01T11:00:00.000Z',
+        lastResolvedMentionAt: '2026-10-01T09:00:00.000Z',
+      }).isMentioned,
     ).toBe(true);
   });
 });

@@ -123,6 +123,7 @@ type AgentChatThreadParticipant {
   isSubscribed: Boolean!
   lastMentionedAt: DateTime
   lastReadAt: DateTime
+  lastResolvedMentionAt: DateTime
   snoozedUntil: DateTime
   threadId: UUID!
   updatedAt: DateTime!

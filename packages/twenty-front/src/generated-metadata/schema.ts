@@ -150,6 +150,7 @@ export type AgentChatThreadParticipant = {
   isSubscribed: Scalars['Boolean']['output'];
   lastMentionedAt?: Maybe<Scalars['DateTime']['output']>;
   lastReadAt?: Maybe<Scalars['DateTime']['output']>;
+  lastResolvedMentionAt?: Maybe<Scalars['DateTime']['output']>;
   snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
   threadId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];

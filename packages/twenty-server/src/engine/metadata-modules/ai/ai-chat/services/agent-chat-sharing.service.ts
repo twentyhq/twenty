@@ -1,3 +1,5 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { throwAgentChatUpgradeInProgress } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-upgrade-in-progress.util';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -95,7 +97,28 @@ export class AgentChatSharingService {
     return hasAgentChatThreadChannelField({ flatFieldMetadataMaps });
   }
 
+  // TODO(@bosiraphael): remove once 2.54 leaves the cross-upgrade window
+  async assertHasMentionResolutionOrThrow(workspaceId: string): Promise<void> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (
+      !isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThreadParticipant.fields
+            .lastResolvedMentionAt.universalIdentifier
+        ],
+      )
+    ) {
+      throwAgentChatUpgradeInProgress();
+    }
+  }
+
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
+    await this.assertHasMentionResolutionOrThrow(workspaceId);
+
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',

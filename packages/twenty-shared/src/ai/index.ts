@@ -109,8 +109,10 @@ export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-t
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
+export { getAgentChatResolvedMentionAt } from './utils/get-agent-chat-resolved-mention-at.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';

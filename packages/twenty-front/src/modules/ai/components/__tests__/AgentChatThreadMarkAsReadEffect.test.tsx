@@ -44,6 +44,7 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  lastResolvedMentionAt: null,
   updatedAt: LAST_ACTIVITY_AT,
   __typename: 'AgentChatThreadParticipant',
 };
@@ -63,13 +64,16 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       {
         __typename: 'AgentChatThread',
         id: THREAD_ID,
+        title: null,
+        createdAt: LAST_ACTIVITY_AT,
+        updatedAt: LAST_ACTIVITY_AT,
         deletedAt: null,
         lastActivityAt: LAST_ACTIVITY_AT,
         lastMessageSenderWorkspaceMemberId: null,
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         assigneeId: null,
         pendingQuestionMessageId: null,
-      } as never,
+      },
     ]);
     jotaiStore.set(currentWorkspaceMemberState.atom, CURRENT_WORKSPACE_MEMBER);
     jotaiStore.set(agentChatThreadParticipantsState.atom, {
@@ -90,6 +94,8 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       isUnread: true,
       lastReadAt: '2026-10-01T09:00:00.000Z',
       isKeptUnread: false,
+      readRequestedForActivityAt: LAST_ACTIVITY_AT,
+      readRequestedForParticipantUpdatedAt: PARTICIPANT.updatedAt,
     });
   });
 
@@ -108,6 +114,7 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       isUnread: false,
       lastReadAt: null,
       isKeptUnread: false,
+      readRequestedForActivityAt: LAST_ACTIVITY_AT,
     });
   });
 

@@ -14,4 +14,5 @@ export class AgentChatThreadParticipantWorkspaceEntity extends BaseWorkspaceEnti
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
+  lastResolvedMentionAt: string | null;
 }

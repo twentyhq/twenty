@@ -31,7 +31,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
+  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt lastResolvedMentionAt updatedAt';
 
 const UPDATE_INBOX_STATE = parse(
   `mutation UpdateInboxState($threadIds: [UUID!]!, $action: AgentChatInboxAction!, $snoozedUntil: DateTime) { updateAgentChatThreadInboxState(threadIds: $threadIds, action: $action, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
@@ -87,6 +87,7 @@ type Participant = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
+  lastResolvedMentionAt: string | null;
 };
 
 const OPEN_THREADS_SUMMARY = parse(
@@ -1221,6 +1222,114 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
   });
 
+  it('resolves the mention when the member reads the chat and keeps it when they mark it unread', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    for (const action of ['READ', 'UNREAD']) {
+      const response = await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const participant = response.body.data.updateAgentChatThreadInboxState[0];
+
+      expect(response.body.errors).toBeUndefined();
+      expect(participant.lastResolvedMentionAt).toBe(
+        participant.lastMentionedAt,
+      );
+    }
+  });
+
+  it('preserves unresolved mentions while marking unread and snoozing', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    for (const action of ['UNREAD', 'SNOOZE']) {
+      const response = await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        snoozedUntil:
+          action === 'SNOOZE' ? buildFutureSnoozedUntil() : undefined,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.updateAgentChatThreadInboxState[0],
+      ).toMatchObject({
+        lastMentionedAt: expect.any(String),
+        lastResolvedMentionAt: null,
+      });
+    }
+  });
+
+  it('keeps a mention resolved after Done until an explicit new mention arrives', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const doneParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(doneParticipant!.lastResolvedMentionAt).toBe(
+      doneParticipant!.lastMentionedAt,
+    );
+
+    await getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).recordThreadActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      text: 'An unrelated update',
+    });
+    await runInboxAction('MOVE_TO_INBOX', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: doneParticipant!.lastMentionedAt,
+      lastResolvedMentionAt: doneParticipant!.lastResolvedMentionAt,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedAgain = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(
+      new Date(mentionedAgain!.lastMentionedAt!).getTime(),
+    ).toBeGreaterThan(
+      new Date(mentionedAgain!.lastResolvedMentionAt!).getTime(),
+    );
+  });
+
+  it('resolves a mention when the member unsubscribes', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runInboxAction('UNSUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const unsubscribedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(unsubscribedParticipant).toMatchObject({
+      isSubscribed: false,
+      lastResolvedMentionAt: unsubscribedParticipant!.lastMentionedAt,
+    });
+  });
+
   it('delivers app recipients without creating or clearing an explicit mention', async () => {
     const threadId = await createTestThread();
     const threadService = getAppProviderByClassName<AgentChatThreadService>(
@@ -1241,6 +1350,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       isSubscribed: true,
       lastReadAt: null,
       lastMentionedAt: null,
+      lastResolvedMentionAt: null,
     });
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
@@ -1256,6 +1366,30 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({
       lastMentionedAt: mentionedParticipant!.lastMentionedAt,
+      lastResolvedMentionAt: null,
     });
+  });
+
+  it('orders a new mention after the resolved cursor at millisecond precision', async () => {
+    const threadId = await createTestThread();
+    const resolvedAt = new Date(Date.now() + 60_000).toISOString();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant"
+       SET "lastMentionedAt" = $3, "lastResolvedMentionAt" = $3
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],
+    );
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBe(
+      new Date(resolvedAt).getTime() + 1,
+    );
   });
 });

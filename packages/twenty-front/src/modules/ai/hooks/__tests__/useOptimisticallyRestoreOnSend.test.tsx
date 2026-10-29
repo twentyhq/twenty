@@ -16,6 +16,7 @@ const ARCHIVED_PARTICIPANT = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  lastResolvedMentionAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T11:00:00.000Z',
 };
@@ -61,6 +62,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
       snoozedUntil: null,
       isSubscribed: true,
       lastMentionedAt: null,
+      lastResolvedMentionAt: null,
       id: 'participant-id',
       updatedAt: ARCHIVED_PARTICIPANT.updatedAt,
     });
