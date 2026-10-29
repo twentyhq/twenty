@@ -34,7 +34,6 @@ export class WorkflowRunJobScopeWorkspaceService {
     });
   }
 
-  // one cache read serves every run of a batch
   async getCoreWorkflowJobScopeResolver(
     workspaceId: string,
   ): Promise<(coreWorkflowId: string | null) => QueueJobScope> {

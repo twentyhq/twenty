@@ -27,7 +27,6 @@ export class AgentRunJobScopeService {
       flatEntityMaps: flatAgentMaps,
     });
 
-    // an agent deleted since its run started has no owner left to charge
     return isDefined(flatAgent)
       ? {
           workspaceId,

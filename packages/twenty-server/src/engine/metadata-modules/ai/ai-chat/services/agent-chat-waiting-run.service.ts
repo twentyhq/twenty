@@ -21,7 +21,6 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
-// scope is absent on runs parked before it was stored, which fall back to a workspace scope
 type AgentChatWaitingRun = {
   jobName: string;
   jobData: object;

@@ -7,6 +7,7 @@ import { IsNull, Not, Raw } from 'typeorm';
 
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -145,25 +146,35 @@ export class AgentRunSuspensionService {
 
   // the wake-up stays while its run goes on, so another resolution of it is let go rather than queued behind it
   async scheduleContinuation(jobData: ContinueAgentRunJobData): Promise<void> {
-    const { workspaceId, wakeUpId } = jobData;
+    await this.messageQueueService.add<ContinueAgentRunJobData>(
+      CONTINUE_AGENT_RUN_JOB_NAME,
+      jobData,
+      {
+        deduplication: { id: `continue-agent-run-${jobData.wakeUpId}` },
+        ...(await this.resolveContinuationJobScope(jobData)),
+      },
+    );
+  }
+
+  private async resolveContinuationJobScope({
+    workspaceId,
+    wakeUpId,
+  }: ContinueAgentRunJobData): Promise<QueueJobScope> {
     const wakeUp = await this.pendingWakeUpService.find({
       workspaceId,
       wakeUpId,
     });
 
-    await this.messageQueueService.add<ContinueAgentRunJobData>(
-      CONTINUE_AGENT_RUN_JOB_NAME,
-      jobData,
-      {
-        deduplication: { id: `continue-agent-run-${wakeUpId}` },
-        ...(isDefined(wakeUp)
-          ? await this.agentRunJobScopeService.resolve({
-              workspaceId,
-              agentId: (wakeUp.payload as AgentRunSuspension).runSpec.agentId,
-            })
-          : { workspaceId, isWorkspaceJob: true as const }),
-      },
-    );
+    if (!isDefined(wakeUp)) {
+      return { workspaceId, isWorkspaceJob: true };
+    }
+
+    const suspension = wakeUp.payload as AgentRunSuspension;
+
+    return this.agentRunJobScopeService.resolve({
+      workspaceId,
+      agentId: suspension.runSpec.agentId,
+    });
   }
 
   // A run that ended, or could not go on, leaves nothing to wait on, and its caller gets the outcome
