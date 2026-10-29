@@ -11119,7 +11119,7 @@ msgstr "Geben Sie zur Bestätigung Ihren Zwei-Faktor-Authentifizierungscode ein.
 #. js-lingui-id: YKwRCb
 #: src/modules/salesfarce/components/SalesfarceBadge.tsx
 msgid "Enterprise only"
-msgstr ""
+msgstr "Nur Enterprise"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -17156,7 +17156,7 @@ msgstr "Tabs zur Überprüfung der Zusammenführung"
 #. js-lingui-id: B59qMi
 #: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
 msgid "Merge with"
-msgstr ""
+msgstr "Zusammenführen mit"
 
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -22874,7 +22874,7 @@ msgstr "Variable zurücksetzen"
 #. js-lingui-id: gh0zvo
 #: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
 msgid "Resize {label} column"
-msgstr ""
+msgstr "Größe der Spalte {label} ändern"
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -23419,7 +23419,7 @@ msgstr "Vertrieb"
 #. js-lingui-id: T3H3GG
 #: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
 msgid "Salesfarce"
-msgstr ""
+msgstr "Verkaufsfarce"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx

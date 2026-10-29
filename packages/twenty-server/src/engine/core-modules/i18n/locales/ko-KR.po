@@ -2389,7 +2389,7 @@ msgstr "캠페인"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Campaigns"
-msgstr ""
+msgstr "캠페인"
 
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8204,7 +8204,7 @@ msgstr "{objectLabelPlural} 병합"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge with Another {objectLabelSingular}"
-msgstr ""
+msgstr "다른 {objectLabelSingular}와 병합"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -12034,7 +12034,7 @@ msgstr "짧은 링크"
 #. js-lingui-id: XcRf2D
 #: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
 msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr ""
+msgstr "워크스페이스 멤버로 로그인하거나 애플리케이션 토큰을 사용하여 이 대화를 변경하세요."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -17398,7 +17398,7 @@ msgstr "구매한 크레딧을 추가할 수 없습니다. 지원팀에 문의�
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
-msgstr ""
+msgstr "현재 역할로는 이러한 레코드 중 일부를 삭제할 수 없으므로 병합할 수 없습니다."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

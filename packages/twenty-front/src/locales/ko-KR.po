@@ -11119,7 +11119,7 @@ msgstr "확인을 위해 2단계 인증 코드를 입력하세요."
 #. js-lingui-id: YKwRCb
 #: src/modules/salesfarce/components/SalesfarceBadge.tsx
 msgid "Enterprise only"
-msgstr ""
+msgstr "엔터프라이즈 전용"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -17156,7 +17156,7 @@ msgstr "병합 검토 탭"
 #. js-lingui-id: B59qMi
 #: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
 msgid "Merge with"
-msgstr ""
+msgstr "다음과 병합"
 
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -22874,7 +22874,7 @@ msgstr "변수 재설정"
 #. js-lingui-id: gh0zvo
 #: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
 msgid "Resize {label} column"
-msgstr ""
+msgstr "{label} 열 크기 조정"
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -23419,7 +23419,7 @@ msgstr "영업"
 #. js-lingui-id: T3H3GG
 #: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
 msgid "Salesfarce"
-msgstr ""
+msgstr "세일즈фар스"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx

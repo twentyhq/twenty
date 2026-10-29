@@ -2389,7 +2389,7 @@ msgstr "キャンペーン"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Campaigns"
-msgstr ""
+msgstr "キャンペーン"
 
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8204,7 +8204,7 @@ msgstr "{objectLabelPlural}をマージする"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge with Another {objectLabelSingular}"
-msgstr ""
+msgstr "別の{objectLabelSingular}とマージ"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -12034,7 +12034,7 @@ msgstr "短縮リンク"
 #. js-lingui-id: XcRf2D
 #: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
 msgid "Sign in as a workspace member or use an application token to change this conversation."
-msgstr ""
+msgstr "ワークスペースメンバーとしてサインインするか、アプリケーショントークンを使用してこの会話を変更してください。"
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -17398,7 +17398,7 @@ msgstr "購入したクレジットを追加できませんでした。サポー
 #. js-lingui-id: vAscP2
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "Your role cannot delete some of these records, so they cannot be merged."
-msgstr ""
+msgstr "あなたのロールではこれらのレコードの一部を削除できないため、マージできません。"
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

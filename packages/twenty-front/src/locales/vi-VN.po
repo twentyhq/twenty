@@ -11119,7 +11119,7 @@ msgstr "Nhập mã xác thực hai yếu tố của bạn để xác nhận."
 #. js-lingui-id: YKwRCb
 #: src/modules/salesfarce/components/SalesfarceBadge.tsx
 msgid "Enterprise only"
-msgstr ""
+msgstr "Chỉ dành cho Enterprise"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -17156,7 +17156,7 @@ msgstr "Các tab xem xét ghép"
 #. js-lingui-id: B59qMi
 #: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
 msgid "Merge with"
-msgstr ""
+msgstr "Hợp nhất với"
 
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
@@ -22874,7 +22874,7 @@ msgstr "Đặt lại biến"
 #. js-lingui-id: gh0zvo
 #: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
 msgid "Resize {label} column"
-msgstr ""
+msgstr "Thay đổi kích thước cột {label}"
 
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -23419,7 +23419,7 @@ msgstr "Bộ phận bán hàng"
 #. js-lingui-id: T3H3GG
 #: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
 msgid "Salesfarce"
-msgstr ""
+msgstr "Salesfarce"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
