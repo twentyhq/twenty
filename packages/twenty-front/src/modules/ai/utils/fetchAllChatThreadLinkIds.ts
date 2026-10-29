@@ -47,19 +47,17 @@ export const fetchAllChatThreadLinkIds = async ({
 
     hasNextPage = connection?.pageInfo?.hasNextPage === true;
 
-    if (!hasNextPage) {
-      return linkIds;
-    }
-
     const nextCursor = connection?.pageInfo?.endCursor;
+    const canAdvanceCursor =
+      isNonEmptyString(nextCursor) && nextCursor !== lastCursor;
 
-    if (!isNonEmptyString(nextCursor) || nextCursor === lastCursor) {
+    if (hasNextPage && !canAdvanceCursor) {
       throw new Error(
         doNotTranslate('Unable to load the next page of conversation links.'),
       );
     }
 
-    lastCursor = nextCursor;
+    lastCursor = nextCursor ?? undefined;
   }
 
   return linkIds;
