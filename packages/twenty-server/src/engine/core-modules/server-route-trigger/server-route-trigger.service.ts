@@ -241,14 +241,17 @@ export class ServerRouteTriggerService {
     applicationRegistrationId: string;
     logicFunctionUniversalIdentifier: string;
   }): Promise<ResolvedServerRouteResolver> {
+    const buildNotFoundException = () =>
+      new ServerRouteTriggerException(
+        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
+        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+
     if (
       !isValidUuid(applicationRegistrationId) ||
       !isValidUuid(logicFunctionUniversalIdentifier)
     ) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
-        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
+      throw buildNotFoundException();
     }
 
     const resolver = await this.createResolverQueryBuilder()
@@ -262,10 +265,7 @@ export class ServerRouteTriggerService {
       .getOne();
 
     if (!isDefined(resolver)) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${logicFunctionUniversalIdentifier} not found in application registration ${applicationRegistrationId}`,
-        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
+      throw buildNotFoundException();
     }
 
     return { resolver, isResolvedThroughLegacyIdentifier: false };
