@@ -42,7 +42,6 @@ export class ApplicationMonitoringCreditBucketDTO {
   @Field(() => String)
   operationType: string;
 
-  // The label of the app's declared billing operation, when the charge named one
   @Field(() => String, { nullable: true })
   operationLabel: string | null;
 

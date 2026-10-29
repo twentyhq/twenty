@@ -11,7 +11,6 @@ export const USAGE_OPERATION_TYPES = [
   'APP_OPERATION',
 ] as const;
 
-// Where app charges land when the app names no platform category.
 export const DEFAULT_APP_USAGE_OPERATION_TYPE = 'APP_OPERATION';
 
 export type UsageOperationTypeValue = (typeof USAGE_OPERATION_TYPES)[number];

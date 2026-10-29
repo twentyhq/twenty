@@ -23,7 +23,7 @@ describe('mapApplicationMonitoringRows', () => {
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
-        creditUsage: { rows: [], billableOperations: {} },
+        creditUsage: { rows: [], billing: null },
       }),
     ).toEqual({
       ...PERIOD,
@@ -85,7 +85,7 @@ describe('mapApplicationMonitoringRows', () => {
           },
         ],
       },
-      creditUsage: { rows: [], billableOperations: {} },
+      creditUsage: { rows: [], billing: null },
     });
 
     expect(monitoring).toMatchObject({
@@ -140,7 +140,7 @@ describe('mapApplicationMonitoringRows', () => {
               creditsUsedMicro: 120_000,
             },
           ],
-          billableOperations: {},
+          billing: null,
         },
       }),
     ).toMatchObject({
@@ -168,7 +168,7 @@ describe('mapApplicationMonitoringRows', () => {
     });
   });
 
-  it('labels credits by the declared billing operation and merges undeclared contexts', () => {
+  it('labels credits by the declared billing charge and merges undeclared contexts', () => {
     expect(
       mapApplicationMonitoringRows({
         period: PERIOD,
@@ -194,12 +194,27 @@ describe('mapApplicationMonitoringRows', () => {
               operation: 'constructor',
               creditsUsedMicro: 10_000,
             },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.SUBSCRIPTION,
+              operation: 'platformFee',
+              creditsUsedMicro: 1_000_000,
+            },
           ],
-          billableOperations: { sendSms: { label: 'SMS sent' } },
+          billing: {
+            operations: { sendSms: { label: 'SMS sent' } },
+            recurring: {
+              platformFee: {
+                period: 'MONTH',
+                amountMicroCredits: 1_000_000,
+                label: 'Platform fee',
+              },
+            },
+          },
         },
       }),
     ).toMatchObject({
-      creditsUsed: 0.15,
+      creditsUsed: 1.15,
       creditUsage: [
         {
           operationType: UsageOperationType.APP_OPERATION,
@@ -210,6 +225,11 @@ describe('mapApplicationMonitoringRows', () => {
           operationType: UsageOperationType.APP_OPERATION,
           operationLabel: null,
           creditsUsed: 0.03,
+        },
+        {
+          operationType: UsageOperationType.SUBSCRIPTION,
+          operationLabel: 'Platform fee',
+          creditsUsed: 1,
         },
       ],
     });

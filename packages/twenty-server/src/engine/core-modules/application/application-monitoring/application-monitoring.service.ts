@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type BillableOperations } from 'twenty-shared/application';
+import { type ApplicationBilling } from 'twenty-shared/application';
 import { In, Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -32,6 +32,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge-label.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type ApplicationMonitoringQueryParams = {
@@ -222,17 +223,17 @@ export class ApplicationMonitoringService {
     period: ApplicationMonitoringPeriod;
   }): Promise<{
     rows: ApplicationMonitoringCreditUsageRow[];
-    billableOperations: BillableOperations;
+    billing: ApplicationBilling | null;
   } | null> {
     try {
-      const [installations, billableOperations] = await Promise.all([
+      const [installations, billing] = await Promise.all([
         this.applicationRegistrationService.findInstallations({
           applicationRegistrationId: params.applicationRegistrationId,
           workspaceId: isNonEmptyString(params.workspaceId)
             ? params.workspaceId
             : undefined,
         }),
-        this.applicationRegistrationService.findBillableOperations(
+        this.applicationRegistrationService.findBilling(
           params.applicationRegistrationId,
         ),
       ]);
@@ -241,12 +242,12 @@ export class ApplicationMonitoringService {
         await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
           {
             installations,
-            declaredOperations: Object.keys(billableOperations),
+            declaredOperations: listDeclaredBillingChargeNames(billing),
             ...period,
           },
         );
 
-      return { rows, billableOperations };
+      return { rows, billing };
     } catch (error) {
       this.logger.warn(
         `Failed to load credits used for registration ${params.applicationRegistrationId}`,
