@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { spawn } from 'node:child_process';
+import { type ChildProcess, spawn } from 'node:child_process';
 import { join } from 'path';
 
 import { isObject } from '@sniptt/guards';
@@ -286,24 +286,33 @@ export class LocalChildProcessRunnerService {
       );
     } finally {
       clearTimeout(timeout);
-      if (isDefined(child.pid)) {
-        try {
-          // Yarn and esbuild must exit before their temporary files are removed.
-          process.kill(-child.pid, 'SIGKILL');
-        } catch (error) {
-          const code =
-            isObject(error) && 'code' in error ? error.code : undefined;
-
-          if (code === 'EPERM') {
-            child.kill('SIGKILL');
-          } else if (code !== 'ESRCH') {
-            throw error;
-          }
-        }
-      }
+      this.killChildProcess(child);
       await closed;
     }
     return { ...result, stdout, stderr };
+  }
+
+  private killChildProcess(child: ChildProcess) {
+    if (!isDefined(child.pid)) {
+      return;
+    }
+
+    try {
+      // Yarn and esbuild must exit before their temporary files are removed.
+      process.kill(-child.pid, 'SIGKILL');
+    } catch (error) {
+      const code = isObject(error) && 'code' in error ? error.code : undefined;
+
+      if (code === 'ESRCH') {
+        return;
+      }
+
+      if (code !== 'EPERM') {
+        throw error;
+      }
+
+      child.kill('SIGKILL');
+    }
   }
 
   private getLayerDirectories(flatApplication: FlatApplication) {
