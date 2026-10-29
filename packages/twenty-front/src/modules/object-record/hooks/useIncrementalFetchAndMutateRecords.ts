@@ -96,7 +96,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
           break;
         }
 
-        const rawResult = await fetchMoreRecordsLazy({ limit });
+        const rawResult = await fetchMoreRecordsLazy(limit);
         const fetchMoreResult = rawResult?.data;
 
         const currentPageRecordIds =

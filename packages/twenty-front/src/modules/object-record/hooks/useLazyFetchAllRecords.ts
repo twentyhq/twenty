@@ -1,12 +1,11 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
+import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
-import { type LazyRecordQueryOptions } from '@/object-record/types/LazyRecordQueryOptions';
 import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
-import { fetchAllRecordPagesOrThrow } from '@/object-record/utils/fetchAllRecordPagesOrThrow';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { sleep } from '~/utils/sleep';
 
 type UseLazyFetchAllRecordIdsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -15,7 +14,6 @@ type UseLazyFetchAllRecordIdsParams<T> = Omit<
   pageSize?: number;
   delayMs?: number;
   maximumRequests?: number;
-  shouldThrowOnIncompleteResult?: boolean;
 };
 
 export const useLazyFetchAllRecords = <T>({
@@ -25,7 +23,6 @@ export const useLazyFetchAllRecords = <T>({
   limit = DEFAULT_QUERY_PAGE_SIZE,
   delayMs = 0,
   maximumRequests = 100,
-  shouldThrowOnIncompleteResult = false,
   recordGqlFields,
   fetchPolicy,
 }: UseLazyFetchAllRecordIdsParams<T>) => {
@@ -47,63 +44,97 @@ export const useLazyFetchAllRecords = <T>({
     objectNameSingular,
   });
 
-  const fetchAllRecords = useCallback(
-    async (queryOptions: LazyRecordQueryOptions = {}) => {
-      if (!isDefined(findManyRecordsLazy)) {
-        return [];
+  const fetchAllRecords = useCallback(async () => {
+    if (!isDefined(findManyRecordsLazy)) {
+      return [];
+    }
+    setIsDownloading(true);
+
+    try {
+      const findManyRecordsDataResult = await findManyRecordsLazy();
+
+      if (isDefined(findManyRecordsDataResult.error)) {
+        throw findManyRecordsDataResult.error;
       }
-      setIsDownloading(true);
 
-      try {
-        return await fetchAllRecordPagesOrThrow({
-          fetchFirstPage: async () => {
-            const result = await findManyRecordsLazy(queryOptions);
+      const firstQueryResult =
+        findManyRecordsDataResult.data?.[objectMetadataItem.namePlural];
 
-            return {
-              connection: result.data?.[objectMetadataItem.namePlural],
-              error: result.error,
-            };
-          },
-          fetchNextPage: async () => {
-            const result = await fetchMoreRecordsLazy({
-              limit,
-              ...queryOptions,
-            });
+      const totalCount = firstQueryResult?.totalCount ?? 0;
 
-            if (isDefined(result) && 'error' in result) {
-              return { error: result.error };
-            }
+      const recordsCount = firstQueryResult?.edges.length ?? 0;
 
-            return { connection: result?.data };
-          },
-          maximumRequests,
-          pageSize: limit,
-          delayMs,
-          shouldThrowOnIncompleteResult,
-          onPageFetched: ({ processedRecordCount, totalRecordCount }) =>
-            setProgress({
-              processedRecordCount,
-              totalRecordCount,
-              displayType: totalRecordCount ? 'percentage' : 'number',
-            }),
-        });
-      } finally {
-        setIsDownloading(false);
+      const records = firstQueryResult?.edges?.map((edge) => edge.node) ?? [];
+
+      setProgress({
+        processedRecordCount: recordsCount,
+        totalRecordCount: totalCount,
+        displayType: totalCount ? 'percentage' : 'number',
+      });
+
+      const remainingCount = totalCount - recordsCount;
+
+      const remainingPages = Math.ceil(remainingCount / limit);
+
+      let lastCursor = firstQueryResult?.pageInfo.endCursor ?? null;
+
+      for (
+        let pageIndex = 0;
+        pageIndex < Math.min(maximumRequests, remainingPages);
+        pageIndex++
+      ) {
+        if (lastCursor === null) {
+          break;
+        }
+
+        if (!isDefined(fetchMoreRecordsLazy)) {
+          break;
+        }
+
+        if (delayMs > 0) {
+          await sleep(delayMs);
+        }
+
+        const rawResult = await fetchMoreRecordsLazy(limit);
+
+        if (isDefined(rawResult) && 'error' in rawResult) {
+          throw rawResult.error;
+        }
+
+        const fetchMoreResult = rawResult?.data;
+
+        for (const edge of fetchMoreResult?.edges ?? []) {
+          records.push(edge.node);
+        }
+
         setProgress({
-          displayType: 'number',
+          processedRecordCount: records.length,
+          totalRecordCount: totalCount,
+          displayType: totalCount ? 'percentage' : 'number',
         });
+
+        if (fetchMoreResult?.pageInfo.hasNextPage === false) {
+          break;
+        }
+
+        lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
       }
-    },
-    [
-      delayMs,
-      fetchMoreRecordsLazy,
-      findManyRecordsLazy,
-      objectMetadataItem.namePlural,
-      limit,
-      maximumRequests,
-      shouldThrowOnIncompleteResult,
-    ],
-  );
+
+      return records;
+    } finally {
+      setIsDownloading(false);
+      setProgress({
+        displayType: 'number',
+      });
+    }
+  }, [
+    delayMs,
+    fetchMoreRecordsLazy,
+    findManyRecordsLazy,
+    objectMetadataItem.namePlural,
+    limit,
+    maximumRequests,
+  ]);
 
   return {
     progress,

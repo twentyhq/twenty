@@ -81,9 +81,29 @@ const LINKS = [
 
 const refetch = jest.fn(() => Promise.resolve());
 const fetchMoreRecords = jest.fn(() => Promise.resolve());
-const fetchAllThreadLinks = jest.fn();
-const useLazyFetchAllRecords = jest.fn((_params: unknown) => ({
-  fetchAllRecords: fetchAllThreadLinks,
+const buildLinksPage = ({
+  linkIds,
+  hasNextPage = false,
+  endCursor = 'last-link-cursor',
+}: {
+  linkIds: string[];
+  hasNextPage?: boolean;
+  endCursor?: string;
+}) => ({
+  data: {
+    agentChatThreadTargets: {
+      edges: linkIds.map((id) => ({ node: { id } })),
+      pageInfo: { hasNextPage, endCursor },
+    },
+  },
+});
+const query = jest.fn();
+const FIND_THREAD_LINKS_QUERY = {};
+const useFindManyRecordsQuery = jest.fn((_params: unknown) => ({
+  findManyRecordsQuery: FIND_THREAD_LINKS_QUERY,
+}));
+const useObjectPermissionsForObject = jest.fn(() => ({
+  canReadObjectRecords: true,
 }));
 const QUERY_IDENTIFIER = 'chat-threads-for-record-query';
 const findManyRecordsResult = {
@@ -104,8 +124,16 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: (params: unknown) => useFindManyRecords(params),
 }));
 
-jest.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
-  useLazyFetchAllRecords: (params: unknown) => useLazyFetchAllRecords(params),
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({ query }),
+}));
+
+jest.mock('@/object-record/hooks/useFindManyRecordsQuery', () => ({
+  useFindManyRecordsQuery: (params: unknown) => useFindManyRecordsQuery(params),
+}));
+
+jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
+  useObjectPermissionsForObject: () => useObjectPermissionsForObject(),
 }));
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
@@ -167,8 +195,11 @@ describe('useChatThreadsForRecord', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useFindManyRecords.mockReturnValue(findManyRecordsResult);
-    fetchAllThreadLinks.mockResolvedValue(
-      ['link-1', 'link-3', 'link-4'].map((id) => ({ id })),
+    useObjectPermissionsForObject.mockReturnValue({
+      canReadObjectRecords: true,
+    });
+    query.mockResolvedValue(
+      buildLinksPage({ linkIds: ['link-1', 'link-3', 'link-4'] }),
     );
   });
 
@@ -210,36 +241,80 @@ describe('useChatThreadsForRecord', () => {
   });
 
   it('finds every link to a conversation before detaching, including links outside the loaded page', async () => {
+    query
+      .mockResolvedValueOnce(
+        buildLinksPage({
+          linkIds: ['link-1', 'link-3'],
+          hasNextPage: true,
+          endCursor: 'first-links-page',
+        }),
+      )
+      .mockResolvedValueOnce(buildLinksPage({ linkIds: ['link-4'] }));
     const result = renderChatThreadsForRecord();
 
-    expect(fetchAllThreadLinks).not.toHaveBeenCalled();
+    expect(query).not.toHaveBeenCalled();
 
     await expect(
       result.current.getAllLinkIdsToThread(RENEWAL_THREAD_ID),
     ).resolves.toEqual(['link-1', 'link-3', 'link-4']);
 
-    expect(useLazyFetchAllRecords).toHaveBeenCalledWith(
-      expect.objectContaining({
-        objectNameSingular: 'agentChatThreadTarget',
-        recordGqlFields: { id: true, threadId: true },
-        fetchPolicy: 'network-only',
-        shouldThrowOnIncompleteResult: true,
-      }),
-    );
-    expect(fetchAllThreadLinks).toHaveBeenCalledWith({
-      filter: {
-        and: [LINKS_FILTER, { threadId: { eq: RENEWAL_THREAD_ID } }],
-      },
+    expect(useFindManyRecordsQuery).toHaveBeenCalledWith({
+      objectNameSingular: 'agentChatThreadTarget',
+      recordGqlFields: { id: true, threadId: true },
+    });
+    const filter = {
+      and: [LINKS_FILTER, { threadId: { eq: RENEWAL_THREAD_ID } }],
+    };
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query).toHaveBeenNthCalledWith(1, {
+      query: FIND_THREAD_LINKS_QUERY,
+      variables: { filter, limit: 30, lastCursor: undefined },
+      fetchPolicy: 'network-only',
+    });
+    expect(query).toHaveBeenNthCalledWith(2, {
+      query: FIND_THREAD_LINKS_QUERY,
+      variables: { filter, limit: 30, lastCursor: 'first-links-page' },
+      fetchPolicy: 'network-only',
     });
   });
 
   it('rejects link lookup errors instead of returning a partial set', async () => {
-    fetchAllThreadLinks.mockRejectedValueOnce(new Error('Link lookup failed'));
+    query.mockRejectedValueOnce(new Error('Link lookup failed'));
     const result = renderChatThreadsForRecord();
 
     await expect(
       result.current.getAllLinkIdsToThread(RENEWAL_THREAD_ID),
     ).rejects.toThrow('Link lookup failed');
+  });
+
+  it('rejects a failed later page instead of detaching only the first links', async () => {
+    query
+      .mockResolvedValueOnce(
+        buildLinksPage({
+          linkIds: ['link-1'],
+          hasNextPage: true,
+          endCursor: 'first-links-page',
+        }),
+      )
+      .mockResolvedValueOnce({ error: new Error('Next page failed') });
+    const result = renderChatThreadsForRecord();
+
+    await expect(
+      result.current.getAllLinkIdsToThread(RENEWAL_THREAD_ID),
+    ).rejects.toThrow('Next page failed');
+  });
+
+  it('does not read conversation links without object read permission', async () => {
+    useObjectPermissionsForObject.mockReturnValue({
+      canReadObjectRecords: false,
+    });
+    const result = renderChatThreadsForRecord();
+
+    await expect(
+      result.current.getAllLinkIdsToThread(RENEWAL_THREAD_ID),
+    ).resolves.toEqual([]);
+    expect(query).not.toHaveBeenCalled();
   });
 
   it('reads nothing for an object conversations cannot be attached to', async () => {
@@ -258,7 +333,7 @@ describe('useChatThreadsForRecord', () => {
     await expect(
       result.current.getAllLinkIdsToThread(RENEWAL_THREAD_ID),
     ).resolves.toEqual([]);
-    expect(fetchAllThreadLinks).not.toHaveBeenCalled();
+    expect(query).not.toHaveBeenCalled();
   });
 
   it('loads the next page of linked conversations', async () => {

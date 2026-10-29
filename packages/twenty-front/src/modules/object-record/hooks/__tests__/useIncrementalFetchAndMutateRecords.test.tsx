@@ -72,7 +72,7 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       abortSignal: expect.any(Object),
     });
 
-    expect(mockFetchMoreRecordsLazy).toHaveBeenCalledWith({ limit: 2 });
+    expect(mockFetchMoreRecordsLazy).toHaveBeenCalledWith(2);
 
     expect(mutateBatchMock).toHaveBeenNthCalledWith(2, {
       recordIds: ['3'],

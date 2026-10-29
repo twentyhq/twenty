@@ -13,7 +13,6 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type LazyRecordQueryOptions } from '@/object-record/types/LazyRecordQueryOptions';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -91,89 +90,74 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     shouldToastOnError,
   });
 
-  const findManyRecordsLazy = useCallback(
-    async ({ filter: queryFilter = filter }: LazyRecordQueryOptions = {}) => {
-      const queryVariables = { ...defaultVariables, filter: queryFilter };
-      const requestQueryIdentifier = getQueryIdentifier({
-        objectNameSingular,
-        ...queryVariables,
-      });
-
-      if (!hasReadPermission) {
-        store.set(
-          hasNextPageFamilyState.atomFamily(requestQueryIdentifier),
-          false,
-        );
-        store.set(cursorFamilyState.atomFamily(requestQueryIdentifier), '');
-
-        return {
-          data: null,
-          records: null,
-          totalCount: 0,
-          hasNextPage: false,
-          error: undefined,
-        };
-      }
-
-      const result = await findManyRecords({
-        variables: queryVariables,
-      }).retain();
-
-      if (isDefined(result?.error) && shouldToastOnError) {
-        handleFindManyRecordsError(result.error);
-      }
-
-      const hasNextPage =
-        result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
-        false;
-
-      const lastCursor =
-        result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '';
-
-      store.set(
-        hasNextPageFamilyState.atomFamily(requestQueryIdentifier),
-        hasNextPage,
-      );
-      store.set(
-        cursorFamilyState.atomFamily(requestQueryIdentifier),
-        lastCursor,
-      );
-
-      const records = getRecordsFromRecordConnection({
-        recordConnection: {
-          edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
-          pageInfo: result?.data?.[objectMetadataItem.namePlural]?.pageInfo ?? {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-        },
-      });
-
-      const totalCount =
-        result?.data?.[objectMetadataItem.namePlural]?.totalCount ?? 0;
+  const findManyRecordsLazy = useCallback(async () => {
+    if (!hasReadPermission) {
+      store.set(hasNextPageFamilyState.atomFamily(queryIdentifier), false);
+      store.set(cursorFamilyState.atomFamily(queryIdentifier), '');
 
       return {
-        data: result?.data,
-        records,
-        totalCount,
-        hasNextPage,
-        error: result?.error,
+        data: null,
+        records: null,
+        totalCount: 0,
+        hasNextPage: false,
+        error: undefined,
       };
-    },
-    [
-      hasReadPermission,
-      findManyRecords,
-      defaultVariables,
-      filter,
-      objectNameSingular,
-      objectMetadataItem.namePlural,
-      handleFindManyRecordsError,
-      shouldToastOnError,
-      store,
-    ],
-  );
+    }
+
+    // In Apollo v4, useLazyQuery's execute aborts in-flight queries when
+    // the query document changes (e.g. metadata/permissions loading).
+    // Calling .retain() keeps the query running to completion even if
+    // the ObservableQuery is updated, preventing AbortError rejections.
+    const result = await findManyRecords({
+      variables: defaultVariables,
+    }).retain();
+
+    if (isDefined(result?.error) && shouldToastOnError) {
+      handleFindManyRecordsError(result.error);
+    }
+
+    const hasNextPage =
+      result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
+      false;
+
+    const lastCursor =
+      result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '';
+
+    store.set(hasNextPageFamilyState.atomFamily(queryIdentifier), hasNextPage);
+    store.set(cursorFamilyState.atomFamily(queryIdentifier), lastCursor);
+
+    const records = getRecordsFromRecordConnection({
+      recordConnection: {
+        edges: result?.data?.[objectMetadataItem.namePlural]?.edges ?? [],
+        pageInfo: result?.data?.[objectMetadataItem.namePlural]?.pageInfo ?? {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+      },
+    });
+
+    const totalCount =
+      result?.data?.[objectMetadataItem.namePlural]?.totalCount ?? 0;
+
+    return {
+      data: result?.data,
+      records,
+      totalCount,
+      hasNextPage,
+      error: result?.error,
+    };
+  }, [
+    hasReadPermission,
+    findManyRecords,
+    defaultVariables,
+    objectMetadataItem.namePlural,
+    queryIdentifier,
+    handleFindManyRecordsError,
+    shouldToastOnError,
+    store,
+  ]);
 
   return {
     findManyRecordsLazy,

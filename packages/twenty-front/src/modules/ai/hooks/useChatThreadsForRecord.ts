@@ -8,11 +8,14 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
@@ -66,6 +69,7 @@ export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
+  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -110,13 +114,14 @@ export const useChatThreadsForRecord = ({
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });
 
-  const { fetchAllRecords: fetchAllThreadLinks } =
-    useLazyFetchAllRecords<AgentChatThreadTargetRecord>({
+  const { findManyRecordsQuery: findThreadLinksQuery } =
+    useFindManyRecordsQuery({
       objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
       recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
-      fetchPolicy: 'network-only',
-      shouldThrowOnIncompleteResult: true,
     });
+  const { canReadObjectRecords } = useObjectPermissionsForObject(
+    junctionConfig?.junctionObjectMetadata.id ?? '',
+  );
 
   const { threads, refetchLimit } = useMemo(
     () =>
@@ -181,20 +186,26 @@ export const useChatThreadsForRecord = ({
   });
 
   const getAllLinkIdsToThread = async (threadId: string) => {
-    if (!isRecordLinkable || !isDefined(junctionConfig) || !isDefined(filter)) {
+    if (
+      !isRecordLinkable ||
+      !canReadObjectRecords ||
+      !isDefined(junctionConfig) ||
+      !isDefined(filter)
+    ) {
       return [];
     }
 
-    const threadLinks = await fetchAllThreadLinks({
+    return fetchAllChatThreadLinkIds({
+      apolloCoreClient,
+      query: findThreadLinksQuery,
       filter: {
         and: [
           filter,
           { [junctionConfig.sourceJoinColumnName]: { eq: threadId } },
         ],
       },
+      objectNamePlural: junctionConfig.junctionObjectMetadata.namePlural,
     });
-
-    return threadLinks.map(({ id }) => id);
   };
 
   useListenToObjectRecordOperationBrowserEvent({
