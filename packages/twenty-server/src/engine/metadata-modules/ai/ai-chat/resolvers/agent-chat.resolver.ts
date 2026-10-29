@@ -38,6 +38,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
+import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -89,6 +90,7 @@ export class AgentChatResolver {
     private readonly turnRecorderService: AgentTurnRecorderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly messageReactionService: AgentChatMessageReactionService,
+    private readonly replyPolicyService: AgentChatReplyPolicyService,
     private readonly participationService: AgentChatParticipationService,
   ) {}
 
@@ -318,16 +320,31 @@ export class AgentChatResolver {
     mentionedWorkspaceMemberIds: string[];
     recipientWorkspaceMemberIds: string[];
   }): Promise<SendChatMessageResultDTO> {
-    const { thread } = await this.threadService.applyAssistantParticipation({
-      threadId,
-      workspaceMemberId,
+    const { thread, isInitialMessage } =
+      await this.threadService.applyAssistantParticipation({
+        threadId,
+        workspaceMemberId,
+        workspaceId: workspace.id,
+        isAssistantMentioned: isAssistantMentioned ?? false,
+        initialIsAssistantParticipant,
+        recipientWorkspaceMemberIds,
+        mentionedWorkspaceMemberIds,
+      });
+    const candidateWorkspaceMemberIds = [
+      ...mentionedWorkspaceMemberIds,
+      ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
+    ];
+    const isAssistantReplying = await this.replyPolicyService.shouldReply({
+      isAiChatInboxEnabled,
+      shouldAssistantReply,
+      thread,
       workspaceId: workspace.id,
-      isAssistantMentioned: isAssistantMentioned ?? false,
-      initialIsAssistantParticipant,
-      recipientWorkspaceMemberIds,
-      mentionedWorkspaceMemberIds,
+      workspaceMemberId,
+      userWorkspaceId,
+      candidateWorkspaceMemberIds,
+      isAssistantMentioned,
+      text,
     });
-    const isAssistantReplying = shouldAssistantReply || !isAiChatInboxEnabled;
 
     // Members can keep talking when the assistant cannot run
     if (isAssistantReplying) {

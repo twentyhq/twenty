@@ -21,6 +21,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AiEvaluationModule } from 'src/engine/metadata-modules/ai/ai-evaluation/ai-evaluation.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -42,6 +43,7 @@ import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
+import { AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
@@ -71,6 +73,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     WorkspaceDomainsModule,
     UserWorkspaceModule,
     AiBillingModule,
+    AiEvaluationModule,
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
@@ -89,6 +92,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AgentInboxResolver,
     AgentInboxProposalService,
     AgentChatQueueService,
+    AgentChatReplyPolicyService,
     AgentChatParticipationService,
     AgentChatService,
     AgentChatThreadTargetService,

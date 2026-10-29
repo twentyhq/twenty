@@ -5,16 +5,10 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
-  NO_REPLY_TOOL_NAME,
   REACT_TO_MESSAGE_TOOL_NAME,
-  extractRecordReferenceIds,
 } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import {
-  AppPath,
-  CoreObjectNameSingular,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -42,13 +36,11 @@ import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
-import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -57,7 +49,6 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { createTurnAuthorizer } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-turn-authorizer.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
-import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
@@ -115,7 +106,6 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
-    private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly agentTurnService: AgentTurnService,
   ) {}
@@ -200,18 +190,6 @@ export class ChatExecutionService {
       .reverse()
       .find((message) => message.role === AgentMessageRole.USER);
 
-    // Members mentioned in this message are only added once the turn is queued
-    const isGroupConversation =
-      isInboxConversation &&
-      (await this.agentChatThreadParticipantService.countMembers({
-        workspaceId: workspace.id,
-        threadId,
-        additionalWorkspaceMemberIds: extractRecordReferenceIds({
-          text: findLastMessageText(latestUserMessage?.parts ?? []) ?? '',
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        }),
-      })) > 1;
-
     let lastUnderlyingStreamError: unknown;
 
     const turn = await this.agentTurnService.start({
@@ -232,9 +210,6 @@ export class ChatExecutionService {
                 [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
                   createCompleteWorkspaceSetupTool(),
               }
-            : {}),
-          ...(isGroupConversation
-            ? { [NO_REPLY_TOOL_NAME]: createNoReplyTool() }
             : {}),
           ...(isInboxConversation
             ? {
@@ -337,10 +312,7 @@ export class ChatExecutionService {
       // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
-      shouldStopAfterStep: hasToolCall(
-        COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
-        NO_REPLY_TOOL_NAME,
-      ),
+      shouldStopAfterStep: hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME),
       billing: {
         workspaceId: workspace.id,
         operationType: UsageOperationType.AI_CHAT_TOKEN,
