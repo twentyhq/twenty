@@ -7,6 +7,7 @@ import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/s
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
+// Pre-filters event wake-ups; each waiting owner then reads the record with its own permissions
 export const resolveAutomationAdmittedRecordIds = async ({
   payload,
   workspaceCacheService,
@@ -21,7 +22,6 @@ export const resolveAutomationAdmittedRecordIds = async ({
     ['flatApplicationMaps'],
   );
 
-  // Automated runs act as the standard application, so without its role they admit nothing
   const roleId = findActiveFlatApplicationByUniversalIdentifier(
     flatApplicationMaps,
     TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
