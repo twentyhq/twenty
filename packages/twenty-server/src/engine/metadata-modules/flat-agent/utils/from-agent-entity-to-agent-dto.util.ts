@@ -10,6 +10,8 @@ export const fromFlatAgentWithRoleIdToAgentDto = (
     createdAt,
     description,
     icon,
+    avatarColor,
+    avatarShape,
     id,
     isActive,
     isSystem,
@@ -42,6 +44,8 @@ export const fromFlatAgentWithRoleIdToAgentDto = (
     workspaceId,
     applicationId: applicationId ?? undefined,
     icon: icon ?? undefined,
+    avatarColor: avatarColor ?? undefined,
+    avatarShape: avatarShape ?? undefined,
     roleId: roleId ?? undefined,
   };
 };

@@ -11,12 +11,17 @@ import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/da
 import { ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-triggers-to-agent-upgrade-command-name.constant';
 import { DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/drop-agent-evaluation-inputs-upgrade-command-name.constant';
 import { AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/agent-and-skill-overridable-entity-upgrade-command-name.constant';
+import { ADD_AVATAR_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-avatar-to-agent-upgrade-command-name.constant';
 import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { ModelConfiguration } from 'src/engine/metadata-modules/ai/ai-agent/types/model-configuration.type';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import {
+  type AgentAvatarColor,
+  type AgentAvatarShape,
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+} from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
@@ -55,6 +60,18 @@ export class AgentEntity
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AVATAR_TO_AGENT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  avatarColor: AgentAvatarColor | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_AVATAR_TO_AGENT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  avatarShape: AgentAvatarShape | null;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;

@@ -30,6 +30,8 @@ export type AddQuerySubscriptionInput = {
 export type Agent = {
   __typename?: 'Agent';
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  avatarColor?: Maybe<Scalars['String']['output']>;
+  avatarShape?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -1564,6 +1566,8 @@ export type CreateAgentChatChannelInput = {
 };
 
 export type CreateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
@@ -7260,6 +7264,8 @@ export type UpdateAgentChatChannelInput = {
 };
 
 export type UpdateAgentInput = {
+  avatarColor?: InputMaybe<Scalars['String']['input']>;
+  avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];

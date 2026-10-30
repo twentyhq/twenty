@@ -94,6 +94,22 @@ describe('defineAgent', () => {
     ]);
   });
 
+  it('should error on an unknown avatar color or shape', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      // @ts-expect-error apps written in JavaScript can pass any shape
+      avatarColor: 'teal',
+      // @ts-expect-error apps written in JavaScript can pass any shape
+      avatarShape: 'star',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      `Agent 'sales-assistant' avatarColor must be one of: blue, sky, turquoise, green, yellow, orange, red, pink, purple, gray`,
+      `Agent 'sales-assistant' avatarShape must be one of: circle, cookie, cloud, clover, flower, burst, pill, arch, gem, hexagon`,
+    ]);
+  });
+
   it('should accept triggers', () => {
     const result = defineAgent({
       ...VALID_AGENT_CONFIG,

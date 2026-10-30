@@ -137,6 +137,8 @@ const AGENT: FlatAgent = {
   name: 'researcher',
   label: 'Researcher',
   icon: null,
+  avatarColor: null,
+  avatarShape: null,
   description: null,
   prompt: 'Research the company',
   modelId: 'auto',

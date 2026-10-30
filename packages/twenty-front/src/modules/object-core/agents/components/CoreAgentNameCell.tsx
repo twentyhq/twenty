@@ -23,7 +23,7 @@ const StyledIconContainer = styled.span`
 `;
 
 type CoreAgentNameCellProps = {
-  agent: Pick<CoreAgent, 'id' | 'label'>;
+  agent: Pick<CoreAgent, 'id' | 'label' | 'avatarColor' | 'avatarShape'>;
 };
 
 export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
@@ -33,7 +33,12 @@ export const CoreAgentNameCell = ({ agent }: CoreAgentNameCellProps) => {
   return (
     <StyledContainer>
       <StyledIconContainer>
-        <CoreAgentIcon agentId={agent.id} size={theme.icon.size.md} />
+        <CoreAgentIcon
+          agentId={agent.id}
+          avatarColor={agent.avatarColor}
+          avatarShape={agent.avatarShape}
+          size={theme.icon.size.md}
+        />
       </StyledIconContainer>
       <OverflowingTextWithTooltip
         text={isNonEmptyString(agent.label) ? agent.label : t`Untitled`}

@@ -1,6 +1,10 @@
+import { type AgentAvatarColor } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const AI_AGENT_AVATAR_COLORS = {
+export const AI_AGENT_AVATAR_COLORS: Record<
+  AgentAvatarColor,
+  { body: string; face: string }
+> = {
   blue: {
     body: themeCssVariables.color.blue4,
     face: themeCssVariables.color.blue10,

@@ -7,6 +7,8 @@ export const coreAgentFormSchema = z.object({
   label: zodNonEmptyString,
   description: z.string().nullish(),
   icon: z.string().optional(),
+  avatarColor: z.string().nullish(),
+  avatarShape: z.string().nullish(),
   modelId: z.string().min(1, { error: () => t`Model is required` }),
   prompt: zodNonEmptyString,
   modelConfiguration: z

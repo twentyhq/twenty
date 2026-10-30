@@ -272,6 +272,7 @@ import { AddWorkspaceChatAssistantModesFastInstanceCommand } from 'src/database/
 import { AddRelatedRecordPathTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793291361887-add-related-record-path-table';
 import { AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793357800472-add-access-token-expires-at-to-connected-account';
 import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793369399690-add-webhook-id-to-role-target';
+import { AddAvatarToAgentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793376858854-add-avatar-to-agent';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -546,4 +547,5 @@ export const INSTANCE_COMMANDS = [
   AddRelatedRecordPathTableFastInstanceCommand,
   AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand,
   AddWebhookIdToRoleTargetFastInstanceCommand,
+  AddAvatarToAgentFastInstanceCommand,
 ];

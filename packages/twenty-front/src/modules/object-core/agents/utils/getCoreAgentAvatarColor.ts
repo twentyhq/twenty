@@ -1,15 +1,6 @@
-import { typedObjectEntries } from 'twenty-shared/utils';
+import { AGENT_AVATAR_COLORS, type AgentAvatarColor } from 'twenty-shared/ai';
 
-import { AI_AGENT_AVATAR_COLORS } from '@/ai/constants/AiAgentAvatarColors';
-import { type AiAgentAvatarColor } from '@/ai/types/AiAgentAvatarColor';
-
-const AGENT_AVATAR_COLOR_NAMES = typedObjectEntries(AI_AGENT_AVATAR_COLORS).map(
-  ([color]) => color,
-);
-
-export const getCoreAgentAvatarColor = (
-  agentId: string,
-): AiAgentAvatarColor => {
+export const getCoreAgentAvatarColor = (agentId: string): AgentAvatarColor => {
   const hash = agentId
     .split('')
     .reduce(
@@ -19,7 +10,5 @@ export const getCoreAgentAvatarColor = (
       0,
     );
 
-  return AGENT_AVATAR_COLOR_NAMES[
-    Math.abs(hash) % AGENT_AVATAR_COLOR_NAMES.length
-  ];
+  return AGENT_AVATAR_COLORS[Math.abs(hash) % AGENT_AVATAR_COLORS.length];
 };

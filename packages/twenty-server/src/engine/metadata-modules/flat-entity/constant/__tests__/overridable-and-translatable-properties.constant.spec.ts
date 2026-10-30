@@ -18,6 +18,8 @@ describe('registry-derived override property maps', () => {
       [
         'label',
         'icon',
+        'avatarColor',
+        'avatarShape',
         'description',
         'prompt',
         'modelId',

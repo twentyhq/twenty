@@ -20,6 +20,8 @@ export const fromAgentManifestToUniversalFlatAgent = ({
     name: agentManifest.name,
     label: agentManifest.label,
     icon: agentManifest.icon ?? null,
+    avatarColor: agentManifest.avatarColor ?? null,
+    avatarShape: agentManifest.avatarShape ?? null,
     description: agentManifest.description ?? null,
     prompt: agentManifest.prompt,
     modelId:

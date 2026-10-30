@@ -9,6 +9,8 @@ export const getCoreAgentInitialFormValues = (
     label: agent.label,
     description: agent.description,
     icon: agent.icon || 'IconLego',
+    avatarColor: agent.avatarColor,
+    avatarShape: agent.avatarShape,
     modelId: agent.modelId,
     prompt: agent.prompt,
     modelConfiguration: agent.modelConfiguration || {},

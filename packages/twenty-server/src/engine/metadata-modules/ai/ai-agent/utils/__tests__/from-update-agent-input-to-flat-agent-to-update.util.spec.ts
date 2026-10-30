@@ -18,6 +18,8 @@ const appAgent: FlatAgent = {
   name: 'researcher',
   label: 'Researcher',
   icon: 'IconRobot',
+  avatarColor: null,
+  avatarShape: null,
   description: 'Finds things',
   prompt: 'Research the company',
   modelId: 'auto',

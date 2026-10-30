@@ -404,6 +404,8 @@ const AGENT_MANIFEST: AgentManifest = {
   name: 'lead-scorer',
   label: 'Lead Scorer',
   icon: 'IconRobot',
+  avatarColor: 'pink',
+  avatarShape: 'pill',
   description: 'Scores new leads',
   prompt: 'Score the lead.',
   modelId: 'gpt-4o',

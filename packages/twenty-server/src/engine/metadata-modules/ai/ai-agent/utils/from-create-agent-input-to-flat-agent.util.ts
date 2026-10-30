@@ -47,6 +47,8 @@ export const fromCreateAgentInputToFlatAgent = ({
       : computeMetadataNameFromLabel({ label: createAgentInput.label }),
     label: createAgentInput.label,
     icon: createAgentInput.icon ?? null,
+    avatarColor: createAgentInput.avatarColor ?? null,
+    avatarShape: createAgentInput.avatarShape ?? null,
     description: createAgentInput.description ?? null,
     prompt: createAgentInput.prompt,
     modelId: createAgentInput.modelId,

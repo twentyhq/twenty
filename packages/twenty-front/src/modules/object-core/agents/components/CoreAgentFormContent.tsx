@@ -30,7 +30,7 @@ import {
   type FindOneAgentQuery,
 } from '~/generated-metadata/graphql';
 import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
-import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
+import { CoreAgentAvatarPicker } from '@/object-core/agents/components/CoreAgentAvatarPicker';
 import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/CoreAgentNewRoleDraftEffect';
 import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
 import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
@@ -187,7 +187,13 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
           namePlaceholder={t`Untitled`}
           onRename={handleRename}
           isReadOnly={isReadOnly}
-          icon={<CoreAgentIcon agentId={agent.id} size={24} />}
+          icon={
+            <CoreAgentAvatarPicker
+              agent={agent}
+              isReadOnly={isReadOnly}
+              size={24}
+            />
+          }
         />
         <StyledScrollContainer>
           <StyledContent>

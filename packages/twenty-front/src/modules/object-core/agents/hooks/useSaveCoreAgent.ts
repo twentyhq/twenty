@@ -115,6 +115,8 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
               label: draft.label,
               description: draft.description,
               icon: draft.icon,
+              avatarColor: draft.avatarColor,
+              avatarShape: draft.avatarShape,
               modelId: draft.modelId,
               prompt: draft.prompt,
               modelConfiguration: draft.modelConfiguration,
