@@ -2,6 +2,7 @@ import {
   APPLICATION_PACKAGE_YARN_LOCK_PATH,
   type Manifest,
 } from 'twenty-shared/application';
+import { getSharedDependenciesBuildManifestPath } from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -75,7 +76,9 @@ export const buildApplicationFileList = (
         isRequired: true,
       },
       {
-        relativePath: `${sharedDependencies.builtPath}.json`,
+        relativePath: getSharedDependenciesBuildManifestPath(
+          sharedDependencies.builtPath,
+        ),
         fileFolder: FileFolder.Dependencies,
         isRequired: false,
       },
