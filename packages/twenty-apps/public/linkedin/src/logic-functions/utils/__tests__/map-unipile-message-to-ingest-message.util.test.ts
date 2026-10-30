@@ -5,7 +5,9 @@ import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 
 const CHANNEL_HANDLE = 'linkedin.com/in/me';
 
-const buildMessage = (overrides: Partial<UnipileMessage> = {}): UnipileMessage => ({
+const buildMessage = (
+  overrides: Partial<UnipileMessage> = {},
+): UnipileMessage => ({
   id: 'message-1',
   chat_id: 'chat-1',
   sender_id: 'ACoGRACE',
