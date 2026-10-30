@@ -5,10 +5,7 @@ export type SettingsAiOverviewProps = {
   behaviorSection?: ReactNode;
   summarySection?: ReactNode;
   secondaryBar?: ReactNode;
-  workspaceInstructions: string;
-  onWorkspaceInstructionsChange?: (value: string) => void;
-  isWorkspaceInstructionsDisabled?: boolean;
-  onMcpSetup?: () => void;
-  onSystemPromptsOpen?: () => void;
-  systemPromptTokenCount?: number;
+  mcpSection: ReactNode;
+  workspaceInstructionsSection: ReactNode;
+  systemPromptSection: ReactNode;
 };
