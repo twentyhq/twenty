@@ -3,7 +3,7 @@
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type FormEvent, useState } from 'react';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import {
   color,
@@ -175,7 +175,7 @@ export function AffiliateApplicationForm() {
     event.preventDefault();
 
     const validationError = validate();
-    if (validationError !== null) {
+    if (isDefined(validationError)) {
       setErrorMessage(validationError);
       return;
     }
@@ -316,7 +316,7 @@ export function AffiliateApplicationForm() {
           />
         </Footer>
       </FullWidth>
-      {errorMessage !== null ? (
+      {isDefined(errorMessage) ? (
         <FullWidth>
           <ErrorBanner role="alert">{errorMessage}</ErrorBanner>
         </FullWidth>
