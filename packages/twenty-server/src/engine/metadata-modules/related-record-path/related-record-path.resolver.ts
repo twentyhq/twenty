@@ -34,9 +34,9 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
       playground: true,
       workspaceAgnostic: false,
     },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
   }),
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
