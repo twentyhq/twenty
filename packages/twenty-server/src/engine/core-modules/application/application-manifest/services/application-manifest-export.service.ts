@@ -16,6 +16,7 @@ import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
+import { reconstructValidationRulesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-validation-rules-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
@@ -185,6 +186,10 @@ export class ApplicationManifestExportService {
     const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
       applicationAllFlatEntityMaps,
     });
+    const { validationRules, coverage: validationRulesCoverage } =
+      reconstructValidationRulesManifest({
+        applicationAllFlatEntityMaps,
+      });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -220,6 +225,7 @@ export class ApplicationManifestExportService {
       timelineActivityTypes: [],
       settingsMenuItems: [],
       workflows,
+      validationRules,
       ...(isDefined(translations) ? { translations } : {}),
     };
 
@@ -243,6 +249,7 @@ export class ApplicationManifestExportService {
           ...workflowsCoverage,
           ...agentsCoverage,
           ...skillsCoverage,
+          ...validationRulesCoverage,
         ],
       }),
       files: shouldIncludeDependencies

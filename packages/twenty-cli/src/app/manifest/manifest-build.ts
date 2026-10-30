@@ -45,6 +45,7 @@ import {
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
+  type ValidationRuleManifest,
   type LogicFunctionManifest,
   type Manifest,
   type NavigationMenuItemManifest,
@@ -109,6 +110,7 @@ export const buildManifest = async (
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
+  const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
@@ -143,6 +145,7 @@ export const buildManifest = async (
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
   const indexesFilePaths: string[] = [];
+  const validationRulesFilePaths: string[] = [];
   const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
@@ -478,6 +481,18 @@ export const buildManifest = async (
         indexesFilePaths.push(relativePath);
         break;
       }
+      case 'validationRules': {
+        const extract = await extractManifestFromFile<ValidationRuleManifest>({
+          appPath,
+          filePath,
+        });
+
+        validationRules.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        validationRulesFilePaths.push(relativePath);
+        break;
+      }
       case 'pageLayoutTabs': {
         const extract = await extractManifestFromFile<PageLayoutTabConfig>({
           appPath,
@@ -750,6 +765,7 @@ export const buildManifest = async (
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
         settingsMenuItems: settingsMenuItems.sort(byId),
+        validationRules: validationRules.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -757,6 +773,7 @@ export const buildManifest = async (
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
     indexes: indexesFilePaths,
+    validationRules: validationRulesFilePaths,
     permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,

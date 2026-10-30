@@ -298,6 +298,7 @@ export {
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

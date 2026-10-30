@@ -100,6 +100,13 @@ describe('app add', () => {
       path: 'src/front-components/invoice-panel.tsx',
       define: 'defineFrontComponent',
     },
+    {
+      entity: 'validation-rule',
+      name: 'invoice-has-amount',
+      options: ['--object', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'],
+      path: 'src/validation-rules/invoice-has-amount.ts',
+      define: 'defineValidationRule',
+    },
   ])(
     'creates a standalone $entity definition with app-relative JSON paths',
     async ({ entity, name, options, path, define }) => {

@@ -27,6 +27,7 @@ import { getFrontComponentWidgetAvailabilityWarnings } from '@/app/manifest/util
 import { getPageLayoutDeprecationWarnings } from '@/app/manifest/utils/get-page-layout-deprecation-warnings';
 import { getUnresolvedLabelIdentifierWarnings } from '@/app/manifest/utils/get-unresolved-label-identifier-warnings';
 import { validateTimelineActivityTypes } from '@/app/manifest/utils/validate-timeline-activity-types';
+import { validateValidationRules } from '@/app/manifest/utils/validate-validation-rules';
 
 const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,
@@ -331,6 +332,8 @@ export const manifestValidate = (manifest: Manifest) => {
   errors.push(...validateGraphWidgets(pageLayoutWidgets));
 
   errors.push(...validateTimelineActivityTypes(manifest));
+
+  errors.push(...validateValidationRules(manifest));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

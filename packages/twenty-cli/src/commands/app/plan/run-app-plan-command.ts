@@ -27,6 +27,8 @@ export const runAppPlanCommand: CommandRun<TargetCommandContext> = async (
     inferDeletionFromMissingEntities,
     target: context.target,
     signal: context.signal,
+    onWarning: (message) =>
+      context.output.warn({ code: 'SYNC_WARNING', message }),
   });
   const summary = getAppPlanSummary(actions);
 

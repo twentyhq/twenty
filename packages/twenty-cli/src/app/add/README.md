@@ -1,20 +1,20 @@
 # App definition scaffolding
 
-The templates create object, field, logic-function and front-component
-definitions. Filenames and logic-function/front-component names use kebab-case.
+The templates create object, field, logic-function, front-component and
+validation-rule definitions. Filenames and logic-function/front-component names use kebab-case.
 Object and field metadata names keep the entered spelling; display labels use
 the same helper as app init.
 
 ## Contract
 
-- `twenty app add [entity]` accepts `object`, `field`, `logic-function` and
-  `front-component`. A human terminal can supply omitted values interactively.
+- `twenty app add [entity]` accepts `object`, `field`, `logic-function`,
+  `front-component` and `validation-rule`. A human terminal can supply omitted values interactively.
   JSON, CI, redirected stdin and `--no-input` never prompt; missing required or
   inapplicable options exit 2. Labels default to the name; fields default to
   `TEXT`.
 - `--path` selects an app, like the other CLI app commands. Files go under the
-  selected app's `src/objects`, `src/fields`, `src/logic-functions` or
-  `src/front-components`. Custom output directories are not supported.
+  selected app's `src/objects`, `src/fields`, `src/logic-functions`,
+  `src/front-components` or `src/validation-rules`. Custom output directories are not supported.
 - Parent and relation endpoint identifiers must be valid universal UUIDs. No
   workspace lookup verifies ownership or existence. Relations require reviewing
   both endpoints; this generator creates only the requested standalone field.

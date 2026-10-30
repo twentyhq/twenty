@@ -3,12 +3,12 @@ import { type LocalCommandDefinition } from '@/catalog/types/command-definition.
 export const APP_ADD_COMMAND_DEFINITION: LocalCommandDefinition = {
   path: ['app', 'add'],
   description:
-    'Add an object, field, logic function or front component to an app',
+    'Add an object, field, logic function, front component or validation rule to an app',
   arguments: [
     {
       name: 'entity',
       description:
-        'object, field, logic-function or front-component (prompted when omitted)',
+        'object, field, logic-function, front-component or validation-rule (prompted when omitted)',
       required: false,
     },
   ],
@@ -53,7 +53,8 @@ export const APP_ADD_COMMAND_DEFINITION: LocalCommandDefinition = {
     },
     {
       flags: '--object <uuid>',
-      description: 'Parent object universal identifier (field)',
+      description:
+        'Parent object universal identifier (field or validation rule)',
     },
     { flags: '--description <text>', description: 'Field description' },
     {

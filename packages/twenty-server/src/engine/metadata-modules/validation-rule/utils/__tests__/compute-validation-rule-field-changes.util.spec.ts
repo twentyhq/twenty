@@ -9,6 +9,7 @@ const AMOUNT = {
   name: 'amount',
   type: FieldMetadataType.CURRENCY,
   isActive: true,
+  applicationUniversalIdentifier: 'application',
 };
 
 const STAGE = {
@@ -16,6 +17,7 @@ const STAGE = {
   name: 'stage',
   type: FieldMetadataType.SELECT,
   isActive: true,
+  applicationUniversalIdentifier: 'application',
 };
 
 const EXISTING_FIELD_BY_UNIVERSAL_IDENTIFIER = {
@@ -24,6 +26,31 @@ const EXISTING_FIELD_BY_UNIVERSAL_IDENTIFIER = {
 };
 
 describe('computeValidationRuleFieldChanges', () => {
+  it('should see a deactivation made through a workspace override', () => {
+    expect(
+      computeValidationRuleFieldChanges({
+        updatedFields: [
+          {
+            ...STAGE,
+            universalOverrides: {
+              'workspace-application': { isActive: false },
+            },
+          },
+        ],
+        deletedFields: [],
+        existingFieldByUniversalIdentifier:
+          EXISTING_FIELD_BY_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toEqual([
+      {
+        fieldUniversalIdentifier: STAGE.universalIdentifier,
+        newFieldName: null,
+        shouldDisableRulesReadingField: true,
+        isDeleted: false,
+      },
+    ]);
+  });
+
   it('should list every change of the migration, updates and deletions alike', () => {
     expect(
       computeValidationRuleFieldChanges({
@@ -86,6 +113,7 @@ describe('computeValidationRuleFieldChanges', () => {
             name: 'newField',
             type: FieldMetadataType.TEXT,
             isActive: true,
+            applicationUniversalIdentifier: 'application',
           },
         ],
         deletedFields: [],

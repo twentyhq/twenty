@@ -58,6 +58,7 @@ beforeEach(() => {
   vi.mocked(syncAppManifest).mockResolvedValue({
     actions: [],
     acknowledgedUniversalIdentifier: 'id',
+    warnings: [],
   });
 });
 

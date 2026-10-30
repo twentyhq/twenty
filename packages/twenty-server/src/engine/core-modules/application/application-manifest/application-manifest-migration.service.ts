@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
+import { addValidationRuleManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-validation-rule-manifests-to-flat-entity-maps-or-throw.util';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
 import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
@@ -186,6 +187,7 @@ export class ApplicationManifestMigrationService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
+    warnings: string[];
   }> {
     const now = new Date().toISOString();
 
@@ -256,6 +258,14 @@ export class ApplicationManifestMigrationService {
       isWorkspaceCustomApplication:
         ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
       connectedAccounts,
+      now,
+    });
+
+    const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      validationRules: manifest.validationRules ?? [],
+      ownerFlatApplication,
+      existingAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
       now,
     });
 
@@ -347,6 +357,7 @@ export class ApplicationManifestMigrationService {
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+      warnings,
     };
   }
 

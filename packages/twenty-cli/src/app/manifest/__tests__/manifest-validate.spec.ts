@@ -1150,6 +1150,74 @@ describe('manifestValidate', () => {
     );
   });
 
+  describe('validation rule validation', () => {
+    const objectUniversalIdentifier = '550e8400-e29b-41d4-a716-446655440100';
+    const rule = {
+      universalIdentifier: '550e8400-e29b-41d4-a716-446655440101',
+      objectUniversalIdentifier,
+      name: 'Has a score',
+      expression: 'score > 0',
+      message: 'Add a score',
+    };
+    const manifestWith = (validationRule: Partial<typeof rule>) => ({
+      ...validManifest,
+      objects: [
+        {
+          universalIdentifier: objectUniversalIdentifier,
+          nameSingular: 'ticket',
+          namePlural: 'tickets',
+          labelSingular: 'Ticket',
+          labelPlural: 'Tickets',
+          fields: [{ ...validField, name: 'score' }],
+        },
+      ] as unknown as Manifest['objects'],
+      validationRules: [{ ...rule, ...validationRule }],
+    });
+
+    it('accepts an expression reading a field of the object', () => {
+      expect(manifestValidate(manifestWith({})).errors).toEqual([]);
+    });
+
+    it('names the rule when it reads a field the object does not declare', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'scor > 0' })).errors,
+      ).toEqual([
+        'Validation rule "Has a score" has an invalid expression: Unknown field "scor"',
+      ]);
+    });
+
+    it('rejects an error field outside the object', () => {
+      expect(
+        manifestValidate(
+          manifestWith({
+            errorFieldUniversalIdentifier:
+              '550e8400-e29b-41d4-a716-446655440102',
+          } as Partial<typeof rule>),
+        ).errors,
+      ).toEqual([
+        expect.stringContaining("does not belong to the rule's object"),
+      ]);
+    });
+
+    it('only checks the syntax on an object outside the app', () => {
+      const outsideObject = '20202020-b374-4779-a561-80086cb2e17f';
+
+      expect(
+        manifestValidate(
+          manifestWith({ objectUniversalIdentifier: outsideObject }),
+        ).errors,
+      ).toEqual([]);
+      expect(
+        manifestValidate(
+          manifestWith({
+            objectUniversalIdentifier: outsideObject,
+            expression: 'score >',
+          }),
+        ).errors,
+      ).toEqual([expect.stringContaining('"Has a score"')]);
+    });
+  });
+
   describe('timeline activity type validation', () => {
     const sourceObjectUniversalIdentifier =
       '1a111111-1111-4111-8111-111111111111';
