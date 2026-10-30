@@ -323,4 +323,23 @@ export const StepAnimations: Story = {
     ],
   },
   render: () => <GettingStartedAnimationPreview />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Complete the current step' }),
+    );
+
+    const steps = await canvas.findByRole('navigation', {
+      name: 'Getting started steps',
+    });
+
+    await waitFor(
+      () =>
+        expect(
+          within(steps).getByRole('button', { name: 'Install an app' }),
+        ).toHaveAttribute('aria-current', 'step'),
+      { timeout: 3000 },
+    );
+  },
 };

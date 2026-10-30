@@ -2,7 +2,6 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
@@ -10,7 +9,6 @@ import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettin
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -110,54 +108,48 @@ export const GettingStartedImportAction = () => {
   };
 
   return (
-    <ContextStoreComponentInstanceContext.Provider
-      value={{ instanceId: GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID }}
+    <StyledColumn
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...getRootProps()}
     >
-      <SpreadsheetImportProvider>
-        <StyledColumn
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...getRootProps()}
-        >
-          <input
-            // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...getInputProps()}
-          />
-          <StyledUploadField>
-            <Text size="xs" color="light">{t`Spreadsheet`}</Text>
+      <input
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...getInputProps()}
+      />
+      <StyledUploadField>
+        <Text size="xs" color="light">{t`Spreadsheet`}</Text>
+        <Button
+          fullWidth
+          startIcon={<IconUpload />}
+          onClick={canImportWithAi ? open : openImportDialog}
+        >{t`Upload file`}</Button>
+        <StyledHelperRow>
+          <Text
+            size="sm"
+            color="light"
+          >{t`A CSV or Excel export from any tool`}</Text>
+          {canImportWithAi && (
             <Button
-              fullWidth
-              startIcon={<IconUpload />}
-              onClick={canImportWithAi ? open : openImportDialog}
-            >{t`Upload file`}</Button>
-            <StyledHelperRow>
-              <Text
-                size="sm"
-                color="light"
-              >{t`A CSV or Excel export from any tool`}</Text>
-              {canImportWithAi && (
-                <Button
-                  variant="link"
-                  onClick={openImportDialog}
-                >{t`Use the import wizard instead`}</Button>
-              )}
-            </StyledHelperRow>
-          </StyledUploadField>
-          <StyledExportRow>
-            <Text size="sm" color="tertiary">{t`Export a CSV from`}</Text>
-            {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
-              <Button
-                key={guide.name}
-                // An href Button renders its label only, so the anchor is passed in to keep the icon
-                render={<a href={guide.url} target="_blank" rel="noreferrer" />}
-                nativeButton={false}
-                endIcon={<IconExternalLink />}
-              >
-                {guide.name}
-              </Button>
-            ))}
-          </StyledExportRow>
-        </StyledColumn>
-      </SpreadsheetImportProvider>
-    </ContextStoreComponentInstanceContext.Provider>
+              variant="link"
+              onClick={openImportDialog}
+            >{t`Use the import wizard instead`}</Button>
+          )}
+        </StyledHelperRow>
+      </StyledUploadField>
+      <StyledExportRow>
+        <Text size="sm" color="tertiary">{t`Export a CSV from`}</Text>
+        {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
+          <Button
+            key={guide.name}
+            // An href Button renders its label only, so the anchor is passed in to keep the icon
+            render={<a href={guide.url} target="_blank" rel="noreferrer" />}
+            nativeButton={false}
+            endIcon={<IconExternalLink />}
+          >
+            {guide.name}
+          </Button>
+        ))}
+      </StyledExportRow>
+    </StyledColumn>
   );
 };

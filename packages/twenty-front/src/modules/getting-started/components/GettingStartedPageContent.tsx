@@ -1,8 +1,10 @@
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { GettingStartedAutoAdvanceEffect } from '@/getting-started/components/GettingStartedAutoAdvanceEffect';
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
+import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
 import { useGettingStartedJustCompletedStep } from '@/getting-started/hooks/useGettingStartedJustCompletedStep';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
@@ -10,6 +12,7 @@ import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettin
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
@@ -166,6 +169,12 @@ export const GettingStartedPageContent = () => {
           onAdvance={() => selectStep(nextStep)}
         />
       )}
+      {/* Mounted at page level so the import wizard survives the step advancing */}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID }}
+      >
+        <SpreadsheetImportProvider />
+      </ContextStoreComponentInstanceContext.Provider>
       <StyledContent>
         <StyledHeading>
           <StyledCountdown>
