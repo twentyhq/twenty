@@ -5,7 +5,7 @@ import {
   listMessageChannels,
 } from 'twenty-sdk/logic-function';
 
-import { deleteUnipileAccount } from 'src/unipile/utils/delete-unipile-account.util';
+import { deleteUnipileAccountOrThrow } from 'src/unipile/utils/delete-unipile-account-or-throw.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 
 export const removeLinkedinConnectionResources = async ({
@@ -22,7 +22,7 @@ export const removeLinkedinConnectionResources = async ({
   );
 
   if (isNonEmptyString(unipileAccountId)) {
-    await deleteUnipileAccount(unipileAccountId);
+    await deleteUnipileAccountOrThrow(unipileAccountId);
     await kv.delete(getUnipileAccountClaimKey(unipileAccountId), {
       scope: 'SERVER',
     });

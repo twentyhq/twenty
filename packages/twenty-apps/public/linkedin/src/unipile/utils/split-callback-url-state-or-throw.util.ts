@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const splitCallbackUrlState = (
+export const splitCallbackUrlStateOrThrow = (
   callbackUrl: string,
 ): { redirectUri: string; state: string } => {
   const url = new URL(callbackUrl);

@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { splitCallbackUrlState } from 'src/unipile/utils/split-callback-url-state.util';
+import { splitCallbackUrlStateOrThrow } from 'src/unipile/utils/split-callback-url-state-or-throw.util';
 
-describe('splitCallbackUrlState', () => {
+describe('splitCallbackUrlStateOrThrow', () => {
   it('moves the state out of the callback URL', () => {
     expect(
-      splitCallbackUrlState(
+      splitCallbackUrlStateOrThrow(
         'https://api.twenty.com/auth/apps/custom/callback?state=signed.state',
       ),
     ).toEqual({
@@ -16,7 +16,9 @@ describe('splitCallbackUrlState', () => {
 
   it('throws when the callback URL carries no state', () => {
     expect(() =>
-      splitCallbackUrlState('https://api.twenty.com/auth/apps/custom/callback'),
+      splitCallbackUrlStateOrThrow(
+        'https://api.twenty.com/auth/apps/custom/callback',
+      ),
     ).toThrow('Connection callback URL has no state');
   });
 });

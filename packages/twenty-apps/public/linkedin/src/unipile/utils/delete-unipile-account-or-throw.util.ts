@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
-export const deleteUnipileAccount = async (
+export const deleteUnipileAccountOrThrow = async (
   accountId: string,
 ): Promise<void> => {
   const { error, response } = await new UnipileAccounts().removeAccount({

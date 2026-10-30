@@ -4,7 +4,7 @@ const mocks = vi.hoisted(() => ({
   listMessageChannels: vi.fn(),
   deleteMessageChannel: vi.fn(),
   kvDelete: vi.fn(),
-  deleteUnipileAccount: vi.fn(),
+  deleteUnipileAccountOrThrow: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -13,8 +13,8 @@ vi.mock('twenty-sdk/logic-function', () => ({
   kv: { delete: mocks.kvDelete },
 }));
 
-vi.mock('src/unipile/utils/delete-unipile-account.util', () => ({
-  deleteUnipileAccount: mocks.deleteUnipileAccount,
+vi.mock('src/unipile/utils/delete-unipile-account-or-throw.util', () => ({
+  deleteUnipileAccountOrThrow: mocks.deleteUnipileAccountOrThrow,
 }));
 
 const { removeLinkedinConnectionResources } =
@@ -35,7 +35,9 @@ describe('removeLinkedinConnectionResources', () => {
     expect(mocks.deleteMessageChannel).toHaveBeenCalledExactlyOnceWith(
       'channel-id',
     );
-    expect(mocks.deleteUnipileAccount).toHaveBeenCalledExactlyOnceWith('acc_1');
+    expect(mocks.deleteUnipileAccountOrThrow).toHaveBeenCalledExactlyOnceWith(
+      'acc_1',
+    );
     expect(mocks.kvDelete).toHaveBeenCalledExactlyOnceWith(
       'unipile-account:acc_1',
       { scope: 'SERVER' },
@@ -51,7 +53,7 @@ describe('removeLinkedinConnectionResources', () => {
     expect(mocks.deleteMessageChannel).toHaveBeenCalledExactlyOnceWith(
       'channel-id',
     );
-    expect(mocks.deleteUnipileAccount).not.toHaveBeenCalled();
+    expect(mocks.deleteUnipileAccountOrThrow).not.toHaveBeenCalled();
     expect(mocks.kvDelete).not.toHaveBeenCalled();
   });
 });
