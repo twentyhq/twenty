@@ -17,6 +17,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   ENTERPRISE_JWT_DEV_PUBLIC_KEY,
+  ENTERPRISE_JWT_PREVIOUS_DEV_PUBLIC_KEY,
   ENTERPRISE_JWT_PUBLIC_KEY,
 } from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
 import {
@@ -734,7 +735,11 @@ export class EnterprisePlanService implements OnModuleInit {
       nodeEnv === NodeEnvironment.DEVELOPMENT ||
       nodeEnv === NodeEnvironment.TEST
     ) {
-      return [ENTERPRISE_JWT_PUBLIC_KEY, ENTERPRISE_JWT_DEV_PUBLIC_KEY];
+      return [
+        ENTERPRISE_JWT_PUBLIC_KEY,
+        ENTERPRISE_JWT_DEV_PUBLIC_KEY,
+        ENTERPRISE_JWT_PREVIOUS_DEV_PUBLIC_KEY,
+      ];
     }
 
     return [ENTERPRISE_JWT_PUBLIC_KEY];
