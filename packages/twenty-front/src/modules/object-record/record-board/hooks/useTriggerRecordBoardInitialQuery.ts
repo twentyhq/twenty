@@ -4,6 +4,7 @@ import { useRecordBoardQueryIdentifier } from '@/object-record/record-board/hook
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
+import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -50,6 +51,11 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
   const store = useStore();
 
+  const recordBoardQueryGenerationCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardQueryGenerationComponentState,
+    );
+
   const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
@@ -70,6 +76,10 @@ export const useTriggerRecordBoardInitialQuery = () => {
   const triggerRecordBoardInitialQuery = useCallback(
     async ({ shouldResetScroll }: { shouldResetScroll: boolean }) => {
       store.set(recordIndexRecordGroupsAreInInitialLoading, true);
+      store.set(
+        recordBoardQueryGenerationCallbackState,
+        store.get(recordBoardQueryGenerationCallbackState) + 1,
+      );
 
       const cleanStateBeforeExit = () => {
         store.set(recordIndexRecordGroupsAreInInitialLoading, false);
@@ -162,6 +172,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
     },
     [
       recordIndexRecordGroupsAreInInitialLoading,
+      recordBoardQueryGenerationCallbackState,
       store,
       executeRecordIndexGroupsRecordsLazyGroupBy,
       objectMetadataItem,

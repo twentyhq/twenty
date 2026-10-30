@@ -73,7 +73,6 @@ const BoardHeaderExample = () => (
         value={{
           columnDefinition: group,
           columnId: group.id,
-          recordIds: [],
           columnIndex: 0,
         }}
       >

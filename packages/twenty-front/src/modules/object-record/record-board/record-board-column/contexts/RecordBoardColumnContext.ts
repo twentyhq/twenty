@@ -5,7 +5,6 @@ import { type RecordGroupDefinition } from '@/object-record/record-group/types/R
 type RecordBoardColumnContextProps = {
   columnDefinition: RecordGroupDefinition;
   columnId: string;
-  recordIds: string[];
   columnIndex: number;
 };
 

@@ -6,14 +6,14 @@ import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecord
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
+import { draggedRecordIdsComponentState } from '@/object-record/record-drag/states/draggedRecordIdsComponentState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -44,9 +44,8 @@ export const RecordBoardCardDragOverlayContent = ({
     columnId,
   );
 
-  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-    columnId,
+  const draggedRecordIds = useAtomComponentStateValue(
+    draggedRecordIdsComponentState,
   );
 
   const isRecordReadOnly = useIsRecordReadOnly({
@@ -63,7 +62,6 @@ export const RecordBoardCardDragOverlayContent = ({
       value={{
         columnDefinition: recordGroupDefinition,
         columnId,
-        recordIds: recordIndexRecordIdsByGroup,
         columnIndex,
       }}
     >
@@ -74,6 +72,7 @@ export const RecordBoardCardDragOverlayContent = ({
           rowIndex,
           columnIndex,
           isDragOverlay: true,
+          isMultiDragOverlay: draggedRecordIds.length > 1,
         }}
       >
         <RecordBoardCard />

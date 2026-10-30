@@ -2,11 +2,14 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
+import { RECORD_BOARD_FETCH_MORE_RETRY_BASE_DELAY_IN_MILLISECONDS } from '@/object-record/record-board/constants/RecordBoardFetchMoreRetryBaseDelayInMilliseconds';
+import { RECORD_BOARD_FETCH_MORE_RETRY_MAX_DELAY_IN_MILLISECONDS } from '@/object-record/record-board/constants/RecordBoardFetchMoreRetryMaxDelayInMilliseconds';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
+import { recordBoardFetchMoreFailureCountComponentState } from '@/object-record/record-board/states/recordBoardFetchMoreFailureCountComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
+import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -50,6 +53,16 @@ export const useTriggerRecordBoardFetchMore = () => {
   const recordBoardCurrentGroupByQueryOffsetCallbackState =
     useAtomComponentStateCallbackState(
       recordBoardCurrentGroupByQueryOffsetComponentState,
+    );
+
+  const recordBoardQueryGenerationCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardQueryGenerationComponentState,
+    );
+
+  const recordBoardFetchMoreFailureCountCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardFetchMoreFailureCountComponentState,
     );
 
   const { executeRecordIndexGroupsRecordsLazyGroupBy } =
@@ -107,6 +120,10 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordGroupValues: recordGroupValuesThatShouldBeFetched,
     });
 
+    const queryGenerationAtRequest = store.get(
+      recordBoardQueryGenerationCallbackState,
+    );
+
     const recordIndexGroupsRecordsGroupByLazyQueryResult =
       await executeRecordIndexGroupsRecordsLazyGroupBy({
         variables: {
@@ -118,12 +135,37 @@ export const useTriggerRecordBoardFetchMore = () => {
         },
       }).catch(() => null);
 
-    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+    // An initial query ran meanwhile and replaced every column: this page is stale
+    if (
+      store.get(recordBoardQueryGenerationCallbackState) !==
+      queryGenerationAtRequest
+    ) {
       cleanStateBeforeExit();
 
       return;
     }
 
+    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+      const failureCount =
+        store.get(recordBoardFetchMoreFailureCountCallbackState) + 1;
+
+      store.set(recordBoardFetchMoreFailureCountCallbackState, failureCount);
+
+      // Holding the fetching flag through the backoff keeps the in-view trigger from retrying in a loop
+      await sleep(
+        Math.min(
+          RECORD_BOARD_FETCH_MORE_RETRY_MAX_DELAY_IN_MILLISECONDS,
+          RECORD_BOARD_FETCH_MORE_RETRY_BASE_DELAY_IN_MILLISECONDS *
+            2 ** (failureCount - 1),
+        ),
+      );
+
+      cleanStateBeforeExit();
+
+      return;
+    }
+
+    store.set(recordBoardFetchMoreFailureCountCallbackState, 0);
     store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
 
     const queryFieldName =
@@ -177,8 +219,12 @@ export const useTriggerRecordBoardFetchMore = () => {
         recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
       ) as string[];
 
-      const newRecordIds = currentRecordIds.concat(
-        newRecords.map((record) => record.id),
+      // Offset pages re-rank server-side, so a card moved locally can come back on a later page
+      const newRecordIds = Array.from(
+        new Set([
+          ...currentRecordIds,
+          ...newRecords.map((record) => record.id),
+        ]),
       );
 
       store.set(
@@ -188,24 +234,11 @@ export const useTriggerRecordBoardFetchMore = () => {
 
       upsertRecordsInStore({ partialRecords: newRecords });
 
-      if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-      } else {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          true,
-        );
-      }
-
-      await sleep(
-        RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
+      store.set(
+        recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+          recordGroupDefinition.id,
+        ),
+        newRecords.length >= RECORD_BOARD_QUERY_PAGE_SIZE,
       );
     }
 
@@ -219,6 +252,8 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordIndexRecordIdsByGroupCallbackState,
     recordBoardIsFetchingMore,
     recordBoardCurrentGroupByQueryOffsetCallbackState,
+    recordBoardQueryGenerationCallbackState,
+    recordBoardFetchMoreFailureCountCallbackState,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
     combinedFilters,
     recordIndexGroupFieldMetadataItem,
