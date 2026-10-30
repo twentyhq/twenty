@@ -39,12 +39,20 @@ export const createLinkedinPerson = async ({
     });
 
     if (isDefined(createPerson)) {
+      console.log(
+        `[linkedin] created person ${createPerson.id} for ${handle} (slug ${slug}, requested id ${id})`,
+      );
+
       return createPerson.id;
     }
   } catch (error) {
     const [existingPersonId] = await findPersonIdsByLinkedinHandle(handle);
 
     if (isDefined(existingPersonId)) {
+      console.log(
+        `[linkedin] reused person ${existingPersonId} for ${handle} after create failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
       return existingPersonId;
     }
 

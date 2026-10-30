@@ -15,7 +15,12 @@ export const matchLinkedinParticipantPersonId = async ({
   isNameMatchingEnabled: boolean;
 }): Promise<string | undefined> => {
   const handle = buildLinkedinProfileHandle(user);
-  const [linkedPersonId] = await findPersonIdsByLinkedinHandle(handle);
+  const linkedPersonIds = await findPersonIdsByLinkedinHandle(handle);
+  const [linkedPersonId] = linkedPersonIds;
+
+  console.log(
+    `[linkedin] ${handle}: ${linkedPersonIds.length} person(s) linked${isDefined(linkedPersonId) ? ` (${linkedPersonIds.join(', ')})` : ''}`,
+  );
 
   if (isDefined(linkedPersonId) || !isNameMatchingEnabled) {
     return linkedPersonId;
