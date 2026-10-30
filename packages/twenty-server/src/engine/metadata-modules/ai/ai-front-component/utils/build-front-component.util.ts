@@ -7,12 +7,10 @@ import {
   unwrapDefineFrontComponentToDirectExport,
 } from 'twenty-shared/front-component-build';
 
-import {
-  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-  FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX,
-} from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-shared-dependencies-banner-prefix.constant';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';

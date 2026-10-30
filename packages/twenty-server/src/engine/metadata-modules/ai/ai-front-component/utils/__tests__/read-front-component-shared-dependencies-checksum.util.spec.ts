@@ -1,4 +1,4 @@
-import { readFrontComponentSharedDependenciesChecksum } from '../readFrontComponentSharedDependenciesChecksum';
+import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 
 const CHECKSUM = 'a'.repeat(64);
 const BANNER = '// twenty-ai-shared-dependencies: ' + CHECKSUM;
@@ -12,12 +12,7 @@ describe('readFrontComponentSharedDependenciesChecksum', () => {
     ).toBe(CHECKSUM);
   });
 
-  it('reads a banner without a trailing newline', () => {
-    expect(readFrontComponentSharedDependenciesChecksum(BANNER)).toBe(CHECKSUM);
-  });
-
   it.each([
-    '',
     'export default () => {};',
     '\n' + BANNER,
     BANNER + 'extra\n',

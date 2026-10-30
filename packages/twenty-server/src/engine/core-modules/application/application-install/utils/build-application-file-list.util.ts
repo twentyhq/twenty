@@ -68,11 +68,18 @@ export const buildApplicationFileList = (
     manifest.application.frontComponentSharedDependencies;
 
   if (isDefined(sharedDependencies)) {
-    files.push({
-      relativePath: sharedDependencies.builtPath,
-      fileFolder: FileFolder.BuiltFrontComponent,
-      isRequired: true,
-    });
+    files.push(
+      {
+        relativePath: sharedDependencies.builtPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
+        isRequired: true,
+      },
+      {
+        relativePath: `${sharedDependencies.builtPath}.json`,
+        fileFolder: FileFolder.Dependencies,
+        isRequired: false,
+      },
+    );
   }
 
   for (const publicAsset of manifest.publicAssets ?? []) {

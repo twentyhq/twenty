@@ -6,10 +6,7 @@ export const getFingerprintedRestUrl = ({
   id,
   checksum,
 }: {
-  resource:
-    | 'front-components'
-    | 'front-component-shared-dependencies'
-    | 'front-component-shared-dependencies/bundles';
+  resource: 'front-components' | 'front-component-shared-dependencies';
   id: string;
   checksum?: string;
 }): string =>

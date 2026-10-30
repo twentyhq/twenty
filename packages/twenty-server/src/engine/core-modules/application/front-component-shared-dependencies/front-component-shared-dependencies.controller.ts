@@ -12,7 +12,6 @@ import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
@@ -61,11 +60,7 @@ export class FrontComponentSharedDependenciesController {
     private readonly frontComponentSharedDependenciesService: FrontComponentSharedDependenciesService,
   ) {}
 
-  @Get([
-    ':applicationId',
-    ':applicationId/:cacheKey',
-    'bundles/:applicationId/:checksum',
-  ])
+  @Get([':applicationId', ':applicationId/:cacheKey'])
   @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async getBuiltSharedDependencies(
     @Res() res: Response,
@@ -76,23 +71,12 @@ export class FrontComponentSharedDependenciesController {
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('cacheKey') cacheKey?: string,
-    @Param('checksum') checksumParameter?: string,
   ) {
-    const checksum = extractChecksumFromCacheKey(checksumParameter);
-
-    if (isDefined(checksumParameter) && !isDefined(checksum)) {
-      throw new ApplicationException(
-        'Invalid shared dependencies checksum',
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
-
     const { fileResponse, frontComponentSharedDependenciesChecksum } =
       await this.frontComponentSharedDependenciesService
         .getBuiltSharedDependenciesPresignedUrlOrStream({
           applicationId,
           workspaceId: workspace.id,
-          checksum,
         })
         .catch((error) => {
           if (
@@ -129,7 +113,7 @@ export class FrontComponentSharedDependenciesController {
     res.setHeader(
       'Cache-Control',
       getSharedDependenciesBundleCacheControl({
-        requestedChecksum: checksum ?? extractChecksumFromCacheKey(cacheKey),
+        requestedChecksum: extractChecksumFromCacheKey(cacheKey),
         frontComponentSharedDependenciesChecksum,
       }),
     );
