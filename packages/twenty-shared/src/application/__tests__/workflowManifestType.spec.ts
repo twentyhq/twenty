@@ -480,6 +480,7 @@ describe('workflow manifest database event trigger', () => {
               value: 'open',
               stepFilterGroupId: 'group',
               fieldMetadataUniversalIdentifier: FIELD_ID,
+              isFullRecord: false,
             },
           ],
         },
@@ -589,6 +590,54 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest state stored by the workflow builder', () => {
+  const { universalIdentifier: _universalIdentifier, ...triggerWithoutId } =
+    workflow.version.trigger;
+
+  const withTrigger = (trigger: Record<string, unknown>) => ({
+    ...workflow,
+    version: { ...workflow.version, trigger },
+  });
+
+  it('accepts a trigger without a universal identifier, with its name, position and output schema', () => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({
+          ...triggerWithoutId,
+          name: 'Launch manually',
+          position: { x: 120, y: 26 },
+          outputSchema: {},
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('accepts a null position for a trigger or step the builder placed nowhere', () => {
+    const [firstStep, ...otherSteps] = workflow.version.steps;
+
+    expect(
+      workflowManifestSchema.safeParse({
+        ...workflow,
+        version: {
+          trigger: { ...workflow.version.trigger, position: null },
+          steps: [{ ...firstStep, position: null }, ...otherSteps],
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each([
+    { problem: 'an empty name', trigger: { name: '' } },
+    { problem: 'a position without coordinates', trigger: { position: {} } },
+  ])('rejects $problem', ({ trigger }) => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({ ...workflow.version.trigger, ...trigger }),
+      ).success,
+    ).toBe(false);
   });
 });
 

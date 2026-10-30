@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" は \"{fieldName}\" のサブフィールドではあ
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "（{currentCreditsByPeriodDisplay} クレジット/月）"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "（{currentCreditsByPeriodDisplay} クレジット/年）"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -907,11 +907,6 @@ msgstr "{morphRelationCount} 個のオブジェクト"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, other {{formattedNewlyEarnedCredits}の無料クレジットを獲得しました}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, other {審査済みアプリケーションに一致するものはありません。審査未済みアプリケーションを # 件利用できます。}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1058,22 +1053,22 @@ msgstr "{scopeLabel} — インスタンスのデフォルトは{defaultText}で
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "シートによる{seatCreditsDisplay}、毎月リセット"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "シートによる{seatCreditsDisplay}、毎月リセット · クレジットパックによる{packageCreditsDisplay}、繰り越し"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "座席分の{seatCreditsDisplay}、毎年リセット"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "座席分の{seatCreditsDisplay}、毎年リセット · クレジットパック分の{packageCreditsDisplay}、繰り越し"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1215,6 +1210,11 @@ msgstr "{unitCount, plural, one {週} other {週}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {年} other {年}}"
 
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr "{unlistedCount, plural, other {掲載済みのアプリケーションに一致するものはありません。利用可能な未掲載のアプリケーションが # 件あります。}}"
+
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
 msgid "{unresolvedCount, plural, one {# other object} other {# other objects}}"
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# アイテ�
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, other {{workspaceCreditsPerSeatPerMonthDisplay} クレジット/月}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3245,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "すべてのタスクに対応しました。勢いを維持しましょう。"
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "このワークスペースに現在インストールされているすべてのアプリ"
 
@@ -3329,11 +3329,6 @@ msgstr "SSOバイパス許可を持つユーザーのためにGoogleを使った
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "CSVファイルからデータをインポートすることを許可"
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "インストールを許可"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3723,6 +3718,11 @@ msgstr "アポストロフィとドット"
 msgid "App"
 msgstr "アプリ"
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr "アプリの設定を読み込めませんでした。接続を確認して、もう一度お試しください。"
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3800,11 +3800,6 @@ msgstr "アプリケーションが正常にインストールされました。
 msgid "Application Logs"
 msgstr "アプリケーションログ"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "このアプリケーションはマーケットプレイスに掲載されていません。直接リンクで共有されています。"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3844,10 +3839,10 @@ msgstr "アプリケーション変数"
 msgid "Applications"
 msgstr "アプリケーション"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "以下のアプリは審査済みではありません。ご自身の責任でご利用ください。"
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr "以下のアプリケーションはTwentyによる審査を受けていません。自己責任でご利用ください。"
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -3915,6 +3910,7 @@ msgid "Apps"
 msgstr "アプリ"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3924,6 +3920,11 @@ msgstr "アプリ"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
 msgstr "アプリの設定"
+
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr ""
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -6941,6 +6942,12 @@ msgstr "このワークスペースに接続"
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP で接続"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr "{0}と接続"
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8035,7 +8042,7 @@ msgstr "クレジットの上限に達しました。ワークフロー、AI、�
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "クレジットパック"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -9708,11 +9715,6 @@ msgstr "モデルの表示名"
 msgid "Display text on multiple lines"
 msgstr "複数行でテキストを表示"
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "このアプリを NPM パッケージ一覧に表示する"
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10114,6 +10116,11 @@ msgstr "各メンバーには AI 利用枠が付与され、ワークスペー�
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "各スライスの意味"
+
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr "以前"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -14612,7 +14619,7 @@ msgstr "含まれるもの"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "座席ごとに含まれるクレジット"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14861,7 +14868,7 @@ msgid "Installed"
 msgstr "インストール済み"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr "インストール済みのアプリ"
 
@@ -16278,8 +16285,14 @@ msgstr "チェックボックス付きリスト"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "掲載中"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr "マーケットプレイスに掲載中"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16329,6 +16342,11 @@ msgstr "さらに読み込む"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
 msgstr "さらにチャットを読み込む"
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
+msgstr "会話をさらに読み込む"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -16464,6 +16482,7 @@ msgstr "ロード中…"
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "読み込み中…"
@@ -16909,10 +16928,10 @@ msgstr "すべて完了としてマーク"
 msgid "Mark as favourite"
 msgstr "お気に入りに追加"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "このアプリをレビューおよび承認済みとしてマークする"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr "このアプリをレビュー済みとしてマークし、マーケットプレイスに表示する"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17366,7 +17385,7 @@ msgid "Missing calendar permission."
 msgstr "カレンダー権限がありません。"
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr "設定がありません"
 
@@ -19391,7 +19410,7 @@ msgid "Not configured"
 msgstr "設定されていません"
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr "未接続"
 
@@ -21998,8 +22017,8 @@ msgid "Reconnect"
 msgstr "再接続"
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr "再接続が必要"
@@ -22346,6 +22365,11 @@ msgstr "拒否"
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "拒否されました"
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "関連レコードパス"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -25194,6 +25218,7 @@ msgstr "受信トレイを表示"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr "表示を減らす"
 
@@ -25203,6 +25228,7 @@ msgid "Show logs"
 msgstr "ログを表示"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25229,6 +25255,11 @@ msgstr "レコードのタイムラインにこのアクティビティタイプ
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
 msgstr "このオブジェクトのレコードをコマンドメニュー（{0}）に表示します。"
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr "未掲載のアプリを表示"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27320,11 +27351,11 @@ msgstr "このアプリケーションはマーケットプレイスで利用で
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "このアプリケーションはこのワークスペースにインストールされていません。アンインストールされたか、リンクが正しくない可能性があります。"
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "このアプリケーションはTwentyによる審査を受けていません。ご自身の責任でご利用ください。"
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr "このアプリケーションはマーケットプレイスに掲載されておらず、Twentyによるレビューも受けていません。ご自身の責任でご利用ください。"
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -27659,6 +27690,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "このビューは、アクセスできないオブジェクト \"{0}\" に対して {usageLabel} を使用しています。"
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29091,6 +29123,7 @@ msgstr "更新"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29947,17 +29980,6 @@ msgstr "縦棒チャート"
 msgid "Very High"
 msgstr "非常に高い"
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "審査済み"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "審査済みのみ"
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30346,7 +30368,6 @@ msgstr "メンバーのデモを見る"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "現在このアプリで問題が発生しており、修正作業中は動作が低下する可能性があります。"
 
@@ -31329,12 +31350,6 @@ msgstr "このオブジェクトにアクセスする権限がありません。
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "この設定ページにアクセスする権限がありません。"
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "{0} の接続はまだありません。"
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

@@ -10,6 +10,9 @@ See the [app tooling overview](../README.md) for package boundaries.
 
 ## Contract
 
+- An existing application's local identifier selects the target. With no local definition, the command fetches `currentWorkspace.workspaceCustomApplication.universalIdentifier`. Apply baseline recording still queries only the workspace ID.
+- Outside an app, pull offers to create a local project and install its dependencies before reconciliation. Noninteractive creation requires `--path` and `--yes`. The initializer omits demo entities, and unrelated nonempty directories are refused.
+- Missing custom applications fail before project creation. The worker still checks that the local identity matches the export before writing.
 - Source scanning stays inside the disposable CLI worker so configs containing functions are never serialized through IPC. Only the server export and report cross that boundary. Selected credentials are removed from the worker environment. App source is trusted developer code, not sandboxed code.
 - The wire/export and baseline boundary check identity and envelope fields, not every metadata collection. `toPullManifest` is the single explicit assertion into the typed writers, preserving their trust in the server schema. Missing/null object and field collections are consumed with `?? []`, like the other collections. Malformed entity contents can still make reconciliation fail before writing. We do not duplicate the server's schema.
 - The baseline file is an envelope whose `manifest` member is an `ExportedManifest`. Reconciliation walks arrays generically without maintaining a second collection list. Unrecognized collections and non-array metadata survive; protected or unreconciled definitions retain their prior baseline entries.

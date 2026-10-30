@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-28 14:17\n"
+"PO-Revision-Date: 2026-10-29 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3675,7 +3675,7 @@ msgstr "Amplía más allá de las pantallas del CRM"
 #. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "Amplía Twenty con aplicaciones: grabación de llamadas, enriquecimiento, Slack, Discord, Linear y más. Instala cualquier aplicación en tu espacio de trabajo de CRM de código abierto con un solo clic."
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
@@ -3685,7 +3685,7 @@ msgstr "Amplía tu CRM"
 #. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "Amplía tu CRM con aplicaciones de Twenty y su comunidad. Cada aplicación aquí es revisada por nuestro equipo en cuanto a seguridad y calidad: instala una con un clic y estará activa en tu espacio de trabajo."
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4801,7 +4801,7 @@ msgstr "Instalar"
 #. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
-msgstr ""
+msgstr "Instala grabación de llamadas, enriquecimiento, Slack, Linear y más: todas las aplicaciones revisadas por Twenty."
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7056,7 +7056,7 @@ msgstr "Ingresos (YTD)"
 #. js-lingui-id: mO7Tm0
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
-msgstr ""
+msgstr "Aplicaciones revisadas para tu espacio de trabajo"
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -8740,7 +8740,7 @@ msgstr "Twenty | CRM de código abierto n.º 1"
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
-msgstr ""
+msgstr "Aplicaciones de Twenty — Aplicaciones revisadas para el CRM de código abierto"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts

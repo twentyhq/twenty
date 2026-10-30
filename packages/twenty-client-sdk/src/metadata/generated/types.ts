@@ -395,6 +395,9 @@ export default {
             "lastReadAt": [
                 210
             ],
+            "mentionsResolvedAt": [
+                209
+            ],
             "snoozedUntil": [
                 210
             ],
@@ -14222,6 +14225,9 @@ export default {
             ],
             "shouldHideEmptyGroups": [
                 4
+            ],
+            "translations": [
+                362
             ],
             "type": [
                 650

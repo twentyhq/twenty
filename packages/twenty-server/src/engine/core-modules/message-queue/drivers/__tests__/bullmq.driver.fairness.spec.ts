@@ -14,7 +14,7 @@ import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/serv
 describe('BullMQDriver fairness scenarios', () => {
   beforeAll(silenceDriverLogs);
 
-  describe('S1: A enqueues a burst of 10 jobs, then B enqueues 1 job (group keys deduced from workspaceId)', () => {
+  describe('S1: A enqueues a burst of 10 jobs, then B enqueues 1 job (core jobs, keyed by workspace)', () => {
     const enqueue = async (harness: FairnessHarness) => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'A', count: 10 }),
@@ -140,58 +140,37 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueue({
         label: 'W1a',
         workspaceId: 'W1',
-        groupKeys: [
-          buildWorkspaceGroupKey('W1'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W1b',
         workspaceId: 'W1',
-        groupKeys: [
-          buildWorkspaceGroupKey('W1'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W2a',
         workspaceId: 'W2',
-        groupKeys: [
-          buildWorkspaceGroupKey('W2'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W2b',
         workspaceId: 'W2',
-        groupKeys: [
-          buildWorkspaceGroupKey('W2'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W3a',
         workspaceId: 'W3',
-        groupKeys: [
-          buildWorkspaceGroupKey('W3'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W3b',
         workspaceId: 'W3',
-        groupKeys: [
-          buildWorkspaceGroupKey('W3'),
-          buildApplicationGroupKey('H'),
-        ],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W4',
         workspaceId: 'W4',
-        groupKeys: [
-          buildWorkspaceGroupKey('W4'),
-          buildApplicationGroupKey('X'),
-        ],
+        applicationUniversalIdentifier: 'X',
       });
     };
 
@@ -365,18 +344,12 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'P', count: 4 }),
         workspaceId: 'WP',
-        groupKeys: [
-          buildWorkspaceGroupKey('WP'),
-          buildApplicationGroupKey('P'),
-        ],
+        applicationUniversalIdentifier: 'P',
       });
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'Q', count: 4 }),
         workspaceId: 'WQ',
-        groupKeys: [
-          buildWorkspaceGroupKey('WQ'),
-          buildApplicationGroupKey('Q'),
-        ],
+        applicationUniversalIdentifier: 'Q',
       });
     };
 
@@ -410,10 +383,6 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S7b: application P weighs 2; WP bulk-enqueues 4 jobs of P, then WP enqueues 1 more job of P and WQ enqueues 1 job of Q', () => {
-    const groupKeysOfP = [
-      buildWorkspaceGroupKey('WP'),
-      buildApplicationGroupKey('P'),
-    ];
     const enqueue = async (harness: FairnessHarness) => {
       await harness.setWeight({
         groupKey: buildApplicationGroupKey('P'),
@@ -422,20 +391,17 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueueBulk({
         labels: buildLabels({ prefix: 'P', count: 4 }),
         workspaceId: 'WP',
-        groupKeys: groupKeysOfP,
+        applicationUniversalIdentifier: 'P',
       });
       await harness.enqueue({
         label: 'P5',
         workspaceId: 'WP',
-        groupKeys: groupKeysOfP,
+        applicationUniversalIdentifier: 'P',
       });
       await harness.enqueue({
         label: 'Q1',
         workspaceId: 'WQ',
-        groupKeys: [
-          buildWorkspaceGroupKey('WQ'),
-          buildApplicationGroupKey('Q'),
-        ],
+        applicationUniversalIdentifier: 'Q',
       });
     };
 
@@ -475,21 +441,18 @@ describe('BullMQDriver fairness scenarios', () => {
         await harness.enqueue({
           label,
           workspaceId,
-          groupKeys: [
-            buildWorkspaceGroupKey(workspaceId),
-            buildApplicationGroupKey('H'),
-          ],
+          applicationUniversalIdentifier: 'H',
         });
       }
       await harness.enqueue({
         label: 'W_H',
         workspaceId: 'W',
-        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('H')],
+        applicationUniversalIdentifier: 'H',
       });
       await harness.enqueue({
         label: 'W_Q',
         workspaceId: 'W',
-        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('Q')],
+        applicationUniversalIdentifier: 'Q',
       });
     };
 
@@ -517,10 +480,6 @@ describe('BullMQDriver fairness scenarios', () => {
   });
 
   describe('S7d: application P weighs 2; X enqueues 6 jobs of P, W bulk-enqueues 4 jobs of P then 1 job of application Q, X enqueues 1 more job of P', () => {
-    const groupKeysOfP = (workspaceId: string) => [
-      buildWorkspaceGroupKey(workspaceId),
-      buildApplicationGroupKey('P'),
-    ];
     const enqueue = async (harness: FairnessHarness) => {
       await harness.setWeight({
         groupKey: buildApplicationGroupKey('P'),
@@ -529,22 +488,22 @@ describe('BullMQDriver fairness scenarios', () => {
       await harness.enqueueMany({
         labels: buildLabels({ prefix: 'P', count: 6 }),
         workspaceId: 'X',
-        groupKeys: groupKeysOfP('X'),
+        applicationUniversalIdentifier: 'P',
       });
       await harness.enqueueBulk({
         labels: buildLabels({ prefix: 'B', count: 4 }),
         workspaceId: 'W',
-        groupKeys: groupKeysOfP('W'),
+        applicationUniversalIdentifier: 'P',
       });
       await harness.enqueue({
         label: 'Q1',
         workspaceId: 'W',
-        groupKeys: [buildWorkspaceGroupKey('W'), buildApplicationGroupKey('Q')],
+        applicationUniversalIdentifier: 'Q',
       });
       await harness.enqueue({
         label: 'P7',
         workspaceId: 'X',
-        groupKeys: groupKeysOfP('X'),
+        applicationUniversalIdentifier: 'P',
       });
     };
 

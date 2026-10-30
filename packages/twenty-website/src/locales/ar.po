@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-28 14:17\n"
+"PO-Revision-Date: 2026-10-29 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -3675,7 +3675,7 @@ msgstr "التوسّع إلى ما بعد شاشات الـCRM"
 #. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "وسّع إمكانات Twenty بتطبيقات — تسجيل المكالمات، والإثراء، وSlack، وDiscord، وLinear والمزيد. ثبّت أي تطبيق على مساحة عمل CRM مفتوح المصدر لديك بنقرة واحدة."
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
@@ -3685,7 +3685,7 @@ msgstr "وسّع إمكانات CRM لديك"
 #. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "وسّع إمكانات CRM لديك باستخدام تطبيقات من Twenty ومجتمعه. يراجع فريقنا كل تطبيق هنا من حيث الأمان والجودة — ثبّت واحدًا بنقرة واحدة وسيصبح فعّالًا في مساحة عملك."
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4801,7 +4801,7 @@ msgstr "تثبيت"
 #. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
-msgstr ""
+msgstr "ثبّت تسجيل المكالمات، والإثراء، وSlack، وLinear والمزيد — يراجع Twenty كل تطبيق."
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7056,7 +7056,7 @@ msgstr "الإيرادات (منذ بداية السنة)"
 #. js-lingui-id: mO7Tm0
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
-msgstr ""
+msgstr "تطبيقات مُراجَعة لمساحة عملك"
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -8740,7 +8740,7 @@ msgstr "Twenty | CRM مفتوح المصدر رقم 1"
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
-msgstr ""
+msgstr "تطبيقات Twenty — تطبيقات مُراجَعة لـ CRM مفتوح المصدر"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts

@@ -12,10 +12,14 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  type BaseOutputSchemaV2,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
+import { type StoredWorkflowNode } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
@@ -813,11 +817,351 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         throw new Error('Expected the synced version to have a trigger');
       }
 
-      Object.assign(trigger, { name: 'Renamed in the builder' });
+      Object.assign(trigger, { propertyNoManifestFieldHolds: true });
 
       expect(exportWorkflow(synced)).toEqual({
         reason: 'workflow changed in the workflow builder',
       });
+    });
+  });
+});
+
+describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow builder', () => {
+  const DECLARED_OUTPUT_SCHEMA: BaseOutputSchemaV2 = {
+    ok: { isLeaf: true, type: 'boolean', label: 'ok', value: true },
+  };
+  const builderReferences: WorkflowManifestReferences = {
+    ...references,
+    logicFunctionOutputSchemaByUniversalIdentifier: new Map([
+      [FUNCTION_ID, DECLARED_OUTPUT_SCHEMA],
+    ]),
+  };
+  const BUILDER_ERROR_HANDLING_OPTIONS = {
+    continueOnFailure: { value: false },
+    retryOnFailure: { value: 0 },
+  };
+
+  const recordCreatedTrigger = (
+    overrides: Partial<StoredWorkflowNode> = {},
+  ): StoredWorkflowNode => ({
+    name: 'Record is created',
+    type: 'DATABASE_EVENT',
+    position: { x: 0, y: 0 },
+    settings: { eventName: 'ticket.created', outputSchema: {} },
+    nextStepIds: [STEP_ID],
+    ...overrides,
+  });
+
+  const createRecordStep = (
+    overrides: Partial<StoredWorkflowNode> = {},
+  ): StoredWorkflowNode => ({
+    id: STEP_ID,
+    name: 'Create Record',
+    type: 'CREATE_RECORD',
+    valid: false,
+    position: { x: 0, y: 180 },
+    nextStepIds: [],
+    settings: {
+      outputSchema: {},
+      errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+      input: { objectName: 'ticket', objectRecord: { name: 'Ticket' } },
+    },
+    ...overrides,
+  });
+
+  const exportBuilderVersion = ({
+    triggers,
+    steps,
+  }: {
+    triggers: StoredWorkflowNode[];
+    steps: StoredWorkflowNode[];
+  }) => {
+    const synced = syncWorkflow(buildWorkflow({}));
+    // The entity types its jsonb as the current builder writes it; rows also hold older shapes
+    const flatWorkflowVersion = {
+      ...synced.flatWorkflowVersion,
+      triggers,
+      steps,
+    } as FlatWorkflowVersion;
+    const result = fromFlatWorkflowToWorkflowManifest({
+      flatWorkflow: synced.flatWorkflow,
+      flatWorkflowVersion,
+      references: builderReferences,
+    });
+
+    if ('reason' in result) {
+      throw new Error(result.reason);
+    }
+
+    const applied = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest: result.manifest,
+      applicationUniversalIdentifier: APPLICATION_ID,
+      existingWorkflow: synced.flatWorkflow,
+      activeVersion: flatWorkflowVersion,
+      isWorkspaceCustomApplication: true,
+      now: '2026-10-27T00:00:00.000Z',
+      ...builderReferences,
+    });
+
+    // apply keeps the active version as it is, so it produces no action
+    expect(applied.flatUniversalWorkflowVersion?.id).toBe(
+      flatWorkflowVersion.id,
+    );
+
+    return result.manifest.version;
+  };
+
+  it('exports a trigger without a universal identifier, and apply writes none', () => {
+    const { trigger } = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [createRecordStep()],
+    });
+
+    expect(trigger).toEqual({
+      type: 'DATABASE_EVENT',
+      nextStepIds: [STEP_ID],
+      settings: { objectUniversalIdentifier: OBJECT_ID, action: 'created' },
+    });
+
+    const reproduced = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
+      manifest: buildWorkflow({ trigger }),
+      applicationUniversalIdentifier: APPLICATION_ID,
+      now: '2026-10-27T00:00:00.000Z',
+      ...references,
+    });
+
+    expect(
+      reproduced.flatUniversalWorkflowVersion?.triggers?.[0],
+    ).not.toHaveProperty('universalIdentifier');
+  });
+
+  it.each([
+    { name: 'Launch manually', type: 'MANUAL', settings: { outputSchema: {} } },
+    {
+      name: 'Every day at 06:40 UTC',
+      type: 'CRON',
+      settings: { type: 'CUSTOM', pattern: '40 6 * * *', outputSchema: {} },
+    },
+    {
+      name: 'Company created',
+      type: 'DATABASE_EVENT',
+      settings: { eventName: 'ticket.created', outputSchema: {} },
+    },
+  ])(
+    'exports the builder name "$name" of a $type trigger',
+    (builderTrigger) => {
+      const { trigger } = exportBuilderVersion({
+        triggers: [recordCreatedTrigger(builderTrigger)],
+        steps: [createRecordStep()],
+      });
+
+      expect(trigger.name).toBe(builderTrigger.name);
+    },
+  );
+
+  it('exports a moved trigger position, and a missing one as null', () => {
+    expect(
+      exportBuilderVersion({
+        triggers: [recordCreatedTrigger({ position: { x: 120, y: 26 } })],
+        steps: [createRecordStep()],
+      }).trigger.position,
+    ).toEqual({ x: 120, y: 26 });
+    expect(
+      exportBuilderVersion({
+        triggers: [recordCreatedTrigger({ position: undefined })],
+        steps: [createRecordStep()],
+      }).trigger.position,
+    ).toBeNull();
+  });
+
+  it('exports the output schema the builder wrote for a POST webhook', () => {
+    const outputSchema = {
+      message: {
+        icon: 'IconVariable',
+        isLeaf: true,
+        label: 'message',
+        type: 'string',
+        value: 'Workflow was started',
+      },
+    };
+
+    const { trigger } = exportBuilderVersion({
+      triggers: [
+        recordCreatedTrigger({
+          name: 'Webhook',
+          type: 'WEBHOOK',
+          settings: {
+            outputSchema,
+            httpMethod: 'POST',
+            expectedBody: { message: 'Workflow was started' },
+            expectedOutputSchema: { message: 'Workflow was started' },
+            authentication: null,
+          },
+        }),
+      ],
+      steps: [createRecordStep()],
+    });
+
+    expect(trigger.outputSchema).toEqual(outputSchema);
+  });
+
+  it('exports an empty step output schema the builder kept over the declared one', () => {
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Enrich the company',
+          type: 'LOGIC_FUNCTION',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: {
+              logicFunctionId: 'logic-function-id',
+              logicFunctionInput: {
+                records: ['{{trigger.properties.after.id}}'],
+              },
+            },
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step.outputSchema).toEqual({});
+  });
+
+  it('exports a step without a position as null', () => {
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [createRecordStep({ position: undefined })],
+    }).steps;
+
+    expect(step.position).toBeNull();
+  });
+
+  it.each([
+    { description: 'the valid flag the builder leaves false', overrides: {} },
+    { description: 'null next steps', overrides: { nextStepIds: null } },
+    {
+      description: 'missing next steps',
+      overrides: { nextStepIds: undefined },
+    },
+    {
+      description: 'Apollo typenames',
+      overrides: {
+        __typename: 'WorkflowAction',
+        position: { x: 0, y: 180, __typename: 'WorkflowStepPosition' },
+      },
+    },
+    {
+      description: 'a retry count stored as a boolean',
+      overrides: {
+        settings: {
+          outputSchema: {},
+          errorHandlingOptions: {
+            retryOnFailure: { value: false },
+            continueOnFailure: { value: false },
+          },
+          input: { objectName: 'ticket', objectRecord: { name: 'Ticket' } },
+        },
+      },
+    },
+  ])('treats $description as the manifest default', ({ overrides }) => {
+    expect(
+      exportBuilderVersion({
+        triggers: [recordCreatedTrigger()],
+        steps: [createRecordStep(overrides)],
+      }).steps,
+    ).toEqual([
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Create Record',
+        type: 'CREATE_RECORD',
+        nextStepIds: [],
+        input: { ...RECORD, objectRecord: { name: 'Ticket' } },
+      },
+    ]);
+  });
+
+  it('ignores the objectType the builder copies from a manual trigger availability', () => {
+    const { trigger } = exportBuilderVersion({
+      triggers: [
+        recordCreatedTrigger({
+          name: 'Launch manually',
+          type: 'MANUAL',
+          settings: {
+            objectType: 'ticket',
+            availability: {
+              type: 'SINGLE_RECORD',
+              objectNameSingular: 'ticket',
+            },
+            outputSchema: {},
+            icon: 'IconHandMove',
+            isPinned: false,
+          },
+        }),
+      ],
+      steps: [createRecordStep()],
+    });
+
+    expect(trigger.settings).toEqual({
+      availability: {
+        type: 'SINGLE_RECORD',
+        objectUniversalIdentifier: OBJECT_ID,
+      },
+      icon: 'IconHandMove',
+      isPinned: false,
+    });
+  });
+
+  it('exports the isFullRecord flag the builder stores on step filters', () => {
+    const builderStepFilter = {
+      id: 'filter',
+      type: 'SELECT',
+      value: '["HIGH"]',
+      operand: 'IS',
+      isFullRecord: false,
+      stepOutputKey: '{{trigger.properties.after.priority}}',
+      fieldMetadataId: 'priority-field-id',
+      stepFilterGroupId: 'group',
+      positionInStepFilterGroup: 0,
+    };
+    const filter = {
+      stepFilterGroups: [
+        { id: 'group', logicalOperator: 'AND', positionInStepFilterGroup: 0 },
+      ],
+      stepFilters: [builderStepFilter],
+    };
+
+    const { trigger, steps } = exportBuilderVersion({
+      triggers: [
+        recordCreatedTrigger({
+          settings: { eventName: 'ticket.created', outputSchema: {}, filter },
+        }),
+      ],
+      steps: [
+        createRecordStep({
+          name: 'Filter',
+          type: 'FILTER',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: filter,
+          },
+        }),
+      ],
+    });
+    const { fieldMetadataId: _fieldMetadataId, ...stepFilterWithoutId } =
+      builderStepFilter;
+    const manifestStepFilter = {
+      ...stepFilterWithoutId,
+      fieldMetadataUniversalIdentifier: PRIORITY_FIELD_ID,
+    };
+
+    expect(trigger.settings).toMatchObject({
+      filter: { stepFilters: [manifestStepFilter] },
+    });
+    expect(steps[0].input).toMatchObject({
+      stepFilters: [manifestStepFilter],
     });
   });
 });

@@ -268,6 +268,8 @@ import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceComma
 import { UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793278636737-unlist-unreviewed-application-registrations';
 import { PurgeSoftDeletedAgentsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793272266091-purge-soft-deleted-agents';
 import { AddGeolocationToUserSessionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793274494191-add-geolocation-to-user-session';
+import { AddWorkspaceChatAssistantModesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793280483473-add-workspace-chat-assistant-modes';
+import { AddRelatedRecordPathTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793291361887-add-related-record-path-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -538,4 +540,6 @@ export const INSTANCE_COMMANDS = [
   AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand,
   PurgeSoftDeletedAgentsSlowInstanceCommand,
   AddGeolocationToUserSessionFastInstanceCommand,
+  AddWorkspaceChatAssistantModesFastInstanceCommand,
+  AddRelatedRecordPathTableFastInstanceCommand,
 ];

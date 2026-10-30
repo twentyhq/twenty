@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-28 14:17\n"
+"PO-Revision-Date: 2026-10-29 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3675,7 +3675,7 @@ msgstr "CRM 画面の外まで拡張"
 #. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "通話録音、エンリッチメント、Slack、Discord、Linear などのアプリで Twenty を拡張しましょう。オープンソースの CRM ワークスペースに、任意のアプリをワンクリックでインストールできます。"
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
@@ -3685,7 +3685,7 @@ msgstr "CRM を拡張"
 #. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "Twenty とそのコミュニティのアプリで CRM を拡張しましょう。ここにあるすべてのアプリは、セキュリティと品質について当社チームが審査しています。ワンクリックでインストールすれば、すぐにワークスペースで利用できます。"
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4801,7 +4801,7 @@ msgstr "インストール"
 #. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
-msgstr ""
+msgstr "通話録音、エンリッチメント、Slack、Linear などをインストールしましょう。すべてのアプリは Twenty が審査しています。"
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7056,7 +7056,7 @@ msgstr "売上（年初来）"
 #. js-lingui-id: mO7Tm0
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
-msgstr ""
+msgstr "ワークスペース向けの審査済みアプリ"
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -8740,7 +8740,7 @@ msgstr "Twenty | #1 Open Source CRM"
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
-msgstr ""
+msgstr "Twenty Apps — オープンソース CRM 向けの審査済みアプリ"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts

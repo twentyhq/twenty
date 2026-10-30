@@ -1,0 +1,2 @@
+export const ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME =
+  '2.54.0_AddWorkspaceChatAssistantModesFastInstanceCommand_1793280483473';

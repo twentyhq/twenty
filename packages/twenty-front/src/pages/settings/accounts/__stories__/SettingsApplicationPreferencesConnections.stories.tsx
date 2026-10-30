@@ -32,9 +32,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsApplicationPreferences,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/applications/:applicationId',
+    routePath: '/settings/app-preferences/:applicationId',
     routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
-    additionalRoutes: ['/settings/accounts'],
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
@@ -264,21 +264,35 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
   },
 };
 
-export const ProviderWithoutConnectionsSaysSo: Story = {
+export const ProviderWithoutConnectionsOffersAConnectCard: Story = {
   parameters: {
     msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const connectCard = await canvas.findByText(
+      'Connect with Linear',
+      undefined,
+      { timeout: 3000 },
+    );
+
+    expect(connectCard).toBeVisible();
     expect(
-      await canvas.findByText('You have no Linear connection yet.', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeVisible();
-    expect(
-      canvas.getByRole('button', { name: 'Add connection' }),
-    ).toBeVisible();
+      canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(connectCard);
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
+    );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      redirectLocation: LINEAR_GENERAL_TAB_REDIRECT_LOCATION,
+    });
   },
 };
 
@@ -298,9 +312,7 @@ export const UnconfiguredProviderWithoutConnectionsShowsOnlyTheBanner: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(
-      canvas.queryByText('You have no Linear connection yet.'),
-    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Connect with Linear')).not.toBeInTheDocument();
   },
 };
 
@@ -319,9 +331,7 @@ export const LoadErrorOffersRetryInsteadOfTheEmptyState: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(
-      canvas.queryByText('You have no Linear connection yet.'),
-    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Connect with Linear')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Add connection' }),
     ).not.toBeInTheDocument();
