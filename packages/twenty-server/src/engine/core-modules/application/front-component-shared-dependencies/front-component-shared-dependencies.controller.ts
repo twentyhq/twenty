@@ -12,7 +12,6 @@ import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';

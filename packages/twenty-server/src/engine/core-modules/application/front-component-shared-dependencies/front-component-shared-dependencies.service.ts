@@ -39,9 +39,7 @@ export class FrontComponentSharedDependenciesService {
         workspaceId,
       });
 
-    const builtPath = application.frontComponentSharedDependenciesBuiltPath;
-
-    if (!isDefined(builtPath)) {
+    if (!isDefined(application.frontComponentSharedDependenciesBuiltPath)) {
       throw new ApplicationException(
         `Application "${applicationId}" does not declare shared dependencies`,
         ApplicationExceptionCode.ENTITY_NOT_FOUND,
@@ -52,7 +50,7 @@ export class FrontComponentSharedDependenciesService {
       workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
-      resourcePath: builtPath,
+      resourcePath: application.frontComponentSharedDependenciesBuiltPath,
     };
 
     const presignedUrl = await this.fileStorageService.getPresignedUrl({
