@@ -125,6 +125,8 @@ const routeObjects: WorkspaceRouteObject[] = [
     element: null,
     handle: { workspaceSurfaces: MAIN_AND_SIDE_PANEL },
   },
+  { path: AppPath.AgentIndexPage, element: null },
+  { path: AppPath.AgentShowPage, element: null },
   {
     path: `/${AppPath.Settings}`,
     element: <Outlet />,
@@ -239,6 +241,21 @@ describe('RouteContextStoreProvider', () => {
     );
     expect(routeContextStore).not.toHaveAttribute('data-view-id');
   });
+
+  it.each(['/agents', '/agent/agent-id'])(
+    'clears the object on %s so the previous page object does not linger',
+    (agentPath) => {
+      renderAt(agentPath, <MainSurfaceRoutes />);
+
+      const routeContextStore = screen.getByTestId('route-context-store');
+
+      expect(routeContextStore).not.toHaveAttribute('data-object-metadata-id');
+      expect(routeContextStore).toHaveAttribute(
+        'data-is-record-index-page',
+        'false',
+      );
+    },
+  );
 
   it('resolves the object on settings object pages', () => {
     renderAt(

@@ -71,6 +71,9 @@ export const RouteContextStoreProvider = () => {
     isAiChatPage ||
     isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
+  const isCoreAgentPage =
+    isMatchingLocation(location, AppPath.AgentIndexPage) ||
+    isMatchingLocation(location, AppPath.AgentShowPage);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
@@ -137,7 +140,8 @@ export const RouteContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
-      isSettingsPage) &&
+      isSettingsPage ||
+      isCoreAgentPage) &&
     metadataStore.status === 'up-to-date';
 
   if (!shouldComputeContextStore) {
