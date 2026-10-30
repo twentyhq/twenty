@@ -5,11 +5,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-column-definition.constant';
-import { ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-index-definition.constant';
-import { ACCESS_GROUP_IDS_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-ids-column-definition.constant';
-import { buildAccessGroupIdsIndexDefinition } from 'src/engine/metadata-modules/access-group/utils/build-access-group-ids-index-definition.util';
-import { isAccessGroupObject } from 'src/engine/metadata-modules/access-group/utils/is-access-group-object.util';
+import { getAccessGroupSchemaDefinitionsForObject } from 'src/engine/metadata-modules/access-group/utils/get-access-group-schema-definitions-for-object.util';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -178,29 +174,23 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
 
-    const isAccessGroup = isAccessGroupObject(flatObjectMetadata);
+    const { columnDefinition, indexDefinition } =
+      getAccessGroupSchemaDefinitionsForObject({
+        objectMetadata: flatObjectMetadata,
+      });
 
     await this.workspaceSchemaManagerService.tableManager.createTable({
       queryRunner,
       schemaName,
       tableName,
-      columnDefinitions: [
-        ...columnDefinitions,
-        isAccessGroup
-          ? ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION
-          : ACCESS_GROUP_IDS_COLUMN_DEFINITION,
-      ],
+      columnDefinitions: [...columnDefinitions, columnDefinition],
     });
 
     await this.workspaceSchemaManagerService.indexManager.createIndex({
       queryRunner,
       schemaName,
       tableName,
-      index: isAccessGroup
-        ? ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION
-        : buildAccessGroupIdsIndexDefinition({
-            objectMetadataId: flatObjectMetadata.id,
-          }),
+      index: indexDefinition,
     });
   }
 }
