@@ -8,7 +8,7 @@ import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
-  margin: ${themeCssVariables.spacing[1]};
+  margin: ${themeCssVariables.spacing['0.5']};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     position: relative;
