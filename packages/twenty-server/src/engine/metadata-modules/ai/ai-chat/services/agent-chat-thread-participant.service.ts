@@ -74,7 +74,7 @@ const buildMentionResolutionQuery = ({
   `UPDATE ${participantTable} AS participant
    SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    WHERE "threadId" = $1 AND "workspaceMemberId" = $2
-     AND ${HAS_UNRESOLVED_MENTION}
+     AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
    RETURNING *`;
 
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
