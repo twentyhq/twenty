@@ -36,11 +36,13 @@ export const fillDateGaps = ({
 
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Temporal.PlainDate[] = [];
+  const notSetGroups: GroupByRawResult[] = [];
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
 
     if (!isDefined(dateValue)) {
+      notSetGroups.push(item);
       continue;
     }
 
@@ -85,7 +87,7 @@ export const fillDateGaps = ({
     };
   });
 
-  return { data: filledData, wasTruncated };
+  return { data: [...filledData, ...notSetGroups], wasTruncated };
 };
 
 type FillDateGapsTwoDimensionalParams = {
@@ -112,12 +114,14 @@ export const fillDateGapsTwoDimensional = ({
 
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Temporal.PlainDate[] = [];
+  const notSetGroups: GroupByRawResult[] = [];
   const uniqueSecondDimensionValues = new Set<unknown>();
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
 
     if (!isDefined(dateValue)) {
+      notSetGroups.push(item);
       continue;
     }
 
@@ -171,5 +175,5 @@ export const fillDateGapsTwoDimensional = ({
     }),
   );
 
-  return { data: filledData, wasTruncated };
+  return { data: [...filledData, ...notSetGroups], wasTruncated };
 };
