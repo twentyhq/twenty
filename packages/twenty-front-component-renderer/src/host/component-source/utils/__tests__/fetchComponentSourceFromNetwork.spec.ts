@@ -1,3 +1,5 @@
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
+
 import { fetchComponentSourceFromNetwork } from '@/host/component-source/utils/fetchComponentSourceFromNetwork';
 
 const COMPONENT_URL =
@@ -73,7 +75,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
-      headers: undefined,
+      headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
       credentials: 'include',
     });
   });
@@ -104,6 +106,41 @@ describe('fetchComponentSourceFromNetwork', () => {
       credentials: 'same-origin',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
+    });
+  });
+
+  it('does not forward the session opt-in to a presigned handoff', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        createFakeResponse({
+          contentType: 'application/json',
+          json: { url: PRESIGNED_URL },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createFakeResponse({ body: 'presigned bundle source' }),
+      );
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer token' },
+      credentials: 'include',
+    });
+
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(
+      1,
+      CACHE_BUSTED_COMPONENT_URL,
+      {
+        headers: {
+          Authorization: 'Bearer token',
+          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
+        },
+        credentials: 'include',
+      },
+    );
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
       credentials: 'same-origin',
     });
   });

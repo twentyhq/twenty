@@ -118,4 +118,17 @@ describe('convertHtmlToText', () => {
       'Real text kept',
     );
   });
+
+  it.each([
+    ['nested divs', '<div>'.repeat(5000) + 'Deep text' + '</div>'.repeat(5000)],
+    [
+      'nested tables',
+      '<table><tr><td>'.repeat(2000) +
+        'Deep text' +
+        '</td></tr></table>'.repeat(2000),
+    ],
+    ['unclosed font tags', '<font>'.repeat(5000) + 'Deep text'],
+  ])('should keep the text of %s without overflowing the stack', (_, html) => {
+    expect(convertHtmlToText(html)).toBe('Deep text');
+  });
 });

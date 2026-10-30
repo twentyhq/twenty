@@ -32,6 +32,7 @@ export const useApplicationOverview = ({
   const marketplaceDetail = data?.findMarketplaceAppDetail;
 
   return {
+    marketplaceDetail,
     description: getApplicationDescriptionSummary(
       marketplaceDetail?.description ?? resolvedDescription,
     ),

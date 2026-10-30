@@ -46,7 +46,7 @@ jobs:
             .source_sha == $sha and (.dry_run | type == "boolean")
             and (.version | type == "string" and test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)*$"))
             and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
-            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
+            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty"
               or .packages == "twenty-ui" or .packages == "twenty")
             and ((.stage_only // false) | type == "boolean")
             and (.staging_version == null)
@@ -194,7 +194,7 @@ jobs:
                 sleep 15
               done
             fi
-            if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then
+            if [[ "$package" != twenty ]]; then
               published_libraries="$published_libraries $package"
             fi
           done

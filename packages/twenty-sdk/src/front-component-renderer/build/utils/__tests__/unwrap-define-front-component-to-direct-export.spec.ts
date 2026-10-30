@@ -58,9 +58,11 @@ type RenderedElement = {
 const loadRenderer = ({
   render,
   useEffect = () => {},
+  onCreateRoot = () => {},
 }: {
   render: (element: RenderedElement) => void;
   useEffect?: (effect: () => void) => void;
+  onCreateRoot?: (options: { onUncaughtError: (error: Error) => void }) => void;
 }) => {
   const source = unwrapDefineFrontComponentToDirectExport(`
     import { defineFrontComponent } from 'twenty-sdk/define';
@@ -77,7 +79,15 @@ const loadRenderer = ({
       return { useEffect };
     }
     if (specifier === 'react-dom/client') {
-      return { createRoot: () => ({ render }) };
+      return {
+        createRoot: (
+          _container: object,
+          options: { onUncaughtError: (error: Error) => void },
+        ) => {
+          onCreateRoot(options);
+          return { render };
+        },
+      };
     }
     if (specifier === 'react/jsx-runtime') {
       return {
@@ -102,6 +112,7 @@ const loadRenderer = ({
 
 describe('unwrapDefineFrontComponentToDirectExport', () => {
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -203,6 +214,58 @@ export const createSummarizeRecordEffect = () => () => null;
     await expect(renderer.default({})).rejects.toThrow(error);
     expect(vi.getTimerCount()).toBe(0);
   });
+
+  it('reports an initial React error only through the render promise', async () => {
+    vi.useFakeTimers();
+    const queueMicrotask = vi.spyOn(globalThis, 'queueMicrotask');
+    const error = new Error('Initial React render failed');
+    const renderer = loadRenderer({
+      render: () => {},
+      onCreateRoot: ({ onUncaughtError }) => onUncaughtError(error),
+    });
+
+    await expect(renderer.default({})).rejects.toThrow(error);
+
+    expect(queueMicrotask).not.toHaveBeenCalled();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each(['commit', 'timeout'])(
+    'reports later React errors after the initial %s',
+    async (settlement) => {
+      vi.useFakeTimers();
+      const effects: (() => void)[] = [];
+      const rootOptions = { onUncaughtError: (_error: Error) => {} };
+      const renderer = loadRenderer({
+        render: (element) => element.component(element.props),
+        useEffect: (effect) => effects.push(effect),
+        onCreateRoot: (options) => {
+          rootOptions.onUncaughtError = options.onUncaughtError;
+        },
+      });
+      const result = renderer.default({});
+      if (settlement === 'commit') {
+        effects.forEach((effect) => effect());
+        await result;
+      } else {
+        const rejection = expect(result).rejects.toThrow(
+          'Front component initial render timed out.',
+        );
+        await vi.advanceTimersByTimeAsync(30_000);
+        await rejection;
+      }
+
+      const queueMicrotask = vi
+        .spyOn(globalThis, 'queueMicrotask')
+        .mockImplementation(() => {});
+      const error = new Error('Later React render failed');
+      rootOptions.onUncaughtError(error);
+
+      expect(queueMicrotask).toHaveBeenCalledTimes(1);
+      expect(queueMicrotask.mock.calls[0][0]).toThrow(error);
+      expect(vi.getTimerCount()).toBe(0);
+    },
+  );
 
   it('rejects when the first render never commits', async () => {
     vi.useFakeTimers();
