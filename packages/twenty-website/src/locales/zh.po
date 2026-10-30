@@ -545,6 +545,16 @@ msgstr ""
 "11 个权限\n"
 "组"
 
+#. js-lingui-id: J00CPN
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "12 months"
+msgstr ""
+
+#. js-lingui-id: HeDrOu
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "12k newsletter subscribers"
+msgstr ""
+
 #. js-lingui-id: 2szX5S
 #: src/partner-application/partner-application-copy.ts
 msgid "150"
@@ -603,6 +613,11 @@ msgstr "20 × Sales Enterprise（$105）"
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Hub Enterprise ($150)"
 msgstr "20 × Sales Hub Enterprise（$150）"
+
+#. js-lingui-id: ewzpPG
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "20%"
+msgstr ""
 
 #. js-lingui-id: FKcV/y
 #: src/case-studies/case-study-catalog.ts
@@ -671,6 +686,16 @@ msgstr "个人 AI 使用量增加 5 倍"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "6 workflows"
 msgstr "6 个工作流"
+
+#. js-lingui-id: kTcFUK
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "60 days"
+msgstr ""
+
+#. js-lingui-id: 13iqbE
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "60 days after the click. If the visitor starts a Cloud Organization or Enterprise plan within that time, the commission is yours. If they later click another partner's link, that partner gets the credit."
+msgstr ""
 
 #. js-lingui-id: fHxYPM
 #: src/case-studies/case-study-catalog.ts
@@ -1098,6 +1123,11 @@ msgstr "高级设置"
 msgid "Advisory & Discovery"
 msgstr "咨询与需求分析"
 
+#. js-lingui-id: JChg3y
+#: src/sections/affiliate-program/AffiliateApply.tsx
+msgid "Affiliate program application"
+msgstr ""
+
 #. js-lingui-id: QjSFuI
 #: src/partner-application/data/partner-country-options.ts
 msgid "Afghanistan 🇦🇫"
@@ -1276,6 +1306,11 @@ msgstr "阿尔及利亚 🇩🇿"
 msgid "All"
 msgstr "全部"
 
+#. js-lingui-id: lw6Fro
+#: src/sections/affiliate-program/AffiliateIntegratorStrip.tsx
+msgid "Already a Twenty *integration partner?*"
+msgstr ""
+
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
 #: src/case-studies/case-study-stories.ts
@@ -1404,6 +1439,16 @@ msgstr "应用日志"
 msgid "App not found — Twenty"
 msgstr "未找到应用 — Twenty"
 
+#. js-lingui-id: xHy9tF
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Application received"
+msgstr ""
+
+#. js-lingui-id: 9Zcd7g
+#: src/sections/affiliate-program/AffiliateHero.tsx
+msgid "Apply now"
+msgstr ""
+
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
 msgid ""
@@ -1509,6 +1554,16 @@ msgstr "附件会在其专属页面中打开并提供内联预览，附件表格
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Attachments without the chaos."
 msgstr "附件不再混乱。"
+
+#. js-lingui-id: qAjvYv
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Audience size must be 200 characters or fewer."
+msgstr ""
+
+#. js-lingui-id: wfUKha
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Audience size or clients"
+msgstr ""
 
 #. js-lingui-id: y2W2Hg
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -1927,6 +1982,11 @@ msgstr "开发者可以通过代码扩展 Twenty 吗？"
 msgid "Can I migrate from Salesforce or HubSpot?"
 msgstr "我可以从 Salesforce 或 HubSpot 迁移过来吗？"
 
+#. js-lingui-id: jaiWEf
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "Can I refer my own company?"
+msgstr ""
+
 #. js-lingui-id: wsjgUI
 #: src/sections/compare/compare-data.ts
 msgid "Can you see the bill coming?"
@@ -2204,10 +2264,16 @@ msgstr "商业许可（无 AGPL 义务）"
 msgid "Commercials"
 msgstr "商务条款"
 
+#. js-lingui-id: /XN91V
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Communities"
+msgstr ""
+
 #. js-lingui-id: chL5IG
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/menu/components/MenuSocial.tsx
+#: src/affiliate-application/data/affiliate-partner-type-options.ts
 msgid "Community"
 msgstr "社区"
 
@@ -2306,6 +2372,16 @@ msgstr "通过 API 连接"
 msgid "Connecting the rest of your stack"
 msgstr "连接技术栈中的其他系统"
 
+#. js-lingui-id: 7eLE71
+#: src/affiliate-application/data/affiliate-partner-type-options.ts
+msgid "Consultant or agency"
+msgstr ""
+
+#. js-lingui-id: m6jsHY
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Consultants and agencies"
+msgstr ""
+
 #. js-lingui-id: cfAG43
 #: src/case-studies/case-study-catalog.ts
 msgid "Consulting"
@@ -2320,6 +2396,16 @@ msgstr "联系"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Contacts & Companies"
 msgstr "联系人与公司"
+
+#. js-lingui-id: uwPOvg
+#: src/affiliate-application/data/affiliate-partner-type-options.ts
+msgid "Content creator"
+msgstr ""
+
+#. js-lingui-id: iTgJXO
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Content creators"
+msgstr ""
 
 #. js-lingui-id: 24qVhV
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2436,6 +2522,11 @@ msgstr "哥斯达黎加 🇨🇷"
 msgid "Costs down more than *90%*"
 msgstr "成本降低超过 *90%*"
 
+#. js-lingui-id: JNCzPW
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Country"
+msgstr ""
+
 #. js-lingui-id: cRA2/z
 #: src/partner-application/partner-application-copy.ts
 msgid "Country *"
@@ -2445,6 +2536,11 @@ msgstr "国家 *"
 #: src/client-brief/client-brief-copy.ts
 msgid "Country / region"
 msgstr "国家 / 地区"
+
+#. js-lingui-id: kEAJQu
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Country must be 100 characters or fewer."
+msgstr ""
 
 #. js-lingui-id: kCu+Rq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3266,6 +3362,23 @@ msgstr "每位成员都有自己的 AI 额度，每周一更新。一个 AI 任�
 msgid "Each workspace now gets a dedicated sub-domain for a more secure experience. And soon you will be able to set your own domain."
 msgstr "现在，每个工作区都会获得一个专用子域名，以提供更安全的体验。很快，你还可以设置自己的域名。"
 
+#. js-lingui-id: /JghV3
+#: src/platform/routing/static-website-routes.ts
+msgid "Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud. Apply to the affiliate program for creators, communities, consultants and tech partners."
+msgstr ""
+
+#. js-lingui-id: 53K9UN
+#: src/sections/affiliate-program/AffiliateHero.tsx
+msgid ""
+"Earn 20% on every team\n"
+"*you bring to Twenty*"
+msgstr ""
+
+#. js-lingui-id: aFCF6n
+#: src/sections/faq/AffiliateProgramFaq.tsx
+msgid "Earning with *Twenty*"
+msgstr ""
+
 #. js-lingui-id: eBNtzO
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier favorites"
@@ -3355,6 +3468,11 @@ msgstr "Elevate Consulting 使用 Twenty 作为 API 骨干，连接计费、Team
 #: src/case-studies/case-study-stories.ts
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Elevate 的 CEO 对 Twenty 印象深刻，以至于在内部搭建尚未完成前就开始向客户推荐。团队正在探索将 Twenty 引入客户项目，作为其咨询实践的一部分，包括用作为特定运营需求量身打造的自定义产品的后端。"
+
+#. js-lingui-id: O3oNi5
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Email"
+msgstr ""
 
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3717,6 +3835,11 @@ msgstr "公平合理"
 msgid "Familiar, modern interface"
 msgstr "熟悉、现代的界面"
 
+#. js-lingui-id: /lDBHm
+#: src/sections/faq/AffiliateProgramFaq.tsx
+msgid "FAQ"
+msgstr ""
+
 #. js-lingui-id: gKNP7S
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Farsi"
@@ -4076,6 +4199,11 @@ msgstr "从文档到*开放 API*"
 msgid "From documents to open APIs"
 msgstr "从文档到开放 API"
 
+#. js-lingui-id: rGsM2c
+#: src/sections/affiliate-program/AffiliateProgramTerms.tsx
+msgid "From link *to payout*"
+msgstr ""
+
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
 msgid ""
@@ -4124,6 +4252,11 @@ msgstr "全面自定义和自定义应用"
 #: src/sections/compare/compare-data.ts
 msgid "Full customization included"
 msgstr "包含全面自定义"
+
+#. js-lingui-id: 0W0FHK
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Full name"
+msgstr ""
 
 #. js-lingui-id: YZ7Q3Z
 #: src/case-studies/case-study-catalog.ts
@@ -4494,10 +4627,20 @@ msgstr "匹配如何运作？"
 msgid "How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack."
 msgstr "Elevate Consulting 如何摆脱文档与表格，将 Twenty 作为 API 连接的 CRM 放在技术栈的中心。"
 
+#. js-lingui-id: 8AULTO
+#: src/sections/affiliate-program/AffiliateProgramTerms.tsx
+msgid "How it works"
+msgstr ""
+
 #. js-lingui-id: OIwpKt
 #: src/sections/faq/faq.data.ts
 msgid "How long does it take to get started?"
 msgstr "要开始使用需要多长时间？"
+
+#. js-lingui-id: ckYNoy
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "How long does my link work?"
+msgstr ""
 
 #. js-lingui-id: FopmmJ
 #: src/sections/compare/compare-data.ts
@@ -4533,6 +4676,16 @@ msgstr "Twenty 如何收集、使用并保护你的数据——我们的隐私�
 msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 msgstr "W3villa Technologies 如何在 Twenty 上交付 W3Grads——一款面向机构的 AI 模拟面试平台——并将其作为运营支柱。"
 
+#. js-lingui-id: 5DnZXR
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "How you plan to promote Twenty"
+msgstr ""
+
+#. js-lingui-id: lCvjWk
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "How you plan to promote Twenty must be 2,000 characters or fewer."
+msgstr ""
+
 #. js-lingui-id: slTOKD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "HTML in workflow emails"
@@ -4540,6 +4693,7 @@ msgstr "工作流电子邮件中的 HTML"
 
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "https://"
 msgstr "https://"
 
@@ -4557,6 +4711,16 @@ msgstr "HubSpot 将自定义对象锁在其 $150/席位 的 Enterprise 套餐后
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
 msgstr "匈牙利 🇭🇺"
+
+#. js-lingui-id: Del3a/
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "I agree to the affiliate program terms sent with my referral link"
+msgstr ""
+
+#. js-lingui-id: GghmRz
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "I'm already a Twenty integration partner"
+msgstr ""
 
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
@@ -4977,6 +5141,11 @@ msgstr "加入我们的生态系统，通过开源基础组件帮助企业掌控
 msgid "Join our growing partner ecosystem"
 msgstr "加入我们不断壮大的合作伙伴生态"
 
+#. js-lingui-id: 2OqRUN
+#: src/sections/affiliate-program/AffiliateIntegratorStrip.tsx
+msgid "Join the program"
+msgstr ""
+
 #. js-lingui-id: m/pXki
 #: src/sections/customers-catalog-signoff/CustomersCatalogSignoff.tsx
 #: src/sections/case-study-detail/CustomersCaseStudySignoff.tsx
@@ -5370,6 +5539,16 @@ msgstr "卢森堡 🇱🇺"
 msgid "Madagascar 🇲🇬"
 msgstr "马达加斯加 🇲🇬"
 
+#. js-lingui-id: +bVhvT
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Main channel (URL)"
+msgstr ""
+
+#. js-lingui-id: KpUYnU
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Main channel must be a full URL starting with https://"
+msgstr ""
+
 #. js-lingui-id: /hmUGb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Maintenance mode"
@@ -5597,6 +5776,7 @@ msgstr "黑山 🇲🇪"
 
 #. js-lingui-id: +8Nek/
 #: src/sections/pricing-plans/BillingToggle.tsx
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
 msgid "Monthly"
 msgstr "按月"
 
@@ -5609,6 +5789,11 @@ msgstr "工作区每月共享的积分，用于工作流、AI 智能体和应用
 #: src/sections/compare/compare-data.ts
 msgid "Monthly or yearly, cancel anytime"
 msgstr "按月或按年计费，随时可取消"
+
+#. js-lingui-id: Gie65U
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "Monthly, once your balance reaches $50. Each commission is released 30 days after the customer pays, to cover refunds. Once paid, it's yours."
+msgstr ""
 
 #. js-lingui-id: W87SCX
 #: src/sections/pricing-plans/plans-data.ts
@@ -5948,6 +6133,11 @@ msgstr "不收费。申请和列入目录均免费。您可自行设定费率，
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
 msgstr "不会。直接在 Settings 中构建自定义对象、字段、视图和无代码工作流。无限制，无额外费用。"
 
+#. js-lingui-id: xLHsWO
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "No. Self-referrals, your own workspace, and existing Twenty customers don't earn commission."
+msgstr ""
+
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
 msgid ""
@@ -6026,6 +6216,16 @@ msgstr "仪表盘数量"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Objects, folders, links and pages now have colored icons in the sidebar, headers and pickers."
 msgstr "对象、文件夹、链接和页面现在在侧边栏、标题和选择器中均显示彩色图标。"
+
+#. js-lingui-id: 888xhe
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "of credit after each click on your link"
+msgstr ""
+
+#. js-lingui-id: AFCzcp
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "of seat revenue on Cloud Organization and Enterprise"
+msgstr ""
 
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
@@ -6159,6 +6359,11 @@ msgstr "打开案例研究：{0}"
 msgid "Open menu"
 msgstr "打开菜单"
 
+#. js-lingui-id: BvalIr
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Open source, Engineering and GTM communities."
+msgstr ""
+
 #. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
@@ -6204,6 +6409,11 @@ msgstr "组织*激活*"
 #: src/platform/routing/static-website-routes.ts
 msgid "Organization Activation | Twenty"
 msgstr "组织激活 | Twenty"
+
+#. js-lingui-id: 7gCIfx
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "Organization and Enterprise plans on Twenty Cloud. Self-hosted Organization is coming soon. Pro plans and AI credits are not included."
+msgstr ""
 
 #. js-lingui-id: 3Yz0mq
 #: src/sections/compare/compare-data.ts
@@ -6337,6 +6547,11 @@ msgstr "未找到合作伙伴 — Twenty 合作伙伴"
 msgid "Partner testimonials"
 msgstr "合作伙伴推荐语"
 
+#. js-lingui-id: 7nUw36
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Partner type"
+msgstr ""
+
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
@@ -6358,12 +6573,27 @@ msgstr "粘贴密钥并点击 Activate。"
 msgid "Pause the recording bot"
 msgstr "暂停录制机器人"
 
+#. js-lingui-id: kP9GPv
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "Payouts from $50, after a 30-day hold"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
 msgid "People"
 msgstr "人员"
+
+#. js-lingui-id: R7/Gcc
+#: src/sections/affiliate-program/AffiliateAudiences.tsx
+msgid "People teams trust *to pick their tools*"
+msgstr ""
+
+#. js-lingui-id: HdzEra
+#: src/sections/affiliate-program/affiliate-program-terms.data.ts
+msgid "per customer, from their first payment"
+msgstr ""
 
 #. js-lingui-id: nU1kSZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6480,11 +6710,31 @@ msgstr "套餐要点"
 msgid "Play audio-only recordings"
 msgstr "播放仅音频录制内容"
 
+#. js-lingui-id: 9FY7bP
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please agree to the program terms."
+msgstr ""
+
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
 msgid "Please complete all required fields before continuing."
 msgstr "在继续之前，请填写所有必填字段。"
+
+#. js-lingui-id: Wq6Wcm
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter a valid email address."
+msgstr ""
+
+#. js-lingui-id: O3Iqcx
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please enter your full name."
+msgstr ""
+
+#. js-lingui-id: 7oO0Fx
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Please select a partner type."
+msgstr ""
 
 #. js-lingui-id: LjJ5i7
 #: src/partner-application/partner-application-copy.ts
@@ -6770,6 +7020,11 @@ msgstr "阅读案例"
 msgid "Read/Edit/Delete permissions"
 msgstr "读取/编辑/删除 权限"
 
+#. js-lingui-id: Ennaz3
+#: src/sections/affiliate-program/AffiliateApply.tsx
+msgid "Ready *to start?*"
+msgstr ""
+
 #. js-lingui-id: PvsAB9
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -6822,6 +7077,16 @@ msgstr "实时数据"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "“实时”是一种心态，而不是一个功能。"
+
+#. js-lingui-id: Tm/VGr
+#: src/sections/affiliate-program/AffiliateHero.tsx
+msgid "Recommend the CRM technical teams build at AI speed. Get paid every month, for a year, on each new customer."
+msgstr ""
+
+#. js-lingui-id: rqSGSr
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Recommend Twenty to clients, even on projects you don't implement."
+msgstr ""
 
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7057,6 +7322,11 @@ msgstr "营收（年初至今）"
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
 msgstr "适用于你的工作区的审核应用"
+
+#. js-lingui-id: s25Dl8
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Reviews, tutorials, migration guides, client recommendations…"
+msgstr ""
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -7437,6 +7707,11 @@ msgstr "查看哪个应用添加了字段"
 msgid "Select {0}"
 msgstr "选择 {0}"
 
+#. js-lingui-id: OEFzA8
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Select a partner type"
+msgstr ""
+
 #. js-lingui-id: wgNoIs
 #: src/sections/pricing-salesfarce/SalesfarceWindow.tsx
 msgid "Select all"
@@ -7621,6 +7896,11 @@ msgstr "分享通话洞察"
 msgid "Share your CRM project brief and our team will match you with a certified Twenty partner."
 msgstr "分享你的 CRM 项目概要，我们的团队会为你匹配经过认证的 Twenty 合作伙伴。"
 
+#. js-lingui-id: 7A75Sv
+#: src/sections/affiliate-program/AffiliateProgramTerms.tsx
+msgid "Share your link, we credit the signups it brings, and you get paid every month the customer stays."
+msgstr ""
+
 #. js-lingui-id: /beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Share your project in a few minutes. We pair you with a certified partner who fits."
@@ -7776,6 +8056,11 @@ msgstr "软删除"
 msgid "Soft delete feature added: Deleted records are now hidden from view but recoverable from the \"Deleted record\" option in any object options menu. No more drama!"
 msgstr "新增软删除功能：被删除的记录现在会从视图中隐藏，但可在任意对象的选项菜单中的“已删除记录”选项里恢复。再也不用紧张兮兮！"
 
+#. js-lingui-id: mOUTs1
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Software companies whose customers need a CRM."
+msgstr ""
+
 #. js-lingui-id: 6sKjjx
 #: src/partner-application/data/partner-team-type-options.ts
 msgid "Solo"
@@ -7806,6 +8091,11 @@ msgstr "索马里 🇸🇴"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Some teammate changes now appear right away, so collaboration feels faster and more up to date."
 msgstr "部分队友的更改现在会立刻显示，让协作更快速、更实时。"
+
+#. js-lingui-id: fWsBTs
+#: src/affiliate-application/affiliate-application-copy.ts
+msgid "Something went wrong. Please try again."
+msgstr ""
 
 #. js-lingui-id: tzdMJX
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7988,6 +8278,7 @@ msgstr "提交项目概要，并为迁移、自定义和 CRM 实施匹配经过�
 
 #. js-lingui-id: H5/rZQ
 #: src/partner-application/partner-application-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Submit application"
 msgstr "提交申请"
 
@@ -7999,6 +8290,7 @@ msgstr "提交概要"
 #. js-lingui-id: MDqQmP
 #: src/partner-application/partner-application-copy.ts
 #: src/client-brief/client-brief-copy.ts
+#: src/affiliate-application/affiliate-application-copy.ts
 msgid "Submitting…"
 msgstr "正在提交…"
 
@@ -8153,6 +8445,16 @@ msgstr "与 Twenty 专家组队合作"
 #: src/sections/compare/compare-data.ts
 msgid "Teams & permission sets"
 msgstr "团队与权限集"
+
+#. js-lingui-id: 7zxYuu
+#: src/affiliate-application/data/affiliate-partner-type-options.ts
+msgid "Tech partner"
+msgstr ""
+
+#. js-lingui-id: 8UHeD8
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "Tech partners"
+msgstr ""
 
 #. js-lingui-id: vsdUaL
 #: src/sections/releases-hero/ReleasesHero.tsx
@@ -8571,6 +8873,11 @@ msgstr "思考中"
 msgid "This feature gives you the ability to merge two records into one. This combines their information and keeps linked data, helping you remove duplicates and keep records accurate."
 msgstr "该功能让你可以将两条记录合并为一条。这会合并它们的信息并保留关联数据，帮助你消除重复并保持记录准确。"
 
+#. js-lingui-id: NJwNVi
+#: src/sections/affiliate-program/AffiliateIntegratorStrip.tsx
+msgid "Tick the box in the form and we link your application to your existing partner record, so you can be in both programs."
+msgstr ""
+
 #. js-lingui-id: cklVjM
 #: src/client-brief/client-brief-copy.ts
 msgid "Timeline"
@@ -8736,6 +9043,16 @@ msgstr "图瓦卢 🇹🇻"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | 全球排名第 1 的开源 CRM"
+
+#. js-lingui-id: DlOfZZ
+#: src/sections/affiliate-program/AffiliateHero.tsx
+msgid "Twenty affiliate program"
+msgstr ""
+
+#. js-lingui-id: CjjMxd
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Affiliate Program — Earn 20% on Every Referral"
+msgstr ""
 
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
@@ -9270,6 +9587,11 @@ msgstr "我们提升了应用性能，使每个页面的加载时间缩短了超
 msgid "We have significantly enhanced our search performance, making it feel instantaneous when searching for records such as people, companies, or tasks."
 msgstr "我们大幅提升了搜索性能，在搜索人员、公司或任务等记录时，现在几乎是瞬时完成。"
 
+#. js-lingui-id: 7YB68b
+#: src/sections/affiliate-program/AffiliateApply.tsx
+msgid "We review every application within 5 business days and send your link once you're approved."
+msgstr ""
+
 #. js-lingui-id: d4cXeX
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "We review your delivered projects, technical depth, and customer feedback before you join the directory. Certified partners carry the badge on their profile."
@@ -9483,6 +9805,11 @@ msgstr "当一名学生在校园活动中通过二维码注册时，系统会为
 msgid "When customers talk to your AI"
 msgstr "当客户与你的 AI 对话时"
 
+#. js-lingui-id: ZU1OEV
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "When do I get paid?"
+msgstr ""
+
 #. js-lingui-id: chISDP
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "When importing records, you can now import relations between records. For example, you can import a CSV file that includes a column for related records, such as linking contacts to companies or tasks to projects."
@@ -9532,6 +9859,11 @@ msgstr "当你的 CRM 就是产品：W3Grads 使用 Twenty | W3villa Technologie
 msgid "Where the caps and gates are"
 msgstr "限制和门槛都在哪些地方"
 
+#. js-lingui-id: hFwtrZ
+#: src/sections/faq/affiliate-program-faq.data.ts
+msgid "Which plans count?"
+msgstr ""
+
 #. js-lingui-id: bGN8u+
 #: src/case-studies/case-study-stories.ts
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
@@ -9541,6 +9873,11 @@ msgstr "目前 NetZero 仍在并行运行第二套 CRM，用于在巴西与农�
 #: src/partner-application/partner-application-copy.ts
 msgid "Who it was for, what you built, which of the four areas you used…"
 msgstr "为谁构建的、你构建了什么、以及你使用了四个领域中的哪些……"
+
+#. js-lingui-id: G3PhW3
+#: src/sections/affiliate-program/AffiliateAudiences.tsx
+msgid "Who it's for"
+msgstr ""
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -9952,6 +10289,11 @@ msgstr "你的组织许可证已成功激活。"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Your workspace is backed by a git repo, so you can branch, review in pull requests, and roll back changes the same way you ship code."
 msgstr "你的工作区由一个 git 仓库支撑，因此你可以像交付代码一样进行分支、在拉取请求中审查并回滚更改。"
+
+#. js-lingui-id: MWF4pS
+#: src/sections/affiliate-program/affiliate-audiences.data.ts
+msgid "YouTube, newsletters, LinkedIn, TikTok: anyone covering GTM tools."
+msgstr ""
 
 #. js-lingui-id: CgGN5T
 #: src/partner-application/data/partner-country-options.ts

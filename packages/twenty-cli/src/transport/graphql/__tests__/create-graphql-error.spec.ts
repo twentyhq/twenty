@@ -51,6 +51,7 @@ describe('createGraphqlError', () => {
       {
         metadataName: 'fieldMetadata',
         entityLabel: 'invalidField',
+        code: 'INVALID_NAME',
         message: 'Field name "123" is invalid',
       },
     ]);

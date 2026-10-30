@@ -685,6 +685,7 @@ export type ApplicationMonitoringCreditBucket = {
   __typename?: 'ApplicationMonitoringCreditBucket';
   bucketStart: Scalars['DateTime']['output'];
   creditsUsed: Scalars['Float']['output'];
+  operationLabel?: Maybe<Scalars['String']['output']>;
   operationType: Scalars['String']['output'];
 };
 
@@ -1971,6 +1972,7 @@ export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   operations: Array<Scalars['String']['input']>;
+  roleId: Scalars['UUID']['input'];
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl: Scalars['String']['input'];
 };
@@ -1978,6 +1980,7 @@ export type CreateWebhookInput = {
 export type CreditUsedItem = {
   __typename?: 'CreditUsedItem';
   creditsUsed: Scalars['Float']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
   label?: Maybe<Scalars['String']['output']>;
   operation?: Maybe<UsageOperationType>;
   resource?: Maybe<UsageResourceType>;
@@ -7745,6 +7748,7 @@ export type UpdateWebhookInput = {
 export type UpdateWebhookInputUpdates = {
   description?: InputMaybe<Scalars['String']['input']>;
   operations?: InputMaybe<Array<Scalars['String']['input']>>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -7972,6 +7976,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
+  APP_OPERATION = 'APP_OPERATION',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
@@ -8427,6 +8432,7 @@ export type Webhook = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   operations: Array<Scalars['String']['output']>;
+  role?: Maybe<Role>;
   secret: Scalars['String']['output'];
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];

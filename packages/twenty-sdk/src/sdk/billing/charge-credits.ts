@@ -18,8 +18,8 @@ export type ChargeCreditsParams = {
       resourceContext?: never;
     }
   | {
-      // For applications that declare no billable operations: names the platform billing category directly
-      operationType: UsageOperationTypeValue;
+      // Platform billing category; omitted, the charge lands in the dedicated APP_OPERATION category
+      operationType?: UsageOperationTypeValue;
       operation?: never;
       resourceContext?: string;
     }

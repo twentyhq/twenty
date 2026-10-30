@@ -23,9 +23,20 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+
+type AddMessageArgs = {
+  threadId: string;
+  uiMessage: Omit<ExtendedUIMessage, 'id'>;
+  turnStatus?: AgentTurnStatus;
+  id?: string;
+  workspaceId: string;
+  userWorkspaceId?: string;
+};
 
 @Injectable()
 export class AgentChatService {
@@ -41,6 +52,7 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   private getMessageSenderValues({
@@ -84,20 +96,15 @@ export class AgentChatService {
     id,
     workspaceId,
     userWorkspaceId,
-  }: {
-    threadId: string;
-    uiMessage: Omit<ExtendedUIMessage, 'id'>;
-    turnStatus?: AgentTurnStatus;
-    id?: string;
-    workspaceId: string;
-    userWorkspaceId?: string;
-  }) {
+    scope,
+  }: AddMessageArgs & { scope?: AgentHistoryTransactionScope }) {
     const turnId = await this.conversationWriterService.insertTurn({
       workspaceId,
       threadId,
       agentId: null,
       status: turnStatus,
       createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
+      scope,
     });
 
     const senderValues = this.getMessageSenderValues({
@@ -116,6 +123,7 @@ export class AgentChatService {
       ...senderValues,
       processedAt,
       parts: uiMessage.parts ?? [],
+      scope,
     });
 
     return {
@@ -127,6 +135,25 @@ export class AgentChatService {
       processedAt: processedAt.toISOString(),
       ...senderValues,
     };
+  }
+
+  async addMessageAndResolveMention({
+    workspaceMemberId,
+    ...message
+  }: AddMessageArgs & { workspaceMemberId: string }) {
+    return this.conversationWriterService.runInTransaction(
+      message.workspaceId,
+      async (scope) => {
+        await this.participantService.resolveMentionInTransaction({
+          workspaceId: message.workspaceId,
+          workspaceMemberId,
+          threadId: message.threadId,
+          scope,
+        });
+
+        return this.addMessage({ ...message, scope });
+      },
+    );
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them

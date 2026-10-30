@@ -529,6 +529,7 @@ export interface ApplicationMonitoringActivityBucket {
 export interface ApplicationMonitoringCreditBucket {
     bucketStart: Scalars['DateTime']
     creditsUsed: Scalars['Float']
+    operationLabel?: Scalars['String']
     operationType: Scalars['String']
     __typename: 'ApplicationMonitoringCreditBucket'
 }
@@ -1327,6 +1328,7 @@ export interface CreateEmailGroupChannelOutput {
 
 export interface CreditUsedItem {
     creditsUsed: Scalars['Float']
+    icon?: Scalars['String']
     label?: Scalars['String']
     operation?: UsageOperationType
     resource?: UsageResourceType
@@ -3686,7 +3688,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'APP_OPERATION' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -4043,6 +4045,7 @@ export interface Webhook {
     description?: Scalars['String']
     id: Scalars['UUID']
     operations: Scalars['String'][]
+    role?: Role
     secret: Scalars['String']
     targetUrl: Scalars['String']
     updatedAt: Scalars['DateTime']
@@ -4790,6 +4793,7 @@ export interface ApplicationMonitoringActivityBucketGenqlSelection{
 export interface ApplicationMonitoringCreditBucketGenqlSelection{
     bucketStart?: boolean | number
     creditsUsed?: boolean | number
+    operationLabel?: boolean | number
     operationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5718,10 +5722,11 @@ openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),sh
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
-export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
+export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
 export interface CreditUsedItemGenqlSelection{
     creditsUsed?: boolean | number
+    icon?: boolean | number
     label?: boolean | number
     operation?: boolean | number
     resource?: boolean | number
@@ -8458,7 +8463,7 @@ id: Scalars['UUID'],
 /** The webhook fields to update */
 update: UpdateWebhookInputUpdates}
 
-export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
+export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),roleId?: (Scalars['UUID'] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
 
@@ -8943,6 +8948,7 @@ export interface WebhookGenqlSelection{
     description?: boolean | number
     id?: boolean | number
     operations?: boolean | number
+    role?: RoleGenqlSelection
     secret?: boolean | number
     targetUrl?: boolean | number
     updatedAt?: boolean | number
@@ -12777,6 +12783,7 @@ export const enumUsageOperationType = {
    AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
+   APP_OPERATION: 'APP_OPERATION' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
