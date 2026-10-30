@@ -1,4 +1,4 @@
-import { getAppPreferencesAppStatusById } from '@/settings/app-preferences/utils/getAppPreferencesAppStatusById';
+import { getAppPreferencesAppStatusesById } from '@/settings/app-preferences/utils/getAppPreferencesAppStatusesById';
 import {
   ConnectedAccountProvider,
   MessageChannelSyncStage,
@@ -56,20 +56,20 @@ const buildApplication = ({
     : [],
 });
 
-const getStatusOfInstalledApplication = ({
+const getStatusesOfInstalledApplication = ({
   application = buildApplication(),
   appAccounts = [],
 }: {
   application?: ReturnType<typeof buildApplication>;
   appAccounts?: ReturnType<typeof buildAccount>[];
 }) =>
-  getAppPreferencesAppStatusById({
+  getAppPreferencesAppStatusesById({
     groups: [{ id: 'group', handle: 'tim@apple.dev', appAccounts }],
     builtInAccountApps: [],
     applicationsWithPreferences: [application],
   })[APPLICATION_ID];
 
-describe('getAppPreferencesAppStatusById', () => {
+describe('getAppPreferencesAppStatusesById', () => {
   it('flags a built-in app whose active account failed to sync', () => {
     const failedAccount = buildAccount({
       provider: ConnectedAccountProvider.GOOGLE,
@@ -78,7 +78,7 @@ describe('getAppPreferencesAppStatusById', () => {
     });
 
     expect(
-      getAppPreferencesAppStatusById({
+      getAppPreferencesAppStatusesById({
         groups: [
           {
             id: 'group',
@@ -91,58 +91,67 @@ describe('getAppPreferencesAppStatusById', () => {
         applicationsWithPreferences: [],
       }),
     ).toEqual({
-      google: { type: 'accountSyncIssue', account: failedAccount },
+      google: [{ type: 'accountSyncIssue', account: failedAccount }],
     });
   });
 
   it('asks to reconnect when an active connection failed to authenticate', () => {
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         appAccounts: [buildAccount({ authFailedAt: '2026-09-01' })],
       }),
-    ).toEqual({ type: 'reconnectNeeded' });
+    ).toEqual([{ type: 'reconnectNeeded' }]);
+  });
+
+  it('keeps missing configuration alongside a needed reconnect', () => {
+    expect(
+      getStatusesOfInstalledApplication({
+        application: buildApplication({ hasMissingRequiredVariable: true }),
+        appAccounts: [buildAccount({ authFailedAt: '2026-09-01' })],
+      }),
+    ).toEqual([{ type: 'reconnectNeeded' }, { type: 'missingConfiguration' }]);
   });
 
   it('flags missing configuration when the app is in use', () => {
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         application: buildApplication({ hasMissingRequiredVariable: true }),
         appAccounts: [buildAccount()],
       }),
-    ).toEqual({ type: 'missingConfiguration' });
+    ).toEqual([{ type: 'missingConfiguration' }]);
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         application: buildApplication({
           hasConnectionProvider: false,
           hasMissingRequiredVariable: true,
         }),
       }),
-    ).toEqual({ type: 'missingConfiguration' });
+    ).toEqual([{ type: 'missingConfiguration' }]);
   });
 
   it('hints at connecting when a provider can authorize and nothing is connected', () => {
-    expect(getStatusOfInstalledApplication({})).toEqual({
-      type: 'notConnected',
-    });
+    expect(getStatusesOfInstalledApplication({})).toEqual([
+      { type: 'notConnected' },
+    ]);
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         application: buildApplication({ hasMissingRequiredVariable: true }),
         appAccounts: [buildAccount({ archivedAt: '2026-09-01' })],
       }),
-    ).toEqual({ type: 'notConnected' });
+    ).toEqual([{ type: 'notConnected' }]);
   });
 
   it('shows nothing for a connected app, an app without providers or an unconfigured provider', () => {
     expect(
-      getStatusOfInstalledApplication({ appAccounts: [buildAccount()] }),
+      getStatusesOfInstalledApplication({ appAccounts: [buildAccount()] }),
     ).toBeUndefined();
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         application: buildApplication({ hasConnectionProvider: false }),
       }),
     ).toBeUndefined();
     expect(
-      getStatusOfInstalledApplication({
+      getStatusesOfInstalledApplication({
         application: buildApplication({
           isClientCredentialsConfigured: false,
         }),
