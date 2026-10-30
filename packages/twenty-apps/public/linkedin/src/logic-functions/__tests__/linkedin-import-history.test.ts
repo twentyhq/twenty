@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   listUnipileChats: vi.fn(),
   listUnipileChatMessages: vi.fn(),
+  listUnipileInboxIds: vi.fn(),
   getUnipileChat: vi.fn(),
   ingestLinkedinMessages: vi.fn(),
 }));
@@ -33,6 +34,10 @@ vi.mock('twenty-sdk/logic-function', () => ({
 
 vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
   listUnipileChats: mocks.listUnipileChats,
+}));
+
+vi.mock('src/unipile/utils/list-unipile-inbox-ids.util', () => ({
+  listUnipileInboxIds: mocks.listUnipileInboxIds,
 }));
 
 vi.mock('src/unipile/utils/list-unipile-chat-messages.util', () => ({
@@ -87,6 +92,7 @@ describe('linkedinImportHistoryHandler', () => {
     ]);
     mocks.listUnipileChatMessages.mockResolvedValue([{ id: 'message' }]);
     mocks.ingestLinkedinMessages.mockResolvedValue(1);
+    mocks.listUnipileInboxIds.mockResolvedValue(['inbox-1']);
   });
 
   it('imports a full page and queues the next one', async () => {
@@ -115,7 +121,12 @@ describe('linkedinImportHistoryHandler', () => {
         jobs: [
           {
             jobId: 'linkedin-import-history-run-1-1',
-            payload: { ...PAYLOAD, pageIndex: 1, cursor: 'cursor-2' },
+            payload: {
+              ...PAYLOAD,
+              pageIndex: 1,
+              inboxId: 'inbox-1',
+              cursor: 'cursor-2',
+            },
           },
         ],
       }),
@@ -136,6 +147,42 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({ status: 'COMPLETED' }),
     );
+  });
+
+  it('moves on to the next inbox once one is done', async () => {
+    mocks.listUnipileInboxIds.mockResolvedValue(['classic', 'sales-navigator']);
+    mocks.listUnipileChats.mockResolvedValue({
+      items: [buildChat('recent', '2026-10-29T00:00:00.000Z')],
+      nextCursor: undefined,
+    });
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual(
+      expect.objectContaining({ status: 'CONTINUED' }),
+    );
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            payload: {
+              ...PAYLOAD,
+              pageIndex: 1,
+              inboxId: 'sales-navigator',
+              cursor: undefined,
+            },
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('completes right away when the account has no inbox', async () => {
+    mocks.listUnipileInboxIds.mockResolvedValue([]);
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'COMPLETED',
+      importedConversationCount: 0,
+    });
+    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
   it('counts the chats first when LinkedIn returns no total', async () => {

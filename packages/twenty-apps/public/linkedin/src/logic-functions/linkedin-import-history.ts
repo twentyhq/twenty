@@ -24,6 +24,7 @@ import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-impo
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { countUnipileChats } from 'src/unipile/utils/count-unipile-chats.util';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { listUnipileInboxIds } from 'src/unipile/utils/list-unipile-inbox-ids.util';
 import { listUnipileChatMessages } from 'src/unipile/utils/list-unipile-chat-messages.util';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
 
@@ -51,16 +52,35 @@ const importPage = async ({
   }
 
   const settings = await getLinkedinSettings(connectedAccountId);
+  const inboxIds = await listUnipileInboxIds(unipileAccountId);
+  const inboxId = payload.inboxId ?? inboxIds[0];
+
+  if (!isDefined(inboxId)) {
+    await saveLinkedinHistoryImportState({
+      connectedAccountId,
+      state: {
+        ...state,
+        totalConversationCount: 0,
+        status: 'COMPLETED',
+        finishedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    });
+
+    return { status: 'COMPLETED', importedConversationCount: 0 };
+  }
+
   const page = await listUnipileChats({
     accountId: unipileAccountId,
+    inboxId,
     cursor: payload.cursor,
     limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
   });
 
   const totalConversationCount =
     state.totalConversationCount ??
-    page.totalCount ??
-    (await countUnipileChats(unipileAccountId));
+    (inboxIds.length === 1 ? page.totalCount : undefined) ??
+    (await countUnipileChats({ accountId: unipileAccountId, inboxIds }));
 
   // Saved before the first chat is imported, so the button shows a percentage from the start
   if (state.totalConversationCount === undefined) {
@@ -111,10 +131,14 @@ const importPage = async ({
   }
 
   // An empty page or a cursor equal to the one just used would loop forever
-  const isLastPage =
+  const isLastPageOfInbox =
     page.items.length === 0 ||
     !isNonEmptyString(page.nextCursor) ||
     page.nextCursor === payload.cursor;
+  const nextInboxId = isLastPageOfInbox
+    ? inboxIds[inboxIds.indexOf(inboxId) + 1]
+    : inboxId;
+  const isLastPage = !isDefined(nextInboxId);
 
   console.log(
     `[linkedin] history run ${payload.runId} page ${payload.pageIndex}: ${page.items.length} chats, ${importedConversationCount} imported`,
@@ -148,7 +172,8 @@ const importPage = async ({
     connectedAccountId,
     runId: payload.runId,
     pageIndex: payload.pageIndex + 1,
-    cursor: page.nextCursor,
+    inboxId: nextInboxId,
+    cursor: isLastPageOfInbox ? undefined : page.nextCursor,
   });
 
   return {

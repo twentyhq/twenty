@@ -3,6 +3,9 @@ import { AppConnectionAuthFailedError } from 'twenty-sdk/logic-function';
 
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
+// 501 and other server errors mean the request itself is wrong, retrying cannot fix them
+const TRANSIENT_HTTP_STATUSES = [429, 500, 502, 503, 504];
+
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -43,7 +46,7 @@ export const getLinkedinHistoryImportError = (
   if (
     (error instanceof Error &&
       (error.name === 'TypeError' || error.name === 'AbortError')) ||
-    (isNumber(status) && (status === 429 || status >= 500))
+    (isNumber(status) && TRANSIENT_HTTP_STATUSES.includes(status))
   ) {
     return { code: 'UNREACHABLE', message };
   }

@@ -34,6 +34,14 @@ describe('getLinkedinHistoryImportError', () => {
       message: 'Service unavailable',
     },
     {
+      error: {
+        status: 501,
+        title: 'Use List inbox Chats endpoint for this provider.',
+      },
+      code: 'UNKNOWN',
+      message: 'Use List inbox Chats endpoint for this provider.',
+    },
+    {
       error: { status: 422, title: 'Invalid cursor' },
       code: 'UNKNOWN',
       message: 'Invalid cursor',

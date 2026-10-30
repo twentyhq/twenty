@@ -24,7 +24,9 @@ describe('countUnipileChats', () => {
       totalCount: 1180,
     });
 
-    await expect(countUnipileChats('acc_1')).resolves.toBe(1180);
+    await expect(
+      countUnipileChats({ accountId: 'acc_1', inboxIds: ['inbox-1'] }),
+    ).resolves.toBe(1180);
     expect(mocks.listUnipileChats).toHaveBeenCalledTimes(1);
   });
 
@@ -34,11 +36,27 @@ describe('countUnipileChats', () => {
       .mockResolvedValueOnce({ items: buildChats(100), nextCursor: 'cursor-3' })
       .mockResolvedValueOnce({ items: buildChats(42), nextCursor: undefined });
 
-    await expect(countUnipileChats('acc_1')).resolves.toBe(242);
+    await expect(
+      countUnipileChats({ accountId: 'acc_1', inboxIds: ['inbox-1'] }),
+    ).resolves.toBe(242);
     expect(mocks.listUnipileChats).toHaveBeenLastCalledWith({
       accountId: 'acc_1',
+      inboxId: 'inbox-1',
       cursor: 'cursor-3',
       limit: 100,
     });
+  });
+
+  it('adds up the chats of every inbox', async () => {
+    mocks.listUnipileChats
+      .mockResolvedValueOnce({ items: buildChats(30), nextCursor: undefined })
+      .mockResolvedValueOnce({ items: buildChats(12), nextCursor: undefined });
+
+    await expect(
+      countUnipileChats({
+        accountId: 'acc_1',
+        inboxIds: ['classic', 'sales-navigator'],
+      }),
+    ).resolves.toBe(42);
   });
 });
