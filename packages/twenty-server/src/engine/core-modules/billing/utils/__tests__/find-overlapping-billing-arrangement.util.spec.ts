@@ -72,6 +72,20 @@ describe('findOverlappingBillingArrangement', () => {
     ).toBeUndefined();
   });
 
+  it('ignores an arrangement cancelled before it started', () => {
+    expect(
+      findOverlappingBillingArrangement({
+        arrangement: period(),
+        workspaceArrangements: [
+          period({
+            startsAt: new Date('2026-12-01T00:00:00.000Z'),
+            revokedAt: new Date('2026-11-15T00:00:00.000Z'),
+          }),
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
   it('never blocks a one-time type', () => {
     expect(
       findOverlappingBillingArrangement({

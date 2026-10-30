@@ -18,14 +18,22 @@ export class CreateBillingArrangementTableFastInstanceCommand
     }
 
     await queryRunner.query(
+      `DO $$ BEGIN CREATE TYPE "core"."billingArrangement_type_enum" AS ENUM ('COMMITTED_SEATS', 'FREE_SEATS', 'STRIPE_COUPON', 'TRIAL_EXTENSION', 'WORKSPACE_CREDIT_ALLOWANCE', 'USER_CREDIT_ALLOWANCE', 'LIMIT_OVERRIDE', 'REFUND', 'CREDIT_GRANT'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+    );
+
+    await queryRunner.query(
+      `DO $$ BEGIN CREATE TYPE "core"."billingArrangement_seatcapmode_enum" AS ENUM ('SOFT', 'HARD'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+    );
+
+    await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."billingArrangement" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
-        "type" character varying NOT NULL,
+        "type" "core"."billingArrangement_type_enum" NOT NULL,
         "label" character varying(100) NOT NULL,
         "comment" character varying(500),
         "seats" integer,
-        "seatCapMode" character varying,
+        "seatCapMode" "core"."billingArrangement_seatcapmode_enum",
         "stripePriceId" character varying,
         "stripeCouponId" character varying,
         "creditAllowanceMicro" bigint,
@@ -51,5 +59,13 @@ export class CreateBillingArrangementTableFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."billingArrangement"`);
+
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "core"."billingArrangement_seatcapmode_enum"`,
+    );
+
+    await queryRunner.query(
+      `DROP TYPE IF EXISTS "core"."billingArrangement_type_enum"`,
+    );
   }
 }

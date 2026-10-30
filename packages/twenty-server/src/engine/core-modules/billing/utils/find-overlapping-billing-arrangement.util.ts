@@ -9,6 +9,9 @@ import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/ut
 const isBefore = (date: Date, endDate: Date | null): boolean =>
   !isDefined(endDate) || date < endDate;
 
+const isNeverActive = (period: BillingArrangementPeriod): boolean =>
+  !isBefore(period.startsAt, getBillingArrangementEndDate(period));
+
 export const findOverlappingBillingArrangement = <
   TArrangement extends BillingArrangementPeriod,
 >({
@@ -18,7 +21,10 @@ export const findOverlappingBillingArrangement = <
   arrangement: BillingArrangementPeriod;
   workspaceArrangements: TArrangement[];
 }): TArrangement | undefined => {
-  if (ONE_TIME_BILLING_ARRANGEMENT_TYPES.includes(arrangement.type)) {
+  if (
+    ONE_TIME_BILLING_ARRANGEMENT_TYPES.includes(arrangement.type) ||
+    isNeverActive(arrangement)
+  ) {
     return undefined;
   }
 
@@ -27,6 +33,7 @@ export const findOverlappingBillingArrangement = <
   return workspaceArrangements.find(
     (existingArrangement) =>
       existingArrangement.type === arrangement.type &&
+      !isNeverActive(existingArrangement) &&
       isBefore(existingArrangement.startsAt, endDate) &&
       isBefore(
         arrangement.startsAt,

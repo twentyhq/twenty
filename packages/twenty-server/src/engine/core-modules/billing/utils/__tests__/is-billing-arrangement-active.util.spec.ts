@@ -19,50 +19,55 @@ const period = (
 describe('isBillingArrangementActive', () => {
   it('is active between its start and end dates', () => {
     expect(
-      isBillingArrangementActive(
-        period({ endsAt: new Date('2026-12-01T00:00:00.000Z') }),
-        NOW,
-      ),
+      isBillingArrangementActive({
+        arrangement: period({ endsAt: new Date('2026-12-01T00:00:00.000Z') }),
+        now: NOW,
+      }),
     ).toBe(true);
   });
 
   it('is active with no end date', () => {
-    expect(isBillingArrangementActive(period(), NOW)).toBe(true);
+    expect(
+      isBillingArrangementActive({ arrangement: period(), now: NOW }),
+    ).toBe(true);
   });
 
   it('is not active before it starts', () => {
     expect(
-      isBillingArrangementActive(
-        period({ startsAt: new Date('2026-11-16T00:00:00.000Z') }),
-        NOW,
-      ),
+      isBillingArrangementActive({
+        arrangement: period({ startsAt: new Date('2026-11-16T00:00:00.000Z') }),
+        now: NOW,
+      }),
     ).toBe(false);
   });
 
   it('is not active from its end date', () => {
-    expect(isBillingArrangementActive(period({ endsAt: NOW }), NOW)).toBe(
-      false,
-    );
+    expect(
+      isBillingArrangementActive({
+        arrangement: period({ endsAt: NOW }),
+        now: NOW,
+      }),
+    ).toBe(false);
   });
 
   it('is not active once ended early', () => {
     expect(
-      isBillingArrangementActive(
-        period({
+      isBillingArrangementActive({
+        arrangement: period({
           endsAt: new Date('2027-01-01T00:00:00.000Z'),
           revokedAt: new Date('2026-11-10T00:00:00.000Z'),
         }),
-        NOW,
-      ),
+        now: NOW,
+      }),
     ).toBe(false);
   });
 
   it('is never active for a one-time type', () => {
     expect(
-      isBillingArrangementActive(
-        period({ type: BillingArrangementType.REFUND }),
-        NOW,
-      ),
+      isBillingArrangementActive({
+        arrangement: period({ type: BillingArrangementType.REFUND }),
+        now: NOW,
+      }),
     ).toBe(false);
   });
 });

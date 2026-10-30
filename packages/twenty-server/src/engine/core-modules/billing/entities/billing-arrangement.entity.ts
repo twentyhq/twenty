@@ -9,12 +9,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
-import { type BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
+import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 
-// No foreign keys: arrangements are the history of commercial terms and must
-// outlive the workspace and the credit grant or usage limit rows they point to.
+// No foreign keys: the history must outlive the workspace and the rows it points to
 @Entity({ name: 'billingArrangement', schema: 'core' })
 @Index('IDX_BILLING_ARRANGEMENT_WORKSPACE_ID_TYPE', ['workspaceId', 'type'])
 export class BillingArrangementEntity {
@@ -24,7 +23,11 @@ export class BillingArrangementEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({
+    nullable: false,
+    type: 'enum',
+    enum: Object.values(BillingArrangementType),
+  })
   type: BillingArrangementType;
 
   @Column({ nullable: false, type: 'varchar', length: 100 })
@@ -36,7 +39,11 @@ export class BillingArrangementEntity {
   @Column({ nullable: true, type: 'int' })
   seats: number | null;
 
-  @Column({ nullable: true, type: 'varchar' })
+  @Column({
+    nullable: true,
+    type: 'enum',
+    enum: Object.values(BillingArrangementSeatCapMode),
+  })
   seatCapMode: BillingArrangementSeatCapMode | null;
 
   @Column({ nullable: true, type: 'varchar' })

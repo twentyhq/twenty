@@ -128,16 +128,19 @@ describe('getBillingArrangementValidationErrors', () => {
     ).toEqual([{ code: 'INVALID_SEATS' }]);
   });
 
-  it('rejects a negative credit allowance', () => {
-    expect(
-      getBillingArrangementValidationErrors(
-        draft({
-          type: BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
-          creditAllowanceMicro: -1,
-        }),
-      ),
-    ).toEqual([{ code: 'INVALID_CREDIT_ALLOWANCE' }]);
-  });
+  it.each([-1, Number.MAX_SAFE_INTEGER + 1])(
+    'rejects a credit allowance of %s',
+    (creditAllowanceMicro) => {
+      expect(
+        getBillingArrangementValidationErrors(
+          draft({
+            type: BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
+            creditAllowanceMicro,
+          }),
+        ),
+      ).toEqual([{ code: 'INVALID_CREDIT_ALLOWANCE' }]);
+    },
+  );
 
   it('rejects an end date on a one-time type', () => {
     expect(

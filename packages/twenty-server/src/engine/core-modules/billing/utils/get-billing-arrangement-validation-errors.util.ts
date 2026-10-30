@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BILLING_ARRANGEMENT_SETTINGS_BY_TYPE } from 'src/engine/core-modules/billing/constants/billing-arrangement-settings-by-type.constant';
@@ -22,7 +23,11 @@ const ALL_SETTING_KEYS = [
 const isSettingSet = (
   arrangement: BillingArrangementDraft,
   setting: BillingArrangementSettingKey,
-): boolean => isDefined(arrangement[setting]) && arrangement[setting] !== '';
+): boolean => {
+  const value = arrangement[setting];
+
+  return isString(value) ? isNonEmptyString(value) : isDefined(value);
+};
 
 export const getBillingArrangementValidationErrors = (
   arrangement: BillingArrangementDraft,
@@ -43,7 +48,7 @@ export const getBillingArrangementValidationErrors = (
     }
   }
 
-  if (arrangement.label.trim() === '') {
+  if (!isNonEmptyString(arrangement.label.trim())) {
     errors.push({ code: 'EMPTY_LABEL' });
   }
 
@@ -56,7 +61,7 @@ export const getBillingArrangementValidationErrors = (
 
   if (
     isDefined(arrangement.creditAllowanceMicro) &&
-    (!Number.isInteger(arrangement.creditAllowanceMicro) ||
+    (!Number.isSafeInteger(arrangement.creditAllowanceMicro) ||
       arrangement.creditAllowanceMicro < 0)
   ) {
     errors.push({ code: 'INVALID_CREDIT_ALLOWANCE' });
