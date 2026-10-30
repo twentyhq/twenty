@@ -4,7 +4,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { promisify } from 'util';
 
-import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-required-shared-dependencies.constant';
+import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'twenty-shared/front-component-build';
 import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
 
@@ -28,7 +28,14 @@ const install = jest.mocked<
   ) => Promise<{ stdout: string; stderr: string }>
 >(promisify(execFile));
 const build = jest.mocked(buildFrontComponentSharedDependencies);
-const packageJson = '{"private":true,"devDependencies":{"twenty-ui":"2.50.0"}}';
+const packageJson = JSON.stringify({
+  private: true,
+  devDependencies: {
+    react: '19.2.0',
+    'react-dom': '19.2.0',
+    'twenty-ui': '2.50.0',
+  },
+});
 const yarnLock = '# exact stored lock bytes\n';
 const vendor: Awaited<
   ReturnType<typeof buildFrontComponentSharedDependencies>

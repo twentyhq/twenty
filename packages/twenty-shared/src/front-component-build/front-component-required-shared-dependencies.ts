@@ -1,4 +1,4 @@
-import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
+import { FRONT_COMPONENT_UI_IMPORTS } from './front-component-ui-imports';
 
 export const FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES = [
   'react',

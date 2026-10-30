@@ -1,5 +1,6 @@
 import { createHash } from 'crypto';
 import {
+  FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   createJsxRuntimeRemoteWrapperPlugin,
   cssInjectionPlugin,
   getCommonFrontComponentBuildOptions,
@@ -8,7 +9,6 @@ import {
   normalizeFrontComponentSharedDependencies,
 } from 'twenty-shared/front-component-build';
 
-import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-required-shared-dependencies.constant';
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
 import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
 

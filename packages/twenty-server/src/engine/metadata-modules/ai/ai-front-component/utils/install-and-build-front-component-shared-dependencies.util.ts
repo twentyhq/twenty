@@ -1,12 +1,14 @@
 import { mkdtemp, rm, writeFile } from 'fs/promises';
 import { z } from 'zod';
-import { parseFrontComponentSharedDependencies } from 'twenty-shared/front-component-build';
+import {
+  parseFrontComponentSharedDependencies,
+  normalizeFrontComponentSharedDependencies,
+} from 'twenty-shared/front-component-build';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { installYarnDependencies } from 'src/engine/core-modules/application/application-package/constants/yarn-engine/install-yarn-dependencies.cjs';
 
-import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-required-shared-dependencies.constant';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 
@@ -21,11 +23,15 @@ export const installAndBuildFrontComponentSharedDependencies = async ({
   yarnLock: string;
   yarnEngineDirectory: string;
 }) => {
-  const { frontComponentSharedDependencies } = z
-    .object({ frontComponentSharedDependencies: z.unknown().optional() })
+  const packageJsonContent = z
+    .object({
+      frontComponentSharedDependencies: z.unknown().optional(),
+      dependencies: z.record(z.string(), z.string()).optional(),
+      devDependencies: z.record(z.string(), z.string()).optional(),
+    })
     .parse(JSON.parse(packageJson));
   const { dependencies, errors } = parseFrontComponentSharedDependencies(
-    frontComponentSharedDependencies,
+    packageJsonContent.frontComponentSharedDependencies,
   );
 
   if (isNonEmptyArray(errors)) {
@@ -56,10 +62,13 @@ export const installAndBuildFrontComponentSharedDependencies = async ({
 
     return await buildFrontComponentSharedDependencies({
       resolveDirectory: directory,
-      dependencies: [
-        ...FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
-        ...(dependencies ?? []),
-      ],
+      dependencies: normalizeFrontComponentSharedDependencies(
+        dependencies ?? [],
+        Object.keys({
+          ...packageJsonContent.dependencies,
+          ...packageJsonContent.devDependencies,
+        }),
+      ),
     });
   } finally {
     await rm(directory, { recursive: true, force: true });
