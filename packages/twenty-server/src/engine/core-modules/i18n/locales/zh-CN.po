@@ -2806,7 +2806,7 @@ msgstr "聊天"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "聊天暂不可用。请在几分钟后重试。"
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8214,13 +8214,13 @@ msgstr "成员"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "提及已解决于"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "截至此时间的提及已为该成员解决"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -11980,7 +11980,7 @@ msgstr "服务器逻辑函数需要身份验证。"
 #. js-lingui-id: VOUkzJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "Server routes can only be defined by an application."
-msgstr ""
+msgstr "服务器路由只能由应用程序定义。"
 
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11990,7 +11990,7 @@ msgstr "此用户或工作区未启用服务器级模拟。"
 #. js-lingui-id: y4fTj2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "serverRouteTriggerSettings can only be set by an installed application"
-msgstr ""
+msgstr "serverRouteTriggerSettings 只能由已安装的应用程序设置"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12066,7 +12066,7 @@ msgstr "设置菜单项标题为必填项"
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
-msgstr ""
+msgstr "多个应用程序声明了此服务器路由。请改用应用程序注册链接。"
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
