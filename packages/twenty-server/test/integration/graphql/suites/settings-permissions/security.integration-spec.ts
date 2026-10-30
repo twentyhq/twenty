@@ -23,8 +23,8 @@ const uploadWorkspaceLogoMutation = gql`
 const client = request(`http://localhost:${APP_PORT}`);
 
 const embeddingMutation = `
-  mutation UpdateEmbeddingOrigins($data: UpdateWorkspaceAllowedIframeOriginsInput!) {
-    updateWorkspaceAllowedIframeOrigins(data: $data) { id allowedIframeOrigins }
+  mutation UpdateEmbeddingOrigins($data: UpdateWorkspaceAllowedEmbeddingOriginsInput!) {
+    updateWorkspaceAllowedEmbeddingOrigins(data: $data) { id allowedEmbeddingOrigins }
   }
 `;
 
@@ -45,10 +45,11 @@ const readOrigins = async () => {
   const response = await client
     .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-    .send({ query: '{ currentWorkspace { allowedIframeOrigins } }' })
+    .send({ query: '{ currentWorkspace { allowedEmbeddingOrigins } }' })
     .expect(200);
   expect(response.body.errors).toBeUndefined();
-  return response.body.data.currentWorkspace.allowedIframeOrigins as string[];
+  return response.body.data.currentWorkspace
+    .allowedEmbeddingOrigins as string[];
 };
 
 describe('Security permissions', () => {
@@ -66,7 +67,7 @@ describe('Security permissions', () => {
           isPublicInviteLinkEnabled
           subdomain
           isCustomDomainEnabled
-          allowedIframeOrigins
+          allowedEmbeddingOrigins
         }
       }
     `;
@@ -96,7 +97,7 @@ describe('Security permissions', () => {
     await makeMetadataApiRequest({ query: restoreQuery });
     for (const origin of await readOrigins())
       await editOrigin('remove', origin);
-    for (const origin of (originalWorkspaceState.allowedIframeOrigins ??
+    for (const origin of (originalWorkspaceState.allowedEmbeddingOrigins ??
       []) as string[])
       await editOrigin('add', origin);
   });
@@ -116,8 +117,8 @@ describe('Security permissions', () => {
         ).expect(200);
         expect(duplicate.body.errors).toBeUndefined();
         expect(
-          duplicate.body.data.updateWorkspaceAllowedIframeOrigins
-            .allowedIframeOrigins,
+          duplicate.body.data.updateWorkspaceAllowedEmbeddingOrigins
+            .allowedEmbeddingOrigins,
         ).toEqual(['https://portal.example.com']);
         const readCached = () =>
           client
@@ -125,16 +126,16 @@ describe('Security permissions', () => {
             .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
             .send({
               query:
-                '{ currentUser { currentWorkspace { allowedIframeOrigins } } }',
+                '{ currentUser { currentWorkspace { allowedEmbeddingOrigins } } }',
             });
         const before = await readCached().expect(200);
         expect(
-          before.body.data.currentUser.currentWorkspace.allowedIframeOrigins,
+          before.body.data.currentUser.currentWorkspace.allowedEmbeddingOrigins,
         ).toEqual(['https://portal.example.com']);
         await editOrigin('remove', 'https://portal.example.com').expect(200);
         const after = await readCached().expect(200);
         expect(
-          after.body.data.currentUser.currentWorkspace.allowedIframeOrigins,
+          after.body.data.currentUser.currentWorkspace.allowedEmbeddingOrigins,
         ).toEqual([]);
       });
 

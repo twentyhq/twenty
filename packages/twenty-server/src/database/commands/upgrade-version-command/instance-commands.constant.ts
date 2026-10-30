@@ -263,6 +263,8 @@ import { AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand } fro
 import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
 import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
 import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
+import { AddWorkspaceIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793358064188-add-workspace-iframe-media-permissions';
+import { RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793358115816-rename-workspace-allowed-iframe-origins-to-allowed-embedding-origins';
 import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793203146887-agent-and-skill-overridable-entity';
 import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793139794914-drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel';
 import { UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793278636737-unlist-unreviewed-application-registrations';
@@ -544,4 +546,6 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceChatAssistantModesFastInstanceCommand,
   AddRelatedRecordPathTableFastInstanceCommand,
   AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand,
+  AddWorkspaceIframeMediaPermissionsFastInstanceCommand,
+  RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand,
 ];

@@ -10,6 +10,7 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
@@ -18,7 +19,7 @@ import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
   isDefined,
-  normalizeAllowedIframeOrigin,
+  normalizeIframeOrigin,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -54,6 +55,7 @@ import {
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { isIframeMediaPermissionsPolicyWithinSizeLimit } from 'src/engine/core-modules/frontend/utils/is-iframe-media-permissions-policy-within-size-limit.util';
 import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
@@ -72,7 +74,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
+import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 import { WORKSPACE_FIELDS_NOT_UPDATABLE_BY_APPLICATIONS } from 'src/engine/core-modules/workspace/constants/workspace-fields-not-updatable-by-applications.constant';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
@@ -80,6 +82,7 @@ import {
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { upsertIframeMediaPermission } from 'src/engine/core-modules/workspace/utils/upsert-iframe-media-permission.util';
 import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
 import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
 import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
@@ -292,9 +295,9 @@ export class WorkspaceService {
     }
   }
 
-  async updateWorkspaceAllowedIframeOrigins(
+  async updateWorkspaceAllowedEmbeddingOrigins(
     workspaceId: string,
-    input: UpdateWorkspaceAllowedIframeOriginsInput,
+    input: UpdateWorkspaceAllowedEmbeddingOriginsInput,
   ): Promise<WorkspaceEntity> {
     const updatedWorkspace = await this.workspaceRepository.manager.transaction(
       async (manager) => {
@@ -304,23 +307,23 @@ export class WorkspaceService {
           lock: { mode: 'pessimistic_write' },
         });
         assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-        const origin = normalizeAllowedIframeOrigin(input.origin);
+        const origin = normalizeIframeOrigin(input.origin);
         assertIsDefinedOrThrow(origin);
-        const origins = workspace.allowedIframeOrigins ?? [];
-        const allowedIframeOrigins =
+        const origins = workspace.allowedEmbeddingOrigins ?? [];
+        const allowedEmbeddingOrigins =
           input.operation === 'add'
             ? [...new Set([...origins, origin])]
             : origins.filter((existingOrigin) => existingOrigin !== origin);
 
-        if (allowedIframeOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+        if (allowedEmbeddingOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
           throw new WorkspaceException(
             'Too many embedding origins',
             WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
           );
         }
 
-        await repository.update(workspaceId, { allowedIframeOrigins });
-        return { ...workspace, allowedIframeOrigins };
+        await repository.update(workspaceId, { allowedEmbeddingOrigins });
+        return { ...workspace, allowedEmbeddingOrigins };
       },
     );
 
@@ -328,6 +331,71 @@ export class WorkspaceService {
       'workspaceEntity',
       workspaceId,
     );
+    return updatedWorkspace;
+  }
+
+  async updateWorkspaceIframeMediaPermissions({
+    workspaceId,
+    input,
+  }: {
+    workspaceId: string;
+    input: IframeMediaPermission;
+  }): Promise<WorkspaceEntity> {
+    const origin = normalizeIframeOrigin(input.origin, { isHttpsOnly: true });
+
+    if (!isDefined(origin)) {
+      throw new WorkspaceException(
+        'Invalid iframe media permission origin',
+        WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID,
+      );
+    }
+
+    const updatedWorkspace = await this.workspaceRepository.manager.transaction(
+      async (manager) => {
+        const repository = manager.getRepository(WorkspaceEntity);
+        const workspace = await repository.findOne({
+          where: { id: workspaceId },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+        const iframeMediaPermissions = upsertIframeMediaPermission({
+          permissions: workspace.iframeMediaPermissions ?? [],
+          permission: {
+            origin,
+            microphone: input.microphone,
+            camera: input.camera,
+          },
+        });
+
+        if (iframeMediaPermissions.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+          throw new WorkspaceException(
+            'Too many iframe media origins',
+            WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
+          );
+        }
+
+        if (
+          !isIframeMediaPermissionsPolicyWithinSizeLimit(iframeMediaPermissions)
+        ) {
+          throw new WorkspaceException(
+            'Iframe media origins exceed the Permissions-Policy size limit',
+            WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE,
+          );
+        }
+
+        await repository.update(workspaceId, { iframeMediaPermissions });
+
+        return { ...workspace, iframeMediaPermissions };
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+
     return updatedWorkspace;
   }
 
