@@ -180,7 +180,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
           billingSpenders,
-          runApplicationId: workflowRun.createdBy.context?.applicationId,
+          runApplicationId: workflow.applicationId,
         }));
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -583,7 +583,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
-    runApplicationId?: string;
+    runApplicationId: string;
   }) {
     const stepId = step.id;
 
