@@ -112,15 +112,12 @@ export const NavigationDrawerAiChatChannelNavigation = ({
       {areChildrenVisible && (
         <div id={childrenId}>
           {AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.map(
-            (
-              { channelStatus, assignment, label, Icon, countKey, unreadKey },
-              index,
-            ) => {
+            ({ channelStatus, label, Icon, countKey, unreadKey }, index) => {
               const count = summary?.[countKey];
 
               return (
                 <NavigationDrawerItem
-                  key={`${channelStatus}-${assignment}`}
+                  key={channelStatus}
                   label={t(label)}
                   secondaryLabel={
                     isDefined(count) && count > 0 ? `${count}` : undefined
@@ -139,7 +136,6 @@ export const NavigationDrawerAiChatChannelNavigation = ({
                     openAgentChatChannel({
                       channelId: channel.id,
                       channelStatus,
-                      assignment,
                     })
                   }
                   triggerEvent="CLICK"

@@ -459,6 +459,83 @@ describe('app plan', () => {
     expect(stdout + stderr).not.toContain('SECRET_PARTIAL');
   });
 
+  it('lists each metadata validation error', async () => {
+    const backslashError = {
+      code: 'INVALID_LOGIC_FUNCTION_INPUT',
+      message: 'Resource path must not contain backslashes',
+      userFriendlyMessage: 'Source path is invalid',
+    };
+
+    state.response = {
+      data: null,
+      errors: [
+        {
+          message:
+            'Validation errors occurred while syncing application manifest metadata',
+          extensions: {
+            code: 'METADATA_VALIDATION_FAILED',
+            errors: {
+              logicFunction: [
+                {
+                  status: 'fail',
+                  type: 'create',
+                  metadataName: 'logicFunction',
+                  flatEntityMinimalInformation: {
+                    universalIdentifier: 'logic-function-id',
+                  },
+                  errors: [backslashError],
+                },
+              ],
+              frontComponent: [
+                {
+                  status: 'fail',
+                  type: 'create',
+                  metadataName: 'frontComponent',
+                  flatEntityMinimalInformation: {
+                    universalIdentifier: 'front-component-id',
+                    name: 'Camperstop',
+                  },
+                  errors: [backslashError],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    };
+
+    const { stderr, exitCode } = await run();
+
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain(
+      '• logicFunction logic-function-id: Source path is invalid (Resource path must not contain backslashes)',
+    );
+    expect(stderr).toContain(
+      '• frontComponent Camperstop: Source path is invalid (Resource path must not contain backslashes)',
+    );
+
+    expect(stderr.match(/Source path is invalid/g)).toHaveLength(2);
+
+    const { envelope } = await runJson();
+
+    expect(envelope.error.details.validationErrors).toEqual([
+      {
+        metadataName: 'logicFunction',
+        entityLabel: 'logic-function-id',
+        code: 'INVALID_LOGIC_FUNCTION_INPUT',
+        userFriendlyMessage: 'Source path is invalid',
+        message: 'Resource path must not contain backslashes',
+      },
+      {
+        metadataName: 'frontComponent',
+        entityLabel: 'Camperstop',
+        code: 'INVALID_LOGIC_FUNCTION_INPUT',
+        userFriendlyMessage: 'Source path is invalid',
+        message: 'Resource path must not contain backslashes',
+      },
+    ]);
+  });
+
   it('does not interpret an endpoint 404 as a missing app registration', async () => {
     state.status = 404;
     state.response = { message: 'Endpoint missing' };
