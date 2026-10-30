@@ -1689,8 +1689,10 @@ input CreateRecordExportInput {
 }
 
 input CreateRelatedRecordPathInput {
-  fieldMetadataIds: [UUID!]!
+  firstFieldMetadataId: UUID!
   objectMetadataId: UUID!
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
 }
 
 input CreateRoleInput {
@@ -4299,9 +4301,11 @@ input RecordTargetInput {
 }
 
 type RelatedRecordPath {
-  fieldMetadataIds: [UUID!]!
+  firstFieldMetadataId: UUID!
   id: UUID!
   objectMetadataId: UUID!
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
 }
 
 type Relation {

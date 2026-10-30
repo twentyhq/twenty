@@ -3187,9 +3187,11 @@ export interface RecordTableConfiguration {
 }
 
 export interface RelatedRecordPath {
-    fieldMetadataIds: Scalars['UUID'][]
+    firstFieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     objectMetadataId: Scalars['UUID']
+    secondFieldMetadataId?: Scalars['UUID']
+    thirdFieldMetadataId?: Scalars['UUID']
     __typename: 'RelatedRecordPath'
 }
 
@@ -5661,7 +5663,7 @@ export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],obj
 
 export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
 
-export interface CreateRelatedRecordPathInput {fieldMetadataIds: Scalars['UUID'][],objectMetadataId: Scalars['UUID']}
+export interface CreateRelatedRecordPathInput {firstFieldMetadataId: Scalars['UUID'],objectMetadataId: Scalars['UUID'],secondFieldMetadataId?: (Scalars['UUID'] | null),thirdFieldMetadataId?: (Scalars['UUID'] | null)}
 
 export interface CreateRoleInput {canAccessAllAgentChatChannels?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['String'] | null),label: Scalars['String']}
 
@@ -7745,9 +7747,11 @@ export interface RecordTableConfigurationGenqlSelection{
 export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
 
 export interface RelatedRecordPathGenqlSelection{
-    fieldMetadataIds?: boolean | number
+    firstFieldMetadataId?: boolean | number
     id?: boolean | number
     objectMetadataId?: boolean | number
+    secondFieldMetadataId?: boolean | number
+    thirdFieldMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

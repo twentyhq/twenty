@@ -1811,8 +1811,10 @@ export type CreateRecordExportInput = {
 };
 
 export type CreateRelatedRecordPathInput = {
-  fieldMetadataIds: Array<Scalars['UUID']['input']>;
+  firstFieldMetadataId: Scalars['UUID']['input'];
   objectMetadataId: Scalars['UUID']['input'];
+  secondFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  thirdFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateRoleInput = {
@@ -6532,9 +6534,11 @@ export type RecordTargetInput = {
 
 export type RelatedRecordPath = {
   __typename?: 'RelatedRecordPath';
-  fieldMetadataIds: Array<Scalars['UUID']['output']>;
+  firstFieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+  secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  thirdFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Relation = {

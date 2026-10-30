@@ -6,11 +6,9 @@ import { createRelationBetweenObjects } from 'test/integration/metadata/suites/o
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import {
-  createRelatedRecordPath,
-  deleteRelatedRecordPath,
-  findRelatedRecordPaths,
-} from 'test/integration/metadata/suites/related-record-path/utils/related-record-path-api.util';
+import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
+import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
+import { findRelatedRecordPaths } from 'test/integration/metadata/suites/related-record-path/utils/find-related-record-paths.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
@@ -72,10 +70,13 @@ describe('Related record path metadata', () => {
   let projectCodeFieldMetadataId: string;
   const createdPathIds: string[] = [];
 
-  const createPath = async (fieldMetadataIds: string[]) => {
+  const createPath = async (hops: {
+    firstFieldMetadataId: string;
+    secondFieldMetadataId?: string;
+  }) => {
     const response = await createRelatedRecordPath({
       objectMetadataId: projectObjectMetadataId,
-      fieldMetadataIds,
+      ...hops,
     });
     const createdPath = response.body.data?.createRelatedRecordPath;
 
@@ -186,10 +187,10 @@ describe('Related record path metadata', () => {
   });
 
   it('should create, list and delete a two hop path', async () => {
-    const response = await createPath([
-      projectTasksFieldMetadataId,
-      taskAssigneeFieldMetadataId,
-    ]);
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      secondFieldMetadataId: taskAssigneeFieldMetadataId,
+    });
 
     expect(response.body.errors).toBeUndefined();
 
@@ -197,10 +198,9 @@ describe('Related record path metadata', () => {
 
     expect(createdPath).toMatchObject({
       objectMetadataId: projectObjectMetadataId,
-      fieldMetadataIds: [
-        projectTasksFieldMetadataId,
-        taskAssigneeFieldMetadataId,
-      ],
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      secondFieldMetadataId: taskAssigneeFieldMetadataId,
+      thirdFieldMetadataId: null,
     });
     expect(await findPathIds()).toContain(createdPath.id);
 
@@ -213,11 +213,15 @@ describe('Related record path metadata', () => {
   });
 
   it('should reject a path that already exists', async () => {
-    const firstResponse = await createPath([projectTasksFieldMetadataId]);
+    const firstResponse = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+    });
 
     expect(firstResponse.body.errors).toBeUndefined();
 
-    const secondResponse = await createPath([projectTasksFieldMetadataId]);
+    const secondResponse = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+    });
 
     expect(JSON.stringify(secondResponse.body.errors)).toContain(
       'This related record path already exists',
@@ -226,8 +230,14 @@ describe('Related record path metadata', () => {
 
   it('should save only one of two identical paths created at the same time', async () => {
     const responses = await Promise.all([
-      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
-      createPath([projectTasksFieldMetadataId, taskAssigneeFieldMetadataId]),
+      createPath({
+        firstFieldMetadataId: projectTasksFieldMetadataId,
+        secondFieldMetadataId: taskAssigneeFieldMetadataId,
+      }),
+      createPath({
+        firstFieldMetadataId: projectTasksFieldMetadataId,
+        secondFieldMetadataId: taskAssigneeFieldMetadataId,
+      }),
     ]);
 
     expect(
@@ -245,10 +255,10 @@ describe('Related record path metadata', () => {
   });
 
   it('should reject a path that comes back to an object it already visited', async () => {
-    const response = await createPath([
-      projectTasksFieldMetadataId,
-      taskProjectFieldMetadataId,
-    ]);
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      secondFieldMetadataId: taskProjectFieldMetadataId,
+    });
 
     expect(JSON.stringify(response.body.errors)).toContain(
       'Related record path cannot visit the same object twice',
@@ -256,7 +266,9 @@ describe('Related record path metadata', () => {
   });
 
   it('should reject a field that does not belong to the object reached so far', async () => {
-    const response = await createPath([taskAssigneeFieldMetadataId]);
+    const response = await createPath({
+      firstFieldMetadataId: taskAssigneeFieldMetadataId,
+    });
 
     expect(JSON.stringify(response.body.errors)).toContain(
       'Each related record path field must belong to the object reached by the previous relation',
@@ -264,7 +276,9 @@ describe('Related record path metadata', () => {
   });
 
   it('should reject a field that is not a relation', async () => {
-    const response = await createPath([projectCodeFieldMetadataId]);
+    const response = await createPath({
+      firstFieldMetadataId: projectCodeFieldMetadataId,
+    });
 
     expect(JSON.stringify(response.body.errors)).toContain(
       'Related record path fields must be relations',
@@ -274,14 +288,16 @@ describe('Related record path metadata', () => {
   it('should reject an object or field that does not exist', async () => {
     const unknownObjectResponse = await createRelatedRecordPath({
       objectMetadataId: v4(),
-      fieldMetadataIds: [projectTasksFieldMetadataId],
+      firstFieldMetadataId: projectTasksFieldMetadataId,
     });
 
     expect(JSON.stringify(unknownObjectResponse.body.errors)).toContain(
       'Related record path object not found',
     );
 
-    const unknownFieldResponse = await createPath([v4()]);
+    const unknownFieldResponse = await createPath({
+      firstFieldMetadataId: v4(),
+    });
 
     expect(JSON.stringify(unknownFieldResponse.body.errors)).toContain(
       'Related record path field not found',

@@ -10,7 +10,7 @@ import { type CreateRelatedRecordPathInput } from 'src/engine/metadata-modules/r
 
 export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow =
   ({
-    createRelatedRecordPathInput: { objectMetadataId, fieldMetadataIds },
+    createRelatedRecordPathInput,
     workspaceId,
     flatApplication,
     flatObjectMetadataMaps,
@@ -18,7 +18,10 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
   }: {
     createRelatedRecordPathInput: Pick<
       CreateRelatedRecordPathInput,
-      'objectMetadataId' | 'fieldMetadataIds'
+      | 'objectMetadataId'
+      | 'firstFieldMetadataId'
+      | 'secondFieldMetadataId'
+      | 'thirdFieldMetadataId'
     >;
     workspaceId: string;
     flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
@@ -26,14 +29,13 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   >): FlatRelatedRecordPath => {
-    const [firstFieldMetadataId, secondFieldMetadataId, thirdFieldMetadataId] =
-      fieldMetadataIds;
-
     const foreignKeyValues = {
-      objectMetadataId,
-      firstFieldMetadataId,
-      secondFieldMetadataId: secondFieldMetadataId ?? null,
-      thirdFieldMetadataId: thirdFieldMetadataId ?? null,
+      objectMetadataId: createRelatedRecordPathInput.objectMetadataId,
+      firstFieldMetadataId: createRelatedRecordPathInput.firstFieldMetadataId,
+      secondFieldMetadataId:
+        createRelatedRecordPathInput.secondFieldMetadataId ?? null,
+      thirdFieldMetadataId:
+        createRelatedRecordPathInput.thirdFieldMetadataId ?? null,
     };
 
     const relationUniversalIdentifiers =

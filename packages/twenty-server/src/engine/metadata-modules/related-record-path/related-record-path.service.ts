@@ -125,15 +125,21 @@ export class RelatedRecordPathService {
       );
     }
 
-    const hasUnknownField = input.fieldMetadataIds.some(
-      (fieldMetadataId) =>
-        !isDefined(
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          }),
-        ),
-    );
+    const hasUnknownField = [
+      input.firstFieldMetadataId,
+      input.secondFieldMetadataId,
+      input.thirdFieldMetadataId,
+    ]
+      .filter(isDefined)
+      .some(
+        (fieldMetadataId) =>
+          !isDefined(
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: fieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            }),
+          ),
+      );
 
     if (hasUnknownField) {
       throw new RelatedRecordPathException(

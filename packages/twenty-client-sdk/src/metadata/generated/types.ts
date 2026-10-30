@@ -3771,10 +3771,16 @@ export default {
             ]
         },
         "CreateRelatedRecordPathInput": {
-            "fieldMetadataIds": [
+            "firstFieldMetadataId": [
                 527
             ],
             "objectMetadataId": [
+                527
+            ],
+            "secondFieldMetadataId": [
+                527
+            ],
+            "thirdFieldMetadataId": [
                 527
             ],
             "__typename": [
@@ -11809,13 +11815,19 @@ export default {
             ]
         },
         "RelatedRecordPath": {
-            "fieldMetadataIds": [
+            "firstFieldMetadataId": [
                 527
             ],
             "id": [
                 527
             ],
             "objectMetadataId": [
+                527
+            ],
+            "secondFieldMetadataId": [
+                527
+            ],
+            "thirdFieldMetadataId": [
                 527
             ],
             "__typename": [
