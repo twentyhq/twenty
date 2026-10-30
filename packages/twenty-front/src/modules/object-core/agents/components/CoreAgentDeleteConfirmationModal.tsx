@@ -1,4 +1,4 @@
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
@@ -13,12 +13,10 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type CoreAgentDeleteConfirmationModalProps = {
   agentId: string;
-  agentName: string;
 };
 
 export const CoreAgentDeleteConfirmationModal = ({
   agentId,
-  agentName,
 }: CoreAgentDeleteConfirmationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
@@ -42,17 +40,9 @@ export const CoreAgentDeleteConfirmationModal = ({
 
   return (
     <ConfirmationDialog
-      confirmationValue={agentName}
-      confirmationPlaceholder={agentName}
       dialogId={CORE_AGENT_DELETE_DIALOG_ID}
       title={t`Delete Agent`}
-      subtitle={
-        <Trans>
-          This action cannot be undone. This will permanently delete your agent.
-          <br />
-          Please type in the agent name to confirm.
-        </Trans>
-      }
+      subtitle={t`This action cannot be undone. This will permanently delete your agent.`}
       onConfirmClick={handleDelete}
       confirmButtonText={t`Delete Agent`}
     />

@@ -186,12 +186,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
           )}
         </SettingsPageContainer>
       </PageCardLayout>
-      {!isReadOnly && (
-        <CoreAgentDeleteConfirmationModal
-          agentId={agent.id}
-          agentName={agent.label}
-        />
-      )}
+      {!isReadOnly && <CoreAgentDeleteConfirmationModal agentId={agent.id} />}
     </>
   );
 };
