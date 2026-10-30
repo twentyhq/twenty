@@ -1,4 +1,5 @@
 import { transformSync } from 'esbuild';
+import { vi } from 'vitest';
 
 import { unwrapDefineFrontComponentToDirectExport } from '@/front-component-renderer/build/utils/unwrap-define-front-component-to-direct-export';
 
@@ -54,16 +55,23 @@ type RenderedElement = {
   props: object;
 };
 
-const loadRenderer = (
-  render: (element: RenderedElement) => void,
-  useEffect: (effect: () => void) => void = () => {},
-) => {
+const loadRenderer = ({
+  render,
+  useEffect = () => {},
+}: {
+  render: (element: RenderedElement) => void;
+  useEffect?: (effect: () => void) => void;
+}) => {
   const source = unwrapDefineFrontComponentToDirectExport(`
     import { defineFrontComponent } from 'twenty-sdk/define';
     export default defineFrontComponent({ component: () => null });
   `);
   const { code } = transformSync(source, { format: 'cjs' });
-  const bundleModule = { exports: {} };
+  const bundleModule: {
+    exports: {
+      default?: (container: object, props?: object) => Promise<void>;
+    };
+  } = { exports: {} };
   const requireModule = (specifier: string) => {
     if (specifier === 'react') {
       return { useEffect };
@@ -85,12 +93,18 @@ const loadRenderer = (
     requireModule,
   );
 
-  return bundleModule.exports as {
-    default: (container: object, props?: object) => Promise<void>;
-  };
+  if (typeof bundleModule.exports.default !== 'function') {
+    throw new Error('The compiled component did not export a renderer.');
+  }
+
+  return { default: bundleModule.exports.default };
 };
 
 describe('unwrapDefineFrontComponentToDirectExport', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('renders the component when component is an inline factory call', () => {
     const output = unwrapDefineFrontComponentToDirectExport(
       INLINE_EXPRESSION_COMPONENT_SOURCE,
@@ -154,35 +168,54 @@ export const createSummarizeRecordEffect = () => () => null;
   });
 
   it('passes data props and waits for the initial commit', async () => {
+    vi.useFakeTimers();
     const renderedElements: unknown[] = [];
     const effects: (() => void)[] = [];
     const props = { records: [{ id: 'sample', name: 'Example' }] };
-    const renderer = loadRenderer(
-      (element) => renderedElements.push(element.component(element.props)),
-      (effect) => effects.push(effect),
-    );
-    let ready = false;
-    const result = renderer.default({}, props).then(() => {
-      ready = true;
+    const renderer = loadRenderer({
+      render: (element) =>
+        renderedElements.push(element.component(element.props)),
+      useEffect: (effect) => effects.push(effect),
     });
+    const onReady = vi.fn();
+    const result = renderer.default({}, props).then(onReady);
 
     await Promise.resolve();
-    expect(ready).toBe(false);
+    expect(onReady).not.toHaveBeenCalled();
     expect(renderedElements).toEqual([
       { component: expect.any(Function), props },
     ]);
     effects.forEach((effect) => effect());
     await result;
-    expect(ready).toBe(true);
+    expect(onReady).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('rejects the initial render when mounting fails', async () => {
+    vi.useFakeTimers();
     const error = new Error('Cannot mount component');
-    const renderer = loadRenderer(() => {
-      throw error;
+    const renderer = loadRenderer({
+      render: () => {
+        throw error;
+      },
     });
 
     await expect(renderer.default({})).rejects.toThrow(error);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('rejects when the first render never commits', async () => {
+    vi.useFakeTimers();
+    const renderer = loadRenderer({ render: () => {} });
+    const result = renderer.default({});
+    const rejection = expect(result).rejects.toThrow(
+      'Front component initial render timed out.',
+    );
+
+    await vi.advanceTimersByTimeAsync(30_000);
+
+    await rejection;
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('keeps imports used by a non-default definition', () => {

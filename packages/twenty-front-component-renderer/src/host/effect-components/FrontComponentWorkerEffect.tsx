@@ -1,7 +1,7 @@
 import { release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
@@ -76,6 +76,18 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
+  const onReadyRef = useRef(onReady);
+  const componentPropsRef = useRef(componentProps);
+
+  if (!fastDeepEqual(componentPropsRef.current, componentProps)) {
+    componentPropsRef.current = componentProps;
+  }
+
+  const stableComponentProps = componentPropsRef.current;
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
 
   useEffect(() => {
     if (isInitializedRef.current) {
@@ -140,6 +152,25 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
+        const resolveSharedDependenciesSource = () => {
+          if (isDefined(providedSharedDependenciesSource)) {
+            return providedSharedDependenciesSource;
+          }
+
+          if (
+            !isDefined(sharedDependenciesUrl) ||
+            !containsSharedDependenciesImportSpecifier(componentSource)
+          ) {
+            return undefined;
+          }
+
+          return fetchComponentSource({
+            url: sharedDependenciesUrl,
+            credentials: sharedDependenciesCredentials,
+            headers: authorizationHeaders,
+          });
+        };
+
         const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
           isDefined(sdkClientUrls) &&
           containsSdkClientImportSpecifier(componentSource)
@@ -148,16 +179,7 @@ export const FrontComponentWorkerEffect = ({
                 headers: authorizationHeaders,
               })
             : undefined,
-          isDefined(providedSharedDependenciesSource)
-            ? providedSharedDependenciesSource
-            : isDefined(sharedDependenciesUrl) &&
-                containsSharedDependenciesImportSpecifier(componentSource)
-              ? fetchComponentSource({
-                  url: sharedDependenciesUrl,
-                  credentials: sharedDependenciesCredentials,
-                  headers: authorizationHeaders,
-                })
-              : undefined,
+          resolveSharedDependenciesSource(),
         ]);
 
         if (isCancelled) {
@@ -179,7 +201,7 @@ export const FrontComponentWorkerEffect = ({
           {
             componentUrl,
             componentSource,
-            componentProps,
+            componentProps: stableComponentProps,
             applicationAccessToken,
             apiUrl,
             functionsBaseUrl,
@@ -197,7 +219,7 @@ export const FrontComponentWorkerEffect = ({
 
         if (!isCancelled) {
           setReceiver(newReceiver);
-          onReady?.();
+          onReadyRef.current?.();
         }
       } catch (error) {
         if (!isCancelled) {
@@ -225,9 +247,8 @@ export const FrontComponentWorkerEffect = ({
   }, [
     componentUrl,
     providedComponentSource,
-    componentProps,
+    stableComponentProps,
     providedSharedDependenciesSource,
-    onReady,
     applicationAccessToken,
     apiUrl,
     functionsBaseUrl,

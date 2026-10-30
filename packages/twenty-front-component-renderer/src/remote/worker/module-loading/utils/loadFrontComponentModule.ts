@@ -15,6 +15,7 @@ type LoadFrontComponentModuleInput = {
 };
 
 type FrontComponentModule = {
+  // Already-built components expect the container as their first argument.
   default: (
     container: Element,
     props?: Record<string, unknown>,

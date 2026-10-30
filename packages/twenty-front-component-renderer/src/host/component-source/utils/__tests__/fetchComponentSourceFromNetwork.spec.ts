@@ -71,6 +71,7 @@ describe('fetchComponentSourceFromNetwork', () => {
       url: COMPONENT_URL,
       credentials: 'include',
     });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
       headers: undefined,
       credentials: 'include',
