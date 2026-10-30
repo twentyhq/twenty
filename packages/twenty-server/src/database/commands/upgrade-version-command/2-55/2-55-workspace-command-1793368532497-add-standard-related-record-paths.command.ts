@@ -13,9 +13,9 @@ import { buildStandardFlatRelatedRecordPathMaps } from 'src/engine/workspace-man
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.54.0', 1793366532086)
+@RegisteredWorkspaceCommand('2.55.0', 1793368532497)
 @Command({
-  name: 'upgrade:2-54:add-standard-related-record-paths',
+  name: 'upgrade:2-55:add-standard-related-record-paths',
   description:
     'Add the standard related record paths that mirror inherited readability',
 })
