@@ -22,7 +22,12 @@ import {
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_LENGTH,
+  CODE_INTERPRETER_UPDATE_INTERVAL_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -99,6 +104,29 @@ export class CodeInterpreterTool implements Tool {
     let accumulatedStdout = '';
     let accumulatedStderr = '';
     const streamedFiles: CodeExecutionFile[] = [];
+    let pendingRunningUpdate: NodeJS.Timeout | undefined;
+
+    // Each update carries the full output and is stored as a stream chunk,
+    // so coalesce bursts of lines into one update per interval.
+    const scheduleRunningUpdate = () => {
+      if (isDefined(pendingRunningUpdate)) {
+        return;
+      }
+
+      pendingRunningUpdate = setTimeout(() => {
+        pendingRunningUpdate = undefined;
+        onCodeExecutionUpdate?.(
+          this.buildExecutionState(
+            executionId,
+            'running',
+            code,
+            accumulatedStdout,
+            accumulatedStderr,
+            streamedFiles,
+          ),
+        );
+      }, CODE_INTERPRETER_UPDATE_INTERVAL_MS);
+    };
 
     onCodeExecutionUpdate?.(
       this.buildExecutionState(executionId, 'pending', code, '', '', []),
@@ -147,30 +175,24 @@ export class CodeInterpreterTool implements Tool {
         },
         {
           onStdout: (line) => {
-            accumulatedStdout += line + '\n';
-            onCodeExecutionUpdate?.(
-              this.buildExecutionState(
-                executionId,
-                'running',
-                code,
-                accumulatedStdout,
-                accumulatedStderr,
-                streamedFiles,
-              ),
-            );
+            if (
+              accumulatedStdout.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH
+            ) {
+              accumulatedStdout = truncateCodeInterpreterOutput(
+                accumulatedStdout + line + '\n',
+              );
+              scheduleRunningUpdate();
+            }
           },
           onStderr: (line) => {
-            accumulatedStderr += line + '\n';
-            onCodeExecutionUpdate?.(
-              this.buildExecutionState(
-                executionId,
-                'running',
-                code,
-                accumulatedStdout,
-                accumulatedStderr,
-                streamedFiles,
-              ),
-            );
+            if (
+              accumulatedStderr.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH
+            ) {
+              accumulatedStderr = truncateCodeInterpreterOutput(
+                accumulatedStderr + line + '\n',
+              );
+              scheduleRunningUpdate();
+            }
           },
           onResult: async (outputFile: OutputFile) => {
             const uploadedFile = await this.uploadSingleFile(
@@ -181,20 +203,14 @@ export class CodeInterpreterTool implements Tool {
 
             if (uploadedFile) {
               streamedFiles.push(uploadedFile);
-              onCodeExecutionUpdate?.(
-                this.buildExecutionState(
-                  executionId,
-                  'running',
-                  code,
-                  accumulatedStdout,
-                  accumulatedStderr,
-                  streamedFiles,
-                ),
-              );
+              scheduleRunningUpdate();
             }
           },
         },
       );
+
+      const stdout = truncateCodeInterpreterOutput(result.stdout);
+      const stderr = truncateCodeInterpreterOutput(result.stderr);
 
       this.logger.debug(
         `Execution result: exitCode=${result.exitCode}, stdout length=${result.stdout.length}, stderr length=${result.stderr.length}`,
@@ -215,8 +231,8 @@ export class CodeInterpreterTool implements Tool {
           executionId,
           finalState,
           code,
-          result.stdout || accumulatedStdout,
-          result.stderr || accumulatedStderr,
+          stdout || accumulatedStdout,
+          stderr || accumulatedStderr,
           allOutputFileUrls,
           {
             exitCode: result.exitCode,
@@ -232,8 +248,8 @@ export class CodeInterpreterTool implements Tool {
           result.exitCode === 0
             ? 'Code executed successfully'
             : 'Code execution failed',
-        stdout: result.stdout,
-        stderr: result.stderr,
+        stdout,
+        stderr,
         exitCode: result.exitCode,
         files: allOutputFileUrls,
         error: result.error,
@@ -266,6 +282,8 @@ export class CodeInterpreterTool implements Tool {
         message: 'Code interpreter execution failed',
         error: errorMessage,
       };
+    } finally {
+      clearTimeout(pendingRunningUpdate);
     }
   }
 

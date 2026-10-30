@@ -6,7 +6,11 @@ import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT,
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES,
+  DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { getOrCreateSessionSandbox } from 'src/engine/core-modules/code-interpreter/drivers/utils/get-or-create-session-sandbox.util';
 import { releaseSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/release-session-sandboxes.util';
 import { sweepExpiredSessionSandboxes } from 'src/engine/core-modules/code-interpreter/drivers/utils/sweep-expired-session-sandboxes.util';
@@ -131,7 +135,10 @@ export class E2BDriver implements CodeInterpreterDriver {
         onStdout: (data) => callbacks?.onStdout?.(data.line),
         onStderr: (data) => callbacks?.onStderr?.(data.line),
         onResult: async (result) => {
-          if (result.png) {
+          if (
+            result.png &&
+            outputFiles.length < CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT
+          ) {
             const outputFile: OutputFile = {
               filename: `chart-${chartCounter++}.png`,
               content: Buffer.from(result.png, 'base64'),
@@ -148,7 +155,18 @@ export class E2BDriver implements CodeInterpreterDriver {
         const outputDir = await sandbox.files.list('/home/user/output');
 
         for (const file of outputDir) {
-          if (file.type === 'file') {
+          if (outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT) {
+            break;
+          }
+
+          if (file.size > CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES) {
+            this.logger.warn(
+              `Skipping output file ${file.name}: ${file.size} bytes exceeds the size limit`,
+            );
+            continue;
+          }
+
+          if (file.type === 'file' && !isDefined(file.symlinkTarget)) {
             const content = await sandbox.files.read(
               `/home/user/output/${file.name}`,
               { format: 'bytes' },

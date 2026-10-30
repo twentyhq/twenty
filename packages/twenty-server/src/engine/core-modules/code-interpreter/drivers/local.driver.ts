@@ -7,7 +7,11 @@ import { type Readable, type Writable } from 'stream';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT,
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES,
+  DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { LOCAL_DRIVER_PERSISTENT_KERNEL_SCRIPT } from 'src/engine/core-modules/code-interpreter/drivers/local-driver-kernel.constant';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
 
@@ -269,8 +273,19 @@ export class LocalDriver implements CodeInterpreterDriver {
       });
 
       for (const entry of outputEntries) {
+        if (outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT) {
+          break;
+        }
+
         if (entry.isFile()) {
-          const content = await fs.readFile(join(outputDir, entry.name));
+          const filePath = join(outputDir, entry.name);
+          const { size } = await fs.stat(filePath);
+
+          if (size > CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES) {
+            continue;
+          }
+
+          const content = await fs.readFile(filePath);
           const outputFile: OutputFile = {
             filename: entry.name,
             content,
