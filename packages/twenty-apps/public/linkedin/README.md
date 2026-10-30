@@ -11,7 +11,7 @@
 
 ## 💳 Billing
 
-**$10 per month** per workspace, billed to your Twenty credits.
+**$10 per month** per connected account.
 
 ## 🚀 Get started
 

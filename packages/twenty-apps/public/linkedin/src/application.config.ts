@@ -14,14 +14,7 @@ export default defineApplication({
   termsUrl: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
   websiteUrl: 'https://www.twenty.com',
   billing: {
-    description: '$10 per month per workspace. Billed to your Twenty credits.',
-    recurring: {
-      subscription: {
-        period: 'MONTH',
-        amountMicroCredits: 10_000_000,
-        label: 'LinkedIn subscription',
-      },
-    },
+    description: '$10 per month per connection',
   },
   serverVariables: {
     UNIPILE_API_KEY: {
