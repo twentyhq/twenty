@@ -31,12 +31,13 @@ const buildService = ({ isCreated = true } = {}) => {
       ),
     sendMessage: jest
       .fn()
-      .mockImplementation(({ input }: { input: { addressing: { threadKey: string } } }) =>
-        Promise.resolve({
-          threadId: `thread-under-${input.addressing.threadKey}`,
-          toolCallId: 'tool-call-id',
-          isDismissed: false,
-        }),
+      .mockImplementation(
+        ({ input }: { input: { addressing: { threadKey: string } } }) =>
+          Promise.resolve({
+            threadId: `thread-under-${input.addressing.threadKey}`,
+            toolCallId: 'tool-call-id',
+            isDismissed: false,
+          }),
       ),
   };
   const agentRunSuspensionService = {
