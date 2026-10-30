@@ -26,7 +26,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
-import { UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
+import { UpdateWebhookInputUpdates } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -79,31 +79,28 @@ export class WebhookController {
   }
 
   @Post()
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookDTO> {
-    return this.webhookService.create(createWebhookDto, workspace.id);
+    return this.webhookService.create({
+      input: createWebhookDto,
+      workspaceId: workspace.id,
+    });
   }
 
   @Patch(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
   async update(
     @Param('id') id: string,
-    @Body()
-    updateWebhookDto: {
-      targetUrl?: string;
-      operations?: string[];
-      description?: string;
-      secret?: string;
-    },
+    @Body() updateWebhookDto: UpdateWebhookInputUpdates,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookDTO> {
-    const input: UpdateWebhookInput = {
-      id,
-      update: updateWebhookDto,
-    };
-
-    return this.webhookService.update(input, workspace.id);
+    return this.webhookService.update({
+      input: { id, update: updateWebhookDto },
+      workspaceId: workspace.id,
+    });
   }
 
   @Delete(':id')

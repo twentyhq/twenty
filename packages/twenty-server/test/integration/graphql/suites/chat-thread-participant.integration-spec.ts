@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { EventEmitter, once } from 'node:events';
 
 import { parse } from 'graphql';
 import {
@@ -11,6 +12,7 @@ import {
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
+import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -19,7 +21,11 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,6 +35,12 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+
+const buildJonyThreadAccess = (threadId: string) => ({
+  workspaceId: SEED_APPLE_WORKSPACE_ID,
+  workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+  threadId,
+});
 
 const PARTICIPANT_FIELDS =
   'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt mentionsResolvedAt updatedAt';
@@ -1260,6 +1272,41 @@ describe('Chat thread participant state through the authenticated API', () => {
     }
   });
 
+  it('resolves only the member who successfully sends a reply', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+
+    await getAppProviderByClassName<AgentChatService>(
+      'AgentChatService',
+    ).addMessageAndResolveMention({
+      ...buildJonyThreadAccess(threadId),
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: 'I have handled this.' }],
+      },
+    });
+
+    const repliedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(repliedParticipant!.mentionsResolvedAt).toBe(
+      repliedParticipant!.lastMentionedAt,
+    );
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      lastMentionedAt: expect.any(String),
+      mentionsResolvedAt: null,
+    });
+  });
+
   it('keeps a mention resolved after Done until an explicit new mention arrives', async () => {
     const threadId = await createTestThread();
 
@@ -1326,6 +1373,88 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
   });
 
+  describe('queued replies to a mention', () => {
+    const queueReply = (threadId: string) =>
+      getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      ).queueMessage({
+        ...buildJonyThreadAccess(threadId),
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        text: 'On it',
+      });
+
+    const deleteQueuedReply = (messageId: string) =>
+      getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      ).deleteQueuedMessage({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        messageId,
+      });
+
+    it('resolves the mention when the member queues a reply and keeps it after the reply is deleted', async () => {
+      const threadId = await createTestThread();
+
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+      const reply = await queueReply(threadId);
+      const repliedParticipant = await findMyParticipant(
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(repliedParticipant!.mentionsResolvedAt).toBe(
+        repliedParticipant!.lastMentionedAt,
+      );
+
+      await deleteQueuedReply(reply.id);
+
+      expect(
+        await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toMatchObject({
+        mentionsResolvedAt: repliedParticipant!.lastMentionedAt,
+      });
+    });
+
+    it('queues a reply while another write of the member locks the chat', async () => {
+      const threadId = await createTestThread();
+
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+      const writeEvents = new EventEmitter();
+      const writeStarted = once(writeEvents, 'started');
+      const writeResumed = once(writeEvents, 'resumed');
+      const write =
+        getAppProviderByClassName<AgentChatThreadParticipantService>(
+          'AgentChatThreadParticipantService',
+        ).resolveMention({
+          ...buildJonyThreadAccess(threadId),
+          writeResponse: async ({ manager, table }) => {
+            const [{ backendProcessId }] = await manager.query<
+              { backendProcessId: number }[]
+            >('SELECT pg_backend_pid() AS "backendProcessId"');
+
+            writeEvents.emit('started', backendProcessId);
+            await writeResumed;
+            await manager.query(
+              `SELECT id FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+              [threadId],
+            );
+          },
+        });
+
+      const [blockingProcessId] = await writeStarted;
+      const reply = queueReply(threadId);
+
+      await waitForBlockedDatabaseQueryOrThrow(blockingProcessId);
+      writeEvents.emit('resumed');
+
+      await expect(Promise.all([write, reply])).resolves.toEqual([
+        undefined,
+        expect.objectContaining({ threadId }),
+      ]);
+    });
+  });
+
   it('delivers app recipients without creating or clearing an explicit mention', async () => {
     const threadId = await createTestThread();
     const threadService = getAppProviderByClassName<AgentChatThreadService>(
@@ -1364,6 +1493,66 @@ describe('Chat thread participant state through the authenticated API', () => {
       lastMentionedAt: mentionedParticipant!.lastMentionedAt,
       mentionsResolvedAt: null,
     });
+  });
+
+  it('rolls mention resolution back when a response cannot be recorded', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    await expect(
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      ).resolveMention({
+        ...buildJonyThreadAccess(threadId),
+        writeResponse: async () => {
+          throw new Error('The response is invalid');
+        },
+      }),
+    ).rejects.toThrow('The response is invalid');
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ mentionsResolvedAt: null });
+  });
+
+  it('preserves a newer mention when an older response finishes first', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const responseEvents = new EventEmitter();
+    const responseStarted = once(responseEvents, 'started');
+    const responseFinished = once(responseEvents, 'finished');
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const response = participantService.resolveMention({
+      ...buildJonyThreadAccess(threadId),
+      writeResponse: async () => {
+        responseEvents.emit('started');
+        await responseFinished;
+      },
+    });
+
+    await responseStarted;
+
+    const laterMention = participantService.markAsMentioned(
+      buildJonyThreadAccess(threadId),
+    );
+
+    responseEvents.emit('finished');
+    await Promise.all([response, laterMention]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBeGreaterThan(
+      new Date(participant!.mentionsResolvedAt!).getTime(),
+    );
   });
 
   it('orders a new mention after the resolved cursor at millisecond precision', async () => {

@@ -23,7 +23,7 @@ describe('mapApplicationMonitoringRows', () => {
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
-        creditUsage: [],
+        creditUsage: { rows: [], billing: null },
       }),
     ).toEqual({
       ...PERIOD,
@@ -85,7 +85,7 @@ describe('mapApplicationMonitoringRows', () => {
           },
         ],
       },
-      creditUsage: [],
+      creditUsage: { rows: [], billing: null },
     });
 
     expect(monitoring).toMatchObject({
@@ -119,23 +119,29 @@ describe('mapApplicationMonitoringRows', () => {
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
-        creditUsage: [
-          {
-            bucketStart: new Date('2026-10-17T00:00:00.000Z'),
-            operationType: UsageOperationType.CODE_EXECUTION,
-            creditsUsedMicro: 10_000,
-          },
-          {
-            bucketStart: new Date('2026-10-18T00:00:00.000Z'),
-            operationType: UsageOperationType.CODE_EXECUTION,
-            creditsUsedMicro: 10_000,
-          },
-          {
-            bucketStart: new Date('2026-10-18T00:00:00.000Z'),
-            operationType: 'sendSms',
-            creditsUsedMicro: 120_000,
-          },
-        ],
+        creditUsage: {
+          rows: [
+            {
+              bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+              operationType: UsageOperationType.CODE_EXECUTION,
+              operation: '',
+              creditsUsedMicro: 10_000,
+            },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.CODE_EXECUTION,
+              operation: '',
+              creditsUsedMicro: 10_000,
+            },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.APP_OPERATION,
+              operation: '',
+              creditsUsedMicro: 120_000,
+            },
+          ],
+          billing: null,
+        },
       }),
     ).toMatchObject({
       creditsUsed: 0.14,
@@ -143,17 +149,87 @@ describe('mapApplicationMonitoringRows', () => {
         {
           bucketStart: new Date('2026-10-17T00:00:00.000Z'),
           operationType: UsageOperationType.CODE_EXECUTION,
+          operationLabel: null,
           creditsUsed: 0.01,
         },
         {
           bucketStart: new Date('2026-10-18T00:00:00.000Z'),
           operationType: UsageOperationType.CODE_EXECUTION,
+          operationLabel: null,
           creditsUsed: 0.01,
         },
         {
           bucketStart: new Date('2026-10-18T00:00:00.000Z'),
-          operationType: 'sendSms',
+          operationType: UsageOperationType.APP_OPERATION,
+          operationLabel: null,
           creditsUsed: 0.12,
+        },
+      ],
+    });
+  });
+
+  it('labels credits by the declared billing charge and merges undeclared contexts', () => {
+    expect(
+      mapApplicationMonitoringRows({
+        period: PERIOD,
+        lookbackInHours: 2160,
+        rows: EMPTY_ROWS,
+        creditUsage: {
+          rows: [
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.APP_OPERATION,
+              operation: 'sendSms',
+              creditsUsedMicro: 120_000,
+            },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.APP_OPERATION,
+              operation: 'workflow-run-1',
+              creditsUsedMicro: 20_000,
+            },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.APP_OPERATION,
+              operation: 'constructor',
+              creditsUsedMicro: 10_000,
+            },
+            {
+              bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+              operationType: UsageOperationType.SUBSCRIPTION,
+              operation: 'platformFee',
+              creditsUsedMicro: 1_000_000,
+            },
+          ],
+          billing: {
+            operations: { sendSms: { label: 'SMS sent' } },
+            recurring: {
+              platformFee: {
+                period: 'MONTH',
+                amountMicroCredits: 1_000_000,
+                label: 'Platform fee',
+              },
+            },
+          },
+        },
+      }),
+    ).toMatchObject({
+      creditsUsed: 1.15,
+      creditUsage: [
+        {
+          operationType: UsageOperationType.APP_OPERATION,
+          operationLabel: 'SMS sent',
+          creditsUsed: 0.12,
+        },
+        {
+          operationType: UsageOperationType.APP_OPERATION,
+          operationLabel: null,
+          creditsUsed: 0.03,
+        },
+        {
+          operationType: UsageOperationType.SUBSCRIPTION,
+          operationLabel: 'Platform fee',
+          creditsUsed: 1,
         },
       ],
     });

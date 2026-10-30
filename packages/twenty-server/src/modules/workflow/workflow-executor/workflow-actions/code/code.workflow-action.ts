@@ -68,9 +68,9 @@ export class CodeWorkflowAction implements WorkflowAction {
     const { authContext, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+    this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
       {
-        application,
+        executionContext: { authContext, application },
         targetApplicationId: flatLogicFunction.applicationId,
         targetLabel: `Logic function "${flatLogicFunction.name}"`,
       },

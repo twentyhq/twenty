@@ -685,6 +685,7 @@ export type ApplicationMonitoringCreditBucket = {
   __typename?: 'ApplicationMonitoringCreditBucket';
   bucketStart: Scalars['DateTime']['output'];
   creditsUsed: Scalars['Float']['output'];
+  operationLabel?: Maybe<Scalars['String']['output']>;
   operationType: Scalars['String']['output'];
 };
 
@@ -1971,6 +1972,7 @@ export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   operations: Array<Scalars['String']['input']>;
+  roleId: Scalars['UUID']['input'];
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl: Scalars['String']['input'];
 };
@@ -1978,6 +1980,7 @@ export type CreateWebhookInput = {
 export type CreditUsedItem = {
   __typename?: 'CreditUsedItem';
   creditsUsed: Scalars['Float']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
   label?: Maybe<Scalars['String']['output']>;
   operation?: Maybe<UsageOperationType>;
   resource?: Maybe<UsageResourceType>;
@@ -2760,6 +2763,13 @@ export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
   configurationType: WidgetConfigurationType;
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type IframeMediaPermission = {
+  __typename?: 'IframeMediaPermission';
+  camera: Scalars['Boolean']['output'];
+  microphone: Scalars['Boolean']['output'];
+  origin: Scalars['String']['output'];
 };
 
 export type ImapSmtpCaldavConnectionSuccess = {
@@ -3679,7 +3689,8 @@ export type Mutation = {
   updateViewSort: ViewSort;
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
-  updateWorkspaceAllowedIframeOrigins: Workspace;
+  updateWorkspaceAllowedEmbeddingOrigins: Workspace;
+  updateWorkspaceIframeMediaPermissions: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
@@ -5075,8 +5086,13 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
-export type MutationUpdateWorkspaceAllowedIframeOriginsArgs = {
-  data: UpdateWorkspaceAllowedIframeOriginsInput;
+export type MutationUpdateWorkspaceAllowedEmbeddingOriginsArgs = {
+  data: UpdateWorkspaceAllowedEmbeddingOriginsInput;
+};
+
+
+export type MutationUpdateWorkspaceIframeMediaPermissionsArgs = {
+  data: UpdateWorkspaceIframeMediaPermissionsInput;
 };
 
 
@@ -7732,12 +7748,19 @@ export type UpdateWebhookInput = {
 export type UpdateWebhookInputUpdates = {
   description?: InputMaybe<Scalars['String']['input']>;
   operations?: InputMaybe<Array<Scalars['String']['input']>>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateWorkspaceAllowedIframeOriginsInput = {
+export type UpdateWorkspaceAllowedEmbeddingOriginsInput = {
   operation: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+};
+
+export type UpdateWorkspaceIframeMediaPermissionsInput = {
+  camera: Scalars['Boolean']['input'];
+  microphone: Scalars['Boolean']['input'];
   origin: Scalars['String']['input'];
 };
 
@@ -7953,6 +7976,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
+  APP_OPERATION = 'APP_OPERATION',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
@@ -8408,6 +8432,7 @@ export type Webhook = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   operations: Array<Scalars['String']['output']>;
+  role?: Maybe<Role>;
   secret: Scalars['String']['output'];
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -8500,7 +8525,7 @@ export type Workspace = {
   aiEvaluationModelId?: Maybe<Scalars['String']['output']>;
   aiModelIdByTier: Scalars['JSON']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
-  allowedIframeOrigins?: Maybe<Array<Scalars['String']['output']>>;
+  allowedEmbeddingOrigins?: Maybe<Array<Scalars['String']['output']>>;
   billingCustomer?: Maybe<BillingCustomer>;
   billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;
@@ -8517,6 +8542,7 @@ export type Workspace = {
   hasValidEnterpriseValidityToken: Scalars['Boolean']['output'];
   hasValidSignedEnterpriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+  iframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];

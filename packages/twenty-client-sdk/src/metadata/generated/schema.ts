@@ -529,6 +529,7 @@ export interface ApplicationMonitoringActivityBucket {
 export interface ApplicationMonitoringCreditBucket {
     bucketStart: Scalars['DateTime']
     creditsUsed: Scalars['Float']
+    operationLabel?: Scalars['String']
     operationType: Scalars['String']
     __typename: 'ApplicationMonitoringCreditBucket'
 }
@@ -1327,6 +1328,7 @@ export interface CreateEmailGroupChannelOutput {
 
 export interface CreditUsedItem {
     creditsUsed: Scalars['Float']
+    icon?: Scalars['String']
     label?: Scalars['String']
     operation?: UsageOperationType
     resource?: UsageResourceType
@@ -1731,6 +1733,13 @@ export interface IframeConfiguration {
     configurationType: WidgetConfigurationType
     url?: Scalars['String']
     __typename: 'IframeConfiguration'
+}
+
+export interface IframeMediaPermission {
+    camera: Scalars['Boolean']
+    microphone: Scalars['Boolean']
+    origin: Scalars['String']
+    __typename: 'IframeMediaPermission'
 }
 
 export interface ImapSmtpCaldavConnectionSuccess {
@@ -2498,7 +2507,8 @@ export interface Mutation {
     updateViewSort: ViewSort
     updateWebhook: Webhook
     updateWorkspace: Workspace
-    updateWorkspaceAllowedIframeOrigins: Workspace
+    updateWorkspaceAllowedEmbeddingOrigins: Workspace
+    updateWorkspaceIframeMediaPermissions: Workspace
     updateWorkspaceMemberRole: WorkspaceMember
     updateWorkspaceMemberSettings: Scalars['Boolean']
     upgradeApplication: Scalars['Boolean']
@@ -3678,7 +3688,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'APP_OPERATION' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -4035,6 +4045,7 @@ export interface Webhook {
     description?: Scalars['String']
     id: Scalars['UUID']
     operations: Scalars['String'][]
+    role?: Role
     secret: Scalars['String']
     targetUrl: Scalars['String']
     updatedAt: Scalars['DateTime']
@@ -4070,7 +4081,7 @@ export interface Workspace {
     aiEvaluationModelId?: Scalars['String']
     aiModelIdByTier: Scalars['JSON']
     allowImpersonation: Scalars['Boolean']
-    allowedIframeOrigins?: Scalars['String'][]
+    allowedEmbeddingOrigins?: Scalars['String'][]
     billingCustomer?: BillingCustomer
     billingEntitlements: BillingEntitlement[]
     billingSubscriptions: BillingSubscription[]
@@ -4087,6 +4098,7 @@ export interface Workspace {
     hasValidEnterpriseValidityToken: Scalars['Boolean']
     hasValidSignedEnterpriseKey: Scalars['Boolean']
     id: Scalars['UUID']
+    iframeMediaPermissions?: IframeMediaPermission[]
     installedApplications: Application[]
     inviteHash?: Scalars['String']
     isAutoModelSelectionEnabled: Scalars['Boolean']
@@ -4781,6 +4793,7 @@ export interface ApplicationMonitoringActivityBucketGenqlSelection{
 export interface ApplicationMonitoringCreditBucketGenqlSelection{
     bucketStart?: boolean | number
     creditsUsed?: boolean | number
+    operationLabel?: boolean | number
     operationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5709,10 +5722,11 @@ openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),sh
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
-export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
+export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
 export interface CreditUsedItemGenqlSelection{
     creditsUsed?: boolean | number
+    icon?: boolean | number
     label?: boolean | number
     operation?: boolean | number
     resource?: boolean | number
@@ -6228,6 +6242,14 @@ export interface GridPositionGenqlSelection{
 export interface IframeConfigurationGenqlSelection{
     configurationType?: boolean | number
     url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IframeMediaPermissionGenqlSelection{
+    camera?: boolean | number
+    microphone?: boolean | number
+    origin?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7012,7 +7034,8 @@ export interface MutationGenqlSelection{
     updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
-    updateWorkspaceAllowedIframeOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedIframeOriginsInput} })
+    updateWorkspaceAllowedEmbeddingOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedEmbeddingOriginsInput} })
+    updateWorkspaceIframeMediaPermissions?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceIframeMediaPermissionsInput} })
     updateWorkspaceMemberRole?: (WorkspaceMemberGenqlSelection & { __args: {roleId: Scalars['UUID'], workspaceMemberId: Scalars['UUID']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
     upgradeApplication?: { __args: {appRegistrationId: Scalars['String'], targetVersion: Scalars['String']} }
@@ -8440,9 +8463,11 @@ id: Scalars['UUID'],
 /** The webhook fields to update */
 update: UpdateWebhookInputUpdates}
 
-export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
+export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),roleId?: (Scalars['UUID'] | null),secret?: (Scalars['String'] | null),targetUrl?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceAllowedIframeOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
+export interface UpdateWorkspaceAllowedEmbeddingOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
+
+export interface UpdateWorkspaceIframeMediaPermissionsInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
 
 export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
@@ -8923,6 +8948,7 @@ export interface WebhookGenqlSelection{
     description?: boolean | number
     id?: boolean | number
     operations?: boolean | number
+    role?: RoleGenqlSelection
     secret?: boolean | number
     targetUrl?: boolean | number
     updatedAt?: boolean | number
@@ -8989,7 +9015,7 @@ export interface WorkspaceGenqlSelection{
     aiEvaluationModelId?: boolean | number
     aiModelIdByTier?: boolean | number
     allowImpersonation?: boolean | number
-    allowedIframeOrigins?: boolean | number
+    allowedEmbeddingOrigins?: boolean | number
     billingCustomer?: BillingCustomerGenqlSelection
     billingEntitlements?: BillingEntitlementGenqlSelection
     billingSubscriptions?: BillingSubscriptionGenqlSelection
@@ -9006,6 +9032,7 @@ export interface WorkspaceGenqlSelection{
     hasValidEnterpriseValidityToken?: boolean | number
     hasValidSignedEnterpriseKey?: boolean | number
     id?: boolean | number
+    iframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     installedApplications?: ApplicationGenqlSelection
     inviteHash?: boolean | number
     isAutoModelSelectionEnabled?: boolean | number
@@ -10434,6 +10461,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isIframeConfiguration = (obj?: { __typename?: any } | null): obj is IframeConfiguration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isIframeConfiguration"')
       return IframeConfiguration_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IframeMediaPermission_possibleTypes: string[] = ['IframeMediaPermission']
+    export const isIframeMediaPermission = (obj?: { __typename?: any } | null): obj is IframeMediaPermission => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIframeMediaPermission"')
+      return IframeMediaPermission_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12748,6 +12783,7 @@ export const enumUsageOperationType = {
    AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
+   APP_OPERATION: 'APP_OPERATION' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,

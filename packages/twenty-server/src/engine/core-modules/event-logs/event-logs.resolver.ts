@@ -12,7 +12,7 @@ import { ForbiddenExceptionGraphqlFilter } from 'src/engine/core-modules/event-l
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -59,7 +59,11 @@ export class EventLogsResolver {
     callingApplication: FlatApplication | undefined,
   ): Promise<EventLogQueryResult> {
     return this.eventLogsService.queryEventLogs(workspace, input, {
-      callingApplicationId: getScopedCallingApplication(callingApplication)?.id,
+      reachableApplications: getReachableApplications({
+        callingApplication,
+        operation: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      }),
     });
   }
 }

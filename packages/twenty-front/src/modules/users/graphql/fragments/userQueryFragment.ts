@@ -88,6 +88,11 @@ export const USER_QUERY_FRAGMENT = gql`
         createdAt
       }
       isCustomDomainEnabled
+      iframeMediaPermissions {
+        origin
+        microphone
+        camera
+      }
       workspaceUrls {
         ...WorkspaceUrlsFragment
       }
