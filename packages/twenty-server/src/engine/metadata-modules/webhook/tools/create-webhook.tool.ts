@@ -7,7 +7,6 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
-import { buildWebhookCallerFromToolContext } from 'src/engine/metadata-modules/webhook/tools/utils/build-webhook-caller-from-tool-context.util';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
@@ -73,7 +72,6 @@ export class CreateWebhookTool extends BaseTool<
         roleId,
       },
       workspaceId: context.workspaceId,
-      caller: buildWebhookCallerFromToolContext(context),
     });
 
     return {

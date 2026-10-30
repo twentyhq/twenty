@@ -4,12 +4,7 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -73,20 +68,10 @@ export class WebhookResolver {
   async createWebhook(
     @Args('input') input: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
     return await this.webhookService.create({
       input,
       workspaceId: workspace.id,
-      caller: {
-        userWorkspaceId,
-        apiKeyId: apiKey?.id,
-        applicationId: application?.id,
-      },
     });
   }
 
@@ -100,20 +85,10 @@ export class WebhookResolver {
   async updateWebhook(
     @Args('input') input: UpdateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
     return await this.webhookService.update({
       input,
       workspaceId: workspace.id,
-      caller: {
-        userWorkspaceId,
-        apiKeyId: apiKey?.id,
-        applicationId: application?.id,
-      },
     });
   }
 

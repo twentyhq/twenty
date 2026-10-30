@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -16,13 +14,6 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import { type WebhookCaller } from 'src/engine/metadata-modules/webhook/types/webhook-caller.type';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { computeWebhookRoleTargetOperations } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -38,7 +29,6 @@ export class WebhookService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly permissionsService: PermissionsService,
   ) {}
 
   private normalizeTargetUrl(targetUrl: string): string {
@@ -113,17 +103,10 @@ export class WebhookService {
   async create({
     input,
     workspaceId,
-    caller,
   }: {
     input: CreateWebhookInput;
     workspaceId: string;
-    caller?: WebhookCaller;
   }): Promise<WebhookDTO> {
-    await this.assertCallerCanManageWebhookRolesOrThrow({
-      workspaceId,
-      caller,
-    });
-
     const { roleId, ...createWebhookInput } = input;
     const normalizedTargetUrl = this.normalizeTargetUrl(
       createWebhookInput.targetUrl,
@@ -217,18 +200,10 @@ export class WebhookService {
   async update({
     input,
     workspaceId,
-    caller,
   }: {
     input: UpdateWebhookInput;
     workspaceId: string;
-    caller?: WebhookCaller;
   }): Promise<WebhookDTO> {
-    // Every webhook carries a role, so redirecting one can leak what that role reads
-    await this.assertCallerCanManageWebhookRolesOrThrow({
-      workspaceId,
-      caller,
-    });
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -381,34 +356,5 @@ export class WebhookService {
     }
 
     return fromFlatWebhookToWebhookDto(flatWebhookToDelete);
-  }
-
-  private async assertCallerCanManageWebhookRolesOrThrow({
-    workspaceId,
-    caller,
-  }: {
-    workspaceId: string;
-    caller: WebhookCaller | undefined;
-  }): Promise<void> {
-    const canAssignRole =
-      isDefined(caller) &&
-      (await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId: caller.userWorkspaceId,
-        setting: PermissionFlagType.ROLES,
-        apiKeyId: caller.apiKeyId,
-        applicationId: caller.applicationId,
-        agentId: caller.agentId,
-      }));
-
-    if (!canAssignRole) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You need the Roles permission to create or edit a webhook.`,
-        },
-      );
-    }
   }
 }

@@ -18,12 +18,7 @@ import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.f
 import { isMetadataRestRequest } from 'src/engine/api/rest/metadata/utils/is-metadata-rest-request.util';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -88,20 +83,10 @@ export class WebhookController {
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
     return this.webhookService.create({
       input: createWebhookDto,
       workspaceId: workspace.id,
-      caller: {
-        userWorkspaceId,
-        apiKeyId: apiKey?.id,
-        applicationId: application?.id,
-      },
     });
   }
 
@@ -111,20 +96,10 @@ export class WebhookController {
     @Param('id') id: string,
     @Body() updateWebhookDto: UpdateWebhookInputUpdates,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-    @AuthApiKey() apiKey: ApiKeyEntity | undefined,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
     return this.webhookService.update({
       input: { id, update: updateWebhookDto },
       workspaceId: workspace.id,
-      caller: {
-        userWorkspaceId,
-        apiKeyId: apiKey?.id,
-        applicationId: application?.id,
-      },
     });
   }
 
