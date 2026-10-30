@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import type { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
   FieldMetadataType,
@@ -31,6 +30,30 @@ import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/w
 
 const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
 const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+const WORKSPACE_CUSTOM_APPLICATION_ROLE_ID =
+  'workspace-custom-application-role-id';
+
+const buildObjectPermissions = ({
+  canReadObjectRecords,
+}: {
+  canReadObjectRecords: boolean;
+}) => ({
+  'test-object-metadata': {
+    canReadObjectRecords,
+    canUpdateObjectRecords: false,
+    canSoftDeleteObjectRecords: false,
+    canDestroyObjectRecords: false,
+    restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
+  },
+});
+
+const WORKSPACE_CUSTOM_FLAT_APPLICATION = {
+  id: WORKSPACE_CUSTOM_APPLICATION_ID,
+  version: '1.0.1',
+  defaultRoleId: WORKSPACE_CUSTOM_APPLICATION_ROLE_ID,
+};
 
 describe('WorkflowDatabaseEventTriggerListener', () => {
   let listener: WorkflowDatabaseEventTriggerListener;
@@ -54,9 +77,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     {
       applicationVersion = '1.0.1',
       applicationRole,
+      workspaceCustomApplicationRoleId = WORKSPACE_CUSTOM_APPLICATION_ROLE_ID,
     }: {
       applicationVersion?: string | null;
       applicationRole?: { canReadObjectRecords: boolean } | null;
+      workspaceCustomApplicationRoleId?: string | null;
     } = {},
   ) => {
     const isApplicationWorkflow = applicationRole !== undefined;
@@ -71,34 +96,27 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
             version: applicationVersion,
             defaultRoleId: applicationRole ? 'application-role-id' : null,
           },
+          [WORKSPACE_CUSTOM_APPLICATION_ID]: {
+            ...WORKSPACE_CUSTOM_FLAT_APPLICATION,
+            defaultRoleId: workspaceCustomApplicationRoleId,
+          },
         },
         idByUniversalIdentifier: {},
       },
-      ...(isApplicationWorkflow
-        ? {
-            rolesPermissions: applicationRole
-              ? {
-                  'application-role-id': {
-                    'test-object-metadata': {
-                      canReadObjectRecords:
-                        applicationRole.canReadObjectRecords,
-                      canUpdateObjectRecords: false,
-                      canSoftDeleteObjectRecords: false,
-                      canDestroyObjectRecords: false,
-                      restrictedFields: {},
-                      rowLevelPermissionPredicates: [],
-                      rowLevelPermissionPredicateGroups: [],
-                    },
-                  },
-                }
-              : {},
-            roleIdsWithAllRecordsAccess: [],
-            flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-            flatRowLevelPermissionPredicateGroupMaps:
-              createEmptyFlatEntityMaps(),
-            flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-          }
-        : {}),
+      rolesPermissions: {
+        [WORKSPACE_CUSTOM_APPLICATION_ROLE_ID]: buildObjectPermissions({
+          canReadObjectRecords: true,
+        }),
+        ...(applicationRole
+          ? {
+              'application-role-id': buildObjectPermissions(applicationRole),
+            }
+          : {}),
+      },
+      roleIdsWithAllRecordsAccess: [WORKSPACE_CUSTOM_APPLICATION_ROLE_ID],
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
         byWorkflowId: Object.fromEntries(
@@ -359,6 +377,16 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       await listener.handleObjectRecordUpdateEvent(mockPayload);
 
       expect(messageQueueService.add).toHaveBeenCalled();
+    });
+
+    it('should not trigger a workspace workflow whose application has no role', async () => {
+      setTriggerMap(mockEventListeners, {
+        workspaceCustomApplicationRoleId: null,
+      });
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should trigger workflow when fields array is empty', async () => {
@@ -641,8 +669,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     });
 
     it('should only trigger workflow for records of a private object shared with the workflow role', async () => {
-      const applicationRoleId = 'application-role-id';
-      const applicationId = TWENTY_STANDARD_APPLICATION_ID;
+      const applicationRoleId = WORKSPACE_CUSTOM_APPLICATION_ROLE_ID;
 
       const privatePayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
         ...mockPayload,
@@ -666,18 +693,17 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 featureFlagsMap: {},
                 flatApplicationMaps: {
                   byId: {
-                    [applicationId]: {
-                      id: applicationId,
-                      defaultRoleId: applicationRoleId,
-                    },
+                    [WORKSPACE_CUSTOM_APPLICATION_ID]:
+                      WORKSPACE_CUSTOM_FLAT_APPLICATION,
                   },
-                  idByUniversalIdentifier: {
-                    [TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER]:
-                      applicationId,
-                  },
+                  idByUniversalIdentifier: {},
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
-                rolesPermissions: {},
+                rolesPermissions: {
+                  [applicationRoleId]: buildObjectPermissions({
+                    canReadObjectRecords: true,
+                  }),
+                },
                 roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),
