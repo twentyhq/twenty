@@ -8535,7 +8535,7 @@ export default {
                         1
                     ],
                     "recipientWorkspaceMemberIds": [
-                        524,
+                        533,
                         "[UUID!]"
                     ],
                     "shouldAssistantReply": [
@@ -12544,7 +12544,7 @@ export default {
                 4
             ],
             "recipientParticipantWorkspaceMemberIds": [
-                524
+                533
             ],
             "streamId": [
                 1
