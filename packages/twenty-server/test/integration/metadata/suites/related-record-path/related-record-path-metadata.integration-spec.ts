@@ -90,6 +90,7 @@ describe('Related record path metadata', () => {
   const createPath = async (hops: {
     firstFieldMetadataId: string;
     secondFieldMetadataId?: string;
+    isInherent?: boolean;
   }) => {
     const response = await createRelatedRecordPath({
       objectMetadataId: projectObjectMetadataId,
@@ -231,6 +232,7 @@ describe('Related record path metadata', () => {
       firstFieldMetadataId: projectTasksFieldMetadataId,
       secondFieldMetadataId: taskAssigneeFieldMetadataId,
       thirdFieldMetadataId: null,
+      isInherent: false,
     });
     expect(await findPathIds()).toContain(createdPath.id);
 
@@ -240,6 +242,20 @@ describe('Related record path metadata', () => {
       createdPath.id,
     );
     expect(await findPathIds()).not.toContain(createdPath.id);
+  });
+
+  it('should create an inherent path', async () => {
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      isInherent: true,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createRelatedRecordPath.isInherent).toBe(true);
+
+    await deleteRelatedRecordPath(
+      response.body.data.createRelatedRecordPath.id,
+    );
   });
 
   it('should reject a path that already exists', async () => {
