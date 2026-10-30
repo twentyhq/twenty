@@ -7,7 +7,6 @@ type FrontComponentSourceRendererProps = {
   componentId: string;
   componentSource: string;
   sharedDependenciesSource?: string;
-  sharedDependenciesUrl?: string;
   data: Record<string, unknown>;
   colorScheme: 'light' | 'dark';
   onReady?: () => void;
@@ -18,7 +17,6 @@ export const FrontComponentSourceRenderer = ({
   componentId,
   componentSource,
   sharedDependenciesSource,
-  sharedDependenciesUrl,
   data,
   colorScheme,
   onReady,
@@ -41,8 +39,6 @@ export const FrontComponentSourceRenderer = ({
       componentUrl={`about:blank#${componentId}`}
       componentSource={componentSource}
       sharedDependenciesSource={sharedDependenciesSource}
-      sharedDependenciesUrl={sharedDependenciesUrl}
-      sharedDependenciesCredentials="include"
       componentProps={data}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={

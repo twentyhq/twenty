@@ -7,6 +7,7 @@ import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/cr
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
+import { type HostOutsidePressController } from '@/host/events/types/HostOutsidePressController';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
@@ -39,7 +40,6 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
-  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -48,6 +48,7 @@ type FrontComponentWorkerEffectProps = {
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
   hostScrollController: HostScrollController;
+  outsidePressController: HostOutsidePressController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
@@ -55,6 +56,7 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   hostScrollController,
+  outsidePressController,
   componentUrl,
   componentSource: providedComponentSource,
   componentProps,
@@ -65,7 +67,6 @@ export const FrontComponentWorkerEffect = ({
   functionsBaseUrl,
   sdkClientUrls,
   sharedDependenciesUrl,
-  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -94,6 +95,8 @@ export const FrontComponentWorkerEffect = ({
       return;
     }
 
+    setError(null);
+
     const newReceiver = new RemoteReceiver({ retain, release });
 
     const sandboxIframe = createFrontComponentSandboxIframe(
@@ -120,6 +123,7 @@ export const FrontComponentWorkerEffect = ({
       hostFetch,
       imageLoadingHost,
       geometryTracker,
+      outsidePressController,
       mediaSessionHost,
     });
 
@@ -166,7 +170,6 @@ export const FrontComponentWorkerEffect = ({
 
           return fetchComponentSource({
             url: sharedDependenciesUrl,
-            credentials: sharedDependenciesCredentials,
             headers: authorizationHeaders,
           });
         };
@@ -189,6 +192,8 @@ export const FrontComponentWorkerEffect = ({
         const storageSnapshots = isDefined(storageNamespace)
           ? buildFrontComponentStorageSnapshots(storageNamespace)
           : undefined;
+
+        setReceiver(newReceiver);
 
         await thread.imports.render(
           createFileInputAwareRemoteConnection({
@@ -218,7 +223,6 @@ export const FrontComponentWorkerEffect = ({
         );
 
         if (!isCancelled) {
-          setReceiver(newReceiver);
           onReadyRef.current?.();
         }
       } catch (error) {
@@ -254,13 +258,13 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    sharedDependenciesCredentials,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,
     geometryTracker,
     hostFocusController,
     hostScrollController,
+    outsidePressController,
     mediaSessionHost,
     setError,
     setReceiver,

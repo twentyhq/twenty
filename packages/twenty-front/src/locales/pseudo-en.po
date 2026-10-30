@@ -902,11 +902,6 @@ msgstr ""
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr ""
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr ""
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1208,6 +1203,11 @@ msgstr ""
 #. js-lingui-id: J407xr
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
 msgid "{unitCount, plural, one {Year} other {Years}}"
+msgstr ""
+
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
 msgstr ""
 
 #. js-lingui-id: GChCUQ
@@ -3240,7 +3240,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr ""
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr ""
 
@@ -3323,11 +3323,6 @@ msgstr ""
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
-msgstr ""
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
 msgstr ""
 
 #. js-lingui-id: GMx1K0
@@ -3718,6 +3713,11 @@ msgstr ""
 msgid "App"
 msgstr ""
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr ""
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3795,11 +3795,6 @@ msgstr ""
 msgid "Application Logs"
 msgstr ""
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr ""
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3839,9 +3834,9 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
 msgstr ""
 
 #. js-lingui-id: p98xmP
@@ -3910,6 +3905,7 @@ msgid "Apps"
 msgstr ""
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3918,6 +3914,11 @@ msgstr ""
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
+msgstr ""
+
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
 msgstr ""
 
 #. js-lingui-id: aDW39c
@@ -6936,6 +6937,12 @@ msgstr ""
 msgid "Connect via IMAP/SMTP"
 msgstr ""
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr ""
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8938,6 +8945,11 @@ msgstr ""
 msgid "Define the name and instructions for this skill"
 msgstr ""
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr ""
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -9703,11 +9715,6 @@ msgstr ""
 msgid "Display text on multiple lines"
 msgstr ""
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr ""
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10108,6 +10115,11 @@ msgstr ""
 #. js-lingui-id: 79hamt
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
+msgstr ""
+
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
 msgstr ""
 
 #. js-lingui-id: tOkc8o
@@ -14820,7 +14832,7 @@ msgid "Installed"
 msgstr ""
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr ""
 
@@ -16237,7 +16249,13 @@ msgstr ""
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
+msgstr ""
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
 msgstr ""
 
 #. js-lingui-id: 5wIe5g
@@ -16287,6 +16305,11 @@ msgstr ""
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
+msgstr ""
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
 msgstr ""
 
 #. js-lingui-id: CZGQgK
@@ -16423,6 +16446,7 @@ msgstr ""
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr ""
@@ -16868,9 +16892,9 @@ msgstr ""
 msgid "Mark as favourite"
 msgstr ""
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
+msgid "Mark this app as reviewed and show it in the marketplace"
 msgstr ""
 
 #. js-lingui-id: u6Hp4N
@@ -17325,7 +17349,7 @@ msgid "Missing calendar permission."
 msgstr ""
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr ""
 
@@ -19350,7 +19374,7 @@ msgid "Not configured"
 msgstr ""
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr ""
 
@@ -21957,8 +21981,8 @@ msgid "Reconnect"
 msgstr ""
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr ""
@@ -22304,6 +22328,16 @@ msgstr ""
 #. js-lingui-id: ekCRTP
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
+msgstr ""
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr ""
+
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
 msgstr ""
 
 #. js-lingui-id: h9AYFD
@@ -25153,6 +25187,7 @@ msgstr ""
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr ""
 
@@ -25162,6 +25197,7 @@ msgid "Show logs"
 msgstr ""
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25187,6 +25223,11 @@ msgstr ""
 #. placeholder {0}: formatShortcut({ shortcut: ['Mod', 'K'] })
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
+msgstr ""
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
 msgstr ""
 
 #. js-lingui-id: TJ4tz9
@@ -27279,10 +27320,10 @@ msgstr ""
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr ""
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
 msgstr ""
 
 #. js-lingui-id: X7w5n6
@@ -27618,6 +27659,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr ""
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29050,6 +29092,7 @@ msgstr ""
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29906,17 +29949,6 @@ msgstr ""
 msgid "Very High"
 msgstr ""
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr ""
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr ""
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30305,7 +30337,6 @@ msgstr ""
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr ""
 
@@ -31287,12 +31318,6 @@ msgstr ""
 #. js-lingui-id: Dg2c0z
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
-msgstr ""
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
 msgstr ""
 
 #. js-lingui-id: tzk0bz

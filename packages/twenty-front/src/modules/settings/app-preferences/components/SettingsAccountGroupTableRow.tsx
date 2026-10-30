@@ -71,7 +71,7 @@ export const SettingsAccountGroupTableRow = ({
       onClick={
         hasSettings
           ? () =>
-              navigateSettings(SettingsPath.AccountDetail, {
+              navigateSettings(SettingsPath.AppPreferencesAccountDetail, {
                 connectedAccountId: group.id,
               })
           : undefined
@@ -79,7 +79,7 @@ export const SettingsAccountGroupTableRow = ({
     >
       {hasSettings ? (
         <UndecoratedLink
-          to={getSettingsPath(SettingsPath.AccountDetail, {
+          to={getSettingsPath(SettingsPath.AppPreferencesAccountDetail, {
             connectedAccountId: group.id,
           })}
           onClick={(event) => event.stopPropagation()}

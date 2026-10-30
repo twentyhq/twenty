@@ -1,25 +1,35 @@
 import { useEffect } from 'react';
+import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/AiWorkspaceFrontComponentRuntime';
 import { loadAiWorkspaceFrontComponentRuntime } from '@/front-components/utils/loadAiWorkspaceFrontComponentRuntime';
 
 type AiWorkspaceFrontComponentRuntimeEffectProps = {
   frontComponentId: string;
+  applicationId: string;
   onRuntimeLoaded: (runtime: AiWorkspaceFrontComponentRuntime) => void;
   onError: (error: Error) => void;
 };
 
 export const AiWorkspaceFrontComponentRuntimeEffect = ({
   frontComponentId,
+  applicationId,
   onRuntimeLoaded,
   onError,
 }: AiWorkspaceFrontComponentRuntimeEffectProps) => {
+  const { loadFrontComponentApplicationTokenPair } =
+    useFrontComponentApplicationTokenPair();
+
   useEffect(() => {
     const controller = new AbortController();
 
-    void loadAiWorkspaceFrontComponentRuntime({
-      frontComponentId,
-      signal: controller.signal,
-    })
+    void loadFrontComponentApplicationTokenPair(applicationId)
+      .then(({ applicationAccessToken }) =>
+        loadAiWorkspaceFrontComponentRuntime({
+          frontComponentId,
+          applicationAccessToken: applicationAccessToken.token,
+          signal: controller.signal,
+        }),
+      )
       .then((runtime) => {
         if (!controller.signal.aborted) {
           onRuntimeLoaded(runtime);
@@ -32,7 +42,13 @@ export const AiWorkspaceFrontComponentRuntimeEffect = ({
       });
 
     return () => controller.abort();
-  }, [frontComponentId, onRuntimeLoaded, onError]);
+  }, [
+    applicationId,
+    frontComponentId,
+    loadFrontComponentApplicationTokenPair,
+    onRuntimeLoaded,
+    onError,
+  ]);
 
   return null;
 };

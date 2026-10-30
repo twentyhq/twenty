@@ -2803,6 +2803,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "Gesels"
 
+#. js-lingui-id: Xm27Tc
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chats are not available yet. Try again in a few minutes."
+msgstr "Kletse is nog nie beskikbaar nie. Probeer oor 'n paar minute weer."
+
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3035,15 +3040,15 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Voltooid"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "Komponentbou het die tydsbeperking van 10 sekondes oorskry."
+#. js-lingui-id: 3/Bvdi
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeded the {timeoutSeconds} second time limit."
+msgstr "Komponentbou het die tydsbeperking van {timeoutSeconds} sekondes oorskry."
 
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "Komponentbou oorskry die uitvoerlimiet van 5 MB."
+#. js-lingui-id: PfwSQo
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+msgstr "Komponentbou oorskry die uitvoerlimiet van {maximumOutputMegabytes} MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3388,6 +3393,12 @@ msgstr "Gesprekgrootte"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Gesprekgrootte"
+
+#. js-lingui-id: mjQZyl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversation type"
+msgstr "Gesprekstipe"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4360,6 +4371,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
 msgstr "Ontwikkelaars"
 
+#. js-lingui-id: Kggq11
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Direct message"
+msgstr "Direkte boodskap"
+
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "Direct upload is not supported for this file type."
@@ -4546,6 +4563,12 @@ msgstr "Gedupliseerde opsie {field}"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Each agent trigger must be an object"
 msgstr "Elke agent-sneller moet ’n objek wees"
+
+#. js-lingui-id: CRI2qP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Each related record path field must belong to the object reached by the previous relation"
+msgstr "Elke verwante rekordpadveld moet behoort aan die objek wat deur die vorige verhouding bereik is"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5144,7 +5167,7 @@ msgid "Failed to add people to the list."
 msgstr "Kon nie mense by die lys voeg nie."
 
 #. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
 msgstr "Kon nie frontkomponent bou nie."
 
@@ -6792,14 +6815,14 @@ msgid "Invalid front component input."
 msgstr "Ongeldige frontkomponent-invoer."
 
 #. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
 msgstr "Ongeldige frontkomponent-instellings."
 
 #. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
-msgstr "Ongeldige frontkomponent-bron."
+msgstr "Ongeldige frontkomponentbron."
 
 #. js-lingui-id: lPC0WB
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
@@ -7042,6 +7065,11 @@ msgstr "Ongeldige ontvangers"
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Ongeldige verfrisstoken."
+
+#. js-lingui-id: gKBOwI
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Invalid related record path input."
+msgstr "Ongeldige verwante rekordpad-invoer."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -8181,6 +8209,18 @@ msgstr "Lede"
 msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Lede"
+
+#. js-lingui-id: fqpInK
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Mentions resolved at"
+msgstr "Vermeldings opgelos op"
+
+#. js-lingui-id: gzZpjR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Mentions up to this time are resolved for the member"
+msgstr "Vermeldings tot op hierdie tyd is vir die lid opgelos"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -9613,7 +9653,7 @@ msgstr "Operand \"{rawOperand}\" van 'n grafiekfilter van die widget \"{widgetTi
 #. js-lingui-id: XBLJbc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand {operand} is not supported for field type {filterType}"
-msgstr ""
+msgstr "Operand {operand} word nie vir veldtipe {filterType} ondersteun nie"
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10917,6 +10957,12 @@ msgstr "Verfrisstoken nie gevind nie."
 msgid "Registered by another workspace."
 msgstr "Deur ’n ander werkruimte geregistreer."
 
+#. js-lingui-id: jLE5Bj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Regular chat"
+msgstr "Gewone klets"
+
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10939,6 +10985,53 @@ msgstr "Verwante rekord"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
 msgstr "Verwante rekord nie gevind nie."
+
+#. js-lingui-id: WrvTKN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot skip its second relation"
+msgstr "Verwante rekordpad kan nie sy tweede verhouding oorslaan nie"
+
+#. js-lingui-id: 4sEoVQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot visit the same object twice"
+msgstr "Verwante rekordpad kan nie dieselfde objek twee keer besoek nie"
+
+#. js-lingui-id: fXYaod
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path field not found"
+msgstr "Verwante rekordpadveld nie gevind nie"
+
+#. js-lingui-id: ZyTgMJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be active"
+msgstr "Verwante rekordpadvelde moet aktief wees"
+
+#. js-lingui-id: mpKEGh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be relations"
+msgstr "Verwante rekordpadvelde moet verhoudings wees"
+
+#. js-lingui-id: pHqQra
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path not found"
+msgstr "Verwante rekordpad nie gevind nie"
+
+#. js-lingui-id: JUo4rP
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record path not found."
+msgstr "Verwante rekordpad nie gevind nie."
+
+#. js-lingui-id: YYg7qq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path object not found"
+msgstr "Verwante rekordpadobjek nie gevind nie"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11884,10 +11977,20 @@ msgstr "Bediener-logikafunksie nie gevind nie."
 msgid "Server logic function requires authentication."
 msgstr "Bediener-logikafunksie vereis outentikasie."
 
+#. js-lingui-id: VOUkzJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "Server routes can only be defined by an application."
+msgstr "Bedienerroetes kan slegs deur 'n toepassing gedefinieer word."
+
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Server-level impersonation is not enabled for this user or workspace."
 msgstr "Bedienervlak-nabootsing is nie vir hierdie gebruiker of werkruimte geaktiveer nie."
+
+#. js-lingui-id: y4fTj2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "serverRouteTriggerSettings can only be set by an installed application"
+msgstr "serverRouteTriggerSettings kan slegs deur 'n geïnstalleerde toepassing gestel word"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11959,6 +12062,11 @@ msgstr "Instellingskieslysitemtitel \"{updatedTitle}\" is gereserveer"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Instellingskieslysitemtitel word vereis"
+
+#. js-lingui-id: AaiDcy
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "Several applications declare this server route. Use the application registration URL instead."
+msgstr "Verskeie toepassings verklaar hierdie bedienerroete. Gebruik eerder die toepassingregistrasie-URL."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -14173,7 +14281,7 @@ msgstr "Hierdie objektoestemming is reeds vir die rol ingestel"
 #. js-lingui-id: JHfGIK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this field"
-msgstr ""
+msgstr "Hierdie operand word nie vir hierdie veld ondersteun nie"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14250,6 +14358,12 @@ msgstr "Hierdie rekord kan nie geskrap word nie omdat ander rekords nog daarna v
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Hierdie rekord bestaan nie of is uitgevee."
+
+#. js-lingui-id: AzRcHW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "This related record path already exists"
+msgstr "Hierdie verwante rekordpad bestaan reeds"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16302,6 +16416,12 @@ msgstr "Of die assistent aan hierdie gesprek deelneem"
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
 msgstr "Of die handvatsel vir ’n enkele werkruimtelid of vir die hele werkruimte geblokkeer is"
+
+#. js-lingui-id: zsdmbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether this is a regular chat or a canonical direct message"
+msgstr "Of dit 'n gewone klets of 'n kanonieke direkte boodskap is"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

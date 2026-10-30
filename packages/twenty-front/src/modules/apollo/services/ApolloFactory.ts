@@ -30,6 +30,7 @@ import {
   type SelectionNode,
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 
 const logger = loggerLink(() => 'Twenty');
@@ -105,6 +106,7 @@ export class ApolloFactory implements ApolloManager {
           headers: {
             ...headers,
             ...optionHeaders,
+            [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
             'x-locale': locale,
             ...(isDefined(this.appVersion) && {
               'X-App-Version': this.appVersion,
