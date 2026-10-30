@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -25,7 +26,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-import { assertRunApplicationCanTriggerStepTarget } from 'src/modules/workflow/workflow-executor/utils/assert-run-application-can-trigger-step-target.util';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -79,17 +79,23 @@ export class WorkflowExecutionContextService {
     targetApplicationId: string;
     targetLabel: string;
   }): void {
-    if (!isDefined(application)) {
+    if (
+      !isDefined(application) ||
+      canCallerReachApplication({
+        callingApplication: application,
+        applicationId: targetApplicationId,
+        access: 'trigger',
+        workspaceCustomApplicationId:
+          authContext.workspace.workspaceCustomApplicationId,
+      })
+    ) {
       return;
     }
 
-    assertRunApplicationCanTriggerStepTarget({
-      application,
-      workspaceCustomApplicationId:
-        authContext.workspace.workspaceCustomApplicationId,
-      targetApplicationId,
-      targetLabel,
-    });
+    throw new WorkflowStepExecutorException(
+      `${targetLabel} belongs to another application than "${application.name}", so this run cannot use it`,
+      WorkflowStepExecutorExceptionCode.FORBIDDEN,
+    );
   }
 
   private async buildExecutionContext(
