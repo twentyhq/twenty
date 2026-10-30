@@ -1374,6 +1374,55 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  accessGroup: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'accessGroup'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'accessGroup',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.accessGroup.universalIdentifier,
+        nameSingular: 'accessGroup',
+        namePlural: 'accessGroups',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Access group`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Access groups`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Members of a role who receive the same evaluated grant`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLock',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
+        readability: MetadataReadability.SYSTEM,
+        disabledObjectPermissionActions:
+          PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   recordShare: ({
     now,
     workspaceId,

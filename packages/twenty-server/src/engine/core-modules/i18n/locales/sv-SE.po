@@ -609,6 +609,24 @@ msgstr "Accepterad"
 msgid "Access denied."
 msgstr "Åtkomst nekad."
 
+#. js-lingui-id: RpHJlx
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Access group"
+msgstr "Åtkomstgrupp"
+
+#. js-lingui-id: EObiot
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Access group position"
+msgstr "Åtkomstgruppsposition"
+
+#. js-lingui-id: YTZTZr
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Access groups"
+msgstr "Åtkomstgrupper"
+
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3073,6 +3091,12 @@ msgstr "Skriv e-post"
 msgid "Composite type not found."
 msgstr "Sammansatt typ hittades inte."
 
+#. js-lingui-id: d+5s6E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conditional grant the group evaluates, empty for whole-object grants"
+msgstr "Villkorlig behörighet som gruppen utvärderar, tom för behörigheter för hela objektet"
+
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3623,6 +3647,7 @@ msgstr "Skapad av"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -3669,6 +3694,7 @@ msgstr "Att skapa en post för ett privat objekt kräver argumentet shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3706,6 +3732,7 @@ msgstr "Skapelsedatum"
 
 #. js-lingui-id: MZxGED
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3937,6 +3964,7 @@ msgstr "Datumformat"
 
 #. js-lingui-id: bCL+CN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4255,6 +4283,7 @@ msgstr "Raderad den"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4899,6 +4928,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Berika"
 
+#. js-lingui-id: +RIetY
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter an HTTPS origin without a path or wildcard"
+msgstr "Ange en HTTPS-origin utan sökväg eller jokertecken"
+
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Enter your two-factor authentication code to continue."
@@ -5293,10 +5327,20 @@ msgstr "Funktionskonfiguration hittades inte."
 msgid "February"
 msgstr "Februari"
 
+#. js-lingui-id: V1MVzr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
+msgstr "Fältet \"{fieldName}\" tillhör inte objektet som nås via relationen \"{relationFieldName}\""
+
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Fältet \"{fieldName}\" är inte en många-till-en-relation och har ingen join-kolumn att jämföra med"
+
+#. js-lingui-id: XZvE/9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{relationFieldName}\" is not a relation"
+msgstr "Fältet \"{relationFieldName}\" är inte en relation"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5504,6 +5548,7 @@ msgstr "Fält använt för fulltextssökning"
 
 #. js-lingui-id: pcBMew
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6149,6 +6194,12 @@ msgstr "Grupperingsfält krävs för cirkeldiagram"
 msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
 msgstr "Grupperingsfält krävs för cirkeldiagramwidgeten \"{widgetTitle}\""
 
+#. js-lingui-id: tZ4I1x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Group hash"
+msgstr "Grupphash"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6187,6 +6238,12 @@ msgstr "\"handlerName\" måste vara en giltig JavaScript-identifierare eller pun
 msgctxt "fieldMetadata.description"
 msgid "Hash of the authored template and resolved destination URLs"
 msgstr "Hashvärde för den skapade mallen och de lösta mål-URL:erna"
+
+#. js-lingui-id: XL/9cp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the role, grant and member field values, unique per group"
+msgstr "Hash för värdena i fälten roll, tilldelning och medlem, unik per grupp"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6232,6 +6289,7 @@ msgstr "iCal UID"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6277,6 +6335,7 @@ msgstr "ID"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -7736,6 +7795,7 @@ msgstr "Senaste gången länken ändrades"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -7771,6 +7831,7 @@ msgstr "Senaste gången posten ändrades"
 
 #. js-lingui-id: hzBM8U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8185,6 +8246,12 @@ msgctxt "fieldMetadata.description"
 msgid "Meeting title from the calendar event"
 msgstr "Mötestitel från kalenderhändelsen"
 
+#. js-lingui-id: I+r+Lx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Member field values"
+msgstr "Medlemsfältvärden"
+
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8209,6 +8276,12 @@ msgstr "Medlemmar"
 msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Medlemmar"
+
+#. js-lingui-id: sK9eyT
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Members of a role who receive the same evaluated grant"
+msgstr "Medlemmar i en roll som får samma utvärderade tilldelning"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -10430,6 +10503,7 @@ msgstr "Kontaktperson"
 
 #. js-lingui-id: rLOFsu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -10498,6 +10572,11 @@ msgstr "Predikatet saknar ett värde"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
 msgstr "Predikatvärdet är inte giltigt för denna operand"
+
+#. js-lingui-id: nSv3rP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reaching a field through a relation are not enabled for this workspace"
+msgstr "Predikat som når ett fält via en relation är inte aktiverade för denna arbetsyta"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11058,6 +11137,22 @@ msgstr "Relationskonfigurationen är ogiltig."
 msgid "Relation creation payload is required"
 msgstr "Relationsskapadragsdata är nödvändig"
 
+#. js-lingui-id: yRw5Ff
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
+msgstr "Relationsfältet \"{relationFieldName}\" tillhör inte objektet som predikatet begränsar"
+
+#. js-lingui-id: lEwqUQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" is not active"
+msgstr "Relationsfältet \"{relationFieldName}\" är inte aktivt"
+
+#. js-lingui-id: k5Rbos
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field metadata not found"
+msgstr "Relationsfältets metadata hittades inte"
+
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
@@ -11357,7 +11452,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "Rollen \"{roleLabel}\" kan inte tilldelas webhooks"
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
@@ -11368,6 +11463,12 @@ msgstr "Rollen \"{roleLabel}\" kan inte tilldelas: anpassade roller kräver Orga
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
 msgstr "Rollen kan inte tilldelas denna entitet."
+
+#. js-lingui-id: IJxetQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Role ID"
+msgstr "Roll-ID"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11459,7 +11560,7 @@ msgstr "Rollens mål saknar identifierare."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgstr "Rollmålet måste ha exakt en av: apiKeyId, userWorkspaceId, agentUniversalIdentifier eller webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11478,6 +11579,12 @@ msgstr "Rollmål hittades inte."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
 msgstr "Rollmål med denna universella identifierare finns redan"
+
+#. js-lingui-id: YDA5ex
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Role whose members can belong to the group"
+msgstr "Roll vars medlemmar kan tillhöra gruppen"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11538,6 +11645,12 @@ msgstr "Funktionen för predikat för behörighet på radnivå är inaktiverad."
 msgid "Row level permission predicate group already exists"
 msgstr "Grupp med predikat för behörighet på radnivå finns redan"
 
+#. js-lingui-id: A9bb6S
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row level permission predicate group ID"
+msgstr "ID för grupp med predikat för behörighet på radnivå"
+
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11595,6 +11708,11 @@ msgstr "Predikat för behörighet på radnivå med denna universella identifiera
 msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "Regel"
+
+#. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Rules through a relation are not enabled for this workspace"
+msgstr "Regler via en relation är inte aktiverade för denna arbetsyta"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -11728,6 +11846,7 @@ msgstr "S\"okvektor"
 
 #. js-lingui-id: Zuw7oP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11839,7 +11958,7 @@ msgstr "Se arbetsflöde"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "Välj en roll för denna webhook."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13193,6 +13312,7 @@ msgstr "Skaparen av länken"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13524,6 +13644,16 @@ msgctxt "fieldMetadata.description"
 msgid "The person in the list"
 msgstr "Personen i listan"
 
+#. js-lingui-id: vuwSBG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through a relation field"
+msgstr "Predikatet kan endast gå via ett relationsfält"
+
+#. js-lingui-id: 1pKvRu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through an active relation field"
+msgstr "Predikatet kan endast gå via ett aktivt relationsfält"
+
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
@@ -13594,7 +13724,7 @@ msgstr "Den valda modellen har inaktiverats av administratören."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "Den valda rollen finns inte."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13757,6 +13887,7 @@ msgstr "Arbetsflödesversionens status"
 
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13824,6 +13955,11 @@ msgstr "Det finns inget föregående onboardingsteg att gå tillbaka till."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Dessa fält kan inte uppdateras förrän arbetsytan har aktiverats: {fieldsList}."
+
+#. js-lingui-id: 029tdK
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "These origins are too long to allow together. Remove one and try again."
+msgstr "Dessa origin är för långa för att tillåtas tillsammans. Ta bort en och försök igen."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -14114,6 +14250,11 @@ msgstr "Denna funktion är inte aktiverad."
 msgid "This field cannot be modified."
 msgstr "Detta fält kan inte ändras."
 
+#. js-lingui-id: Bp6UAi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field does not belong to the object reached by the relation"
+msgstr "Det här fältet tillhör inte objektet som nås via relationen"
+
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the workspace member object"
@@ -14391,6 +14532,11 @@ msgstr "Den här sökvägen för relaterad post finns redan"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field cannot be used in a record rule"
 msgstr "Detta relationsfält kan inte användas i en postregel"
+
+#. js-lingui-id: K7NTYK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This relation field does not belong to the restricted object"
+msgstr "Det här relationsfältet tillhör inte det begränsade objektet"
 
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15430,6 +15576,7 @@ msgstr "Uppdaterad den"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -15811,6 +15958,12 @@ msgstr "Värdet \"{stringifiedValue}\" resulterar inte i någon post för operan
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Värdet måste vara i VERSALER och följa snake_case \"{sanitizedValue}\""
+
+#. js-lingui-id: OG7PgU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Values of the member fields the grant reads, shared by every member of the group"
+msgstr "Värden för de medlemsfält som tilldelningen läser, delade av alla medlemmar i gruppen"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
