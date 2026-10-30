@@ -73,6 +73,7 @@ export const mockCurrentWorkspace = {
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
+  isTrialAvailable: true,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,

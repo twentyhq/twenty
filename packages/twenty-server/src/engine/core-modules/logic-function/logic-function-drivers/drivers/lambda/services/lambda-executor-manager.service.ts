@@ -38,6 +38,7 @@ import {
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { buildLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-lambda-resource-tags.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -52,14 +53,16 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
 };
 
 export class LambdaExecutorManagerService {
   private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
   constructor(
-    private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
+    private readonly options: Pick<
+      LambdaDriverOptions,
+      'lambdaRole' | 'resourceTags'
+    >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
     private readonly cacheLockService: CacheLockService,
@@ -176,7 +179,7 @@ export class LambdaExecutorManagerService {
   }
 
   async installPrebuiltBundle(context: ExecutorBuildContext): Promise<void> {
-    const { flatLogicFunction, applicationUniversalIdentifier } = context;
+    const { flatLogicFunction, flatApplication } = context;
 
     if (!isNonEmptyString(flatLogicFunction.checksum)) {
       throw new LogicFunctionException(
@@ -201,7 +204,7 @@ export class LambdaExecutorManagerService {
         const compiledCode =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
           });
 
@@ -283,7 +286,7 @@ export class LambdaExecutorManagerService {
     canSkip: boolean;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }> {
-    const { flatApplication, applicationUniversalIdentifier } = context;
+    const { flatApplication } = context;
     const lambdaExecutor = await this.getLambdaExecutor(
       context.flatLogicFunction,
     );
@@ -294,11 +297,10 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.layerManager.hasExpectedLayers({
+      (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
-        applicationUniversalIdentifier,
-      });
+      }));
 
     return { canSkip, lambdaExecutor };
   }
@@ -306,7 +308,6 @@ export class LambdaExecutorManagerService {
   private async ensureExecutor({
     flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
     lambdaExecutor,
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
@@ -314,10 +315,7 @@ export class LambdaExecutorManagerService {
     let depsLayerArn: string;
 
     try {
-      depsLayerArn = await this.layerManager.ensureDepsLayer({
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
+      depsLayerArn = await this.layerManager.ensureDepsLayer(flatApplication);
     } catch (error) {
       if (
         error instanceof LogicFunctionException &&
@@ -341,10 +339,7 @@ export class LambdaExecutorManagerService {
     let sdkLayerArn: string;
 
     try {
-      sdkLayerArn = await this.layerManager.ensureSdkLayer({
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
+      sdkLayerArn = await this.layerManager.ensureSdkLayer(flatApplication);
     } catch (error) {
       if (
         error instanceof LogicFunctionException &&
@@ -453,9 +448,10 @@ export class LambdaExecutorManagerService {
         Timeout: EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-        Tags: isDefined(sdkClientCoreChecksum)
-          ? { [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum }
-          : undefined,
+        Tags: buildLambdaResourceTags({
+          resourceTags: this.options.resourceTags,
+          sdkClientCoreChecksum,
+        }),
       };
 
       const lambdaClient = await this.awsClient.getLambdaClient();

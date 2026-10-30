@@ -30,6 +30,8 @@ const OR_GROUP_ROLE_ID = 'or-group-role-1';
 const AND_GROUP_ROLE_ID = 'and-group-role-1';
 const NESTED_GROUP_ROLE_ID = 'nested-group-role-1';
 const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
+const TEXT_IS_ROLE_ID = 'text-is-role-1';
+const SELECT_CONTAINS_ROLE_ID = 'select-contains-role-1';
 const COMPANY_OBJECT_ID = 'company-object';
 const PERSON_OBJECT_ID = 'person-object';
 const OWNER_MORPH_ID = 'owner-morph';
@@ -228,6 +230,15 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     operand: 'IS',
     value: { selectedRecordIds: [OWNER_RECORD_ID] },
   }),
+  buildPredicate('predicate-text-is', TEXT_IS_ROLE_ID, {
+    operand: 'IS',
+    value: 'stale-value',
+  }),
+  buildPredicate('predicate-select-contains', SELECT_CONTAINS_ROLE_ID, {
+    fieldMetadataId: STATUS_FIELD_ID,
+    operand: 'CONTAINS',
+    value: 'OPEN',
+  }),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
 const buildPredicateGroup = (
@@ -320,6 +331,20 @@ describe('buildRowLevelPermissionRecordFilter', () => {
         { name: { ilike: '%visible-to-user%' } },
         { name: { ilike: '%visible-to-application%' } },
       ],
+    });
+  });
+
+  describe('predicate whose operand is invalid for the field type', () => {
+    it('should throw a meaningful error for an IS operand on a text field', () => {
+      expect(() => build([TEXT_IS_ROLE_ID])).toThrow(
+        /Operand IS is not supported for field name of type TEXT/,
+      );
+    });
+
+    it('should throw a meaningful error for a contains operand on a select field', () => {
+      expect(() => build([SELECT_CONTAINS_ROLE_ID])).toThrow(
+        /Operand CONTAINS is not supported for field status of type SELECT/,
+      );
     });
   });
 

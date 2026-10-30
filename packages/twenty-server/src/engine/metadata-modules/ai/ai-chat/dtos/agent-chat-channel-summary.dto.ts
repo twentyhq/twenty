@@ -10,6 +10,30 @@ export class AgentChatChannelSummaryDTO {
   @Field(() => Int)
   openCount: number;
 
+  @Field(() => Int)
+  needsInputCount: number;
+
+  @Field(() => Int)
+  mentionedCount: number;
+
+  @Field(() => Int)
+  assignedToMeCount: number;
+
+  @Field(() => Int)
+  assignedCount: number;
+
+  @Field(() => Int)
+  unassignedCount: number;
+
+  @Field(() => Int)
+  snoozedCount: number;
+
+  @Field(() => Int)
+  doneCount: number;
+
   @Field(() => Boolean)
   hasUnreadOpen: boolean;
+
+  @Field(() => Boolean)
+  hasUnreadAssignedToMe: boolean;
 }

@@ -82,6 +82,7 @@ export const USER_QUERY_FRAGMENT = gql`
       installedApplications {
         id
         name
+        description
         universalIdentifier
         logoUrl
         createdAt
@@ -109,6 +110,7 @@ export const USER_QUERY_FRAGMENT = gql`
         key
         value
       }
+      isTrialAvailable
       workspaceMembersCount
       defaultRole {
         ...RoleFragment

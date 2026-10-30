@@ -32,7 +32,7 @@
     "twenty-sdk": "2.31.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   },
   "dependencies": {
     "marked": "^18.0.5",

@@ -1,0 +1,36 @@
+---
+title: Renderizado del servidor
+description: Comprenda las limitaciones actuales de Twenty UI para el renderizado del servidor y la inicialización del tema.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Twenty aún no ofrece una garantía de renderizado del lado del servidor para todo el paquete. Verifique los puntos de entrada y componentes específicos que utiliza con la compilación del servidor y el flujo de hidratación de su framework.
+
+## Cargue CSS mediante su framework
+
+La biblioteca incluye hojas de estilo precompiladas. Impórtelas desde el punto de entrada de la aplicación o el diseño que su framework permita para cargar CSS global. Un servidor que importa JavaScript sin un cargador de CSS no puede cargar directamente una importación de hoja de estilo.
+
+Los componentes que utilizan API del navegador, mediciones de diseño o efectos deben estar en un límite de cliente cuando su framework distingue entre componentes de servidor y de cliente.
+
+## Inicialice el tema
+
+Las hojas de estilo del tema definen sus tokens en `.light` y `.dark`. Aplique la clase inicial en el documento renderizado en el servidor y, a continuación, inicialice `ThemeProvider` con el mismo esquema en el cliente:
+
+```html
+<html class="light"></html>
+```
+
+Esto hace que la paleta esté disponible antes de la hidratación. Determine el esquema inicial a partir de información disponible para ambos renderizados, como una preferencia guardada transmitida desde el servidor.
+
+## Mantenga las mediciones del navegador en el cliente
+
+`ThemeProvider` resuelve valores mediante estilos calculados en el navegador. Durante el renderizado del servidor, o sin compatibilidad con estilos calculados, los valores del tema pueden permanecer como referencias a variables CSS. No suponga que un token numérico devuelto durante el renderizado del servidor ya es un número de JavaScript.
+
+Utilice referencias a variables CSS para los estilos y posponga los cálculos que necesitan dimensiones resueltas hasta que el cliente haya cargado el tema. Pruebe la hidratación con los mismos componentes, hojas de estilo y esquema inicial que implemente.
+
+El [renderizador de componentes frontales](/es/developers/extend/apps/layout/front-components#current-limitations) es un entorno aislado independiente con sus propias limitaciones de DOM; un renderizado correcto en el navegador no garantiza la compatibilidad con el entorno aislado.
+
+<PageBanner illustration="dev-self-host" />

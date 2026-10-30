@@ -10,7 +10,9 @@ import {
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
@@ -28,9 +30,9 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
 
-const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
-  object,
-  Map<string, WorkspaceTableShape>
+const tableShapeCache = new WeakMap<
+  FlatEntityMaps<OrmFlatFieldMetadata>,
+  WeakMap<FlatObjectMetadata, WorkspaceTableShape>
 >();
 
 export class WorkspaceDataSource {
@@ -210,6 +212,9 @@ export class WorkspaceDataSource {
       resolveObjectRecordsPermissions({
         rolePermissionConfig: repositoryRolePermissionConfig,
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
+        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+        flatApplicationMaps: this.internalContext.flatApplicationMaps,
       });
 
     return new WorkspaceRepository<T>({
@@ -254,14 +259,16 @@ export class WorkspaceDataSource {
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {
-    const cacheKey = this.internalContext.flatObjectMetadataMaps as object;
+    const { flatFieldMetadataMaps } = this.internalContext;
+    const flatObjectMetadata =
+      this.getFlatObjectMetadataOrThrow(objectMetadataId);
     const cachedShapes =
-      tableShapeCacheByFlatObjectMetadataMaps.get(cacheKey) ??
-      new Map<string, WorkspaceTableShape>();
+      tableShapeCache.get(flatFieldMetadataMaps) ??
+      new WeakMap<FlatObjectMetadata, WorkspaceTableShape>();
 
-    tableShapeCacheByFlatObjectMetadataMaps.set(cacheKey, cachedShapes);
+    tableShapeCache.set(flatFieldMetadataMaps, cachedShapes);
 
-    const cachedShape = cachedShapes.get(objectMetadataId);
+    const cachedShape = cachedShapes.get(flatObjectMetadata);
 
     if (isDefined(cachedShape)) {
       return cachedShape;
@@ -269,11 +276,11 @@ export class WorkspaceDataSource {
 
     const tableShape = buildWorkspaceTableShape({
       workspaceId: this.internalContext.workspaceId,
-      flatObjectMetadata: this.getFlatObjectMetadataOrThrow(objectMetadataId),
-      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     });
 
-    cachedShapes.set(objectMetadataId, tableShape);
+    cachedShapes.set(flatObjectMetadata, tableShape);
 
     return tableShape;
   }

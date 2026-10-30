@@ -37,7 +37,7 @@ export function AppsMarketplaceHeader() {
         <HeaderBody>
           <Body muted size="md">
             {i18n._(
-              msg`Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace.`,
+              msg`Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace.`,
             )}
           </Body>
         </HeaderBody>

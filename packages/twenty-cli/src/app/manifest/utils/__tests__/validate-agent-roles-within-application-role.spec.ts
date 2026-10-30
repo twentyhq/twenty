@@ -119,6 +119,31 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
+  it('names system flags as the app SDK does', () => {
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [buildAgent()],
+      roles: [
+        applicationRole,
+        buildRole({
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag.CONNECTED_ACCOUNTS,
+          ],
+        }),
+      ],
+      objects: [],
+      permissionFlags: [],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+      systemPermissionFlag: {
+        USER_APPS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+        ...SystemPermissionFlag,
+      },
+    });
+
+    expect(errors).toEqual([
+      'Role "Agent role" used by agent "assistant" grants more than the application role "Application role": permission flag USER_APPS. The application role must cover every permission an agent role grants.',
+    ]);
+  });
+
   it('treats a custom permission flag without a permission type as a tool flag, like the server does', () => {
     const customToolFlagUniversalIdentifier = 'custom-tool-flag';
 

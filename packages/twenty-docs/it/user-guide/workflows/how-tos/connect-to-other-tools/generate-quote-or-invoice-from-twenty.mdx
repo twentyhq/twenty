@@ -3,7 +3,7 @@ title: Genera un preventivo o una fattura da Twenty
 description: Crea automaticamente fatture negli strumenti esterni quando le opportunità vengono chiuse.
 ---
 
-Invia automaticamente i dati dell'opportunità al tuo sistema di fatturazione (Stripe, QuickBooks, Xero, ecc.) quando un'opportunità è chiusa come vinta.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Struttura del flusso di lavoro
 
@@ -37,10 +37,10 @@ Il trigger si attiva a ogni aggiornamento di un'Opportunità. Il filtro garantis
 
 Il record Opportunity potrebbe non includere tutti i campi dell'azienda necessari per la fattura. Aggiungi un'azione **Search Record**:
 
-| Impostazione           | Valore                                     |
-| ---------------------- | ------------------------------------------ |
-| **Oggetto**            | Azienda                                    |
-| **Corrispondenza per** | ID uguale a `{{trigger.object.companyId}}` |
+| Impostazione           | Valore                                               |
+| ---------------------- | ---------------------------------------------------- |
+| **Oggetto**            | Azienda                                              |
+| **Corrispondenza per** | ID uguale a `{{trigger.properties.after.companyId}}` |
 
 Questo recupera il record completo dell'azienda con indirizzo di fatturazione, partita IVA, ecc.
 
@@ -142,3 +142,5 @@ Body: {{code.invoice}}
 * [Trigger dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-triggers)
 * [Azioni dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-actions)
 * [Automazioni Closed Won](/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+
+<PageBanner illustration="section-document-generator" />

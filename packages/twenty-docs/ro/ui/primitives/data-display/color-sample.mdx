@@ -1,0 +1,63 @@
+---
+title: ColorSample
+description: Afișează o culoare de temă sau o culoare personalizată alături de o etichetă text.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+## Prezentare generală
+
+`ColorSample` este o mostră de culoare neinteractivă. Folosiți-o lângă o etichetă, astfel încât semnificația să nu depindă doar de culoare. Selectarea aparține controlului înconjurător.
+
+<StoryEmbed storyId="ui-data-display-colorsample--display" title="Exemplu ColorSample" height={90} />
+
+## Utilizare
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
+    High priority
+  </Text>
+);
+```
+
+`colorName` selectează o intrare din paleta temei pentru umplere și contur. `variant` acceptă `default` sau `circle`. Omiterea sa utilizează forma implicită.
+
+## Culori personalizate
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
+    Brand blue
+  </Text>
+);
+```
+
+O `color` personalizată înlocuiește umplerea; `colorName` rămâne obligatoriu și determină în continuare culoarea conturului. Proprietățile native, `className`, `style` și `ref` vizează div-ul eșantionului de culoare. `render` acceptă un element sau un callback prin compunerea Base UI, de exemplu un span în interiorul textului. Stilurile utilizatorului suprascriu umplerea, bordura sau geometria implicite. Eșantioanele de culoare decorative folosesc `aria-hidden="true"`; un eșantion de culoare semnificativ autonom folosește `role="img"` cu `aria-label` sau `aria-labelledby`. Pentru a oferi culori selectabile, compuneți mostra de culoare într-un [ListItem](/ro/ui/primitives/navigation/list-item) etichetat.
+
+## Migrare
+
+`ColorSampleProps` și `ColorSampleVariant` rămân disponibile din familia de afișare a datelor. Varianta `pipeline` neutilizată este eliminată. Indicatorii specifici produsului aparțin aplicației, folosind stiluri native sau compunere. Eșantioanele de culoare implicite și circulare își păstrează aspectul existent.
+
+## Proprietăți
+
+<ColorSampleReference />
+
+<PageBanner illustration="page-cover-palette" />

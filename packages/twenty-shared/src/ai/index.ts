@@ -8,6 +8,7 @@
  */
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
+export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export type { AiEvaluationQuestionType } from './constants/ai-evaluation-question-type.const';
 export { AI_EVALUATION_QUESTION_TYPES } from './constants/ai-evaluation-question-type.const';
@@ -108,8 +109,10 @@ export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-t
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
+export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
+export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';
 export { isAiModelEffort } from './utils/is-ai-model-effort.util';
 export { isAiModelTier } from './utils/is-ai-model-tier.util';

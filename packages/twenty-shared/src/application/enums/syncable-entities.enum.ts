@@ -7,6 +7,8 @@ export enum SyncableEntity {
   Skill = 'skill',
   Agent = 'agent',
   ConnectionProvider = 'connectionProvider',
+  MessagingProvider = 'messagingProvider',
+  McpServer = 'mcpServer',
   View = 'view',
   ViewField = 'viewField',
   NavigationMenuItem = 'navigationMenuItem',

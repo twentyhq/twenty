@@ -1,8 +1,11 @@
 ---
 title: Logic Functions
 description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
-icon: 'bolt'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
 
@@ -290,28 +293,25 @@ export default defineLogicFunction({
 The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
+The first segment is your app registration's id, the second the resolver's `universalIdentifier` from your manifest. A route only resolves to a resolver of that registration, in its owner workspace. When your app registers the webhook itself, build the URL from inside a logic function with `getServerRouteUrl`; Twenty injects the base URL of your app's server routes as `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  A URL carrying the resolver's `universalIdentifier` still resolves for now,
-  and the response carries a `Deprecation` header. A `universalIdentifier` is
-  unique per workspace, not globally: if another registration owned by a
-  different workspace declares the same one, the platform answers `404` for that
-  URL instead of choosing between them. Move the URLs registered with your
-  providers to the `id` form.
+  URLs carrying only the resolver's `id` or `universalIdentifier`
+  (`/webhooks/server/:identifier`) still resolve for now, and both answer with
+  a `Deprecation` header. The `universalIdentifier` form returns `409` when two
+  registrations declare the same identifier. Move the URLs registered with your
+  providers to the registration form.
 </Note>
 
 **Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
@@ -620,7 +620,7 @@ Check `context.workspaceMemberId` when a function behaves differently depending 
 
 </Note>
 
-The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits). `sendInboxMessage` also uses your application's access and ignores `runAs`, though it writes to the chats of the members you name.
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits).
 
 #### Exposing a function as an AI tool or workflow action
 
@@ -1037,7 +1037,7 @@ const { createCompany } = await client.mutation({
   },
 });
 
-// Only on an object whose readability is PRIVATE: choose who can read the created record
+// Only on an object whose records are private: choose who can read the created record
 const { createContract } = await client.mutation({
   createContract: {
     __args: {
@@ -1056,7 +1056,7 @@ const { createContract } = await client.mutation({
 });
 ```
 
-`shareWith` only matters on an object whose readability is `PRIVATE`; every object is `OPEN` by default, and on an `OPEN` object the argument is ignored. On a `PRIVATE` object it lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and such callers, like a system caller, must pass `shareWith` or the create is rejected. Every entry must name a member or a role of the workspace. A logic function or API key shares through its role, so every holder of that role gets the same access to the records it creates; give a key whose records must stay private to it a role of its own.
+`shareWith` only matters on an object whose records are private; elsewhere the argument is ignored. On such an object it lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and such callers, like a system caller, must pass `shareWith` or the create is rejected. Every entry must name a member or a role of the workspace. A logic function or API key shares through its role, so every holder of that role gets the same access to the records it creates; give a key whose records must stay private to it a role of its own.
 
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
@@ -1113,7 +1113,7 @@ const { objects } = await metadataClient.query({
         nameSingular: true,
         namePlural: true,
         labelSingular: true,
-        isCustom: true,
+        applicationId: true,
       },
     },
     __args: {
@@ -1169,3 +1169,5 @@ Key points:
 You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
 
 </Note>
+
+<PageBanner illustration="card-page-logic-functions" />

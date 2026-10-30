@@ -113,6 +113,7 @@ describe('CreateMessageListMemberViewCommand', () => {
     await runOnWorkspace();
 
     expect(validateBuildAndRunWorkspaceMigrationMock).toHaveBeenCalledWith({
+      shouldDeferActions: false,
       isSystemBuild: true,
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: STANDARD_APPLICATION.universalIdentifier,

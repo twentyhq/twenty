@@ -105,7 +105,9 @@ export class BackfillTimelineActivityMessageCampaignIndexesCommand extends Provi
       indexUniversalIdentifier,
       fieldUniversalIdentifier,
     } of INDEXES_TO_BACKFILL) {
-      if (isDefined(flatIndexMaps.byUniversalIdentifier[indexUniversalIdentifier])) {
+      if (
+        isDefined(flatIndexMaps.byUniversalIdentifier[indexUniversalIdentifier])
+      ) {
         continue;
       }
 
@@ -171,7 +173,9 @@ export class BackfillTimelineActivityMessageCampaignIndexesCommand extends Provi
 
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Creating ${flatIndexBuildPlans.length} timelineActivity index(es) for workspace ${workspaceId}: ${flatIndexBuildPlans
-        .map(({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name)
+        .map(
+          ({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name,
+        )
         .join(', ')}`,
     );
 
@@ -227,6 +231,7 @@ export class BackfillTimelineActivityMessageCampaignIndexesCommand extends Provi
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             index: {

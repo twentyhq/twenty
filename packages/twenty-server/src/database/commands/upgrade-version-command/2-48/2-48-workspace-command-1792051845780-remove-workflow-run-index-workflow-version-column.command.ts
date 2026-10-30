@@ -53,6 +53,7 @@ export class RemoveWorkflowRunIndexWorkflowVersionColumnCommand extends Provisio
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

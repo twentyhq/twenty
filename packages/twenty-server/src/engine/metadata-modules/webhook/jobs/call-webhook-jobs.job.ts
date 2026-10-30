@@ -60,7 +60,6 @@ export class CallWebhookJobsJob {
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    // Without the readability the batch cannot be gated, so nothing may leave
     if (!isDefined(flatObjectMetadata)) {
       this.logger.warn(
         `Object metadata ${workspaceEventBatch.objectMetadata.id} not found for workspace ${workspaceEventBatch.workspaceId}, dropping the webhook batch`,
@@ -98,7 +97,11 @@ export class CallWebhookJobsJob {
       await this.messageQueueService.add<CallWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: workspaceEventBatch.workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
   }

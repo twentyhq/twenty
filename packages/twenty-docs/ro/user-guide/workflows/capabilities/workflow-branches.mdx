@@ -3,6 +3,10 @@ title: Sucursale de lucru
 description: Creați căi paralele și logică condițională în fluxurile dvs. de lucru.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Ramificațiile vă permit să împărțiți fluxul de lucru în mai multe căi care pot rula simultan sau condițional, în funcție de datele dvs.
 
 <img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
@@ -29,9 +33,21 @@ Fiecare ramificație este independentă. Adăugarea unei ramificații nu afectea
 
 Ramificațiile apar ca căi paralele în editorul de fluxuri de lucru. Puteți glisa noduri pentru a rearanja macheta vizuală fără a afecta execuția.
 
-## Ramificații condiționale
+## Ramuri If/Else
 
-Deoarece toate ramificațiile rulează în mod implicit, utilizați noduri **Filtru** pentru a controla care căi se execută de fapt:
+Pentru căi care se exclud reciproc — unde dorești să ruleze exact o ramură, nu mai multe — adaugă o acțiune **If/else** în loc să divizezi manual pânza.
+
+**Configurare**:
+
+* Prima ramură (**Dacă**) are o condiție de filtrare.
+* Faceți clic pe **Adăugare rută** pentru a insera ramuri **Altfel dacă** suplimentare, fiecare cu propria condiție.
+* Ultima ramură (**Altfel**) nu are nicio condiție și preia tot ce nu s-a potrivit cu celelalte ramuri.
+
+**Cum funcționează**: Condițiile sunt evaluate în ordine, de sus în jos. Fluxul de lucru continuă pe prima ramură a cărei condiție se potrivește; toate celelalte ramuri sunt omise.
+
+## Ramuri condiționale (manual, cu filtru)
+
+Dacă/altfel acoperă majoritatea cazurilor, dar puteți construi același model și manual: deoarece toate ramurile create manual rulează în mod implicit, utilizați noduri **Filtru** pentru a controla căile care se execută efectiv:
 
 | Ramificație | Condiție de filtrare | Acțiune                           |
 | ----------- | -------------------- | --------------------------------- |
@@ -39,7 +55,7 @@ Deoarece toate ramificațiile rulează în mod implicit, utilizați noduri **Fil
 | B           | Etapă = "Pierdut"    | Creați o sarcină de urmărire      |
 | C           | Etapă = "Negociere"  | Notificați managerul              |
 
-1. Creați ramificații din declanșatorul sau acțiunea dvs.
+1. Creați ramificații din declanșatorul sau acțiunea dvs
 2. Adăugați un nod **Filtru** ca prim pas al fiecărei ramificații
 3. Configurați fiecare filtru cu condiții care se exclud reciproc
 4. Adăugați acțiunile după fiecare filtru
@@ -64,3 +80,5 @@ Deși puteți utiliza un nod [Întârziere](/ro/user-guide/workflows/capabilitie
 
 * [Cum să utilizați ramificațiile în fluxuri de lucru](/ro/user-guide/workflows/capabilities/use-branches-in-workflows) - Ghid pas cu pas
 * [Acțiuni ale fluxului de lucru](/ro/user-guide/workflows/capabilities/workflow-actions) - Acțiuni disponibile, inclusiv Filtru
+
+<PageBanner illustration="page-cover-branches" />

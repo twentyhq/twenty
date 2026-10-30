@@ -24,6 +24,8 @@ describe('getRecordSharingInvitationRecipients', () => {
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           accessLevel: RecordShareAccessLevel.READ,
           rowCause: RecordShareRowCause.MANUAL,
+          __typename: 'RecordSharingGrantDTO',
+          principalRoleId: null,
         },
         {
           id: 'role-share',
@@ -31,11 +33,25 @@ describe('getRecordSharingInvitationRecipients', () => {
           principalType: RecordSharePrincipalType.ROLE,
           accessLevel: RecordShareAccessLevel.READ,
           rowCause: RecordShareRowCause.MANUAL,
+          __typename: 'RecordSharingGrantDTO',
+          principalRoleId: null,
         },
       ],
       roles: [
-        { id: MEMBER.id, label: 'Sales' },
-        { id: 'role', label: 'Support' },
+        {
+          id: MEMBER.id,
+          label: 'Sales',
+          __typename: 'RecordSharingRoleDTO',
+          canRead: null,
+          canUpdate: null,
+        },
+        {
+          id: 'role',
+          label: 'Support',
+          __typename: 'RecordSharingRoleDTO',
+          canRead: null,
+          canUpdate: null,
+        },
       ],
       roleLabel: 'Role',
     });

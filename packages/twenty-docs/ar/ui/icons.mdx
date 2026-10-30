@@ -1,0 +1,90 @@
+---
+title: الأيقونات
+description: الأيقونات المُسمّاة، والبحث الديناميكي، وأغلفة الرسوم التوضيحية، والخصائص المدعومة لها.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import IconReference from '/snippets/ui/generated/icon/icon.mdx';
+import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
+import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
+import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
+import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+## نظرة عامة
+
+استورِد الأيقونات المُسمّاة من `twenty-ui/icon`. استخدم عنصر التحكم المحيط أو النص المرئي لإيصال المعنى. يجب إخفاء الأيقونات الزخرفية عن التقنيات المساعدة.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const CompleteButton = () => (
+  <Button startIcon={<IconCheck />}>Complete task</Button>
+);
+```
+
+تُحدِّد فتحات أيقونات الأزرار حجم أيقونتها وتخفيها عن التقنيات المساعدة بالفعل، لذا لا تحتاج الأيقونة إلى خصائص إضافية هناك.
+
+## الخصائص المدعومة
+
+تقبل أيقونات Tabler كلاً من `size` (رقم أو طول CSS)، و`stroke` (عرض الحد)، و`color`، وسمات ومراجع SVG الأصلية. لا تقبل أيقونات العلامة التجارية والرسوم التوضيحية المخصصة إلا الخصائص المدرجة في الكتالوج المُنشأ أدناه. تختلف أحجامها الافتراضية؛ مرِّر `size` للحصول على نتيجة متسقة. قد تكون ألوان العلامة التجارية ثابتة في العمل الفني، لذا لا يتوفر تجاوز اللون إلا حيثما يكون مُدرجاً.
+
+تحتاج الأيقونات المخصصة التي لا تقبل سمات إمكانية الوصول إلى غلاف يحمل التسمية المناسبة أو `aria-hidden`. يتوفر `className` و`style` أيضاً فقط حيثما يكونان مُدرجين. استورِد أيقونة محددة عندما يكون ذلك ممكناً لتجنب تحميل الكتالوج الديناميكي.
+
+تحافظ الأيقونات المُصدَّرة على عرضها المطلوب في تخطيطات flex، بما في ذلك داخل الأزرار. اسمح للنص المجاور بالاقتطاع أو اسمح للعنصر الأب بالالتفاف أو التمرير عند محدودية المساحة. عندما تدعم أيقونة `className` أو `style`، يمكنك تجاوز `flex-shrink` صراحةً لتخطيط يحتاج إليه. تحافظ حاويات الرسوم التوضيحية أيضًا على عرضها.
+
+## أسماء الأيقونات الديناميكية
+
+استخدم `IconsProvider` و`Icon` عندما تُختار الأسماء في وقت التشغيل. يحمّل الموفّر خريطة الأيقونات الكاملة بشكل غير متزامن؛ تتضمن الحزم المُنشأة بدون تقسيم الشفرة، مثل المكونات الأمامية، الخريطة كاملةً. قبل اكتمال التحميل، وللأسماء غير المعروفة، يعرض `Icon` الرمز `Icon123`. تختلف الخريطة الديناميكية عن كتالوج التصدير المُسمّى؛ لا تفترض أنه يمكن حل كل تصدير لعلامة تجارية أو رسم توضيحي بالاسم.
+
+```tsx
+import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DynamicAction = ({ iconName }: { iconName: string }) => (
+  <IconsProvider>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
+  </IconsProvider>
+);
+```
+
+يكشف `useIcons()` عن `getIcon(name, customDefaultIcon)` و`getIcons()` داخل الموفّر نفسه. تُرجع `getIcons()` في البداية خريطة فارغة. تستخدم `getIcon` البديل المُسمّى عند وجوده، ثم `Icon123`. يقبل الموفّر عنصراً تابعاً واحداً؛ استخدم جزءاً لعدة عناصر تابعة.
+
+### خصائص Icon
+
+<IconReference />
+
+### خصائص IconsProvider
+
+<IconsProviderReference />
+
+## غلاف الرسم التوضيحي
+
+يوفر `IllustrationIconWrapper` تنسيق حاوية الرسم التوضيحي ويمرر سمات div الأصلية والعناصر التابعة والأنماط والمراجع. يُعرَض كل تصدير من `IllustrationIcon*` داخله بالفعل، لذا استخدم الغلاف فقط لتأطير محتوى الرسم التوضيحي الخاص بك.
+
+```tsx
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
+
+export const CalendarIllustration = () => (
+  <IllustrationIconWrapper role="img" aria-label="Calendar event">
+    <IconCalendarEvent size={32} />
+  </IllustrationIconWrapper>
+);
+```
+
+<IllustrationIconWrapperReference />
+
+## أيقونة تحميل متحركة
+
+تتحرك `ThinkingOrbitLoaderIcon` باستمرار أثناء تركيبها. إنها زخرفية ومخفية دائماً عن التقنيات المساعدة. اعرض نص التحميل بشكل منفصل، وركّب الأيقونة أو أزلها وفقاً لحالة التطبيق.
+
+<ThinkingOrbitLoaderIconReference />
+
+## كتالوج الأيقونات المُسمّاة
+
+يُنشأ هذا الكتالوج من عمليات التصدير العامة لـ `twenty-ui/icon` ويجمع الأيقونات حسب الخصائص التي تقبلها.
+
+<IconCatalog />
+
+<PageBanner illustration="section-ui-components" />

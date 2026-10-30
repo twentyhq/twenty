@@ -131,4 +131,75 @@ describe('defineConnectionProvider', () => {
       ).toBe(true);
     },
   );
+
+  describe('custom type', () => {
+    const baseCustomConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ebbbb',
+      name: 'linkedin',
+      displayName: 'LinkedIn',
+      type: 'custom' as const,
+      custom: {
+        authorizeLogicFunction: {
+          universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+        },
+        callbackLogicFunction: {
+          universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991062',
+        },
+      },
+    };
+
+    it('returns success for a valid config', () => {
+      const result = defineConnectionProvider(baseCustomConfig);
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('reports a missing custom config block', () => {
+      const result = defineConnectionProvider({
+        ...baseCustomConfig,
+        custom: undefined as never,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        "Connection provider with type 'custom' must declare a `custom` config block",
+      );
+    });
+
+    it.each(['authorizeLogicFunction', 'callbackLogicFunction'] as const)(
+      'reports a missing custom.%s',
+      (logicFunctionKey) => {
+        const result = defineConnectionProvider({
+          ...baseCustomConfig,
+          custom: {
+            ...baseCustomConfig.custom,
+            [logicFunctionKey]: undefined as never,
+          },
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.errors).toContain(
+          `Custom connection provider must declare custom.${logicFunctionKey}`,
+        );
+      },
+    );
+
+    it('rejects a non-UUID logic function reference', () => {
+      const result = defineConnectionProvider({
+        ...baseCustomConfig,
+        custom: {
+          ...baseCustomConfig.custom,
+          callbackLogicFunction: { universalIdentifier: 'linkedin-callback' },
+        },
+      });
+
+      expect(result.success).toBe(false);
+      expect(
+        result.errors.some((error) =>
+          error.includes('custom.callbackLogicFunction.universalIdentifier'),
+        ),
+      ).toBe(true);
+    });
+  });
 });

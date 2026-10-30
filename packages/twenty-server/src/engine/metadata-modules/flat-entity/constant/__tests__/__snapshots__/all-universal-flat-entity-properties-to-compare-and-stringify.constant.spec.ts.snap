@@ -13,12 +13,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "responseFormat",
       "modelConfiguration",
       "triggers",
+      "isActive",
+      "overrides",
       "isSystem",
     ],
     "propertiesToStringify": [
       "responseFormat",
       "modelConfiguration",
       "triggers",
+      "overrides",
     ],
   },
   "agentChatChannel": {
@@ -85,12 +88,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "scope",
       "oauthConfig",
+      "customConfig",
       "identifyAccountLogicFunctionUniversalIdentifier",
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "oauthConfig",
+      "customConfig",
     ],
   },
   "fieldMetadata": {
@@ -110,6 +115,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalSettings",
       "isUIEditable",
       "writability",
+      "disabledFieldPermissionActions",
       "isNullable",
     ],
     "propertiesToStringify": [
@@ -117,6 +123,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "options",
       "overrides",
       "universalSettings",
+      "disabledFieldPermissionActions",
     ],
   },
   "fieldPermission": {
@@ -185,6 +192,25 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workflowActionTriggerSettings",
     ],
   },
+  "mcpServer": {
+    "propertiesToCompare": [
+      "name",
+      "label",
+      "url",
+      "connectionProviderUniversalIdentifier",
+      "isActive",
+    ],
+    "propertiesToStringify": [],
+  },
+  "messagingProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "connectionProviderUniversalIdentifier",
+      "sendMessageLogicFunctionUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
   "navigationMenuItem": {
     "propertiesToCompare": [
       "type",
@@ -214,6 +240,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUIEditable",
       "writability",
       "readability",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
       "sharingReach",
       "isUICreatable",
@@ -222,7 +249,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "overrides",
+      "disabledObjectPermissionActions",
       "readabilityParentFieldUniversalIdentifiers",
+      "duplicateCriteria",
     ],
   },
   "objectPermission": {
@@ -276,6 +305,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
+      "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",
@@ -289,6 +319,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "description",
       "icon",
       "permissionType",
+    ],
+    "propertiesToStringify": [],
+  },
+  "relatedRecordPath": {
+    "propertiesToCompare": [
+      "objectMetadataUniversalIdentifier",
+      "firstFieldMetadataUniversalIdentifier",
+      "secondFieldMetadataUniversalIdentifier",
+      "thirdFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -375,9 +414,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "description",
       "content",
       "isActive",
+      "overrides",
       "isSystem",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "timelineActivityType": {
     "propertiesToCompare": [

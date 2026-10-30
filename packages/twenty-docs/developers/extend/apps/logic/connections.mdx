@@ -1,12 +1,15 @@
 ---
 title: Connections
 description: Let your app act on a user's behalf in third-party services via OAuth.
-icon: 'plug'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
-Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+OAuth 2.0 is built in. Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
 
 <AccordionGroup>
 
@@ -93,13 +96,146 @@ Key points:
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-- `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+- `type` is `'oauth'` (with an `oauth` block) or `'custom'` (with a `custom` block, see "Custom connection flows"). The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside these.
 
 The OAuth callback URL your provider needs to whitelist is:
 
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Custom connection flows" description="Connect services that are not OAuth providers">
+
+Some services connect accounts through their own flow rather than OAuth: Unipile, Plaid or Merge send the user to a hosted page and then report the connected account to a URL you gave them, sometimes from their servers rather than the browser. Declare these with `type: 'custom'` and two logic functions:
+
+```ts src/connection-providers/linkedin-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  name: 'linkedin',
+  displayName: 'LinkedIn',
+  type: 'custom',
+  scope: 'USER',
+  custom: {
+    authorizeLogicFunction: {
+      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    callbackLogicFunction: {
+      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
+    },
+  },
+  onConnectLogicFunction: {
+    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
+  },
+});
+```
+
+**Add connection** and **Reconnect** work as for OAuth. Twenty checks the member may connect, signs a short-lived state for the attempt, and runs `authorizeLogicFunction` with a `callbackUrl` that carries it. Return where to send the user:
+
+```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
+import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinAuthorizeHandler = async ({
+  callbackUrl,
+}: AuthorizeConnectionPayload) => {
+  const response = await fetch(
+    `${process.env.UNIPILE_DSN}/api/v1/hosted/accounts/link`,
+    {
+      method: 'POST',
+      headers: {
+        'X-API-KEY': process.env.UNIPILE_API_KEY ?? '',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'create',
+        providers: ['LINKEDIN'],
+        api_url: process.env.UNIPILE_DSN,
+        expiresOn: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+        // The browser comes back here, and the account id is posted here.
+        success_redirect_url: callbackUrl,
+        failure_redirect_url: callbackUrl,
+        notify_url: callbackUrl,
+      }),
+    },
+  );
+
+  const { url } = await response.json();
+
+  return { authorizationUrl: url };
+};
+```
+
+Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters (without `state`), headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
+
+```ts src/logic-functions/handlers/linkedin-callback-handler.ts
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinCallbackHandler = async ({
+  httpMethod,
+  body,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST') {
+    return null;
+  }
+
+  const { account_id: accountId } = body as { account_id: string };
+
+  // Never trust the payload alone: confirm the account with the service.
+  const account = await fetchUnipileAccount(accountId);
+
+  return { externalAccountId: account.id, handle: account.name };
+};
+```
+
+The signed state in `callbackUrl` only proves the request carries that URL, not that the service sent it. When the service signs its notifications, verify the signature over `rawBody` before trusting the body. Headers are lowercased, and `cookie`, `authorization` and `proxy-authorization` are never passed on:
+
+```ts src/logic-functions/handlers/hosted-callback-handler.ts
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const hostedCallbackHandler = async ({
+  httpMethod,
+  headers,
+  rawBody,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST' || rawBody === null) {
+    return null;
+  }
+
+  const expected = createHmac('sha256', process.env.WEBHOOK_SECRET ?? '')
+    .update(rawBody)
+    .digest();
+  const received = Buffer.from(headers['x-signature'] ?? '', 'hex');
+
+  if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+    throw new Error('Invalid notification signature');
+  }
+
+  const { account_id: accountId } = JSON.parse(rawBody) as { account_id: string };
+
+  return { externalAccountId: accountId };
+};
+```
+
+The callback returns:
+
+| Field               | Description                                                                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `externalAccountId` | The service's id for the account. A later callback for the same id and member updates that connection instead of adding a second one.          |
+| `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
+| `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
+
+Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
+
+Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
+
+A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth` and `custom`, declare a new provider with a new `universalIdentifier`.
+
+Custom providers ship with Twenty 2.52.0.
 
 </Accordion>
 
@@ -231,9 +367,9 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 </Accordion>
 
-<Accordion title="Run a logic function on disconnect" description="Clean up when a connection is removed">
+<Accordion title="Run a logic function on disconnect" description="Clean up when a connection is disconnected or removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs right before the `ConnectedAccount` and its token are deleted, so the handler can still call the provider with `getConnection` to release anything the on-connect hook set up remotely.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs when the connection is disconnected and again when it is deleted.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -251,7 +387,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Unlike the on-connect hook it runs **inline in the disconnecting workspace**, once, without retries: a failure is captured and the disconnect still completes. The handler receives the same payload shape:
+Unlike the on-connect hook it runs **inline in the disconnecting workspace**, without retries: a failure is captured and the disconnect or delete still completes. The handler receives the same payload shape:
 
 ```ts
 type OnDisconnectPayload = {
@@ -261,9 +397,9 @@ type OnDisconnectPayload = {
 };
 ```
 
-The `ConnectedAccount` and its token are still present when the hook runs, so `getConnection(connectedAccountId)` resolves with a fresh access token and the handler can delete whatever it registered remotely. State the provider cannot give back (a `team_id`, an external subscription id) still belongs in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep the handler short: it runs inside the disconnect request, so its `timeoutSeconds` is the upper bound on how long that request can take.
+On a disconnect the `ConnectedAccount` and its token are still present, so `getConnection(connectedAccountId)` resolves and the handler can release whatever it registered remotely. On a delete the credentials may already be gone (a member can delete a connection they disconnected earlier), so make the handler idempotent and keep the state it needs (a `team_id`, an external subscription id) in the [key-value store](/developers/extend/apps/logic/key-value-store), written at connect time and keyed by `connectedAccountId`. Keep it short: it runs inside the request, so its `timeoutSeconds` is the upper bound on how long that request can take.
 
-The hook fires when a connection is removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
+The hook fires when a connection is disconnected or removed on its own. Uninstalling the app drops its connections through a database cascade instead, so the hook does not run there. Declare an `uninstallLogicFunction` on `defineApplication` for that path: it runs before the app's metadata is deleted, so it can still call `listConnections` and clean up whatever is left.
 
 </Accordion>
 
@@ -319,12 +455,13 @@ Each connection has:
 | Field               | Description                                                                                                                                                                                                                |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`                | Unique row id; pass to `getConnection(id)` to refetch a single one                                                                                                                                                         |
-| `scope`             | `'USER'` (private to one workspace member) or `'WORKSPACE'` (shared with all members)                                                                                                                                      |
+| `scope`             | `'USER'` (belongs to the connecting member) or `'WORKSPACE'` (shared with all members)                                                                                                                                     |
 | `visibility`        | Deprecated: `scope` in lowercase (`'user'` or `'workspace'`). Use `scope` instead                                                                                                                                         |
 | `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
-| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired)                                                                                                                                                              |
+| `providerType`      | `'oauth'` or `'custom'`, the type of the connection provider. Check it to narrow `accessToken`                                                                                                                       |
+| `accessToken`       | Fresh OAuth access token (refreshed automatically if expired), always set when `providerType` is `'oauth'`. For `'custom'`, `null` unless the callback returned one                                                   |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
 | `handle`            | The connected upstream account's label, refreshed on each reconnect: the `handle` returned by the identify function when there is one, otherwise the email from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email |
 | `externalAccountId` | Stable id of the upstream account returned by the identify function, or `null` when the provider declares none or the connection predates it. Not unique: use it to deduplicate connections yourself                         |
@@ -366,18 +503,24 @@ The mutation behind this helper ships with Twenty 2.40.0, so calling it against 
 Each connection has one of two scopes:
 
 - **Workspace shared** (`'WORKSPACE'`) — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
-- **Just for me** (`'USER'`) — the credential is private to the connecting member. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
+- **Just for me** (`'USER'`) — the credential belongs to the connecting member. In runs made on a member's behalf (HTTP-route trigger with `isAuthRequired: true`), `listConnections` returns the shared connections plus that member's own, and `findConnectionForRequest` picks the member's personal connection, falling back to a shared one when they have none. In runs without a request user (cron triggers, for example), `listConnections` returns every connection, including every member's personal ones.
 
 The provider's `scope` decides which one its new connections get:
 
-- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's settings creates a workspace-shared connection.
-- `scope: 'USER'` — each member connects their own account, creating personal connections. Members will connect from their **App preferences**, which is not available yet: until then a `USER` provider has no **Add connection** button, and the app's settings only list the connections a member can already see.
+- `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > Apps preferences**, which requires the User Apps permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
+
+<Note>
+  **Apps preferences** is not enabled in every workspace yet: where it is not,
+  members have no place to add a `USER` connection, so do not rely on one for
+  a feature every workspace needs now.
+</Note>
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
 A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it through the regular disconnect path (`onDisconnectLogicFunction`, token revocation, channel cleanup), and members connect again through the new provider.
 
-Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission.
+Adding or reconnecting a **Just for me** connection requires the User Apps permission, and adding or reconnecting a **Workspace shared** one requires the Workspace Apps permission.
 
 Use the right connection for each handler:
 
@@ -410,3 +553,5 @@ For each connection provider, the server admin needs to register an OAuth app at
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-connections" />

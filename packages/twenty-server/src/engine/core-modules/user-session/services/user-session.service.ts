@@ -34,6 +34,7 @@ import { UserSessionCookieService } from 'src/engine/core-modules/user-session/s
 import { type CachedUserSession } from 'src/engine/core-modules/user-session/types/cached-user-session.type';
 import { type CreateUserSessionInput } from 'src/engine/core-modules/user-session/types/create-user-session-input.type';
 import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
+import { extractCloudflareGeolocationFromRequest } from 'src/engine/core-modules/user-session/utils/extract-cloudflare-geolocation-from-request.util';
 import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
@@ -247,6 +248,9 @@ export class UserSessionService {
     const requestMetadata = {
       userAgent: request.headers['user-agent'] ?? null,
       ipAddress: request.ip ?? null,
+      ...(this.twentyConfigService.get('IS_CLOUDFLARE_GEOLOCATION_ENABLED')
+        ? extractCloudflareGeolocationFromRequest(request)
+        : {}),
     };
 
     if (payload.type === JwtTokenTypeEnum.ACCESS) {
@@ -331,6 +335,9 @@ export class UserSessionService {
             : null,
         userAgent: input.userAgent ?? null,
         ipAddress: input.ipAddress ?? null,
+        country: input.country ?? null,
+        region: input.region ?? null,
+        city: input.city ?? null,
         expiresAt: addMilliseconds(now, ms(lifetime)),
         lastActiveAt: now,
       }),

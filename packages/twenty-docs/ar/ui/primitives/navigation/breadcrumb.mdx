@@ -1,0 +1,150 @@
+---
+title: مسار التنقّل
+description: اعرض موقع الصفحة باستخدام مسار من روابط العناصر الأصلية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+## نظرة عامة
+
+`Breadcrumb` يعرض مسار تنقل مرتبًا. يتضمن فواصل زخرفية، وأنماط تركيز الروابط، واقتطاع تسمية العنصر الأخير. تحافظ العناصر على سلوك الارتساء الأصلي وتدعم التوجيه المخصص عبر `render`. يستخدم مسار التنقل وزن خط متوسطًا بشكل متسق، بما في ذلك داخل العناوين ذات الوزن المختلف.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--display" title="مثال على Breadcrumb" height={100} />
+
+## استخدام
+
+مرّر العناصر بترتيب من العنصر الأصل إلى الحالي. يكون الاسم المتاح لمعلم التنقل افتراضيًا هو `Breadcrumb`؛ استخدم `aria-label` لترجمته أو لتمييز مسارات متعددة. يكون العنصر الأخير افتراضيًا هو `aria-current="page"`، سواء أكان له وجهة أم يعرض نصًا عاديًا.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+تستخدم العناصر التي تحتوي على `href` مراسي أصلية. تتحول العناصر التي لا وجهة لها إلى نص افتراضيا. تكون الفواصل `/` للزينة، ومخفية عن التقنية المساعدة، وخارج الأسماء المتاحة للروابط. تتبع الروابط سلوك Tab وEnter المعتاد في المتصفح، بما في ذلك النقرات مع المفاتيح المعدلة والفتح في علامة تبويب جديدة.
+
+## خصائص العنصر الأصلية
+
+يقبل كل عنصر سمات الرابط الأصلية، ومعالجات الأحداث، و`className`، و`style`، و`ref`. على سبيل المثال، مرر `target` و`rel` لعلامة تبويب جديدة، و`download` لملف، أو `referrerPolicy` للتحكم في الطلب. يصل ref الخاص بالعنصر إلى عنصر DOM المعروض.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const ReferenceBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Reference location"
+    links={[
+      {
+        children: 'Documentation',
+        href: 'https://docs.twenty.com',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        referrerPolicy: 'no-referrer',
+      },
+      { children: 'Companies' },
+    ]}
+  />
+);
+```
+
+## الصفحة الحالية
+
+تكون لقيمة `aria-current` الصريحة في عنصر أولوية على موضعه. استخدم `aria-current="page"` في عنصر آخر و`aria-current={false}` في العنصر الأخير عندما تكون الصفحة الحالية في موضع سابق ضمن المسار. يتم أيضا الاحتفاظ بقيم العناصر الحالية الأصلية الأخرى، مثل `step`. تأكد من أن العنصر المقصود فقط هو الحالي.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyContextBreadcrumb = () => (
+  <Breadcrumb
+    links={[
+      { children: 'Home', href: '/' },
+      {
+        children: 'Companies',
+        href: '/companies',
+        'aria-current': 'page',
+      },
+      { children: 'Acme', 'aria-current': false },
+    ]}
+  />
+);
+```
+
+## روابط الموجّه
+
+استخدم الخاصية `render` للعنصر لتوفير مكوّن الرابط الخاص بموجّهك، إلى جانب `href`. مرر الوجهات والحالة وخيارات السجل الخاصة بالموجّه مباشرة إلى ذلك المكوّن. يقبل `render` إما عنصرا أو دالة تتلقى الخصائص المقدمة، بما في ذلك سمات الرابط الأصلية وref الخاص به.
+
+يجب أن يمرّر الرابط المعروض الخصائص وref المزوّدين إلى عنصر الارتساء الخاص به. حافظ على سلوك الرابط الأصلي عند معالجة التنقل، بما في ذلك النقرات مع المفاتيح المعدلة وعلامات التبويب الجديدة. راجع [المكوّنات المخصصة](/ar/ui/primitives/overview#custom-components) لمعرفة متطلبات التركيب.
+
+يختار التطبيق الوجهات ويقرر متى يعرض إجراء الرجوع على الأجهزة المحمولة. لا يستنتج `Breadcrumb` المسارات ولا يطوي العناصر الأصلية في قائمة.
+
+## تسميات طويلة
+
+يتقلص العنصر الأخير ويقتطع مع علامة حذف عندما تكون مساحة الحاوية محدودة. تحتفظ العناصر الأصلية بعرضها. تصبح التسميات النصية العادية تلميح أداة المتصفح الأصلي تلقائيًا. استخدم `title` لتجاوز ذلك النص أو لتوفير تلميح أداة للمحتوى الغني. اضبط `title=""` لمنع تلميح الأداة التلقائي.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--truncation" title="Breadcrumb مع تسمية طويلة للصفحة الحالية" height={100} />
+
+## محتوى غني
+
+يمكن أن تتضمن `children` للعنصر نصًا ومحتوى مرئيًا داعمًا. حافظ على قابلية قراءة التسمية وتجنب تداخل عناصر تحكم تفاعلية داخل رابط.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rich-content" title="Breadcrumb مع محتوى داعم" height={100} />
+
+## اتجاه النص
+
+يتبع المسار اتجاه النص المحيط. عيّن `dir="rtl"` على `Breadcrumb` أو على عنصر أصل للمحتوى من اليمين إلى اليسار. عندما تحتاج عناصر تحكم أخرى إلى سلوك مطابق للوحة المفاتيح أو المؤشر من حيث الاتجاه، اضبط أيضًا [DirectionProvider](/ar/ui/primitives/layout/direction-provider) على الاتجاه نفسه.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rtl" title="Breadcrumb في محتوى من اليمين إلى اليسار" height={100} />
+
+## تخصيص الجذر
+
+تصل سمات التنقل الأصلية، بما في ذلك الأسماء المتاحة و`className` و`style` ومعالجات الأحداث، إلى المعلم الجذر. يصل ref الخاص بالجذر إلى عنصر `nav` الخاص به. يقبل `render` الخاص بالجذر أيضا عنصرا أو دالة؛ حافظ على معلم التنقل ومرر الخصائص المقدمة وref الخاص به.
+
+```tsx
+import { useRef } from 'react';
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const HeaderBreadcrumb = () => {
+  const navigationRef = useRef<HTMLElement>(null);
+  const companiesRef = useRef<HTMLAnchorElement>(null);
+
+  return (
+    <Breadcrumb
+      aria-label="Company location"
+      ref={navigationRef}
+      render={<nav data-location="header" />}
+      links={[
+        {
+          children: 'Companies',
+          href: '/companies',
+          ref: companiesRef,
+          render: (props) => (
+            <a {...props} data-route={props.href}>
+              {props.children}
+            </a>
+          ),
+        },
+        { children: 'Acme' },
+      ]}
+    />
+  );
+};
+```
+
+## الخصائص
+
+<BreadcrumbReference />
+
+<PageBanner illustration="card-page-navigation" />

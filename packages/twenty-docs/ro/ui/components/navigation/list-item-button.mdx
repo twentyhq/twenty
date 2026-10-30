@@ -1,0 +1,165 @@
+---
+title: ListItemButton
+description: Butoane de acțiune native cu aspectul partajat al rândurilor de listă.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+## Prezentare generală
+
+Utilizați `ListItemButton` pentru rânduri de acțiune și butoane de selectare independente. Combină aspectul [ListItem](/ro/ui/primitives/navigation/list-item) cu un buton nativ, inclusiv activarea cu Enter și Spațiu, focalizarea și comportamentul dezactivat. Implicit, are `type="button"`.
+
+<StoryEmbed storyId="ui-components-listitembutton--display" title="Exemplu ListItemButton" height={110} />
+
+## Utilizare
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const DuplicateAction = ({
+  onDuplicate,
+}: {
+  onDuplicate: () => void;
+}) => (
+  <ListItemButton
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+## Acțiuni și stare dezactivată
+
+Transmiteți direct `onClick` și `disabled`. Butoanele dezactivate folosesc aspectul corespunzător al rândului, împiedică activarea și ies din ordinea de tabulare.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    onClick={onDuplicate}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--disabled" title="Rând de acțiune dezactivat" height={110} />
+
+Setați `focusableWhenDisabled` pentru a menține focalizabil un buton dezactivat. Folosește `aria-disabled` și continuă să blocheze activarea. Atributele, evenimentele, stilurile, numele de clase ale butonului nativ și o referință `HTMLButtonElement` ajung la buton. Evenimentele se propagă normal; apelanții furnizează orice politică pentru `stopPropagation()` sau `preventDefault()`.
+
+## Selectare și sloturi vizuale
+
+Aplicația dvs. gestionează independent stările `active`, `selected` și `focused`. Utilizați `active` pentru rândul deschis sau curent. Asociați `selected` cu starea accesibilă corespunzătoare, precum `aria-pressed` pentru un buton de comutare. `focused` evidențiază rândul fără a muta focalizarea DOM. Indicatorii și sugestiile pentru scurtături sunt decorative; aplicația dvs. înregistrează scurtăturile și gestionează navigarea.
+
+```tsx
+import { useState } from 'react';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItemButton
+      aria-pressed={selected}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItemButton>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--selected" title="Rând de acțiune selectat" height={110} />
+
+Utilizați `startIcon`, `endIcon`, `description` și `descriptionPlacement` pentru conținut suplimentar. `color="danger"` marchează o acțiune distructivă. `shortcutJoinLabel` controlează textul dintre scurtăturile secvențiale, iar `hasSubmenu` afișează un indicator de submeniu.
+
+## Conținut de suport pe mai multe rânduri
+
+Setați `descriptionPlacement="below"` pentru a încadra textul de suport sub etichetă. Eticheta își păstrează comportamentul de trunchiere. Transmiteți [Text](/ro/ui/primitives/typography/text) cu `truncate` sau `lineClamp` ca `description` atunci când aveți nevoie de o previzualizare mai scurtă. Poziționările `inline` și `end` își păstrează aspectul existent.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type PlanningActionProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const PlanningAction = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: PlanningActionProps) => (
+  <ListItemButton
+    active={active}
+    disabled={disabled}
+    descriptionPlacement="below"
+    description="Review the proposed timeline and confirm the next steps with the team."
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    onClick={onOpen}
+  >
+    Quarterly planning
+  </ListItemButton>
+);
+```
+
+`active` aplică fundalul rândului curent. Setați `selectionAppearance="accent"` pentru o umplere de accent pe rândurile selectate, cu orice poziționare a descrierii; opțiunea implicită păstrează stilul existent de selecție bazat pe indicator. `focused` aplică fundalul evidențiat partajat; conturul vizibil la focalizare urmează focalizarea reală de la tastatură. Aceste proprietăți nu adaugă stare accesibilă și nu mută focalizarea. Activarea nativă a butonului și comportamentul dezactivat rămân neschimbate.
+
+## Comenzi independente
+
+Păstrați butoanele și casetele de selectare independente lângă `ListItemButton`, astfel încât fiecare să își păstreze propria focalizare și activare. Nu le imbricați în sloturile sale de conținut sau de pictogramă. Componenta nu are un slot `actions`. Utilizați un `ListItem` cu rădăcina sa implicită `div` pentru [un rând cu controale independente](/ro/ui/primitives/navigation/list-item#independent-controls) și asigurați comportamentul dezactivat și propagarea evenimentelor pentru fiecare control.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ContactActionsProps = {
+  onOpen: () => void;
+  onDetails: () => void;
+};
+
+export const ContactActions = ({ onOpen, onDetails }: ContactActionsProps) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ListItemButton onClick={onOpen} description="Account owner">
+      Alex Morgan
+    </ListItemButton>
+    <Button onClick={onDetails} aria-label="Open Alex Morgan's details">
+      Details
+    </Button>
+  </div>
+);
+```
+
+<StoryEmbed storyId="ui-components-listitembutton--independent-action" title="Comenzi de acțiune adiacente" height={110} />
+
+Utilizați `ListItem` pentru conținut pasiv, linkuri sau proprietari semantici personalizați. Folosește părțile de element existente [Dropdown](/ro/ui/components/navigation/dropdown) și [Select](/ro/ui/primitives/input/select) în cadrul containerelor lor pop-up, care oferă roluri și navigare cu tastatura.
+
+## Proprietăți
+
+<ListItemButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

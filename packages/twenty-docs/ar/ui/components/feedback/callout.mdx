@@ -1,0 +1,90 @@
+---
+title: تنبيه
+description: ملاحظات تتضمن محتوى العُقد والإجراءات والإخفاء الذي يتولى المستدعي التحكم به.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+## نظرة عامة
+
+يجمع `Callout` بين عُقد العنوان والوصف والأيقونة والإجراء. استخدم `status` للقيم `neutral` أو `info` أو `success` أو `warning` أو `error`. تكون القيمة الافتراضية هي `info`، ويدعم المظهر `soft`. تحدد الحالة لوحة ألوان رمادية أو زرقاء أو خضراء أو برتقالية أو حمراء؛ وتتجاوز `color` تلك اللوحة دون تغيير المعنى.
+
+<StoryEmbed storyId="ui-feedback-callout--display" title="مثال على التنبيه" height={230} />
+
+## استخدام
+
+```tsx
+import { Callout } from 'twenty-ui/components/feedback';
+
+export const WorkflowNotice = () => (
+  <Callout
+    status="neutral"
+    title="This form will appear in workflow runs."
+    description="Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
+    action={<Callout.Action>Learn more</Callout.Action>}
+  />
+);
+```
+
+## خيارات مرئية
+
+قارن الحالات الدلالية باستخدام المحتوى نفسه. اختر حالة لمعنى الرسالة، ولا تتجاوز اللون إلا عندما يتطلب التصميم المحيط ذلك.
+
+<StoryEmbed storyId="ui-feedback-callout--catalog" title="حالات ملاحظات التنبيه" height={1010} />
+
+## إشعار قابل للإغلاق
+
+```tsx
+import { useState } from 'react';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+      {isVisible && (
+        <Callout
+          status="warning"
+          title="Some records need attention"
+          description="Review the missing email addresses before importing."
+          icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+          action={
+            <Callout.Action onClick={onReview}>Review records</Callout.Action>
+          }
+          onDismiss={() => setIsVisible(false)}
+          closeLabel="Dismiss import notice"
+        />
+      )}
+      <Button onClick={() => setIsVisible(true)}>Show notice</Button>
+    </>
+  );
+};
+```
+
+## الإخفاء والتسميات
+
+يؤدي تمرير `onDismiss` إلى إظهار زر إغلاق متاح. يستدعي كل تنشيط بالمؤشر أو لوحة المفاتيح هذه الدالة مرة واحدة. يبقى مربع التنبيه معروضًا إلى أن يخفيه المستدعي. احذف `onDismiss` للحصول على رسالة دائمة. تكون القيمة الافتراضية لـ `closeLabel` هي `Close`.
+
+يمتلك تطبيقك المحتوى والإجراءات والأسماء المتاحة والترجمات. استخدم `Callout.Action` للحصول على زر شفاف صغير بوزن خط عادي. يقبل خصائص Button، بما في ذلك سمات الرابط وحالة التعطيل والمراجع والعرض المخصص؛ ويكون الحجم والمظهر ثابتين. تقبل خانة الإجراء أيضًا أزرارًا مخصصة أو روابط أو عناصر تحكم معطلة أو عقدًا متعددة. أيقونة المساعدة الافتراضية زخرفية؛ مرر `icon={null}` لحذفها أو وفّر عقدة بدلالات إتاحة مناسبة. لا يتطلب Twenty موفر i18n.
+
+## التكامل الأصلي
+
+تستهدف السمات الأصلية و`className` و`style` و`ref` عنصر `div` الجذر. استخدم `render` لتكوين عنصر جذر مختلف أو دالة رد تتلقى خصائص الجذر و`{ status, variant, color }`. يمثل `title` و`description` خانات محتوى. يزيل `fullWidth` الحد الأقصى الافتراضي للعرض البالغ 512px.
+
+لا يضيف المكون أي دور لمنطقة مباشرة أو إعلانات. وفّر `role` و`aria-live` الأصليين وسمات الإتاحة الأخرى عندما يتطلبها سير العمل المحيط.
+
+## الترحيل
+
+استبدل `variant` الدلالي السابق بـ `status`، و`Icon` الخاص بالمنشئ بعقدة `icon`. استبدل كائنات الإجراء `{ label, onClick }` بـ `Callout.Action` أو عناصر تحكم مخصصة. استبدل `isClosable` و`onClose` بـ `onDismiss`، واعرض مربع التنبيه شرطيًا في المستدعي عندما ينبغي أن يؤدي الإغلاق إلى إخفائه. يبقى المحتوى المترجم الحالي وتسميات الإجراءات في التطبيق.
+
+## الخصائص
+
+<CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

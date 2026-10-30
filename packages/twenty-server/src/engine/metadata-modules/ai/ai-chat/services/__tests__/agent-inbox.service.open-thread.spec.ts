@@ -42,7 +42,7 @@ const buildService = () => {
       .mockImplementation(({ id, workspaceMemberId }) =>
         Promise.resolve({ id, workspaceMemberId }),
       ),
-    addParticipants: jest
+    deliverToParticipants: jest
       .fn()
       .mockImplementation(({ participantWorkspaceMemberIds }) =>
         Promise.resolve(participantWorkspaceMemberIds),
@@ -93,7 +93,7 @@ describe('AgentInboxService.openThread', () => {
       service.openThread({ ...OPEN_ARGS, workspaceMemberIds: ['member-id'] }),
     ).resolves.toEqual({ thread: existingThread, isCreated: false });
     expect(threadService.createThread).not.toHaveBeenCalled();
-    expect(threadService.addParticipants).not.toHaveBeenCalled();
+    expect(threadService.deliverToParticipants).not.toHaveBeenCalled();
   });
 
   it('creates the conversation owned by the first member and adds the others', async () => {
@@ -114,7 +114,7 @@ describe('AgentInboxService.openThread', () => {
       title: 'Draft the quote',
       isArchived: true,
     });
-    expect(threadService.addParticipants).toHaveBeenCalledWith({
+    expect(threadService.deliverToParticipants).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
       threadId: THREAD_ID,
       workspaceMemberId: 'member-id',
@@ -142,7 +142,7 @@ describe('AgentInboxService.openThread', () => {
       ],
     });
 
-    expect(threadService.addParticipants).toHaveBeenCalledWith(
+    expect(threadService.deliverToParticipants).toHaveBeenCalledWith(
       expect.objectContaining({
         participantWorkspaceMemberIds: ['third-member-id'],
       }),
@@ -176,13 +176,13 @@ describe('AgentInboxService.openThread', () => {
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     expect(threadService.createThread).not.toHaveBeenCalled();
-    expect(threadService.addParticipants).not.toHaveBeenCalled();
+    expect(threadService.deliverToParticipants).not.toHaveBeenCalled();
   });
 
   it('fails when a member cannot join the conversation', async () => {
     const { service, threadService } = buildService();
 
-    threadService.addParticipants.mockResolvedValue([]);
+    threadService.deliverToParticipants.mockResolvedValue([]);
 
     await expect(
       service.openThread({
@@ -220,7 +220,7 @@ describe('AgentInboxService.openThread', () => {
     await expect(
       service.openThread({ ...OPEN_ARGS, workspaceMemberIds: ['member-id'] }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
-    expect(threadService.addParticipants).not.toHaveBeenCalled();
+    expect(threadService.deliverToParticipants).not.toHaveBeenCalled();
   });
 
   it('returns a deleted conversation without adding anyone to it', async () => {
@@ -239,7 +239,7 @@ describe('AgentInboxService.openThread', () => {
         workspaceMemberIds: ['member-id', 'other-member-id'],
       }),
     ).resolves.toEqual({ thread: deletedThread, isCreated: false });
-    expect(threadService.addParticipants).not.toHaveBeenCalled();
+    expect(threadService.deliverToParticipants).not.toHaveBeenCalled();
   });
 
   it('returns the conversation a concurrent open created first', async () => {
@@ -285,7 +285,7 @@ describe('AgentInboxService.sendMessage', () => {
       }),
     ).resolves.toMatchObject({ threadId: THREAD_ID, isDismissed: false });
     expect(threadService.createThread).not.toHaveBeenCalled();
-    expect(threadService.addParticipants).toHaveBeenCalledWith(
+    expect(threadService.deliverToParticipants).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: THREAD_ID,
         participantWorkspaceMemberIds: ['other-member-id'],

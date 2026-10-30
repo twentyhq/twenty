@@ -1,0 +1,133 @@
+---
+title: Flujos de trabajo
+description: Incluye flujos de trabajo predefinidos con tu aplicación.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Define un flujo de trabajo
+
+Las aplicaciones pueden incluir flujos de trabajo. Cada llamada a `defineWorkflow()` describe un flujo de trabajo: un desencadenador y los pasos que ejecuta. Al instalarse, Twenty lo crea como un flujo de trabajo activo en el espacio de trabajo, listo para ejecutarse.
+
+Este flujo de trabajo se ejecuta cuando se crea una empresa. Llama a una de las funciones lógicas de la aplicación y, después, escribe el resultado en la empresa:
+
+```ts src/workflows/score-new-companies.ts
+import {
+  defineWorkflow,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const COMPANY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
+const SCORE_COMPANY_FUNCTION = '0f6c0b3e-8a4f-4f0e-9d0a-3c1e5b7a2d41';
+
+const SCORE_NEW_COMPANIES = {
+  workflow: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e81',
+  trigger: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e82',
+  score: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e83',
+  save: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e84',
+};
+
+export default defineWorkflow({
+  universalIdentifier: SCORE_NEW_COMPANIES.workflow,
+  name: 'Score new companies',
+  version: {
+    trigger: {
+      universalIdentifier: SCORE_NEW_COMPANIES.trigger,
+      type: 'DATABASE_EVENT',
+      settings: {
+        objectUniversalIdentifier: COMPANY,
+        action: 'created',
+      },
+      nextStepIds: [SCORE_NEW_COMPANIES.score],
+    },
+    steps: [
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.score,
+        name: 'Score the company',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: SCORE_COMPANY_FUNCTION,
+        input: { companyName: '{{trigger.properties.after.name}}' },
+        nextStepIds: [SCORE_NEW_COMPANIES.save],
+      },
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.save,
+        name: 'Save the score',
+        type: 'UPDATE_RECORD',
+        input: {
+          objectUniversalIdentifier: COMPANY,
+          objectRecordId: '{{trigger.recordId}}',
+          objectRecord: { leadScore: `{{${SCORE_NEW_COMPANIES.score}.score}}` },
+          fieldsToUpdate: ['leadScore'],
+        },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+Puntos clave:
+
+* El flujo de trabajo, su desencadenador y cada paso necesitan su propio `universalIdentifier`. Mantenlos estables entre versiones: así es como Twenty encuentra el flujo de trabajo instalado en la próxima instalación.
+* `nextStepIds` conecta el grafo. El desencadenador apunta a los primeros pasos, y cada paso apunta a los pasos que se ejecutan después de él.
+* Un paso lee la salida anterior con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
+* La compilación valida toda la definición: los tipos de desencadenador o de paso no compatibles, los enlaces de pasos rotos y las referencias a pasos desconocidos hacen que falle.
+* `isSystem` (opcional, el valor predeterminado es `false`) oculta el flujo de trabajo de las listas que excluyen los flujos de trabajo del sistema. Solo cambia lo que se muestra.
+
+## Referencia a otras entidades
+
+Los pasos y los desencadenadores apuntan a metadatos mediante identificador universal, nunca por nombre o id:
+
+* **Objetos y campos**: los propios de tu aplicación o los estándar mediante `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. El ejemplo anterior supone que la aplicación también define un campo numérico `leadScore` en Company con [`defineField()`](/es/developers/extend/apps/data/extending-objects): un paso de registro que escribe en un campo que falta en el espacio de trabajo hace que falle la instalación.
+* **Funciones lógicas**: las propias de tu aplicación, expuestas como una [acción de flujo de trabajo](/es/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) con `workflowActionTriggerSettings`. La aplicación Personalizada del espacio de trabajo también puede hacer referencia a las acciones de flujo de trabajo de las otras aplicaciones instaladas en el espacio de trabajo, al igual que los flujos de trabajo creados en la aplicación.
+* **Agentes**: los propios de tu aplicación, de [`defineAgent()`](/es/developers/extend/apps/logic/skills-and-agents).
+
+Una referencia que Twenty no puede resolver hace que falle la instalación.
+
+## Disparadores
+
+| Tipo             | Se ejecuta cuando                                      | Configuración                                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MANUAL`         | Un usuario lo inicia                                   | `availability` (opcional): `GLOBAL`, o `SINGLE_RECORD` / `BULK_RECORDS` con un `objectUniversalIdentifier`. Añade una entrada al menú de comandos, con `icon` e `isPinned` opcionales.   |
+| `CRON`           | Según una programación                                 | `type`: `DAYS`, `HOURS` o `MINUTES` con un `schedule`, o `CUSTOM` con un `pattern` de cron.                                                                                              |
+| `DATABASE_EVENT` | Un registro cambia                                     | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), `fieldUniversalIdentifiers` opcionales para supervisar (solo actualizaciones y upserts) y `filter`. |
+| `WEBHOOK`        | Una solicitud HTTP llega a la URL del flujo de trabajo | `httpMethod` (`GET` o `POST`) y `expectedBody` para `POST`.                                                                                                                              |
+
+Un flujo de trabajo manual sin `availability` no obtiene ninguna entrada en el menú de comandos.
+
+Un flujo de trabajo de webhook escucha en `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, donde `workflowId` es el id del flujo de trabajo instalado. El cuerpo de la solicitud está disponible como `{{trigger.\<path>}}`.
+
+## Pasos
+
+Los flujos de trabajo de la aplicación admiten estos tipos de pasos: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` y `EMPTY`.
+
+Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions), con identificadores universales en lugar de nombres:
+
+* Los pasos de registro usan `objectUniversalIdentifier` en lugar de un nombre de objeto.
+* Los filtros y las ordenaciones apuntan a campos con `fieldMetadataUniversalIdentifier`.
+* Los operandos de filtro toman valores de `ViewFilterOperand`, exportados por `twenty-sdk/define`. Los operadores de grupo de filtros toman valores de cadena como `'AND'` u `'OR'`.
+* Los campos de formulario de tipo `RECORD` nombran su objeto con `settings.objectUniversalIdentifier`. Los campos de tipo `SELECT` y `MULTI_SELECT` ofrecen las opciones de un campo existente del mismo tipo, denominado con `settings.selectedFieldUniversalIdentifier`.
+* Para ejecutar tu propio código, usa un paso `LOGIC_FUNCTION`. El paso Code del constructor no está disponible.
+* Los pasos de correo electrónico y calendario se ejecutan solo si el rol de tu aplicación tiene el indicador de permiso correspondiente: `SystemPermissionFlag.SEND_EMAIL_TOOL` para `SEND_EMAIL` y `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` para `CREATE_CALENDAR_EVENT`. El espacio de trabajo lo concede al instalar la aplicación, y el paso puede usar cualquier cuenta conectada en el espacio de trabajo, como un flujo de trabajo creado en la aplicación.
+* Los ID de las cuentas conectadas son locales para cada espacio de trabajo, así que no codifiques uno de forma fija. Asigne un nombre a la cuenta de una de estas dos formas:
+
+  * `connectedAccountHandle`: la dirección de correo electrónico de la cuenta, como `'sales@example.com'`. Cuando la aplicación se sincroniza, el identificador se resuelve en una cuenta con esa dirección que se comparte con el espacio de trabajo (ámbito `WORKSPACE`) y puede ejecutar el paso. No se puede asignar un nombre mediante identificador a la cuenta privada de un miembro: pull la conserva como su `connectedAccountId`. Si varias cuentas comparten la dirección, por ejemplo, un buzón conectado por dos miembros o a través de dos proveedores, gana la más antigua. Si ninguna coincide, la sincronización falla e indica el identificador. Esto no es `fromHandle`, que selecciona un alias desde el que enviar.
+  * `connectedAccountId`: una variable, como `{{trigger.properties.after.connectedAccountId}}`. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
+
+  Establece exactamente uno de los dos.
+
+## Después de la instalación
+
+* El flujo de trabajo está activo en cuanto se instala la aplicación, y sus ejecuciones aparecen junto con las otras ejecuciones de flujos de trabajo del espacio de trabajo.
+* La instalación de una nueva versión de la aplicación actualiza el flujo de trabajo en el mismo lugar.
+* Los usuarios no pueden editar un flujo de trabajo instalado. Para personalizar uno, lo duplican: la copia es suya para editarla.
+
+## Workflows de la aplicación personalizada del espacio de trabajo
+
+La aplicación personalizada del espacio de trabajo posee los flujos de trabajo creados en el generador de flujos de trabajo, y el código es tan autoritativo para ellos como el generador:
+
+* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Se informa de un flujo de trabajo cuya versión activa usa configuraciones que un archivo `defineWorkflow()` no puede expresar, como un paso de Code o un desencadenador que el generador renombró, y se deja en su lugar.
+* `twenty app apply` publica como el generador. Un flujo de trabajo cuya definición coincide con su versión activa se deja sin cambios. De lo contrario, la versión activa se archiva y la definición se convierte en una nueva versión activa, por lo que las ejecuciones anteriores conservan la versión que ejecutaron.
+* Los usuarios siguen editando estos flujos de trabajo en el constructor, y la siguiente extracción recupera sus cambios.
+
+<PageBanner illustration="card-page-workflows" />

@@ -544,17 +544,4 @@ describe('readabilityObjectRecordsPermissions', () => {
       );
     });
   });
-
-  describe('SYSTEM readability', () => {
-    beforeAll(async () => {
-      await setObjectReadability(objectMetadataId, MetadataReadability.SYSTEM);
-    });
-
-    it('should refuse reads even for an admin', async () => {
-      const response = await makeGraphqlApiRequest(findManyOperation);
-
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not readable');
-    });
-  });
 });

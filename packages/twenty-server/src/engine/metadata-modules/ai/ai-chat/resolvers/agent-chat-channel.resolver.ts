@@ -1,5 +1,12 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Int, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -19,6 +26,7 @@ import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { CreateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/create-agent-chat-channel.input';
@@ -28,6 +36,7 @@ import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -60,6 +69,16 @@ export class AgentChatChannelResolver {
     private readonly permissionsService: PermissionsService,
   ) {}
 
+  @ResolveField(() => Boolean, {
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() channel: AgentChatChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return channel.applicationId === workspace.workspaceCustomApplicationId;
+  }
+
   @Query(() => AgentChatChannelThreadIdsDTO)
   async agentChatChannelThreadIds(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
@@ -73,6 +92,11 @@ export class AgentChatChannelResolver {
       nullable: true,
     })
     assignment: AgentChatChannelAssignmentFilter | null,
+    @Args('filter', {
+      type: () => AgentChatChannelThreadFilter,
+      nullable: true,
+    })
+    filter: AgentChatChannelThreadFilter | null,
     @Args('first', { type: () => Int, nullable: true }) first: number | null,
     @Args('after', { type: () => String, nullable: true }) after: string | null,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
@@ -82,6 +106,7 @@ export class AgentChatChannelResolver {
       channelId,
       status,
       assignment,
+      filter,
       first,
       after,
       workspaceMemberId,

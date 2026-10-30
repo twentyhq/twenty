@@ -6,18 +6,20 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
+import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
 import {
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
-  APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
   failNextApplicationPreferencesRequest,
+  stopApplicationForNextRequest,
   findApplicationsGatedQuery,
   findOneFrontComponent,
   seedApplicationPreferencesStory,
@@ -29,14 +31,14 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsApplicationPreferences,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/applications/:applicationId',
+    routePath: '/settings/app-preferences/:applicationId',
     routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
-    additionalRoutes: ['/settings/accounts'],
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
     layout: 'fullscreen',
-    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
   },
 };
 
@@ -47,6 +49,7 @@ const NEW_PERSONAL_API_KEY = 'sk-2abcdefghijklmnopqrstuvwxyz0123456789';
 export type Story = StoryObj<typeof SettingsApplicationPreferences>;
 
 export const VariablesTabSavesOnlyEditedValues: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -54,7 +57,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
       await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
     ).toBeVisible();
     expect(canvas.getAllByText('Fathom').length).toBeGreaterThan(0);
-    expect(canvas.getByText('App preferences')).toBeVisible();
+    expect(canvas.getByText('Apps preferences')).toBeVisible();
     expect(canvas.getByText('Record my meetings')).toBeVisible();
     expect(canvas.getByDisplayValue('always')).toBeVisible();
     expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
@@ -91,6 +94,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
 };
 
 export const ClearedValueFallsBackToTheDefault: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -125,6 +129,7 @@ export const ClearedValueFallsBackToTheDefault: Story = {
 };
 
 export const MissingRequiredValueShowsBannerUntilSaved: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -169,6 +174,7 @@ export const MissingRequiredValueShowsBannerUntilSaved: Story = {
 };
 
 export const SavedSecretIsReplacedNotAppended: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -211,6 +217,7 @@ export const SavedSecretIsReplacedNotAppended: Story = {
 };
 
 export const SavedSecretCanBeCleared: Story = {
+  args: { routeHash: '#variables' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -256,33 +263,139 @@ export const SavedSecretCanBeCleared: Story = {
   },
 };
 
-export const SettingsTabReplacesVariablesTab: Story = {
+export const SettingsOnlyAppOpensItsSettingsFromTheTabBar: Story = {
   args: {
     routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(
-      await canvas.findByRole('link', { name: 'My notes' }, { timeout: 3000 }),
-    ).toBeVisible();
+    const myNotesLink = await canvas.findByRole(
+      'link',
+      { name: 'My notes' },
+      { timeout: 3000 },
+    );
+
+    expect(canvas.getByRole('link', { name: 'General' })).toBeVisible();
+
+    await userEvent.click(myNotesLink);
+
+    await waitFor(
+      () =>
+        expect(findOneFrontComponent).toHaveBeenCalledWith(
+          GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+        ),
+      { timeout: 3000 },
+    );
     expect(
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
+    expect(canvas.queryByText('Language')).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: 'Save settings' }),
     ).not.toBeInTheDocument();
-
-    await waitFor(() =>
-      expect(findOneFrontComponent).toHaveBeenCalledWith(
-        GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
-      ),
-    );
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
 };
 
-export const UnknownAppGoesBackToAccounts: Story = {
+export const MemberLandsOnGeneralWithoutWorkspaceActions: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Records, transcribes and summarizes your meetings.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      await canvas.findByText('Connect with Fathom', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Save settings' }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: /Uninstall/ }),
+    ).not.toBeInTheDocument();
+    expect(canvas.queryByText('View in marketplace')).not.toBeInTheDocument();
+    expect(canvas.queryByText('See app page')).not.toBeInTheDocument();
+    expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const StoppedAppShowsDegradedBanner: Story = {
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    stopApplicationForNextRequest();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        /We are currently encountering issues with this app/,
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+  },
+};
+
+const FAILED_OAUTH_ERROR_MESSAGE =
+  'Failed to exchange the authorization code for an access token.';
+
+const LocationProbe = () => {
+  const { search, hash } = useLocation();
+
+  return <div data-testid="location-probe">{`${search}${hash}`}</div>;
+};
+
+export const FailedOAuthReturnShowsItsMessage: Story = {
+  args: {
+    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
+    searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
+    routeHash: '#general',
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <ErrorMessageEffect />
+        <LocationProbe />
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await body.findByText(FAILED_OAUTH_ERROR_MESSAGE, undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByTestId('location-probe')).toHaveTextContent(
+        /^#general$/,
+      ),
+    );
+    expect(
+      await canvas.findByText(
+        'Connect your own Fathom account for this app to use on your behalf.',
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
+    expect(canvas.getByRole('link', { name: 'Variables' })).toBeVisible();
+    expect(canvas.getByRole('link', { name: 'General' })).toBeVisible();
+  },
+};
+
+export const UnknownAppGoesBackToAppPreferences: Story = {
   args: {
     routeParams: { ':applicationId': '20202020-1a2b-4c3d-8e4f-000000000099' },
   },
@@ -290,9 +403,13 @@ export const UnknownAppGoesBackToAccounts: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };
@@ -325,29 +442,5 @@ export const LoadErrorOffersRetryInsteadOfGoingBack: Story = {
       ),
     ).not.toBeInTheDocument();
     expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
-  },
-};
-
-export const FlagOffGoesBackToAccounts: Story = {
-  beforeEach: async () => {
-    await seedApplicationPreferencesStory();
-
-    const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
-
-    if (isDefined(currentWorkspace)) {
-      jotaiStore.set(currentWorkspaceState.atom, {
-        ...currentWorkspace,
-        featureFlags: [],
-      });
-    }
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeVisible();
   },
 };

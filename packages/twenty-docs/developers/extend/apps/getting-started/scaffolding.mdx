@@ -1,8 +1,11 @@
 ---
 title: Scaffolding
 description: Generate app entities with twenty app add.
-icon: 'wand-magic-sparkles'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Use the standalone CLI to generate an object, field, logic function, or front component:
 
@@ -26,3 +29,5 @@ twenty app add object --name invoice --name-plural invoices \
 For other entity types, write the corresponding `define*` file using `twenty-sdk/define` and a valid UUID v4. Run `twenty app typecheck` and `twenty app plan` before syncing.
 
 `--path` selects the app directory, not a custom output folder. Run `twenty app add --help` for supported options.
+
+<PageBanner illustration="dev-contribute" />

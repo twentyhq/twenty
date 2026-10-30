@@ -74,6 +74,7 @@ export class DropMessageDirectionFieldCommand extends ProvisionedWorkspaceComman
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],

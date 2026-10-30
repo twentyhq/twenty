@@ -5,7 +5,10 @@ const TEST_SCHEMA_NAME = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 // Timeline activities are inserted by listeners after the mutation resolves;
 // mutating a record while its activities are still in flight races those inserts.
 export const waitForTimelineActivities = async (
-  targetColumnName: 'targetCompanyId' | 'targetPersonId',
+  targetColumnName:
+    | 'targetCompanyId'
+    | 'targetPersonId'
+    | 'targetOpportunityId',
   recordIds: string[],
 ) => {
   await expectEventually(async () => {

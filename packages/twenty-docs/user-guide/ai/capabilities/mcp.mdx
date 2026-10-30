@@ -3,6 +3,10 @@ title: MCP Server
 description: Connect AI assistants to your Twenty workspace using the Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Twenty exposes an [MCP](https://modelcontextprotocol.io/) server so that AI assistants — Claude Desktop, Claude Code, Cursor, ChatGPT, and others — can read and write your CRM data through natural language.
 
 Use your **workspace URL** (the URL you use to access Twenty) as the MCP endpoint. On Twenty Cloud, your workspace URL might be `https://{mycompany}.twenty.com` or a custom domain. The server is available at:
@@ -138,3 +142,5 @@ The MCP endpoint, OAuth endpoints, and discovery metadata all derive from this v
 
 **Connection timeout**
 - Confirm the MCP endpoint URL is reachable from your machine. For self-hosted instances, check that the server is running and `SERVER_URL` is set correctly.
+
+<PageBanner illustration="card-page-connections" />
