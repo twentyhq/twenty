@@ -122,6 +122,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'monthly',
+    description: msg`Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud. Apply to the affiliate program for creators, communities, consultants and tech partners.`,
+    id: 'affiliatePartners',
+    indexed: false,
+    path: '/affiliate-partners',
+    priority: 0.6,
+    title: msg`Twenty Affiliate Program — Earn 20% on Every Referral`,
+  },
+  {
+    changeFrequency: 'monthly',
     description: msg`Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform.`,
     id: 'whyTwenty',
     indexed: true,
