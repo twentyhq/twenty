@@ -180,19 +180,15 @@ jobs:
             if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
               echo "$package@$VERSION already published; skipping"
             else
-              for attempt in 1 2 3; do
-                publish_log=$(mktemp)
-                if yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public 2>&1 | tee "$publish_log"; then
-                  break
-                fi
-                # Yarn's Sigstore client times out on slow Rekor writes and its retry then hits a 409.
-                # Signing happens before the upload, so a failed attempt has published nothing.
-                if [[ "$attempt" == 3 ]] || ! grep -q "error creating tlog entry - (409)" "$publish_log"; then
-                  exit 1
-                fi
-                echo "::warning::$package provenance entry conflicted in Rekor; retrying publish"
-                sleep 15
-              done
+              # Yarn signs with a 5 s Sigstore timeout, so a slow Rekor write makes its retry hit a 409 on
+              # the entry it just created. npm's signer waits up to fetch-timeout; Yarn still packs, to
+              # resolve workspace: ranges, and pack skips prepublish, so the CLI's runs here.
+              if [[ "$package" == twenty ]]; then
+                yarn workspace twenty run prepublish
+              fi
+              tarball="$RUNNER_TEMP/$package-$VERSION.tgz"
+              yarn workspace "$package" pack --out "$tarball"
+              npm publish "$tarball" --provenance --tag "$DIST_TAG" --access public
             fi
             if [[ "$package" != twenty ]]; then
               published_libraries="$published_libraries $package"
