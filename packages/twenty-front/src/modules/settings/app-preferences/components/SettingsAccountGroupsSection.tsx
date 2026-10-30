@@ -59,7 +59,10 @@ export const SettingsAccountGroupsSection = ({
       {isDefined(builtInAccountApp) ? (
         <TableHeader>{t`Permissions`}</TableHeader>
       ) : (
-        <TableHeader align="right">{t`Used by`}</TableHeader>
+        <>
+          <TableHeader />
+          <TableHeader align="right">{t`Used by`}</TableHeader>
+        </>
       )}
       <TableHeader />
     </TableRow>
