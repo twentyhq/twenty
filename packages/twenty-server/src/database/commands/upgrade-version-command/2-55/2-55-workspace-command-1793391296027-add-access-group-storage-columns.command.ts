@@ -6,7 +6,11 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { getAccessGroupSchemaDefinitionsForObject } from 'src/engine/metadata-modules/access-group/utils/get-access-group-schema-definitions-for-object.util';
+import { ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-column-definition.constant';
+import { ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-index-definition.constant';
+import { ACCESS_GROUP_IDS_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-ids-column-definition.constant';
+import { buildAccessGroupIdsIndexDefinition } from 'src/engine/metadata-modules/access-group/utils/build-access-group-ids-index-definition.util';
+import { isAccessGroupObject } from 'src/engine/metadata-modules/access-group/utils/is-access-group-object.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -74,10 +78,15 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           continue;
         }
 
-        const { columnDefinition, indexDefinition } =
-          getAccessGroupSchemaDefinitionsForObject({
-            objectMetadata: flatObjectMetadata,
-          });
+        const isAccessGroup = isAccessGroupObject(flatObjectMetadata);
+        const columnDefinition = isAccessGroup
+          ? ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION
+          : ACCESS_GROUP_IDS_COLUMN_DEFINITION;
+        const indexDefinition = isAccessGroup
+          ? ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION
+          : buildAccessGroupIdsIndexDefinition({
+              objectMetadataId: flatObjectMetadata.id,
+            });
         const existingColumnType = existingColumnTypes.get(
           columnDefinition.name,
         );
@@ -85,7 +94,7 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
 
         if (
           !isColumnMissing &&
-          existingColumnType !== (columnDefinition.isArray ? '_int4' : 'int4')
+          existingColumnType !== (isAccessGroup ? 'int4' : '_int4')
         ) {
           this.logger.error(
             `Skipping ${tableName} in workspace ${workspaceId}: column ${columnDefinition.name} already exists with type ${existingColumnType}`,
