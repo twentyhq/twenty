@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793366004507-add-direct-message-pair-identity.command';
 import { AddChatConversationTypeCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793280040522-add-chat-conversation-type.command';
 import { AddMergeWithRecordCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793265618567-add-merge-with-record-command-menu-item.command';
 import { StripServerRoutesFromCustomAppLogicFunctionsCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793352708113-strip-server-routes-from-custom-app-logic-functions.command';
@@ -20,6 +21,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddDirectMessagePairIdentityCommand,
     AddChatConversationTypeCommand,
     AddMergeWithRecordCommandMenuItemCommand,
     StripServerRoutesFromCustomAppLogicFunctionsCommand,

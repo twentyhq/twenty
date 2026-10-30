@@ -40,6 +40,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "58116005-31cb-59be-9a8d-da2dd428d9b7",
       },
+      "directMessageFirstWorkspaceMemberId": {
+        "universalIdentifier": "dd7e093b-06af-47f3-a246-57ae2de33244",
+      },
+      "directMessageSecondWorkspaceMemberId": {
+        "universalIdentifier": "730c7491-35fa-4bce-90e1-29901e08eba3",
+      },
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
@@ -107,6 +113,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "channelLastActivityIndex": {
         "universalIdentifier": "bd129bd1-db66-4c74-a64e-819d2edd3062",
+      },
+      "directMessagePairUniqueIndex": {
+        "universalIdentifier": "365c5b24-cd52-4ebc-98d2-23c5684216d5",
       },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",

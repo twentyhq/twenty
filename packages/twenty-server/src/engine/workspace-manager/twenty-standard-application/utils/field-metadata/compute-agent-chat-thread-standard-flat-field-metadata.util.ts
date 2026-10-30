@@ -121,6 +121,64 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
+  directMessageFirstWorkspaceMemberId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'directMessageFirstWorkspaceMemberId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({
+            message: 'First direct message member ID',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'The first member in the fixed direct message pair',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+    isAuditLogged: false,
+  },
+  directMessageSecondWorkspaceMemberId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'directMessageSecondWorkspaceMemberId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(
+          msg({
+            message: 'Second direct message member ID',
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'The second member in the fixed direct message pair',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUser',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+    isAuditLogged: false,
+  },
   isAssistantParticipant: {
     ...createStandardFieldFlatMetadata({
       ...args,
