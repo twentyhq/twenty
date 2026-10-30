@@ -10,6 +10,8 @@ export const getLinkedinHistoryImportErrorReason = (
       return t(
         'LinkedIn signed you out. Reconnect your account in the General tab, then retry.',
       );
+    case 'STALLED':
+      return t('It stopped responding. Retry to start it again.');
     case 'UNREACHABLE':
       return t('LinkedIn could not be reached. Retry in a few minutes.');
     default:

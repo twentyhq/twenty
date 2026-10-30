@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/linkedin-history-import-chats-per-job.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-import-history-job-payload.type';
@@ -93,6 +94,7 @@ const importPage = async ({
     processedConversationCount:
       state.processedConversationCount + page.items.length,
     totalConversationCount: state.totalConversationCount ?? page.totalCount,
+    updatedAt: new Date().toISOString(),
     ...(isLastPage
       ? { status: 'COMPLETED', finishedAt: new Date().toISOString() }
       : {}),
@@ -157,6 +159,6 @@ export default defineLogicFunction({
   name: 'linkedin-import-history',
   description:
     'Imports one page of past LinkedIn conversations of a connection, then queues the next page.',
-  timeoutSeconds: 900,
+  timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinImportHistoryHandler,
 });

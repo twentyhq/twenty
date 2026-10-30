@@ -14,6 +14,7 @@ import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-li
 import { getLinkedinConnectionKvKey } from 'src/logic-functions/utils/get-linkedin-connection-kv-key.util';
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
+import { isLinkedinHistoryImportStalled } from 'src/logic-functions/utils/is-linkedin-history-import-running.util';
 import { parseLinkedinSettingsUpdate } from 'src/logic-functions/utils/parse-linkedin-settings-update.util';
 import { startLinkedinHistoryImport } from 'src/logic-functions/utils/start-linkedin-history-import.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
@@ -60,6 +61,7 @@ export const linkedinUpdateSettingsHandler = async (
   if (
     !isDefined(historyImport) ||
     historyImport.status === 'FAILED' ||
+    isLinkedinHistoryImportStalled({ historyImport, now: Date.now() }) ||
     (settings.importPolicy === 'ALL' &&
       historyImport.importPolicy === 'CONTACTS_ONLY')
   ) {

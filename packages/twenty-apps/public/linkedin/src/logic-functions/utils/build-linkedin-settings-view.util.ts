@@ -5,6 +5,7 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
+import { isLinkedinHistoryImportStalled } from 'src/logic-functions/utils/is-linkedin-history-import-running.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
@@ -36,6 +37,18 @@ export const buildLinkedinSettingsView = async (
           ? 'SHARE_EVERYTHING'
           : 'METADATA',
     },
-    historyImport,
+    // Jobs that died never mark their run failed, so the page offers Retry instead of spinning forever
+    historyImport:
+      isDefined(historyImport) &&
+      isLinkedinHistoryImportStalled({ historyImport, now: Date.now() })
+        ? {
+            ...historyImport,
+            status: 'FAILED',
+            error: {
+              code: 'STALLED',
+              message: 'The import stopped making progress.',
+            },
+          }
+        : historyImport,
   };
 };

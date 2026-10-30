@@ -11,13 +11,15 @@ export const startLinkedinHistoryImport = async ({
   connectedAccountId: string;
   importPolicy: LinkedinImportPolicy;
 }): Promise<LinkedinHistoryImportState> => {
+  const now = new Date().toISOString();
   const state: LinkedinHistoryImportState = {
     runId: crypto.randomUUID(),
     importPolicy,
     status: 'IMPORTING',
     importedConversationCount: 0,
     processedConversationCount: 0,
-    startedAt: new Date().toISOString(),
+    startedAt: now,
+    updatedAt: now,
   };
 
   await saveLinkedinHistoryImportState({ connectedAccountId, state });

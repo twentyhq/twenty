@@ -33,7 +33,10 @@ const syncHistory = () =>
     userWorkspaceId: 'member-user-workspace-id',
   });
 
-const setHistoryImport = (status: 'IMPORTING' | 'COMPLETED' | 'FAILED') =>
+const setHistoryImport = (
+  status: 'IMPORTING' | 'COMPLETED' | 'FAILED',
+  updatedAt = new Date().toISOString(),
+) =>
   mocks.kvStore.set(HISTORY_KEY, {
     runId: 'run-1',
     importPolicy: 'ALL',
@@ -41,6 +44,7 @@ const setHistoryImport = (status: 'IMPORTING' | 'COMPLETED' | 'FAILED') =>
     importedConversationCount: 12,
     processedConversationCount: 20,
     startedAt: '2026-10-01T00:00:00.000Z',
+    updatedAt,
   });
 
 describe('linkedinSyncHistoryHandler', () => {
@@ -98,6 +102,17 @@ describe('linkedinSyncHistoryHandler', () => {
     expect((mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId).toBe(
       'run-1',
     );
+  });
+
+  it('restarts a run that stopped making progress', async () => {
+    setHistoryImport('IMPORTING', '2026-10-01T00:00:00.000Z');
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
+    expect(
+      (mocks.kvStore.get(HISTORY_KEY) as { runId: string }).runId,
+    ).not.toBe('run-1');
   });
 
   it('refuses a member without a LinkedIn connection', async () => {

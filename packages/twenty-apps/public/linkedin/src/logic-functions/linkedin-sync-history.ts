@@ -24,9 +24,10 @@ export const linkedinSyncHistoryHandler = async (
 
   // A second click while a run is going would restart it from the first page
   if (
-    !isLinkedinHistoryImportRunning(
-      await getLinkedinHistoryImportState(connection.id),
-    )
+    !isLinkedinHistoryImportRunning({
+      historyImport: await getLinkedinHistoryImportState(connection.id),
+      now: Date.now(),
+    })
   ) {
     const { importPolicy } = await getLinkedinSettings(connection.id);
 
