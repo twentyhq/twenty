@@ -55,7 +55,7 @@ For command details, remotes, validation command semantics, sync modes, troubles
 If the user asks to run tests, also read `references/develop-app/tests.md` before running any test command. Full test suites include integration tests that install and uninstall the app on their target server, so start or verify the isolated test instance and run:
 
 ```bash
-docker start twenty-app-dev-test
+twenty local start --test
 TWENTY_API_URL=http://localhost:2021 yarn test
 ```
 

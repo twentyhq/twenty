@@ -158,7 +158,22 @@ twenty app uninstall
 twenty app uninstall --yes
 ```
 
-Integration tests install and uninstall the app on their target server, so run them against the isolated test instance (`docker start twenty-app-dev-test`, port `2021`) rather than the dev instance — see `../develop-app/tests.md`.
+Integration tests install and uninstall the app on their target server, so run them against the isolated test instance (`twenty local start --test`, port `2021`) rather than the dev instance — see `../develop-app/tests.md`.
+
+## Local development environment
+
+`twenty local start` runs a complete local Twenty instance, including web UI,
+API, worker and databases. Docker must be running with a local socket context.
+No app directory or saved remote is required. Login remains separate:
+`twenty auth login --url http://localhost:2020 --name local`.
+
+Use `local status`, `local logs` and `local stop` to inspect and stop it.
+`start [version]` preserves existing instances. New instances use the explicit
+version, the highest published match for `engines.twenty`, or `latest` when no
+range exists.
+
+Use `--test` consistently for the separate test instance on port `2021`.
+Stopping an instance preserves data. None of these commands changes remotes.
 
 ## CI/CD
 
