@@ -40,21 +40,6 @@ export class UsageQuotaAdmissionService {
     }
   }
 
-  async assertWorkspaceNotSuspended(workspaceId: string): Promise<void> {
-    const subscriptionInactiveReason =
-      await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
-
-    if (subscriptionInactiveReason === 'WORKSPACE_SUSPENDED') {
-      throw buildUsageRefusalException({
-        usageRefusal: {
-          kind: 'subscriptionInactive',
-          reason: subscriptionInactiveReason,
-        },
-        workspaceId,
-      });
-    }
-  }
-
   async findUsageRefusal({
     workspaceId,
     resourceType,

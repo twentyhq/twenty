@@ -25,6 +25,7 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
@@ -34,6 +35,7 @@ import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/fl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { buildUsageRefusalException } from 'src/engine/core-modules/billing/utils/build-usage-refusal-exception.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
@@ -56,6 +58,7 @@ import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
+import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -106,6 +109,7 @@ export class LogicFunctionExecutorService {
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
@@ -275,6 +279,25 @@ export class LogicFunctionExecutorService {
     }
   }
 
+  private async assertWorkspaceNotSuspendedOrThrow(
+    workspaceId: string,
+  ): Promise<void> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (isWorkspaceSuspended(workspace)) {
+      throw buildUsageRefusalException({
+        usageRefusal: {
+          kind: 'subscriptionInactive',
+          reason: 'WORKSPACE_SUSPENDED',
+        },
+        workspaceId,
+      });
+    }
+  }
+
   private async assertExecutionAllowed({
     workspaceId,
     flatApplication,
@@ -284,11 +307,9 @@ export class LogicFunctionExecutorService {
     flatApplication: FlatApplication;
     flatLogicFunction: FlatLogicFunction;
   }): Promise<void> {
-    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
-      await this.usageQuotaAdmissionService.assertWorkspaceNotSuspended(
-        workspaceId,
-      );
+    await this.assertWorkspaceNotSuspendedOrThrow(workspaceId);
 
+    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
       return;
     }
 
