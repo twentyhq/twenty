@@ -1,3 +1,7 @@
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type FrontComponentDraftReference } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-reference.type';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -20,7 +24,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 
 import { readFrontComponentSharedDependenciesChecksum } from 'twenty-shared/application';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -45,6 +49,7 @@ export class AiFrontComponentService {
     private readonly locks: CacheLockService,
     private readonly permissions: PermissionsService,
     private readonly sharedDependencies: FrontComponentSharedDependenciesService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -109,12 +114,12 @@ export class AiFrontComponentService {
     return `${this.draftKey({ workspaceId, draftId: rootId })}:current`;
   }
 
-  private async saveDraft({
+  private async saveDraftReference({
     workspaceId,
     draft,
   }: {
     workspaceId: string;
-    draft: FrontComponentDraft;
+    draft: FrontComponentDraftReference;
   }) {
     await this.cache.set(
       this.draftKey({ workspaceId, draftId: draft.id }),
@@ -123,7 +128,7 @@ export class AiFrontComponentService {
     );
   }
 
-  async getDraft({
+  private async getDraftReference({
     workspaceId,
     userWorkspaceId,
     draftId,
@@ -133,16 +138,14 @@ export class AiFrontComponentService {
     draftId: string;
   }) {
     await this.assertCanAuthorOrThrow({ workspaceId, userWorkspaceId });
-    const draft = await this.cache.get<FrontComponentDraft>(
+    const draft = await this.cache.get<FrontComponentDraftReference>(
       this.draftKey({ workspaceId, draftId }),
     );
 
     if (
       !isDefined(draft) ||
       draft.expiresAt <= Date.now() ||
-      draft.userWorkspaceId !== userWorkspaceId ||
-      !isDefined(draft.compiledSource) ||
-      !isDefined(draft.entrySource)
+      draft.userWorkspaceId !== userWorkspaceId
     ) {
       throw new ApplicationException(
         doNotTranslate('Component draft not found or expired.'),
@@ -154,12 +157,52 @@ export class AiFrontComponentService {
     return draft;
   }
 
+  async getDraft({
+    workspaceId,
+    userWorkspaceId,
+    draftId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    draftId: string;
+  }): Promise<FrontComponentDraft> {
+    const reference = await this.getDraftReference({
+      workspaceId,
+      userWorkspaceId,
+      draftId,
+    });
+
+    try {
+      const stream = await this.fileStorageService.readFile({
+        workspaceId,
+        applicationUniversalIdentifier:
+          reference.applicationUniversalIdentifier,
+        fileFolder: FileFolder.AgentChat,
+        resourcePath: `front-component-drafts/${reference.id}.json`,
+      });
+      const draft: FrontComponentDraft = JSON.parse(
+        (await streamToBuffer(stream)).toString(),
+      );
+
+      return { ...draft, diagnostic: reference.diagnostic };
+    } catch (error) {
+      if (error.code !== FileStorageExceptionCode.FILE_NOT_FOUND) {
+        throw error;
+      }
+      throw new ApplicationException(
+        doNotTranslate('Component draft not found or expired.'),
+        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+        { userFriendlyMessage: msg`Component draft not found or expired.` },
+      );
+    }
+  }
+
   private async isCurrent({
     workspaceId,
     draft,
   }: {
     workspaceId: string;
-    draft: FrontComponentDraft;
+    draft: Pick<FrontComponentDraft, 'id' | 'rootId'>;
   }) {
     return (
       (await this.cache.get<string>(
@@ -220,7 +263,7 @@ export class AiFrontComponentService {
       selectedFields: input.query.select,
     });
     const previous = isDefined(input.previousDraftId)
-      ? await this.getDraft({
+      ? await this.getDraftReference({
           workspaceId: context.workspaceId,
           userWorkspaceId,
           draftId: input.previousDraftId,
@@ -245,7 +288,7 @@ export class AiFrontComponentService {
     return this.locks.withLock(
       async () => {
         if (isDefined(previous)) {
-          const latestPrevious = await this.getDraft({
+          const latestPrevious = await this.getDraftReference({
             workspaceId: context.workspaceId,
             userWorkspaceId,
             draftId: previous.id,
@@ -292,7 +335,31 @@ export class AiFrontComponentService {
           source: built.sharedDependencies.source,
           checksum: built.sharedDependencies.checksum,
         });
-        await this.saveDraft({ workspaceId: context.workspaceId, draft });
+        await this.fileStorageService.writeFile({
+          workspaceId: context.workspaceId,
+          applicationUniversalIdentifier: application.universalIdentifier,
+          applicationId: application.id,
+          fileFolder: FileFolder.AgentChat,
+          resourcePath: `front-component-drafts/${id}.json`,
+          fileId: id,
+          sourceFile: JSON.stringify(draft),
+          settings: {
+            isTemporaryFile: true,
+            toDelete: false,
+            expiresAt: new Date(draft.expiresAt).toISOString(),
+          },
+        });
+        await this.saveDraftReference({
+          workspaceId: context.workspaceId,
+          draft: {
+            id,
+            rootId,
+            threadId,
+            userWorkspaceId,
+            expiresAt: draft.expiresAt,
+            applicationUniversalIdentifier: application.universalIdentifier,
+          },
+        });
         await this.cache.set(
           this.currentKey({ workspaceId: context.workspaceId, rootId }),
           id,
@@ -356,7 +423,7 @@ export class AiFrontComponentService {
     draftId: string;
     diagnostic: FrontComponentDiagnostic;
   }) {
-    const draft = await this.getDraft({
+    const draft = await this.getDraftReference({
       workspaceId,
       userWorkspaceId,
       draftId,
@@ -364,13 +431,16 @@ export class AiFrontComponentService {
 
     await this.locks.withLock(
       async () => {
-        const latest = await this.getDraft({
+        const latest = await this.getDraftReference({
           workspaceId,
           userWorkspaceId,
           draftId,
         });
 
-        await this.saveDraft({ workspaceId, draft: { ...latest, diagnostic } });
+        await this.saveDraftReference({
+          workspaceId,
+          draft: { ...latest, diagnostic },
+        });
       },
       this.currentKey({ workspaceId, rootId: draft.rootId }),
     );
