@@ -12,11 +12,11 @@ import {
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
+import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
-import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
@@ -35,6 +35,12 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+
+const buildJonyThreadAccess = (threadId: string) => ({
+  workspaceId: SEED_APPLE_WORKSPACE_ID,
+  workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+  threadId,
+});
 
 const PARTICIPANT_FIELDS =
   'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt mentionsResolvedAt updatedAt';
@@ -1278,11 +1284,9 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await getAppProviderByClassName<AgentChatService>(
       'AgentChatService',
-    ).addMessage({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      resolveMentionForWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    ).addMessageAndResolveMention({
+      ...buildJonyThreadAccess(threadId),
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      threadId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text', text: 'I have handled this.' }],
@@ -1374,10 +1378,8 @@ describe('Chat thread participant state through the authenticated API', () => {
       getAppProviderByClassName<AgentChatQueueService>(
         'AgentChatQueueService',
       ).queueMessage({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        ...buildJonyThreadAccess(threadId),
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-        threadId,
         text: 'On it',
       });
 
@@ -1387,15 +1389,6 @@ describe('Chat thread participant state through the authenticated API', () => {
       ).deleteQueuedMessage({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         messageId,
-      });
-
-    const waitForBlockedParticipantWrite = () =>
-      expectEventually(async () => {
-        const blockedLocks = await global.testDataSource.query(
-          `SELECT 1 FROM pg_locks WHERE locktype = 'advisory' AND NOT granted`,
-        );
-
-        expect(blockedLocks).not.toHaveLength(0);
       });
 
     it('resolves the mention when the member queues a reply and keeps it after the reply is deleted', async () => {
@@ -1434,11 +1427,13 @@ describe('Chat thread participant state through the authenticated API', () => {
         getAppProviderByClassName<AgentChatThreadParticipantService>(
           'AgentChatThreadParticipantService',
         ).resolveMention({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          threadId,
+          ...buildJonyThreadAccess(threadId),
           writeResponse: async ({ manager, table }) => {
-            writeEvents.emit('started');
+            const [{ backendProcessId }] = await manager.query<
+              { backendProcessId: number }[]
+            >('SELECT pg_backend_pid() AS "backendProcessId"');
+
+            writeEvents.emit('started', backendProcessId);
             await writeResumed;
             await manager.query(
               `SELECT id FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
@@ -1447,11 +1442,10 @@ describe('Chat thread participant state through the authenticated API', () => {
           },
         });
 
-      await writeStarted;
-
+      const [blockingProcessId] = await writeStarted;
       const reply = queueReply(threadId);
 
-      await waitForBlockedParticipantWrite();
+      await waitForBlockedDatabaseQueryOrThrow(blockingProcessId);
       writeEvents.emit('resumed');
 
       await expect(Promise.all([write, reply])).resolves.toEqual([
@@ -1510,9 +1504,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       getAppProviderByClassName<AgentChatThreadParticipantService>(
         'AgentChatThreadParticipantService',
       ).resolveMention({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        threadId,
+        ...buildJonyThreadAccess(threadId),
         writeResponse: async () => {
           throw new Error('The response is invalid');
         },
@@ -1536,13 +1528,8 @@ describe('Chat thread participant state through the authenticated API', () => {
       getAppProviderByClassName<AgentChatThreadParticipantService>(
         'AgentChatThreadParticipantService',
       );
-    const memberThreadAccess = {
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      threadId,
-    };
     const response = participantService.resolveMention({
-      ...memberThreadAccess,
+      ...buildJonyThreadAccess(threadId),
       writeResponse: async () => {
         responseEvents.emit('started');
         await responseFinished;
@@ -1551,7 +1538,9 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await responseStarted;
 
-    const laterMention = participantService.markAsMentioned(memberThreadAccess);
+    const laterMention = participantService.markAsMentioned(
+      buildJonyThreadAccess(threadId),
+    );
 
     responseEvents.emit('finished');
     await Promise.all([response, laterMention]);

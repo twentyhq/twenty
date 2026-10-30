@@ -512,18 +512,19 @@ export class AgentChatStreamingService {
       workspaceId,
     );
 
-    const savedMessage = await this.agentChatService.addMessage({
-      threadId,
-      resolveMentionForWorkspaceMemberId: workspaceMemberId,
-      userWorkspaceId,
-      id: messageId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: [{ type: 'text' as const, text }, ...fileParts],
-      },
-      turnStatus,
-      workspaceId,
-    });
+    const savedMessage =
+      await this.agentChatService.addMessageAndResolveMention({
+        threadId,
+        workspaceMemberId,
+        userWorkspaceId,
+        id: messageId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [{ type: 'text' as const, text }, ...fileParts],
+        },
+        turnStatus,
+        workspaceId,
+      });
 
     await this.eventPublisherService.publish({
       workspaceId,

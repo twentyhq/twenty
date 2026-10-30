@@ -21,6 +21,13 @@ const ARCHIVED_PARTICIPANT = {
   updatedAt: '2026-10-01T11:00:00.000Z',
 };
 
+const renderRestoreHook = (store: ReturnType<typeof createStore>) =>
+  renderHook(() => useOptimisticallyRestoreOnSend(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    ),
+  });
+
 describe('useOptimisticallyRestoreOnSend', () => {
   it('resolves the mention and restores the inbox on send, and undoes both if sending fails', async () => {
     const store = createStore();
@@ -34,11 +41,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
       [THREAD_ID]: ARCHIVED_PARTICIPANT,
     });
 
-    const { result } = renderHook(() => useOptimisticallyRestoreOnSend(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <Provider store={store}>{children}</Provider>
-      ),
-    });
+    const { result } = renderRestoreHook(store);
     const sentAt = '2026-10-01T12:00:00.000Z';
     const rollback = await act(() =>
       result.current.applyOptimisticRestore({
@@ -82,11 +85,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
       [THREAD_ID]: ARCHIVED_PARTICIPANT,
     });
 
-    const { result } = renderHook(() => useOptimisticallyRestoreOnSend(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <Provider store={store}>{children}</Provider>
-      ),
-    });
+    const { result } = renderRestoreHook(store);
     const rollback = await act(() =>
       result.current.applyOptimisticRestore({
         threadId: THREAD_ID,

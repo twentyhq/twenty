@@ -27,6 +27,16 @@ import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+
+type AddMessageArgs = {
+  threadId: string;
+  uiMessage: Omit<ExtendedUIMessage, 'id'>;
+  turnStatus?: AgentTurnStatus;
+  id?: string;
+  workspaceId: string;
+  userWorkspaceId?: string;
+};
 
 @Injectable()
 export class AgentChatService {
@@ -86,69 +96,62 @@ export class AgentChatService {
     id,
     workspaceId,
     userWorkspaceId,
-    resolveMentionForWorkspaceMemberId,
-  }: {
-    threadId: string;
-    uiMessage: Omit<ExtendedUIMessage, 'id'>;
-    turnStatus?: AgentTurnStatus;
-    id?: string;
-    workspaceId: string;
-    userWorkspaceId?: string;
-    resolveMentionForWorkspaceMemberId: string | null;
-  }) {
-    return this.conversationWriterService.runInTransaction(
+    scope,
+  }: AddMessageArgs & { scope?: AgentHistoryTransactionScope }) {
+    const turnId = await this.conversationWriterService.insertTurn({
       workspaceId,
-      async (scope) => {
-        if (isDefined(resolveMentionForWorkspaceMemberId)) {
-          await this.participantService.resolveMentionInTransaction({
-            workspaceId,
-            workspaceMemberId: resolveMentionForWorkspaceMemberId,
-            threadId,
-            scope,
-          });
-        }
+      threadId,
+      agentId: null,
+      status: turnStatus,
+      createdBy: this.getMessageSenderActor({ workspaceId, userWorkspaceId }),
+      scope,
+    });
 
-        const turnId = await this.conversationWriterService.insertTurn({
-          workspaceId,
-          threadId,
-          agentId: null,
-          status: turnStatus,
-          createdBy: this.getMessageSenderActor({
-            workspaceId,
-            userWorkspaceId,
-          }),
+    const senderValues = this.getMessageSenderValues({
+      workspaceId,
+      userWorkspaceId,
+    });
+    const processedAt = new Date();
+
+    const savedMessageId = await this.conversationWriterService.insertMessage({
+      workspaceId,
+      id,
+      threadId,
+      turnId,
+      role: uiMessage.role as AgentMessageRole,
+      agentId: null,
+      ...senderValues,
+      processedAt,
+      parts: uiMessage.parts ?? [],
+      scope,
+    });
+
+    return {
+      id: savedMessageId,
+      threadId,
+      turnId,
+      role: uiMessage.role as AgentMessageRole,
+      agentId: null,
+      processedAt: processedAt.toISOString(),
+      ...senderValues,
+    };
+  }
+
+  async addMessageAndResolveMention({
+    workspaceMemberId,
+    ...message
+  }: AddMessageArgs & { workspaceMemberId: string }) {
+    return this.conversationWriterService.runInTransaction(
+      message.workspaceId,
+      async (scope) => {
+        await this.participantService.resolveMentionInTransaction({
+          workspaceId: message.workspaceId,
+          workspaceMemberId,
+          threadId: message.threadId,
           scope,
         });
 
-        const senderValues = this.getMessageSenderValues({
-          workspaceId,
-          userWorkspaceId,
-        });
-        const processedAt = new Date();
-
-        const savedMessageId =
-          await this.conversationWriterService.insertMessage({
-            workspaceId,
-            id,
-            threadId,
-            turnId,
-            role: uiMessage.role as AgentMessageRole,
-            agentId: null,
-            ...senderValues,
-            processedAt,
-            parts: uiMessage.parts ?? [],
-            scope,
-          });
-
-        return {
-          id: savedMessageId,
-          threadId,
-          turnId,
-          role: uiMessage.role as AgentMessageRole,
-          agentId: null,
-          processedAt: processedAt.toISOString(),
-          ...senderValues,
-        };
+        return this.addMessage({ ...message, scope });
       },
     );
   }

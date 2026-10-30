@@ -10,9 +10,7 @@ import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
-import { resolveAgentChatThreadParticipantMention } from '@/ai/utils/resolveAgentChatThreadParticipantMention';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -46,10 +44,6 @@ export const useAnswerAgentChatToolCall = () => {
       if (!isDefined(threadId)) {
         return false;
       }
-
-      const lastMentionedAt = store.get(
-        agentChatThreadParticipantsState.atom,
-      )?.[threadId]?.lastMentionedAt;
 
       const messagesAtom = agentChatMessagesFamilyState.atomFamily({
         threadId,
@@ -88,14 +82,6 @@ export const useAnswerAgentChatToolCall = () => {
           },
         });
         const streamId = data?.answerToolCall.streamId;
-
-        store.set(agentChatThreadParticipantsState.atom, (participants) =>
-          resolveAgentChatThreadParticipantMention({
-            participants,
-            threadId,
-            lastMentionedAt,
-          }),
-        );
 
         // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {

@@ -78,11 +78,10 @@ export const useOptimisticallyRestoreOnSend = () => {
         ...(isDefined(thread?.deletedAt) && { deletedAt: thread.deletedAt }),
       });
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
-        if (!isDefined(participants)) {
-          return participants;
-        }
-
-        if (participants[threadId] !== optimisticParticipant) {
+        if (
+          !isDefined(participants) ||
+          participants[threadId] !== optimisticParticipant
+        ) {
           return participants;
         }
 

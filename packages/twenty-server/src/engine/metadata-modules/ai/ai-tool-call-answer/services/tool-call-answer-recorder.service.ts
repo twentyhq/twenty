@@ -11,10 +11,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { throwToolCallNotPending } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/throw-tool-call-not-pending.util';
 
 @Injectable()
 export class ToolCallAnswerRecorderService {
@@ -68,10 +65,7 @@ export class ToolCallAnswerRecorderService {
         );
 
         if (claimedParts.length !== 1) {
-          throw new AiException(
-            'This tool call is no longer waiting for an answer',
-            AiExceptionCode.TOOL_CALL_NOT_PENDING,
-          );
+          throwToolCallNotPending();
         }
       },
     });

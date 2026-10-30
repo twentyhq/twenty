@@ -1,12 +1,10 @@
 import { type ObjectLiteral } from 'typeorm';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export type AgentHistoryTransactionScope = {
-  executeRawQuery: (args: {
-    sql: string;
-    parameters?: unknown[];
-  }) => Promise<void>;
+  executeRawQuery: WorkspaceTransactionScope['executeRawQuery'];
   insert: (
     name: AgentHistoryObjectName,
     values: ObjectLiteral | ObjectLiteral[],

@@ -50,7 +50,6 @@ describe('Persisted chat senders', () => {
 
   it('persists the authenticated user on ordinary and queued messages', async () => {
     const message = await chat.addMessage({
-      resolveMentionForWorkspaceMemberId: workspaceMemberId,
       workspaceId,
       threadId,
       userWorkspaceId,

@@ -53,9 +53,8 @@ export class AgentChatQueueService {
     userWorkspaceId: string;
     workspaceMemberId: string;
   }) {
-    const savedMessageId = id ?? randomUUID();
     const messageValues = {
-      id: savedMessageId,
+      id: id ?? randomUUID(),
       threadId,
       turnId: null,
       role: AgentMessageRole.USER,
@@ -82,7 +81,7 @@ export class AgentChatQueueService {
 
     const parts = [
       {
-        messageId: savedMessageId,
+        messageId: messageValues.id,
         orderIndex: 0,
         type: 'text',
         textContent: text,
@@ -90,7 +89,7 @@ export class AgentChatQueueService {
       ...(fileAttachments ?? [])
         .filter((attachment) => validFileIds.has(attachment.id))
         .map((attachment, index) => ({
-          messageId: savedMessageId,
+          messageId: messageValues.id,
           orderIndex: index + 1,
           type: 'file',
           fileId: attachment.id,

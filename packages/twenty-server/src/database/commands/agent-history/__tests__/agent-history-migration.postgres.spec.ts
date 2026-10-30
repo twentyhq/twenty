@@ -812,8 +812,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
         threadId: thread.id,
       });
-      const message = await chat.addMessage({
-        resolveMentionForWorkspaceMemberId: MEMBER_ID,
+      const message = await chat.addMessageAndResolveMention({
+        workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,

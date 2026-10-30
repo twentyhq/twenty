@@ -41,6 +41,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { throwToolCallNotPending } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/throw-tool-call-not-pending.util';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -131,7 +132,7 @@ export class ToolCallAnswerService {
     });
 
     if (!isToolCallPending) {
-      throw this.notPending();
+      throwToolCallNotPending();
     }
 
     const validation = pausingToolCall.validate(args.response);
@@ -178,7 +179,7 @@ export class ToolCallAnswerService {
         });
 
       if (!awaitingToolParts.some((part) => part.id === toolPart.id)) {
-        throw this.notPending();
+        throwToolCallNotPending();
       }
 
       if (isDefined(wakeUp)) {
@@ -211,7 +212,7 @@ export class ToolCallAnswerService {
             wakeUpId: wakeUp.id,
           });
 
-          throw this.notPending();
+          throwToolCallNotPending();
         }
       }
 
@@ -296,7 +297,6 @@ export class ToolCallAnswerService {
     // the answer is recorded and cannot be resubmitted, so failures fail the turn or run for retry
     try {
       const answerMessage = await this.agentChatService.addMessage({
-        resolveMentionForWorkspaceMemberId: null,
         threadId,
         userWorkspaceId,
         turnStatus:
@@ -572,13 +572,6 @@ export class ToolCallAnswerService {
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
-  }
-
-  private notPending(): AiException {
-    return new AiException(
-      'This tool call is no longer waiting for an answer',
-      AiExceptionCode.TOOL_CALL_NOT_PENDING,
-    );
   }
 
   private async publishToolCallResolved({

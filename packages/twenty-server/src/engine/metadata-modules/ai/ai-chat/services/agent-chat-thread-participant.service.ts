@@ -67,6 +67,17 @@ const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
      "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    RETURNING *`;
 
+const buildMentionResolutionQuery = ({
+  participantTable,
+}: {
+  participantTable: string;
+}) =>
+  `UPDATE ${participantTable} AS participant
+   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   WHERE "threadId" = $1 AND "workspaceMemberId" = $2
+     AND ${HAS_UNRESOLVED_MENTION}
+   RETURNING *`;
+
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
@@ -140,17 +151,6 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
 };
 
 const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
-
-const buildMentionResolutionQuery = ({
-  participantTable,
-}: {
-  participantTable: string;
-}) =>
-  `UPDATE ${participantTable} AS participant
-   SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
-   WHERE "threadId" = $1 AND "workspaceMemberId" = $2
-     AND ${HAS_UNRESOLVED_MENTION}
-   RETURNING ${PARTICIPANT_COLUMNS}`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -303,16 +303,15 @@ export class AgentChatThreadParticipantService {
       args.workspaceId,
     );
     // Taken by the writes on the other pool too, so before and after stay this write's
-    await scope.executeRawQuery({
-      sql: PARTICIPANT_LOCK_QUERY,
-      parameters: [buildAgentChatThreadParticipantLockKey(args)],
-    });
-    await scope.executeRawQuery({
-      sql: buildMentionResolutionQuery({
+    await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
+      buildAgentChatThreadParticipantLockKey(args),
+    ]);
+    await scope.executeRawQuery(
+      buildMentionResolutionQuery({
         participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
       }),
-      parameters: [args.threadId, args.workspaceMemberId],
-    });
+      [args.threadId, args.workspaceMemberId],
+    );
   }
 
   // An assignee follows the chat and finds it in their inbox, unread unless
