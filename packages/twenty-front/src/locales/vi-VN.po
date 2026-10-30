@@ -3734,6 +3734,11 @@ msgstr "Đã xóa thành công ứng dụng"
 msgid "App logs"
 msgstr "Nhật ký ứng dụng"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"

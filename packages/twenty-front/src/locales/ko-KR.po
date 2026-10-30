@@ -3734,6 +3734,11 @@ msgstr "앱이 성공적으로 삭제되었습니다"
 msgid "App logs"
 msgstr "앱 로그"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"

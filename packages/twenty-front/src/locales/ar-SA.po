@@ -3734,6 +3734,11 @@ msgstr "تم حذف التطبيق بنجاح"
 msgid "App logs"
 msgstr "سجلات التطبيق"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"

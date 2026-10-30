@@ -3734,6 +3734,11 @@ msgstr "Aplicativo excluído com sucesso"
 msgid "App logs"
 msgstr "Logs do aplicativo"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
