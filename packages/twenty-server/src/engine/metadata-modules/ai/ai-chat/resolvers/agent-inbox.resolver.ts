@@ -21,6 +21,8 @@ import { SendInboxMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-cha
 import { SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
+import { getInboxCallerAuthContextOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-inbox-caller-auth-context-or-throw.util';
+import { normalizeSendInboxMessageInput } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-send-inbox-message-input.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
 @UseGuards(
@@ -51,7 +53,8 @@ export class AgentInboxResolver {
     return this.agentInboxService.sendMessage({
       workspaceId: workspace.id,
       sender: { type: 'application', application },
-      input,
+      input: normalizeSendInboxMessageInput(input),
+      authContext: getInboxCallerAuthContextOrThrow(),
       resolveProposal: (proposeToolCallInput) =>
         this.agentInboxProposalService.resolveApplicationProposal({
           workspaceId: workspace.id,

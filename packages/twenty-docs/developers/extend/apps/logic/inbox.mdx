@@ -13,7 +13,7 @@ The inbox helpers are exported from both `twenty-sdk/logic-function` and `twenty
 
 ## Sending a message
 
-`sendInboxMessage()` posts a message from your app in the chats of one or more workspace members and returns the conversation's `threadId`.
+`sendInboxMessage()` posts a message from your app in the chats of one or more workspace members, in a channel or in a conversation your app may write to, and returns the conversation's `threadId`, the `messageId`, whether the conversation is new (`isNewThread`) and whether a member had deleted it (`isDismissed`), in which case nothing was written.
 
 ```ts src/logic-functions/notify-first-recording.ts
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
@@ -37,16 +37,19 @@ const { threadId } = await sendInboxMessage({
 
 Key points:
 
-- `workspaceMemberIds` lists the members who receive the conversation, at least one. The first member of a new conversation owns it, and the others follow it as participants. A later send under the same key that lists new members adds them; members it leaves out keep the conversation.
-- `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation.
+- `workspaceMemberIds` lists the members who receive the conversation. The first member of a new conversation owns it, and the others follow it as participants. A later send under the same key that lists new members adds them; members it leaves out keep the conversation. Recipients find the conversation unread in their inbox, with no obligation to answer: [mention](#mentioning-members) the members you need something from.
+- `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation. To write in a conversation your app did not open, pass its [`threadId`](#replying-in-an-existing-conversation) instead.
+- `channelId` (optional, with `threadKey`) files a new conversation in a channel: see [posting in a channel](#posting-in-a-channel). A conversation that exists stays where it is.
 - `idempotencyKey` identifies the message within the conversation. Sending again with the same keys writes nothing new, so retries and concurrent runs never duplicate a message.
 - `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references).
+- `recordTargets` (optional) lists records to [attach](#attaching-records-to-a-conversation) to the conversation before the message is written, each as `objectNameSingular` and `recordId`. A record your app cannot read fails the call with `RECORD_NOT_FOUND`, and nothing is written.
 - `toolCall` (optional) ends the message on one of:
   - a call the member answers, which pauses the conversation: `ask_question` (one multiple-choice question), `request_form` (fields to fill in) or `propose_tool_call` (a call to approve). Its `input` takes the `toolName`, the `arguments` you would call the tool with and a one-sentence `summary`. The tool must be one your app's default role could run itself, such as `create_one_person` or `update_one_opportunity` (with the record `id`); an email (`send_email` or `draft_email`, with `recipients`, `subject` and a `body` in HTML) needs no permission of your app. The member reviews the call in the same card as a call the assistant proposes, edits it if they want, and the approved call runs with their own access;
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered by its front component with the `input` and `output` you pass. It does not pause the conversation.
 - Only one call the member answers can wait in a conversation at a time: sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain messages and app tool calls are still accepted.
 - Only the member who owns a conversation can delete it, and a deleted conversation is gone for every member: it is not recreated, and nothing is added to it. The other members can unsubscribe to take it out of their own inbox.
 - Every member must have the `AI` permission, and the call fails without writing the message when one of them cannot have the conversation. Your app's [default role](/developers/extend/apps/config/roles) must grant `SystemPermissionFlag.AI`.
+- A message needs somewhere to go: a recipient, a mentioned member, a channel or an existing conversation. A call that names none, or that gives both `threadKey` and `threadId`, fails with `INVALID_INBOX_MESSAGE_INPUT`.
 
 ### Who sends the message
 
@@ -58,6 +61,68 @@ A message is always written by your app, whatever triggered the call. The call i
 The person behind the call needs the `AI` permission as well, like every recipient.
 
 To post from a front component, import the same helpers from `twenty-sdk/front-component`. [Posting to the inbox](/developers/extend/apps/layout/front-components#posting-to-the-inbox) shows how to open the conversation afterwards.
+
+## Replying in an existing conversation
+
+Pass `threadId` instead of `threadKey` to add a message to a conversation that already exists, such as one a member started, or one your app opened under a key you no longer have.
+
+```ts src/logic-functions/post-transcript.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+await sendInboxMessage({
+  threadId,
+  idempotencyKey: `transcript-${call.id}`,
+  text: `The transcript of **${call.title}** is ready.`,
+});
+```
+
+- The call runs with the same access as [sending a message](#who-sends-the-message): a member must be able to edit the conversation, and your application can write in a conversation it wrote in itself or one its default role was granted; otherwise the call fails with `THREAD_NOT_FOUND`.
+- `idempotencyKey` identifies the message within the conversation for your app: another app using the same key writes its own message.
+- The conversation keeps its title, owner and channel, and no opening message is added: `channelId` is refused, and `title` is ignored.
+- `workspaceMemberIds` and `mentionedWorkspaceMemberIds` add members to a conversation that has an owner, as they do for a conversation your app opened.
+
+## Posting in a channel
+
+Pass `channelId` with `threadKey` to file a new conversation in a channel, where every member whose role reaches the channel finds it in the channel's Open list.
+
+```ts src/logic-functions/escalate-ticket.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  channelId: supportChannelId,
+  threadKey: `ticket-${ticket.id}`,
+  idempotencyKey: `ticket-${ticket.id}-opened`,
+  title: `Ticket ${ticket.number}: ${ticket.subject}`,
+  text: ticket.summary,
+});
+```
+
+- Your app's default role must reach the channel: it must be one of the channel's roles, or have access to all channels. Otherwise the call fails with `CHAT_CHANNEL_NOT_FOUND`.
+- Without `workspaceMemberIds`, the conversation has no owner and no member follows it: the channel's roles read it, and members join it from the channel. With recipients, the first one owns it, and must reach the channel too.
+- `channelId` only applies when the conversation is created. A send under a key your app used before adds the message to that conversation, wherever it is filed.
+
+## Mentioning members
+
+`mentionedWorkspaceMemberIds` lists the members the message needs something from. A mentioned member follows the conversation like a recipient and finds it under Needs input until they answer or mark it read; a member who is only listed in `workspaceMemberIds` finds it unread, with nothing to answer.
+
+```ts src/logic-functions/request-review.ts
+import { inboxMention, sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const reviewerMention = await inboxMention({ workspaceMemberId: reviewer.id });
+
+await sendInboxMessage({
+  workspaceMemberIds: [owner.id, reviewer.id],
+  mentionedWorkspaceMemberIds: [reviewer.id],
+  threadKey: `quote-${quote.id}`,
+  idempotencyKey: `quote-${quote.id}-review`,
+  title: `Review the quote for ${quote.companyName}`,
+  text: `${reviewerMention}, can you review this quote before it goes out?`,
+});
+```
+
+- A mentioned member is added to the recipients, so they receive the conversation even when `workspaceMemberIds` leaves them out.
+- The mention in `text` only renders: write it with [`inboxMention`](#mentions-and-record-references), and list the member in `mentionedWorkspaceMemberIds` to notify them.
+- Sending the same message again, with the same keys, creates no new obligation.
 
 ## Mentions and record references
 
@@ -89,12 +154,12 @@ await sendInboxMessage({
 - `inboxMention({ workspaceMemberId })` writes a mention of a workspace member, and `inboxReferenceRecord({ objectNameSingular, recordId })` a chip that links to any record.
 - Both read the label the chip shows, as the composer does: the member's full name, or their email when the name is empty, and the record's label identifier, such as a company name. Brackets become parentheses and line breaks become spaces, so the chip always renders.
 - They read with the same access as the rest of the call, so that access needs to reach the member or record. A record reference makes two requests, one for the object's label field and one for the record.
-- A mention only renders. It does not add the member to the conversation or notify them, so list everyone who should receive the message in `workspaceMemberIds`.
+- A mention only renders. It does not add the member to the conversation or notify them: list everyone who should receive the message in `workspaceMemberIds`, and the members you need something from in [`mentionedWorkspaceMemberIds`](#mentioning-members).
 - `INBOX_ASSISTANT_MENTION` is the text the composer writes when a member mentions the assistant (`@Ada`), so your messages name it the same way.
 
 ## Attaching records to a conversation
 
-`attachRecordToInboxThread()` links a conversation to a record, and `detachRecordFromInboxThread()` removes the link.
+`sendInboxMessage()` attaches the records listed in `recordTargets` before it writes the message. `attachRecordToInboxThread()` links a conversation to a record afterwards, and `detachRecordFromInboxThread()` removes the link.
 
 ```ts src/logic-functions/file-call-recap.ts
 import {
@@ -108,12 +173,13 @@ const { threadId } = await sendInboxMessage({
   idempotencyKey: `call-recap-${call.id}`,
   title: `Recap of ${call.title}`,
   text: call.summary,
+  recordTargets: [{ objectNameSingular: 'company', recordId: company.id }],
 });
 
 await attachRecordToInboxThread({
   threadId,
-  objectNameSingular: 'company',
-  recordId: company.id,
+  objectNameSingular: 'person',
+  recordId: attendee.id,
 });
 ```
 

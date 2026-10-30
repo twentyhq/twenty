@@ -145,6 +145,7 @@ export interface AgentMessage {
     processedAt?: Scalars['DateTime']
     reactions: AgentMessageReactionSummary[]
     role: Scalars['String']
+    senderApplicationId?: Scalars['UUID']
     senderUserWorkspaceId?: Scalars['UUID']
     senderWorkspaceMemberId?: Scalars['UUID']
     status: Scalars['String']
@@ -3433,6 +3434,9 @@ export interface SendEmailViaDomainOutput {
 }
 
 export interface SendInboxMessageResult {
+    isDismissed: Scalars['Boolean']
+    isNewThread: Scalars['Boolean']
+    messageId: Scalars['UUID']
     threadId: Scalars['UUID']
     __typename: 'SendInboxMessageResult'
 }
@@ -4439,6 +4443,7 @@ export interface AgentMessageGenqlSelection{
     processedAt?: boolean | number
     reactions?: AgentMessageReactionSummaryGenqlSelection
     role?: boolean | number
+    senderApplicationId?: boolean | number
     senderUserWorkspaceId?: boolean | number
     senderWorkspaceMemberId?: boolean | number
     status?: boolean | number
@@ -6394,6 +6399,8 @@ export interface ImpersonateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InboxMessageRecordTargetInput {objectNameSingular: Scalars['String'],recordId: Scalars['UUID']}
+
 export interface InboxThreadRecordInput {objectNameSingular: Scalars['String'],recordId: Scalars['UUID'],threadId: Scalars['UUID']}
 
 export interface IndexGenqlSelection{
@@ -8108,9 +8115,12 @@ export interface SendEmailViaDomainOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendInboxMessageInput {idempotencyKey: Scalars['String'],text: Scalars['String'],threadKey: Scalars['String'],title: Scalars['String'],toolCall?: (Scalars['JSON'] | null),workspaceMemberIds: Scalars['UUID'][]}
+export interface SendInboxMessageInput {channelId?: (Scalars['UUID'] | null),idempotencyKey: Scalars['String'],mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null),recordTargets?: (InboxMessageRecordTargetInput[] | null),text: Scalars['String'],threadId?: (Scalars['UUID'] | null),threadKey?: (Scalars['String'] | null),title?: (Scalars['String'] | null),toolCall?: (Scalars['JSON'] | null),workspaceMemberIds?: (Scalars['UUID'][] | null)}
 
 export interface SendInboxMessageResultGenqlSelection{
+    isDismissed?: boolean | number
+    isNewThread?: boolean | number
+    messageId?: boolean | number
     threadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

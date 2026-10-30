@@ -12,6 +12,9 @@ export const sendInboxMessage = async (
     sendInboxMessage: {
       __args: { input },
       threadId: true,
+      messageId: true,
+      isNewThread: true,
+      isDismissed: true,
     },
   });
 

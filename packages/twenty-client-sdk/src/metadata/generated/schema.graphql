@@ -157,6 +157,7 @@ type AgentMessage {
   processedAt: DateTime
   reactions: [AgentMessageReactionSummary!]!
   role: String!
+  senderApplicationId: UUID
   senderUserWorkspaceId: UUID
   senderWorkspaceMemberId: UUID
   status: String!
@@ -2713,6 +2714,11 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+input InboxMessageRecordTargetInput {
+  objectNameSingular: String!
+  recordId: UUID!
+}
+
 input InboxThreadRecordInput {
   objectNameSingular: String!
   recordId: UUID!
@@ -4652,15 +4658,22 @@ type SendEmailViaDomainOutput {
 }
 
 input SendInboxMessageInput {
+  channelId: UUID
   idempotencyKey: String!
+  mentionedWorkspaceMemberIds: [UUID!]
+  recordTargets: [InboxMessageRecordTargetInput!]
   text: String!
-  threadKey: String!
-  title: String!
+  threadId: UUID
+  threadKey: String
+  title: String
   toolCall: JSON
-  workspaceMemberIds: [UUID!]!
+  workspaceMemberIds: [UUID!]
 }
 
 type SendInboxMessageResult {
+  isDismissed: Boolean!
+  isNewThread: Boolean!
+  messageId: UUID!
   threadId: UUID!
 }
 

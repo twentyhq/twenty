@@ -9,11 +9,13 @@ describe('getAgentInboxSenderDetails', () => {
         application: {
           id: 'application-id',
           name: 'Call recorder',
+          defaultRoleId: 'role-id',
         } as FlatApplication,
       }),
     ).toEqual({
       key: 'application:application-id',
       applicationId: 'application-id',
+      roleId: 'role-id',
       description: 'The "Call recorder" application',
     });
   });
@@ -38,6 +40,7 @@ describe('getAgentInboxSenderDetails', () => {
     ).toEqual({
       key: 'workflow:workflow-id',
       applicationId: null,
+      roleId: null,
       description: 'The "Welcome new deals" workflow',
     });
   });

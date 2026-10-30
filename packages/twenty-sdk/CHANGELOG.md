@@ -54,6 +54,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const text = `${await inboxMention({ workspaceMemberId })}, the report is ready.`;
   ```
 
+- **`sendInboxMessage` addresses channels and existing conversations, mentions members and attaches records.** `threadId` adds the message to a conversation your app may write to, in place of `threadKey`; `channelId` with `threadKey` files a new conversation in a channel the app's default role reaches, with no owner when no member is listed; `mentionedWorkspaceMemberIds` lists the members who must answer, while `workspaceMemberIds` only delivers; `recordTargets` attaches records before the message is written. `workspaceMemberIds` and `title` are optional, and the result adds `messageId`, `isNewThread` and `isDismissed`.
+
+  ```ts
+  import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+  await sendInboxMessage({
+    threadId,
+    idempotencyKey: `transcript-${call.id}`,
+    text: 'The transcript is ready.',
+    mentionedWorkspaceMemberIds: [owner.id],
+    recordTargets: [{ objectNameSingular: 'company', recordId: company.id }],
+  });
+  ```
+
 - **`attachRecordToInboxThread` and `detachRecordFromInboxThread` in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** Link a conversation to a person, company, opportunity or custom object record, or remove the link. Both are idempotent and run like the default API clients: a member must be able to edit the conversation, and your application can act on a conversation it wrote in or one its default role was granted. The record must be readable with the same access.
 
   ```ts

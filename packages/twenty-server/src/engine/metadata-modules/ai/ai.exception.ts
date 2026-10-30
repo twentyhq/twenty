@@ -48,6 +48,7 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
+  INVALID_INBOX_MESSAGE_INPUT = 'INVALID_INBOX_MESSAGE_INPUT',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -138,6 +139,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_ANSWER:
       return msg`This conversation is waiting on an earlier request. Send your message once it is answered or done.`;
+    case AiExceptionCode.INVALID_INBOX_MESSAGE_INPUT:
+      return msg`Invalid inbox message input.`;
     default:
       assertUnreachable(code);
   }

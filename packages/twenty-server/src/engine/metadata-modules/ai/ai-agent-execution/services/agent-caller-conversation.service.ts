@@ -17,6 +17,7 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentRunConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-conversation.type';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
+import { normalizeSendInboxMessageInput } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-send-inbox-message-input.util';
 import { readToolCallStatus } from 'src/engine/metadata-modules/ai/ai-history/utils/read-tool-call-status.util';
 import {
   AiException,
@@ -165,24 +166,29 @@ export class AgentCallerConversationService {
   > {
     // as in openConversation, a recipient who cannot join the keyed conversation, such as one no inbox
     // receives, is given the fallback one, which fails in turn for a recipient who cannot have one at all
-    const sendInboxMessage = (
-      args: Pick<
-        Parameters<AgentInboxService['sendMessage']>[0],
-        'input' | 'buildAwaitingToolCall'
-      >,
-    ) =>
-      this.agentInboxService
-        .sendMessage({ workspaceId, sender, ...args })
-        .catch((error: unknown) =>
-          isThreadNotFoundError(error)
-            ? this.agentInboxService.sendMessage({
-                workspaceId,
-                sender,
-                ...args,
-                input: { ...args.input, threadKey: fallbackThreadKey },
-              })
-            : Promise.reject(error),
-        );
+    const sendInboxMessage = ({
+      input,
+      buildAwaitingToolCall,
+    }: {
+      input: Omit<SendInboxMessageInput, 'toolCall'>;
+      buildAwaitingToolCall?: Parameters<
+        AgentInboxService['sendMessage']
+      >[0]['buildAwaitingToolCall'];
+    }) => {
+      const send = (message: Omit<SendInboxMessageInput, 'toolCall'>) =>
+        this.agentInboxService.sendMessage({
+          workspaceId,
+          sender,
+          input: normalizeSendInboxMessageInput(message),
+          buildAwaitingToolCall,
+        });
+
+      return send(input).catch((error: unknown) =>
+        isThreadNotFoundError(error)
+          ? send({ ...input, threadKey: fallbackThreadKey })
+          : Promise.reject(error),
+      );
+    };
 
     if (!isDefined(awaitedToolCall)) {
       const { threadId } = await sendInboxMessage({ input: message });

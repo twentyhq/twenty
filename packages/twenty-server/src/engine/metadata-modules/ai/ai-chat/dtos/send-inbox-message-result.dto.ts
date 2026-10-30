@@ -8,4 +8,13 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 export class SendInboxMessageResultDTO implements SendInboxMessageResult {
   @Field(() => UUIDScalarType)
   threadId: string;
+
+  @Field(() => UUIDScalarType)
+  messageId: string;
+
+  @Field()
+  isNewThread: boolean;
+
+  @Field()
+  isDismissed: boolean;
 }

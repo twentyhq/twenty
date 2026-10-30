@@ -9,6 +9,14 @@ import {
 } from 'vitest';
 
 const THREAD_ID = '6f1d7c2a-3b4e-4f5a-8b9c-0d1e2f3a4b5c';
+const MESSAGE_ID = '0d1e2f3a-4b5c-4f5a-8b9c-6f1d7c2a3b4e';
+
+const SENT_RESULT = {
+  threadId: THREAD_ID,
+  messageId: MESSAGE_ID,
+  isNewThread: true,
+  isDismissed: false,
+};
 
 const importSendInboxMessage = async () => {
   const module = await import('@/sdk/inbox/send-inbox-message');
@@ -23,7 +31,7 @@ const graphqlResponse = (body: unknown) =>
   });
 
 const successResponse = () =>
-  graphqlResponse({ data: { sendInboxMessage: { threadId: THREAD_ID } } });
+  graphqlResponse({ data: { sendInboxMessage: SENT_RESULT } });
 
 const MESSAGE_INPUT = {
   workspaceMemberIds: ['20202020-0000-4000-8000-000000000001'],
@@ -53,7 +61,7 @@ describe('sendInboxMessage', () => {
     fetchSpy.mockRestore();
   });
 
-  it('calls the sendInboxMessage mutation on the metadata API and returns the thread', async () => {
+  it('calls the sendInboxMessage mutation on the metadata API and returns the delivery', async () => {
     fetchSpy.mockResolvedValue(successResponse());
 
     const sendInboxMessage = await importSendInboxMessage();
@@ -76,7 +84,7 @@ describe('sendInboxMessage', () => {
 
     const result = await sendInboxMessage(input);
 
-    expect(result).toEqual({ threadId: THREAD_ID });
+    expect(result).toEqual(SENT_RESULT);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -84,7 +92,9 @@ describe('sendInboxMessage', () => {
 
     const sentBody = JSON.parse(String(requestInit?.body));
 
-    expect(sentBody.query).toContain('sendInboxMessage(input:$v1){threadId}');
+    expect(sentBody.query).toContain(
+      'sendInboxMessage(input:$v1){threadId,messageId,isNewThread,isDismissed}',
+    );
     expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
@@ -124,13 +134,39 @@ describe('sendInboxMessage', () => {
 
     const result = await sendInboxMessage(MESSAGE_INPUT);
 
-    expect(result).toEqual({ threadId: THREAD_ID });
+    expect(result).toEqual(SENT_RESULT);
     expect(requestAccessTokenRefresh).toHaveBeenCalledTimes(1);
     expect(
       fetchSpy.mock.calls.map(([, requestInit]) =>
         getSentAuthorizationHeader(requestInit),
       ),
     ).toEqual(['Bearer expired-token', 'Bearer refreshed-token']);
+  });
+
+  it('replies in an existing conversation, mentions members and attaches records as given', async () => {
+    fetchSpy.mockResolvedValue(successResponse());
+
+    const sendInboxMessage = await importSendInboxMessage();
+
+    const input = {
+      threadId: THREAD_ID,
+      idempotencyKey: 'transcript-ready',
+      text: 'The transcript is ready.',
+      mentionedWorkspaceMemberIds: ['20202020-0000-4000-8000-000000000001'],
+      recordTargets: [
+        {
+          objectNameSingular: 'company',
+          recordId: '20202020-0000-4000-8000-000000000002',
+        },
+      ],
+    };
+
+    await sendInboxMessage(input);
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+    const sentBody = JSON.parse(String(requestInit?.body));
+
+    expect(Object.values(sentBody.variables)).toEqual([input]);
   });
 
   it('surfaces GraphQL errors as a rejection', async () => {
