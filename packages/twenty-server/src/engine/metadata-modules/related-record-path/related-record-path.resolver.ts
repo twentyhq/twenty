@@ -19,7 +19,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { CreateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/create-related-record-path.input';
 import { RelatedRecordPathDTO } from 'src/engine/metadata-modules/related-record-path/dtos/related-record-path.dto';
@@ -55,7 +54,7 @@ export class RelatedRecordPathResolver {
   @Query(() => [RelatedRecordPathDTO])
   @UseGuards(
     FeatureFlagGuard(FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED),
-    NoPermissionGuard,
+    SettingsPermissionGuard(PermissionFlagType.ROLES),
   )
   async relatedRecordPaths(
     @AuthWorkspace() workspace: WorkspaceEntity,
