@@ -183,8 +183,16 @@ export class AiFrontComponentService {
     context,
   }: {
     draftInput: FrontComponentDraftInput;
-    context: ToolProviderContext;
+    context: Pick<
+      ToolProviderContext,
+      | 'workspaceId'
+      | 'userWorkspaceId'
+      | 'threadId'
+      | 'authContext'
+      | 'rolePermissionConfig'
+    >;
   }) {
+    const { userWorkspaceId, threadId } = context;
     const validation = frontComponentDraftSchema.safeParse(draftInput);
 
     if (!validation.success) {
@@ -198,8 +206,8 @@ export class AiFrontComponentService {
     const input = validation.data;
 
     if (
-      !isDefined(context.userWorkspaceId) ||
-      !isDefined(context.threadId) ||
+      !isDefined(userWorkspaceId) ||
+      !isDefined(threadId) ||
       !isDefined(context.authContext)
     ) {
       throw new ApplicationException(
@@ -210,7 +218,7 @@ export class AiFrontComponentService {
     }
     await this.assertCanAuthorOrThrow({
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
+      userWorkspaceId,
     });
     await this.validateQueryOrThrow({
       query: input.query,
@@ -244,7 +252,7 @@ export class AiFrontComponentService {
     const previous = isDefined(input.previousDraftId)
       ? await this.getDraft({
           workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
+          userWorkspaceId,
           draftId: input.previousDraftId,
         })
       : undefined;
@@ -270,7 +278,7 @@ export class AiFrontComponentService {
         if (isDefined(previous)) {
           const latestPrevious = await this.getDraft({
             workspaceId: context.workspaceId,
-            userWorkspaceId: context.userWorkspaceId!,
+            userWorkspaceId,
             draftId: previous.id,
           });
 
@@ -279,7 +287,7 @@ export class AiFrontComponentService {
               workspaceId: context.workspaceId,
               draft: latestPrevious,
             })) ||
-            latestPrevious.threadId !== context.threadId
+            latestPrevious.threadId !== threadId
           ) {
             throw new ApplicationException(
               doNotTranslate(
@@ -303,8 +311,8 @@ export class AiFrontComponentService {
           applicationId: application.id,
           rootId,
           expiresAt: Date.now() + DRAFT_TTL,
-          userWorkspaceId: context.userWorkspaceId!,
-          threadId: context.threadId!,
+          userWorkspaceId,
+          threadId,
         };
 
         await this.sharedDependencies.saveBuiltSharedDependencies({
