@@ -18,6 +18,7 @@ import {
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { consolidateUsageByApplication } from 'src/engine/core-modules/usage/utils/consolidate-usage-by-application.util';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
 import { fromUsageBreakdownItemToUsageBreakdownItemDTO } from 'src/engine/core-modules/usage/utils/from-usage-breakdown-item-to-usage-breakdown-item-dto.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -82,10 +83,7 @@ export class UsageResolver {
       Object.entries(flatApplicationMaps.byId).map(
         ([applicationId, application]) => [
           applicationId,
-          [
-            ...Object.keys(application?.billing?.recurring ?? {}),
-            ...Object.keys(application?.billing?.operations ?? {}),
-          ],
+          listDeclaredBillingChargeNames({ billing: application?.billing }),
         ],
       ),
     );

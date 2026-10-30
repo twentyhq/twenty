@@ -98,6 +98,8 @@ const PUBLIC_SVG_README_DOC_PATHS = [
 // where layout is genuinely multi-axis (wrapping rows, multi-column
 // tracks) — listed here explicitly.
 const ROW_GAP_MULTI_AXIS_FILES = new Set([
+  'sections/affiliate-program/AffiliateIntegratorStrip.tsx',
+  'sections/affiliate-program/AffiliateProgramTerms.tsx',
   'sections/case-study-detail/CaseStudyHero.tsx',
   'sections/faq/Faq.tsx',
   'sections/faq/FaqItems.tsx',

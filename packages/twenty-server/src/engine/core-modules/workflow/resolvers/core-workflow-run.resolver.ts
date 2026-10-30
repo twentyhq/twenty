@@ -65,7 +65,8 @@ export class CoreWorkflowRunResolver {
   @Mutation(() => RunWorkflowVersionDTO)
   async runCoreWorkflowVersion(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthApplication({ allowUndefined: true })
@@ -101,7 +102,8 @@ export class CoreWorkflowRunResolver {
     await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow(
       {
         workspaceId,
-        callerApplicationId: callerApplication?.id,
+        workspaceCustomApplicationId,
+        callerApplication,
         coreWorkflowVersionIds: [coreWorkflowVersionId],
       },
     );

@@ -1,3 +1,7 @@
+import { LOCAL_START_COMMAND_DEFINITION } from '@/commands/local/start/local-start.command-definition';
+import { LOCAL_STOP_COMMAND_DEFINITION } from '@/commands/local/stop/local-stop.command-definition';
+import { LOCAL_STATUS_COMMAND_DEFINITION } from '@/commands/local/status/local-status.command-definition';
+import { LOCAL_LOGS_COMMAND_DEFINITION } from '@/commands/local/environment-logs/local-logs.command-definition';
 import { APP_INSTALL_COMMAND_DEFINITION } from '@/commands/app/install/app-install.command-definition';
 import { APP_PUBLISH_COMMAND_DEFINITION } from '@/commands/app/publish/app-publish.command-definition';
 import { APP_DEV_COMMAND_DEFINITION } from '@/commands/app/dev/app-dev.command-definition';
@@ -36,6 +40,11 @@ import { REMOTE_USE_COMMAND_DEFINITION } from '@/commands/remote/use/remote-use.
 import { VERSION_COMMAND_DEFINITION } from '@/commands/version/version.command-definition';
 
 export const COMMAND_CATALOG: CommandDefinition[] = [
+  LOCAL_START_COMMAND_DEFINITION,
+  LOCAL_STOP_COMMAND_DEFINITION,
+  LOCAL_STATUS_COMMAND_DEFINITION,
+  LOCAL_LOGS_COMMAND_DEFINITION,
+
   APP_ADD_COMMAND_DEFINITION,
   APP_APPLY_COMMAND_DEFINITION,
   APP_DEV_COMMAND_DEFINITION,
