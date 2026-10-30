@@ -14,7 +14,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const company = getMockObjectMetadataItemOrThrow('company');
 const noteTarget = getMockObjectMetadataItemOrThrow('noteTarget');
 
-const getFieldMetadataId = ({
+const getFieldMetadataIdOrThrow = ({
   objectMetadataItem,
   fieldName,
 }: {
@@ -37,7 +37,7 @@ const RELATED_RECORD_PATHS = [
     __typename: 'RelatedRecordPath',
     id: 'c6c3a4b1-0b0e-4c55-9c39-6f3f0f0c0a01',
     objectMetadataId: company.id,
-    firstFieldMetadataId: getFieldMetadataId({
+    firstFieldMetadataId: getFieldMetadataIdOrThrow({
       objectMetadataItem: company,
       fieldName: 'attachments',
     }),
@@ -49,11 +49,11 @@ const RELATED_RECORD_PATHS = [
     __typename: 'RelatedRecordPath',
     id: 'c6c3a4b1-0b0e-4c55-9c39-6f3f0f0c0a02',
     objectMetadataId: company.id,
-    firstFieldMetadataId: getFieldMetadataId({
+    firstFieldMetadataId: getFieldMetadataIdOrThrow({
       objectMetadataItem: company,
       fieldName: 'noteTargets',
     }),
-    secondFieldMetadataId: getFieldMetadataId({
+    secondFieldMetadataId: getFieldMetadataIdOrThrow({
       objectMetadataItem: noteTarget,
       fieldName: 'note',
     }),
@@ -172,11 +172,11 @@ export const AddPathThroughRelations: Story = {
     await waitFor(() =>
       expect(createRelatedRecordPath).toHaveBeenCalledWith({
         objectMetadataId: company.id,
-        firstFieldMetadataId: getFieldMetadataId({
+        firstFieldMetadataId: getFieldMetadataIdOrThrow({
           objectMetadataItem: company,
           fieldName: 'noteTargets',
         }),
-        secondFieldMetadataId: getFieldMetadataId({
+        secondFieldMetadataId: getFieldMetadataIdOrThrow({
           objectMetadataItem: noteTarget,
           fieldName: 'note',
         }),
