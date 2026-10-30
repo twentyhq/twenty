@@ -5,6 +5,7 @@ import { styled } from '@linaria/react';
 import { type FormEvent, useState } from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
+import { AFFILIATE_APPLY_ANCHOR_ID } from '@/platform/routing/affiliate-apply-anchor-id';
 import {
   color,
   FONT_WEIGHT,
@@ -24,6 +25,17 @@ import {
 } from './data/affiliate-partner-type-options';
 
 const COPY = AFFILIATE_APPLICATION_COPY;
+
+// The success card is much shorter than the form, which leaves the viewport
+// below the section heading that explains the review delay.
+const scrollToApplySection = () => {
+  document.getElementById(AFFILIATE_APPLY_ANCHOR_ID)?.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth',
+    block: 'start',
+  });
+};
 
 const FormGrid = styled.form`
   column-gap: ${spacing(4)};
@@ -197,6 +209,7 @@ export function AffiliateApplicationForm() {
 
       setIsSubmitted(true);
       setState(INITIAL_STATE);
+      scrollToApplySection();
     } catch {
       setErrorMessage(i18n._(COPY.errors.unexpected));
     } finally {

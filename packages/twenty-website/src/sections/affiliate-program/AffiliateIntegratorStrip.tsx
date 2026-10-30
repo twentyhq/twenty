@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { AFFILIATE_APPLY_ANCHOR_ID } from '@/platform/routing/affiliate-apply-anchor-id';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
 import { Body, Button, Heading, SectionShell } from '@/ui';
 
@@ -47,7 +48,7 @@ export function AffiliateIntegratorStrip() {
           </Body>
         </IntegratorCopy>
         <Button
-          href="#apply"
+          href={`#${AFFILIATE_APPLY_ANCHOR_ID}`}
           label={i18n._(msg`Join the program`)}
           variant="outlined"
         />

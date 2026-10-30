@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { AFFILIATE_APPLY_ANCHOR_ID } from '@/platform/routing/affiliate-apply-anchor-id';
 import { GRADIENT, mediaUp, spacing } from '@/tokens';
 import {
   Body,
@@ -75,7 +76,10 @@ export function AffiliateHero() {
             </Body>
           </BodyMeasure>
         </HeadingPair>
-        <Button href="#apply" label={i18n._(msg`Apply now`)} />
+        <Button
+          href={`#${AFFILIATE_APPLY_ANCHOR_ID}`}
+          label={i18n._(msg`Apply now`)}
+        />
       </IntroStack>
     </SectionShell>
   );

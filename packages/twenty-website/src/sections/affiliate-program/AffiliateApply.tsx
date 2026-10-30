@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 
 import { AffiliateApplicationForm } from '@/affiliate-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { AFFILIATE_APPLY_ANCHOR_ID } from '@/platform/routing/affiliate-apply-anchor-id';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
 import { Body, CornerMarkers, Heading, HeadingPair, SectionShell } from '@/ui';
 
@@ -10,6 +11,7 @@ const ApplyStack = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  scroll-margin-top: ${spacing(22)};
   text-align: center;
   width: 100%;
 
@@ -49,7 +51,7 @@ export function AffiliateApply() {
       rhythm="section"
       scheme="light"
     >
-      <ApplyStack id="apply">
+      <ApplyStack id={AFFILIATE_APPLY_ANCHOR_ID}>
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
