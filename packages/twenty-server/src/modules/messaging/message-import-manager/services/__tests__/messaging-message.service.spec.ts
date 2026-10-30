@@ -413,11 +413,9 @@ describe('MessagingMessageService draft synchronization', () => {
       participants = [participant];
       const finalParticipant = {
         handle: participant.handle,
-        displayName: participant.displayName,
-        role: participant.role,
-        ...(field === 'role'
-          ? { role: MessageParticipantRole.CC }
-          : { displayName: 'Alice Updated' }),
+        displayName:
+          field === 'displayName' ? 'Alice Updated' : participant.displayName,
+        role: field === 'role' ? MessageParticipantRole.CC : participant.role,
       };
 
       await save([{ ...sentMessage, participants: [finalParticipant] }]);
