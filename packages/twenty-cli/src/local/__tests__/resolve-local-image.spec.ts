@@ -18,6 +18,21 @@ afterEach(() => {
 });
 
 describe('local image selection', () => {
+  it.each([
+    ['2.53', 'v2.53'],
+    ['v2.53', 'v2.53'],
+    ['2.53.1', 'v2.53.1'],
+    ['v2.53.1', 'v2.53.1'],
+    ['2.54.0-beta.1', 'v2.54.0-beta.1'],
+    ['latest', 'latest'],
+    ['nightly', 'nightly'],
+  ])('resolves explicit version %s to tag %s', async (version, tag) => {
+    expect(await resolveLocalImage({ version, signal })).toBe(
+      `twentycrm/twenty-app-dev:${tag}`,
+    );
+    expect(fetchWithProxy).not.toHaveBeenCalled();
+  });
+
   it('selects the highest compatible published version across pages', async () => {
     vi.mocked(getEngineVersionRange).mockReturnValue('^2.52.0');
     vi.mocked(fetchWithProxy)

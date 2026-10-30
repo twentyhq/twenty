@@ -1524,7 +1524,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -3289,6 +3289,7 @@ export interface RowLevelPermissionPredicate {
     objectMetadataId: Scalars['String']
     operand: RowLevelPermissionPredicateOperand
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
+    relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
     subFieldName?: Scalars['String']
@@ -7880,6 +7881,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     objectMetadataId?: boolean | number
     operand?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
+    relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
     subFieldName?: boolean | number
@@ -7903,7 +7905,7 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RunAgentInput {additionalInstructions?: (Scalars['String'] | null),agentUniversalIdentifier: Scalars['String'],input?: (RunAgentMessageInput[] | null),messages?: (RunAgentMessageInput[] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),thread?: (RunAgentThreadInput | null),waitForCompletion?: (Scalars['Boolean'] | null)}
 
@@ -12371,7 +12373,8 @@ export const enumFeatureFlagKey = {
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
-   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
+   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
+   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED: 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' as const
 }
 
 export const enumFieldDisplayMode = {

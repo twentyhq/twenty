@@ -151,6 +151,41 @@ exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPe
 }
 `;
 
+exports[`Row Level Permission Predicate upsert should fail when relation hops are not enabled for the workspace 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
+              "message": "Predicates reaching a field through a relation are not enabled for this workspace",
+              "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when roleId is not a valid UUID 1`] = `
 {
   "extensions": {
@@ -210,5 +245,64 @@ exports[`Row Level Permission Predicate upsert should fail when the operand is n
   },
   "message": "Validation errors occurred while upserting row level permission predicates",
   "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop does not belong to the restricted object 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Relation field "company" does not belong to the object the predicate restricts",
+              "userFriendlyMessage": "This relation field does not belong to the restricted object",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This relation field does not belong to the restricted object",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop does not exist 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop is not a relation field 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
 }
 `;
