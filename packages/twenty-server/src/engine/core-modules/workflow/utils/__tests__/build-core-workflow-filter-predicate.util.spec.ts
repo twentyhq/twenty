@@ -156,6 +156,21 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       });
     });
 
+    it.each([CoreWorkflowFilterOperand.IS, CoreWorkflowFilterOperand.IS_NOT])(
+      'should keep surrounding whitespace in the %s value',
+      (operand) => {
+        expect(
+          buildPredicate([
+            {
+              fieldKey: CoreWorkflowFilterFieldKey.NAME,
+              operand,
+              value: ' Send invoice ',
+            },
+          ]).parameters,
+        ).toEqual([' Send invoice ']);
+      },
+    );
+
     it('should treat a blank name as empty', () => {
       expect(
         buildPredicate([
@@ -185,6 +200,8 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     it.each([
       CoreWorkflowFilterOperand.CONTAINS,
       CoreWorkflowFilterOperand.DOES_NOT_CONTAIN,
+      CoreWorkflowFilterOperand.IS,
+      CoreWorkflowFilterOperand.IS_NOT,
     ])('should reject %s without a value', (operand) => {
       expect(() =>
         buildPredicate([
