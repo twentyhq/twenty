@@ -1,7 +1,6 @@
 import { SettingsPath } from 'twenty-shared/types';
 
-// TODO: remove the AccountDetail, BuiltInAccountApp and ApplicationPreferences redirects after 2027-01-14.
-// The others go with IS_APP_PREFERENCES_ENABLED, since server redirects and seeded menu items still emit them.
+// TODO(@ehconitin): drop AccountDetail, BuiltInAccountApp and ApplicationPreferences after 2027-01-14, the rest with IS_APP_PREFERENCES_ENABLED.
 export const APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH = {
   [SettingsPath.Accounts]: SettingsPath.AppPreferences,
   [SettingsPath.AccountsEmails]: SettingsPath.AppPreferences,
