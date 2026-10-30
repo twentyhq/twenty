@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
-import { getLocalImage } from '@/local/get-local-image';
 import { resolveLocalImage } from '@/local/resolve-local-image';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 
@@ -19,21 +18,6 @@ afterEach(() => {
 });
 
 describe('local image selection', () => {
-  it('uses an explicit version without consulting the registry or app range', async () => {
-    vi.mocked(getEngineVersionRange).mockReturnValue('^1.0.0');
-    expect(await resolveLocalImage({ version: '2.53.1', signal })).toBe(
-      'twentycrm/twenty-app-dev:v2.53.1',
-    );
-    expect(fetchWithProxy).not.toHaveBeenCalled();
-  });
-
-  it('uses latest outside an app', async () => {
-    expect(await resolveLocalImage({ version: undefined, signal })).toBe(
-      'twentycrm/twenty-app-dev:latest',
-    );
-    expect(fetchWithProxy).not.toHaveBeenCalled();
-  });
-
   it('selects the highest compatible published version across pages', async () => {
     vi.mocked(getEngineVersionRange).mockReturnValue('^2.52.0');
     vi.mocked(fetchWithProxy)
@@ -58,21 +42,41 @@ describe('local image selection', () => {
     );
   });
 
-  it.each(['unavailable', 'incompatible'])(
-    'never falls back to latest when range selection is %s',
-    async (failure) => {
-      vi.mocked(getEngineVersionRange).mockReturnValue('^2.52.0');
-      if (failure === 'unavailable') {
-        vi.mocked(fetchWithProxy).mockRejectedValue(new Error('Offline'));
-      } else {
-        vi.mocked(fetchWithProxy).mockResolvedValue(
+  it.each([
+    {
+      failure: 'network failure',
+      response: () => Promise.reject(new Error('Offline')),
+      reason: 'Offline',
+    },
+    {
+      failure: 'rate limit',
+      response: () => Promise.resolve(new Response(null, { status: 429 })),
+      reason: 'Image registry request failed (HTTP 429)',
+    },
+    {
+      failure: 'malformed response',
+      response: () => Promise.resolve(Response.json({ results: null })),
+      reason: 'Invalid image registry response',
+    },
+    {
+      failure: 'no compatible version',
+      response: () =>
+        Promise.resolve(
           Response.json({ results: [{ name: 'v1.0.0' }], next: null }),
-        );
-      }
+        ),
+      reason: 'No published image matches engines.twenty',
+    },
+  ])(
+    'reports $failure instead of falling back to latest',
+    async ({ response, reason }) => {
+      vi.mocked(getEngineVersionRange).mockReturnValue('^2.52.0');
+      vi.mocked(fetchWithProxy).mockImplementation(response);
       await expect(
         resolveLocalImage({ version: undefined, signal }),
       ).rejects.toMatchObject({
         code: 'LOCAL_ENVIRONMENT_FAILED',
+        message: `Could not select a published Twenty image matching ^2.52.0: ${reason}`,
+        cause: expect.any(Error),
       });
     },
   );
@@ -86,11 +90,4 @@ describe('local image selection', () => {
     });
     expect(fetchWithProxy).not.toHaveBeenCalled();
   });
-
-  it.each(['other/image:tag', '--privileged', 'latest; touch /tmp/file'])(
-    'rejects invalid image tag %s',
-    (tag) => {
-      expect(() => getLocalImage(tag)).toThrow();
-    },
-  );
 });

@@ -5,10 +5,8 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
-import {
-  checkLocalHealth,
-  waitForLocalHealth,
-} from '@/local/check-local-health';
+import { checkLocalHealth } from '@/local/check-local-health';
+import { waitForLocalHealth } from '@/local/wait-for-local-health';
 import { getLocalEnvironment } from '@/local/get-local-environment';
 import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
@@ -16,6 +14,8 @@ import { CliError } from '@/output/cli-error';
 vi.mock('@/local/run-docker', () => ({ runDocker: vi.fn() }));
 vi.mock('@/local/check-local-health', () => ({
   checkLocalHealth: vi.fn(),
+}));
+vi.mock('@/local/wait-for-local-health', () => ({
   waitForLocalHealth: vi.fn(),
 }));
 
@@ -136,6 +136,14 @@ describe('local commands', () => {
     expect((await runJson(['start'])).exitCode).toBe(0);
     expect(mutations()[0]).toEqual(['pull', 'twentycrm/twenty-app-dev:latest']);
     expect(mutations()[1][0]).toBe('run');
+  });
+
+  it('rejects an invalid image tag before pulling or creating anything', async () => {
+    container = undefined;
+    const { exitCode, envelope } = await runJson(['start', 'other/image:tag']);
+    expect(exitCode).toBe(1);
+    expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(mutations()).toEqual([]);
   });
 
   it('restarts a stopped instance without replacing it or changing its port', async () => {

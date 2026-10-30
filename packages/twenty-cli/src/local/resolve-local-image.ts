@@ -47,7 +47,9 @@ export const resolveLocalImage = async ({
       );
       if (!response.ok) {
         await response.body?.cancel();
-        throw new Error('Image registry request failed');
+        throw new Error(
+          `Image registry request failed (HTTP ${response.status})`,
+        );
       }
       const body: unknown = JSON.parse(
         Buffer.from(
@@ -71,12 +73,14 @@ export const resolveLocalImage = async ({
       }
     }
     throw new Error('Image registry listing exceeded 2000 tags');
-  } catch {
+  } catch (error) {
     signal.throwIfAborted();
+    const reason = error instanceof Error ? error.message : String(error);
     throw new CliError({
       code: 'LOCAL_ENVIRONMENT_FAILED',
-      message: `Could not select a published Twenty image matching ${range}.`,
+      message: `Could not select a published Twenty image matching ${range}: ${reason}`,
       hint: 'Check the range and your connection, or pass a version explicitly.',
+      cause: error,
     });
   }
 };

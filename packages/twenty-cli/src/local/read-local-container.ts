@@ -1,7 +1,8 @@
-import { isArray, isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { LOCAL_IMAGE_REPOSITORY } from '@/local/get-local-environment';
+import { readLocalContainerPorts } from '@/local/read-local-container-ports';
 import { runDocker } from '@/local/run-docker';
 import {
   type LocalContainer,
@@ -71,33 +72,10 @@ export const readLocalContainer = async ({
     });
   }
 
-  const ports = Object.entries(value.HostConfig.PortBindings).filter(([key]) =>
-    key.endsWith('/tcp'),
-  );
-  const [containerPortKey, bindings] = ports[0] ?? [];
-  const binding = isArray(bindings) ? bindings[0] : undefined;
-  const port =
-    isPlainObject(binding) && isString(binding.HostPort)
-      ? Number(binding.HostPort)
-      : NaN;
-  const containerPort = Number(containerPortKey?.split('/')[0]);
-
-  if (
-    ports.length !== 1 ||
-    !isArray(bindings) ||
-    bindings.length !== 1 ||
-    !Number.isInteger(port) ||
-    port < 1 ||
-    port > 65535 ||
-    !Number.isInteger(containerPort) ||
-    containerPort < 1 ||
-    containerPort > 65535
-  ) {
-    throw new CliError({
-      code: 'CONFLICT',
-      message: `${environment.name} has an unsupported port configuration.`,
-    });
-  }
+  const { port } = readLocalContainerPorts({
+    containerName: environment.name,
+    portBindings: value.HostConfig.PortBindings,
+  });
 
   return {
     id: value.Id,

@@ -1,4 +1,4 @@
-import { waitForLocalHealth } from '@/local/check-local-health';
+import { waitForLocalHealth } from '@/local/wait-for-local-health';
 import { getLocalStatus } from '@/local/get-local-status';
 import { readLocalContainer } from '@/local/read-local-container';
 import { type LocalEnvironment } from '@/local/types/local-environment.type';
