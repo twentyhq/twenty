@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -18,7 +17,6 @@ import {
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
@@ -96,18 +94,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     }
   }, [webhookData, formConfig]);
-
-  // Runs after the reset above so a webhook without a role gets the role the selector displays
-  useEffect(() => {
-    const firstRoleId = rolesData?.getApiKeyRoles[0]?.id;
-
-    if (
-      isDefined(firstRoleId) &&
-      !isNonEmptyString(formConfig.getValues('roleId'))
-    ) {
-      formConfig.setValue('roleId', firstRoleId, { shouldValidate: true });
-    }
-  }, [rolesData, webhookData, formConfig]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode

@@ -6,6 +6,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
+import { SettingsDevelopersWebhookDefaultRoleEffect } from '@/settings/developers/components/SettingsDevelopersWebhookDefaultRoleEffect';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -84,6 +85,9 @@ export const SettingsDevelopersWebhookForm = ({
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
+      <SettingsDevelopersWebhookDefaultRoleEffect
+        defaultRoleId={roles[0]?.id}
+      />
       <SettingsPageLayout
         title={getTitle()}
         links={[
