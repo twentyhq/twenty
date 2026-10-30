@@ -7,10 +7,16 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 type SettingsApplicationTableHeaderRowProps = {
   middleColumn: SettingsApplicationTableRowMiddleColumn;
+  nameLabel?: string;
+  detailsLabel?: string;
+  detailsAlign?: 'left' | 'right';
 };
 
 export const SettingsApplicationTableHeaderRow = ({
   middleColumn,
+  nameLabel,
+  detailsLabel,
+  detailsAlign,
 }: SettingsApplicationTableHeaderRowProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -22,11 +28,15 @@ export const SettingsApplicationTableHeaderRow = ({
         isMobile,
       })}
     >
-      <TableHeader>{t`Name`}</TableHeader>
+      <TableHeader>{nameLabel ?? t`Name`}</TableHeader>
       <TableHeader>
         {middleColumn === 'status' ? t`Status` : t`Type`}
       </TableHeader>
-      {!isMobile && <TableHeader>{t`Description`}</TableHeader>}
+      {!isMobile && (
+        <TableHeader align={detailsAlign}>
+          {detailsLabel ?? t`Description`}
+        </TableHeader>
+      )}
       <TableHeader />
     </TableRow>
   );

@@ -1,6 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
@@ -22,9 +21,5 @@ export const SettingsBuiltInAccountAppPermissionsCell = ({
     )
     .map((permission) => t(permission.label));
 
-  return (
-    <TableCell minWidth="0">
-      <OverflowingTextWithTooltip text={permissionLabels.join(', ')} />
-    </TableCell>
-  );
+  return <OverflowingTextWithTooltip text={permissionLabels.join(', ')} />;
 };

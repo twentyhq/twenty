@@ -6,6 +6,7 @@ import { type SettingsApplicationsTableLinkTarget } from '@/settings/application
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type SettingsMemberApplicationStatus } from '@/settings/applications/types/SettingsMemberApplicationStatus';
 import { type SettingsWorkspaceApplicationStatus } from '@/settings/applications/types/SettingsWorkspaceApplicationStatus';
+import { getSettingsApplicationLink } from '@/settings/applications/utils/getSettingsApplicationLink';
 import { getSettingsApplicationsTableRowItems } from '@/settings/applications/utils/getSettingsApplicationsTableRowItems';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -108,8 +109,11 @@ export const SettingsApplicationsTable = ({
               {filteredRowItems.map((rowItem) => (
                 <SettingsApplicationsTableApplicationRow
                   key={rowItem.id}
-                  rowItem={rowItem}
-                  linkTarget={linkTarget}
+                  application={rowItem}
+                  link={getSettingsApplicationLink({
+                    linkTarget,
+                    applicationId: rowItem.id,
+                  })}
                   middleColumn={middleColumn}
                   statuses={statusesById?.[rowItem.id]}
                 />
