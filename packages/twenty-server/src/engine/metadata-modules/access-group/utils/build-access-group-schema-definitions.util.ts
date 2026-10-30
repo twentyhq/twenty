@@ -4,8 +4,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import {
   ACCESS_GROUP_COMPACT_ID_COLUMN_NAME,
+  ACCESS_GROUP_RECORD_COLUMN_NAMES,
   READABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
-  WRITABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
 } from 'src/engine/metadata-modules/access-group/constants/access-group-column-names.constant';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -16,8 +16,7 @@ type AccessGroupSchemaDefinitions = {
   indexDefinitions: WorkspaceSchemaIndexDefinition[];
 };
 
-// Keyed on the object id, not the table name, so a renamed object never
-// leaves an index name that a new object with the old name would collide with.
+// Keyed on the object id so a renamed object's index cannot collide with a new object's
 const computeAccessGroupIndexName = ({
   objectMetadataId,
   columnName,
@@ -31,8 +30,7 @@ const computeAccessGroupIndexName = ({
     .digest('hex')
     .slice(0, 27)}`;
 
-// These columns are engine-owned: they have no field metadata, so the record
-// APIs, the UI and app manifests never see them.
+// No field metadata on purpose: keeps them out of the record APIs, the UI and app manifests
 export const buildAccessGroupSchemaDefinitions = ({
   objectMetadata,
 }: {
@@ -65,10 +63,7 @@ export const buildAccessGroupSchemaDefinitions = ({
   }
 
   return {
-    columnDefinitions: [
-      READABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
-      WRITABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
-    ].map((columnName) => ({
+    columnDefinitions: ACCESS_GROUP_RECORD_COLUMN_NAMES.map((columnName) => ({
       name: columnName,
       type: 'integer',
       isArray: true,

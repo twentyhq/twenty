@@ -86,4 +86,25 @@ describe('Failing create field metadata tests suite', () => {
       expect(errorDetails).toContain(expectedMessage);
     },
   );
+  it.each(['readableByAccessGroupIds', 'destroyableByAccessGroupIds'])(
+    'should fail to create a field named %s',
+    async (name) => {
+      const { data, errors } = await createOneFieldMetadata({
+        expectToFail: true,
+        input: {
+          objectMetadataId: createdObjectMetadataId,
+          type: FieldMetadataType.TEXT,
+          name,
+          label: name,
+          isLabelSyncedWithName: false,
+        },
+        gqlFields: 'id',
+      });
+
+      expect(data).toBeNull();
+      expect(JSON.stringify(errors[0].extensions.errors)).toContain(
+        'reserved for access group storage',
+      );
+    },
+  );
 });

@@ -32,7 +32,7 @@ export const buildSqlColumnDefinition = (
     }
   }
 
-  if (column.isGeneratedAlwaysAsIdentity === true) {
+  if (column.isGeneratedAlwaysAsIdentity) {
     parts.push('GENERATED ALWAYS AS IDENTITY');
   }
 

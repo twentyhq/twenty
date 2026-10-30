@@ -16,7 +16,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Command({
   name: 'upgrade:2-55:add-access-group-storage-columns',
   description:
-    'Add the readable and writable access group id columns to every object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
+    'Add the readable, writable, deletable and destroyable access group id columns to every object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
 export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -51,8 +51,8 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      const existingColumnNamesByTableName =
-        await this.findExistingColumnNamesByTableName({
+      const existingColumnTypesByTableName =
+        await this.findExistingColumnTypesByTableName({
           queryRunner,
           schemaName,
         });
@@ -64,10 +64,10 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           workspaceId,
           objectMetadata: flatObjectMetadata,
         });
-        const existingColumnNames =
-          existingColumnNamesByTableName.get(tableName);
+        const existingColumnTypes =
+          existingColumnTypesByTableName.get(tableName);
 
-        if (!isDefined(existingColumnNames)) {
+        if (!isDefined(existingColumnTypes)) {
           continue;
         }
 
@@ -75,8 +75,25 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           buildAccessGroupSchemaDefinitions({
             objectMetadata: flatObjectMetadata,
           });
+        const conflictingColumnNames = columnDefinitions
+          .filter(
+            (columnDefinition) =>
+              existingColumnTypes.has(columnDefinition.name) &&
+              existingColumnTypes.get(columnDefinition.name) !==
+                (columnDefinition.isArray ? '_int4' : 'int4'),
+          )
+          .map((columnDefinition) => columnDefinition.name);
+
+        if (conflictingColumnNames.length > 0) {
+          this.logger.error(
+            `Skipping ${tableName} in workspace ${workspaceId}: column(s) ${conflictingColumnNames.join(', ')} already exist with another type`,
+          );
+
+          continue;
+        }
+
         const missingColumnDefinitions = columnDefinitions.filter(
-          (columnDefinition) => !existingColumnNames.has(columnDefinition.name),
+          (columnDefinition) => !existingColumnTypes.has(columnDefinition.name),
         );
 
         if (options.dryRun) {
@@ -118,33 +135,34 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
     }
   }
 
-  private async findExistingColumnNamesByTableName({
+  private async findExistingColumnTypesByTableName({
     queryRunner,
     schemaName,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-  }): Promise<Map<string, Set<string>>> {
-    const columns: { tableName: string; columnName: string }[] =
+  }): Promise<Map<string, Map<string, string>>> {
+    const columns: { tableName: string; columnName: string; udtName: string }[] =
       await queryRunner.query(
-        `SELECT table_name AS "tableName", column_name AS "columnName"
+        `SELECT table_name AS "tableName", column_name AS "columnName", udt_name AS "udtName"
          FROM information_schema.columns
          WHERE table_schema = $1`,
         [schemaName],
       );
 
-    const existingColumnNamesByTableName = new Map<string, Set<string>>();
+    const existingColumnTypesByTableName = new Map<string, Map<string, string>>();
 
-    for (const { tableName, columnName } of columns) {
-      existingColumnNamesByTableName.set(
+    for (const { tableName, columnName, udtName } of columns) {
+      existingColumnTypesByTableName.set(
         tableName,
-        (existingColumnNamesByTableName.get(tableName) ?? new Set()).add(
+        (existingColumnTypesByTableName.get(tableName) ?? new Map()).set(
           columnName,
+          udtName,
         ),
       );
     }
 
-    return existingColumnNamesByTableName;
+    return existingColumnTypesByTableName;
   }
 
   // An interrupted CREATE INDEX CONCURRENTLY leaves an invalid index that IF NOT EXISTS would keep
