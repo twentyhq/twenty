@@ -68,7 +68,7 @@ export default defineWorkflow({
 
 Puntos clave:
 
-* El flujo de trabajo, su desencadenador y cada paso necesitan su propio `universalIdentifier`. Mantenlos estables entre versiones: así es como Twenty encuentra el flujo de trabajo instalado en la próxima instalación.
+* El flujo de trabajo y cada paso necesitan su propio `universalIdentifier`, y el desencadenador puede tener uno. Mantenlos estables entre versiones: así es como Twenty encuentra el flujo de trabajo instalado en la próxima instalación.
 * `nextStepIds` conecta el grafo. El desencadenador apunta a los primeros pasos, y cada paso apunta a los pasos que se ejecutan después de él.
 * Un paso lee la salida anterior con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
 * La compilación valida toda la definición: los tipos de desencadenador o de paso no compatibles, los enlaces de pasos rotos y las referencias a pasos desconocidos hacen que falle.
@@ -94,6 +94,8 @@ Una referencia que Twenty no puede resolver hace que falle la instalación.
 | `WEBHOOK`        | Una solicitud HTTP llega a la URL del flujo de trabajo | `httpMethod` (`GET` o `POST`) y `expectedBody` para `POST`.                                                                                                                              |
 
 Un flujo de trabajo manual sin `availability` no obtiene ninguna entrada en el menú de comandos.
+
+Cada desencadenador también acepta `name`, `position` y `outputSchema` opcionales, que solo determinan el aspecto del flujo de trabajo en el constructor. Sin ellos, Twenty usa un nombre como `Manual trigger`, coloca el desencadenador en la parte superior del lienzo y calcula el esquema de salida a partir de la configuración.
 
 Un flujo de trabajo de webhook escucha en `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, donde `workflowId` es el id del flujo de trabajo instalado. El cuerpo de la solicitud está disponible como `{{trigger.\<path>}}`.
 
@@ -126,7 +128,8 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 
 La aplicación personalizada del espacio de trabajo posee los flujos de trabajo creados en el generador de flujos de trabajo, y el código es tan autoritativo para ellos como el generador:
 
-* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Se informa de un flujo de trabajo cuya versión activa usa configuraciones que un archivo `defineWorkflow()` no puede expresar, como un paso de Code o un desencadenador que el generador renombró, y se deja en su lugar.
+* `twenty app pull` escribe cada uno desde su versión activa, la que el generador publicó por última vez. Se informa sobre un flujo de trabajo cuya versión activa utiliza configuraciones que un archivo `defineWorkflow()` no puede expresar, como un paso de código, y se deja en su lugar.
+* Un flujo de trabajo extraído conserva lo que almacenó el constructor: un desencadenador sin `universalIdentifier`, el nombre del desencadenador en el constructor, una `position` de `null` para un nodo que el constructor nunca colocó y un `outputSchema` que difiere del calculado. Estos campos requieren twenty-sdk 2.53.0 o posterior, aplicado a un servidor con la versión 2.53.0 o posterior: las versiones anteriores los rechazan como claves desconocidas.
 * `twenty app apply` publica como el generador. Un flujo de trabajo cuya definición coincide con su versión activa se deja sin cambios. De lo contrario, la versión activa se archiva y la definición se convierte en una nueva versión activa, por lo que las ejecuciones anteriores conservan la versión que ejecutaron.
 * Los usuarios siguen editando estos flujos de trabajo en el constructor, y la siguiente extracción recupera sus cambios.
 
