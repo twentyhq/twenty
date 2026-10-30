@@ -166,6 +166,7 @@ export const createChatParticipationTestContext = async () => {
   }) =>
     chatService.addMessage({
       id,
+      resolveMentionForWorkspaceMemberId: workspaceMemberId,
       threadId,
       workspaceId,
       userWorkspaceId,
