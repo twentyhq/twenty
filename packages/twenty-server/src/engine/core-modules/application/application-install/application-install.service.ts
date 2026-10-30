@@ -887,7 +887,7 @@ export class ApplicationInstallService {
           );
 
           // A copy left by an earlier upload would otherwise be checked and built as this version's
-          if (shouldDeleteStoredFileWhenMissing === true) {
+          if (shouldDeleteStoredFileWhenMissing) {
             await this.fileStorageService.deleteFile({
               fileFolder,
               applicationUniversalIdentifier,

@@ -229,6 +229,7 @@ describe('ApplicationInstallService', () => {
 
     await install();
 
+    expect(fileStorageService.deleteFile).toHaveBeenCalledTimes(1);
     expect(fileStorageService.deleteFile).toHaveBeenCalledWith({
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
