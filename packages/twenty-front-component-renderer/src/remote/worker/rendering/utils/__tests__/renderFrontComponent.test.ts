@@ -89,9 +89,9 @@ describe('renderFrontComponent', () => {
 
   it('passes the supplied data and waits for initial rendering', async () => {
     const componentProps = { records: [{ id: 'sample', name: 'Example' }] };
-    let finishRender = () => {};
+    const initialRenderControl = { resolve: () => {} };
     const initialRender = new Promise<void>((resolve) => {
-      finishRender = resolve;
+      initialRenderControl.resolve = resolve;
     });
     const render = jest.fn(() => initialRender);
     jest
@@ -99,15 +99,16 @@ describe('renderFrontComponent', () => {
       .mockResolvedValue({ default: render });
     const onReady = jest.fn();
     const result = renderFrontComponent({
-      connection: {} as RemoteConnection,
+      connection: createConnection(),
       renderContext: { ...COMPONENT_RENDER_CONTEXT, componentProps },
       hostFetch: jest.fn(),
     }).then(onReady);
 
     await Promise.resolve();
+    expect(render).toHaveBeenCalledTimes(1);
     expect(render).toHaveBeenCalledWith({}, componentProps);
     expect(onReady).not.toHaveBeenCalled();
-    finishRender();
+    initialRenderControl.resolve();
     await result;
     expect(onReady).toHaveBeenCalledTimes(1);
   });
@@ -121,7 +122,7 @@ describe('renderFrontComponent', () => {
 
     await expect(
       renderFrontComponent({
-        connection: {} as RemoteConnection,
+        connection: createConnection(),
         renderContext: COMPONENT_RENDER_CONTEXT,
         hostFetch: jest.fn(),
       }),
