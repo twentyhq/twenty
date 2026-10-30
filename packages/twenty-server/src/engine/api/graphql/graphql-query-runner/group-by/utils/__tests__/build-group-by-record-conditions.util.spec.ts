@@ -24,8 +24,8 @@ describe('buildGroupByRecordConditions', () => {
     });
 
     expect(result).toEqual({
-      sql: '("opportunity"."stage" IN (:...groupValues_0))',
-      parameters: { groupValues_0: ['NEW', 'SCREENING'] },
+      sql: '("opportunity"."stage" IN (:...groupValues))',
+      parameters: { groupValues: ['NEW', 'SCREENING'] },
     });
   });
 
@@ -36,8 +36,8 @@ describe('buildGroupByRecordConditions', () => {
     });
 
     expect(result).toEqual({
-      sql: '("opportunity"."stage" IN (:...groupValues_0) OR "opportunity"."stage" IS NULL)',
-      parameters: { groupValues_0: ['NEW'] },
+      sql: '("opportunity"."stage" IN (:...groupValues) OR "opportunity"."stage" IS NULL)',
+      parameters: { groupValues: ['NEW'] },
     });
   });
 
@@ -51,6 +51,39 @@ describe('buildGroupByRecordConditions', () => {
       sql: '("opportunity"."stage" IS NULL)',
       parameters: {},
     });
+  });
+
+  it('should treat an undefined dimension value as the null group', () => {
+    const result = buildGroupByRecordConditions({
+      groupsResult: [{ opportunity_stage: undefined }],
+      groupByDefinitions: [stageDefinition],
+    });
+
+    expect(result).toEqual({
+      sql: '("opportunity"."stage" IS NULL)',
+      parameters: {},
+    });
+  });
+
+  it('should keep falsy non-null values in the IN list', () => {
+    const result = buildGroupByRecordConditions({
+      groupsResult: [{ opportunity_stage: false }, { opportunity_stage: 0 }],
+      groupByDefinitions: [stageDefinition],
+    });
+
+    expect(result).toEqual({
+      sql: '("opportunity"."stage" IN (:...groupValues))',
+      parameters: { groupValues: [false, 0] },
+    });
+  });
+
+  it('should match nothing when there are no groups', () => {
+    const result = buildGroupByRecordConditions({
+      groupsResult: [],
+      groupByDefinitions: [stageDefinition],
+    });
+
+    expect(result).toEqual({ sql: 'FALSE', parameters: {} });
   });
 
   it('should keep one equality branch per group across several dimensions', () => {

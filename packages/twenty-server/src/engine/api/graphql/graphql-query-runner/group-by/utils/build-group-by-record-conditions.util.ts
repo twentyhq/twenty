@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 
-// Builds the WHERE that scopes the per-group record subquery to the resolved groups,
-// shared by the v1 and v2 with-records services so the two ORM paths cannot diverge.
+// Builds the WHERE that scopes the per-group record subquery to the resolved groups
 export const buildGroupByRecordConditions = ({
   groupsResult,
   groupByDefinitions,
@@ -11,6 +10,10 @@ export const buildGroupByRecordConditions = ({
   groupsResult: Array<Record<string, unknown>>;
   groupByDefinitions: GroupByDefinition[];
 }): { sql: string; parameters: Record<string, unknown> } => {
+  if (groupsResult.length === 0) {
+    return { sql: 'FALSE', parameters: {} };
+  }
+
   if (groupByDefinitions.length === 1) {
     return buildSingleDimensionConditions({
       groupsResult,
@@ -60,7 +63,7 @@ const buildSingleDimensionConditions = ({
   const conditions: string[] = [];
 
   if (groupValues.length > 0) {
-    conditions.push(`${groupByDefinition.expression} IN (:...groupValues_0)`);
+    conditions.push(`${groupByDefinition.expression} IN (:...groupValues)`);
   }
 
   if (hasNullGroup) {
@@ -69,6 +72,6 @@ const buildSingleDimensionConditions = ({
 
   return {
     sql: `(${conditions.join(' OR ')})`,
-    parameters: groupValues.length > 0 ? { groupValues_0: groupValues } : {},
+    parameters: groupValues.length > 0 ? { groupValues } : {},
   };
 };
