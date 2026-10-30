@@ -1522,7 +1522,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1711,6 +1711,58 @@ export interface GetAuthorizationUrlForSSO {
     id: Scalars['UUID']
     type: Scalars['String']
     __typename: 'GetAuthorizationUrlForSSO'
+}
+
+export interface GettingStartedProgress {
+    completedSteps: GettingStartedStep[]
+    isHidden: Scalars['Boolean']
+    selectedStep?: GettingStartedStep
+    snoozedUntil?: Scalars['String']
+    steps: GettingStartedStepDefinition[]
+    __typename: 'GettingStartedProgress'
+}
+
+export type GettingStartedStep = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+
+export interface GettingStartedStepDefinition {
+    description: Scalars['String']
+    doneTitle: Scalars['String']
+    icon: Scalars['String']
+    iconColor: Scalars['String']
+    kind: GettingStartedStepKind
+    prompt?: Scalars['String']
+    promptLabel?: Scalars['String']
+    step: GettingStartedStep
+    title: Scalars['String']
+    __typename: 'GettingStartedStepDefinition'
+}
+
+export type GettingStartedStepKind = 'CUSTOM' | 'PROMPT' | 'WORKFLOW'
+
+export interface GettingStartedWorkflow {
+    versionId: Scalars['String']
+    workflowId: Scalars['String']
+    __typename: 'GettingStartedWorkflow'
+}
+
+export interface GettingStartedWorkflowPreview {
+    actions: GettingStartedWorkflowPreviewAction[]
+    step: GettingStartedStep
+    trigger: GettingStartedWorkflowPreviewTrigger
+    __typename: 'GettingStartedWorkflowPreview'
+}
+
+export interface GettingStartedWorkflowPreviewAction {
+    title: Scalars['String']
+    type: WorkflowActionType
+    __typename: 'GettingStartedWorkflowPreviewAction'
+}
+
+export interface GettingStartedWorkflowPreviewTrigger {
+    databaseEventAction?: Scalars['String']
+    title: Scalars['String']
+    type: Scalars['String']
+    __typename: 'GettingStartedWorkflowPreviewTrigger'
 }
 
 
@@ -2384,6 +2436,7 @@ export interface Mutation {
     installMarketplaceApp: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
+    prepareGettingStartedWorkflow: GettingStartedWorkflow
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     removeAgentChatMessageReaction: AgentMessageReactionSummary[]
@@ -2461,6 +2514,7 @@ export interface Mutation {
     updateCommandMenuItem: CommandMenuItem
     updateEmailGroupChannel: MessageChannel
     updateFrontComponent: FrontComponent
+    updateGettingStarted: GettingStartedProgress
     updateLabPublicFeatureFlag: FeatureFlag
     updateManyNavigationMenuItems: NavigationMenuItem[]
     updateManyObjects: Object[]
@@ -3065,6 +3119,8 @@ export interface Query {
     getViewSorts: ViewSort[]
     getViews: View[]
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
+    gettingStartedProgress: GettingStartedProgress
+    gettingStartedWorkflowPreviews: GettingStartedWorkflowPreview[]
     githubClaimAuthorizationUrl: Scalars['String']
     isApplicationStopped: Scalars['Boolean']
     lineChartData: LineChartData
@@ -4046,6 +4102,8 @@ export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfigu
 export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
 export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
+
+export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -6214,6 +6272,60 @@ export interface GetAuthorizationUrlForSSOGenqlSelection{
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
+export interface GettingStartedProgressGenqlSelection{
+    completedSteps?: boolean | number
+    isHidden?: boolean | number
+    selectedStep?: boolean | number
+    snoozedUntil?: boolean | number
+    steps?: GettingStartedStepDefinitionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedStepDefinitionGenqlSelection{
+    description?: boolean | number
+    doneTitle?: boolean | number
+    icon?: boolean | number
+    iconColor?: boolean | number
+    kind?: boolean | number
+    prompt?: boolean | number
+    promptLabel?: boolean | number
+    step?: boolean | number
+    title?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedWorkflowGenqlSelection{
+    versionId?: boolean | number
+    workflowId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedWorkflowPreviewGenqlSelection{
+    actions?: GettingStartedWorkflowPreviewActionGenqlSelection
+    step?: boolean | number
+    trigger?: GettingStartedWorkflowPreviewTriggerGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedWorkflowPreviewActionGenqlSelection{
+    title?: boolean | number
+    type?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GettingStartedWorkflowPreviewTriggerGenqlSelection{
+    databaseEventAction?: boolean | number
+    title?: boolean | number
+    type?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface GrantApplicationCapabilitiesInput {applicationId: Scalars['UUID'],capabilities: Scalars['String'][]}
 
 export interface GridPositionGenqlSelection{
@@ -6898,6 +7010,7 @@ export interface MutationGenqlSelection{
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
+    prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {step: GettingStartedStep} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
@@ -6975,6 +7088,7 @@ export interface MutationGenqlSelection{
     updateCommandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {input: UpdateCommandMenuItemInput} })
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
+    updateGettingStarted?: (GettingStartedProgressGenqlSelection & { __args: {input: UpdateGettingStartedInput} })
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
@@ -7623,6 +7737,8 @@ export interface QueryGenqlSelection{
     getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
+    gettingStartedProgress?: GettingStartedProgressGenqlSelection
+    gettingStartedWorkflowPreviews?: GettingStartedWorkflowPreviewGenqlSelection
     githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
     isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     lineChartData?: (LineChartDataGenqlSelection & { __args: {input: LineChartDataInput} })
@@ -8313,6 +8429,8 @@ id: Scalars['UUID'],
 update: UpdateFrontComponentInputUpdates}
 
 export interface UpdateFrontComponentInputUpdates {description?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
+
+export interface UpdateGettingStartedInput {completedStep?: (GettingStartedStep | null),isHidden?: (Scalars['Boolean'] | null),selectedStep?: (GettingStartedStep | null),snoozedUntil?: (Scalars['String'] | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -10422,6 +10540,54 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const GettingStartedProgress_possibleTypes: string[] = ['GettingStartedProgress']
+    export const isGettingStartedProgress = (obj?: { __typename?: any } | null): obj is GettingStartedProgress => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedProgress"')
+      return GettingStartedProgress_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GettingStartedStepDefinition_possibleTypes: string[] = ['GettingStartedStepDefinition']
+    export const isGettingStartedStepDefinition = (obj?: { __typename?: any } | null): obj is GettingStartedStepDefinition => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedStepDefinition"')
+      return GettingStartedStepDefinition_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GettingStartedWorkflow_possibleTypes: string[] = ['GettingStartedWorkflow']
+    export const isGettingStartedWorkflow = (obj?: { __typename?: any } | null): obj is GettingStartedWorkflow => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflow"')
+      return GettingStartedWorkflow_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GettingStartedWorkflowPreview_possibleTypes: string[] = ['GettingStartedWorkflowPreview']
+    export const isGettingStartedWorkflowPreview = (obj?: { __typename?: any } | null): obj is GettingStartedWorkflowPreview => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreview"')
+      return GettingStartedWorkflowPreview_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GettingStartedWorkflowPreviewAction_possibleTypes: string[] = ['GettingStartedWorkflowPreviewAction']
+    export const isGettingStartedWorkflowPreviewAction = (obj?: { __typename?: any } | null): obj is GettingStartedWorkflowPreviewAction => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreviewAction"')
+      return GettingStartedWorkflowPreviewAction_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GettingStartedWorkflowPreviewTrigger_possibleTypes: string[] = ['GettingStartedWorkflowPreviewTrigger']
+    export const isGettingStartedWorkflowPreviewTrigger = (obj?: { __typename?: any } | null): obj is GettingStartedWorkflowPreviewTrigger => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGettingStartedWorkflowPreviewTrigger"')
+      return GettingStartedWorkflowPreviewTrigger_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const GridPosition_possibleTypes: string[] = ['GridPosition']
     export const isGridPosition = (obj?: { __typename?: any } | null): obj is GridPosition => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isGridPosition"')
@@ -12330,6 +12496,7 @@ export const enumFeatureFlagKey = {
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
+   IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
@@ -12390,6 +12557,22 @@ export const enumFileFolder = {
    Source: 'Source' as const,
    Workflow: 'Workflow' as const,
    WorkspaceDataExport: 'WorkspaceDataExport' as const
+}
+
+export const enumGettingStartedStep = {
+   CONNECT_MAILBOX: 'CONNECT_MAILBOX' as const,
+   CUSTOMIZE_DATA_MODEL: 'CUSTOMIZE_DATA_MODEL' as const,
+   FOLLOW_UP_DEALS: 'FOLLOW_UP_DEALS' as const,
+   HANDOVER_DEALS: 'HANDOVER_DEALS' as const,
+   IMPORT_DATA: 'IMPORT_DATA' as const,
+   INSTALL_APP: 'INSTALL_APP' as const,
+   INVITE_TEAM: 'INVITE_TEAM' as const
+}
+
+export const enumGettingStartedStepKind = {
+   CUSTOM: 'CUSTOM' as const,
+   PROMPT: 'PROMPT' as const,
+   WORKFLOW: 'WORKFLOW' as const
 }
 
 export const enumGraphOrderBy = {
@@ -12914,6 +13097,31 @@ export const enumWidgetType = {
    WORKFLOW: 'WORKFLOW' as const,
    WORKFLOW_RUN: 'WORKFLOW_RUN' as const,
    WORKFLOW_VERSION: 'WORKFLOW_VERSION' as const
+}
+
+export const enumWorkflowActionType = {
+   AI_AGENT: 'AI_AGENT' as const,
+   CLASSIFY: 'CLASSIFY' as const,
+   CODE: 'CODE' as const,
+   CREATE_CALENDAR_EVENT: 'CREATE_CALENDAR_EVENT' as const,
+   CREATE_RECORD: 'CREATE_RECORD' as const,
+   DELAY: 'DELAY' as const,
+   DELETE_RECORD: 'DELETE_RECORD' as const,
+   DRAFT_EMAIL: 'DRAFT_EMAIL' as const,
+   EMPTY: 'EMPTY' as const,
+   FILTER: 'FILTER' as const,
+   FIND_RECORDS: 'FIND_RECORDS' as const,
+   FORM: 'FORM' as const,
+   HTTP_REQUEST: 'HTTP_REQUEST' as const,
+   IF_ELSE: 'IF_ELSE' as const,
+   ITERATOR: 'ITERATOR' as const,
+   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   PICK_RECORD: 'PICK_RECORD' as const,
+   SEND_CHAT_MESSAGE: 'SEND_CHAT_MESSAGE' as const,
+   SEND_EMAIL: 'SEND_EMAIL' as const,
+   UPDATE_RECORD: 'UPDATE_RECORD' as const,
+   UPSERT_RECORD: 'UPSERT_RECORD' as const,
+   WAIT_FOR_EVENT: 'WAIT_FOR_EVENT' as const
 }
 
 export const enumWorkspaceActivationStatus = {
