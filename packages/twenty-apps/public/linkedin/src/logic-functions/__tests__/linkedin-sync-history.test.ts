@@ -22,6 +22,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
     set: async (key: string, value: unknown) => {
       mocks.kvStore.set(key, value);
     },
+    delete: async (key: string) => mocks.kvStore.delete(key),
   },
 }));
 

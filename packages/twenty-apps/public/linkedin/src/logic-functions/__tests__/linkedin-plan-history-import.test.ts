@@ -71,10 +71,17 @@ const mockChatPages = (pageSizes: number[]) => {
   );
 };
 
-const getEnqueuedJobs = (): {
-  jobId: string;
-  payload: { chatIds: string[] };
-}[] => mocks.enqueueJobs.mock.calls.flatMap(([input]) => input.jobs);
+const getEnqueuedJobIds = (): string[] =>
+  mocks.enqueueJobs.mock.calls.flatMap(([input]) =>
+    input.jobs.map((job: { jobId: string }) => job.jobId),
+  );
+
+const getStoredChatIds = (chunkIndex: number) =>
+  (
+    mocks.kvStore.get(
+      `linkedin-history-import-chats:connection-id:run-1:${chunkIndex}`,
+    ) as { id: string }[] | undefined
+  )?.map((chat) => chat.id);
 
 describe('linkedinPlanHistoryImportHandler', () => {
   beforeEach(() => {
@@ -88,7 +95,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
     mocks.listUnipileInboxIds.mockResolvedValue(['inbox-1']);
   });
 
-  it('queues one job per page of chats, most recent first', async () => {
+  it('stores each page of chats for the import jobs, most recent first', async () => {
     mockChatPages([20, 20, 5]);
 
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
@@ -96,15 +103,8 @@ describe('linkedinPlanHistoryImportHandler', () => {
       chunkCount: 3,
     });
 
-    const jobs = getEnqueuedJobs();
-
-    expect(jobs.map((job) => job.jobId)).toEqual([
-      'linkedin-history-chunk-run-1-0',
-      'linkedin-history-chunk-run-1-1',
-      'linkedin-history-chunk-run-1-2',
-    ]);
-    expect(jobs[0].payload.chatIds).toEqual(buildChatIds(20));
-    expect(jobs[2].payload.chatIds).toEqual(buildChatIds(5, 40));
+    expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
+    expect(getStoredChatIds(2)).toEqual(buildChatIds(5, 40));
     expect(mocks.kvStore.get(STATE_KEY)).toEqual({
       ...RUNNING_STATE,
       plannedChunkCount: 3,
@@ -112,6 +112,28 @@ describe('linkedinPlanHistoryImportHandler', () => {
       totalConversationCount: 45,
       chunkCount: 3,
     });
+  });
+
+  it('starts the import chain on the first page only', async () => {
+    mockChatPages([20, 20, 5]);
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(getEnqueuedJobIds()).toEqual(['linkedin-history-chunk-run-1-0']);
+  });
+
+  it('restarts the import chain when it caught up with the listing', async () => {
+    mocks.kvStore.set('linkedin-history-import-progress:connection-id:run-1', {
+      completedChunkCount: 1,
+      completedConversationCount: 20,
+      importedConversationCount: 12,
+      currentChunkProcessedCount: 0,
+    });
+    mockChatPages([20, 20]);
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(getEnqueuedJobIds()).toEqual(['linkedin-history-chunk-run-1-1']);
   });
 
   it('sorts each page by the date of its last message', async () => {
@@ -125,7 +147,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
-    expect(getEnqueuedJobs()[0].payload.chatIds).toEqual(['newer', 'older']);
+    expect(getStoredChatIds(0)).toEqual(['newer', 'older']);
   });
 
   it('shows the total LinkedIn reports while still listing', async () => {
@@ -151,16 +173,6 @@ describe('linkedinPlanHistoryImportHandler', () => {
       plannedConversationCount: 1,
       totalConversationCount: 340,
     });
-  });
-
-  it('queues the most recent page alone, then the next ones in bulk every 10', async () => {
-    mockChatPages(Array.from({ length: 25 }, () => 20));
-
-    await linkedinPlanHistoryImportHandler(PAYLOAD);
-
-    expect(
-      mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs.length),
-    ).toEqual([1, 10, 10, 4]);
   });
 
   it('hands over to a new planning job when its time runs out', async () => {
@@ -190,6 +202,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
         cursor: '+++',
         plannedChunkCount: 3,
         plannedConversationCount: 60,
+        reportedConversationCount: undefined,
       },
     });
     expect(mocks.kvStore.get(STATE_KEY)).toEqual({
@@ -205,13 +218,13 @@ describe('linkedinPlanHistoryImportHandler', () => {
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
-    expect(getEnqueuedJobs()).toEqual([]);
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({ status: 'COMPLETED', chunkCount: 0 }),
     );
   });
 
-  it('queues nothing for a cancelled run', async () => {
+  it('lists nothing for a cancelled run', async () => {
     mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
 
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({

@@ -1,1 +1,0 @@
-export const ENQUEUE_JOBS_MAX_BATCH_SIZE = 200;

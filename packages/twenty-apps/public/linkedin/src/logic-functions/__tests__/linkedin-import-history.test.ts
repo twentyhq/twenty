@@ -5,6 +5,7 @@ import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-impo
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   listMessageChannels: vi.fn(),
+  enqueueJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
   listUnipileChatMessages: vi.fn(),
   getUnipileChat: vi.fn(),
@@ -20,6 +21,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {},
   getConnection: mocks.getConnection,
   listMessageChannels: mocks.listMessageChannels,
+  enqueueJobs: mocks.enqueueJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
     set: async (key: string, value: unknown) => {
@@ -44,7 +46,9 @@ const { linkedinImportHistoryHandler } =
   await import('src/logic-functions/linkedin-import-history');
 
 const STATE_KEY = 'linkedin-history-import:connection-id';
-const CHUNK_KEY = 'linkedin-history-import-chunk:connection-id:run-1:2';
+const PROGRESS_KEY = 'linkedin-history-import-progress:connection-id:run-1';
+const getChatsKey = (chunkIndex: number) =>
+  `linkedin-history-import-chats:connection-id:run-1:${chunkIndex}`;
 
 const RUNNING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
@@ -52,30 +56,48 @@ const RUNNING_STATE: LinkedinHistoryImportState = {
   status: 'IMPORTING',
   importedConversationCount: 0,
   processedConversationCount: 0,
-  totalConversationCount: 60,
-  chunkCount: 3,
+  plannedChunkCount: 3,
   startedAt: '2026-10-30T00:00:00.000Z',
+};
+
+const PROGRESS_BEFORE_CHUNK_2 = {
+  completedChunkCount: 2,
+  completedConversationCount: 40,
+  importedConversationCount: 30,
+  currentChunkProcessedCount: 0,
 };
 
 const PAYLOAD = {
   connectedAccountId: 'connection-id',
   runId: 'run-1',
   chunkIndex: 2,
-  chatIds: ['chat-1', 'chat-2'],
 };
+
+const LISTED_CHAT_WITH_ATTENDEE = {
+  id: 'chat-1',
+  user: { id: 'user-1', public_identifier: 'ada' },
+};
+
+const LISTED_CHAT_WITHOUT_ATTENDEE = { id: 'chat-2' };
 
 describe('linkedinImportHistoryHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     mocks.kvStore.clear();
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
+    mocks.kvStore.set(PROGRESS_KEY, PROGRESS_BEFORE_CHUNK_2);
+    mocks.kvStore.set(getChatsKey(2), [
+      LISTED_CHAT_WITH_ATTENDEE,
+      LISTED_CHAT_WITHOUT_ATTENDEE,
+    ]);
     mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
     mocks.listMessageChannels.mockResolvedValue([
       { id: 'channel-id', handle: 'linkedin.com/in/me' },
     ]);
     mocks.getUnipileChat.mockImplementation(async ({ chatId }) => ({
       id: chatId,
-      attendees: [],
+      user: { id: `user-${chatId}`, public_identifier: chatId },
     }));
     mocks.listUnipileChatMessages.mockResolvedValue([{ id: 'message' }]);
     mocks.ingestLinkedinMessages
@@ -92,34 +114,83 @@ describe('linkedinImportHistoryHandler', () => {
       });
   });
 
-  it('imports the chats of its chunk and stores how many were imported', async () => {
-    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const result = await linkedinImportHistoryHandler(PAYLOAD);
-
-    expect(mocks.ingestLinkedinMessages).toHaveBeenCalledTimes(2);
-    expect(result).toEqual({
+  it('imports its page and adds it to the run progress', async () => {
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
       status: 'COMPLETED',
       importedConversationCount: 1,
     });
-    expect(mocks.kvStore.get(CHUNK_KEY)).toEqual({
-      importedConversationCount: 1,
+
+    expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-2',
     });
-    expect(
-      mocks.kvStore.get(
-        'linkedin-history-import-chunk-progress:connection-id:run-1:2',
-      ),
-    ).toBe(2);
-    expect(log).toHaveBeenCalledWith(
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
+      completedChunkCount: 3,
+      completedConversationCount: 42,
+      importedConversationCount: 31,
+      currentChunkProcessedCount: 0,
+    });
+    expect(console.log).toHaveBeenCalledWith(
       expect.stringMatching(
         /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, skipped 1 without contact/,
       ),
     );
   });
 
+  it('queues the next page once it is listed', async () => {
+    mocks.kvStore.set(getChatsKey(3), [{ id: 'chat-3' }]);
+
+    await linkedinImportHistoryHandler(PAYLOAD);
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: 'linkedin-history-chunk-run-1-3',
+            payload: { ...PAYLOAD, chunkIndex: 3 },
+          },
+        ],
+      }),
+    );
+  });
+
+  it('leaves the next page to the planning job when it is not listed yet', async () => {
+    await linkedinImportHistoryHandler(PAYLOAD);
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('records progress after each chat', async () => {
+    mocks.listUnipileChatMessages
+      .mockResolvedValueOnce([{ id: 'message' }])
+      .mockImplementationOnce(async () => {
+        expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
+          ...PROGRESS_BEFORE_CHUNK_2,
+          currentChunkProcessedCount: 1,
+        });
+
+        return [];
+      });
+
+    await linkedinImportHistoryHandler(PAYLOAD);
+  });
+
+  it('skips a page that is not next in line', async () => {
+    mocks.kvStore.set(PROGRESS_KEY, {
+      ...PROGRESS_BEFORE_CHUNK_2,
+      completedChunkCount: 3,
+    });
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'SKIPPED',
+    });
+    expect(mocks.ingestLinkedinMessages).not.toHaveBeenCalled();
+  });
+
   it.each([
     ['a cancelled run', { ...RUNNING_STATE, status: 'CANCELLED' }],
     ['a newer run', { ...RUNNING_STATE, runId: 'run-2' }],
-  ])('skips its chunk for %s', async (_, state) => {
+  ])('skips its page for %s', async (_, state) => {
     mocks.kvStore.set(STATE_KEY, state);
 
     await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
@@ -137,10 +208,10 @@ describe('linkedinImportHistoryHandler', () => {
       (error: Error) =>
         error.constructor.name === 'RetryableLogicFunctionError',
     );
-    expect(mocks.kvStore.has(CHUNK_KEY)).toBe(false);
+    expect(mocks.kvStore.get(PROGRESS_KEY)).not.toHaveProperty('error');
   });
 
-  it('stores the error of a chunk Twenty will not retry', async () => {
+  it('stores the error of a page Twenty will not retry', async () => {
     mocks.getUnipileChat.mockRejectedValue({
       status: 400,
       title: 'Invalid querystring',
@@ -149,8 +220,9 @@ describe('linkedinImportHistoryHandler', () => {
     await expect(
       linkedinImportHistoryHandler(PAYLOAD, { retryCount: 0, maxRetries: 3 }),
     ).rejects.toThrow('Invalid querystring');
-    expect(mocks.kvStore.get(CHUNK_KEY)).toEqual({
-      importedConversationCount: 0,
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
+      ...PROGRESS_BEFORE_CHUNK_2,
+      currentChunkProcessedCount: 1,
       error: { code: 'UNKNOWN', message: 'Invalid querystring' },
     });
   });

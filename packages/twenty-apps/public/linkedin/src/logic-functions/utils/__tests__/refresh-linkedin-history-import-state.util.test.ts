@@ -22,19 +22,23 @@ const { refreshLinkedinHistoryImportState } =
   await import('src/logic-functions/utils/refresh-linkedin-history-import-state.util');
 
 const STATE_KEY = 'linkedin-history-import:connection-id';
+const PROGRESS_KEY = 'linkedin-history-import-progress:connection-id:run-1';
 
-const getChunkKey = (chunkIndex: number) =>
-  `linkedin-history-import-chunk:connection-id:run-1:${chunkIndex}`;
-
-const PLANNED_STATE: LinkedinHistoryImportState = {
+const LISTING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
   importPolicy: 'ALL',
   status: 'IMPORTING',
   importedConversationCount: 0,
   processedConversationCount: 0,
-  totalConversationCount: 45,
-  chunkCount: 3,
+  plannedChunkCount: 3,
+  plannedConversationCount: 60,
   startedAt: '2026-10-30T00:00:00.000Z',
+};
+
+const LISTED_STATE: LinkedinHistoryImportState = {
+  ...LISTING_STATE,
+  chunkCount: 3,
+  totalConversationCount: 45,
 };
 
 const mockJobStates = (states: Record<string, string>) =>
@@ -48,54 +52,73 @@ const mockJobStates = (states: Record<string, string>) =>
       })),
   );
 
+const setProgress = (progress: Record<string, unknown>) =>
+  mocks.kvStore.set(PROGRESS_KEY, {
+    completedChunkCount: 0,
+    completedConversationCount: 0,
+    importedConversationCount: 0,
+    currentChunkProcessedCount: 0,
+    ...progress,
+  });
+
 describe('refreshLinkedinHistoryImportState', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.kvStore.clear();
-    mocks.kvStore.set(STATE_KEY, PLANNED_STATE);
+    mocks.kvStore.set(STATE_KEY, LISTING_STATE);
+    mockJobStates({
+      'linkedin-history-plan-run-1-0': 'ACTIVE',
+      'linkedin-history-chunk-run-1-1': 'ACTIVE',
+    });
   });
 
-  it('counts the conversations of finished chunks while others run', async () => {
-    mockJobStates({
-      'linkedin-history-chunk-run-1-0': 'COMPLETED',
-      'linkedin-history-chunk-run-1-1': 'ACTIVE',
-      'linkedin-history-chunk-run-1-2': 'PRIORITIZED',
+  it('counts the chats of finished pages and of the page being imported', async () => {
+    setProgress({
+      completedChunkCount: 1,
+      completedConversationCount: 20,
+      importedConversationCount: 14,
+      currentChunkProcessedCount: 7,
     });
 
     await expect(
       refreshLinkedinHistoryImportState('connection-id'),
-    ).resolves.toEqual({ ...PLANNED_STATE, processedConversationCount: 20 });
+    ).resolves.toEqual({
+      ...LISTING_STATE,
+      processedConversationCount: 27,
+      importedConversationCount: 14,
+    });
   });
 
-  it('completes the run once every chunk finished and clears their results', async () => {
-    mockJobStates({
-      'linkedin-history-chunk-run-1-0': 'COMPLETED',
-      'linkedin-history-chunk-run-1-1': 'COMPLETED',
+  it('completes the run once every listed page is imported and clears its data', async () => {
+    mocks.kvStore.set(STATE_KEY, LISTED_STATE);
+    mocks.kvStore.set(
+      'linkedin-history-import-chats:connection-id:run-1:2',
+      [],
+    );
+    setProgress({
+      completedChunkCount: 3,
+      completedConversationCount: 45,
+      importedConversationCount: 31,
     });
-    mocks.kvStore.set(getChunkKey(0), { importedConversationCount: 12 });
-    mocks.kvStore.set(getChunkKey(1), { importedConversationCount: 7 });
-    mocks.kvStore.set(getChunkKey(2), { importedConversationCount: 1 });
 
     await expect(
       refreshLinkedinHistoryImportState('connection-id'),
     ).resolves.toEqual(
       expect.objectContaining({
         status: 'COMPLETED',
-        importedConversationCount: 20,
+        importedConversationCount: 31,
         processedConversationCount: 45,
       }),
     );
-    expect(mocks.kvStore.has(getChunkKey(0))).toBe(false);
+    expect(mocks.kvStore.has(PROGRESS_KEY)).toBe(false);
+    expect(
+      mocks.kvStore.has('linkedin-history-import-chats:connection-id:run-1:2'),
+    ).toBe(false);
   });
 
-  it('fails the run with the error of a failed chunk', async () => {
-    mockJobStates({
-      'linkedin-history-chunk-run-1-0': 'COMPLETED',
-      'linkedin-history-chunk-run-1-1': 'FAILED',
-      'linkedin-history-chunk-run-1-2': 'PRIORITIZED',
-    });
-    mocks.kvStore.set(getChunkKey(1), {
-      importedConversationCount: 0,
+  it('fails the run with the error a page stored', async () => {
+    setProgress({
+      completedChunkCount: 1,
       error: { code: 'AUTH_FAILED', message: 'Signed out' },
     });
 
@@ -112,61 +135,24 @@ describe('refreshLinkedinHistoryImportState', () => {
     );
   });
 
-  it('keeps a run importing while its planning job is queued', async () => {
-    const planningState = {
-      ...PLANNED_STATE,
-      totalConversationCount: undefined,
-      chunkCount: undefined,
-    };
-
-    mocks.kvStore.set(STATE_KEY, planningState);
-    mockJobStates({ 'linkedin-history-plan-run-1-0': 'ACTIVE' });
-
-    await expect(
-      refreshLinkedinHistoryImportState('connection-id'),
-    ).resolves.toEqual(planningState);
-  });
-
-  it('counts finished chunks and the chats running chunks already processed', async () => {
-    mocks.kvStore.set(STATE_KEY, {
-      ...PLANNED_STATE,
-      totalConversationCount: undefined,
-      chunkCount: undefined,
-      plannedChunkCount: 3,
-      plannedConversationCount: 60,
-    });
-    mocks.kvStore.set(
-      'linkedin-history-import-chunk-progress:connection-id:run-1:1',
-      7,
-    );
-    mocks.kvStore.set(
-      'linkedin-history-import-chunk-progress:connection-id:run-1:2',
-      5,
-    );
+  it('fails the run when the page being imported failed', async () => {
+    setProgress({ completedChunkCount: 1 });
     mockJobStates({
       'linkedin-history-plan-run-1-0': 'ACTIVE',
-      'linkedin-history-chunk-run-1-0': 'COMPLETED',
-      'linkedin-history-chunk-run-1-1': 'ACTIVE',
-      'linkedin-history-chunk-run-1-2': 'PRIORITIZED',
+      'linkedin-history-chunk-run-1-1': 'FAILED',
     });
 
     await expect(
       refreshLinkedinHistoryImportState('connection-id'),
     ).resolves.toEqual(
       expect.objectContaining({
-        status: 'IMPORTING',
-        processedConversationCount: 27,
-        totalConversationCount: undefined,
+        status: 'FAILED',
+        error: { code: 'UNKNOWN', message: 'Boom' },
       }),
     );
   });
 
   it('fails a run whose planning job is gone', async () => {
-    mocks.kvStore.set(STATE_KEY, {
-      ...PLANNED_STATE,
-      totalConversationCount: undefined,
-      chunkCount: undefined,
-    });
     mockJobStates({});
 
     await expect(
@@ -180,7 +166,7 @@ describe('refreshLinkedinHistoryImportState', () => {
   });
 
   it('leaves a finished run as it is', async () => {
-    mocks.kvStore.set(STATE_KEY, { ...PLANNED_STATE, status: 'CANCELLED' });
+    mocks.kvStore.set(STATE_KEY, { ...LISTING_STATE, status: 'CANCELLED' });
 
     await refreshLinkedinHistoryImportState('connection-id');
 

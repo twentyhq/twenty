@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   getConnection,
-  kv,
   listMessageChannels,
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
@@ -10,12 +9,17 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { type LinkedinHistoryImportChunkResult } from 'src/logic-functions/types/linkedin-history-import-chunk-result.type';
+import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/linkedin-history-import-progress.type';
 import { type LinkedinImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-import-history-job-payload.type';
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
-import { getLinkedinHistoryImportChunkKvKey } from 'src/logic-functions/utils/get-linkedin-history-import-chunk-kv-key.util';
+import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
+import {
+  getLinkedinHistoryImportChunkChats,
+  getLinkedinHistoryImportProgress,
+  saveLinkedinHistoryImportProgress,
+} from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
@@ -23,22 +27,24 @@ import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 import { listUnipileChatMessages } from 'src/unipile/utils/list-unipile-chat-messages.util';
 
 type LinkedinImportHistoryResult = {
-  status: 'CANCELLED' | 'COMPLETED';
+  status: 'CANCELLED' | 'SKIPPED' | 'COMPLETED';
   importedConversationCount?: number;
 };
 
-const saveChunkResult = async ({
+const saveProgressIfActive = async ({
   payload,
-  result,
+  progress,
 }: {
   payload: LinkedinImportHistoryJobPayload;
-  result: LinkedinHistoryImportChunkResult;
-}): Promise<void> => {
+  progress: LinkedinHistoryImportProgress;
+}): Promise<boolean> => {
   if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
-    return;
+    return false;
   }
 
-  await kv.set(getLinkedinHistoryImportChunkKvKey(payload), result);
+  await saveLinkedinHistoryImportProgress({ ...payload, progress });
+
+  return true;
 };
 
 export const linkedinImportHistoryHandler = async (
@@ -49,7 +55,14 @@ export const linkedinImportHistoryHandler = async (
     return { status: 'CANCELLED' };
   }
 
-  const { connectedAccountId } = payload;
+  const { connectedAccountId, runId, chunkIndex } = payload;
+  const startProgress = await getLinkedinHistoryImportProgress(payload);
+  const chats = await getLinkedinHistoryImportChunkChats(payload);
+
+  if (startProgress.completedChunkCount !== chunkIndex || chats === null) {
+    return { status: 'SKIPPED' };
+  }
+
   const startedAt = Date.now();
   let importedConversationCount = 0;
   let processedChatCount = 0;
@@ -63,7 +76,6 @@ export const linkedinImportHistoryHandler = async (
     NO_MESSAGES: 0,
     NO_CONTACT: 0,
   };
-  const lastMessageTimestamps: string[] = [];
 
   try {
     const connection = await getConnection(connectedAccountId);
@@ -78,15 +90,14 @@ export const linkedinImportHistoryHandler = async (
 
     const settings = await getLinkedinSettings(connectedAccountId);
 
-    for (const chatId of payload.chatIds) {
-      const chat = await getUnipileChat({
-        accountId: unipileAccountId,
-        chatId,
-      });
-
-      if (isNonEmptyString(chat.last_message_timestamp)) {
-        lastMessageTimestamps.push(chat.last_message_timestamp);
-      }
+    for (const listedChat of chats) {
+      const chat =
+        getLinkedinChatCounterparts(listedChat).length > 0
+          ? listedChat
+          : await getUnipileChat({
+              accountId: unipileAccountId,
+              chatId: listedChat.id,
+            });
 
       const ingestResult = await ingestLinkedinMessages({
         channel,
@@ -99,7 +110,7 @@ export const linkedinImportHistoryHandler = async (
         ),
         messages: await listUnipileChatMessages({
           accountId: unipileAccountId,
-          chatId,
+          chatId: chat.id,
         }),
       });
 
@@ -117,35 +128,65 @@ export const linkedinImportHistoryHandler = async (
 
       processedChatCount += 1;
 
-      await kv.set(
-        getLinkedinHistoryImportChunkKvKey({ ...payload, kind: 'progress' }),
-        processedChatCount,
-      );
+      if (
+        !(await saveProgressIfActive({
+          payload,
+          progress: {
+            ...startProgress,
+            currentChunkProcessedCount: processedChatCount,
+          },
+        }))
+      ) {
+        return { status: 'CANCELLED' };
+      }
     }
   } catch (error) {
     return failLinkedinHistoryImportJob({
       error,
       context,
-      onFinalFailure: (importError) =>
-        saveChunkResult({
+      onFinalFailure: async (importError) => {
+        await saveProgressIfActive({
           payload,
-          result: { importedConversationCount, error: importError },
-        }),
+          progress: {
+            ...startProgress,
+            currentChunkProcessedCount: processedChatCount,
+            error: importError,
+          },
+        });
+      },
     });
   }
 
-  await saveChunkResult({ payload, result: { importedConversationCount } });
-
-  const sortedTimestamps = [...lastMessageTimestamps].sort();
+  const isActive = await saveProgressIfActive({
+    payload,
+    progress: {
+      completedChunkCount: chunkIndex + 1,
+      completedConversationCount:
+        startProgress.completedConversationCount + chats.length,
+      importedConversationCount:
+        startProgress.importedConversationCount + importedConversationCount,
+      currentChunkProcessedCount: 0,
+    },
+  });
 
   console.log(
-    `[linkedin] history run ${payload.runId} chunk ${payload.chunkIndex}: ` +
-      `${payload.chatIds.length} chats (last messages ${sortedTimestamps[sortedTimestamps.length - 1] ?? '-'} to ${sortedTimestamps[0] ?? '-'}), ` +
+    `[linkedin] history run ${runId} chunk ${chunkIndex}: ` +
+      `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
       `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ` +
       `skipped ${skippedChatCounts.NO_CONTACT} without contact, ${skippedChatCounts.GROUP_CHATS_OFF} group chats, ${skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );
+
+  if (!isActive) {
+    return { status: 'CANCELLED' };
+  }
+
+  const nextChunk = { connectedAccountId, runId, chunkIndex: chunkIndex + 1 };
+
+  if ((await getLinkedinHistoryImportChunkChats(nextChunk)) !== null) {
+    await enqueueLinkedinImportHistoryJob(nextChunk);
+  }
 
   return { status: 'COMPLETED', importedConversationCount };
 };
@@ -154,7 +195,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-import-history',
   description:
-    'Imports one chunk of past LinkedIn conversations of a connection.',
+    'Imports one page of past LinkedIn conversations of a connection, then queues the next page once it is listed, so one page is imported at a time.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinImportHistoryHandler,
 });

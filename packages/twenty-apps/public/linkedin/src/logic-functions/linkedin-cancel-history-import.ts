@@ -5,10 +5,9 @@ import { isDefined } from 'twenty-sdk/utils';
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
 import { LINKEDIN_CANCEL_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildLinkedinSettingsView } from 'src/logic-functions/utils/build-linkedin-settings-view.util';
-import { deleteLinkedinHistoryImportChunkResults } from 'src/logic-functions/utils/delete-linkedin-history-import-chunk-results.util';
 import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-linkedin-connection.util';
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
-import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
+import { finishLinkedinHistoryImport } from 'src/logic-functions/utils/refresh-linkedin-history-import-state.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
 export const linkedinCancelHistoryImportHandler = async (
@@ -24,19 +23,13 @@ export const linkedinCancelHistoryImportHandler = async (
   const state = await getLinkedinHistoryImportState(connection.id);
 
   if (state?.status === 'IMPORTING') {
-    const cancelledState = {
-      ...state,
-      status: 'CANCELLED' as const,
-      finishedAt: new Date().toISOString(),
-    };
-
-    await saveLinkedinHistoryImportState({
+    await finishLinkedinHistoryImport({
       connectedAccountId: connection.id,
-      state: cancelledState,
-    });
-    await deleteLinkedinHistoryImportChunkResults({
-      connectedAccountId: connection.id,
-      state: cancelledState,
+      state: {
+        ...state,
+        status: 'CANCELLED',
+        finishedAt: new Date().toISOString(),
+      },
     });
   }
 

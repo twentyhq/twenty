@@ -7,59 +7,31 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { ENQUEUE_JOBS_MAX_BATCH_SIZE } from 'src/constants/enqueue-jobs-max-batch-size.constant';
 import { LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/linkedin-history-import-chats-per-job.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
-import {
-  LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER,
-  LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
-} from 'src/constants/universal-identifiers';
-import { type LinkedinImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-import-history-job-payload.type';
+import { LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinPlanHistoryImportJobPayload } from 'src/logic-functions/types/linkedin-plan-history-import-job-payload.type';
+import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
+import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import {
-  getLinkedinImportHistoryJobId,
-  getLinkedinPlanHistoryImportJobId,
-} from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
+  getLinkedinHistoryImportProgress,
+  saveLinkedinHistoryImportChunkChats,
+} from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
+import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
-import { sortUnipileChatsByLastMessage } from 'src/unipile/utils/sort-unipile-chats-by-last-message.util';
 import { listUnipileInboxIds } from 'src/unipile/utils/list-unipile-inbox-ids.util';
-
-const LINKEDIN_IMPORT_HISTORY_RETRY_LIMIT = 3;
+import { sortUnipileChatsByLastMessage } from 'src/unipile/utils/sort-unipile-chats-by-last-message.util';
 
 const LINKEDIN_PLAN_HISTORY_IMPORT_RETRY_LIMIT = 3;
-
-const LINKEDIN_PLAN_HISTORY_IMPORT_FLUSH_CHUNK_COUNT = 10;
 
 const LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS = 10 * 60 * 1000;
 
 type LinkedinPlanHistoryImportResult = {
   status: 'CANCELLED' | 'CONTINUED' | 'PLANNED';
   chunkCount?: number;
-};
-
-type LinkedinImportHistoryJob = {
-  jobId: string;
-  payload: LinkedinImportHistoryJobPayload;
-};
-
-const enqueueImportHistoryJobs = async (
-  jobs: LinkedinImportHistoryJob[],
-): Promise<void> => {
-  for (
-    let batchStart = 0;
-    batchStart < jobs.length;
-    batchStart += ENQUEUE_JOBS_MAX_BATCH_SIZE
-  ) {
-    await enqueueJobs({
-      logicFunctionUniversalIdentifier:
-        LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER,
-      jobs: jobs.slice(batchStart, batchStart + ENQUEUE_JOBS_MAX_BATCH_SIZE),
-      retryLimit: LINKEDIN_IMPORT_HISTORY_RETRY_LIMIT,
-    });
-  }
 };
 
 const continuePlanning = async (
@@ -90,6 +62,58 @@ const continuePlanning = async (
   return { status: 'CONTINUED' };
 };
 
+const planChunk = async ({
+  payload,
+  chunkIndex,
+  chats,
+  conversationCount,
+  reportedConversationCount,
+}: {
+  payload: LinkedinPlanHistoryImportJobPayload;
+  chunkIndex: number;
+  chats: UnipileChat[];
+  conversationCount: number;
+  reportedConversationCount: number | undefined;
+}): Promise<boolean> => {
+  const { connectedAccountId, runId } = payload;
+  const state = await getActiveLinkedinHistoryImportState(payload);
+
+  if (state === null) {
+    return false;
+  }
+
+  await saveLinkedinHistoryImportChunkChats({
+    connectedAccountId,
+    runId,
+    chunkIndex,
+    chats,
+  });
+  await saveLinkedinHistoryImportState({
+    connectedAccountId,
+    state: {
+      ...state,
+      plannedChunkCount: chunkIndex + 1,
+      plannedConversationCount: conversationCount,
+      ...(isDefined(reportedConversationCount)
+        ? { totalConversationCount: reportedConversationCount }
+        : {}),
+    },
+  });
+
+  const { completedChunkCount } =
+    await getLinkedinHistoryImportProgress(payload);
+
+  if (completedChunkCount === chunkIndex) {
+    await enqueueLinkedinImportHistoryJob({
+      connectedAccountId,
+      runId,
+      chunkIndex,
+    });
+  }
+
+  return true;
+};
+
 const finishPlanning = async ({
   payload,
   chunkCount,
@@ -117,6 +141,10 @@ const finishPlanning = async ({
     },
   });
 
+  console.log(
+    `[linkedin] history run ${payload.runId}: listing done, ${conversationCount} conversations in ${chunkCount} pages`,
+  );
+
   return { status: 'PLANNED', chunkCount };
 };
 
@@ -140,49 +168,12 @@ const planHistoryImport = async (
   let chunkCount = payload.plannedChunkCount ?? 0;
   let conversationCount = payload.plannedConversationCount ?? 0;
   let reportedConversationCount = payload.reportedConversationCount;
-  let pendingJobs: LinkedinImportHistoryJob[] = [];
-
-  const flushPendingJobs = async (): Promise<boolean> => {
-    const state = await getActiveLinkedinHistoryImportState(payload);
-
-    if (state === null) {
-      return false;
-    }
-
-    await enqueueImportHistoryJobs(pendingJobs);
-
-    if (pendingJobs.length > 0) {
-      console.log(
-        `[linkedin] history run ${runId}: queued chunks ${pendingJobs[0].payload.chunkIndex} to ${chunkCount - 1}, ${conversationCount} conversations listed${isDefined(reportedConversationCount) ? ` of ${reportedConversationCount}` : ''}`,
-      );
-    }
-
-    pendingJobs = [];
-
-    await saveLinkedinHistoryImportState({
-      connectedAccountId,
-      state: {
-        ...state,
-        plannedChunkCount: chunkCount,
-        plannedConversationCount: conversationCount,
-        ...(isDefined(reportedConversationCount)
-          ? { totalConversationCount: reportedConversationCount }
-          : {}),
-      },
-    });
-
-    return true;
-  };
 
   while (inboxIndex < inboxIds.length) {
     if (
       Date.now() - startedAt >
       LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS
     ) {
-      if (!(await flushPendingJobs())) {
-        return { status: 'CANCELLED' };
-      }
-
       return continuePlanning({
         connectedAccountId,
         runId,
@@ -217,17 +208,21 @@ const planHistoryImport = async (
     );
 
     if (chats.length > 0) {
-      pendingJobs.push({
-        jobId: getLinkedinImportHistoryJobId({ runId, chunkIndex: chunkCount }),
-        payload: {
-          connectedAccountId,
-          runId,
-          chunkIndex: chunkCount,
-          chatIds: chats.map((chat) => chat.id),
-        },
-      });
-      chunkCount += 1;
       conversationCount += chats.length;
+
+      if (
+        !(await planChunk({
+          payload,
+          chunkIndex: chunkCount,
+          chats,
+          conversationCount,
+          reportedConversationCount,
+        }))
+      ) {
+        return { status: 'CANCELLED' };
+      }
+
+      chunkCount += 1;
     }
 
     if (
@@ -240,19 +235,6 @@ const planHistoryImport = async (
     } else {
       cursor = page.nextCursor;
     }
-
-    if (
-      (chunkCount === 1 ||
-        pendingJobs.length >= LINKEDIN_PLAN_HISTORY_IMPORT_FLUSH_CHUNK_COUNT) &&
-      pendingJobs.length > 0 &&
-      !(await flushPendingJobs())
-    ) {
-      return { status: 'CANCELLED' };
-    }
-  }
-
-  if (!(await flushPendingJobs())) {
-    return { status: 'CANCELLED' };
   }
 
   return finishPlanning({ payload, chunkCount, conversationCount });
@@ -295,7 +277,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the past LinkedIn conversations of a connection, most recent first, queues one import job per chunk of conversations in bulk and hands over to a new planning job when its time runs out.',
+    'Lists the past LinkedIn conversations of a connection, most recent first, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });
