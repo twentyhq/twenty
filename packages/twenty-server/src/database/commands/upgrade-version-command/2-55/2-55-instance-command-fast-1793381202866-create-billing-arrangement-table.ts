@@ -8,11 +8,11 @@ export class CreateBillingArrangementTableFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const isBillingSchemaPresent = await queryRunner.query(
+    const billingCustomerTables = await queryRunner.query(
       `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
     );
 
-    if (isBillingSchemaPresent.length === 0) {
+    if (billingCustomerTables.length === 0) {
       return;
     }
 

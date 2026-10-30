@@ -6,11 +6,19 @@ import { ONE_TIME_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/bill
 import { type BillingArrangementPeriod } from 'src/engine/core-modules/billing/types/billing-arrangement-period.type';
 import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
 
-const isBefore = (date: Date, endDate: Date | null): boolean =>
-  !isDefined(endDate) || date < endDate;
+const isBefore = ({
+  date,
+  endDate,
+}: {
+  date: Date;
+  endDate: Date | null;
+}): boolean => !isDefined(endDate) || date < endDate;
 
 const isNeverActive = (period: BillingArrangementPeriod): boolean =>
-  !isBefore(period.startsAt, getBillingArrangementEndDate(period));
+  !isBefore({
+    date: period.startsAt,
+    endDate: getBillingArrangementEndDate(period),
+  });
 
 export const findOverlappingBillingArrangement = <
   TArrangement extends BillingArrangementPeriod,
@@ -34,10 +42,10 @@ export const findOverlappingBillingArrangement = <
     (existingArrangement) =>
       existingArrangement.type === arrangement.type &&
       !isNeverActive(existingArrangement) &&
-      isBefore(existingArrangement.startsAt, endDate) &&
-      isBefore(
-        arrangement.startsAt,
-        getBillingArrangementEndDate(existingArrangement),
-      ),
+      isBefore({ date: existingArrangement.startsAt, endDate }) &&
+      isBefore({
+        date: arrangement.startsAt,
+        endDate: getBillingArrangementEndDate(existingArrangement),
+      }),
   );
 };
