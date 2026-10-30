@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 
 const mocks = vi.hoisted(() => ({
@@ -45,7 +46,8 @@ const DAPHNE = {
 };
 
 const buildMessageEvent = (
-  payload: Record<string, unknown>,
+  payload: Pick<UnipileMessage, 'sender_id' | 'is_sender'> &
+    Partial<UnipileMessage>,
 ): UnipileWebhookEvent => ({
   id: 'evt_1',
   created_at: '2026-10-29T07:44:08.382Z',

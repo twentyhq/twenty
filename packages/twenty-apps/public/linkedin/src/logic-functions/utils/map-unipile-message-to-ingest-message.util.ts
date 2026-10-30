@@ -9,6 +9,34 @@ import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-link
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
+const buildLinkedinMessageParticipants = ({
+  message,
+  channelHandle,
+  counterparts,
+}: {
+  message: UnipileMessage;
+  channelHandle: string;
+  counterparts: UnipileUser[];
+}): IngestMessageParticipant[] => {
+  if (message.is_sender) {
+    return [
+      { role: 'FROM', handle: channelHandle },
+      ...counterparts.map((user) =>
+        buildLinkedinParticipant({ role: 'TO', user }),
+      ),
+    ];
+  }
+
+  const sender: IngestMessageParticipant = isDefined(message.sender)
+    ? buildLinkedinParticipant({ role: 'FROM', user: message.sender })
+    : {
+        role: 'FROM',
+        handle: buildLinkedinProfileHandle({ id: message.sender_id }),
+      };
+
+  return [sender, { role: 'TO', handle: channelHandle }];
+};
+
 export const mapUnipileMessageToIngestMessage = ({
   message,
   channelHandle,
@@ -22,32 +50,15 @@ export const mapUnipileMessageToIngestMessage = ({
     return null;
   }
 
-  const channelParticipant = (
-    role: IngestMessageParticipant['role'],
-  ): IngestMessageParticipant => ({ role, handle: channelHandle });
-
-  const participants: IngestMessageParticipant[] = message.is_sender
-    ? [
-        channelParticipant('FROM'),
-        ...counterparts.map((user) =>
-          buildLinkedinParticipant({ role: 'TO', user }),
-        ),
-      ]
-    : [
-        isDefined(message.sender)
-          ? buildLinkedinParticipant({ role: 'FROM', user: message.sender })
-          : {
-              role: 'FROM',
-              handle: buildLinkedinProfileHandle({ id: message.sender_id }),
-            },
-        channelParticipant('TO'),
-      ];
-
   return {
     externalId: message.id,
     threadExternalId: message.chat_id,
     text: message.text ?? '',
     receivedAt: new Date(message.timestamp),
-    participants,
+    participants: buildLinkedinMessageParticipants({
+      message,
+      channelHandle,
+      counterparts,
+    }),
   };
 };

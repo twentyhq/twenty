@@ -60,7 +60,7 @@ const LINKEDIN_EVENT: UnipileWebhookEvent = {
   created_at: '2026-10-28T10:00:00.000Z',
   account_id: 'acc_1',
   account_provider: 'linkedin',
-  type: 'message.new',
+  type: 'account.status.disconnected',
   payload: {},
 };
 

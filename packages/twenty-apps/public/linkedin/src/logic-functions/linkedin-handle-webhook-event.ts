@@ -81,12 +81,15 @@ export const linkedinHandleWebhookEventHandler = async (
     return { handled: false, reason: 'Unknown LinkedIn account' };
   }
 
+  // Unipile also sends types the union does not list; they reach `default`.
+  const eventType: string = event.type;
+
   switch (event.type) {
     case 'message.new':
       return ingestUnipileMessage({
         connectedAccountId: connection.id,
         unipileAccountId: event.account_id,
-        message: event.payload as UnipileMessage,
+        message: event.payload,
       });
     case 'account.status.disconnected':
     case 'account.status.errored':
@@ -97,7 +100,7 @@ export const linkedinHandleWebhookEventHandler = async (
 
       return { handled: true };
     default:
-      return { handled: false, reason: `Unhandled event ${event.type}` };
+      return { handled: false, reason: `Unhandled event ${eventType}` };
   }
 };
 
