@@ -5,9 +5,23 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AnimatedCount } from 'src/front-components/components/AnimatedCount';
 import { formatLinkedinSyncProgressLabel } from 'src/front-components/utils/format-linkedin-sync-progress-label.util';
 import { getLinkedinHistoryImportErrorReason } from 'src/front-components/utils/get-linkedin-history-import-error-reason.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledCaption = styled.p`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  margin: 0;
+  text-align: right;
+`;
 
 const StyledRow = styled.div`
   align-items: center;
@@ -53,52 +67,56 @@ export const LinkedinSyncButton = ({
     !isDefined(historyImport.chunkCount) &&
     !isDefined(historyImport.totalConversationCount);
 
-  const label = isListing
-    ? t('Listing conversations ({count})', {
-        count: historyImport.plannedConversationCount ?? 0,
-      })
-    : isRunning
-      ? isDefined(progress)
-        ? t('Syncing {progress}', {
-            progress: formatLinkedinSyncProgressLabel(progress),
-          })
-        : t('Syncing…')
-      : hasFailed
-        ? t('Retry')
-        : t('Sync now');
+  const label = isRunning
+    ? isDefined(progress)
+      ? t('Syncing {progress}', {
+          progress: formatLinkedinSyncProgressLabel(progress),
+        })
+      : t('Syncing…')
+    : hasFailed
+      ? t('Retry')
+      : t('Sync now');
 
   return (
-    <StyledRow>
-      {hasFailed && (
-        <StyledError role="alert">
-          <StyledErrorTitle>
-            {t('The import stopped before finishing.')}
-          </StyledErrorTitle>{' '}
-          {getLinkedinHistoryImportErrorReason(historyImport.error)}
-        </StyledError>
-      )}
-      {isRunning && (
+    <StyledContainer>
+      <StyledRow>
+        {hasFailed && (
+          <StyledError role="alert">
+            <StyledErrorTitle>
+              {t('The import stopped before finishing.')}
+            </StyledErrorTitle>{' '}
+            {getLinkedinHistoryImportErrorReason(historyImport.error)}
+          </StyledError>
+        )}
+        {isRunning && (
+          <Button
+            variant="outline"
+            size="md"
+            onClick={onCancel}
+            loading={isCancelling}
+            disabled={isCancelling}
+          >
+            {t('Cancel')}
+          </Button>
+        )}
         <Button
-          variant="outline"
+          startIcon={<IconRefresh />}
+          variant="solid"
+          color="accent"
           size="md"
-          onClick={onCancel}
-          loading={isCancelling}
-          disabled={isCancelling}
+          onClick={onSync}
+          loading={isRunning || isStarting}
+          loadingPosition="end"
         >
-          {t('Cancel')}
+          {label}
         </Button>
+      </StyledRow>
+      {isListing && (
+        <StyledCaption aria-live="polite">
+          {t('Listing conversations')} (
+          <AnimatedCount count={historyImport.plannedConversationCount ?? 0} />)
+        </StyledCaption>
       )}
-      <Button
-        startIcon={<IconRefresh />}
-        variant="solid"
-        color="accent"
-        size="md"
-        onClick={onSync}
-        loading={isRunning || isStarting}
-        loadingPosition="end"
-      >
-        {label}
-      </Button>
-    </StyledRow>
+    </StyledContainer>
   );
 };
