@@ -9,11 +9,10 @@ const isTwentyConnectBinding = (
   value: unknown,
 ): value is TwentyConnectBinding =>
   isDefined(value) &&
-  typeof (value as TwentyConnectBinding).fetch === 'function';
+  typeof value === 'object' &&
+  'fetch' in value &&
+  typeof value.fetch === 'function';
 
-// Enterprise licensing moved to the twenty-connect Worker. Deployed servers
-// keep calling twenty.com/api/enterprise, so these routes forward there; with
-// forwarding off (rollback), the local handlers still answer.
 export const forwardToTwentyConnect = async (
   request: Request,
 ): Promise<Response | null> => {
@@ -21,8 +20,20 @@ export const forwardToTwentyConnect = async (
     return null;
   }
 
-  const { env } = await getCloudflareContext({ async: true });
-  const binding = (env as { TWENTY_CONNECT?: unknown }).TWENTY_CONNECT;
+  let binding: unknown;
+
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+
+    binding = 'TWENTY_CONNECT' in env ? env.TWENTY_CONNECT : undefined;
+  } catch (error) {
+    console.error(
+      '[enterprise] Cloudflare context is unavailable; answering locally',
+      error,
+    );
+
+    return null;
+  }
 
   if (!isTwentyConnectBinding(binding)) {
     console.error(

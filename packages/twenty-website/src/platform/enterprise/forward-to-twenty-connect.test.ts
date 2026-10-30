@@ -23,6 +23,10 @@ describe('forwardToTwentyConnect', () => {
     process.env.TWENTY_CONNECT_FORWARDING_ENABLED = 'true';
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   afterAll(() => {
     process.env.TWENTY_CONNECT_FORWARDING_ENABLED = originalForwardingFlag;
   });
@@ -67,5 +71,59 @@ describe('forwardToTwentyConnect', () => {
     mockedGetCloudflareContext.mockResolvedValue({ env: {} });
 
     await expect(forwardToTwentyConnect(buildRequest())).resolves.toBeNull();
+  });
+
+  it('should preserve the raw webhook body and Stripe signature without processing it twice', async () => {
+    const rawBody = '{ "type": "checkout.session.completed", "data": "é" }\n';
+    const stripeSignature = 't=123,v1=test-signature';
+    const connectFetch = jest.fn().mockResolvedValue(new Response('ok'));
+    mockedGetCloudflareContext.mockResolvedValue({
+      env: { TWENTY_CONNECT: { fetch: connectFetch } },
+    });
+
+    const response = await forwardToTwentyConnect(
+      new Request('https://twenty.com/api/enterprise/stripe-webhook', {
+        method: 'POST',
+        headers: { 'stripe-signature': stripeSignature },
+        body: rawBody,
+      }),
+    );
+
+    expect(await response?.text()).toBe('ok');
+    expect(connectFetch).toHaveBeenCalledTimes(1);
+
+    const forwardedRequest: Request = connectFetch.mock.calls[0][0];
+
+    expect(forwardedRequest.url).toBe(
+      'https://twenty.com/v1/enterprise/stripe-webhook',
+    );
+    expect(forwardedRequest.headers.get('stripe-signature')).toBe(
+      stripeSignature,
+    );
+    expect(Buffer.from(await forwardedRequest.arrayBuffer())).toEqual(
+      Buffer.from(rawBody),
+    );
+  });
+
+  it('should leave the body available to the local handler when Cloudflare context fails', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockedGetCloudflareContext.mockRejectedValue(
+      new Error('Context unavailable'),
+    );
+    const request = buildRequest();
+
+    await expect(forwardToTwentyConnect(request)).resolves.toBeNull();
+    expect(await request.json()).toEqual({ enterpriseKey: 'key' });
+  });
+
+  it('should propagate forwarding errors without falling through to local processing', async () => {
+    const error = new Error('Connect unavailable');
+    const connectFetch = jest.fn().mockRejectedValue(error);
+    mockedGetCloudflareContext.mockResolvedValue({
+      env: { TWENTY_CONNECT: { fetch: connectFetch } },
+    });
+
+    await expect(forwardToTwentyConnect(buildRequest())).rejects.toBe(error);
+    expect(connectFetch).toHaveBeenCalledTimes(1);
   });
 });
