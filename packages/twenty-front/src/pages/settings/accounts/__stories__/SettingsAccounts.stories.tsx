@@ -673,12 +673,10 @@ export const InstalledAppsFlagReconnectAndMissingConfiguration: Story = {
     await canvas.findByText('Fathom', undefined, { timeout: 3000 });
 
     expect(
-      await getTableRow(canvasElement, 'Fathom').findByText(
-        'Missing configuration',
-      ),
+      await getTableRow(canvasElement, 'Fathom').findByText('Setup incomplete'),
     ).toBeVisible();
     expect(
-      await getTableRow(canvasElement, 'Linear').findByText('Reconnect needed'),
+      await getTableRow(canvasElement, 'Linear').findByText('Sync failed'),
     ).toBeVisible();
     expect(
       getStatusCell({ canvasElement, text: 'Granola' }),
@@ -698,13 +696,13 @@ export const InstalledAppWithoutMyConnectionShowsNotConnectedHint: Story = {
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
     expect(
-      await getTableRow(canvasElement, 'Linear').findByText('Not connected'),
+      await getTableRow(canvasElement, 'Linear').findByText('Inactive'),
     ).toBeVisible();
 
     const fathomRow = getTableRow(canvasElement, 'Fathom');
 
-    expect(fathomRow.getByText('Missing configuration')).toBeVisible();
-    expect(fathomRow.queryByText('Not connected')).not.toBeInTheDocument();
+    expect(fathomRow.getByText('Setup incomplete')).toBeVisible();
+    expect(fathomRow.queryByText('Inactive')).not.toBeInTheDocument();
     expect(
       getStatusCell({ canvasElement, text: 'Granola' }),
     ).toBeEmptyDOMElement();
@@ -768,14 +766,14 @@ export const ConnectionsLoadErrorHidesStatusesUntilRetry: Story = {
       ),
     ).toBeVisible();
     expect(canvas.getByText('Linear')).toBeVisible();
-    expect(canvas.queryByText('Not connected')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Inactive')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
 
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
 
     expect(
       await getTableRow(canvasElement, 'Linear').findByText(
-        'Not connected',
+        'Inactive',
         undefined,
         { timeout: 3000 },
       ),

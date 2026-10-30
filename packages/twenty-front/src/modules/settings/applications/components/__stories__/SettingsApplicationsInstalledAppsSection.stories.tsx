@@ -234,7 +234,7 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
     expect(recorderRow).toHaveTextContent('NPM');
     expect(canvas.getByText('Type')).toBeVisible();
     expect(canvas.queryByText('Status')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
     expect(canvas.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
     expect(findManyApplicationsForStatus).not.toHaveBeenCalled();
   },
@@ -248,26 +248,26 @@ export const ShowsStatusWithAppPreferences: Story = {
     const recorderRow = await canvas.findByRole('link', { name: /Recorder/ });
 
     expect(
-      await within(recorderRow).findByText('Missing configuration'),
+      await within(recorderRow).findByText('Setup incomplete'),
     ).toBeVisible();
-    expect(recorderRow).not.toHaveTextContent('Update');
+    expect(recorderRow).not.toHaveTextContent('Outdated');
     expect(canvas.getByText('Status')).toBeVisible();
     expect(canvas.queryByText('Type')).not.toBeInTheDocument();
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
-    expect(within(acmeRow).getByText('Update')).toBeVisible();
+    expect(within(acmeRow).getByText('Outdated')).toBeVisible();
     expect(acmeRow).not.toHaveTextContent('NPM');
 
     const notesRow = canvas.getByRole('link', { name: /Notes/ });
 
-    expect(notesRow).not.toHaveTextContent('Missing configuration');
-    expect(notesRow).not.toHaveTextContent('Update');
+    expect(notesRow).not.toHaveTextContent('Setup incomplete');
+    expect(notesRow).not.toHaveTextContent('Outdated');
 
     const gmailRow = canvas.getByRole('link', { name: /Gmail and Calendar/ });
 
     expect(gmailRow).not.toHaveTextContent('Built-in');
-    expect(gmailRow).not.toHaveTextContent('Missing configuration');
+    expect(gmailRow).not.toHaveTextContent('Setup incomplete');
   },
 };
 
@@ -280,10 +280,10 @@ export const KeepsUpdateAndShowsErrorWhenConfigurationFailsToLoad: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText(STATUS_LOAD_ERROR_MESSAGE)).toBeVisible();
-    expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
     expect(
       await within(canvas.getByRole('link', { name: /Acme Sync/ })).findByText(
-        'Update',
+        'Outdated',
       ),
     ).toBeVisible();
     expect(canvas.getByRole('link', { name: /Notes/ })).toBeVisible();
@@ -292,7 +292,7 @@ export const KeepsUpdateAndShowsErrorWhenConfigurationFailsToLoad: Story = {
 
     expect(
       await within(canvas.getByRole('link', { name: /Recorder/ })).findByText(
-        'Missing configuration',
+        'Setup incomplete',
       ),
     ).toBeVisible();
     expect(

@@ -3,12 +3,12 @@ import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preference
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
 import { SettingsBuiltInAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInAccountAppPermissionsCell';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
+import { getApplicationTableRowGridTemplateColumns } from '@/settings/applications/utils/getApplicationTableRowGridTemplateColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
@@ -16,6 +16,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
@@ -34,6 +35,7 @@ export const SettingsAccountGroupTableRow = ({
   builtInAccountApp,
 }: SettingsAccountGroupTableRowProps) => {
   const theme = useTheme();
+  const isMobile = useIsMobile();
   const navigateSettings = useNavigateSettings();
   const { builtInAccount } = group;
 
@@ -61,15 +63,15 @@ export const SettingsAccountGroupTableRow = ({
     >
       <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       <OverflowingTextWithTooltip text={group.handle} />
-      {shouldShowSyncStatus && (
-        <SettingsConnectedAccountSyncStatus account={builtInAccount} />
-      )}
     </TableCell>
   );
 
   return (
     <TableRow
-      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
+      gridTemplateColumns={getApplicationTableRowGridTemplateColumns({
+        middleColumn: 'status',
+        isMobile,
+      })}
       onClick={
         hasSettings
           ? () =>
@@ -91,17 +93,27 @@ export const SettingsAccountGroupTableRow = ({
       ) : (
         accountCell
       )}
-      {isDefined(builtInAccountApp) ? (
-        <SettingsBuiltInAccountAppPermissionsCell
-          builtInAccountApp={builtInAccountApp}
-          account={builtInAccount}
-        />
-      ) : (
-        <TableCell align="right">
-          <SettingsAccountGroupUsedBy group={group} />
-        </TableCell>
-      )}
-      <TableCell align="right" onClick={(event) => event.stopPropagation()}>
+      <TableCell>
+        {shouldShowSyncStatus && (
+          <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+        )}
+      </TableCell>
+      {!isMobile &&
+        (isDefined(builtInAccountApp) ? (
+          <SettingsBuiltInAccountAppPermissionsCell
+            builtInAccountApp={builtInAccountApp}
+            account={builtInAccount}
+          />
+        ) : (
+          <TableCell align="right">
+            <SettingsAccountGroupUsedBy group={group} />
+          </TableCell>
+        ))}
+      <TableCell
+        align="right"
+        padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+        onClick={(event) => event.stopPropagation()}
+      >
         <SettingsAppPreferencesRowDropdownMenu
           group={group}
           hasAccountSettings={hasSettings}

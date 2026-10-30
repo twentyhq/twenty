@@ -14,12 +14,12 @@ export const SettingsApplicationConnectionStatus = ({
   const { t } = useLingui();
 
   if (isDefined(connection.archivedAt)) {
-    return <Status color="gray">{t`Disconnected`}</Status>;
+    return <Status color="gray" weight="medium">{t`Disconnected`}</Status>;
   }
 
   return isApplicationConnectionReconnectNeeded(connection) ? (
-    <Status color="red">{t`Reconnect needed`}</Status>
+    <Status color="red" weight="medium">{t`Sync failed`}</Status>
   ) : (
-    <Status color="green">{t`Connected`}</Status>
+    <Status color="green" weight="medium">{t`Connected`}</Status>
   );
 };

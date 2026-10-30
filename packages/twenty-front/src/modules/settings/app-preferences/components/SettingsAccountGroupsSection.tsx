@@ -1,10 +1,10 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { getApplicationTableRowGridTemplateColumns } from '@/settings/applications/utils/getApplicationTableRowGridTemplateColumns';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -16,6 +16,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -37,6 +38,7 @@ export const SettingsAccountGroupsSection = ({
   builtInAccountApp,
 }: SettingsAccountGroupsSectionProps) => {
   const { t } = useLingui();
+  const isMobile = useIsMobile();
   const { addBuiltInAccount } = useAddBuiltInAccount();
   const { groups: allGroups, loading } = useMyAccountGroups();
 
@@ -50,12 +52,19 @@ export const SettingsAccountGroupsSection = ({
 
   const tableHeaderRow = (
     <TableRow
-      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
+      gridTemplateColumns={getApplicationTableRowGridTemplateColumns({
+        middleColumn: 'status',
+        isMobile,
+      })}
     >
       <TableHeader>{t`Account`}</TableHeader>
-      <TableHeader align="right">
-        {isDefined(builtInAccountApp) ? t`Permissions` : t`Used by`}
-      </TableHeader>
+      <TableHeader>{t`Status`}</TableHeader>
+      {!isMobile &&
+        (isDefined(builtInAccountApp) ? (
+          <TableHeader>{t`Permissions`}</TableHeader>
+        ) : (
+          <TableHeader align="right">{t`Used by`}</TableHeader>
+        ))}
       <TableHeader />
     </TableRow>
   );

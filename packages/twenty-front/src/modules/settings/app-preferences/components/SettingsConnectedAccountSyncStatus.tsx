@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { MAIL_SERVER_CERTIFICATE_INVALID_AUTH_FAILED_REASON } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type SettingsConnectedAccountSyncStatusProps = {
   account: Pick<
@@ -27,11 +28,17 @@ export const SettingsConnectedAccountSyncStatus = ({
 
   switch (computeSyncStatus(messageChannel, account.calendarChannels[0])) {
     case SyncStatus.FAILED:
-      return account.authFailedReason ===
-        MAIL_SERVER_CERTIFICATE_INVALID_AUTH_FAILED_REASON ? (
-        <Status color="red" weight="medium">{t`Certificate invalid`}</Status>
-      ) : (
-        <Status color="red" weight="medium">{t`Sync failed`}</Status>
+      return (
+        <Tooltip
+          content={
+            account.authFailedReason ===
+            MAIL_SERVER_CERTIFICATE_INVALID_AUTH_FAILED_REASON
+              ? t`The mail server certificate is invalid`
+              : undefined
+          }
+        >
+          <Status color="red" weight="medium">{t`Sync failed`}</Status>
+        </Tooltip>
       );
     case SyncStatus.SYNCED:
       return <Status color="green" weight="medium">{t`Synced`}</Status>;

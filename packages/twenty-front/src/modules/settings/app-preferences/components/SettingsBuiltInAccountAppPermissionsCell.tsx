@@ -23,7 +23,7 @@ export const SettingsBuiltInAccountAppPermissionsCell = ({
     .map((permission) => t(permission.label));
 
   return (
-    <TableCell align="right" minWidth="0">
+    <TableCell minWidth="0">
       <OverflowingTextWithTooltip text={permissionLabels.join(', ')} />
     </TableCell>
   );
