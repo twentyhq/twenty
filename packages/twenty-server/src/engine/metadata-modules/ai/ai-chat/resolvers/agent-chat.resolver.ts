@@ -330,6 +330,10 @@ export class AgentChatResolver {
         recipientWorkspaceMemberIds,
         mentionedWorkspaceMemberIds,
       });
+    const assistantReplyContext = {
+      isAssistantMentioned: isAssistantMentioned ?? false,
+      isDirectAssistantChat: assistantPolicy.isDirectAssistantChat,
+    };
     const isAssistantReplying = await this.replyPolicyService.shouldReply({
       isAiChatInboxEnabled,
       shouldAssistantReply,
@@ -364,6 +368,7 @@ export class AgentChatResolver {
       const savedMessage =
         await this.agentChatStreamingService.saveMessageWithoutReply({
           thread,
+          assistantReplyContext,
           userWorkspaceId,
           workspaceMemberId,
           workspace,
@@ -377,6 +382,7 @@ export class AgentChatResolver {
 
     const result = await this.agentChatStreamingService.streamAgentChat({
       thread,
+      assistantReplyContext,
       browsingContext: browsingContext ?? null,
       modelId,
       userWorkspaceId,

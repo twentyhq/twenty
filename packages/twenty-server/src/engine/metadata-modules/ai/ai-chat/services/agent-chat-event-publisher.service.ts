@@ -56,6 +56,7 @@ export class AgentChatEventPublisherService {
       publishedEvent = { ...event, seq };
     } else if (
       event.type === 'message-persisted' ||
+      event.type === 'stream-ended' ||
       event.type === 'credits-exhausted'
     ) {
       const redis = this.redisClientService.getClient();

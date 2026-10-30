@@ -8,6 +8,8 @@ import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
@@ -44,6 +46,7 @@ export class AgentChatQueueService {
     workspaceId,
     userWorkspaceId,
     workspaceMemberId,
+    assistantReplyContext,
   }: {
     threadId: string;
     text: string;
@@ -52,6 +55,7 @@ export class AgentChatQueueService {
     workspaceId: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
+    assistantReplyContext?: AgentChatAssistantReplyContext;
   }) {
     const messageValues = {
       id: id ?? randomUUID(),
@@ -85,6 +89,9 @@ export class AgentChatQueueService {
         orderIndex: 0,
         type: 'text',
         textContent: text,
+        providerMetadata: buildAgentChatAssistantReplyProviderMetadata(
+          assistantReplyContext,
+        ),
       },
       ...(fileAttachments ?? [])
         .filter((attachment) => validFileIds.has(attachment.id))

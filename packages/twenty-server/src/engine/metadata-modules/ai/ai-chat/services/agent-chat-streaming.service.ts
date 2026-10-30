@@ -51,6 +51,8 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { type AgentChatAssistantReplyContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-reply-context.type';
+import { buildAgentChatAssistantReplyProviderMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-assistant-reply-provider-metadata.util';
 
 type MemberMessageOptions = {
   thread: AgentChatThreadWorkspaceEntity;
@@ -60,6 +62,7 @@ type MemberMessageOptions = {
   text: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
+  assistantReplyContext?: AgentChatAssistantReplyContext;
 };
 
 type StreamAgentChatOptions = MemberMessageOptions & {
@@ -109,6 +112,7 @@ export class AgentChatStreamingService {
       modelId,
       messageId,
       fileAttachments,
+      assistantReplyContext,
     } = options;
     const threadId = thread.id;
     const workspaceId = workspace.id;
@@ -174,6 +178,7 @@ export class AgentChatStreamingService {
       workspaceId,
       userWorkspaceId,
       workspaceMemberId,
+      assistantReplyContext,
     });
 
     if (isDefined(suspendedRun)) {
@@ -498,6 +503,7 @@ export class AgentChatStreamingService {
     text,
     messageId,
     fileAttachments,
+    assistantReplyContext,
     turnStatus,
     eventType,
   }: MemberMessageOptions & {
@@ -520,7 +526,16 @@ export class AgentChatStreamingService {
         id: messageId,
         uiMessage: {
           role: AgentMessageRole.USER,
-          parts: [{ type: 'text' as const, text }, ...fileParts],
+          parts: [
+            {
+              type: 'text' as const,
+              text,
+              providerMetadata: buildAgentChatAssistantReplyProviderMetadata(
+                assistantReplyContext,
+              ),
+            },
+            ...fileParts,
+          ],
         },
         turnStatus,
         workspaceId,
