@@ -55,6 +55,10 @@ const LegacyAccountsRedirectHarness = ({
                   path: getSettingsPath(SettingsPath.AccountsConfiguration),
                   element: <span>Legacy configuration page</span>,
                 },
+                {
+                  path: getSettingsPath(SettingsPath.ApplicationPreferences),
+                  element: <span>Legacy application page</span>,
+                },
               ],
             },
             {
@@ -113,6 +117,21 @@ export const ForwardsWithQueryAndHash: Story = {
     expect(
       await canvas.findByText(
         'Location /settings/app-preferences/accounts/account-id/configuration?tab=emails#calendar',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const ForwardsAnAppConnectionReturn: Story = {
+  args: {
+    initialEntry: '/settings/accounts/applications/application-id#connections',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Location /settings/app-preferences/application-id#connections',
       ),
     ).toBeVisible();
   },
