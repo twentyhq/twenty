@@ -30,10 +30,6 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
     required: ['creditAllowanceMicro'],
     optional: ['endsAt'],
   },
-  [BillingArrangementType.USER_CREDIT_ALLOWANCE]: {
-    required: ['creditAllowanceMicro'],
-    optional: ['endsAt'],
-  },
   [BillingArrangementType.LIMIT_OVERRIDE]: {
     required: ['usageLimitId'],
     optional: ['endsAt'],

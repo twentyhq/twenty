@@ -14,7 +14,7 @@ export class CreateBillingArrangementTableFastInstanceCommand implements FastIns
       return;
     }
 
-    await queryRunner.query('CREATE TYPE "core"."billingArrangement_type_enum" AS ENUM(\'COMMITTED_SEATS\', \'FREE_SEATS\', \'COUPON\', \'TRIAL_EXTENSION\', \'WORKSPACE_CREDIT_ALLOWANCE\', \'USER_CREDIT_ALLOWANCE\', \'LIMIT_OVERRIDE\', \'REFUND\', \'CREDIT_GRANT\')');
+    await queryRunner.query('CREATE TYPE "core"."billingArrangement_type_enum" AS ENUM(\'COMMITTED_SEATS\', \'FREE_SEATS\', \'COUPON\', \'TRIAL_EXTENSION\', \'WORKSPACE_CREDIT_ALLOWANCE\', \'LIMIT_OVERRIDE\', \'REFUND\', \'CREDIT_GRANT\')');
     await queryRunner.query('CREATE TYPE "core"."billingArrangement_seatcapmode_enum" AS ENUM(\'SOFT\', \'HARD\')');
     await queryRunner.query('CREATE TABLE "core"."billingArrangement" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspaceId" uuid NOT NULL, "type" "core"."billingArrangement_type_enum" NOT NULL, "label" character varying NOT NULL, "comment" character varying(500), "seats" integer, "seatCapMode" "core"."billingArrangement_seatcapmode_enum", "stripePriceId" character varying, "stripeCouponId" character varying, "creditAllowanceMicro" bigint, "stripeCreditNoteId" character varying, "creditGrantId" uuid, "usageLimitId" uuid, "startsAt" TIMESTAMP WITH TIME ZONE NOT NULL, "endsAt" TIMESTAMP WITH TIME ZONE, "revokedAt" TIMESTAMP WITH TIME ZONE, "revokedByUserId" uuid, "grantedByUserId" uuid, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_9451bfacd03125c95a4a60a4e63" PRIMARY KEY ("id"))');
     await queryRunner.query('CREATE INDEX "IDX_BILLING_ARRANGEMENT_WORKSPACE_ID_TYPE" ON "core"."billingArrangement" ("workspaceId", "type") ');

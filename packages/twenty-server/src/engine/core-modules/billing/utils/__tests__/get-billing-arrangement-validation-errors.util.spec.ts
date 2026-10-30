@@ -58,9 +58,9 @@ describe('getBillingArrangementValidationErrors', () => {
       }),
     ],
     [
-      'a user credit allowance of 0',
+      'a workspace credit allowance of 0',
       draft({
-        type: BillingArrangementType.USER_CREDIT_ALLOWANCE,
+        type: BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
         creditAllowanceMicro: 0,
       }),
     ],
