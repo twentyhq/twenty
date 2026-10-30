@@ -405,6 +405,7 @@ describe('Sending an inbox message as an application', () => {
         threadId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       }),
+      expect.anything(),
     );
   });
 });

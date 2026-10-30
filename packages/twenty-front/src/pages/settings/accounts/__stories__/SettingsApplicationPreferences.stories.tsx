@@ -312,7 +312,7 @@ export const MemberLandsOnGeneralWithoutWorkspaceActions: Story = {
       ),
     ).toBeVisible();
     expect(
-      await canvas.findByText('You have no Fathom connection yet.', undefined, {
+      await canvas.findByText('Connect with Fathom', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
