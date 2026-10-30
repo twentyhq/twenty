@@ -613,19 +613,19 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Access group"
-msgstr ""
+msgstr "Група доступу"
 
 #. js-lingui-id: EObiot
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Access group position"
-msgstr ""
+msgstr "Посада в групі доступу"
 
 #. js-lingui-id: YTZTZr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Access groups"
-msgstr ""
+msgstr "Групи доступу"
 
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -3095,7 +3095,7 @@ msgstr "Складений тип не знайдено."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conditional grant the group evaluates, empty for whole-object grants"
-msgstr ""
+msgstr "Умовний дозвіл, який обчислюється для групи; порожнє значення для дозволів на весь об’єкт"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5330,7 +5330,7 @@ msgstr "Лютий"
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
-msgstr ""
+msgstr "Поле \"{fieldName}\" не належить до об'єкта, досягнутого через зв'язок \"{relationFieldName}\""
 
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5340,7 +5340,7 @@ msgstr "Поле \"{fieldName}\" не є зв’язком «багато до �
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
-msgstr ""
+msgstr "Поле \"{relationFieldName}\" не є зв'язком"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6198,7 +6198,7 @@ msgstr "Поле групування є обов’язковим для від
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Group hash"
-msgstr ""
+msgstr "Хеш групи"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6243,7 +6243,7 @@ msgstr "Хеш створеного шаблону та визначених ц�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Hash of the role, grant and member field values, unique per group"
-msgstr ""
+msgstr "Хеш значень полів ролі, дозволу та учасника, унікальний для кожної групи"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -8250,7 +8250,7 @@ msgstr "Заголовок зустрічі з події календаря"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Member field values"
-msgstr ""
+msgstr "Значення полів учасників"
 
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -8281,7 +8281,7 @@ msgstr "Учасники"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
-msgstr ""
+msgstr "Учасники ролі, які отримують однаковий обчислений дозвіл"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -10574,7 +10574,7 @@ msgstr "Значення предиката є недійсним для цьо�
 #. js-lingui-id: nSv3rP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Предикати, що досягають поля через зв'язок, не ввімкнено для цього робочого простору"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11138,18 +11138,18 @@ msgstr "Payload для створення зв'язку є обов'язкови
 #. js-lingui-id: yRw5Ff
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
-msgstr ""
+msgstr "Поле зв'язку \"{relationFieldName}\" не належить до об'єкта, який обмежує предикат"
 
 #. js-lingui-id: lEwqUQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" is not active"
-msgstr ""
+msgstr "Поле зв'язку \"{relationFieldName}\" неактивне"
 
 #. js-lingui-id: k5Rbos
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field metadata not found"
-msgstr ""
+msgstr "Метадані поля зв'язку не знайдено"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11466,7 +11466,7 @@ msgstr "Роль не можна призначити цій сутності."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
-msgstr ""
+msgstr "ID ролі"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11582,7 +11582,7 @@ msgstr "Ціль ролі з цим універсальним ідентифі�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Role whose members can belong to the group"
-msgstr ""
+msgstr "Роль, учасники якої можуть належати до групи"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11647,7 +11647,7 @@ msgstr "Група предикатів дозволів на рівні ряд�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Row level permission predicate group ID"
-msgstr ""
+msgstr "ID групи предикатів дозволів на рівні рядка"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11710,7 +11710,7 @@ msgstr "Правило"
 #. js-lingui-id: zhLAHJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Правила через зв'язок не ввімкнено для цього робочого простору"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13641,12 +13641,12 @@ msgstr "Особа в списку"
 #. js-lingui-id: vuwSBG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through a relation field"
-msgstr ""
+msgstr "Предикат може проходити лише через поле зв'язку"
 
 #. js-lingui-id: 1pKvRu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through an active relation field"
-msgstr ""
+msgstr "Предикат може проходити лише через активне поле зв'язку"
 
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14247,7 +14247,7 @@ msgstr "Це поле не можна змінювати."
 #. js-lingui-id: Bp6UAi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the object reached by the relation"
-msgstr ""
+msgstr "Це поле не належить до об'єкта, досягнутого через зв'язок"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14530,7 +14530,7 @@ msgstr "Це поле зв’язку не можна використовува
 #. js-lingui-id: K7NTYK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field does not belong to the restricted object"
-msgstr ""
+msgstr "Це поле зв'язку не належить до обмеженого об'єкта"
 
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15957,7 +15957,7 @@ msgstr "Значення повинно бути у ВЕЛИКИХ_ЛІТЕРА�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Values of the member fields the grant reads, shared by every member of the group"
-msgstr ""
+msgstr "Значення полів учасників, які читає дозвіл і які є спільними для кожного учасника групи"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

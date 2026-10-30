@@ -613,19 +613,19 @@ msgstr "Kirish rad etildi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Access group"
-msgstr ""
+msgstr "Kirish guruhi"
 
 #. js-lingui-id: EObiot
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Access group position"
-msgstr ""
+msgstr "Kirish guruhi pozitsiyasi"
 
 #. js-lingui-id: YTZTZr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Access groups"
-msgstr ""
+msgstr "Kirish guruhlari"
 
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -3095,7 +3095,7 @@ msgstr "Kompozit turi topilmadi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conditional grant the group evaluates, empty for whole-object grants"
-msgstr ""
+msgstr "Guruh baholaydigan shartli ruxsat, butun obyekt ruxsatlari uchun bo‘sh"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5330,7 +5330,7 @@ msgstr "Fevral"
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
-msgstr ""
+msgstr "\"{fieldName}\" maydoni \"{relationFieldName}\" bog‘lanishi orqali yetib borilgan obyektga tegishli emas"
 
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5340,7 +5340,7 @@ msgstr "\"{fieldName}\" maydoni ko‘pdan-birga munosabat emas, unda taqqoslash 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
-msgstr ""
+msgstr "\"{relationFieldName}\" maydoni bog‘lanish emas"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6198,7 +6198,7 @@ msgstr "\"{widgetTitle}\" doira diagrammasi vidjeti uchun guruhlash maydoni (gro
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Group hash"
-msgstr ""
+msgstr "Guruh xeshi"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6243,7 +6243,7 @@ msgstr "Yaratilgan shablon va aniqlangan manzil URL manzillarining xeshi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Hash of the role, grant and member field values, unique per group"
-msgstr ""
+msgstr "Rol, ruxsat va a’zo maydoni qiymatlarining xeshi, har bir guruh uchun noyob"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -8250,7 +8250,7 @@ msgstr "Kalendar hodisasidagi uchrashuv sarlavhasi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Member field values"
-msgstr ""
+msgstr "A’zo maydoni qiymatlari"
 
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -8281,7 +8281,7 @@ msgstr "A’zolar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
-msgstr ""
+msgstr "Bir xil baholangan ruxsatni oladigan rol a’zolari"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -10574,7 +10574,7 @@ msgstr "Predikat qiymati ushbu operand uchun yaroqsiz"
 #. js-lingui-id: nSv3rP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Bog‘lanish orqali maydonga yetib boruvchi predikatlar ushbu ish maydoni uchun yoqilmagan"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11138,18 +11138,18 @@ msgstr "Bog‘lanish yaratish uchun yuborilgan ma’lumotlar (relation creation 
 #. js-lingui-id: yRw5Ff
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
-msgstr ""
+msgstr "\"{relationFieldName}\" bog‘lanish maydoni predikat cheklaydigan obyektga tegishli emas"
 
 #. js-lingui-id: lEwqUQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" is not active"
-msgstr ""
+msgstr "\"{relationFieldName}\" bog‘lanish maydoni faol emas"
 
 #. js-lingui-id: k5Rbos
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field metadata not found"
-msgstr ""
+msgstr "Bog‘lanish maydoni metama’lumoti topilmadi"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11466,7 +11466,7 @@ msgstr "Rolni ushbu obyektga biriktirib bo‘lmaydi."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
-msgstr ""
+msgstr "Rol ID"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11582,7 +11582,7 @@ msgstr "Ushbu universal identifikatorli rol nishoni allaqachon mavjud"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Role whose members can belong to the group"
-msgstr ""
+msgstr "A’zolari guruhga tegishli bo‘lishi mumkin bo‘lgan rol"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11647,7 +11647,7 @@ msgstr "Qator darajasidagi ruxsat predikatlari guruhi allaqachon mavjud"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Row level permission predicate group ID"
-msgstr ""
+msgstr "Qator darajasidagi ruxsat predikati guruhi ID"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11710,7 +11710,7 @@ msgstr "Qoida"
 #. js-lingui-id: zhLAHJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Bog‘lanish orqali qoidalar ushbu ish maydoni uchun yoqilmagan"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13641,12 +13641,12 @@ msgstr "Ro‘yxatdagi shaxs"
 #. js-lingui-id: vuwSBG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through a relation field"
-msgstr ""
+msgstr "Predikat faqat bog‘lanish maydoni orqali o‘tishi mumkin"
 
 #. js-lingui-id: 1pKvRu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through an active relation field"
-msgstr ""
+msgstr "Predikat faqat faol bog‘lanish maydoni orqali o‘tishi mumkin"
 
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14247,7 +14247,7 @@ msgstr "Ushbu maydonni o‘zgartirib bo‘lmaydi."
 #. js-lingui-id: Bp6UAi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the object reached by the relation"
-msgstr ""
+msgstr "Bu maydon bog‘lanish orqali yetib borilgan obyektga tegishli emas"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14530,7 +14530,7 @@ msgstr "Bu munosabat maydonidan yozuv qoidasida foydalanib bo‘lmaydi"
 #. js-lingui-id: K7NTYK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field does not belong to the restricted object"
-msgstr ""
+msgstr "Bu bog‘lanish maydoni cheklangan obyektga tegishli emas"
 
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15957,7 +15957,7 @@ msgstr "Qiymat UPPER_CASE bo‘lishi va snake_case \"{sanitizedValue}\" formatig
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Values of the member fields the grant reads, shared by every member of the group"
-msgstr ""
+msgstr "Ruxsat o‘qiydigan a’zo maydonlari qiymatlari, guruhning har bir a’zosi uchun umumiy"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

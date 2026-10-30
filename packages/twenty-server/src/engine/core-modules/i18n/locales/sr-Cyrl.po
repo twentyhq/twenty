@@ -613,19 +613,19 @@ msgstr "Приступ одбијен."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Access group"
-msgstr ""
+msgstr "Група за приступ"
 
 #. js-lingui-id: EObiot
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Access group position"
-msgstr ""
+msgstr "Позиција групе за приступ"
 
 #. js-lingui-id: YTZTZr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Access groups"
-msgstr ""
+msgstr "Групе за приступ"
 
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -3095,7 +3095,7 @@ msgstr "Композитни тип није пронађен."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conditional grant the group evaluates, empty for whole-object grants"
-msgstr ""
+msgstr "Условна додела коју група процењује, празно за доделе за цео објекат"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5330,7 +5330,7 @@ msgstr "Фебруар"
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
-msgstr ""
+msgstr "Поље \"{fieldName}\" не припада објекту до којег се долази преко релације \"{relationFieldName}\""
 
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5340,7 +5340,7 @@ msgstr "Поље \"{fieldName}\" није релација више-према-�
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
-msgstr ""
+msgstr "Поље \"{relationFieldName}\" није релација"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6198,7 +6198,7 @@ msgstr "Поље за груписање је обавезно за виџет �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Group hash"
-msgstr ""
+msgstr "Хеш групе"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6243,7 +6243,7 @@ msgstr "Хеш ауторског шаблона и разрешених одр�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Hash of the role, grant and member field values, unique per group"
-msgstr ""
+msgstr "Хеш вредности поља улоге, доделе и члана, јединствен за сваку групу"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -8250,7 +8250,7 @@ msgstr "Наслов састанка из догађаја календара"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Member field values"
-msgstr ""
+msgstr "Вредности поља члана"
 
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -8281,7 +8281,7 @@ msgstr "Чланови"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
-msgstr ""
+msgstr "Чланови улоге који добијају исту процењену доделу"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -10574,7 +10574,7 @@ msgstr "Вредност предиката није важећа за овај 
 #. js-lingui-id: nSv3rP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Предикати који до поља долазе преко релације нису омогућени за овај радни простор"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11138,18 +11138,18 @@ msgstr "Payload за креирање релације је обавезан"
 #. js-lingui-id: yRw5Ff
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
-msgstr ""
+msgstr "Релационо поље \"{relationFieldName}\" не припада објекту који предикат ограничава"
 
 #. js-lingui-id: lEwqUQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" is not active"
-msgstr ""
+msgstr "Релационо поље \"{relationFieldName}\" није активно"
 
 #. js-lingui-id: k5Rbos
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field metadata not found"
-msgstr ""
+msgstr "Метаподаци релационог поља нису пронађени"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11466,7 +11466,7 @@ msgstr "Улогу није могуће доделити овом ентите�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
-msgstr ""
+msgstr "ID улоге"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11582,7 +11582,7 @@ msgstr "Циљ улоге са овим универзалним идентиф�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Role whose members can belong to the group"
-msgstr ""
+msgstr "Улога чији чланови могу припадати групи"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11647,7 +11647,7 @@ msgstr "Група предиката дозвола на нивоу реда в
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Row level permission predicate group ID"
-msgstr ""
+msgstr "ID групе предиката дозвола на нивоу реда"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11710,7 +11710,7 @@ msgstr "Правило"
 #. js-lingui-id: zhLAHJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Правила преко релације нису омогућена за овај радни простор"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13641,12 +13641,12 @@ msgstr "Особа на листи"
 #. js-lingui-id: vuwSBG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through a relation field"
-msgstr ""
+msgstr "Предикат може ићи само преко релационог поља"
 
 #. js-lingui-id: 1pKvRu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through an active relation field"
-msgstr ""
+msgstr "Предикат може ићи само преко активног релационог поља"
 
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14247,7 +14247,7 @@ msgstr "Ово поље није могуће изменити."
 #. js-lingui-id: Bp6UAi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the object reached by the relation"
-msgstr ""
+msgstr "Ово поље не припада објекту до којег се долази преко релације"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14530,7 +14530,7 @@ msgstr "Ово релационо поље се не може користити
 #. js-lingui-id: K7NTYK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field does not belong to the restricted object"
-msgstr ""
+msgstr "Ово релационо поље не припада ограниченом објекту"
 
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15957,7 +15957,7 @@ msgstr "Вредност мора бити у ВЕЛИКАМ СЛОВИМА и �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Values of the member fields the grant reads, shared by every member of the group"
-msgstr ""
+msgstr "Вредности поља члана које додела чита, а које деле сви чланови групе"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

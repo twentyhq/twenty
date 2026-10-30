@@ -613,19 +613,19 @@ msgstr "Acces refuzat."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Access group"
-msgstr ""
+msgstr "Grup de acces"
 
 #. js-lingui-id: EObiot
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Access group position"
-msgstr ""
+msgstr "Poziția grupului de acces"
 
 #. js-lingui-id: YTZTZr
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Access groups"
-msgstr ""
+msgstr "Grupuri de acces"
 
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -3095,7 +3095,7 @@ msgstr "Tipul compus nu a fost găsit."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Conditional grant the group evaluates, empty for whole-object grants"
-msgstr ""
+msgstr "Acordare condițională pe care o evaluează grupul, necompletată pentru acordări pentru întregul obiect"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5330,7 +5330,7 @@ msgstr "Februarie"
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
-msgstr ""
+msgstr "Câmpul \"{fieldName}\" nu aparține obiectului accesat prin relația \"{relationFieldName}\""
 
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5340,7 +5340,7 @@ msgstr "Câmpul \"{fieldName}\" nu este o relație de tip many-to-one, nu are ni
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
-msgstr ""
+msgstr "Câmpul \"{relationFieldName}\" nu este o relație"
 
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6198,7 +6198,7 @@ msgstr "Câmpul de grupare este obligatoriu pentru widgetul cu diagramă tip pl�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Group hash"
-msgstr ""
+msgstr "Hash grup"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6243,7 +6243,7 @@ msgstr "Hash-ul șablonului creat și al URL-urilor de destinație rezolvate"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Hash of the role, grant and member field values, unique per group"
-msgstr ""
+msgstr "Hash al valorilor câmpurilor rolului, acordării și membrului, unic pentru fiecare grup"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -8250,7 +8250,7 @@ msgstr "Titlul întâlnirii din evenimentul de calendar"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Member field values"
-msgstr ""
+msgstr "Valori ale câmpurilor membrului"
 
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -8281,7 +8281,7 @@ msgstr "Membri"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
-msgstr ""
+msgstr "Membri ai unui rol care primesc aceeași acordare evaluată"
 
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -10574,7 +10574,7 @@ msgstr "Valoarea predicatului nu este validă pentru acest operand"
 #. js-lingui-id: nSv3rP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Predicatele care accesează un câmp printr-o relație nu sunt activate pentru acest spațiu de lucru"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11138,18 +11138,18 @@ msgstr "Informații necesare pentru crearea unei relații"
 #. js-lingui-id: yRw5Ff
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
-msgstr ""
+msgstr "Câmpul de relație \"{relationFieldName}\" nu aparține obiectului pe care îl restricționează predicatul"
 
 #. js-lingui-id: lEwqUQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field \"{relationFieldName}\" is not active"
-msgstr ""
+msgstr "Câmpul de relație \"{relationFieldName}\" nu este activ"
 
 #. js-lingui-id: k5Rbos
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Relation field metadata not found"
-msgstr ""
+msgstr "Metadatele câmpului de relație nu au fost găsite"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11466,7 +11466,7 @@ msgstr "Rolul nu poate fi atribuit acestei entități."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
-msgstr ""
+msgstr "ID-ul rolului"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11582,7 +11582,7 @@ msgstr "Ținta rolului cu acest identificator universal există deja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Role whose members can belong to the group"
-msgstr ""
+msgstr "Rol ai cărui membri pot aparține grupului"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11647,7 +11647,7 @@ msgstr "Grupul de predicate de permisiune la nivel de rând există deja"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Row level permission predicate group ID"
-msgstr ""
+msgstr "ID-ul grupului de predicate de permisiune la nivel de rând"
 
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11710,7 +11710,7 @@ msgstr "Regulă"
 #. js-lingui-id: zhLAHJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Regulile printr-o relație nu sunt activate pentru acest spațiu de lucru"
 
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -13641,12 +13641,12 @@ msgstr "Persoana din listă"
 #. js-lingui-id: vuwSBG
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through a relation field"
-msgstr ""
+msgstr "Predicatul poate trece doar printr-un câmp de relație"
 
 #. js-lingui-id: 1pKvRu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "The predicate can only go through an active relation field"
-msgstr ""
+msgstr "Predicatul poate trece doar printr-un câmp de relație activ"
 
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14247,7 +14247,7 @@ msgstr "Acest câmp nu poate fi modificat."
 #. js-lingui-id: Bp6UAi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field does not belong to the object reached by the relation"
-msgstr ""
+msgstr "Acest câmp nu aparține obiectului accesat prin relație"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14530,7 +14530,7 @@ msgstr "Acest câmp de relație nu poate fi utilizat într-o regulă de înregis
 #. js-lingui-id: K7NTYK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This relation field does not belong to the restricted object"
-msgstr ""
+msgstr "Acest câmp de relație nu aparține obiectului restricționat"
 
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15957,7 +15957,7 @@ msgstr "Valoarea trebuie să fie în UPPER_CASE și să urmeze snake_case \"{san
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Values of the member fields the grant reads, shared by every member of the group"
-msgstr ""
+msgstr "Valorile câmpurilor membrului pe care le citește acordarea, comune tuturor membrilor grupului"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts

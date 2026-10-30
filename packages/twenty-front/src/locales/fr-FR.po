@@ -16048,7 +16048,7 @@ msgstr "Permettre aux utilisateurs de restreindre et de partager des enregistrem
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
-msgstr ""
+msgstr "Permettre aux règles d'autorisation au niveau des enregistrements de comparer un champ d'un enregistrement associé."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -22179,7 +22179,7 @@ msgstr "Page d'enregistrement"
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
-msgstr ""
+msgstr "Règles d'enregistrement via les relations"
 
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx

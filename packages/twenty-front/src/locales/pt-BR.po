@@ -16048,7 +16048,7 @@ msgstr "Permita que as pessoas restrinjam e compartilhem registros individuais."
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
-msgstr ""
+msgstr "Permitir que regras de permissão no nível do registro comparem um campo de um registro relacionado."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -22179,7 +22179,7 @@ msgstr "Página de registro"
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
-msgstr ""
+msgstr "Regras de registro por meio de relações"
 
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx

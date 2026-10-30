@@ -16048,7 +16048,7 @@ msgstr "Kişilerin tek tek kayıtları kısıtlamasına ve paylaşmasına izin v
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
-msgstr ""
+msgstr "Kayıt düzeyindeki izin kurallarının ilişkili bir kaydın alanını karşılaştırmasına izin verin."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -22179,7 +22179,7 @@ msgstr "Kayıt sayfası"
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
-msgstr ""
+msgstr "İlişkiler aracılığıyla kayıt kuralları"
 
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
