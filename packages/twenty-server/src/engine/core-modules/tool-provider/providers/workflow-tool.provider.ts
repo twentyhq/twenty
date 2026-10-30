@@ -2,9 +2,8 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
-import { getReachableApplicationId } from 'src/engine/core-modules/application/utils/get-reachable-application-id.util';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -36,16 +35,14 @@ export class WorkflowToolProvider implements ToolProvider {
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
     // Workspace workflows can call any application, so only callers reaching them all get these tools
-    const reachesEveryApplication = !isDefined(
-      getReachableApplicationId({
-        callingApplication: context.application,
-        access: 'trigger',
-        workspaceCustomApplicationId:
-          context.authContext?.workspace.workspaceCustomApplicationId,
-      }),
-    );
+    const reachableApplications = getReachableApplications({
+      callingApplication: context.application,
+      access: 'trigger',
+      workspaceCustomApplicationId:
+        context.authContext?.workspace.workspaceCustomApplicationId,
+    });
 
-    if (!this.workflowToolService || !reachesEveryApplication) {
+    if (!this.workflowToolService || reachableApplications.type !== 'all') {
       return false;
     }
 

@@ -1,7 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type ApplicationCallerAccess } from 'src/engine/core-modules/application/types/application-caller-access.type';
-import { getReachableApplicationId } from 'src/engine/core-modules/application/utils/get-reachable-application-id.util';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 
 export const canCallerReachApplication = ({
   applicationId,
@@ -9,10 +7,10 @@ export const canCallerReachApplication = ({
 }: ApplicationCallerAccess & {
   applicationId: string | null | undefined;
 }): boolean => {
-  const reachableApplicationId = getReachableApplicationId(callerAccess);
+  const reachableApplications = getReachableApplications(callerAccess);
 
   return (
-    !isDefined(reachableApplicationId) ||
-    reachableApplicationId === applicationId
+    reachableApplications.type === 'all' ||
+    reachableApplications.applicationId === applicationId
   );
 };
