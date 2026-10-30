@@ -74,6 +74,22 @@ describe('ConnectedAccountRefreshTokensService - isAccessTokenStillValid', () =>
     expect(await service.isAccessTokenStillValid(account)).toBe(false);
   });
 
+  it.each([
+    ConnectedAccountProvider.GOOGLE,
+    ConnectedAccountProvider.MICROSOFT,
+  ])('keeps the 55-minute window for %s accounts', async (provider) => {
+    const account = buildAccount({
+      provider,
+      lastCredentialsRefreshedAt: new Date('2026-01-01T12:00:00.000Z'),
+    });
+
+    jest.setSystemTime(new Date('2026-01-01T12:54:00.000Z'));
+    expect(await service.isAccessTokenStillValid(account)).toBe(true);
+
+    jest.setSystemTime(new Date('2026-01-01T12:56:00.000Z'));
+    expect(await service.isAccessTokenStillValid(account)).toBe(false);
+  });
+
   it('returns true for APP provider when refreshToken is absent', async () => {
     const account = buildAccount({
       refreshToken: null,
