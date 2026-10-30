@@ -36,6 +36,7 @@ const UNREAD_PARTICIPANT = {
     snoozedUntil: null,
     isSubscribed: true,
     lastMentionedAt: null,
+    mentionsResolvedAt: null,
     updatedAt: LAST_ACTIVITY_AT,
   },
 };
