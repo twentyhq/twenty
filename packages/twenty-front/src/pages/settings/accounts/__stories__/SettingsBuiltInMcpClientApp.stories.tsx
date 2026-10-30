@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -32,15 +32,28 @@ export type Story = StoryObj<typeof SettingsBuiltInMcpClientApp>;
 export const ChatGptConnectOpensTheOfficialApp: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const originalWindowOpen = window.open;
+    const windowOpen = fn();
 
-    expect(
-      await canvas.findByText(
-        'Work with your Twenty workspace from ChatGPT through the official Twenty app.',
-      ),
-    ).toBeVisible();
-    expect(
-      canvas.getByRole('link', { name: /Connect with ChatGPT/ }),
-    ).toHaveAttribute('href', MCP_SETUP.chatGptTwentyAppUrl);
+    window.open = windowOpen;
+
+    try {
+      expect(
+        await canvas.findByText(
+          'Work with your Twenty workspace from ChatGPT through the official Twenty app.',
+        ),
+      ).toBeVisible();
+
+      await userEvent.click(canvas.getByRole('button', { name: 'Connect' }));
+
+      expect(windowOpen).toHaveBeenCalledWith(
+        MCP_SETUP.chatGptTwentyAppUrl,
+        '_blank',
+        'noopener,noreferrer',
+      );
+    } finally {
+      window.open = originalWindowOpen;
+    }
   },
 };
 
@@ -56,6 +69,6 @@ export const ClaudeOffersToConnect: Story = {
         'Work with your Twenty workspace from Claude through the Twenty connector.',
       ),
     ).toBeVisible();
-    expect(canvas.getByText('Connect with Claude')).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Connect' })).toBeVisible();
   },
 };
