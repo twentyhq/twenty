@@ -14,6 +14,7 @@ import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
 } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
@@ -153,6 +154,8 @@ export class WorkspaceService {
     isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
     aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
+    aiChatDirectMessageAssistantMode: PermissionFlagType.AI_SETTINGS,
+    aiChatInboxAssistantMode: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
@@ -359,6 +362,26 @@ export class WorkspaceService {
       agentId,
       workspaceActivationStatus: workspace.activationStatus,
     });
+
+    const isUpdatingAssistantModes =
+      isDefined(payload.aiChatDirectMessageAssistantMode) ||
+      isDefined(payload.aiChatInboxAssistantMode);
+    const isInboxRequiredButDisabled =
+      isUpdatingAssistantModes &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        workspace.id,
+      ));
+
+    if (isInboxRequiredButDisabled) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`Inbox is not enabled for this workspace.`,
+        },
+      );
+    }
 
     if (
       isDefined(payload.subdomain) &&

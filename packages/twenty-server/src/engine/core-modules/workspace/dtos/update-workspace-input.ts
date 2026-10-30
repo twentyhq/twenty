@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { isUndefined } from '@sniptt/guards';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
@@ -16,9 +17,11 @@ import {
   Matches,
   Max,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
@@ -154,6 +157,22 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   aiEvaluationModelId?: string;
+
+  @Field(() => AiChatAssistantMode, { nullable: true })
+  @IsEnum(AiChatAssistantMode)
+  @ValidateIf(
+    ({ aiChatDirectMessageAssistantMode }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatDirectMessageAssistantMode),
+  )
+  aiChatDirectMessageAssistantMode?: AiChatAssistantMode;
+
+  @Field(() => AiChatAssistantMode, { nullable: true })
+  @IsEnum(AiChatAssistantMode)
+  @ValidateIf(
+    ({ aiChatInboxAssistantMode }: UpdateWorkspaceInput) =>
+      !isUndefined(aiChatInboxAssistantMode),
+  )
+  aiChatInboxAssistantMode?: AiChatAssistantMode;
 
   @Field({ nullable: true })
   @IsString()
