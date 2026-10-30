@@ -165,7 +165,7 @@ describe('agent history workspace metadata', () => {
       ],
     ).toMatchObject({
       isUnique: true,
-      indexWhereClause: null,
+      indexWhereClause: '"directMessageFirstWorkspaceMemberId" IS NOT NULL',
       universalFlatIndexFieldMetadatas: [
         {
           fieldMetadataUniversalIdentifier:

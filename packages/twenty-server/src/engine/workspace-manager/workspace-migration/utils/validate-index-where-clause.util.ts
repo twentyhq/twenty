@@ -2,6 +2,7 @@
 const ALLOWED_INDEX_WHERE_CLAUSES = new Set([
   '"deletedAt" IS NULL',
   '"_isPrivate"',
+  '"directMessageFirstWorkspaceMemberId" IS NOT NULL',
 ]);
 
 export const validateAndReturnIndexWhereClause = (
