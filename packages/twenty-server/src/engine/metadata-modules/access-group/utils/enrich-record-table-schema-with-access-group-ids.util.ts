@@ -10,18 +10,21 @@ export const enrichRecordTableSchemaWithAccessGroupIds = ({
 }: {
   objectMetadata: Pick<FlatObjectMetadata, 'id' | 'readability'>;
   tableSchema: WorkspaceTableSchemaDefinitions;
-}): WorkspaceTableSchemaDefinitions =>
-  hasRoleBasedReadability(objectMetadata)
-    ? {
-        columnDefinitions: [
-          ...tableSchema.columnDefinitions,
-          ACCESS_GROUP_IDS_COLUMN_DEFINITION,
-        ],
-        indexDefinitions: [
-          ...tableSchema.indexDefinitions,
-          buildAccessGroupIdsIndexDefinition({
-            objectMetadataId: objectMetadata.id,
-          }),
-        ],
-      }
-    : tableSchema;
+}): WorkspaceTableSchemaDefinitions => {
+  if (!hasRoleBasedReadability(objectMetadata)) {
+    return tableSchema;
+  }
+
+  return {
+    columnDefinitions: [
+      ...tableSchema.columnDefinitions,
+      ACCESS_GROUP_IDS_COLUMN_DEFINITION,
+    ],
+    indexDefinitions: [
+      ...tableSchema.indexDefinitions,
+      buildAccessGroupIdsIndexDefinition({
+        objectMetadataId: objectMetadata.id,
+      }),
+    ],
+  };
+};

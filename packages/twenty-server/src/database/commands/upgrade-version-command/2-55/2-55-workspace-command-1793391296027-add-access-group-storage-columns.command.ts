@@ -120,13 +120,13 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           });
         }
 
-        for (const indexDefinition of indexDefinitions) {
-          await this.dropInvalidIndex({
-            queryRunner,
-            schemaName,
-            indexName: indexDefinition.name,
-          });
+        await this.dropInvalidIndexes({
+          queryRunner,
+          schemaName,
+          indexNames: indexDefinitions.map((index) => index.name),
+        });
 
+        for (const indexDefinition of indexDefinitions) {
           await this.workspaceSchemaManagerService.indexManager.createIndex({
             queryRunner,
             schemaName,
@@ -212,22 +212,26 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
   }
 
   // An interrupted CREATE INDEX CONCURRENTLY leaves an invalid index that IF NOT EXISTS would keep
-  private async dropInvalidIndex({
+  private async dropInvalidIndexes({
     queryRunner,
     schemaName,
-    indexName,
+    indexNames,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-    indexName: string;
+    indexNames: string[];
   }): Promise<void> {
+    if (indexNames.length === 0) {
+      return;
+    }
+
     const invalidIndexes: { name: string }[] = await queryRunner.query(
       `SELECT c.relname AS name
        FROM pg_index i
        JOIN pg_class c ON c.oid = i.indexrelid
        JOIN pg_namespace n ON n.oid = c.relnamespace
-       WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
-      [schemaName, indexName],
+       WHERE n.nspname = $1 AND c.relname = ANY($2) AND NOT i.indisvalid`,
+      [schemaName, indexNames],
     );
 
     for (const { name } of invalidIndexes) {

@@ -10,16 +10,19 @@ export const enrichAccessGroupTableSchema = ({
 }: {
   objectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>;
   tableSchema: WorkspaceTableSchemaDefinitions;
-}): WorkspaceTableSchemaDefinitions =>
-  isAccessGroupObject(objectMetadata)
-    ? {
-        columnDefinitions: [
-          ...tableSchema.columnDefinitions,
-          ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION,
-        ],
-        indexDefinitions: [
-          ...tableSchema.indexDefinitions,
-          ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION,
-        ],
-      }
-    : tableSchema;
+}): WorkspaceTableSchemaDefinitions => {
+  if (!isAccessGroupObject(objectMetadata)) {
+    return tableSchema;
+  }
+
+  return {
+    columnDefinitions: [
+      ...tableSchema.columnDefinitions,
+      ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION,
+    ],
+    indexDefinitions: [
+      ...tableSchema.indexDefinitions,
+      ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION,
+    ],
+  };
+};
