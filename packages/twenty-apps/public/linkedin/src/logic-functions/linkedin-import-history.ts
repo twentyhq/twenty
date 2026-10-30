@@ -11,6 +11,7 @@ import { LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/linkedin-hi
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-import-history-job-payload.type';
 import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
+import { getLinkedinHistoryImportError } from 'src/logic-functions/utils/get-linkedin-history-import-error.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
@@ -89,6 +90,9 @@ const importPage = async ({
     ...state,
     importedConversationCount:
       state.importedConversationCount + importedConversationCount,
+    processedConversationCount:
+      state.processedConversationCount + page.items.length,
+    totalConversationCount: state.totalConversationCount ?? page.totalCount,
     ...(isLastPage
       ? { status: 'COMPLETED', finishedAt: new Date().toISOString() }
       : {}),
@@ -139,6 +143,7 @@ export const linkedinImportHistoryHandler = async (
           ...state,
           status: 'FAILED',
           finishedAt: new Date().toISOString(),
+          error: getLinkedinHistoryImportError(error),
         },
       });
     }

@@ -3,7 +3,7 @@ import 'twenty-ui/theme-dark.css';
 import 'twenty-ui/theme-light.css';
 
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -24,7 +24,9 @@ import { LinkedinReadStatusSection } from 'src/front-components/components/Linke
 import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
+import { notifyLinkedinHistoryImportEnd } from 'src/front-components/utils/notify-linkedin-history-import-end.util';
 import { postLinkedinSettingsRouteOrThrow } from 'src/front-components/utils/post-linkedin-settings-route-or-throw.util';
+import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
 type LinkedinSettingsValues = Extract<
@@ -58,13 +60,27 @@ export const LinkedinSettings = () => {
   });
   const [pollCount, setPollCount] = useState(0);
 
+  const [isSyncStarting, setIsSyncStarting] = useState(false);
+  const lastHistoryImportRef = useRef<LinkedinHistoryImportState | null>(null);
+
+  const showView = (view: LinkedinSettingsView) => {
+    const historyImport = view.isConnected ? view.historyImport : null;
+
+    notifyLinkedinHistoryImportEnd({
+      previous: lastHistoryImportRef.current,
+      next: historyImport,
+    });
+    lastHistoryImportRef.current = historyImport;
+    setState({ step: 'ready', view });
+  };
+
   const loadSettings = async () => {
     try {
-      const view = await postLinkedinSettingsRouteOrThrow({
-        routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.get,
-      });
-
-      setState({ step: 'ready', view });
+      showView(
+        await postLinkedinSettingsRouteOrThrow({
+          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.get,
+        }),
+      );
     } catch {
       setState((current) =>
         current.step === 'ready' ? current : { step: 'unavailable' },
@@ -90,19 +106,37 @@ export const LinkedinSettings = () => {
     );
 
     try {
-      setState({
-        step: 'ready',
-        view: await postLinkedinSettingsRouteOrThrow({
+      showView(
+        await postLinkedinSettingsRouteOrThrow({
           routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
           body: update,
         }),
-      });
+      );
     } catch {
       enqueueSnackbar({
         message: t('Could not save LinkedIn settings. Try again.'),
         variant: 'error',
       });
       await loadSettings();
+    }
+  };
+
+  const handleSync = async () => {
+    setIsSyncStarting(true);
+
+    try {
+      showView(
+        await postLinkedinSettingsRouteOrThrow({
+          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.syncHistory,
+        }),
+      );
+    } catch {
+      enqueueSnackbar({
+        message: t('Could not start the LinkedIn sync. Try again.'),
+        variant: 'error',
+      });
+    } finally {
+      setIsSyncStarting(false);
     }
   };
 
@@ -159,9 +193,11 @@ export const LinkedinSettings = () => {
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
               historyImport={view.historyImport}
+              isSyncStarting={isSyncStarting}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
+              onSync={handleSync}
             />
             <LinkedinVisibilitySection
               visibility={view.settings.visibility}

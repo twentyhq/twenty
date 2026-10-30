@@ -16,6 +16,7 @@ export const startLinkedinHistoryImport = async ({
     importPolicy,
     status: 'IMPORTING',
     importedConversationCount: 0,
+    processedConversationCount: 0,
     startedAt: new Date().toISOString(),
   };
 

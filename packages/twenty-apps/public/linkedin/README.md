@@ -5,7 +5,7 @@
 ## ✨ What you get
 
 - **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
-- **Your history too**: past conversations are imported when you connect, either all of them or only those with people already in Twenty
+- **Your history too**: past conversations are imported when you connect, most recent first, either all of them or only those with people already in Twenty; **Sync now** imports them again with your current settings
 - **Private by default, shareable**: choose whether teammates see your messages or only who you talked to and when
 - **Matched on the LinkedIn field, then by name**: a conversation links to the Person whose LinkedIn profile URL matches, or to the only Person with the same name, whose LinkedIn field is then filled in
 - **People created for you**: people you message (or also those who message you) become People records, like with email

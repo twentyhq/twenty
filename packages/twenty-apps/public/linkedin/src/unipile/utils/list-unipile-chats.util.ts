@@ -20,5 +20,9 @@ export const listUnipileChats = async ({
     query: { cursor, limit },
   });
 
-  return { items: data.data, nextCursor: data.next_cursor };
+  return {
+    items: data.data,
+    nextCursor: data.next_cursor,
+    totalCount: data.total_count,
+  };
 };

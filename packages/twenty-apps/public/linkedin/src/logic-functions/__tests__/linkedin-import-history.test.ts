@@ -18,6 +18,7 @@ vi.mock('twenty-sdk/define', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
+  AppConnectionAuthFailedError: class extends Error {},
   getConnection: mocks.getConnection,
   listMessageChannels: mocks.listMessageChannels,
   enqueueJobs: mocks.enqueueJobs,
@@ -55,6 +56,7 @@ const RUNNING_STATE: LinkedinHistoryImportState = {
   importPolicy: 'ALL',
   status: 'IMPORTING',
   importedConversationCount: 3,
+  processedConversationCount: 3,
   startedAt: '2026-10-30T00:00:00.000Z',
 };
 
@@ -90,12 +92,19 @@ describe('linkedinImportHistoryHandler', () => {
     mocks.listUnipileChats.mockResolvedValue({
       items: [buildChat('recent', '2026-10-29T00:00:00.000Z')],
       nextCursor: 'cursor-2',
+      totalCount: 40,
     });
 
     await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
       status: 'CONTINUED',
       importedConversationCount: 4,
     });
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({
+        processedConversationCount: 4,
+        totalConversationCount: 40,
+      }),
+    );
     expect(mocks.listUnipileChatMessages).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'recent',
@@ -164,7 +173,10 @@ describe('linkedinImportHistoryHandler', () => {
       linkedinImportHistoryHandler(PAYLOAD, { retryCount: 3, maxRetries: 3 }),
     ).rejects.toThrow('Unipile is down');
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
-      expect.objectContaining({ status: 'FAILED' }),
+      expect.objectContaining({
+        status: 'FAILED',
+        error: { code: 'UNKNOWN', message: 'Unipile is down' },
+      }),
     );
   });
 });
