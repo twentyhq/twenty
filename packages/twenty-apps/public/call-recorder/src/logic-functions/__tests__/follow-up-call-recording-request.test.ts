@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { buildCallRecordingRequestFollowUpJobId } from 'src/logic-functions/domain/build-call-recording-request-follow-up-job-id.util';
@@ -17,7 +18,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   },
 }));
 
-vi.mock('twenty-client-sdk/metadata', () => ({
+vi.mock('twenty-client-sdk/metadata', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-client-sdk/metadata')>()),
   MetadataApiClient: class {
     query = metadataQueryMock;
   },
@@ -58,7 +60,7 @@ const getDeferredRecallBotDeletionAt = (): Date => {
     now: NOW,
   });
 
-  if (deferredRecallBotDeletionAt === undefined) {
+  if (isUndefined(deferredRecallBotDeletionAt)) {
     throw new Error('Expected the meeting to have a deferred deletion time');
   }
 
@@ -90,7 +92,7 @@ describe('followUpCallRecordingRequestHandler', () => {
       },
     });
     queryMock.mockReset().mockImplementation(async (query: any) => {
-      if (query.callRecordings !== undefined) {
+      if (!isUndefined(query.callRecordings)) {
         return {
           callRecordings: buildConnection([
             {
@@ -105,7 +107,7 @@ describe('followUpCallRecordingRequestHandler', () => {
         };
       }
 
-      if (query.calendarEvents !== undefined) {
+      if (!isUndefined(query.calendarEvents)) {
         return {
           calendarEvents: buildConnection([
             {

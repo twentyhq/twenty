@@ -12,7 +12,8 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   enqueueJobs: enqueueJobsMock,
 }));
 
-vi.mock('twenty-client-sdk/metadata', () => ({
+vi.mock('twenty-client-sdk/metadata', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-client-sdk/metadata')>()),
   MetadataApiClient: class {
     query = metadataQueryMock;
   },

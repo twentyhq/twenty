@@ -9,6 +9,11 @@ import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/com
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 
+type DeferredDeletionCalendarEvent = Pick<
+  CalendarEventRecord,
+  'id' | 'conferenceLinkUrl' | 'iCalUid' | 'startsAt'
+>;
+
 // Undefined means delete now: the join time is unknown or the deletion time has passed.
 export const computeDeferredRecallBotDeletionAt = ({
   callRecordingId,
@@ -16,7 +21,7 @@ export const computeDeferredRecallBotDeletionAt = ({
   now,
 }: {
   callRecordingId: string;
-  calendarEvent: CalendarEventRecord | undefined;
+  calendarEvent: DeferredDeletionCalendarEvent | undefined;
   now: Date;
 }): Date | undefined => {
   const meetingStartsAt = calendarEvent?.startsAt;
@@ -45,7 +50,7 @@ const isMeetingOfCallRecording = ({
   calendarEvent,
   callRecordingId,
 }: {
-  calendarEvent: CalendarEventRecord;
+  calendarEvent: DeferredDeletionCalendarEvent;
   callRecordingId: string;
 }): boolean =>
   computeCallRecordingIdForMeeting(

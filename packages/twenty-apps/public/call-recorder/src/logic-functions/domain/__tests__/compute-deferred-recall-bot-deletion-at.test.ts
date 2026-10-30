@@ -97,13 +97,17 @@ describe('computeDeferredRecallBotDeletionAt', () => {
 
     vi.stubEnv('CALL_RECORDER_JOIN_EARLY_MINUTES', '11');
 
+    const deletionTimeWithEarlierJoin = computeDeferredRecallBotDeletionAt({
+      callRecordingId: CALL_RECORDING_ID,
+      calendarEvent: buildCalendarEvent(),
+      now: NOW,
+    })?.getTime();
+
+    expect(deletionTimeWithDefaultJoin).toBeDefined();
+    expect(deletionTimeWithEarlierJoin).toBeDefined();
     expect(
-      computeDeferredRecallBotDeletionAt({
-        callRecordingId: CALL_RECORDING_ID,
-        calendarEvent: buildCalendarEvent(),
-        now: NOW,
-      })?.getTime(),
-    ).toBe((deletionTimeWithDefaultJoin ?? 0) - 10 * MILLISECONDS_PER_MINUTE);
+      Number(deletionTimeWithDefaultJoin) - Number(deletionTimeWithEarlierJoin),
+    ).toBe(10 * MILLISECONDS_PER_MINUTE);
   });
 
   it('asks for an immediate deletion once the deletion time has passed', () => {

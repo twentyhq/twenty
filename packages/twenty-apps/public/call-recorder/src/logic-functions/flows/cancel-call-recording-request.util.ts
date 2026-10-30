@@ -35,7 +35,6 @@ export const cancelCallRecordingRequest = async ({
     return;
   }
 
-  // Defer only if the follow-up armed with this cancellation still arrives before the deletion time.
   const latestFollowUpArrival = new Date(
     now.getTime() +
       CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS +

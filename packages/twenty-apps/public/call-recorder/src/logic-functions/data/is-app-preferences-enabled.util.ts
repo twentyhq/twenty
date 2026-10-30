@@ -1,9 +1,8 @@
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { MetadataApiClient, MetadataSchema } from 'twenty-client-sdk/metadata';
 
 import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 
-const APP_PREFERENCES_FEATURE_FLAG_KEY = 'IS_APP_PREFERENCES_ENABLED';
-
+// Deferred bot deletion exists for per-user app preferences, so it rolls out under their flag.
 export const isAppPreferencesEnabled = async (): Promise<boolean> => {
   try {
     const metadataClient = new MetadataApiClient({
@@ -17,7 +16,8 @@ export const isAppPreferencesEnabled = async (): Promise<boolean> => {
 
     return (queryResult.currentWorkspace?.featureFlags ?? []).some(
       (featureFlag) =>
-        featureFlag.key === APP_PREFERENCES_FEATURE_FLAG_KEY &&
+        featureFlag.key ===
+          MetadataSchema.enumFeatureFlagKey.IS_APP_PREFERENCES_ENABLED &&
         featureFlag.value,
     );
   } catch (error) {

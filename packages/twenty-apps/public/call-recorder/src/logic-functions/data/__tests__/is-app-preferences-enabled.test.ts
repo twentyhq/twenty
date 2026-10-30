@@ -4,7 +4,8 @@ import { isAppPreferencesEnabled } from 'src/logic-functions/data/is-app-prefere
 
 const metadataQueryMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-client-sdk/metadata', () => ({
+vi.mock('twenty-client-sdk/metadata', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-client-sdk/metadata')>()),
   MetadataApiClient: class {
     query = metadataQueryMock;
   },

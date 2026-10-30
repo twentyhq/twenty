@@ -413,7 +413,7 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       );
     });
 
-    it('leaves the bot of a request that was requested again during the check', async () => {
+    const buildClientRequestedAgainDuringCheck = () => {
       const client = buildCanceledClient();
       const originalQuery = client.query.bind(client);
       let callRecordingReadCount = 0;
@@ -429,17 +429,50 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
         return originalQuery(query);
       };
 
+      return client;
+    };
+
+    it('keeps the bot of a request that was requested again during the check, and still checks credits', async () => {
+      getCreditAvailabilityMock.mockResolvedValue({
+        hasAvailableCredits: true,
+      });
+      const client = buildClientRequestedAgainDuringCheck();
+
       const result = await checkCredits({
         client,
         now: TEN_MINUTES_BEFORE_JOIN,
       });
 
-      expect(result.status).toBe('skipped');
+      expect(result).toEqual({ status: 'allowed' });
+      expect(getCreditAvailabilityMock).toHaveBeenCalledOnce();
       expect(fetchMock).not.toHaveBeenCalled();
       expect(client.callRecording).toMatchObject({
         recordingRequestStatus: 'REQUESTED',
         externalBotId: 'recall-bot-1',
       });
+    });
+
+    it('blocks a request that was requested again during the check when the workspace is out of credits', async () => {
+      getCreditAvailabilityMock.mockResolvedValue({
+        hasAvailableCredits: false,
+        reason: 'no-credits',
+      });
+      const client = buildClientRequestedAgainDuringCheck();
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
+
+      expect(result).toEqual({
+        status: 'blocked',
+        failureReason: 'workspace_out_of_credits',
+      });
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        RECALL_BOT_URL,
+        expect.objectContaining({ method: 'DELETE' }),
+      );
+      expect(client.callRecording.status).toBe('NOT_RECORDED');
     });
 
     it('throws so the queue retries when Recall refuses the deletion', async () => {

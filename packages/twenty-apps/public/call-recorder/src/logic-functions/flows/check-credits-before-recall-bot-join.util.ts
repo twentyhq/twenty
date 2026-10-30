@@ -27,7 +27,7 @@ export const checkCreditsBeforeRecallBotJoin = async ({
   callRecordingId: string;
   now: Date;
 }): Promise<CheckCreditsBeforeRecallBotJoinResult> => {
-  const callRecording = (
+  let callRecording = (
     await findCallRecordingsByIds(client, [callRecordingId])
   )[0];
 
@@ -49,12 +49,14 @@ export const checkCreditsBeforeRecallBotJoin = async ({
       );
     }
 
-    return cancelOutcome === 'canceled'
-      ? { status: 'canceled' }
-      : {
-          status: 'skipped',
-          reason: 'call recording no longer holds a canceled bot',
-        };
+    if (cancelOutcome === 'canceled') {
+      return { status: 'canceled' };
+    }
+
+    // A re-request kept the bot, and its reschedule cannot enqueue this check again under the same job id.
+    callRecording = (
+      await findCallRecordingsByIds(client, [callRecordingId])
+    )[0];
   }
 
   if (

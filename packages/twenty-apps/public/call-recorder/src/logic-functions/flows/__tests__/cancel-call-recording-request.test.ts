@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -26,7 +27,7 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
-    if (mutation.updateCallRecording !== undefined) {
+    if (!isUndefined(mutation.updateCallRecording)) {
       Object.assign(
         this.callRecording,
         mutation.updateCallRecording.__args.data,
@@ -35,7 +36,7 @@ class FakeCoreApiClient {
       return { updateCallRecording: { id: this.callRecording.id } };
     }
 
-    if (mutation.updateCallRecordings !== undefined) {
+    if (!isUndefined(mutation.updateCallRecordings)) {
       Object.assign(
         this.callRecording,
         mutation.updateCallRecordings.__args.data,
@@ -76,7 +77,7 @@ const getDeletionTime = (meetingStartsAt: string): number => {
     now: NOW,
   });
 
-  if (deferredRecallBotDeletionAt === undefined) {
+  if (isUndefined(deferredRecallBotDeletionAt)) {
     throw new Error('Expected the meeting to have a deferred deletion time');
   }
 
