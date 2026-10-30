@@ -12,7 +12,7 @@ import {
   ApplicationVariableScope,
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
+import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -187,9 +187,10 @@ const seedInstalledTabStory = ({
   });
 };
 
-const meta: Meta<typeof SettingsApplicationsInstalledTab> = {
-  title: 'Pages/Settings/Applications/SettingsApplicationsInstalledTab',
-  component: SettingsApplicationsInstalledTab,
+const meta: Meta<typeof SettingsApplicationsInstalledAppsSection> = {
+  title:
+    'Modules/Settings/Applications/SettingsApplicationsInstalledAppsSection',
+  component: SettingsApplicationsInstalledAppsSection,
   decorators: [ComponentWithRouterDecorator],
   beforeEach: async () => {
     findManyApplicationsForStatus.mockClear();
@@ -215,7 +216,7 @@ const meta: Meta<typeof SettingsApplicationsInstalledTab> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SettingsApplicationsInstalledTab>;
+type Story = StoryObj<typeof SettingsApplicationsInstalledAppsSection>;
 
 export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
   beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: false }),

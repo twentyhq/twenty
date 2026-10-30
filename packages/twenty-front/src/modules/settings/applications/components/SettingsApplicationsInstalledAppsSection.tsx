@@ -14,7 +14,7 @@ const StyledToolbar = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-export const SettingsApplicationsInstalledTab = () => {
+export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
   const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
@@ -43,6 +43,7 @@ export const SettingsApplicationsInstalledTab = () => {
           <StyledToolbar>
             <SettingsApplicationLoadErrorBanner
               message={t`App configuration could not be loaded. Check your connection and try again.`}
+              // A failed retry sets the query error again, so the banner stays
               onRetry={() => refetchStatuses().catch(() => undefined)}
             />
           </StyledToolbar>
