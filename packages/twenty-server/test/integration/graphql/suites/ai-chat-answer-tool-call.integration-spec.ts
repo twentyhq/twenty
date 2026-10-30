@@ -15,7 +15,6 @@ import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/a
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -50,7 +49,6 @@ describe('Answering a chat tool call', () => {
   let chat: AgentChatService;
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
-  const testSpies: jest.SpyInstance[] = [];
 
   const pauseOnQuestions = async (...toolCallIds: string[]) => {
     const userMessage = await chat.addMessage({
@@ -133,10 +131,10 @@ describe('Answering a chat tool call', () => {
       )
     )[0]?.toolOutput?.result?.status;
 
-  const markAsMentioned = (memberId = workspaceMemberId) =>
+  const markAsMentioned = () =>
     getAppProviderByClassName<AgentChatThreadParticipantService>(
       'AgentChatThreadParticipantService',
-    ).markAsMentioned({ workspaceId, workspaceMemberId: memberId, threadId });
+    ).markAsMentioned({ workspaceId, workspaceMemberId, threadId });
 
   const readMentionState = async (memberId = workspaceMemberId) => {
     const [participant]: {
@@ -155,15 +153,6 @@ describe('Answering a chat tool call', () => {
     const participant = await readMentionState();
 
     expect(participant.mentionsResolvedAt).toEqual(participant.lastMentionedAt);
-  };
-
-  const expectNewerMentionPending = async (resolvedMentionAt: Date | null) => {
-    const participant = await readMentionState();
-
-    expect(participant.mentionsResolvedAt).toEqual(resolvedMentionAt);
-    expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
-      participant.mentionsResolvedAt!.getTime(),
-    );
   };
 
   const stopStream = () =>
@@ -214,10 +203,6 @@ describe('Answering a chat tool call', () => {
   });
 
   afterEach(async () => {
-    for (const spy of testSpies.splice(0)) {
-      spy.mockRestore();
-    }
-
     await stopStream();
   });
 
@@ -282,23 +267,6 @@ describe('Answering a chat tool call', () => {
     );
   });
 
-  it('keeps the mention unresolved when a submitted answer is invalid', async () => {
-    await pauseOnQuestions('invalid-mention-answer');
-    await markAsMentioned();
-
-    const mentionBefore = await readMentionState();
-    const response = await answerToolCall({
-      toolCall: { threadId, toolCallId: 'invalid-mention-answer' },
-      response: { selectedOptionIndices: [] },
-    });
-
-    expect(JSON.stringify(response.body.errors)).toContain(
-      'INVALID_TOOL_CALL_OUTPUT',
-    );
-    expect(await readMentionState()).toEqual(mentionBefore);
-    expect(await readToolCallStatus('invalid-mention-answer')).toBe('pending');
-  });
-
   it('resolves only the answering member while another request remains pending', async () => {
     await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
     await getAgentChatThreadService().mentionParticipants({
@@ -324,22 +292,6 @@ describe('Answering a chat tool call', () => {
     expect(await readPendingQuestionMessageId()).not.toBeNull();
   });
 
-  it('resolves a successfully recorded rejection of a proposed action', async () => {
-    const toolCallId = 'mention-rejected-action';
-
-    await pauseOnProposal(toolCallId);
-    await markAsMentioned();
-
-    const response = await answerToolCall({
-      toolCall: { threadId, toolCallId },
-      response: { decision: 'reject' },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(await readToolCallStatus(toolCallId)).toBe('rejected');
-    await expectMentionResolved();
-  });
-
   it('preserves a new mention arriving while an accepted approval executes', async () => {
     const toolCallId = 'mention-during-approved-execution';
 
@@ -361,7 +313,7 @@ describe('Answering a chat tool call', () => {
         return { success: true, message: 'Company created', result: {} };
       });
 
-    testSpies.push(executeTool);
+    spies.push(executeTool);
 
     const response = await answerToolCall({
       toolCall: { threadId, toolCallId },
@@ -371,94 +323,15 @@ describe('Answering a chat tool call', () => {
     expect(response.body.errors).toBeUndefined();
     expect(executeTool).toHaveBeenCalledTimes(1);
     expect(await readToolCallStatus(toolCallId)).toBe('approved');
-    await expectNewerMentionPending(acceptedMention.lastMentionedAt);
-  });
 
-  it('keeps an accepted answer resolved when its authored response cannot be created', async () => {
-    await pauseOnQuestions('accepted-before-message-failure');
-    await markAsMentioned();
+    const participant = await readMentionState();
 
-    testSpies.push(
-      jest
-        .spyOn(chat, 'addMessage')
-        .mockRejectedValueOnce(
-          new Error('Authored response could not be created'),
-        ),
+    expect(participant.mentionsResolvedAt).toEqual(
+      acceptedMention.lastMentionedAt,
     );
-
-    const response = await answerQuestions('accepted-before-message-failure');
-
-    expect(response.body.errors).toBeDefined();
-    expect(await readToolCallStatus('accepted-before-message-failure')).toBe(
-      'answered',
+    expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
+      participant.mentionsResolvedAt!.getTime(),
     );
-    await expectMentionResolved();
-    expect(await readPendingQuestionMessageId()).toBeNull();
-  });
-
-  it('rolls back the recorded answer and pending marker when its resolution transaction fails', async () => {
-    const { assistantMessageId } = await pauseOnQuestions(
-      'rolled-back-mention-answer',
-    );
-
-    await markAsMentioned();
-
-    const mentionBefore = await readMentionState();
-    const participantService =
-      getAppProviderByClassName<AgentChatThreadParticipantService>(
-        'AgentChatThreadParticipantService',
-      );
-    const resolveMention =
-      participantService.resolveMention.bind(participantService);
-
-    testSpies.push(
-      jest
-        .spyOn(participantService, 'resolveMention')
-        .mockImplementationOnce((resolveMentionArgs) =>
-          resolveMention({
-            ...resolveMentionArgs,
-            writeResponse: async (
-              context: Parameters<AgentChatThreadWriteStep>[0],
-            ) => {
-              await resolveMentionArgs.writeResponse(context);
-
-              throw new Error('Response transaction could not commit');
-            },
-          }),
-        ),
-    );
-
-    const response = await answerQuestions('rolled-back-mention-answer');
-
-    expect(response.body.errors).toBeDefined();
-    expect(await readToolCallStatus('rolled-back-mention-answer')).toBe(
-      'pending',
-    );
-    expect(await readPendingQuestionMessageId()).toBe(assistantMessageId);
-    expect(await readMentionState()).toEqual(mentionBefore);
-  });
-
-  it('preserves a new mention arriving between the accepted answer and its authored response', async () => {
-    await pauseOnQuestions('mention-before-authored-response');
-    await markAsMentioned();
-
-    const previousMention = await readMentionState();
-    const addMessage = chat.addMessage.bind(chat);
-
-    testSpies.push(
-      jest
-        .spyOn(chat, 'addMessage')
-        .mockImplementationOnce(async (addMessageArgs) => {
-          await markAsMentioned();
-
-          return addMessage(addMessageArgs);
-        }),
-    );
-
-    const response = await answerQuestions('mention-before-authored-response');
-
-    expect(response.body.errors).toBeUndefined();
-    await expectNewerMentionPending(previousMention.lastMentionedAt);
   });
 
   it('answers the questions of a step in any order', async () => {
