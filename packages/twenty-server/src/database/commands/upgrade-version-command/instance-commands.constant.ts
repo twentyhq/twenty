@@ -274,6 +274,7 @@ import { AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand } from 'sr
 import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793369399690-add-webhook-id-to-role-target';
 import { AddWorkspaceIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022948-add-workspace-iframe-media-permissions';
 import { RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022971-rename-workspace-allowed-iframe-origins-to-allowed-embedding-origins';
+import { AddRelatedRecordPathIsInherentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793375358574-add-related-record-path-is-inherent';
 import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793381202866-create-billing-arrangement-table';
 
 export const INSTANCE_COMMANDS = [
@@ -551,5 +552,6 @@ export const INSTANCE_COMMANDS = [
   AddWebhookIdToRoleTargetFastInstanceCommand,
   AddWorkspaceIframeMediaPermissionsFastInstanceCommand,
   RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand,
+  AddRelatedRecordPathIsInherentFastInstanceCommand,
   CreateBillingArrangementTableFastInstanceCommand,
 ];
