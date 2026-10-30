@@ -15,24 +15,22 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type RelatedRecordPath } from '~/generated-metadata/graphql';
 
-const StyledInlineContent = styled.span`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
+const StyledRelation = styled.span`
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const StyledHop = styled.span`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledSeparator = styled.span`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
+const StyledInlineIcon = styled.span<{ isSeparator?: boolean }>`
+  color: ${({ isSeparator }) =>
+    isSeparator ? themeCssVariables.font.color.tertiary : 'inherit'};
+  display: inline-flex;
+  margin: ${({ isSeparator }) =>
+    isSeparator
+      ? `0 ${themeCssVariables.spacing[1]}`
+      : `0 ${themeCssVariables.spacing[1]} 0 0`};
+  vertical-align: middle;
 `;
 
 type SettingsObjectRelatedRecordPathTableRowProps = {
@@ -61,6 +59,9 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
     objectMetadataItems,
   });
   const reachedObjectMetadataItem = steps.at(-1)?.targetObjectMetadataItem;
+  const relationLabel = steps
+    .map(({ fieldMetadataItem }) => fieldMetadataItem.label)
+    .join(' > ');
 
   return (
     <TableRow
@@ -76,29 +77,26 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
         />
         {reachedObjectMetadataItem?.labelPlural ?? t`Unavailable object`}
       </TableCell>
-      <TableCell>
-        <StyledInlineContent>
+      <TableCell minWidth="0" overflow="hidden">
+        <StyledRelation title={relationLabel}>
           {steps.map(({ fieldMetadataItem }, index) => {
             const FieldIcon = getIcon(fieldMetadataItem.icon);
 
             return (
               <Fragment key={fieldMetadataItem.id}>
                 {index > 0 && (
-                  <StyledSeparator>
+                  <StyledInlineIcon isSeparator>
                     <IconChevronRight size={theme.icon.size.sm} />
-                  </StyledSeparator>
+                  </StyledInlineIcon>
                 )}
-                <StyledHop>
+                <StyledInlineIcon>
                   <FieldIcon size={theme.icon.size.sm} />
-                  {fieldMetadataItem.label}
-                </StyledHop>
+                </StyledInlineIcon>
+                <span>{fieldMetadataItem.label}</span>
               </Fragment>
             );
           })}
-        </StyledInlineContent>
-      </TableCell>
-      <TableCell>
-        {relatedRecordPath.isInherent ? t`Inherent` : t`Regular`}
+        </StyledRelation>
       </TableCell>
       <TableCell align="center">
         {!isReadOnly && (

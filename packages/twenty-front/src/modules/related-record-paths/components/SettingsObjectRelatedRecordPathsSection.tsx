@@ -61,7 +61,6 @@ export const SettingsObjectRelatedRecordPathsSection = ({
           >
             <TableHeader>{t`Object`}</TableHeader>
             <TableHeader>{t`Relation`}</TableHeader>
-            <TableHeader>{t`Type`}</TableHeader>
             <TableHeader />
           </TableRow>
           <TableBody>

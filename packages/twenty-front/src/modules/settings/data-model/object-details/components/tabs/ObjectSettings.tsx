@@ -6,6 +6,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsObjectRelatedRecordPathsSection } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathsSection';
+import { useHasRelatedRecordPathsEntitlement } from '@/related-record-paths/hooks/useHasRelatedRecordPathsEntitlement';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -112,6 +113,8 @@ export const ObjectSettings = ({
     FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   );
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const hasRelatedRecordPathsEntitlement =
+    useHasRelatedRecordPathsEntitlement();
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -173,10 +176,19 @@ export const ObjectSettings = ({
             <Section.Header
               title={t`Related records`}
               description={t`Records reached through these relations follow access to ${objectLabel}. Inherent paths always apply, regular paths only when a role grants direct access.`}
+              actions={
+                <OrganizationAdornment
+                  tooltipContent={
+                    hasRelatedRecordPathsEntitlement
+                      ? undefined
+                      : t`Upgrade to Organization to change related records`
+                  }
+                />
+              }
             />
             <SettingsObjectRelatedRecordPathsSection
               objectMetadataItem={objectMetadataItem}
-              isReadOnly={isDDLLocked}
+              isReadOnly={isDDLLocked || !hasRelatedRecordPathsEntitlement}
             />
           </Section.Root>
         )}

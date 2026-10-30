@@ -114,9 +114,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Inherent')).toBeVisible();
-    expect(canvas.getByText('Regular')).toBeVisible();
-    expect(canvas.getByText('Note')).toBeVisible();
+    expect(await canvas.findByText('Note')).toBeVisible();
+    expect(canvas.queryByText('Inherent')).not.toBeInTheDocument();
   },
 };
 
@@ -125,7 +124,7 @@ export const ReadOnly: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Inherent')).toBeVisible();
+    expect(await canvas.findByText('Note')).toBeVisible();
     expect(
       canvas.queryByRole('button', { name: 'Add path' }),
     ).not.toBeInTheDocument();
