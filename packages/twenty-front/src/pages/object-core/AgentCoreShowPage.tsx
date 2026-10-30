@@ -2,21 +2,14 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
-import { useTheme } from 'twenty-ui/theme';
 
-import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
-import { CoreAgentDetailSkeletonLoader } from '@/object-core/agents/components/CoreAgentDetailSkeletonLoader';
 import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
-import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
 
 export const AgentCoreShowPage = () => {
   const { agentId = '' } = useParams<{ agentId: string }>();
-  const theme = useTheme();
 
   const { data, loading, error } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
@@ -36,19 +29,7 @@ export const AgentCoreShowPage = () => {
   }
 
   if (!isDefined(agent)) {
-    return (
-      <SettingsPageLayout
-        title={t`Agent`}
-        icon={<CoreAgentIcon agentId={agentId} size={theme.icon.size.md} />}
-        links={getCoreAgentBreadcrumbLinks()}
-      >
-        <SettingsPageContainer>
-          <Section.Root>
-            <CoreAgentDetailSkeletonLoader />
-          </Section.Root>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    );
+    return <PageContentSkeletonLoader />;
   }
 
   return <CoreAgentFormContent key={agent.id} agent={agent} />;

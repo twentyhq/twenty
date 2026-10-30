@@ -156,6 +156,7 @@ export const WorkflowAiAgentPromptTab = ({
       <AiModelPicker
         modelId={agent.modelId}
         onModelIdChange={handleModelChange}
+        label={t`Model`}
         disabled={readonly}
       />
 

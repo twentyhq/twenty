@@ -48,14 +48,18 @@ const getViewId = ({
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const routeObjects = useWorkspaceRouteObjects();
-  const isRecordIndexPage = isMatchingLocation(
+  const isCoreWorkflowIndexPage = isMatchingLocation(
     location,
-    AppPath.RecordIndexPage,
+    AppPath.WorkflowCoreIndexPage,
   );
+  const isRecordIndexPage =
+    isCoreWorkflowIndexPage ||
+    isMatchingLocation(location, AppPath.RecordIndexPage);
   const isCoreWorkflowShowPage = isMatchingLocation(
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   // The chat page and the whole inbox act on chats: the chat on screen, or
   // the chats selected in the inbox list
@@ -70,7 +74,7 @@ export const RouteContextStoreProvider = () => {
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular = isCoreWorkflowShowPage
+  const objectNameSingular = isCoreWorkflowPage
     ? CoreObjectNameSingular.Workflow
     : isAiChatPage
       ? CoreObjectNameSingular.AgentChatThread
@@ -142,7 +146,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
+      viewId={isCoreWorkflowPage || isAiChatPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}

@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -25,28 +26,30 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>
-      <MemoryRouter initialEntries={['/command-menu']}>
-        <CommandMenuContext.Provider
-          value={{
-            displayType: 'listItem',
-            containerType: CommandMenuItemContainerType.CommandMenuList,
-            isInPreviewMode: false,
-            commandMenuItems: [],
-            commandMenuContextApi: {
-              ...EMPTY_COMMAND_MENU_CONTEXT_API,
-              objectMetadataItem: {
-                nameSingular: CoreObjectNameSingular.Workflow,
+  <MockedProvider mocks={[]}>
+    <JotaiProvider store={jotaiStore}>
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/command-menu']}>
+          <CommandMenuContext.Provider
+            value={{
+              displayType: 'listItem',
+              containerType: CommandMenuItemContainerType.CommandMenuList,
+              isInPreviewMode: false,
+              commandMenuItems: [],
+              commandMenuContextApi: {
+                ...EMPTY_COMMAND_MENU_CONTEXT_API,
+                objectMetadataItem: {
+                  nameSingular: CoreObjectNameSingular.Workflow,
+                },
               },
-            },
-          }}
-        >
-          {children}
-        </CommandMenuContext.Provider>
-      </MemoryRouter>
-    </I18nProvider>
-  </JotaiProvider>
+            }}
+          >
+            {children}
+          </CommandMenuContext.Provider>
+        </MemoryRouter>
+      </I18nProvider>
+    </JotaiProvider>
+  </MockedProvider>
 );
 
 const renderCommands = () => {

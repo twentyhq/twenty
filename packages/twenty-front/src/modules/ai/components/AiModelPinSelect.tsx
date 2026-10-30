@@ -4,6 +4,7 @@ import { type ComponentProps } from 'react';
 import { isAiModelEffort, parseAiModelVariantId } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconWand } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AUTOMATIC_MODEL_PIN } from '@/ai/constants/AutomaticModelPin';
@@ -30,6 +31,7 @@ type AiModelPinSelectProps = {
   onChange: (modelId: string | null) => void;
   aiModels: PinnableAiModel[];
   emptyOptionLabel?: string;
+  automaticOptions?: SelectOption[];
   label?: string;
   description?: string;
   disabled?: boolean;
@@ -43,6 +45,7 @@ export const AiModelPinSelect = ({
   onChange,
   aiModels,
   emptyOptionLabel,
+  automaticOptions = [],
   label,
   description,
   disabled = false,
@@ -51,13 +54,25 @@ export const AiModelPinSelect = ({
 }: AiModelPinSelectProps) => {
   const { t } = useLingui();
 
-  const { modelId: baseModelId, effort } = parseAiModelVariantId(modelId ?? '');
+  const isAutomaticOptionValue = (value: string | null) =>
+    automaticOptions.some((option) => option.value === value);
+  const isAutomaticOptionSelected = isAutomaticOptionValue(modelId);
+
+  const { modelId: baseModelId, effort } = parseAiModelVariantId(
+    isAutomaticOptionSelected ? '' : (modelId ?? ''),
+  );
   const baseModel = aiModels.find((model) => model.modelId === baseModelId);
   const efforts = (baseModel?.efforts ?? []).filter(isAiModelEffort);
 
   const handleModelChange = (value: string) => {
     if (value === AUTOMATIC_MODEL_PIN) {
       onChange(null);
+
+      return;
+    }
+
+    if (isAutomaticOptionValue(value)) {
+      onChange(value);
 
       return;
     }
@@ -81,7 +96,11 @@ export const AiModelPinSelect = ({
         dropdownId={dropdownId}
         label={label}
         description={description}
-        value={isDefined(modelId) ? baseModelId : AUTOMATIC_MODEL_PIN}
+        value={
+          isAutomaticOptionSelected || !isDefined(modelId)
+            ? (modelId ?? AUTOMATIC_MODEL_PIN)
+            : baseModelId
+        }
         onChange={handleModelChange}
         showIconInControl={isDefined(modelId)}
         options={[
@@ -94,6 +113,7 @@ export const AiModelPinSelect = ({
                 },
               ]
             : []),
+          ...automaticOptions,
           ...getAiModelPinOptions({ aiModels, keepModelId: baseModelId }),
         ]}
         withSearchInput

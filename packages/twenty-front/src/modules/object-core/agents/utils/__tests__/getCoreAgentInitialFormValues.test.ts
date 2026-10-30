@@ -36,19 +36,9 @@ describe('getCoreAgentInitialFormValues', () => {
       description: 'Qualifies leads',
       icon: 'IconRobot',
       modelId: 'anthropic/claude-sonnet-5',
-      role: 'role-id',
       prompt: 'You qualify leads.',
       isCustom: true,
       modelConfiguration: { webSearch: { enabled: true } },
-      triggers: [
-        {
-          id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
-          type: 'CRON',
-          isActive: true,
-          instructions: 'Send the weekly digest',
-          settings: { pattern: '0 9 * * 1' },
-        },
-      ],
     });
   });
 

@@ -8,8 +8,10 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
+import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
+import { isMatchingSidePanelSearch } from '@/object-core/commands/utils/isMatchingSidePanelSearch';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
@@ -17,7 +19,6 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { normalizeSearchText } from 'twenty-ui/utilities';
 
 export const useCoreObjectsCommands = () => {
   const { t } = useLingui();
@@ -32,6 +33,8 @@ export const useCoreObjectsCommands = () => {
     coreWorkflowsFilterSettingsState,
   );
 
+  const { coreAgentEditionCommandIds } = useCoreAgentEditionCommands();
+
   const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
     currentFilterSettings: coreWorkflowsFilterSettings,
@@ -43,9 +46,7 @@ export const useCoreObjectsCommands = () => {
       CoreObjectNameSingular.Workflow;
 
   const matchesSidePanelSearch = (label: string) =>
-    normalizeSearchText(label).includes(
-      normalizeSearchText(sidePanelSearch.trim()),
-    );
+    isMatchingSidePanelSearch({ label, sidePanelSearch });
 
   const coreWorkflowFiltersCommandLabel = t`Filter workflows`;
 
@@ -66,9 +67,12 @@ export const useCoreObjectsCommands = () => {
     canManageWorkflows &&
     matchesSidePanelSearch(coreWorkflowsDeleteCommandLabel);
 
-  const coreObjectCommandIds = shouldDisplayCoreWorkflowFiltersCommand
-    ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
-    : [];
+  const coreObjectCommandIds = [
+    ...(shouldDisplayCoreWorkflowFiltersCommand
+      ? [CORE_WORKFLOW_FILTERS_COMMAND_ID]
+      : []),
+    ...coreAgentEditionCommandIds,
+  ];
 
   const coreSelectionCommandIds = shouldDisplayCoreWorkflowsDeleteCommand
     ? [CORE_WORKFLOWS_DELETE_COMMAND_ID]

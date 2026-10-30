@@ -21,6 +21,7 @@ import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
+  hasFooter?: boolean;
   triggerOptions:
     | {
         readonly: true;
@@ -44,6 +45,7 @@ type FormErrorMessages = {
 
 export const WorkflowEditTriggerCronForm = ({
   trigger,
+  hasFooter = true,
   triggerOptions,
 }: WorkflowEditTriggerCronFormProps) => {
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
@@ -462,7 +464,7 @@ export const WorkflowEditTriggerCronForm = ({
           </>
         )}
       </WorkflowStepBody>
-      {!triggerOptions.readonly && (
+      {!triggerOptions.readonly && hasFooter && (
         <WorkflowStepFooter stepId={TRIGGER_STEP_ID} />
       )}
     </>

@@ -185,7 +185,13 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         .filter(
           (item) =>
             item.type === NavigationMenuItemType.OBJECT &&
-            item.targetObjectMetadataId === currentObjectMetadataItem?.id,
+            (item.targetObjectMetadataId === currentObjectMetadataItem?.id ||
+              getNavigationMenuItemComputedLink({
+                item,
+                objectMetadataItems,
+                views,
+                lastVisitedViewPerObjectMetadataItem,
+              }) === currentPathWithSearch),
         )
         .map((item) => item.id);
 
