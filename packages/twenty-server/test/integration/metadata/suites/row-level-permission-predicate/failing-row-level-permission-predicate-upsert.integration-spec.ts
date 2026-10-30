@@ -4,12 +4,14 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import {
+  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -268,6 +270,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let adminRoleId: string;
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
+  let personObjectMetadataId: string;
   let personCompanyFieldMetadataId: string;
 
   beforeAll(async () => {
@@ -309,6 +312,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     );
 
     jestExpectToBeDefined(personObjectMetadata);
+    personObjectMetadataId = personObjectMetadata.id;
     jestExpectToBeDefined(personObjectMetadata.fieldsList);
 
     const personCompanyField = personObjectMetadata.fieldsList.find(
@@ -340,9 +344,21 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     jestExpectToBeDefined(createdRoleId);
 
     adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
   });
 
   afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
     if (createdRoleId) {
       await deleteOneRole({
         expectToFail: false,
@@ -385,5 +401,43 @@ describe('Row Level Permission Predicate upsert should fail', () => {
     expectOneNotInternalServerErrorSnapshot({
       errors,
     });
+  });
+
+  it('when relation hops are not enabled for the workspace', async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
+    try {
+      const { errors } = await upsertRowLevelPermissionPredicates({
+        expectToFail: true,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObjectMetadataId,
+          predicates: [
+            {
+              relationFieldMetadataId: personCompanyFieldMetadataId,
+              fieldMetadataId: companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
+
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
+    } finally {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
+    }
   });
 });

@@ -6,6 +6,7 @@ import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
   type ViewFilterOperand,
@@ -42,6 +43,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
   validateFlatRowLevelPermissionPredicateCreation({
     flatEntityToValidate: flatPredicateToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    additionalCacheDataMaps,
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
@@ -98,6 +100,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           relationFieldMetadataUniversalIdentifier:
             flatPredicateToValidate.relationFieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
+          isRelationHopEnabled:
+            additionalCacheDataMaps.featureFlagsMap[
+              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+            ] === true,
         }),
       );
 
@@ -236,6 +242,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    additionalCacheDataMaps,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
@@ -323,6 +330,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           relationFieldMetadataUniversalIdentifier:
             updatedPredicate.relationFieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
+          isRelationHopEnabled:
+            additionalCacheDataMaps.featureFlagsMap[
+              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+            ] === true,
         }),
       );
     }
@@ -481,6 +492,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     objectMetadataUniversalIdentifier,
     relationFieldMetadataUniversalIdentifier,
     flatFieldMetadataMaps,
+    isRelationHopEnabled,
   }: {
     fieldMetadata: UniversalFlatFieldMetadata;
     objectMetadataUniversalIdentifier: string;
@@ -488,12 +500,23 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     flatFieldMetadataMaps:
       | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
       | undefined;
+    isRelationHopEnabled: boolean;
   }): FlatEntityValidationError[] {
     if (
       !isDefined(relationFieldMetadataUniversalIdentifier) ||
       !isDefined(flatFieldMetadataMaps)
     ) {
       return [];
+    }
+
+    if (!isRelationHopEnabled) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+          message: t`Predicates reaching a field through a relation are not enabled for this workspace`,
+          userFriendlyMessage: msg`Rules through a relation are not enabled for this workspace`,
+        },
+      ];
     }
 
     const relationFieldMetadata = findFlatEntityByUniversalIdentifier({

@@ -2,8 +2,10 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
+  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -149,20 +151,37 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       predicateGroups: [],
     };
 
-    const { data } = await upsertRowLevelPermissionPredicates({
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: true,
       expectToFail: false,
-      input,
     });
 
-    expect(data.upsertRowLevelPermissionPredicates.predicates).toHaveLength(1);
-    expect(data.upsertRowLevelPermissionPredicates.predicates[0]).toMatchObject(
-      {
+    try {
+      const { data } = await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input,
+      });
+
+      expect(data.upsertRowLevelPermissionPredicates.predicates).toHaveLength(
+        1,
+      );
+      expect(
+        data.upsertRowLevelPermissionPredicates.predicates[0],
+      ).toMatchObject({
         objectMetadataId: personObjectMetadataId,
         relationFieldMetadataId: personCompanyFieldMetadataId,
         fieldMetadataId: companyNameFieldMetadataId,
         value: 'Acme',
-      },
-    );
+      });
+    } finally {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
   });
 
   it('should upsert predicates with all fields', async () => {
