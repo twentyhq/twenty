@@ -127,20 +127,22 @@ export class UsageAnalyticsService {
     }
 
     const rows = await this.clickHouseService.selectOrThrow<{
-      resourceType: string;
-      operationType: string;
       operation: string;
+      latestResourceType: string;
+      latestOperationType: string;
       creditsUsedMicro: string | number;
     }>(
-      `SELECT resourceType, operationType,
-              if(resourceType = 'APP' AND has({declaredOperations:Array(String)}, resourceContext), resourceContext, '') AS operation,
+      // One row per declared operation, else per operation type: a resource or category split renders as duplicates
+      `SELECT if(resourceType = 'APP' AND has({declaredOperations:Array(String)}, resourceContext), resourceContext, '') AS operation,
+              argMax(resourceType, timestamp) AS latestResourceType,
+              argMax(operationType, timestamp) AS latestOperationType,
               sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
          AND applicationId IN {applicationIds:Array(String)}
          AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
          AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-       GROUP BY resourceType, operationType, operation
+       GROUP BY operation, if(operation = '', operationType, '')
        HAVING creditsUsedMicro != 0
        ORDER BY creditsUsedMicro DESC
        SETTINGS max_execution_time = 10, use_query_cache = true,
@@ -154,7 +156,12 @@ export class UsageAnalyticsService {
     );
 
     return rows.map(
-      ({ resourceType, operationType, operation, creditsUsedMicro }) => {
+      ({
+        operation,
+        latestResourceType: resourceType,
+        latestOperationType: operationType,
+        creditsUsedMicro,
+      }) => {
         const isKnownOperation = USAGE_OPERATION_TYPES.has(operationType);
         const declaredCharge = findDeclaredBillingCharge({
           billing,

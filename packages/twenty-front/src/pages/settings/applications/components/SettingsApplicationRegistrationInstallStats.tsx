@@ -19,6 +19,7 @@ import {
   IconCoins,
   IconPlayerPause,
   IconRefresh,
+  type IconComponent,
   IconVersions,
   useIcons,
 } from 'twenty-ui/icon';
@@ -111,6 +112,27 @@ export const SettingsApplicationRegistrationInstallStats = ({
 
   const creditsUsedBreakdown = stats?.creditsUsedBreakdown ?? [];
 
+  const getCreditsUsedBreakdownIcon = ({
+    icon,
+    operation,
+  }: {
+    icon?: string | null;
+    operation?: string | null;
+  }): IconComponent => {
+    if (isDefined(icon)) {
+      return getIcon(icon);
+    }
+
+    if (
+      isDefined(operation) &&
+      isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
+    ) {
+      return USAGE_LIMIT_OPERATION_TYPE_ICONS[operation];
+    }
+
+    return IconCoins;
+  };
+
   const creditsUsedStats: SettingsStatRow[] = [
     {
       Icon: IconCoins,
@@ -129,14 +151,8 @@ export const SettingsApplicationRegistrationInstallStats = ({
         ? getUsageOperationTypeLabel(operation)
         : undefined;
 
-      // A label or icon the app declared for its billing operation wins over the platform category's
       return {
-        Icon: isDefined(icon)
-          ? getIcon(icon)
-          : isDefined(operation) &&
-              isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
-            ? USAGE_LIMIT_OPERATION_TYPE_ICONS[operation]
-            : IconCoins,
+        Icon: getCreditsUsedBreakdownIcon({ icon, operation }),
         label:
           label ??
           (isDefined(operationLabel) ? i18n._(operationLabel) : undefined) ??

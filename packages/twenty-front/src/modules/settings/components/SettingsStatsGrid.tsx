@@ -87,7 +87,7 @@ export const SettingsStatsGrid = ({ columns }: SettingsStatsGridProps) => (
           {column.map((stat, rowIndex) => (
             <Fragment key={`${rowIndex}-${stat.label}`}>
               <StatRow Icon={stat.Icon} label={stat.label} value={stat.value} />
-              {stat.hasSeparatorAfter === true && <StyledRowSeparator />}
+              {stat.hasSeparatorAfter && <StyledRowSeparator />}
             </Fragment>
           ))}
         </StyledColumn>
