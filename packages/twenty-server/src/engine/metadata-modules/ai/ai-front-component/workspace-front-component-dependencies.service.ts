@@ -4,7 +4,10 @@ import {
   computeDependencyFileChecksum,
   FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
 } from 'twenty-shared/application';
-import { type SharedDependenciesBuildManifest } from 'twenty-shared/front-component-build';
+import {
+  getSharedDependenciesBuildManifestPath,
+  type SharedDependenciesBuildManifest,
+} from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
 import { createHash } from 'crypto';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -19,6 +22,7 @@ import {
   BUILD_LOCK_RETRY_MS,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-required-shared-dependencies.constant';
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
 import { convertFrontComponentBuildFailureToException } from 'src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util';
@@ -62,11 +66,14 @@ export class WorkspaceFrontComponentDependenciesService {
         const existingManifest = await this.readBuildManifest({
           ...location,
           fileFolder: FileFolder.Dependencies,
-          resourcePath: `${builtPath}.json`,
+          resourcePath: getSharedDependenciesBuildManifestPath(builtPath),
         });
 
         if (
           isDefined(existingManifest) &&
+          FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES.every((specifier) =>
+            isDefined(existingManifest.exports[specifier]),
+          ) &&
           existingManifest.checksum === dependencies.builtChecksum &&
           existingManifest.packageJsonChecksum ===
             dependencies.packageJsonChecksum &&
@@ -132,7 +139,7 @@ export class WorkspaceFrontComponentDependenciesService {
           ...location,
           applicationId: dependencies.applicationId,
           fileFolder: FileFolder.Dependencies,
-          resourcePath: `${builtPath}.json`,
+          resourcePath: getSharedDependenciesBuildManifestPath(builtPath),
           sourceFile: JSON.stringify(manifest),
           settings: { isTemporaryFile: false, toDelete: false },
         });
@@ -141,6 +148,16 @@ export class WorkspaceFrontComponentDependenciesService {
           frontComponentSharedDependenciesBuiltPath: builtPath,
           frontComponentSharedDependenciesChecksum: result.checksum,
         });
+
+        if (dependencies.builtChecksum !== result.checksum) {
+          await this.applicationService.broadcastFrontComponentSharedDependenciesChecksumUpdates(
+            {
+              workspaceId,
+              applicationId: dependencies.applicationId,
+              frontComponentSharedDependenciesChecksum: result.checksum,
+            },
+          );
+        }
 
         return { ...manifest, dependencyRevision: dependencies.revision };
       },

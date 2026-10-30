@@ -3,6 +3,7 @@ import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
 import {
   getSharedDependenciesEntrySource,
+  getSharedDependenciesBuildManifestPath,
   type SharedDependenciesBuildContext,
   type SharedDependenciesBuildManifest,
 } from 'twenty-shared/front-component-build';
@@ -105,10 +106,13 @@ export const buildSharedDependenciesBundle = async ({
   };
   const manifestSource = JSON.stringify(buildManifest);
 
-  await writeFile(`${absoluteBuiltPath}.json`, manifestSource);
+  await writeFile(
+    getSharedDependenciesBuildManifestPath(absoluteBuiltPath),
+    manifestSource,
+  );
   await onFileBuilt({
     fileFolder: FileFolder.Dependencies,
-    builtPath: `${builtPath}.json`,
+    builtPath: getSharedDependenciesBuildManifestPath(builtPath),
     sourcePath: 'package.json',
     checksum: crypto.createHash('sha256').update(manifestSource).digest('hex'),
   });
