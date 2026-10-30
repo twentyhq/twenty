@@ -31,6 +31,7 @@ export const getApplicationsWithPreferences = ({
         settingsMenuItems,
         variables,
         connectionProviders,
+        hasUserHealthCheck,
       }) => {
         const application = installedApplications.find(
           (installedApplication) => installedApplication.id === applicationId,
@@ -41,7 +42,8 @@ export const getApplicationsWithPreferences = ({
           !isDefined(application) ||
           (!isNonEmptyArray(settingsMenuItems) &&
             !isNonEmptyArray(displayedVariables) &&
-            !isNonEmptyArray(connectionProviders))
+            !isNonEmptyArray(connectionProviders) &&
+            !hasUserHealthCheck)
         ) {
           return [];
         }
@@ -55,6 +57,7 @@ export const getApplicationsWithPreferences = ({
             missingRequiredVariables:
               getMissingRequiredApplicationVariables(displayedVariables),
             connectionProviders,
+            hasUserHealthCheck,
           },
         ];
       },

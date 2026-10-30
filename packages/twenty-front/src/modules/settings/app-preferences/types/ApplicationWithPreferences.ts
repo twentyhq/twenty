@@ -10,4 +10,5 @@ export type ApplicationWithPreferences = {
   variables: MyApplicationPreferences['variables'];
   missingRequiredVariables: MyApplicationPreferences['variables'];
   connectionProviders: MyApplicationPreferences['connectionProviders'];
+  hasUserHealthCheck: MyApplicationPreferences['hasUserHealthCheck'];
 };
