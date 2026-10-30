@@ -12,7 +12,7 @@ export const getLocalStatus = async ({
   signal,
 }: {
   environment: Pick<LocalEnvironment, 'name' | 'port'>;
-  container: LocalContainer | undefined;
+  container: Pick<LocalContainer, 'port' | 'image' | 'isRunning'> | undefined;
   signal: AbortSignal;
 }) => {
   const data = {

@@ -24,7 +24,7 @@ export const runLocalLogsCommand: CommandRun<CommandContext> = async ({
       name: '--lines',
       maximum: 10000,
     }) ?? 50;
-  const follow = options.follow !== false;
+  const shouldFollow = options.follow !== false;
   await checkLocalRuntime(signal);
   const container = await readLocalContainer({ environment, signal });
   if (!isDefined(container)) {
@@ -34,13 +34,13 @@ export const runLocalLogsCommand: CommandRun<CommandContext> = async ({
       hint: 'Run twenty local start first (add --test for the test instance).',
     });
   }
-  await output.event('start', { name: environment.name, follow }, signal);
+  await output.event('start', { name: environment.name, shouldFollow }, signal);
   await runDocker({
     args: [
       'logs',
       '--tail',
       String(lines),
-      ...(follow ? ['--follow'] : []),
+      ...(shouldFollow ? ['--follow'] : []),
       container.id,
     ],
     signal,
@@ -53,7 +53,7 @@ export const runLocalLogsCommand: CommandRun<CommandContext> = async ({
     },
   });
   return {
-    data: { name: environment.name, follow },
+    data: { name: environment.name, shouldFollow },
     human: 'Log stream completed.',
   };
 };

@@ -226,6 +226,14 @@ describe('local commands', () => {
       'record',
       'result',
     ]);
+    expect(events[0].data).toEqual({
+      name: environment.name,
+      shouldFollow: false,
+    });
+    expect(events.at(-1).data).toEqual({
+      name: environment.name,
+      shouldFollow: false,
+    });
     expect(events[1].data.message).toBe('server started\nworker ready\n');
     expect(dockerArguments().at(-1)).toEqual([
       'logs',

@@ -33,7 +33,7 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
   const port = existing?.port ?? requestedPort ?? environment.port;
 
   if (
-    existing &&
+    isDefined(existing) &&
     ((isDefined(requestedPort) && requestedPort !== existing.port) ||
       (isDefined(requestedImage) && requestedImage !== existing.image))
   ) {
@@ -44,23 +44,25 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     });
   }
 
-  if (existing) {
-    const range = getLocalEngineRange();
-    const existingVersion = valid(existing.image.split(':').at(-1));
-    if (
-      isDefined(range) &&
-      (!isDefined(existingVersion) || !satisfies(existingVersion, range))
-    ) {
-      output.warn({
-        code: 'LOCAL_VERSION_MISMATCH',
-        message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}.`,
-      });
-    }
-    if (!existing.isRunning) {
-      output.progress({ message: 'Starting the existing local environment…' });
-      await runDocker({ args: ['start', existing.id], signal });
-    }
-  } else {
+  const range = isDefined(existing) ? getLocalEngineRange() : undefined;
+  const existingVersion = valid(existing?.image.split(':').at(-1));
+  if (
+    isDefined(existing) &&
+    isDefined(range) &&
+    (!isDefined(existingVersion) || !satisfies(existingVersion, range))
+  ) {
+    output.warn({
+      code: 'LOCAL_VERSION_MISMATCH',
+      message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}.`,
+    });
+  }
+
+  if (isDefined(existing) && !existing.isRunning) {
+    output.progress({ message: 'Starting the existing local environment…' });
+    await runDocker({ args: ['start', existing.id], signal });
+  }
+
+  if (!isDefined(existing)) {
     const image =
       requestedImage ??
       (await resolveLocalImage({ version: undefined, signal }));
