@@ -690,7 +690,25 @@ export const graphqlMocks = {
               operations: ['*.created', '*.updated'],
               description: 'Slack notifications for lead updates',
               secret: 'sample-secret',
-              role: null,
+              role: {
+                __typename: 'Role',
+                id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+              },
+            },
+          ],
+        },
+      });
+    }),
+    metadataGraphql.query('GetApiKeyRoles', () => {
+      return HttpResponse.json({
+        data: {
+          getApiKeyRoles: [
+            {
+              __typename: 'Role',
+              id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+              label: 'Admin',
+              icon: 'IconUserCog',
+              canBeAssignedToApiKeys: true,
             },
           ],
         },
@@ -708,7 +726,10 @@ export const graphqlMocks = {
             operations: ['*.created', '*.updated'],
             description: 'Slack notifications for lead updates',
             secret: 'sample-secret',
-            role: null,
+            role: {
+              __typename: 'Role',
+              id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+            },
           },
         },
       });
