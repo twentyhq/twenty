@@ -4177,6 +4177,9 @@ export default {
             "operations": [
                 1
             ],
+            "roleId": [
+                528
+            ],
             "secret": [
                 1
             ],
@@ -14358,6 +14361,9 @@ export default {
             "operations": [
                 1
             ],
+            "roleId": [
+                528
+            ],
             "secret": [
                 1
             ],
@@ -15709,6 +15715,9 @@ export default {
             ],
             "operations": [
                 1
+            ],
+            "role": [
+                451
             ],
             "secret": [
                 1

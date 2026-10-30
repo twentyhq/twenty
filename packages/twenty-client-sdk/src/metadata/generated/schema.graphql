@@ -1852,6 +1852,7 @@ input CreateWebhookInput {
   description: String
   id: UUID
   operations: [String!]!
+  roleId: UUID!
   secret: String
   targetUrl: String!
 }
@@ -5439,6 +5440,7 @@ input UpdateWebhookInput {
 input UpdateWebhookInputUpdates {
   description: String
   operations: [String!]
+  roleId: UUID
   secret: String
   targetUrl: String
 }
@@ -6109,6 +6111,7 @@ type Webhook {
   description: String
   id: UUID!
   operations: [String!]!
+  role: Role
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
