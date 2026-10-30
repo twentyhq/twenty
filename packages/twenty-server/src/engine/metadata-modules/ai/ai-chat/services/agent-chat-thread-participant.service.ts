@@ -95,44 +95,25 @@ export class AgentChatThreadParticipantService {
     // Queued before the write, so no saved snooze lacks its end; the end of
     // a snooze that was never saved finds nothing to end
     if (isDefined(snoozeEnd)) {
-      for (const threadId of uniqueThreadIds) {
-        await this.scheduleSnoozeEnd({
-          ...memberArgs,
-          threadId,
-          snoozedUntil: snoozeEnd.toISOString(),
-          delay: Math.max(snoozeEnd.getTime() - Date.now(), 0),
-        });
-      }
+      await this.scheduleSnoozeEnds({
+        ...memberArgs,
+        threadIds: uniqueThreadIds,
+        snoozeEnd,
+      });
     }
 
-    // The assignee is checked under the thread's lock, which an assignment
-    // takes too, so the member cannot be assigned while unsubscribing
-    const assertIsNotAssignee: AgentChatThreadWriteStep = async ({
-      manager,
-      table,
-      threadId,
-    }) => {
-      const [thread] = await manager.query<{ assigneeId: string | null }[]>(
-        `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
-        [threadId],
-      );
-
-      if (thread?.assigneeId === workspaceMemberId) {
-        throw new AiException(
-          'The assignee of a chat cannot unsubscribe from it',
-          AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
-        );
-      }
-    };
-
-    return this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
-      AGENT_CHAT_INBOX_ACTION_QUERIES[action],
-      isSnooze ? [snoozeEnd] : [],
-      action === AgentChatInboxAction.UNSUBSCRIBE
-        ? assertIsNotAssignee
-        : writeThread,
-    );
+    return this.write({
+      ...memberArgs,
+      threadIds: uniqueThreadIds,
+      buildQuery: AGENT_CHAT_INBOX_ACTION_QUERIES[action],
+      extraParameters: isSnooze ? [snoozeEnd] : [],
+      writeThread:
+        action === AgentChatInboxAction.UNSUBSCRIBE
+          ? (context) =>
+              this.assertIsNotAssignee({ ...context, workspaceMemberId })
+          : writeThread,
+      isEveryRowRequired: true,
+    });
   }
 
   async moveMembersToInbox({
@@ -181,12 +162,12 @@ export class AgentChatThreadParticipantService {
   }: AgentChatThreadAccessArgs & {
     writeResponse: AgentChatThreadWriteStep;
   }): Promise<void> {
-    await this.write(
-      { ...args, threadIds: [args.threadId] },
-      buildAgentChatThreadMentionResolutionQuery,
-      [],
-      writeResponse,
-    );
+    await this.write({
+      ...args,
+      threadIds: [args.threadId],
+      buildQuery: buildAgentChatThreadMentionResolutionQuery,
+      writeThread: writeResponse,
+    });
   }
 
   async resolveMentionInTransaction({
@@ -223,12 +204,13 @@ export class AgentChatThreadParticipantService {
     isSelfAssigned: boolean;
     writeAssignment: AgentChatThreadWriteStep;
   }): Promise<void> {
-    await this.write(
-      { ...args, threadIds: [threadId] },
-      buildAgentChatThreadAssigneeParticipantQuery,
-      [isSelfAssigned],
-      writeAssignment,
-    );
+    await this.write({
+      ...args,
+      threadIds: [threadId],
+      buildQuery: buildAgentChatThreadAssigneeParticipantQuery,
+      extraParameters: [isSelfAssigned],
+      writeThread: writeAssignment,
+    });
   }
 
   // A snooze ends by moving the chat back to the inbox. The snooze stays
@@ -268,40 +250,24 @@ export class AgentChatThreadParticipantService {
     }
 
     // A snooze the member replaced or cleared since has nothing to end
-    await this.write(
-      {
-        workspaceId: args.workspaceId,
-        workspaceMemberId: args.workspaceMemberId,
-        threadIds: [args.threadId],
-      },
-      buildAgentChatThreadSnoozeEndQuery,
-      [snoozedUntil],
-    );
+    await this.write({
+      workspaceId: args.workspaceId,
+      workspaceMemberId: args.workspaceMemberId,
+      threadIds: [args.threadId],
+      buildQuery: buildAgentChatThreadSnoozeEndQuery,
+      extraParameters: [snoozedUntil],
+    });
   }
 
   async isFollowing(args: AgentChatThreadAccessArgs): Promise<boolean> {
-    await this.sharingService.assertHasMentionResolutionOrThrow(
-      args.workspaceId,
-    );
-
-    const participant = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager }) => this.findOne({ manager, ...args }),
-    );
+    const participant = await this.findParticipant(args);
 
     return participant?.isSubscribed ?? false;
   }
 
   // For the row written along with a new thread
   async emitParticipantCreated(args: AgentChatThreadAccessArgs): Promise<void> {
-    await this.sharingService.assertHasMentionResolutionOrThrow(
-      args.workspaceId,
-    );
-
-    const participant = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager }) => this.findOne({ manager, ...args }),
-    );
+    const participant = await this.findParticipant(args);
 
     if (!isDefined(participant)) {
       return;
@@ -398,6 +364,24 @@ export class AgentChatThreadParticipantService {
     return memberCount;
   }
 
+  private async scheduleSnoozeEnds({
+    threadIds,
+    snoozeEnd,
+    ...memberArgs
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+    snoozeEnd: Date;
+  }): Promise<void> {
+    for (const threadId of threadIds) {
+      await this.scheduleSnoozeEnd({
+        ...memberArgs,
+        threadId,
+        snoozedUntil: snoozeEnd.toISOString(),
+        delay: Math.max(snoozeEnd.getTime() - Date.now(), 0),
+      });
+    }
+  }
+
   private async scheduleSnoozeEnd({
     delay,
     ...data
@@ -411,6 +395,18 @@ export class AgentChatThreadParticipantService {
         workspaceId: data.workspaceId,
         isWorkspaceJob: true,
       },
+    );
+  }
+
+  private async findParticipant(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadParticipantRow | null> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+
+    return this.threadRepository.query(args.workspaceId, ({ manager }) =>
+      this.findOne({ manager, ...args }),
     );
   }
 
@@ -481,6 +477,29 @@ export class AgentChatThreadParticipantService {
 
     if (readableThreadIds.length !== threadIds.length) {
       throwAgentChatThreadNotFound();
+    }
+  }
+
+  // The assignee is checked under the thread's lock, which an assignment
+  // takes too, so the member cannot be assigned while unsubscribing
+  private async assertIsNotAssignee({
+    manager,
+    table,
+    threadId,
+    workspaceMemberId,
+  }: Parameters<AgentChatThreadWriteStep>[0] & {
+    workspaceMemberId: string;
+  }): Promise<void> {
+    const [thread] = await manager.query<{ assigneeId: string | null }[]>(
+      `SELECT "assigneeId" FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+      [threadId],
+    );
+
+    if (thread?.assigneeId === workspaceMemberId) {
+      throw new AiException(
+        'The assignee of a chat cannot unsubscribe from it',
+        AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE,
+      );
     }
   }
 
@@ -565,20 +584,21 @@ export class AgentChatThreadParticipantService {
 
   // Each row is locked while it is read and written, so the change sent is
   // the one this write made; one transaction writes all of them or none
-  private async write(
-    {
-      workspaceId,
-      workspaceMemberId,
-      threadIds,
-      isEveryRowRequired = false,
-    }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
-      threadIds: string[];
-      isEveryRowRequired?: boolean;
-    },
-    buildQuery: BuildAgentChatThreadParticipantWriteQuery,
-    extraParameters: unknown[] = [],
-    writeThread?: AgentChatThreadWriteStep,
-  ): Promise<AgentChatThreadParticipantRow[]> {
+  private async write({
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+    buildQuery,
+    extraParameters = [],
+    writeThread,
+    isEveryRowRequired = false,
+  }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
+    threadIds: string[];
+    buildQuery: BuildAgentChatThreadParticipantWriteQuery;
+    extraParameters?: unknown[];
+    writeThread?: AgentChatThreadWriteStep;
+    isEveryRowRequired?: boolean;
+  }): Promise<AgentChatThreadParticipantRow[]> {
     const objectMetadataId =
       await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
