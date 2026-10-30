@@ -1825,6 +1825,13 @@ export type CreateRecordExportInput = {
   orderBy?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type CreateRelatedRecordPathInput = {
+  firstFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  secondFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  thirdFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type CreateRoleInput = {
   canAccessAllAgentChatChannels?: InputMaybe<Scalars['Boolean']['input']>;
   canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2440,6 +2447,7 @@ export enum FeatureFlagKey {
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
+  IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 }
 
@@ -3456,6 +3464,7 @@ export type Mutation = {
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
   createPublicDomain: PublicDomain;
+  createRelatedRecordPath: RelatedRecordPath;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
   createSubscriptionPaymentIntent: BillingPaymentIntent;
@@ -3494,6 +3503,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String']['output'];
   deletePublicDomain: Scalars['Boolean']['output'];
   deleteQueuedChatMessage: Scalars['Boolean']['output'];
+  deleteRelatedRecordPath: RelatedRecordPath;
   deleteSSOIdentityProvider: DeleteSso;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
@@ -3996,6 +4006,11 @@ export type MutationCreatePublicDomainArgs = {
 };
 
 
+export type MutationCreateRelatedRecordPathArgs = {
+  input: CreateRelatedRecordPathInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -4184,6 +4199,11 @@ export type MutationDeletePublicDomainArgs = {
 
 export type MutationDeleteQueuedChatMessageArgs = {
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteRelatedRecordPathArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -5862,6 +5882,7 @@ export type Query = {
   publicMarketplaceApps: Array<MarketplaceApp>;
   recordPermissions: Array<RecordPermissionsResult>;
   recordSharing: RecordSharingDto;
+  relatedRecordPaths: Array<RelatedRecordPath>;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
@@ -6525,6 +6546,15 @@ export type RecordTableConfiguration = {
 export type RecordTargetInput = {
   objectMetadataId: Scalars['UUID']['input'];
   recordId: Scalars['UUID']['input'];
+};
+
+export type RelatedRecordPath = {
+  __typename?: 'RelatedRecordPath';
+  firstFieldMetadataId: Scalars['UUID']['output'];
+  id: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  thirdFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type Relation = {
