@@ -22,7 +22,7 @@ export const timelineThreadFragment = gql`
     channel {
       type
       provider
-      connectionProviderName
+      applicationId
     }
   }
   ${participantFragment}

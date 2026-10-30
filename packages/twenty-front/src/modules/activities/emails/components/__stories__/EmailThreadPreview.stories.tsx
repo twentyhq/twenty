@@ -34,7 +34,7 @@ const thread: TimelineThread = {
   channel: {
     type: MessageChannelType.EMAIL,
     provider: 'google',
-    connectionProviderName: null,
+    applicationId: null,
   },
 };
 
@@ -118,7 +118,7 @@ export const LinkedInConversation: Story = {
       channel: {
         type: MessageChannelType.APP,
         provider: 'app',
-        connectionProviderName: 'linkedin',
+        applicationId: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
       },
     },
   },

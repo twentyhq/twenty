@@ -861,7 +861,7 @@ export type TimelineThread = {
 
 export type TimelineThreadChannel = {
   __typename?: 'TimelineThreadChannel';
-  connectionProviderName?: Maybe<Scalars['String']['output']>;
+  applicationId?: Maybe<Scalars['UUID']['output']>;
   provider: Scalars['String']['output'];
   type: MessageChannelType;
 };
