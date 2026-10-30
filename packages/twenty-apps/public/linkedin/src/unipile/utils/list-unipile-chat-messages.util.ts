@@ -6,6 +6,9 @@ import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-
 
 const UNIPILE_MESSAGES_PAGE_SIZE = 100;
 
+// A chat with more messages than this is cut, rather than letting a cursor that never ends eat the job timeout
+const UNIPILE_MESSAGES_MAX_PAGES = 50;
+
 export const listUnipileChatMessages = async ({
   accountId,
   chatId,
@@ -14,9 +17,10 @@ export const listUnipileChatMessages = async ({
   chatId: string;
 }): Promise<UnipileMessage[]> => {
   const messages: UnipileMessage[] = [];
+  const seenCursors = new Set<string>();
   let cursor: string | undefined;
 
-  do {
+  for (let pageIndex = 0; pageIndex < UNIPILE_MESSAGES_MAX_PAGES; pageIndex++) {
     const { data } = await new UnipileMessaging().getMessagesList({
       ...getUnipileRequestOptions(),
       path: { account_id: accountId, chat_id: chatId },
@@ -25,7 +29,17 @@ export const listUnipileChatMessages = async ({
 
     messages.push(...data.data);
     cursor = data.next_cursor;
-  } while (isNonEmptyString(cursor));
+
+    if (
+      data.data.length === 0 ||
+      !isNonEmptyString(cursor) ||
+      seenCursors.has(cursor)
+    ) {
+      break;
+    }
+
+    seenCursors.add(cursor);
+  }
 
   return messages;
 };

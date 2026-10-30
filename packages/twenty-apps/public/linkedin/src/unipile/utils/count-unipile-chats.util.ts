@@ -9,28 +9,38 @@ const UNIPILE_CHAT_COUNT_MAX_PAGES = 500;
 
 // LinkedIn returns no total, so progress needs one walk over the chat list (no messages fetched)
 export const countUnipileChats = async (accountId: string): Promise<number> => {
+  const seenCursors = new Set<string>();
   let count = 0;
   let cursor: string | undefined;
-  let pageCount = 0;
 
-  do {
+  for (
+    let pageIndex = 0;
+    pageIndex < UNIPILE_CHAT_COUNT_MAX_PAGES;
+    pageIndex++
+  ) {
     const page = await listUnipileChats({
       accountId,
       cursor,
       limit: UNIPILE_CHAT_COUNT_PAGE_SIZE,
     });
 
-    if (pageCount === 0 && page.totalCount !== undefined) {
+    if (pageIndex === 0 && page.totalCount !== undefined) {
       return page.totalCount;
     }
 
     count += page.items.length;
     cursor = page.nextCursor;
-    pageCount += 1;
-  } while (
-    isNonEmptyString(cursor) &&
-    pageCount < UNIPILE_CHAT_COUNT_MAX_PAGES
-  );
+
+    if (
+      page.items.length === 0 ||
+      !isNonEmptyString(cursor) ||
+      seenCursors.has(cursor)
+    ) {
+      break;
+    }
+
+    seenCursors.add(cursor);
+  }
 
   return count;
 };

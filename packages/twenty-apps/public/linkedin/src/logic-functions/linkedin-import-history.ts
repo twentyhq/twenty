@@ -63,6 +63,10 @@ const importPage = async ({
 
   // Saved before the first chat is imported, so the button shows a percentage from the start
   if (state.totalConversationCount === undefined) {
+    console.log(
+      `[linkedin] history run ${payload.runId}: ${totalConversationCount} conversations to import`,
+    );
+
     await saveLinkedinHistoryImportState({
       connectedAccountId,
       state: {
@@ -104,7 +108,15 @@ const importPage = async ({
     }
   }
 
-  const isLastPage = !isNonEmptyString(page.nextCursor);
+  // An empty page or a cursor equal to the one just used would loop forever
+  const isLastPage =
+    page.items.length === 0 ||
+    !isNonEmptyString(page.nextCursor) ||
+    page.nextCursor === payload.cursor;
+
+  console.log(
+    `[linkedin] history run ${payload.runId} page ${payload.pageIndex}: ${page.items.length} chats, ${importedConversationCount} imported`,
+  );
   const nextState: LinkedinHistoryImportState = {
     ...state,
     importedConversationCount:
