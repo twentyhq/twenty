@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const GETTING_STARTED_WORKFLOW_PREVIEWS = gql`
   query GettingStartedWorkflowPreviews {
     gettingStartedWorkflowPreviews {
-      step
+      stepActionKey
       trigger {
         type
         databaseEventAction

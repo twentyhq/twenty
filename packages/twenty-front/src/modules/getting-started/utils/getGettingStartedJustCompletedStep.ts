@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type GettingStartedProgressQuery,
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
 } from '~/generated-metadata/graphql';
 
 type GettingStartedProgress =
@@ -14,25 +14,27 @@ export const getGettingStartedJustCompletedStep = ({
   progress,
 }: {
   previousProgress:
-    | Pick<GettingStartedProgress, 'steps' | 'completedSteps' | 'selectedStep'>
+    | Pick<
+        GettingStartedProgress,
+        'steps' | 'completedStepActionKeys' | 'selectedStepActionKey'
+      >
     | undefined;
-  progress: Pick<GettingStartedProgress, 'completedSteps'>;
-}): GettingStartedStep | null => {
+  progress: Pick<GettingStartedProgress, 'completedStepActionKeys'>;
+}): GettingStartedStepActionKey | null => {
   if (!isDefined(previousProgress)) {
     return null;
   }
 
-  const { selectedStep: previouslyDisplayedStep } =
+  const { selectedStepActionKey: previouslyDisplayedStep } =
     getGettingStartedStepSelection({
-      steps: previousProgress.steps.map(({ step }) => step),
-      completedSteps: previousProgress.completedSteps,
-      selectedStep: previousProgress.selectedStep,
+      stepActionKeys: previousProgress.steps.map(({ actionKey }) => actionKey),
+      completedStepActionKeys: previousProgress.completedStepActionKeys,
+      selectedStepActionKey: previousProgress.selectedStepActionKey,
     });
 
-  const wasDisplayedStepCompleted = previousProgress.completedSteps.includes(
-    previouslyDisplayedStep,
-  );
-  const isDisplayedStepCompleted = progress.completedSteps.includes(
+  const wasDisplayedStepCompleted =
+    previousProgress.completedStepActionKeys.includes(previouslyDisplayedStep);
+  const isDisplayedStepCompleted = progress.completedStepActionKeys.includes(
     previouslyDisplayedStep,
   );
 

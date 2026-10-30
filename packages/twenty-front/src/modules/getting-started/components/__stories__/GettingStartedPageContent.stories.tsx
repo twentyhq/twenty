@@ -15,7 +15,7 @@ import {
   FeatureFlagKey,
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
-  GettingStartedStep,
+  GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
   SubscriptionStatus,
   UpdateGettingStartedDocument,
@@ -28,7 +28,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import {
   mockGettingStartedStepDefinitions,
-  mockGettingStartedSteps,
+  mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
@@ -52,8 +52,8 @@ const TRIALING_WORKSPACE = {
 const TRIAL_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] = {
   __typename: 'GettingStartedProgress',
   steps: mockGettingStartedStepDefinitions,
-  completedSteps: [],
-  selectedStep: null,
+  completedStepActionKeys: [],
+  selectedStepActionKey: null,
   snoozedUntil: null,
   isHidden: false,
 };
@@ -66,7 +66,7 @@ const WORKFLOW_PREVIEWS_MOCK: MockedResponse = {
       gettingStartedWorkflowPreviews: [
         {
           __typename: 'GettingStartedWorkflowPreview',
-          step: GettingStartedStep.HANDOVER_DEALS,
+          stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
           trigger: {
             __typename: 'GettingStartedWorkflowPreviewTrigger',
             type: 'DATABASE_EVENT',
@@ -131,14 +131,16 @@ export const Trial: Story = {
         request: {
           query: UpdateGettingStartedDocument,
           variables: {
-            input: { selectedStep: GettingStartedStep.INVITE_TEAM },
+            input: {
+              selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+            },
           },
         },
         result: {
           data: {
             updateGettingStarted: {
               ...TRIAL_PROGRESS,
-              selectedStep: GettingStartedStep.INVITE_TEAM,
+              selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
             },
           },
         },
@@ -178,8 +180,9 @@ export const AllDone: Story = {
           data: {
             gettingStartedProgress: {
               ...TRIAL_PROGRESS,
-              completedSteps: mockGettingStartedSteps,
-              selectedStep: GettingStartedStep.CONNECT_MAILBOX,
+              completedStepActionKeys: mockGettingStartedStepActionKeys,
+              selectedStepActionKey:
+                GettingStartedStepActionKey.CONNECT_MAILBOX,
             },
           },
         },
@@ -231,7 +234,7 @@ export const LoadError: Story = {
 const createAnimationPreviewProgress =
   (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
     ...TRIAL_PROGRESS,
-    completedSteps: [GettingStartedStep.CONNECT_MAILBOX],
+    completedStepActionKeys: [GettingStartedStepActionKey.CONNECT_MAILBOX],
   });
 
 let animationPreviewProgress = createAnimationPreviewProgress();
@@ -257,11 +260,15 @@ const GettingStartedAnimationPreview = () => {
   };
 
   const completeCurrentStep = () => {
-    const { steps, completedSteps, selectedStep } = animationPreviewProgress;
+    const { steps, completedStepActionKeys, selectedStepActionKey } =
+      animationPreviewProgress;
     const stepToComplete =
-      isDefined(selectedStep) && !completedSteps.includes(selectedStep)
-        ? selectedStep
-        : steps.find(({ step }) => !completedSteps.includes(step))?.step;
+      isDefined(selectedStepActionKey) &&
+      !completedStepActionKeys.includes(selectedStepActionKey)
+        ? selectedStepActionKey
+        : steps.find(
+            ({ actionKey }) => !completedStepActionKeys.includes(actionKey),
+          )?.actionKey;
 
     if (!isDefined(stepToComplete)) {
       return;
@@ -269,7 +276,7 @@ const GettingStartedAnimationPreview = () => {
 
     writeProgress({
       ...animationPreviewProgress,
-      completedSteps: [...completedSteps, stepToComplete],
+      completedStepActionKeys: [...completedStepActionKeys, stepToComplete],
     });
   };
 
@@ -311,8 +318,9 @@ export const StepAnimations: Story = {
         result: ({ input }: UpdateGettingStartedMutationVariables) => {
           animationPreviewProgress = {
             ...animationPreviewProgress,
-            selectedStep:
-              input.selectedStep ?? animationPreviewProgress.selectedStep,
+            selectedStepActionKey:
+              input.selectedStepActionKey ??
+              animationPreviewProgress.selectedStepActionKey,
           };
 
           return {

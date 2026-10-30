@@ -33,7 +33,7 @@ type GettingStartedPromptActionProps = {
 };
 
 export const GettingStartedPromptAction = ({
-  stepDefinition: { step, prompt: defaultPrompt, promptLabel },
+  stepDefinition: { actionKey, prompt: defaultPrompt, promptLabel },
 }: GettingStartedPromptActionProps) => {
   const { t } = useLingui();
   const [prompt, setPrompt] = useState(defaultPrompt ?? '');
@@ -48,19 +48,19 @@ export const GettingStartedPromptAction = ({
         serializePlainTextAsAdvancedTextEditorDocument(trimmedPrompt),
       mode: 'SEND',
     });
-    void updateGettingStarted({ completedStep: step });
+    void updateGettingStarted({ completedStepActionKey: actionKey });
   };
 
   return (
     <StyledComposer role="group" aria-label={promptLabel ?? undefined}>
       <TextArea
-        textAreaId={`getting-started-${step}-prompt`}
+        textAreaId={`getting-started-${actionKey}-prompt`}
         variant="transparent"
         value={prompt}
         onChange={setPrompt}
       />
       <AiChatComposerActionsRow
-        modelTierDropdownId={`getting-started-${step}-model`}
+        modelTierDropdownId={`getting-started-${actionKey}-model`}
         sendButton={
           <IconButton
             size="sm"

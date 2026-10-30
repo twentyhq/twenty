@@ -8,7 +8,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
 import {
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
   type GettingStartedStepDefinition,
 } from '~/generated-metadata/graphql';
 
@@ -106,17 +106,17 @@ const StyledStackedStepTitle = styled.span`
 
 type GettingStartedStepStackProps = {
   steps: GettingStartedStepDefinition[];
-  selectedStep: GettingStartedStep;
-  completedSteps: GettingStartedStep[];
-  justCompletedStep: GettingStartedStep | null;
+  selectedStepActionKey: GettingStartedStepActionKey;
+  completedStepActionKeys: GettingStartedStepActionKey[];
+  justCompletedStep: GettingStartedStepActionKey | null;
   isSaving: boolean;
-  onSelectStep: (step: GettingStartedStep) => void;
+  onSelectStep: (stepActionKey: GettingStartedStepActionKey) => void;
 };
 
 export const GettingStartedStepStack = ({
   steps,
-  selectedStep,
-  completedSteps,
+  selectedStepActionKey,
+  completedStepActionKeys,
   justCompletedStep,
   isSaving,
   onSelectStep,
@@ -133,7 +133,7 @@ export const GettingStartedStepStack = ({
   const cardOffset = shouldReduceMotion ? 0 : 16;
 
   const selectedStepIndex = steps.findIndex(
-    ({ step }) => step === selectedStep,
+    ({ actionKey }) => actionKey === selectedStepActionKey,
   );
   const selectedStepDefinition = steps[selectedStepIndex];
   const stackedSteps = [3, 2, 1]
@@ -147,12 +147,12 @@ export const GettingStartedStepStack = ({
     <div>
       <AnimatePresence initial={false} mode="popLayout">
         {stackedSteps.map(({ depth, stepDefinition }) => {
-          const { step, icon, iconColor, title } = stepDefinition;
+          const { actionKey, icon, iconColor, title } = stepDefinition;
           const StepIcon = getIcon(icon);
 
           return (
             <StyledStackedStep
-              key={step}
+              key={actionKey}
               layout="position"
               initial={{ opacity: 0, y: -stackOffset }}
               animate={{ opacity: 1, y: 0 }}
@@ -161,7 +161,7 @@ export const GettingStartedStepStack = ({
               type="button"
               depth={depth}
               disabled={isSaving}
-              onClick={() => onSelectStep(step)}
+              onClick={() => onSelectStep(actionKey)}
             >
               <StepIcon
                 size={theme.icon.size.md}
@@ -174,21 +174,25 @@ export const GettingStartedStepStack = ({
       </AnimatePresence>
       <StyledActiveStep>
         <StyledSteps aria-label={t`Getting started steps`}>
-          {steps.map(({ step, title }) => (
+          {steps.map(({ actionKey, title }) => (
             <StyledTick
-              key={step}
+              key={actionKey}
               type="button"
               aria-label={title}
-              aria-current={step === selectedStep ? 'step' : undefined}
-              data-completed={completedSteps.includes(step) || undefined}
+              aria-current={
+                actionKey === selectedStepActionKey ? 'step' : undefined
+              }
+              data-completed={
+                completedStepActionKeys.includes(actionKey) || undefined
+              }
               disabled={isSaving}
-              onClick={() => onSelectStep(step)}
+              onClick={() => onSelectStep(actionKey)}
             />
           ))}
         </StyledSteps>
         <AnimatePresence initial={false} mode="wait">
           <motion.div
-            key={selectedStep}
+            key={selectedStepActionKey}
             initial={{ opacity: 0, y: -cardOffset }}
             animate={{ opacity: 1, y: 0 }}
             exit={{
@@ -204,8 +208,10 @@ export const GettingStartedStepStack = ({
           >
             <GettingStartedStepCard
               stepDefinition={selectedStepDefinition}
-              isCompleted={completedSteps.includes(selectedStep)}
-              isJustCompleted={justCompletedStep === selectedStep}
+              isCompleted={completedStepActionKeys.includes(
+                selectedStepActionKey,
+              )}
+              isJustCompleted={justCompletedStep === selectedStepActionKey}
             />
           </motion.div>
         </AnimatePresence>

@@ -109,7 +109,7 @@ export const GettingStartedStepCard = ({
 
   const StepIcon = getIcon(stepDefinition.icon);
   const DoneDescription = isCompleted
-    ? GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS[stepDefinition.step]
+    ? GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS[stepDefinition.actionKey]
     : undefined;
 
   return (

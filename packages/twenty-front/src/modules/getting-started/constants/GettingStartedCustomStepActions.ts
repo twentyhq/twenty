@@ -4,13 +4,13 @@ import { GettingStartedAppsAction } from '@/getting-started/components/GettingSt
 import { GettingStartedImportAction } from '@/getting-started/components/GettingStartedImportAction';
 import { GettingStartedInviteAction } from '@/getting-started/components/GettingStartedInviteAction';
 import { GettingStartedMailboxAction } from '@/getting-started/components/GettingStartedMailboxAction';
-import { GettingStartedStep } from '~/generated-metadata/graphql';
+import { GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
 export const GETTING_STARTED_CUSTOM_STEP_ACTIONS: Partial<
-  Record<GettingStartedStep, ComponentType>
+  Record<GettingStartedStepActionKey, ComponentType>
 > = {
-  [GettingStartedStep.CONNECT_MAILBOX]: GettingStartedMailboxAction,
-  [GettingStartedStep.IMPORT_DATA]: GettingStartedImportAction,
-  [GettingStartedStep.INSTALL_APP]: GettingStartedAppsAction,
-  [GettingStartedStep.INVITE_TEAM]: GettingStartedInviteAction,
+  [GettingStartedStepActionKey.CONNECT_MAILBOX]: GettingStartedMailboxAction,
+  [GettingStartedStepActionKey.IMPORT_DATA]: GettingStartedImportAction,
+  [GettingStartedStepActionKey.INSTALL_APP]: GettingStartedAppsAction,
+  [GettingStartedStepActionKey.INVITE_TEAM]: GettingStartedInviteAction,
 };

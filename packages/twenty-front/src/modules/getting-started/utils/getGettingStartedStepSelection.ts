@@ -1,32 +1,36 @@
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
 export const getGettingStartedStepSelection = ({
-  steps,
-  completedSteps,
-  selectedStep,
+  stepActionKeys,
+  completedStepActionKeys,
+  selectedStepActionKey,
 }: {
-  steps: GettingStartedStep[];
-  completedSteps: GettingStartedStep[];
-  selectedStep: GettingStartedStep | null | undefined;
+  stepActionKeys: GettingStartedStepActionKey[];
+  completedStepActionKeys: GettingStartedStepActionKey[];
+  selectedStepActionKey: GettingStartedStepActionKey | null | undefined;
 }): {
-  selectedStep: GettingStartedStep;
-  nextStep: GettingStartedStep;
-  stepAfterSkip: GettingStartedStep;
+  selectedStepActionKey: GettingStartedStepActionKey;
+  nextStep: GettingStartedStepActionKey;
+  stepAfterSkip: GettingStartedStepActionKey;
 } => {
   const currentStep =
-    steps.find((step) => !completedSteps.includes(step)) ?? steps[0];
-  const displayedStep = selectedStep ?? currentStep;
-  const displayedStepIndex = steps.indexOf(displayedStep);
+    stepActionKeys.find(
+      (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
+    ) ?? stepActionKeys[0];
+  const displayedStep = selectedStepActionKey ?? currentStep;
+  const displayedStepIndex = stepActionKeys.indexOf(displayedStep);
   const nextStep =
     [
-      ...steps.slice(displayedStepIndex + 1),
-      ...steps.slice(0, displayedStepIndex),
-    ].find((step) => !completedSteps.includes(step)) ?? displayedStep;
+      ...stepActionKeys.slice(displayedStepIndex + 1),
+      ...stepActionKeys.slice(0, displayedStepIndex),
+    ].find(
+      (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
+    ) ?? displayedStep;
 
   return {
-    selectedStep: displayedStep,
+    selectedStepActionKey: displayedStep,
     nextStep,
-    stepAfterSkip: completedSteps.includes(displayedStep)
+    stepAfterSkip: completedStepActionKeys.includes(displayedStep)
       ? currentStep
       : nextStep,
   };

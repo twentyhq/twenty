@@ -19,7 +19,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
-  GettingStartedStep,
+  GettingStartedStepActionKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
@@ -75,7 +75,7 @@ export const GettingStartedImportAction = () => {
       files,
     });
     void updateGettingStarted({
-      completedStep: GettingStartedStep.IMPORT_DATA,
+      completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,
     });
   };
 
@@ -99,7 +99,7 @@ export const GettingStartedImportAction = () => {
     openObjectRecordsSpreadsheetImportDialog({
       uploadStepHook: async (importedRows) => {
         void updateGettingStarted({
-          completedStep: GettingStartedStep.IMPORT_DATA,
+          completedStepActionKey: GettingStartedStepActionKey.IMPORT_DATA,
         });
 
         return importedRows;
