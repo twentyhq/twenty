@@ -21,7 +21,6 @@ export const getBuiltInAccountAppStatuses = <
     ),
   );
 
-  // Archived built-in accounts are paused, so they still count as connected
   if (!isNonEmptyArray(accountsUsingApp)) {
     return [{ type: 'notConnected' }];
   }
