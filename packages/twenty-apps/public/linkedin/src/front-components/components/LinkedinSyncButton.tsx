@@ -10,19 +10,16 @@ import { getLinkedinHistoryImportErrorReason } from 'src/front-components/utils/
 import { getLinkedinSyncProgress } from 'src/front-components/utils/get-linkedin-sync-progress.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
-const StyledRow = styled.div`
-  align-items: center;
+const StyledStack = styled.div`
   display: flex;
-  gap: ${() => themeCssVariables.spacing[4]};
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[2]};
 `;
 
 const StyledError = styled.p`
   color: ${() => themeCssVariables.color.red};
-  flex: 1;
   font-size: ${() => themeCssVariables.font.size.sm};
   margin: 0;
-  min-width: 0;
 `;
 
 const StyledErrorTitle = styled.span`
@@ -57,7 +54,19 @@ export const LinkedinSyncButton = ({
       : t('Sync now');
 
   return (
-    <StyledRow>
+    <StyledStack>
+      <Button
+        startIcon={<IconRefresh />}
+        variant="solid"
+        color="accent"
+        size="md"
+        fullWidth
+        onClick={onSync}
+        loading={isRunning}
+        loadingPosition="end"
+      >
+        {label}
+      </Button>
       {hasFailed && (
         <StyledError role="alert">
           <StyledErrorTitle>
@@ -66,17 +75,6 @@ export const LinkedinSyncButton = ({
           {getLinkedinHistoryImportErrorReason(historyImport.error)}
         </StyledError>
       )}
-      <Button
-        startIcon={<IconRefresh />}
-        variant="solid"
-        color="accent"
-        size="md"
-        onClick={onSync}
-        loading={isRunning}
-        loadingPosition="end"
-      >
-        {label}
-      </Button>
-    </StyledRow>
+    </StyledStack>
   );
 };
