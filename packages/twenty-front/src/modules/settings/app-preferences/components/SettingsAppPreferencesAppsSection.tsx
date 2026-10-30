@@ -1,7 +1,7 @@
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { getAppPreferencesAppStatusById } from '@/settings/app-preferences/utils/getAppPreferencesAppStatusById';
+import { getAppPreferencesAppStatusesById } from '@/settings/app-preferences/utils/getAppPreferencesAppStatusesById';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { styled } from '@linaria/react';
@@ -32,10 +32,10 @@ export const SettingsAppPreferencesAppsSection = () => {
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
   const hasAccountGroupsLoadError = isDefined(accountGroupsError);
-  const statusById =
+  const statusesById =
     accountGroupsLoading || hasAccountGroupsLoadError
       ? {}
-      : getAppPreferencesAppStatusById({
+      : getAppPreferencesAppStatusesById({
           groups,
           builtInAccountApps: enabledBuiltInAccountApps,
           applicationsWithPreferences,
@@ -67,8 +67,9 @@ export const SettingsAppPreferencesAppsSection = () => {
         ({ application }) => application,
       )}
       builtInAccountApps={enabledBuiltInAccountApps}
-      variant="member"
-      statusById={statusById}
+      linkTarget="applicationPreferences"
+      middleColumn="status"
+      statusesById={statusesById}
       isLoading={isLoadingApplications}
     />
   );

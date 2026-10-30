@@ -16,7 +16,12 @@ import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMe
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  ApplicationRegistrationSourceType,
+  FeatureFlagKey,
+  type FindMarketplaceAppDetailQuery,
+} from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
 
@@ -101,10 +106,41 @@ const USER_SETTINGS_MENU_ITEM = buildSettingsMenuItem({
   scope: 'USER',
 });
 
+const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] =
+  {
+    __typename: 'MarketplaceAppDetail',
+    id: 'recorder-marketplace-id',
+    universalIdentifier: APPLICATION_ID,
+    name: 'Recorder Pro',
+    sourceType: ApplicationRegistrationSourceType.NPM,
+    sourcePackage: '@twenty/recorder',
+    latestAvailableVersion: '1.0.0',
+    isListed: true,
+    description: 'Records and transcribes every meeting.',
+    author: 'Twenty',
+    category: 'Productivity',
+    logoUrl: null,
+    websiteUrl: null,
+    aboutDescription: null,
+    pricingDescription: null,
+    termsUrl: null,
+    emailSupport: null,
+    issueReportUrl: null,
+    galleryImages: ['https://example.com/recorder-cover.png'],
+    installCount: 12,
+    defaultRoleUniversalIdentifier: null,
+    requestedCapabilities: [],
+    billsCredits: false,
+    objects: [],
+    roles: [],
+  };
+
 const buildApplicationHandlers = ({
   settingsMenuItems,
+  marketplaceAppDetail,
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
+  marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
 }) => [
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
@@ -138,9 +174,15 @@ const buildApplicationHandlers = ({
     }),
   ),
   graphql.query('FindMarketplaceAppDetail', () =>
-    HttpResponse.json({
-      errors: [{ message: 'Not listed', extensions: { code: 'NOT_FOUND' } }],
-    }),
+    HttpResponse.json(
+      isDefined(marketplaceAppDetail)
+        ? { data: { findMarketplaceAppDetail: marketplaceAppDetail } }
+        : {
+            errors: [
+              { message: 'Not listed', extensions: { code: 'NOT_FOUND' } },
+            ],
+          },
+    ),
   ),
   graphql.query('IsApplicationStopped', () =>
     HttpResponse.json({ data: { isApplicationStopped: false } }),
@@ -182,6 +224,40 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export type Story = StoryObj<typeof SettingsApplicationDetails>;
+
+export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
+  parameters: {
+    msw: {
+      handlers: buildApplicationHandlers({
+        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        marketplaceAppDetail: MARKETPLACE_APP_DETAIL,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Records and transcribes every meeting.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    const breadcrumb = within(canvas.getByLabelText('Breadcrumb'));
+
+    expect(breadcrumb.getByRole('link', { name: 'Apps' })).toBeVisible();
+    expect(breadcrumb.getByText('Recorder Pro')).toBeVisible();
+    expect(
+      canvasElement.querySelector(
+        'img[src="https://example.com/recorder-cover.png"]',
+      ),
+    ).not.toBeNull();
+    expect(
+      canvas.getByRole('button', { name: 'View in marketplace' }),
+    ).toBeVisible();
+  },
+};
 
 export const VariablesTabIgnoresUserScope: Story = {
   play: async ({ canvasElement }) => {

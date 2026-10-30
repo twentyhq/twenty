@@ -308,10 +308,10 @@ const destinationUrl = getServerRouteUrl(
 
 <Note>
   URLs carrying only the resolver's `id` or `universalIdentifier`
-  (`/webhooks/server/:identifier`) still resolve for now. The
-  `universalIdentifier` form answers with a `Deprecation` header and returns
-  `404` when two registrations declare the same identifier. Move the URLs
-  registered with your providers to the registration form.
+  (`/webhooks/server/:identifier`) still resolve for now, and both answer with
+  a `Deprecation` header. The `universalIdentifier` form returns `409` when two
+  registrations declare the same identifier. Move the URLs registered with your
+  providers to the registration form.
 </Note>
 
 **Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:

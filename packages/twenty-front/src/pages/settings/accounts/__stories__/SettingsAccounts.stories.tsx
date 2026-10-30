@@ -112,7 +112,9 @@ const openRowMenu = async ({
 
 const accountGroupsStory: Story = {
   args: {
-    additionalRoutes: ['/settings/accounts/detail/:connectedAccountId'],
+    additionalRoutes: [
+      '/settings/app-preferences/accounts/:connectedAccountId',
+    ],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -184,7 +186,7 @@ export const AccountsGroupedByEmail: Story = {
     ).not.toBeInTheDocument();
     expect(canvas.getByRole('link', { name: 'tim@apple.dev' })).toHaveAttribute(
       'href',
-      `/settings/accounts/detail/${GOOGLE_ACCOUNT_ID}`,
+      `/settings/app-preferences/accounts/${GOOGLE_ACCOUNT_ID}`,
     );
     expect(canvas.queryByText('Tim@Apple.dev')).not.toBeInTheDocument();
 
@@ -327,7 +329,7 @@ export const AppPreferencesListEnabledApps: Story = {
   ...accountsTabStory,
   args: {
     ...accountsTabStory.args,
-    additionalRoutes: ['/settings/accounts/apps/outlook'],
+    additionalRoutes: ['/settings/app-preferences/outlook'],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -344,7 +346,7 @@ export const AppPreferencesListEnabledApps: Story = {
     await userEvent.click(canvas.getByRole('link', { name: /Outlook/ }));
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts/apps/outlook'),
+      await canvas.findByText('Navigated to /settings/app-preferences/outlook'),
     ).toBeVisible();
   },
 };
@@ -363,7 +365,7 @@ export const RowOpensAccountPage: Story = {
 
     expect(
       await canvas.findByText(
-        'Navigated to /settings/accounts/detail/:connectedAccountId',
+        'Navigated to /settings/app-preferences/accounts/:connectedAccountId',
       ),
     ).toBeVisible();
   },
@@ -516,7 +518,10 @@ export const AccountsTabMenuOpensAccountSettingsWithoutReconnect: Story = {
 
     expect(
       await body.findByRole('menuitem', { name: 'Account settings' }),
-    ).toHaveAttribute('href', `/settings/accounts/detail/${GOOGLE_ACCOUNT_ID}`);
+    ).toHaveAttribute(
+      'href',
+      `/settings/app-preferences/accounts/${GOOGLE_ACCOUNT_ID}`,
+    );
     expect(
       body.queryByRole('menuitem', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
@@ -597,7 +602,7 @@ export const AppsFlagOnlyBrokenAccounts: Story = {
 export const AppPreferencesListInstalledApps: Story = {
   ...accountGroupsStory,
   args: {
-    additionalRoutes: ['/settings/accounts/applications/:applicationId'],
+    additionalRoutes: ['/settings/app-preferences/:applicationId'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
@@ -612,7 +617,7 @@ export const AppPreferencesListInstalledApps: Story = {
 
     expect(fathomName.closest('a')).toHaveAttribute(
       'href',
-      `/settings/accounts/applications/${FATHOM_APPLICATION_ID}`,
+      `/settings/app-preferences/${FATHOM_APPLICATION_ID}`,
     );
     expect(canvas.getByText('Granola')).toBeVisible();
     expect(canvas.getByText('Linear')).toBeVisible();
@@ -649,7 +654,7 @@ export const AppPreferencesListInstalledApps: Story = {
 
     expect(
       await canvas.findByText(
-        'Navigated to /settings/accounts/applications/:applicationId',
+        'Navigated to /settings/app-preferences/:applicationId',
       ),
     ).toBeVisible();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();

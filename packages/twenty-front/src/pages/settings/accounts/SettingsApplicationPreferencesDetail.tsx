@@ -142,7 +142,7 @@ export const SettingsApplicationPreferencesDetail = ({
         },
         {
           children: t`Apps preferences`,
-          href: getSettingsPath(SettingsPath.Accounts),
+          href: getSettingsPath(SettingsPath.AppPreferences),
         },
         { children: appName },
       ]}
@@ -171,7 +171,7 @@ export const SettingsApplicationPreferencesDetail = ({
             onConfigure={() =>
               navigate(
                 getSettingsPath(
-                  SettingsPath.ApplicationPreferences,
+                  SettingsPath.AppPreferencesApp,
                   { applicationId: application.id },
                   undefined,
                   configurationTabId,
