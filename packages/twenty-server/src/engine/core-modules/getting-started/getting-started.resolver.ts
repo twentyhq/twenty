@@ -90,13 +90,13 @@ export class GettingStartedResolver {
     context: I18nContext;
   }): GettingStartedProgressDTO {
     const i18nInstance = this.i18nService.getI18nInstance(context.req.locale);
-    const { companyEnrichment, ...progressFields } = progress;
+    const { companyEnrichment, stepActionKeys, ...progressFields } = progress;
 
     return {
       ...progressFields,
-      steps: progress.steps.map((step) =>
+      steps: stepActionKeys.map((stepActionKey) =>
         buildGettingStartedStepDefinition({
-          step,
+          stepActionKey,
           companyEnrichment,
           translate: (descriptor) => i18nInstance._(descriptor),
         }),

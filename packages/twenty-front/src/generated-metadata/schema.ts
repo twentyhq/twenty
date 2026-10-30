@@ -2730,14 +2730,14 @@ export type GetAuthorizationUrlForSsoInput = {
 
 export type GettingStartedProgress = {
   __typename?: 'GettingStartedProgress';
-  completedSteps: Array<GettingStartedStep>;
+  completedStepActionKeys: Array<GettingStartedStepActionKey>;
   isHidden: Scalars['Boolean']['output'];
-  selectedStep?: Maybe<GettingStartedStep>;
+  selectedStepActionKey?: Maybe<GettingStartedStepActionKey>;
   snoozedUntil?: Maybe<Scalars['String']['output']>;
   steps: Array<GettingStartedStepDefinition>;
 };
 
-export enum GettingStartedStep {
+export enum GettingStartedStepActionKey {
   CONNECT_MAILBOX = 'CONNECT_MAILBOX',
   CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
   FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
@@ -2749,6 +2749,7 @@ export enum GettingStartedStep {
 
 export type GettingStartedStepDefinition = {
   __typename?: 'GettingStartedStepDefinition';
+  actionKey: GettingStartedStepActionKey;
   description: Scalars['String']['output'];
   doneTitle: Scalars['String']['output'];
   icon: Scalars['String']['output'];
@@ -2756,7 +2757,6 @@ export type GettingStartedStepDefinition = {
   kind: GettingStartedStepKind;
   prompt?: Maybe<Scalars['String']['output']>;
   promptLabel?: Maybe<Scalars['String']['output']>;
-  step: GettingStartedStep;
   title: Scalars['String']['output'];
 };
 
@@ -2775,7 +2775,7 @@ export type GettingStartedWorkflow = {
 export type GettingStartedWorkflowPreview = {
   __typename?: 'GettingStartedWorkflowPreview';
   actions: Array<GettingStartedWorkflowPreviewAction>;
-  step: GettingStartedStep;
+  stepActionKey: GettingStartedStepActionKey;
   trigger: GettingStartedWorkflowPreviewTrigger;
 };
 
@@ -4556,7 +4556,7 @@ export type MutationMoveAgentChatThreadToChannelArgs = {
 
 
 export type MutationPrepareGettingStartedWorkflowArgs = {
-  step: GettingStartedStep;
+  stepActionKey: GettingStartedStepActionKey;
 };
 
 
@@ -7461,9 +7461,9 @@ export type UpdateFrontComponentInputUpdates = {
 };
 
 export type UpdateGettingStartedInput = {
-  completedStep?: InputMaybe<GettingStartedStep>;
+  completedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
-  selectedStep?: InputMaybe<GettingStartedStep>;
+  selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
 };
 

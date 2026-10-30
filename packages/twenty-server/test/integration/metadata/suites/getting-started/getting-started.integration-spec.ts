@@ -14,10 +14,10 @@ const GETTING_STARTED_PROGRESS_QUERY = gql`
   query GettingStartedProgress {
     gettingStartedProgress {
       steps {
-        step
+        actionKey
         kind
       }
-      completedSteps
+      completedStepActionKeys
     }
   }
 `;
@@ -25,8 +25,8 @@ const GETTING_STARTED_PROGRESS_QUERY = gql`
 const UPDATE_GETTING_STARTED_MUTATION = gql`
   mutation UpdateGettingStarted($input: UpdateGettingStartedInput!) {
     updateGettingStarted(input: $input) {
-      completedSteps
-      selectedStep
+      completedStepActionKeys
+      selectedStepActionKey
       snoozedUntil
       isHidden
     }
@@ -34,8 +34,10 @@ const UPDATE_GETTING_STARTED_MUTATION = gql`
 `;
 
 const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
-  mutation PrepareGettingStartedWorkflow($step: GettingStartedStep!) {
-    prepareGettingStartedWorkflow(step: $step) {
+  mutation PrepareGettingStartedWorkflow(
+    $stepActionKey: GettingStartedStepActionKey!
+  ) {
+    prepareGettingStartedWorkflow(stepActionKey: $stepActionKey) {
       workflowId
       versionId
     }
@@ -45,7 +47,7 @@ const PREPARE_GETTING_STARTED_WORKFLOW_MUTATION = gql`
 const GETTING_STARTED_WORKFLOW_PREVIEWS_QUERY = gql`
   query GettingStartedWorkflowPreviews {
     gettingStartedWorkflowPreviews {
-      step
+      stepActionKey
       trigger {
         type
         databaseEventAction
@@ -89,20 +91,42 @@ const updateGettingStarted = (input: Record<string, unknown>) =>
     variables: { input },
   });
 
-const prepareGettingStartedWorkflow = (step: string) =>
+const insertKeyValuePair = ({
+  userId,
+  key,
+  value,
+  type,
+}: {
+  userId: string | null;
+  key: string;
+  value: unknown;
+  type: 'USER_VARIABLE' | 'CONFIG_VARIABLE';
+}) =>
+  globalThis.testDataSource.query(
+    `INSERT INTO core."keyValuePair" ("workspaceId", "userId", "key", "value", "type") VALUES ($1, $2, $3, $4, $5)`,
+    [SEED_APPLE_WORKSPACE_ID, userId, key, JSON.stringify(value), type],
+  );
+
+const deleteCompanyEnrichmentAttempt = () =>
+  globalThis.testDataSource.query(
+    `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" IS NULL AND "key" = 'COMPANY_ENRICHMENT_ATTEMPT'`,
+    [SEED_APPLE_WORKSPACE_ID],
+  );
+
+const prepareGettingStartedWorkflow = (stepActionKey: string) =>
   makeMetadataApiRequest({
     query: PREPARE_GETTING_STARTED_WORKFLOW_MUTATION,
-    variables: { step },
+    variables: { stepActionKey },
   });
 
-const findCompletedSteps = async (): Promise<string[]> => {
+const findCompletedStepActionKeys = async (): Promise<string[]> => {
   const response = await makeMetadataApiRequest({
     query: GETTING_STARTED_PROGRESS_QUERY,
   });
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.gettingStartedProgress.completedSteps;
+  return response.body.data.gettingStartedProgress.completedStepActionKeys;
 };
 
 describe('gettingStarted (e2e)', () => {
@@ -117,20 +141,20 @@ describe('gettingStarted (e2e)', () => {
 
       expect(response.body.errors).toBeUndefined();
 
-      const { steps, completedSteps } =
+      const { steps, completedStepActionKeys } =
         response.body.data.gettingStartedProgress;
 
       expect(steps).toEqual([
-        { step: 'CONNECT_MAILBOX', kind: 'CUSTOM' },
-        { step: 'IMPORT_DATA', kind: 'CUSTOM' },
-        { step: 'CUSTOMIZE_DATA_MODEL', kind: 'PROMPT' },
-        { step: 'INVITE_TEAM', kind: 'CUSTOM' },
-        { step: 'HANDOVER_DEALS', kind: 'WORKFLOW' },
-        { step: 'FOLLOW_UP_DEALS', kind: 'PROMPT' },
+        { actionKey: 'CONNECT_MAILBOX', kind: 'CUSTOM' },
+        { actionKey: 'IMPORT_DATA', kind: 'CUSTOM' },
+        { actionKey: 'CUSTOMIZE_DATA_MODEL', kind: 'PROMPT' },
+        { actionKey: 'INVITE_TEAM', kind: 'CUSTOM' },
+        { actionKey: 'HANDOVER_DEALS', kind: 'WORKFLOW' },
+        { actionKey: 'FOLLOW_UP_DEALS', kind: 'PROMPT' },
       ]);
-      expect(completedSteps).toContain('CONNECT_MAILBOX');
+      expect(completedStepActionKeys).toContain('CONNECT_MAILBOX');
       expect(
-        await findJaneUserVar('GETTING_STARTED_STEP_CONNECT_MAILBOX'),
+        await findJaneUserVar('GETTING_STARTED_COMPLETED_CONNECT_MAILBOX'),
       ).toEqual({ completedAt: expect.any(String) });
     });
 
@@ -156,7 +180,7 @@ describe('gettingStarted (e2e)', () => {
         expect(
           response.body.data.gettingStartedProgress.steps,
         ).not.toContainEqual(
-          expect.objectContaining({ step: 'HANDOVER_DEALS' }),
+          expect.objectContaining({ actionKey: 'HANDOVER_DEALS' }),
         );
       } finally {
         await globalThis.testDataSource.query(
@@ -167,17 +191,99 @@ describe('gettingStarted (e2e)', () => {
     });
   });
 
+  describe('assigned step action keys', () => {
+    beforeEach(deleteCompanyEnrichmentAttempt);
+
+    afterEach(async () => {
+      await deleteGettingStartedUserVars();
+      await deleteCompanyEnrichmentAttempt();
+    });
+
+    it('saves the assigned list once the company enrichment is final', async () => {
+      await insertKeyValuePair({
+        userId: null,
+        key: 'COMPANY_ENRICHMENT_ATTEMPT',
+        value: {
+          domain: 'apple.dev',
+          outcome: 'notFound',
+          attemptedAt: '2026-10-30T00:00:00.000Z',
+        },
+        type: 'CONFIG_VARIABLE',
+      });
+
+      const response = await makeMetadataApiRequest({
+        query: GETTING_STARTED_PROGRESS_QUERY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS')).toEqual(
+        [
+          'CONNECT_MAILBOX',
+          'IMPORT_DATA',
+          'CUSTOMIZE_DATA_MODEL',
+          'INVITE_TEAM',
+          'HANDOVER_DEALS',
+          'FOLLOW_UP_DEALS',
+          'INSTALL_APP',
+        ],
+      );
+    });
+
+    it('does not save the list after a transient enrichment error', async () => {
+      await insertKeyValuePair({
+        userId: null,
+        key: 'COMPANY_ENRICHMENT_ATTEMPT',
+        value: {
+          domain: 'apple.dev',
+          outcome: 'transientError',
+          httpStatus: 503,
+          message: 'Service unavailable',
+          attemptedAt: '2026-10-30T00:00:00.000Z',
+        },
+        type: 'CONFIG_VARIABLE',
+      });
+
+      const response = await makeMetadataApiRequest({
+        query: GETTING_STARTED_PROGRESS_QUERY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        await findJaneUserVar('GETTING_STARTED_STEP_ACTION_KEYS'),
+      ).toBeUndefined();
+    });
+
+    it('keeps the saved list in its order and drops unknown keys', async () => {
+      await insertKeyValuePair({
+        userId: USER_DATA_SEED_IDS.JANE,
+        key: 'GETTING_STARTED_STEP_ACTION_KEYS',
+        value: ['FOLLOW_UP_DEALS', 'REMOVED_STEP', 'IMPORT_DATA'],
+        type: 'USER_VARIABLE',
+      });
+
+      const response = await makeMetadataApiRequest({
+        query: GETTING_STARTED_PROGRESS_QUERY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.gettingStartedProgress.steps).toEqual([
+        { actionKey: 'FOLLOW_UP_DEALS', kind: 'PROMPT' },
+        { actionKey: 'IMPORT_DATA', kind: 'CUSTOM' },
+      ]);
+    });
+  });
+
   describe('updateGettingStarted', () => {
     it('persists the selected step, the snooze and the hide', async () => {
       const response = await updateGettingStarted({
-        selectedStep: 'INVITE_TEAM',
+        selectedStepActionKey: 'INVITE_TEAM',
         snoozedUntil: '2099-01-01T00:00:00.000Z',
         isHidden: true,
       });
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.updateGettingStarted).toMatchObject({
-        selectedStep: 'INVITE_TEAM',
+        selectedStepActionKey: 'INVITE_TEAM',
         snoozedUntil: '2099-01-01T00:00:00.000Z',
         isHidden: true,
       });
@@ -185,30 +291,30 @@ describe('gettingStarted (e2e)', () => {
 
     it('completes a step', async () => {
       const response = await updateGettingStarted({
-        completedStep: 'INVITE_TEAM',
+        completedStepActionKey: 'INVITE_TEAM',
       });
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateGettingStarted.completedSteps).toContain(
-        'INVITE_TEAM',
-      );
+      expect(
+        response.body.data.updateGettingStarted.completedStepActionKeys,
+      ).toContain('INVITE_TEAM');
     });
 
     it('keeps the first completion when a step is completed twice', async () => {
-      await updateGettingStarted({ completedStep: 'FOLLOW_UP_DEALS' });
+      await updateGettingStarted({ completedStepActionKey: 'FOLLOW_UP_DEALS' });
 
       const firstCompletion = await findJaneUserVar(
-        'GETTING_STARTED_STEP_FOLLOW_UP_DEALS',
+        'GETTING_STARTED_COMPLETED_FOLLOW_UP_DEALS',
       );
 
       const secondResponse = await updateGettingStarted({
-        completedStep: 'FOLLOW_UP_DEALS',
+        completedStepActionKey: 'FOLLOW_UP_DEALS',
       });
 
       expect(secondResponse.body.errors).toBeUndefined();
       expect(firstCompletion).toEqual({ completedAt: expect.any(String) });
       expect(
-        await findJaneUserVar('GETTING_STARTED_STEP_FOLLOW_UP_DEALS'),
+        await findJaneUserVar('GETTING_STARTED_COMPLETED_FOLLOW_UP_DEALS'),
       ).toEqual(firstCompletion);
     });
   });
@@ -222,7 +328,7 @@ describe('gettingStarted (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.gettingStartedWorkflowPreviews).toEqual([
         {
-          step: 'HANDOVER_DEALS',
+          stepActionKey: 'HANDOVER_DEALS',
           trigger: {
             type: 'DATABASE_EVENT',
             databaseEventAction: 'updated',
@@ -283,7 +389,9 @@ describe('gettingStarted (e2e)', () => {
       });
 
       expect(draftVersion.status).toBe('DRAFT');
-      expect(await findCompletedSteps()).not.toContain('HANDOVER_DEALS');
+      expect(await findCompletedStepActionKeys()).not.toContain(
+        'HANDOVER_DEALS',
+      );
     });
   });
 });

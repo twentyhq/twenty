@@ -3,22 +3,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type GettingStartedWorkflowPreviewDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow-preview.dto';
-import { type GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { type GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { type GettingStartedWorkflow } from 'src/engine/core-modules/getting-started/types/getting-started-workflow.type';
 
 export const buildGettingStartedWorkflowPreview = ({
-  step,
+  stepActionKey,
   gettingStartedWorkflow: { manifest, triggerTitle, stepTitles },
   translate,
 }: {
-  step: GettingStartedStep;
+  stepActionKey: GettingStartedStepActionKey;
   gettingStartedWorkflow: GettingStartedWorkflow;
   translate: (descriptor: MessageDescriptor) => string;
 }): GettingStartedWorkflowPreviewDTO => {
   const { trigger, steps } = manifest.version;
 
   return {
-    step,
+    stepActionKey,
     trigger: {
       type: trigger.type,
       databaseEventAction:

@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { GettingStartedStepKind } from 'src/engine/core-modules/getting-started/enums/getting-started-step-kind.enum';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 
 @ObjectType('GettingStartedStepDefinition')
 export class GettingStartedStepDefinitionDTO {
-  @Field(() => GettingStartedStep)
-  step: GettingStartedStep;
+  @Field(() => GettingStartedStepActionKey)
+  actionKey: GettingStartedStepActionKey;
 
   @Field(() => GettingStartedStepKind)
   kind: GettingStartedStepKind;

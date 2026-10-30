@@ -1714,17 +1714,18 @@ export interface GetAuthorizationUrlForSSO {
 }
 
 export interface GettingStartedProgress {
-    completedSteps: GettingStartedStep[]
+    completedStepActionKeys: GettingStartedStepActionKey[]
     isHidden: Scalars['Boolean']
-    selectedStep?: GettingStartedStep
+    selectedStepActionKey?: GettingStartedStepActionKey
     snoozedUntil?: Scalars['String']
     steps: GettingStartedStepDefinition[]
     __typename: 'GettingStartedProgress'
 }
 
-export type GettingStartedStep = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+export type GettingStartedStepActionKey = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
 
 export interface GettingStartedStepDefinition {
+    actionKey: GettingStartedStepActionKey
     description: Scalars['String']
     doneTitle: Scalars['String']
     icon: Scalars['String']
@@ -1732,7 +1733,6 @@ export interface GettingStartedStepDefinition {
     kind: GettingStartedStepKind
     prompt?: Scalars['String']
     promptLabel?: Scalars['String']
-    step: GettingStartedStep
     title: Scalars['String']
     __typename: 'GettingStartedStepDefinition'
 }
@@ -1747,7 +1747,7 @@ export interface GettingStartedWorkflow {
 
 export interface GettingStartedWorkflowPreview {
     actions: GettingStartedWorkflowPreviewAction[]
-    step: GettingStartedStep
+    stepActionKey: GettingStartedStepActionKey
     trigger: GettingStartedWorkflowPreviewTrigger
     __typename: 'GettingStartedWorkflowPreview'
 }
@@ -6273,9 +6273,9 @@ export interface GetAuthorizationUrlForSSOGenqlSelection{
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
 export interface GettingStartedProgressGenqlSelection{
-    completedSteps?: boolean | number
+    completedStepActionKeys?: boolean | number
     isHidden?: boolean | number
-    selectedStep?: boolean | number
+    selectedStepActionKey?: boolean | number
     snoozedUntil?: boolean | number
     steps?: GettingStartedStepDefinitionGenqlSelection
     __typename?: boolean | number
@@ -6283,6 +6283,7 @@ export interface GettingStartedProgressGenqlSelection{
 }
 
 export interface GettingStartedStepDefinitionGenqlSelection{
+    actionKey?: boolean | number
     description?: boolean | number
     doneTitle?: boolean | number
     icon?: boolean | number
@@ -6290,7 +6291,6 @@ export interface GettingStartedStepDefinitionGenqlSelection{
     kind?: boolean | number
     prompt?: boolean | number
     promptLabel?: boolean | number
-    step?: boolean | number
     title?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6305,7 +6305,7 @@ export interface GettingStartedWorkflowGenqlSelection{
 
 export interface GettingStartedWorkflowPreviewGenqlSelection{
     actions?: GettingStartedWorkflowPreviewActionGenqlSelection
-    step?: boolean | number
+    stepActionKey?: boolean | number
     trigger?: GettingStartedWorkflowPreviewTriggerGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7010,7 +7010,7 @@ export interface MutationGenqlSelection{
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
-    prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {step: GettingStartedStep} })
+    prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
@@ -8430,7 +8430,7 @@ update: UpdateFrontComponentInputUpdates}
 
 export interface UpdateFrontComponentInputUpdates {description?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
-export interface UpdateGettingStartedInput {completedStep?: (GettingStartedStep | null),isHidden?: (Scalars['Boolean'] | null),selectedStep?: (GettingStartedStep | null),snoozedUntil?: (Scalars['String'] | null)}
+export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
@@ -12559,7 +12559,7 @@ export const enumFileFolder = {
    WorkspaceDataExport: 'WorkspaceDataExport' as const
 }
 
-export const enumGettingStartedStep = {
+export const enumGettingStartedStepActionKey = {
    CONNECT_MAILBOX: 'CONNECT_MAILBOX' as const,
    CUSTOMIZE_DATA_MODEL: 'CUSTOMIZE_DATA_MODEL' as const,
    FOLLOW_UP_DEALS: 'FOLLOW_UP_DEALS' as const,

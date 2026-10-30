@@ -1,19 +1,23 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 
 export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
-  GettingStartedStep,
+  GettingStartedStepActionKey,
   PermissionFlagType[]
 > = {
-  [GettingStartedStep.CONNECT_MAILBOX]: [PermissionFlagType.CONNECTED_ACCOUNTS],
-  [GettingStartedStep.IMPORT_DATA]: [PermissionFlagType.IMPORT_CSV],
-  [GettingStartedStep.CUSTOMIZE_DATA_MODEL]: [
+  [GettingStartedStepActionKey.CONNECT_MAILBOX]: [
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  ],
+  [GettingStartedStepActionKey.IMPORT_DATA]: [PermissionFlagType.IMPORT_CSV],
+  [GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL]: [
     PermissionFlagType.DATA_MODEL,
     PermissionFlagType.AI,
   ],
-  [GettingStartedStep.INSTALL_APP]: [PermissionFlagType.APPLICATIONS],
-  [GettingStartedStep.INVITE_TEAM]: [PermissionFlagType.WORKSPACE_MEMBERS],
-  [GettingStartedStep.HANDOVER_DEALS]: [PermissionFlagType.WORKFLOWS],
-  [GettingStartedStep.FOLLOW_UP_DEALS]: [PermissionFlagType.AI],
+  [GettingStartedStepActionKey.INSTALL_APP]: [PermissionFlagType.APPLICATIONS],
+  [GettingStartedStepActionKey.INVITE_TEAM]: [
+    PermissionFlagType.WORKSPACE_MEMBERS,
+  ],
+  [GettingStartedStepActionKey.HANDOVER_DEALS]: [PermissionFlagType.WORKFLOWS],
+  [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [PermissionFlagType.AI],
 };

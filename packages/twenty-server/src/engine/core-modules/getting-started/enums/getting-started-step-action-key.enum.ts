@@ -1,6 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-export enum GettingStartedStep {
+export enum GettingStartedStepActionKey {
   CONNECT_MAILBOX = 'CONNECT_MAILBOX',
   IMPORT_DATA = 'IMPORT_DATA',
   CUSTOMIZE_DATA_MODEL = 'CUSTOMIZE_DATA_MODEL',
@@ -10,4 +10,6 @@ export enum GettingStartedStep {
   FOLLOW_UP_DEALS = 'FOLLOW_UP_DEALS',
 }
 
-registerEnumType(GettingStartedStep, { name: 'GettingStartedStep' });
+registerEnumType(GettingStartedStepActionKey, {
+  name: 'GettingStartedStepActionKey',
+});

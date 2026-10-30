@@ -30,7 +30,7 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -424,7 +424,7 @@ export class WorkspaceInvitationService {
       await this.gettingStartedService.completeStep({
         userId: sender.userId,
         workspaceId: workspace.id,
-        step: GettingStartedStep.INVITE_TEAM,
+        stepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
       });
     }
 

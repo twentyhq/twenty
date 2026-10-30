@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
 import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
-import { type GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { type GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import {
   GettingStartedException,
   GettingStartedExceptionCode,
@@ -34,17 +34,17 @@ export class GettingStartedWorkflowWorkspaceService {
   async prepareWorkflowOrThrow({
     workspaceId,
     userWorkspaceId,
-    step,
+    stepActionKey,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    step: GettingStartedStep;
+    stepActionKey: GettingStartedStepActionKey;
   }): Promise<GettingStartedWorkflowDTO> {
-    const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[step];
+    const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[stepActionKey];
 
     if (!isDefined(gettingStartedWorkflow)) {
       throw new GettingStartedException(
-        `Step ${step} has no workflow`,
+        `Step ${stepActionKey} has no workflow`,
         GettingStartedExceptionCode.INVALID_STEP,
       );
     }
@@ -53,7 +53,7 @@ export class GettingStartedWorkflowWorkspaceService {
       async () => {
         const savedWorkflow = await this.userVarsService.get({
           workspaceId,
-          key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}`,
+          key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${stepActionKey}`,
         });
 
         const savedCoreWorkflow = isDefined(savedWorkflow)
@@ -71,11 +71,11 @@ export class GettingStartedWorkflowWorkspaceService {
         return this.createWorkflowDraft({
           workspaceId,
           userWorkspaceId,
-          step,
+          stepActionKey,
           gettingStartedWorkflow,
         });
       },
-      `getting-started-workflow:${workspaceId}:${step}`,
+      `getting-started-workflow:${workspaceId}:${stepActionKey}`,
       { ttl: 30_000 },
     );
   }
@@ -83,12 +83,12 @@ export class GettingStartedWorkflowWorkspaceService {
   private async createWorkflowDraft({
     workspaceId,
     userWorkspaceId,
-    step,
+    stepActionKey,
     gettingStartedWorkflow,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    step: GettingStartedStep;
+    stepActionKey: GettingStartedStepActionKey;
     gettingStartedWorkflow: GettingStartedWorkflow;
   }): Promise<GettingStartedWorkflowDTO> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -120,7 +120,7 @@ export class GettingStartedWorkflowWorkspaceService {
 
     await this.userVarsService.set({
       workspaceId,
-      key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${step}`,
+      key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${stepActionKey}`,
       value: workflow,
     });
 

@@ -9,7 +9,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
 import { GettingStartedWorkflowPreviewDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow-preview.dto';
 import { GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { GettingStartedGraphqlApiExceptionFilter } from 'src/engine/core-modules/getting-started/filters/getting-started-graphql-api-exception.filter';
 import { GettingStartedWorkflowWorkspaceService } from 'src/engine/core-modules/getting-started/services/getting-started-workflow.workspace-service';
 import { buildGettingStartedWorkflowPreview } from 'src/engine/core-modules/getting-started/utils/build-getting-started-workflow-preview.util';
@@ -63,31 +63,34 @@ export class GettingStartedWorkflowResolver {
   ): GettingStartedWorkflowPreviewDTO[] {
     const i18nInstance = this.i18nService.getI18nInstance(context.req.locale);
 
-    return Object.values(GettingStartedStep).flatMap((step) => {
-      const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[step];
+    return Object.values(GettingStartedStepActionKey).flatMap(
+      (stepActionKey) => {
+        const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[stepActionKey];
 
-      return isDefined(gettingStartedWorkflow)
-        ? [
-            buildGettingStartedWorkflowPreview({
-              step,
-              gettingStartedWorkflow,
-              translate: (descriptor) => i18nInstance._(descriptor),
-            }),
-          ]
-        : [];
-    });
+        return isDefined(gettingStartedWorkflow)
+          ? [
+              buildGettingStartedWorkflowPreview({
+                stepActionKey,
+                gettingStartedWorkflow,
+                translate: (descriptor) => i18nInstance._(descriptor),
+              }),
+            ]
+          : [];
+      },
+    );
   }
 
   @Mutation(() => GettingStartedWorkflowDTO)
   async prepareGettingStartedWorkflow(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('step', { type: () => GettingStartedStep }) step: GettingStartedStep,
+    @Args('stepActionKey', { type: () => GettingStartedStepActionKey })
+    stepActionKey: GettingStartedStepActionKey,
   ): Promise<GettingStartedWorkflowDTO> {
     return this.gettingStartedWorkflowWorkspaceService.prepareWorkflowOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
-      step,
+      stepActionKey,
     });
   }
 }

@@ -17,20 +17,22 @@ import {
   COMPANY_ENRICHMENT_KEY,
   type CompanyEnrichmentKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-key-value.type';
+import { GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE } from 'src/engine/core-modules/getting-started/constants/getting-started-step-action-keys-by-profile.constant';
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import {
+  GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX,
   GETTING_STARTED_HIDDEN_USER_VAR_KEY,
-  GETTING_STARTED_PROFILE_USER_VAR_KEY,
   GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
   GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
-  GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX,
+  GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
-import { type GettingStartedProfile } from 'src/engine/core-modules/getting-started/types/getting-started-profile.type';
 import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
+import { filterGettingStartedStepActionKeys } from 'src/engine/core-modules/getting-started/utils/filter-getting-started-step-action-keys.util';
 import { getGettingStartedProfile } from 'src/engine/core-modules/getting-started/utils/get-getting-started-profile.util';
-import { getGettingStartedSteps } from 'src/engine/core-modules/getting-started/utils/get-getting-started-steps.util';
+import { isCompanyEnrichmentFinal } from 'src/engine/core-modules/getting-started/utils/is-company-enrichment-final.util';
+import { isGettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/utils/is-getting-started-step-action-key.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -41,6 +43,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 type WorkspaceEnrichmentKeyValueTypeMap = CompanyEnrichmentKeyValueTypeMap &
   CompanyEnrichmentAttemptKeyValueTypeMap;
+
+type CompanyEnrichmentAttempt =
+  CompanyEnrichmentAttemptKeyValueTypeMap[typeof COMPANY_ENRICHMENT_ATTEMPT_KEY];
 
 type GettingStartedScope = {
   userId: string;
@@ -95,44 +100,52 @@ export class GettingStartedService {
       }),
     ]);
 
-    const profile = await this.getProfile({
+    const assignedStepActionKeys = await this.getOrSaveAssignedStepActionKeys({
       userId,
       userEmail,
       workspaceId,
-      savedProfile: userVars.get(GETTING_STARTED_PROFILE_USER_VAR_KEY),
+      savedStepActionKeys: userVars.get(
+        GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
+      ),
       companyEnrichment: companyEnrichment ?? null,
-      hasCompanyEnrichmentAttempt: isDefined(companyEnrichmentAttempt),
+      companyEnrichmentAttempt: companyEnrichmentAttempt ?? null,
     });
 
-    const steps = getGettingStartedSteps({
-      profile,
+    const stepActionKeys = filterGettingStartedStepActionKeys({
+      stepActionKeys: assignedStepActionKeys,
       permissionFlags,
       hasSendingMailbox: isDefined(ownSendingMailbox),
       hasFeaturedApp: isNonEmptyArray(featuredApps),
     });
 
-    const isSavedAsCompleted = (step: GettingStartedStep) =>
+    const isSavedAsCompleted = (stepActionKey: GettingStartedStepActionKey) =>
       isDefined(
-        userVars.get(`${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`),
+        userVars.get(
+          `${GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX}${stepActionKey}`,
+        ),
       );
 
-    const alreadyDoneSteps = await this.findAlreadyDoneSteps({
+    const alreadyDoneStepActionKeys = await this.findAlreadyDoneStepActionKeys({
       workspaceId,
       userWorkspaceId,
-      steps: steps.filter((step) => !isSavedAsCompleted(step)),
+      stepActionKeys: stepActionKeys.filter(
+        (stepActionKey) => !isSavedAsCompleted(stepActionKey),
+      ),
     });
 
     await Promise.all(
-      alreadyDoneSteps.map((step) =>
-        this.completeStep({ userId, workspaceId, step }),
+      alreadyDoneStepActionKeys.map((stepActionKey) =>
+        this.completeStep({ userId, workspaceId, stepActionKey }),
       ),
     );
 
-    const completedSteps = steps.filter(
-      (step) => isSavedAsCompleted(step) || alreadyDoneSteps.includes(step),
+    const completedStepActionKeys = stepActionKeys.filter(
+      (stepActionKey) =>
+        isSavedAsCompleted(stepActionKey) ||
+        alreadyDoneStepActionKeys.includes(stepActionKey),
     );
 
-    const savedSelectedStep = userVars.get(
+    const savedSelectedStepActionKey = userVars.get(
       GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
     );
     const snoozedUntil = userVars.get(
@@ -140,10 +153,13 @@ export class GettingStartedService {
     );
 
     return {
-      steps,
+      stepActionKeys,
       companyEnrichment: companyEnrichment ?? null,
-      completedSteps,
-      selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
+      completedStepActionKeys,
+      selectedStepActionKey:
+        stepActionKeys.find(
+          (stepActionKey) => stepActionKey === savedSelectedStepActionKey,
+        ) ?? null,
       snoozedUntil: isNonEmptyString(snoozedUntil) ? snoozedUntil : null,
       isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) ?? false,
     };
@@ -158,12 +174,12 @@ export class GettingStartedService {
   }: GettingStartedScope & {
     input: UpdateGettingStartedInput;
   }): Promise<GettingStartedProgress> {
-    if (isDefined(input.selectedStep)) {
+    if (isDefined(input.selectedStepActionKey)) {
       await this.userVarsService.set({
         userId,
         workspaceId,
         key: GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
-        value: input.selectedStep,
+        value: input.selectedStepActionKey,
       });
     }
 
@@ -185,11 +201,11 @@ export class GettingStartedService {
       });
     }
 
-    if (isDefined(input.completedStep)) {
+    if (isDefined(input.completedStepActionKey)) {
       await this.completeStep({
         userId,
         workspaceId,
-        step: input.completedStep,
+        stepActionKey: input.completedStepActionKey,
       });
     }
 
@@ -204,52 +220,56 @@ export class GettingStartedService {
   async completeStep({
     userId,
     workspaceId,
-    step,
+    stepActionKey,
   }: {
     userId: string;
     workspaceId: string;
-    step: GettingStartedStep;
+    stepActionKey: GettingStartedStepActionKey;
   }): Promise<void> {
     await this.userVarsService.setIfNotExists({
       userId,
       workspaceId,
-      key: `${GETTING_STARTED_STEP_USER_VAR_KEY_PREFIX}${step}`,
+      key: `${GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX}${stepActionKey}`,
       value: { completedAt: new Date().toISOString() },
     });
   }
 
   // Saved once final so late enrichment does not reshuffle the step list.
-  private async getProfile({
+  private async getOrSaveAssignedStepActionKeys({
     userId,
     userEmail,
     workspaceId,
-    savedProfile,
+    savedStepActionKeys,
     companyEnrichment,
-    hasCompanyEnrichmentAttempt,
+    companyEnrichmentAttempt,
   }: {
     userId: string;
     userEmail: string;
     workspaceId: string;
-    savedProfile: GettingStartedProfile | undefined;
+    savedStepActionKeys: string[] | undefined;
     companyEnrichment: WorkspaceCompanyEnrichment | null;
-    hasCompanyEnrichmentAttempt: boolean;
-  }): Promise<GettingStartedProfile> {
-    if (isDefined(savedProfile)) {
-      return savedProfile;
+    companyEnrichmentAttempt: CompanyEnrichmentAttempt | null;
+  }): Promise<GettingStartedStepActionKey[]> {
+    if (isDefined(savedStepActionKeys)) {
+      return savedStepActionKeys.filter(isGettingStartedStepActionKey);
     }
 
     const profile = getGettingStartedProfile({ userEmail, companyEnrichment });
+    const stepActionKeys = GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE[profile];
 
-    if (profile === 'PERSONAL' || hasCompanyEnrichmentAttempt) {
+    if (
+      profile === 'PERSONAL' ||
+      isCompanyEnrichmentFinal({ companyEnrichment, companyEnrichmentAttempt })
+    ) {
       await this.userVarsService.setIfNotExists({
         userId,
         workspaceId,
-        key: GETTING_STARTED_PROFILE_USER_VAR_KEY,
-        value: profile,
+        key: GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
+        value: stepActionKeys,
       });
     }
 
-    return profile;
+    return stepActionKeys;
   }
 
   private async findWorkspaceConfigVariable<
@@ -271,28 +291,30 @@ export class GettingStartedService {
     return keyValuePair?.value;
   }
 
-  private async findAlreadyDoneSteps({
+  private async findAlreadyDoneStepActionKeys({
     workspaceId,
     userWorkspaceId,
-    steps,
+    stepActionKeys,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    steps: GettingStartedStep[];
-  }): Promise<GettingStartedStep[]> {
+    stepActionKeys: GettingStartedStepActionKey[];
+  }): Promise<GettingStartedStepActionKey[]> {
     const [hasConnectedMailbox, hasInstalledFeaturedApp] = await Promise.all([
-      steps.includes(GettingStartedStep.CONNECT_MAILBOX)
+      stepActionKeys.includes(GettingStartedStepActionKey.CONNECT_MAILBOX)
         ? this.hasOwnDraftingMailbox({ workspaceId, userWorkspaceId })
         : false,
-      steps.includes(GettingStartedStep.INSTALL_APP)
+      stepActionKeys.includes(GettingStartedStepActionKey.INSTALL_APP)
         ? this.hasInstalledFeaturedApp(workspaceId)
         : false,
     ]);
 
-    return steps.filter(
-      (step) =>
-        (step === GettingStartedStep.CONNECT_MAILBOX && hasConnectedMailbox) ||
-        (step === GettingStartedStep.INSTALL_APP && hasInstalledFeaturedApp),
+    return stepActionKeys.filter(
+      (stepActionKey) =>
+        (stepActionKey === GettingStartedStepActionKey.CONNECT_MAILBOX &&
+          hasConnectedMailbox) ||
+        (stepActionKey === GettingStartedStepActionKey.INSTALL_APP &&
+          hasInstalledFeaturedApp),
     );
   }
 

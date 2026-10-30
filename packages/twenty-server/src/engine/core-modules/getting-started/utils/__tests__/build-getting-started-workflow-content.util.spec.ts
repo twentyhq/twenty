@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GETTING_STARTED_STEP_PERMISSION_FLAGS } from 'src/engine/core-modules/getting-started/constants/getting-started-step-permission-flags.constant';
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { buildGettingStartedWorkflowContent } from 'src/engine/core-modules/getting-started/utils/build-getting-started-workflow-content.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
@@ -16,19 +16,19 @@ const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
   }).allFlatEntityMaps;
 
 const GETTING_STARTED_WORKFLOW_ENTRIES = Object.values(
-  GettingStartedStep,
-).flatMap((step) => {
-  const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[step];
+  GettingStartedStepActionKey,
+).flatMap((stepActionKey) => {
+  const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[stepActionKey];
 
   return isDefined(gettingStartedWorkflow)
-    ? [{ step, gettingStartedWorkflow }]
+    ? [{ stepActionKey, gettingStartedWorkflow }]
     : [];
 });
 
 describe('buildGettingStartedWorkflowContent', () => {
   it.each(GETTING_STARTED_WORKFLOW_ENTRIES)(
-    'should build the $step workflow from the standard metadata',
-    ({ step, gettingStartedWorkflow }) => {
+    'should build the $stepActionKey workflow from the standard metadata',
+    ({ stepActionKey, gettingStartedWorkflow }) => {
       const { trigger, steps } = buildGettingStartedWorkflowContent({
         gettingStartedWorkflow,
         flatObjectMetadataMaps,
@@ -41,14 +41,14 @@ describe('buildGettingStartedWorkflowContent', () => {
           (manifestStep) => manifestStep.universalIdentifier,
         ),
       );
-      expect(GETTING_STARTED_STEP_PERMISSION_FLAGS[step]).toEqual([
+      expect(GETTING_STARTED_STEP_PERMISSION_FLAGS[stepActionKey]).toEqual([
         PermissionFlagType.WORKFLOWS,
       ]);
     },
   );
 
   it.each(GETTING_STARTED_WORKFLOW_ENTRIES)(
-    'should chain the $step steps in order and title only its own steps',
+    'should chain the $stepActionKey steps in order and title only its own steps',
     ({ gettingStartedWorkflow }) => {
       const { trigger, steps } = gettingStartedWorkflow.manifest.version;
       const stepUniversalIdentifiers = steps.map(
@@ -90,7 +90,7 @@ describe('buildGettingStartedWorkflowContent', () => {
     'should start the handover from $before to $after: $expected',
     ({ before, after, expected }) => {
       const handoverWorkflow =
-        GETTING_STARTED_WORKFLOWS[GettingStartedStep.HANDOVER_DEALS];
+        GETTING_STARTED_WORKFLOWS[GettingStartedStepActionKey.HANDOVER_DEALS];
 
       if (!isDefined(handoverWorkflow)) {
         throw new Error('The handover step has no workflow');

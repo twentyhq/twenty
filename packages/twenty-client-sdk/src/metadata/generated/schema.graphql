@@ -2579,14 +2579,14 @@ input GetAuthorizationUrlForSSOInput {
 }
 
 type GettingStartedProgress {
-  completedSteps: [GettingStartedStep!]!
+  completedStepActionKeys: [GettingStartedStepActionKey!]!
   isHidden: Boolean!
-  selectedStep: GettingStartedStep
+  selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
   steps: [GettingStartedStepDefinition!]!
 }
 
-enum GettingStartedStep {
+enum GettingStartedStepActionKey {
   CONNECT_MAILBOX
   CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS
@@ -2597,6 +2597,7 @@ enum GettingStartedStep {
 }
 
 type GettingStartedStepDefinition {
+  actionKey: GettingStartedStepActionKey!
   description: String!
   doneTitle: String!
   icon: String!
@@ -2604,7 +2605,6 @@ type GettingStartedStepDefinition {
   kind: GettingStartedStepKind!
   prompt: String
   promptLabel: String
-  step: GettingStartedStep!
   title: String!
 }
 
@@ -2621,7 +2621,7 @@ type GettingStartedWorkflow {
 
 type GettingStartedWorkflowPreview {
   actions: [GettingStartedWorkflowPreviewAction!]!
-  step: GettingStartedStep!
+  stepActionKey: GettingStartedStepActionKey!
   trigger: GettingStartedWorkflowPreviewTrigger!
 }
 
@@ -3444,7 +3444,7 @@ type Mutation {
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
-  prepareGettingStartedWorkflow(step: GettingStartedStep!): GettingStartedWorkflow!
+  prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
@@ -5139,9 +5139,9 @@ input UpdateFrontComponentInputUpdates {
 }
 
 input UpdateGettingStartedInput {
-  completedStep: GettingStartedStep
+  completedStepActionKey: GettingStartedStepActionKey
   isHidden: Boolean
-  selectedStep: GettingStartedStep
+  selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
 }
 

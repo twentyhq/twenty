@@ -5360,13 +5360,13 @@ export default {
             ]
         },
         "GettingStartedProgress": {
-            "completedSteps": [
+            "completedStepActionKeys": [
                 294
             ],
             "isHidden": [
                 4
             ],
-            "selectedStep": [
+            "selectedStepActionKey": [
                 294
             ],
             "snoozedUntil": [
@@ -5379,8 +5379,11 @@ export default {
                 1
             ]
         },
-        "GettingStartedStep": {},
+        "GettingStartedStepActionKey": {},
         "GettingStartedStepDefinition": {
+            "actionKey": [
+                294
+            ],
             "description": [
                 1
             ],
@@ -5401,9 +5404,6 @@ export default {
             ],
             "promptLabel": [
                 1
-            ],
-            "step": [
-                294
             ],
             "title": [
                 1
@@ -5428,7 +5428,7 @@ export default {
             "actions": [
                 299
             ],
-            "step": [
+            "stepActionKey": [
                 294
             ],
             "trigger": [
@@ -8205,9 +8205,9 @@ export default {
             "prepareGettingStartedWorkflow": [
                 297,
                 {
-                    "step": [
+                    "stepActionKey": [
                         294,
-                        "GettingStartedStep!"
+                        "GettingStartedStepActionKey!"
                     ]
                 }
             ],
@@ -13667,13 +13667,13 @@ export default {
             ]
         },
         "UpdateGettingStartedInput": {
-            "completedStep": [
+            "completedStepActionKey": [
                 294
             ],
             "isHidden": [
                 4
             ],
-            "selectedStep": [
+            "selectedStepActionKey": [
                 294
             ],
             "snoozedUntil": [

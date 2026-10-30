@@ -2,7 +2,7 @@ import { setupI18n } from '@lingui/core';
 import { compileMessage } from '@lingui/message-utils/compileMessage';
 
 import { GettingStartedStepKind } from 'src/engine/core-modules/getting-started/enums/getting-started-step-kind.enum';
-import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { buildGettingStartedStepDefinition } from 'src/engine/core-modules/getting-started/utils/build-getting-started-step-definition.util';
 
 const translate = (descriptor: { message?: string }) =>
@@ -18,12 +18,12 @@ describe('buildGettingStartedStepDefinition', () => {
   it('should define a step with a workflow template as a workflow step', () => {
     expect(
       buildGettingStartedStepDefinition({
-        step: GettingStartedStep.HANDOVER_DEALS,
+        stepActionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
         companyEnrichment: null,
         translate,
       }),
     ).toEqual({
-      step: GettingStartedStep.HANDOVER_DEALS,
+      actionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
       kind: GettingStartedStepKind.WORKFLOW,
       title: 'Hand over won deals',
       doneTitle: 'Workflow enabled',
@@ -38,7 +38,7 @@ describe('buildGettingStartedStepDefinition', () => {
   it('should define a step with a prompt as a prompt step', () => {
     expect(
       buildGettingStartedStepDefinition({
-        step: GettingStartedStep.FOLLOW_UP_DEALS,
+        stepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
         companyEnrichment: null,
         translate,
       }),
@@ -53,7 +53,7 @@ describe('buildGettingStartedStepDefinition', () => {
   it('should fill the data model prompt from the company enrichment', () => {
     expect(
       buildGettingStartedStepDefinition({
-        step: GettingStartedStep.CUSTOMIZE_DATA_MODEL,
+        stepActionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         companyEnrichment: {
           domain: 'acme.com',
           enrichedAt: '2026-10-29T12:00:00.000Z',
@@ -80,7 +80,7 @@ describe('buildGettingStartedStepDefinition', () => {
   it('should fall back to a generic data model prompt without enrichment', () => {
     expect(
       buildGettingStartedStepDefinition({
-        step: GettingStartedStep.CUSTOMIZE_DATA_MODEL,
+        stepActionKey: GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL,
         companyEnrichment: null,
         translate: (descriptor) => i18n._(descriptor),
       }).prompt,
@@ -92,7 +92,7 @@ describe('buildGettingStartedStepDefinition', () => {
   it('should define any other step as a custom step', () => {
     expect(
       buildGettingStartedStepDefinition({
-        step: GettingStartedStep.CONNECT_MAILBOX,
+        stepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         companyEnrichment: null,
         translate,
       }),
