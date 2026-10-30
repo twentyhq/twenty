@@ -81,7 +81,7 @@ export class AgentChatDirectMessageIdentityService {
     );
   }
 
-  // TODO(@bosiraphael): remove once 2.54 leaves the cross-upgrade window
+  // TODO(@bosiraphael): remove once 2.55 leaves the cross-upgrade window
   private async assertStorageAvailableOrThrow(
     workspaceId: string,
   ): Promise<void> {

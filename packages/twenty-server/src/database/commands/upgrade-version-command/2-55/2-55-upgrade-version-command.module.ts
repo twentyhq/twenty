@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793371089726-add-direct-message-pair-identity.command';
 import { BackfillWebhookAdminRoleCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793369399691-backfill-webhook-admin-role.command';
 import { AddStandardRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793375369182-add-standard-related-record-paths.command';
 import { SyncAccessGroupObjectCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793384492383-sync-access-group-object.command';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceSchemaManagerModule,
   ],
   providers: [
+    AddDirectMessagePairIdentityCommand,
     BackfillWebhookAdminRoleCommand,
     AddStandardRelatedRecordPathsCommand,
     SyncAccessGroupObjectCommand,
