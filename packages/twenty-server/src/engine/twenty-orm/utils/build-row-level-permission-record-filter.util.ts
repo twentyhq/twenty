@@ -132,6 +132,10 @@ const buildRecordFilterForRole = ({
       );
     }
 
+    if (isDefined(predicate.relationFieldMetadataId)) {
+      unsatisfiableRecordFilterIds.add(predicate.id);
+    }
+
     const workspaceMemberFieldMetadataId =
       predicate.workspaceMemberFieldMetadataId;
     let predicateValue: RowLevelPermissionPredicateValue = predicate.value;

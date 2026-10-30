@@ -623,6 +623,7 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
+  operationLabel: String
   operationType: String!
 }
 
@@ -1705,6 +1706,7 @@ input CreateRecordExportInput {
 
 input CreateRelatedRecordPathInput {
   firstFieldMetadataId: UUID
+  isInherent: Boolean
   objectMetadataId: UUID
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
@@ -1852,12 +1854,14 @@ input CreateWebhookInput {
   description: String
   id: UUID
   operations: [String!]!
+  roleId: UUID!
   secret: String
   targetUrl: String!
 }
 
 type CreditUsedItem {
   creditsUsed: Float!
+  icon: String
   label: String
   operation: UsageOperationType
   resource: UsageResourceType
@@ -2318,6 +2322,7 @@ enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
 }
 
 type Field {
@@ -2609,6 +2614,12 @@ enum IdentityProviderType {
 type IframeConfiguration {
   configurationType: WidgetConfigurationType!
   url: String
+}
+
+type IframeMediaPermission {
+  camera: Boolean!
+  microphone: Boolean!
+  origin: String!
 }
 
 type ImapSmtpCaldavConnectionSuccess {
@@ -3498,7 +3509,8 @@ type Mutation {
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
-  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
+  updateWorkspaceAllowedEmbeddingOrigins(data: UpdateWorkspaceAllowedEmbeddingOriginsInput!): Workspace!
+  updateWorkspaceIframeMediaPermissions(data: UpdateWorkspaceIframeMediaPermissionsInput!): Workspace!
   updateWorkspaceMemberRole(roleId: UUID!, workspaceMemberId: UUID!): WorkspaceMember!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
@@ -4319,6 +4331,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
@@ -4406,6 +4419,7 @@ type RowLevelPermissionPredicate {
   objectMetadataId: String!
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
   subFieldName: String
@@ -4441,6 +4455,7 @@ input RowLevelPermissionPredicateInput {
   id: UUID
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: UUID
   rowLevelPermissionPredicateGroupId: UUID
   subFieldName: String
   value: JSON
@@ -5440,12 +5455,19 @@ input UpdateWebhookInput {
 input UpdateWebhookInputUpdates {
   description: String
   operations: [String!]
+  roleId: UUID
   secret: String
   targetUrl: String
 }
 
-input UpdateWorkspaceAllowedIframeOriginsInput {
+input UpdateWorkspaceAllowedEmbeddingOriginsInput {
   operation: String!
+  origin: String!
+}
+
+input UpdateWorkspaceIframeMediaPermissionsInput {
+  camera: Boolean!
+  microphone: Boolean!
   origin: String!
 }
 
@@ -5685,6 +5707,7 @@ enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
+  APP_OPERATION
   CALL_RECORDING
   CODE_EXECUTION
   EMAIL_SEND
@@ -6110,6 +6133,7 @@ type Webhook {
   description: String
   id: UUID!
   operations: [String!]!
+  role: Role
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
@@ -6198,7 +6222,7 @@ type Workspace {
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
-  allowedIframeOrigins: [String!]
+  allowedEmbeddingOrigins: [String!]
   billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   billingSubscriptions: [BillingSubscription!]!
@@ -6215,6 +6239,7 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   hasValidSignedEnterpriseKey: Boolean!
   id: UUID!
+  iframeMediaPermissions: [IframeMediaPermission!]
   installedApplications: [Application!]!
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean!

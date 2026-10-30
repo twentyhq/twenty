@@ -34,13 +34,13 @@ src/utils/__tests__/map-bar.util.spec.ts
 Integration tests build, deploy, install, and uninstall the app on whatever server `TWENTY_API_URL` points to. The scaffold defaults to the dev instance (`http://localhost:2020`), so running them there adds and then removes the app from the workspace you sync to with `twenty app apply`. Always run them against the isolated test instance instead — a separate container, database, and port (`2021`) that does not affect your running dev instance:
 
 ```bash
-# Start an already provisioned isolated test container.
-docker start twenty-app-dev-test
+# Create or start the isolated test environment.
+twenty local start --test
 
 # Run integration tests against it.
 TWENTY_API_URL=http://localhost:2021 yarn test
 ```
 
-Provision the isolated test container before starting it, using the local-server documentation. Set `TWENTY_API_KEY` for that instance; the CLI no longer provisions Docker containers. This mirrors CI, which spawns the same isolated instance via the `spawn-twenty-app-dev-test` action.
+Set `TWENTY_API_KEY` for that isolated instance. `twenty local start --test` creates it when missing and preserves its data when restarting. New test instances use the same rate limits and disabled marketplace sync as CI. CI creates a fresh instance through the `spawn-twenty-app-dev-test` action; local restarts preserve existing settings and data.
 
 When the user asks you to run tests, do run them. First start or verify the isolated test instance, then run the test command with `TWENTY_API_URL=http://localhost:2021`. Do not run integration tests against `http://localhost:2020` unless the user explicitly asks to target the dev instance. If only unit tests are requested, use the package's unit-test script and no `TWENTY_API_URL` override is needed.

@@ -11351,6 +11351,12 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
 
+#. js-lingui-id: Nlegrg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
+msgstr ""
+
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
@@ -11447,11 +11453,11 @@ msgstr "Rollenziel existiert bereits"
 msgid "Role target is missing identifier."
 msgstr "Dem Rollenziel fehlt ein Identifikator."
 
-#. js-lingui-id: vYrPc5
+#. js-lingui-id: iqcAvV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
-msgstr "Das Rollenziel muss genau einen der folgenden Werte aufweisen: apiKeyId, userWorkspaceId oder agentUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
+msgstr ""
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11825,6 +11831,11 @@ msgstr "Workflow anzeigen"
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
 msgstr "Workflow anzeigen"
+
+#. js-lingui-id: qWQwt8
+#: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
+msgid "Select a role for this webhook."
+msgstr ""
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13573,6 +13584,11 @@ msgstr "Dieselbe Spalte kann nicht zweimal in einem Index vorkommen."
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "Das ausgewählte Modell wurde vom Administrator deaktiviert."
+
+#. js-lingui-id: pkPsbr
+#: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
+msgid "The selected role does not exist."
+msgstr ""
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
