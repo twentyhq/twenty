@@ -5,7 +5,6 @@ import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -33,7 +32,6 @@ export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -42,26 +40,35 @@ export class WorkflowExecutionContextService {
   async getExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<WorkflowExecutionContext> {
-    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
+    const [workflowRun, workspace] = await Promise.all([
+      this.workflowRunService.getWorkflowRunOrFail({
+        workflowRunId: runInfo.workflowRunId,
+        workspaceId: runInfo.workspaceId,
+      }),
+      this.findWorkspaceOrFail(runInfo.workspaceId),
+    ]);
 
-    return this.buildExecutionContext(workflowRun, runInfo.workspaceId);
+    return this.buildExecutionContext(workflowRun, workspace);
   }
 
-  async getApplicationBoundExecutionContext({
+  // workspace workflow forms still read picked records unrestricted, relations included
+  async getFormRecordReadContext({
     workflowRun,
     workspaceId,
   }: {
     workflowRun: WorkflowRunWorkspaceEntity;
     workspaceId: string;
   }): Promise<WorkflowExecutionContext | null> {
-    if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
+    const workspace = await this.findWorkspaceOrFail(workspaceId);
+
+    if (
+      this.getRunApplicationId(workflowRun, workspace) ===
+      workspace.workspaceCustomApplicationId
+    ) {
       return null;
     }
 
-    return this.buildExecutionContext(workflowRun, workspaceId);
+    return this.buildExecutionContext(workflowRun, workspace);
   }
 
   assertRunApplicationCanTriggerStepTargetOrThrow({
@@ -77,7 +84,6 @@ export class WorkflowExecutionContextService {
     targetLabel: string;
   }): void {
     if (
-      !isDefined(application) ||
       canCallerReachApplication({
         callingApplication: application,
         applicationId: targetApplicationId,
@@ -97,25 +103,29 @@ export class WorkflowExecutionContextService {
 
   private async buildExecutionContext(
     workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
+    workspace: WorkspaceEntity,
   ): Promise<WorkflowExecutionContext> {
-    const application = await this.findRunApplication(workflowRun, workspaceId);
+    const { flatApplicationMaps, userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+        'userWorkspaceRoleMap',
+      ]);
+
+    const application = resolveWorkflowRunApplicationOrThrow({
+      applicationId: this.getRunApplicationId(workflowRun, workspace),
+      applicationsById: flatApplicationMaps.byId,
+    });
 
     const isActingOnBehalfOfUser =
       workflowRun.createdBy.source === FieldActorSource.MANUAL &&
       isDefined(workflowRun.createdBy.workspaceMemberId);
 
-    const authContext = await this.buildAuthContext({
-      workflowRun,
-      workspaceId,
-      application,
-      isActingOnBehalfOfUser,
-    });
-
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
+    const authContext = isActingOnBehalfOfUser
+      ? await this.buildMemberAuthContext(workflowRun, workspace, application)
+      : buildApplicationAuthContext({
+          workspace: fromWorkspaceEntityToFlat(workspace),
+          application,
+        });
 
     const rolePermissionConfig = resolveRolePermissionConfig({
       authContext,
@@ -140,67 +150,37 @@ export class WorkflowExecutionContextService {
     };
   }
 
-  private async findRunApplication(
+  // Runs created before workspace workflows bound theirs carry no application
+  private getRunApplicationId(
     workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<FlatApplication | null> {
-    if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
-      return null;
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    return resolveWorkflowRunApplicationOrThrow({
-      workflowRun,
-      applicationsById: flatApplicationMaps.byId,
-    });
-  }
-
-  private buildAuthContext({
-    workflowRun,
-    workspaceId,
-    application,
-    isActingOnBehalfOfUser,
-  }: {
-    workflowRun: WorkflowRunWorkspaceEntity;
-    workspaceId: string;
-    application: FlatApplication | null;
-    isActingOnBehalfOfUser: boolean;
-  }): Promise<WorkspaceAuthContext> {
-    if (isActingOnBehalfOfUser) {
-      return this.buildMemberAuthContext(workflowRun, workspaceId, application);
-    }
-
-    if (isDefined(application)) {
-      return this.buildBoundApplicationAuthContext(workspaceId, application);
-    }
-
-    return this.buildStandardApplicationAuthContext(workspaceId);
+    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId'>,
+  ): string {
+    return (
+      workflowRun.createdBy.context?.applicationId ??
+      workspace.workspaceCustomApplicationId
+    );
   }
 
   private async buildMemberAuthContext(
     workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
-    application: FlatApplication | null,
+    workspace: WorkspaceEntity,
+    application: FlatApplication,
   ): Promise<WorkspaceAuthContext> {
     const workspaceMember =
       await this.userWorkspaceService.getWorkspaceMemberOrThrow({
         workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
-        workspaceId,
+        workspaceId: workspace.id,
       });
 
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
         userId: workspaceMember.userId,
-        workspaceId,
-        relations: ['workspace', 'user'],
+        workspaceId: workspace.id,
+        relations: ['user'],
       });
 
     return buildUserAuthContext({
-      workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
+      workspace: fromWorkspaceEntityToFlat(workspace),
       userWorkspaceId: userWorkspace.id,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
@@ -209,31 +189,9 @@ export class WorkflowExecutionContextService {
     });
   }
 
-  private async buildBoundApplicationAuthContext(
-    workspaceId: string,
-    application: FlatApplication,
-  ): Promise<WorkspaceAuthContext> {
-    const workspace = await this.workspaceRepository.findOneOrFail({
+  private findWorkspaceOrFail(workspaceId: string): Promise<WorkspaceEntity> {
+    return this.workspaceRepository.findOneOrFail({
       where: { id: workspaceId },
-    });
-
-    return buildApplicationAuthContext({
-      workspace: fromWorkspaceEntityToFlat(workspace),
-      application,
-    });
-  }
-
-  private async buildStandardApplicationAuthContext(
-    workspaceId: string,
-  ): Promise<WorkspaceAuthContext> {
-    const { application, workspace } =
-      await this.applicationService.findTwentyStandardApplicationOrThrow(
-        workspaceId,
-      );
-
-    return buildApplicationAuthContext({
-      workspace: fromWorkspaceEntityToFlat(workspace),
-      application,
     });
   }
 }

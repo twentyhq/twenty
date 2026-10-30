@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -13,18 +12,12 @@ export const resolveWorkflowRunApplicationOrThrow = <
     'name' | 'deletedAt' | 'defaultRoleId'
   >,
 >({
-  workflowRun,
+  applicationId,
   applicationsById,
 }: {
-  workflowRun: Pick<WorkflowRunWorkspaceEntity, 'createdBy'>;
+  applicationId: string;
   applicationsById: Partial<Record<string, TApplication>>;
-}): TApplication | null => {
-  const applicationId = workflowRun.createdBy.context?.applicationId;
-
-  if (!isDefined(applicationId)) {
-    return null;
-  }
-
+}): TApplication => {
   const application = applicationsById[applicationId];
 
   if (!isDefined(application) || isDefined(application.deletedAt)) {
