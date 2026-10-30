@@ -4,6 +4,7 @@ import { type ApplicationDisplayData } from '@/applications/types/ApplicationDis
 import { SettingsApplicationStatusCell } from '@/settings/applications/components/SettingsApplicationStatusCell';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/components/SettingsApplicationTableRowChevronIcon';
+import { SettingsApplicationTypeOrStatusCell } from '@/settings/applications/components/SettingsApplicationTypeOrStatusCell';
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
@@ -44,6 +45,7 @@ export const SettingsApplicationsTableApplicationRow = ({
   statuses = [],
 }: SettingsApplicationsTableApplicationRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
+  const sourceTypeLabel = getSourceTypeLabel(application.sourceType);
   const shouldShowUpdateTag =
     middleColumn === 'type' &&
     statuses.some((status) => status.type === 'updateAvailable');
@@ -54,10 +56,15 @@ export const SettingsApplicationsTableApplicationRow = ({
       link={link}
       name={<ApplicationDisplay application={application} />}
       middle={
-        middleColumn === 'status' ? (
+        middleColumn === 'type' ? (
+          sourceTypeLabel
+        ) : middleColumn === 'status' ? (
           <SettingsApplicationStatusCell statuses={statuses} />
         ) : (
-          getSourceTypeLabel(application.sourceType)
+          <SettingsApplicationTypeOrStatusCell
+            typeLabel={sourceTypeLabel}
+            statuses={statuses}
+          />
         )
       }
       details={
