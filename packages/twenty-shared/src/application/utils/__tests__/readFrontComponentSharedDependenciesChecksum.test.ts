@@ -1,4 +1,4 @@
-import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
+import { readFrontComponentSharedDependenciesChecksum } from '../readFrontComponentSharedDependenciesChecksum';
 
 const CHECKSUM = 'a'.repeat(64);
 const BANNER = '// twenty-ai-shared-dependencies: ' + CHECKSUM;

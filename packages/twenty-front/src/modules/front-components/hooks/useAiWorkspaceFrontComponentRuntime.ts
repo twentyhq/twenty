@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { convertUnknownToError } from '@/error-handler/utils/convertUnknownToError';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/AiWorkspaceFrontComponentRuntime';
-import { loadAiWorkspaceFrontComponentRuntime } from '@/front-components/utils/loadAiWorkspaceFrontComponentRuntime';
+import { loadAiWorkspaceFrontComponentRuntimeOrThrow } from '@/front-components/utils/loadAiWorkspaceFrontComponentRuntimeOrThrow';
 
 export const useAiWorkspaceFrontComponentRuntime = ({
   frontComponentId,
@@ -21,7 +21,7 @@ export const useAiWorkspaceFrontComponentRuntime = ({
 
     void loadFrontComponentApplicationTokenPair(applicationId)
       .then(({ applicationAccessToken }) =>
-        loadAiWorkspaceFrontComponentRuntime({
+        loadAiWorkspaceFrontComponentRuntimeOrThrow({
           frontComponentId,
           applicationAccessToken: applicationAccessToken.token,
           signal: controller.signal,

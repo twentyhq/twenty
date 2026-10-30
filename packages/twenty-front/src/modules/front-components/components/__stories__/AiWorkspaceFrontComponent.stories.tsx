@@ -12,6 +12,19 @@ const SHARED_DEPENDENCIES_SOURCE = "export const label = 'Visible records: ';";
 const SHARED_DEPENDENCIES_CHECKSUM =
   '9ecb73aa1c9807936b7167777d5178f0c74386e4b0a3f66625be84dc13004f6d';
 
+const COMPONENT_SOURCE = `// twenty-ai-shared-dependencies: 9ecb73aa1c9807936b7167777d5178f0c74386e4b0a3f66625be84dc13004f6d
+import { label } from 'twenty:front-component-shared-dependencies';
+      export default function render(container, props) {
+        if (globalThis.process?.env?.TWENTY_APP_ACCESS_TOKEN || JSON.stringify(props).includes('component-application-token')) {
+          throw new Error('Credential exposed to component');
+        }
+        const paragraph = document.createElement('p');
+        paragraph.textContent = label + props.records.length;
+        container.appendChild(paragraph);
+      }`;
+const COMPONENT_CHECKSUM =
+  '85a6c123834c5169e60f10b335c83d854b1ba0cf53261a423fcd922d90476abd';
+
 const meta: Meta<typeof AiWorkspaceFrontComponent> = {
   title: 'Modules/FrontComponents/AiWorkspaceFrontComponent',
   component: AiWorkspaceFrontComponent,
@@ -66,17 +79,21 @@ export const ViewerData: Story = {
             );
             return HttpResponse.json({
               applicationId: APPLICATION_ID,
-              sharedDependenciesChecksum: SHARED_DEPENDENCIES_CHECKSUM,
-              componentSource: `import { label } from 'twenty:front-component-shared-dependencies';
-      export default function render(container, props) {
-        if (globalThis.process?.env?.TWENTY_APP_ACCESS_TOKEN || JSON.stringify(props).includes('component-application-token')) {
-          throw new Error('Credential exposed to component');
-        }
-        const paragraph = document.createElement('p');
-        paragraph.textContent = label + props.records.length;
-        container.appendChild(paragraph);
-      }`,
+              sharedDependenciesChecksum: 'a'.repeat(64),
+              builtComponentChecksum: COMPONENT_CHECKSUM,
               data: { records: [{ id: 'visible-record' }] },
+            });
+          },
+        ),
+        component: http.get(
+          '*/rest/front-components/:id/:checksum',
+          ({ request, params }) => {
+            expect(params.checksum).toBe(`${COMPONENT_CHECKSUM}.js`);
+            expect(request.headers.get('Authorization')).toBe(
+              `Bearer ${APPLICATION_ACCESS_TOKEN}`,
+            );
+            return new HttpResponse(COMPONENT_SOURCE, {
+              headers: { 'Content-Type': 'text/javascript' },
             });
           },
         ),
@@ -84,6 +101,7 @@ export const ViewerData: Story = {
           '*/rest/front-component-shared-dependencies/bundles/:applicationId/:checksum',
           ({ request, params }) => {
             expect(params.applicationId).toBe(APPLICATION_ID);
+            expect(params.checksum).toBe(`${SHARED_DEPENDENCIES_CHECKSUM}.js`);
             expect(request.headers.get('Authorization')).toBe(
               `Bearer ${APPLICATION_ACCESS_TOKEN}`,
             );
@@ -121,5 +139,37 @@ export const AccessDenied: Story = {
     await expect(
       await within(canvasElement).findByRole('alert'),
     ).toHaveTextContent('Could not load this component or its data.');
+  },
+};
+
+export const CorruptComponentSource: Story = {
+  args: { frontComponentId: '273eceb2-019c-4aa4-913e-e36f003e4ea7' },
+  parameters: {
+    msw: {
+      handlers: {
+        runtime: http.get('*/rest/ai-front-components/:id/runtime', () =>
+          HttpResponse.json({
+            applicationId: APPLICATION_ID,
+            builtComponentChecksum: 'c'.repeat(64),
+            data: { records: [] },
+          }),
+        ),
+        component: http.get(
+          '*/rest/front-components/:id/:checksum',
+          () =>
+            new HttpResponse(COMPONENT_SOURCE, {
+              headers: { 'Content-Type': 'text/javascript' },
+            }),
+        ),
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByRole('alert'),
+    ).toHaveTextContent('Front component source checksum mismatch');
+    expect(
+      within(canvasElement).queryByText('Visible records: 0'),
+    ).not.toBeInTheDocument();
   },
 };

@@ -1,11 +1,11 @@
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
-import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
+import { readFrontComponentQueryOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query-or-throw.util';
 
 const QUERY = { objectName: 'company', select: ['name'], limit: 20 };
 
-describe('readFrontComponentQuery', () => {
+describe('readFrontComponentQueryOrThrow', () => {
   it('reads the query from the saved SDK component without executing its code', () => {
     const source = buildFrontComponentEntrySource({
       componentId: 'component',
@@ -15,12 +15,12 @@ describe('readFrontComponentQuery', () => {
       source:
         'export const Component = () => <div />; throw new Error("Must never execute");',
     });
-    expect(readFrontComponentQuery(source)).toEqual(QUERY);
+    expect(readFrontComponentQueryOrThrow(source)).toEqual(QUERY);
   });
 
   it('continues reading previously generated query aliases', () => {
     expect(
-      readFrontComponentQuery(
+      readFrontComponentQueryOrThrow(
         `const AiComponent123Query = ${JSON.stringify(QUERY)}; export { AiComponent123Query as componentQuery };`,
       ),
     ).toEqual(QUERY);
@@ -33,7 +33,7 @@ describe('readFrontComponentQuery', () => {
     '{ ...otherQuery }',
   ])('rejects dynamic or invalid query %s', (query) => {
     expect(() =>
-      readFrontComponentQuery(`export const componentQuery = ${query};`),
+      readFrontComponentQueryOrThrow(`export const componentQuery = ${query};`),
     ).toThrow();
   });
 });
