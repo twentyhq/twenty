@@ -1,7 +1,6 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
-import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
 import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
@@ -49,21 +48,14 @@ export const SettingsAccountGroupsSection = ({
       )
     : allGroups;
 
-  const gridTemplateColumns = isDefined(builtInAccountApp)
-    ? SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
-    : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
-
   const tableHeaderRow = (
-    <TableRow gridTemplateColumns={gridTemplateColumns}>
+    <TableRow
+      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
+    >
       <TableHeader>{t`Account`}</TableHeader>
-      {isDefined(builtInAccountApp) ? (
-        <TableHeader>{t`Permissions`}</TableHeader>
-      ) : (
-        <>
-          <TableHeader />
-          <TableHeader align="right">{t`Used by`}</TableHeader>
-        </>
-      )}
+      <TableHeader align="right">
+        {isDefined(builtInAccountApp) ? t`Permissions` : t`Used by`}
+      </TableHeader>
       <TableHeader />
     </TableRow>
   );
@@ -89,7 +81,6 @@ export const SettingsAccountGroupsSection = ({
                 <SettingsAccountGroupTableRow
                   key={group.id}
                   group={group}
-                  gridTemplateColumns={gridTemplateColumns}
                   builtInAccountApp={builtInAccountApp}
                 />
               ))}

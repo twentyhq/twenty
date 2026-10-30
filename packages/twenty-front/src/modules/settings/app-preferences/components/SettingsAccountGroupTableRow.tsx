@@ -3,6 +3,7 @@ import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preference
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
 import { SettingsBuiltInAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInAccountAppPermissionsCell';
+import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
@@ -25,13 +26,11 @@ const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
 
 type SettingsAccountGroupTableRowProps = {
   group: ConnectedAccountGroup;
-  gridTemplateColumns: string;
   builtInAccountApp?: BuiltInAccountApp;
 };
 
 export const SettingsAccountGroupTableRow = ({
   group,
-  gridTemplateColumns,
   builtInAccountApp,
 }: SettingsAccountGroupTableRowProps) => {
   const theme = useTheme();
@@ -62,12 +61,15 @@ export const SettingsAccountGroupTableRow = ({
     >
       <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       <OverflowingTextWithTooltip text={group.handle} />
+      {shouldShowSyncStatus && (
+        <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+      )}
     </TableCell>
   );
 
   return (
     <TableRow
-      gridTemplateColumns={gridTemplateColumns}
+      gridTemplateColumns={SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS}
       onClick={
         hasSettings
           ? () =>
@@ -95,25 +97,11 @@ export const SettingsAccountGroupTableRow = ({
           account={builtInAccount}
         />
       ) : (
-        <>
-          <TableCell>
-            {shouldShowSyncStatus && (
-              <SettingsConnectedAccountSyncStatus account={builtInAccount} />
-            )}
-          </TableCell>
-          <TableCell align="right">
-            <SettingsAccountGroupUsedBy group={group} />
-          </TableCell>
-        </>
+        <TableCell align="right">
+          <SettingsAccountGroupUsedBy group={group} />
+        </TableCell>
       )}
-      <TableCell
-        align="right"
-        gap={themeCssVariables.spacing[4]}
-        onClick={(event) => event.stopPropagation()}
-      >
-        {isDefined(builtInAccountApp) && shouldShowSyncStatus && (
-          <SettingsConnectedAccountSyncStatus account={builtInAccount} />
-        )}
+      <TableCell align="right" onClick={(event) => event.stopPropagation()}>
         <SettingsAppPreferencesRowDropdownMenu
           group={group}
           hasAccountSettings={hasSettings}
