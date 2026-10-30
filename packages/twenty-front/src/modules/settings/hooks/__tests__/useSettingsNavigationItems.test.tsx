@@ -80,14 +80,18 @@ const setPermissionFlags = (permissionFlags: PermissionFlagType[]) => {
   });
 };
 
-const getAccountsItem = () => {
+const getAccountsOrAppPreferencesItem = () => {
   const { result } = renderHook(() => useSettingsNavigationItems(), {
     wrapper: Wrapper,
   });
 
   return result.current
     .find((section) => section.label === 'User')
-    ?.items.find((item) => item.path === SettingsPath.Accounts);
+    ?.items.find(
+      (item) =>
+        item.path === SettingsPath.Accounts ||
+        item.path === SettingsPath.AppPreferences,
+    );
 };
 
 describe('useSettingsNavigationItems', () => {
@@ -209,9 +213,10 @@ describe('useSettingsNavigationItems', () => {
   it('should show Accounts with Emails and Calendars when app preferences are off', () => {
     setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
 
-    const accountsItem = getAccountsItem();
+    const accountsItem = getAccountsOrAppPreferencesItem();
 
     expect(accountsItem?.label).toBe('Accounts');
+    expect(accountsItem?.path).toBe(SettingsPath.Accounts);
     expect(accountsItem?.Icon).toBe(IconAt);
     expect(accountsItem?.subItems?.map((subItem) => subItem.path)).toEqual([
       SettingsPath.AccountsEmails,
@@ -228,9 +233,10 @@ describe('useSettingsNavigationItems', () => {
       ],
     });
 
-    const accountsItem = getAccountsItem();
+    const accountsItem = getAccountsOrAppPreferencesItem();
 
     expect(accountsItem?.label).toBe('Apps preferences');
+    expect(accountsItem?.path).toBe(SettingsPath.AppPreferences);
     expect(accountsItem?.Icon).toBe(IconApps);
     expect(accountsItem?.isHidden).toBe(false);
     expect(accountsItem?.subItems).toBeUndefined();

@@ -79,6 +79,29 @@ export const SearchMatchesBuiltInAccountApps: Story = {
   },
 };
 
+export const SearchMatchesTheDescriptionShownForTheStandardApp: Story = {
+  args: {
+    applications: [
+      { ...STANDARD_APPLICATION, name: 'twenty-standard' },
+      NPM_APPLICATION,
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(
+      await canvas.findByPlaceholderText('Search an application'),
+      'data model',
+    );
+
+    await waitFor(() =>
+      expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual([
+        '/settings/applications/standard-application-id',
+      ]),
+    );
+  },
+};
+
 export const SearchWithNoMatchShowsAnEmptyState: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -196,11 +219,11 @@ export const MemberRowsLinkToTheirPreferences: Story = {
 
     expect(await canvas.findByText('Gmail and Calendar')).toBeVisible();
     expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual([
-      '/settings/accounts/apps/google',
-      '/settings/accounts/apps/outlook',
-      '/settings/accounts/apps/imap',
-      '/settings/accounts/applications/npm-application-id',
-      '/settings/accounts/applications/oauth-application-id',
+      '/settings/app-preferences/google',
+      '/settings/app-preferences/outlook',
+      '/settings/app-preferences/imap',
+      '/settings/app-preferences/npm-application-id',
+      '/settings/app-preferences/oauth-application-id',
     ]);
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });

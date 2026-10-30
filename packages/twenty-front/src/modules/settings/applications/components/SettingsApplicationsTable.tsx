@@ -1,17 +1,17 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationsTableApplicationRow } from '@/settings/applications/components/SettingsApplicationsTableApplicationRow';
-import { SettingsApplicationsTableBuiltInAccountAppRow } from '@/settings/applications/components/SettingsApplicationsTableBuiltInAccountAppRow';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
 import { type SettingsApplicationsTableLinkTarget } from '@/settings/applications/types/SettingsApplicationsTableLinkTarget';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type SettingsMemberApplicationStatus } from '@/settings/applications/types/SettingsMemberApplicationStatus';
 import { type SettingsWorkspaceApplicationStatus } from '@/settings/applications/types/SettingsWorkspaceApplicationStatus';
-import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
-import { splitApplicationsAroundBuiltInAccountApps } from '@/settings/applications/utils/splitApplicationsAroundBuiltInAccountApps';
+import { getSettingsApplicationsTableRowItems } from '@/settings/applications/utils/getSettingsApplicationsTableRowItems';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -71,43 +71,29 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredApplications = sortApplicationsWithOAuthOnlyLast(
-    filterBySearchQuery({
-      items: applications,
-      searchQuery: searchTerm.trim(),
-      getSearchableValues: (application) => [
-        application.name,
-        application.description ?? '',
-      ],
-    }),
-  );
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const filteredBuiltInAccountApps = filterBySearchQuery({
-    items: builtInAccountApps,
+  const rowItems = getSettingsApplicationsTableRowItems({
+    applications,
+    builtInAccountApps,
+    currentWorkspace,
+  });
+
+  const filteredRowItems = filterBySearchQuery({
+    items: rowItems,
     searchQuery: searchTerm.trim(),
-    getSearchableValues: (builtInAccountApp) => [
-      t(builtInAccountApp.name),
-      t(builtInAccountApp.description),
+    getSearchableValues: (rowItem) => [
+      rowItem.name ?? '',
+      rowItem.description ?? '',
     ],
   });
-
-  const {
-    applicationsBeforeBuiltInAccountApps,
-    applicationsAfterBuiltInAccountApps,
-  } = splitApplicationsAroundBuiltInAccountApps({
-    applications: filteredApplications,
-    hasBuiltInAccountApps: isNonEmptyArray(builtInAccountApps),
-  });
-
-  const hasApplications =
-    isNonEmptyArray(applications) || isNonEmptyArray(builtInAccountApps);
 
   return (
     <Section.Root>
       <Section.Header title={title} description={description} />
       {toolbar}
       {isLoading && <SettingsSectionSkeletonLoader />}
-      {!isLoading && hasApplications && (
+      {!isLoading && isNonEmptyArray(rowItems) && (
         <>
           <StyledSearchInputContainer>
             <SearchInput
@@ -119,37 +105,18 @@ export const SettingsApplicationsTable = ({
           <Table>
             <SettingsApplicationTableHeaderRow middleColumn={middleColumn} />
             <StyledTableRowsContainer>
-              {filteredApplications.length === 0 &&
-                filteredBuiltInAccountApps.length === 0 && (
-                  <SettingsEmptyPlaceholder padding="4">
-                    <span role="status">{t`No application matches your search`}</span>
-                  </SettingsEmptyPlaceholder>
-                )}
-              {applicationsBeforeBuiltInAccountApps.map((application) => (
+              {filteredRowItems.length === 0 && (
+                <SettingsEmptyPlaceholder padding="4">
+                  <span role="status">{t`No application matches your search`}</span>
+                </SettingsEmptyPlaceholder>
+              )}
+              {filteredRowItems.map((rowItem) => (
                 <SettingsApplicationsTableApplicationRow
-                  key={application.id}
-                  application={application}
+                  key={rowItem.id}
+                  rowItem={rowItem}
                   linkTarget={linkTarget}
                   middleColumn={middleColumn}
-                  statuses={statusesById?.[application.id]}
-                />
-              ))}
-              {filteredBuiltInAccountApps.map((builtInAccountApp) => (
-                <SettingsApplicationsTableBuiltInAccountAppRow
-                  key={builtInAccountApp.id}
-                  builtInAccountApp={builtInAccountApp}
-                  linkTarget={linkTarget}
-                  middleColumn={middleColumn}
-                  statuses={statusesById?.[builtInAccountApp.id]}
-                />
-              ))}
-              {applicationsAfterBuiltInAccountApps.map((application) => (
-                <SettingsApplicationsTableApplicationRow
-                  key={application.id}
-                  application={application}
-                  linkTarget={linkTarget}
-                  middleColumn={middleColumn}
-                  statuses={statusesById?.[application.id]}
+                  statuses={statusesById?.[rowItem.id]}
                 />
               ))}
             </StyledTableRowsContainer>

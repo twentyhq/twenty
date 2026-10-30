@@ -16,6 +16,6 @@ describe('getSettingsApplicationLink', () => {
         linkTarget: 'applicationPreferences',
         applicationId: 'acme-application-id',
       }),
-    ).toBe('/settings/accounts/applications/acme-application-id');
+    ).toBe('/settings/app-preferences/acme-application-id');
   });
 });
