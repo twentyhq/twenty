@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import groupBy from 'lodash.groupby';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -12,13 +11,13 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -41,28 +40,11 @@ export class CallWebhookJobsJob {
   ): Promise<void> {
     // Keep in sync with packages/twenty-zapier/src/triggers/trigger_record.ts and computeWebhooks.utils.ts
 
-    const {
-      flatWebhookMaps,
-      flatObjectMetadataMaps,
-      webhookRoleMap,
-      rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      workspaceEventBatch.workspaceId,
-      [
-        'flatWebhookMaps',
-        'flatObjectMetadataMaps',
-        'webhookRoleMap',
-        'rolesPermissions',
-        'roleIdsWithAllRecordsAccess',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'flatFieldMetadataMaps',
-      ],
-    );
+    const { flatWebhookMaps, flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceEventBatch.workspaceId,
+        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
+      );
 
     const webhooks = findWebhooksMatchingEventName({
       flatWebhookMaps,
@@ -86,48 +68,19 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    const workspaceEventBatchWithFlatObjectMetadata = {
-      ...workspaceEventBatch,
-      objectMetadata: flatObjectMetadata,
-    };
+    // A webhook carries no identity, so only a row granted to everyone lets an event out
+    const admittedRecordIds = await this.recordAccessPolicyService
+      .buildEventRecordAccessGate({
+        ...workspaceEventBatch,
+        objectMetadata: flatObjectMetadata,
+      })
+      .resolveAdmittedRecordIds(EVERYONE_ROW_ACCESS_POLICY_SUBJECT);
 
-    const eventRecordAccessGate =
-      this.recordAccessPolicyService.buildEventRecordAccessGate(
-        workspaceEventBatchWithFlatObjectMetadata,
-      );
-
-    const webhookEvents: CallWebhookJobData[] = [];
-
-    const webhooksByRoleId = groupBy(
-      webhooks.filter((webhook) => isDefined(webhookRoleMap[webhook.id])),
-      (webhook) => webhookRoleMap[webhook.id],
-    );
-
-    for (const [roleId, roleWebhooks] of Object.entries(webhooksByRoleId)) {
-      const readableEvents = await resolveEventsReadableByRole({
-        roleId,
-        // A webhook reads through its role only, never with its storing application's ownership rights
-        owningApplicationId: undefined,
-        workspaceEventBatch: workspaceEventBatchWithFlatObjectMetadata,
-        eventRecordAccessGate,
-        rolesPermissions,
-        roleIdsWithAllRecordsAccess,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-
-      webhookEvents.push(
-        ...transformEventBatchToWebhookEvents({
-          workspaceEventBatch: {
-            ...workspaceEventBatch,
-            events: readableEvents,
-          },
-          webhooks: roleWebhooks,
-        }),
-      );
-    }
+    const webhookEvents = transformEventBatchToWebhookEvents({
+      workspaceEventBatch,
+      webhooks,
+      admittedRecordIds,
+    });
 
     const admittedWebhookEvents =
       await this.webhookRateLimitService.admitWebhookEventsWithinRateLimit({
