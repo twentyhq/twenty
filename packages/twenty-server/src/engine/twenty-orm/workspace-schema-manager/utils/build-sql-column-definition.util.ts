@@ -32,6 +32,10 @@ export const buildSqlColumnDefinition = (
     }
   }
 
+  if (column.isGeneratedAlwaysAsIdentity === true) {
+    parts.push('GENERATED ALWAYS AS IDENTITY');
+  }
+
   if (column.isPrimary) {
     parts.push('PRIMARY KEY');
   }
