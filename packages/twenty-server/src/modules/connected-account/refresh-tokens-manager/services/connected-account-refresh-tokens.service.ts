@@ -161,13 +161,13 @@ export class ConnectedAccountRefreshTokensService {
           return false;
         }
 
-        return isBefore(
-          new Date(),
-          computeAccessTokenRefreshAt({
-            accessTokenIssuedAt: connectedAccount.lastCredentialsRefreshedAt,
-            accessTokenExpiresAt: connectedAccount.accessTokenExpiresAt,
-          }),
-        );
+        const now = new Date();
+        const accessTokenRefreshAt = computeAccessTokenRefreshAt({
+          accessTokenIssuedAt: connectedAccount.lastCredentialsRefreshedAt,
+          accessTokenExpiresAt: connectedAccount.accessTokenExpiresAt,
+        });
+
+        return isBefore(now, accessTokenRefreshAt);
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
       case ConnectedAccountProvider.OIDC:
