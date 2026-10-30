@@ -6,7 +6,6 @@ import {
   type CompanyEnrichmentAttemptKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/company-enrichment-attempt-key-value.type';
 
-// A matched attempt is recorded before its result, and storing the result is best effort.
 export const isCompanyEnrichmentFinal = ({
   companyEnrichment,
   companyEnrichmentAttempt,
