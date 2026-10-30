@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationCallerAccess } from 'src/engine/core-modules/application/types/application-caller-access.type';
 import { type ReachableApplications } from 'src/engine/core-modules/application/types/reachable-applications.type';
@@ -21,17 +21,27 @@ export const getReachableApplications = ({
     return { type: 'all' };
   }
 
-  // The standard application shares this reach while automated workspace
-  // workflow runs and its built-in helper agent still act through it
-  const reachesEveryApplication =
-    access !== 'manage' &&
-    (isWorkspaceCustomApplication({
-      application: scopedCallingApplication,
-      workspaceCustomApplicationId,
-    }) ||
-      isTwentyStandardApplication(scopedCallingApplication));
+  const ownApplication: ReachableApplications = {
+    type: 'own',
+    applicationId: scopedCallingApplication.id,
+  };
 
-  return reachesEveryApplication
-    ? { type: 'all' }
-    : { type: 'own', applicationId: scopedCallingApplication.id };
+  switch (access) {
+    case 'read':
+    case 'trigger': {
+      // The standard application shares this reach while automated workspace
+      // workflow runs and its built-in helper agent still act through it
+      const reachesEveryApplication =
+        isWorkspaceCustomApplication({
+          application: scopedCallingApplication,
+          workspaceCustomApplicationId,
+        }) || isTwentyStandardApplication(scopedCallingApplication);
+
+      return reachesEveryApplication ? { type: 'all' } : ownApplication;
+    }
+    case 'manage':
+      return ownApplication;
+    default:
+      return assertUnreachable(access);
+  }
 };
