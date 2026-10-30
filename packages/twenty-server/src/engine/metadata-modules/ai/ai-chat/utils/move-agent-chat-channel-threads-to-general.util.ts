@@ -37,12 +37,6 @@ export const moveAgentChatChannelThreadsToGeneral = async ({
     return;
   }
 
-  const isDeletingGeneralChannel = generalChannel.id === channelId;
-
-  if (isDeletingGeneralChannel) {
-    return;
-  }
-
   const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
   const movedThreads = await manager.query<{ id: string }[]>(
     `WITH moved_thread AS (

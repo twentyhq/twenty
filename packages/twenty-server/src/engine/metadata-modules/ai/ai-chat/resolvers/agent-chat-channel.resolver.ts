@@ -14,7 +14,14 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -35,7 +42,7 @@ import { AgentChatChannelService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelThreadsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-threads.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { buildAgentChatCallerOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-caller-or-throw.util';
+import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
@@ -148,7 +155,6 @@ export class AgentChatChannelResolver {
 
   @Query(() => [AgentChatChannelDTO])
   async agentChatChannels(
-    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -166,10 +172,7 @@ export class AgentChatChannelResolver {
 
     return this.channelService.findChannels({
       workspaceId,
-      caller: buildAgentChatCallerOrThrow({
-        workspaceMemberId,
-        callingApplication,
-      }),
+      authContext: this.getCallerAuthContextOrThrow(),
       canManageChannels,
     });
   }
@@ -208,10 +211,7 @@ export class AgentChatChannelResolver {
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('input', { type: () => UpdateAgentChatChannelInput })
     input: UpdateAgentChatChannelInput,
-    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
   ): Promise<AgentChatChannelDTO> {
     return this.channelService.updateChannel({
       channelId,
@@ -222,11 +222,7 @@ export class AgentChatChannelResolver {
         position: input.position ?? undefined,
         roleIds: input.roleIds ?? undefined,
       },
-      caller: buildAgentChatCallerOrThrow({
-        workspaceMemberId,
-        callingApplication,
-      }),
-      callingApplication: getScopedCallingApplication(callingApplication),
+      authContext: this.getCallerAuthContextOrThrow(),
       workspaceId,
     });
   }
@@ -240,19 +236,12 @@ export class AgentChatChannelResolver {
       nullable: true,
     })
     destinationChannelId: string | null,
-    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    callingApplication: FlatApplication | undefined,
   ): Promise<boolean> {
     await this.channelService.deleteChannel({
       channelId,
       destinationChannelId: destinationChannelId ?? null,
-      caller: buildAgentChatCallerOrThrow({
-        workspaceMemberId,
-        callingApplication,
-      }),
-      callingApplication: getScopedCallingApplication(callingApplication),
+      authContext: this.getCallerAuthContextOrThrow(),
       workspaceId,
     });
 
@@ -376,5 +365,21 @@ export class AgentChatChannelResolver {
     });
 
     return true;
+  }
+
+  private getCallerAuthContextOrThrow(): AgentInboxCallerAuthContext {
+    const authContext = getWorkspaceAuthContext();
+
+    if (
+      isUserAuthContext(authContext) ||
+      isApplicationAuthContext(authContext)
+    ) {
+      return authContext;
+    }
+
+    throw new AuthException(
+      'A workspace member or an application must make this request',
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
   }
 }

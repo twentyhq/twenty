@@ -1,10 +1,13 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type EntityManager } from 'typeorm';
 
-import { type AgentChatChannelGrantScope } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel-grant-scope.type';
 import { buildAgentChatChannelAccessQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-access-query.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+
+type AgentChatChannelGrantScope =
+  | { threadIds: string[] }
+  | { channelId: string };
 
 export const replaceAgentChatChannelRuleGrants = async ({
   manager,
