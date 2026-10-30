@@ -44,4 +44,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
+  [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
+    label: msg`Getting started`,
+    description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
+  },
 };
