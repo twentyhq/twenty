@@ -7,9 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -76,7 +76,16 @@ export class CoreWorkflowAccessService {
     callerApplication: FlatApplication | undefined;
     coreWorkflowVersionIds: string[];
   }): Promise<void> {
-    if (!isDefined(callerApplication) || coreWorkflowVersionIds.length === 0) {
+    const reachableApplications = getReachableApplications({
+      callingApplication: callerApplication,
+      access: 'trigger',
+      workspaceCustomApplicationId,
+    });
+
+    if (
+      reachableApplications.type === 'all' ||
+      coreWorkflowVersionIds.length === 0
+    ) {
       return;
     }
 
@@ -105,17 +114,14 @@ export class CoreWorkflowAccessService {
       select: { id: true, applicationId: true },
     });
 
-    const isStartable = workflows.every((workflow) =>
-      canApplicationStartCoreWorkflow({
-        callerApplication,
-        workspaceCustomApplicationId,
-        workflowApplicationId: workflow.applicationId,
-      }),
+    const isStartable = workflows.every(
+      (workflow) =>
+        workflow.applicationId === reachableApplications.applicationId,
     );
 
     if (!isStartable) {
       throw new WorkflowQueryValidationException(
-        `Application '${callerApplication.id}' cannot start a workflow owned by another application`,
+        `Application '${reachableApplications.applicationId}' cannot start a workflow owned by another application`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`An application can only start its own workflows.`,

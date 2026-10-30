@@ -28,7 +28,7 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import {
@@ -187,10 +187,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     }
 
     if (
-      isDefined(callerApplication) &&
-      agent.applicationId !== callerApplication.id &&
-      !isWorkspaceCustomApplication({
-        application: callerApplication,
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: agent.applicationId,
+        access: 'trigger',
         workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
