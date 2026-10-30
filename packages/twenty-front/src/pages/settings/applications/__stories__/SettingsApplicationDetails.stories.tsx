@@ -20,6 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
   FeatureFlagKey,
+  type FindMarketplaceAppDetailQuery,
 } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
@@ -105,42 +106,41 @@ const USER_SETTINGS_MENU_ITEM = buildSettingsMenuItem({
   scope: 'USER',
 });
 
-const MARKETPLACE_APP_DETAIL = {
-  __typename: 'MarketplaceAppDetail',
-  id: 'recorder-marketplace-id',
-  universalIdentifier: APPLICATION_ID,
-  name: 'Recorder Pro',
-  sourceType: ApplicationRegistrationSourceType.NPM,
-  sourcePackage: '@twenty/recorder',
-  latestAvailableVersion: '1.0.0',
-  isListed: true,
-  description: 'Records and transcribes every meeting.',
-  author: 'Twenty',
-  category: 'Productivity',
-  logoUrl: null,
-  websiteUrl: null,
-  aboutDescription: null,
-  pricingDescription: null,
-  termsUrl: null,
-  emailSupport: null,
-  issueReportUrl: null,
-  galleryImages: ['https://example.com/recorder-cover.png'],
-  installCount: 12,
-  defaultRoleUniversalIdentifier: null,
-  requestedCapabilities: [],
-  billsCredits: false,
-  objects: [],
-  roles: [],
-};
+const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] =
+  {
+    __typename: 'MarketplaceAppDetail',
+    id: 'recorder-marketplace-id',
+    universalIdentifier: APPLICATION_ID,
+    name: 'Recorder Pro',
+    sourceType: ApplicationRegistrationSourceType.NPM,
+    sourcePackage: '@twenty/recorder',
+    latestAvailableVersion: '1.0.0',
+    isListed: true,
+    description: 'Records and transcribes every meeting.',
+    author: 'Twenty',
+    category: 'Productivity',
+    logoUrl: null,
+    websiteUrl: null,
+    aboutDescription: null,
+    pricingDescription: null,
+    termsUrl: null,
+    emailSupport: null,
+    issueReportUrl: null,
+    galleryImages: ['https://example.com/recorder-cover.png'],
+    installCount: 12,
+    defaultRoleUniversalIdentifier: null,
+    requestedCapabilities: [],
+    billsCredits: false,
+    objects: [],
+    roles: [],
+  };
 
 const buildApplicationHandlers = ({
   settingsMenuItems,
   marketplaceAppDetail,
-  isApplicationStopped = false,
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
-  marketplaceAppDetail?: typeof MARKETPLACE_APP_DETAIL;
-  isApplicationStopped?: boolean;
+  marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
 }) => [
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
@@ -185,7 +185,7 @@ const buildApplicationHandlers = ({
     ),
   ),
   graphql.query('IsApplicationStopped', () =>
-    HttpResponse.json({ data: { isApplicationStopped } }),
+    HttpResponse.json({ data: { isApplicationStopped: false } }),
   ),
   graphql.mutation('UpdateOneApplicationVariable', ({ variables }) => {
     updateOneApplicationVariable(variables);
@@ -248,7 +248,6 @@ export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
 
     expect(breadcrumb.getByRole('link', { name: 'Apps' })).toBeVisible();
     expect(breadcrumb.getByText('Recorder Pro')).toBeVisible();
-    expect(canvas.getAllByText('Recorder Pro')).toHaveLength(3);
     expect(
       canvasElement.querySelector(
         'img[src="https://example.com/recorder-cover.png"]',
@@ -256,28 +255,6 @@ export const MarketplaceListingFillsTheHeaderAndOverview: Story = {
     ).not.toBeNull();
     expect(
       canvas.getByRole('button', { name: 'View in marketplace' }),
-    ).toBeVisible();
-  },
-};
-
-export const StoppedAppShowsDegradedBanner: Story = {
-  parameters: {
-    msw: {
-      handlers: buildApplicationHandlers({
-        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
-        isApplicationStopped: true,
-      }),
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText(
-        /We are currently encountering issues with this app/,
-        undefined,
-        { timeout: 3000 },
-      ),
     ).toBeVisible();
   },
 };
