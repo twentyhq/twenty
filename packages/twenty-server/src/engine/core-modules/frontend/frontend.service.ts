@@ -6,16 +6,22 @@ import { Readable } from 'stream';
 import { type ReadableStream } from 'stream/web';
 
 import { type NextFunction, type Request, type Response } from 'express';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
+
+import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
 
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
 import { buildIframeMediaPermissionsPolicy } from 'src/engine/core-modules/frontend/utils/build-iframe-media-permissions-policy.util';
+import { fitIframeMediaPermissionsToPolicySizeLimit } from 'src/engine/core-modules/frontend/utils/fit-iframe-media-permissions-to-policy-size-limit.util';
 import { isFrontendDocumentRequest } from 'src/engine/core-modules/frontend/utils/is-frontend-document-request.util';
 import { renderFrontendHtml } from 'src/engine/core-modules/frontend/utils/render-frontend-html.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -30,6 +36,7 @@ export class FrontendService {
   constructor(
     private readonly clientConfigService: ClientConfigService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @Inject('FRONTEND_PATH') readonly frontPath: string,
     twentyConfigService: TwentyConfigService,
   ) {
@@ -93,6 +100,48 @@ export class FrontendService {
     return template;
   }
 
+  private async getDocumentIframeMediaPermissions(
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<IframeMediaPermission[]> {
+    if (!isDefined(workspace)) {
+      return [];
+    }
+
+    const workspaceIframeMediaPermissions =
+      workspace.iframeMediaPermissions ?? [];
+
+    try {
+      const { flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspace.id, [
+          'flatApplicationMaps',
+        ]);
+      const permissions = toIframeMediaPermissions([
+        ...workspaceIframeMediaPermissions,
+        ...Object.values(flatApplicationMaps.byId).flatMap(
+          (flatApplication) =>
+            flatApplication?.grantedIframeMediaPermissions ?? [],
+        ),
+      ]);
+      const fittingPermissions =
+        fitIframeMediaPermissionsToPolicySizeLimit(permissions);
+
+      if (fittingPermissions.length < permissions.length) {
+        this.logger.warn(
+          `Dropped iframe media origins over the Permissions-Policy size limit for workspace ${workspace.id}`,
+        );
+      }
+
+      return fittingPermissions;
+    } catch (error) {
+      this.logger.error(
+        `Unable to load application iframe media permissions for workspace ${workspace.id}`,
+        error,
+      );
+
+      return workspaceIframeMediaPermissions;
+    }
+  }
+
   async serveDocument(
     request: Request,
     response: Response,
@@ -144,7 +193,8 @@ export class FrontendService {
         .map((origin) => normalizeIframeOrigin(origin))
         .filter(isDefined);
 
-      const iframeMediaPermissions = workspace?.iframeMediaPermissions ?? [];
+      const iframeMediaPermissions =
+        await this.getDocumentIframeMediaPermissions(workspace);
 
       response.setHeader(
         'Permissions-Policy',

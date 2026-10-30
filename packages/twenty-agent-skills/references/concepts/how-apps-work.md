@@ -79,6 +79,8 @@ For microphone or camera capture, declare `requestedCapabilities: ['microphone']
 
 Calling `navigator.mediaDevices.getUserMedia()` without a saved grant pauses capture and shows an approval dialog, including for older apps without `requestedCapabilities`. Declining leaves capture blocked before browser permissions are requested. Package updates do not automatically add grants; locally synced development apps receive their declared capabilities. Browser and operating system permissions still apply after workspace approval.
 
+An embedded website such as a phone or video tool needs its exact HTTPS origin declared in `requestedIframeMediaPermissions` in `defineApplication()`, with microphone and camera set separately: `[{ origin: 'https://phone.example.com', microphone: true, camera: false }]`. Declared websites appear during installation for the same workspace-wide approval, and the iframe must request the features (`allow="microphone"` or `allow="microphone; camera"`). Twenty delegates only to granted origins, and only after a member selects the embed's **Enable** control. `srcDoc` iframes, embeds at Twenty's own origin and `IFRAME` page layout widgets defined by an app never receive media access, so render media embeds from a front component.
+
 ## App File Structure
 
 A typical Twenty app after scaffolding:

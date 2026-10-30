@@ -186,6 +186,8 @@ export default defineApplication({
 
 Set `requestedCapabilities` only when the app uses microphone or camera capture. Supported values are `'microphone'` and `'camera'`; request only the devices the app needs and explain their use in the README. The installation screen shows these requests for workspace-wide approval by a member who can manage apps. Omitting a capability does not silently grant access: first use pauses capture for approval, including for older apps without declarations. Browser and operating system permissions remain separate, and package updates do not automatically add grants.
 
+Set `requestedIframeMediaPermissions` only when a front component embeds a website that needs the microphone or camera. List each exact HTTPS origin with `microphone` and `camera` set separately; the installation screen shows each website for the same approval.
+
 Only set `aboutDescription` when the marketplace About tab should differ from the npm README. Otherwise keep one source of truth in `README.md`. The About tab renders markdown text only: images and raw HTML (badges, `<div>` blocks) are not rendered, so keep the marketplace-facing content in plain markdown.
 
 If the app requires a specific Twenty server version, set `engines.twenty` in `package.json`. If publishing to npm, add the `twenty-app` keyword.

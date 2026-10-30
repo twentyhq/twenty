@@ -12,6 +12,7 @@ import { type GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -24,6 +25,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -115,6 +117,22 @@ export class FrontComponentResolver {
     return (
       flatApplicationMaps.byId[frontComponent.applicationId]
         ?.grantedCapabilities ?? []
+    );
+  }
+
+  @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
+  async applicationGrantedIframeMediaPermissions(
+    @Parent() frontComponent: FrontComponentDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<IframeMediaPermission[]> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    return (
+      flatApplicationMaps.byId[frontComponent.applicationId]
+        ?.grantedIframeMediaPermissions ?? []
     );
   }
 
