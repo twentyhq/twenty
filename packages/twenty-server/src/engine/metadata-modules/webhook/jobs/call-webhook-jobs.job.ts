@@ -11,6 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
 import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
@@ -40,11 +41,28 @@ export class CallWebhookJobsJob {
   ): Promise<void> {
     // Keep in sync with packages/twenty-zapier/src/triggers/trigger_record.ts and computeWebhooks.utils.ts
 
-    const { flatWebhookMaps, flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
-      );
+    const {
+      flatWebhookMaps,
+      flatObjectMetadataMaps,
+      webhookRoleMap,
+      rolesPermissions,
+      roleIdsWithAllRecordsAccess,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      [
+        'flatWebhookMaps',
+        'flatObjectMetadataMaps',
+        'webhookRoleMap',
+        'rolesPermissions',
+        'roleIdsWithAllRecordsAccess',
+        'flatRowLevelPermissionPredicateMaps',
+        'flatRowLevelPermissionPredicateGroupMaps',
+        'flatFieldMetadataMaps',
+      ],
+    );
 
     const webhooks = findWebhooksMatchingEventName({
       flatWebhookMaps,
@@ -68,19 +86,65 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    // A webhook carries no identity, so only a row granted to everyone lets an event out
-    const admittedRecordIds = await this.recordAccessPolicyService
-      .buildEventRecordAccessGate({
-        ...workspaceEventBatch,
-        objectMetadata: flatObjectMetadata,
-      })
-      .resolveAdmittedRecordIds(EVERYONE_ROW_ACCESS_POLICY_SUBJECT);
+    const workspaceEventBatchWithFlatObjectMetadata = {
+      ...workspaceEventBatch,
+      objectMetadata: flatObjectMetadata,
+    };
 
-    const webhookEvents = transformEventBatchToWebhookEvents({
-      workspaceEventBatch,
-      webhooks,
-      admittedRecordIds,
-    });
+    const eventRecordAccessGate =
+      this.recordAccessPolicyService.buildEventRecordAccessGate(
+        workspaceEventBatchWithFlatObjectMetadata,
+      );
+
+    const webhooksWithoutRole = webhooks.filter(
+      (webhook) => !isDefined(webhookRoleMap[webhook.id]),
+    );
+    const webhooksWithRole = webhooks.filter((webhook) =>
+      isDefined(webhookRoleMap[webhook.id]),
+    );
+
+    const webhookEvents: CallWebhookJobData[] = [];
+
+    if (webhooksWithoutRole.length > 0) {
+      // A webhook without a role carries no identity, so only a row granted to everyone lets an event out
+      const admittedRecordIds =
+        await eventRecordAccessGate.resolveAdmittedRecordIds(
+          EVERYONE_ROW_ACCESS_POLICY_SUBJECT,
+        );
+
+      webhookEvents.push(
+        ...transformEventBatchToWebhookEvents({
+          workspaceEventBatch,
+          webhooks: webhooksWithoutRole,
+          admittedRecordIds,
+        }),
+      );
+    }
+
+    for (const webhook of webhooksWithRole) {
+      const readableEvents = await resolveEventsReadableByRole({
+        roleId: webhookRoleMap[webhook.id],
+        owningApplicationId: webhook.applicationId,
+        workspaceEventBatch: workspaceEventBatchWithFlatObjectMetadata,
+        eventRecordAccessGate,
+        rolesPermissions,
+        roleIdsWithAllRecordsAccess,
+        flatRowLevelPermissionPredicateMaps,
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+
+      webhookEvents.push(
+        ...transformEventBatchToWebhookEvents({
+          workspaceEventBatch: {
+            ...workspaceEventBatch,
+            events: readableEvents,
+          },
+          webhooks: [webhook],
+        }),
+      );
+    }
 
     const admittedWebhookEvents =
       await this.webhookRateLimitService.admitWebhookEventsWithinRateLimit({

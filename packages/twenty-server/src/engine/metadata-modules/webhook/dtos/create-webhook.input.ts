@@ -35,4 +35,9 @@ export class CreateWebhookInput {
   @IsOptional()
   @Field({ nullable: true })
   secret?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string;
 }

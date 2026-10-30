@@ -31,6 +31,7 @@ const createMockWebhookData = (overrides = {}) => ({
   operations: ['person.created'],
   description: 'Test webhook',
   secret: 'test-secret',
+  role: null,
   ...overrides,
 });
 
@@ -145,6 +146,7 @@ describe('useWebhookForm', () => {
         description: '',
         operations: [{ object: '*', action: '*' }, WEBHOOK_EMPTY_OPERATION],
         secret: '',
+        roleId: null,
       });
     });
 
@@ -165,6 +167,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
+        roleId: null,
       };
 
       await act(async () => {
@@ -211,6 +214,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
+        roleId: null,
       };
 
       await act(async () => {
@@ -249,6 +253,7 @@ describe('useWebhookForm', () => {
           { object: null, action: 'test' },
         ],
         secret: 'test-secret',
+        roleId: null,
       };
 
       await act(async () => {
@@ -308,6 +313,7 @@ describe('useWebhookForm', () => {
         description: 'Updated webhook',
         operations: [{ object: 'person', action: 'updated' }],
         secret: 'updated-secret',
+        roleId: null,
       };
 
       await act(async () => {
@@ -362,6 +368,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
+        roleId: null,
       };
 
       await act(async () => {

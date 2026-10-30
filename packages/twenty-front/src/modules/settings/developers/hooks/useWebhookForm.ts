@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
@@ -22,6 +23,7 @@ import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
   GetWebhookDocument,
+  PermissionFlagType,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -37,6 +39,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
+  roleId: null,
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
@@ -44,6 +47,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const { enqueueToast } = useToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
+  const canAssignRole = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const [createWebhook] = useMutation(CreateWebhookDocument);
   const [updateWebhook] = useMutation(UpdateWebhookDocument);
@@ -81,6 +85,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         description: webhook.description || '',
         operations,
         secret: webhook.secret || '',
+        roleId: webhook.role?.id ?? null,
       });
     }
   }, [webhookData, formConfig]);
@@ -92,7 +97,10 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleCreate = async (formValues: WebhookFormValues) => {
     try {
-      const input = createWebhookCreateInput(formValues);
+      const input = createWebhookCreateInput({
+        formValues,
+        canAssignRole,
+      });
       const { data } = await createWebhook({ variables: { input } });
       const createdWebhook = data?.createWebhook;
 
@@ -127,7 +135,10 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
 
     try {
-      const input = createWebhookUpdateInput(formValues);
+      const input = createWebhookUpdateInput({
+        formValues,
+        canAssignRole,
+      });
       const { data } = await updateWebhook({
         variables: { input: { id: webhookId, update: input } },
       });
@@ -220,6 +231,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     removeOperation,
     handleDelete,
     isCreationMode,
+    canAssignRole,
     error,
   };
 };

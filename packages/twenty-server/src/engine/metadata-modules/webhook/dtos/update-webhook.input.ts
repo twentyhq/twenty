@@ -33,6 +33,11 @@ export class UpdateWebhookInputUpdates {
   @IsString()
   @Field({ nullable: true })
   secret?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roleId?: string | null;
 }
 
 @InputType()

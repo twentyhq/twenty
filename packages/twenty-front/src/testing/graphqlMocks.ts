@@ -690,6 +690,7 @@ export const graphqlMocks = {
               operations: ['*.created', '*.updated'],
               description: 'Slack notifications for lead updates',
               secret: 'sample-secret',
+              role: null,
             },
           ],
         },
@@ -707,6 +708,7 @@ export const graphqlMocks = {
             operations: ['*.created', '*.updated'],
             description: 'Slack notifications for lead updates',
             secret: 'sample-secret',
+            role: null,
           },
         },
       });

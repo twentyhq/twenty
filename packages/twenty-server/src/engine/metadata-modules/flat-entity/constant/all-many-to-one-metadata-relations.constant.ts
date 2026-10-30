@@ -327,6 +327,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'agentUniversalIdentifier',
     },
     apiKey: null,
+    webhook: {
+      metadataName: 'webhook',
+      foreignKey: 'webhookId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'webhookUniversalIdentifier',
+    },
     workspace: null,
     application: null,
   },

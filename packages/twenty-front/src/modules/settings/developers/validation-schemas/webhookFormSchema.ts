@@ -28,6 +28,7 @@ export const getWebhookFormSchema = () =>
         },
       ),
     secret: z.string().optional(),
+    roleId: z.string().nullable(),
   });
 
 export type WebhookFormValues = z.infer<
