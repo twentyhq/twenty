@@ -2,6 +2,8 @@ import http from 'http';
 
 import { gql } from 'graphql-tag';
 
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+
 import { makeMetadataApiRequest } from './make-metadata-api-request.util';
 
 const CREATE_WEBHOOK_MUTATION = gql`
@@ -69,6 +71,7 @@ export type WebhookInput = {
   operations: string[];
   description?: string;
   secret?: string;
+  roleId?: string;
 };
 
 export type WebhookReceiver = {
@@ -77,10 +80,13 @@ export type WebhookReceiver = {
   close: () => Promise<void>;
 };
 
-export const createWebhook = (input: WebhookInput) => {
+export const createWebhook = async (input: WebhookInput) => {
+  const roleId =
+    input.roleId ?? (await findOneRoleByLabel({ label: 'Admin' })).id;
+
   return makeMetadataApiRequest({
     query: CREATE_WEBHOOK_MUTATION,
-    variables: { input },
+    variables: { input: { ...input, roleId } },
   });
 };
 

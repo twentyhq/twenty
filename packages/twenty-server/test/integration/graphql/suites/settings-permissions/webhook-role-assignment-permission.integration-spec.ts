@@ -2,10 +2,11 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -34,6 +35,14 @@ const UPDATE_WEBHOOK = gql`
   }
 `;
 
+const DELETE_WEBHOOK = gql`
+  mutation DeleteWebhook($id: UUID!) {
+    deleteWebhook(id: $id) {
+      id
+    }
+  }
+`;
+
 describe('Webhook role assignment permission', () => {
   let customRoleId: string;
   let adminRoleId: string;
@@ -44,7 +53,7 @@ describe('Webhook role assignment permission', () => {
     roleId,
     token,
   }: {
-    roleId?: string | null;
+    roleId?: string;
     token?: string;
   }) => {
     const response = await makeMetadataApiRequest(
@@ -54,7 +63,7 @@ describe('Webhook role assignment permission', () => {
           input: {
             targetUrl: 'https://example.com/webhook',
             operations: ['*.*'],
-            ...(roleId !== undefined && { roleId }),
+            roleId,
           },
         },
       },
@@ -63,26 +72,26 @@ describe('Webhook role assignment permission', () => {
 
     const webhookId = response.body.data?.createWebhook?.id;
 
-    if (webhookId) {
+    if (isDefined(webhookId)) {
       webhookIds.push(webhookId);
     }
 
     return response;
   };
 
-  const updateWebhookRoleAs = ({
+  const updateWebhookAs = ({
     webhookId,
-    roleId,
+    update,
     token,
   }: {
     webhookId: string;
-    roleId: string | null;
+    update: Record<string, unknown>;
     token?: string;
   }) =>
     makeMetadataApiRequest(
       {
         query: UPDATE_WEBHOOK,
-        variables: { input: { id: webhookId, update: { roleId } } },
+        variables: { input: { id: webhookId, update } },
       },
       token,
     );
@@ -147,13 +156,7 @@ describe('Webhook role assignment permission', () => {
 
     for (const webhookId of webhookIds) {
       await makeMetadataApiRequest({
-        query: gql`
-          mutation DeleteWebhook($id: UUID!) {
-            deleteWebhook(id: $id) {
-              id
-            }
-          }
-        `,
+        query: DELETE_WEBHOOK,
         variables: { id: webhookId },
       });
     }
@@ -164,16 +167,25 @@ describe('Webhook role assignment permission', () => {
       .send(deleteOneRoleOperationFactory(customRoleId));
   });
 
-  it('allows creating a webhook without a role when the caller lacks ROLES permission', async () => {
-    const response = await createWebhookAs({
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
+  it('rejects creating a webhook without a role', async () => {
+    const response = await createWebhookAs({});
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.createWebhook.role).toBeNull();
+    expect(response.body.data?.createWebhook ?? null).toBeNull();
+    expect(response.body.errors).toBeDefined();
   });
 
-  it('denies creating a webhook with a role when the caller lacks ROLES permission', async () => {
+  it('rejects creating a webhook with an unknown role', async () => {
+    const response = await createWebhookAs({
+      roleId: '20202020-0000-4000-8000-000000000000',
+    });
+
+    expect(response.body.data?.createWebhook ?? null).toBeNull();
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
+  });
+
+  it('denies creating a webhook when the caller lacks ROLES permission', async () => {
     const response = await createWebhookAs({
       roleId: adminRoleId,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -183,30 +195,20 @@ describe('Webhook role assignment permission', () => {
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('denies changing the role of a webhook when the caller lacks ROLES permission', async () => {
+  it('denies editing a webhook when the caller lacks ROLES permission', async () => {
     const createResponse = await createWebhookAs({ roleId: adminRoleId });
     const webhookId = createResponse.body.data.createWebhook.id;
 
-    const response = await updateWebhookRoleAs({
+    const response = await updateWebhookAs({
       webhookId,
-      roleId: null,
+      update: { targetUrl: 'https://attacker.example.com/webhook' },
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('allows creating a webhook with a null role when the caller lacks ROLES permission', async () => {
-    const response = await createWebhookAs({
-      roleId: null,
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.createWebhook.role).toBeNull();
-  });
-
-  it('denies creating a webhook with a role through REST when the caller lacks ROLES permission', async () => {
+  it('denies creating a webhook through REST when the caller lacks ROLES permission', async () => {
     const response = await makeRestApiRequest({
       method: 'post',
       path: '/webhooks',
@@ -221,7 +223,7 @@ describe('Webhook role assignment permission', () => {
     expect(response.body.code).toBe('PERMISSION_DENIED');
   });
 
-  it('denies changing the role of a webhook through REST when the caller lacks ROLES permission', async () => {
+  it('denies editing a webhook through REST when the caller lacks ROLES permission', async () => {
     const createResponse = await createWebhookAs({ roleId: adminRoleId });
     const webhookId = createResponse.body.data.createWebhook.id;
 
@@ -229,42 +231,32 @@ describe('Webhook role assignment permission', () => {
       method: 'patch',
       path: `/webhooks/${webhookId}`,
       bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      body: { roleId: null },
+      body: { targetUrl: 'https://attacker.example.com/webhook' },
     });
 
     expect(response.body.code).toBe('PERMISSION_DENIED');
 
-    const roleTargets = await testDataSource.query(
-      'SELECT "roleId" FROM core."roleTarget" WHERE "webhookId" = $1',
+    const webhooks = await testDataSource.query(
+      'SELECT "targetUrl" FROM core."webhook" WHERE id = $1',
       [webhookId],
     );
 
-    expect(roleTargets).toEqual([{ roleId: adminRoleId }]);
+    expect(webhooks).toEqual([{ targetUrl: 'https://example.com/webhook' }]);
   });
 
-  it('assigns, changes and removes the role of a webhook with ROLES permission', async () => {
+  it('assigns and changes the role of a webhook with ROLES permission', async () => {
     const createResponse = await createWebhookAs({ roleId: adminRoleId });
 
     expect(createResponse.body.errors).toBeUndefined();
     expect(createResponse.body.data.createWebhook.role.id).toBe(adminRoleId);
 
-    const webhookId = createResponse.body.data.createWebhook.id;
-
-    const changeResponse = await updateWebhookRoleAs({
-      webhookId,
-      roleId: customRoleId,
+    const changeResponse = await updateWebhookAs({
+      webhookId: createResponse.body.data.createWebhook.id,
+      update: { roleId: customRoleId },
     });
 
     expect(changeResponse.body.errors).toBeUndefined();
     expect(changeResponse.body.data.updateWebhook.role.id).toBe(customRoleId);
-
-    const removeResponse = await updateWebhookRoleAs({
-      webhookId,
-      roleId: null,
-    });
-
-    expect(removeResponse.body.errors).toBeUndefined();
-    expect(removeResponse.body.data.updateWebhook.role).toBeNull();
   });
 
   it('deletes the role assignment along with the webhook', async () => {
@@ -272,13 +264,7 @@ describe('Webhook role assignment permission', () => {
     const webhookId = createResponse.body.data.createWebhook.id;
 
     await makeMetadataApiRequest({
-      query: gql`
-        mutation DeleteWebhook($id: UUID!) {
-          deleteWebhook(id: $id) {
-            id
-          }
-        }
-      `,
+      query: DELETE_WEBHOOK,
       variables: { id: webhookId },
     });
 

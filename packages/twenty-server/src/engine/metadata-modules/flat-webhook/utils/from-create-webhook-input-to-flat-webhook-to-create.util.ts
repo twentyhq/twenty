@@ -11,7 +11,7 @@ export const fromCreateWebhookInputToFlatWebhookToCreate = ({
   workspaceId,
   flatApplication,
 }: {
-  createWebhookInput: CreateWebhookInput;
+  createWebhookInput: Omit<CreateWebhookInput, 'roleId'>;
   workspaceId: string;
   flatApplication: FlatApplication;
 }): FlatWebhook => {

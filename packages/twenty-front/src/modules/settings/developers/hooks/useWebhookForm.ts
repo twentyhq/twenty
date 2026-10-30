@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
@@ -18,12 +18,13 @@ import {
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
+  GetApiKeyRolesDocument,
   GetWebhookDocument,
-  PermissionFlagType,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -39,7 +40,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
-  roleId: null,
+  roleId: '',
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
@@ -47,7 +48,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const { enqueueToast } = useToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
-  const canAssignRole = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const [createWebhook] = useMutation(CreateWebhookDocument);
   const [updateWebhook] = useMutation(UpdateWebhookDocument);
@@ -70,6 +70,25 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     },
   });
 
+  const {
+    data: rolesData,
+    loading: rolesLoading,
+    error: rolesError,
+  } = useQuery(GetApiKeyRolesDocument);
+  const roles = rolesData?.getApiKeyRoles ?? [];
+
+  useEffect(() => {
+    const firstRoleId = rolesData?.getApiKeyRoles[0]?.id;
+
+    if (
+      isCreationMode &&
+      isDefined(firstRoleId) &&
+      !isNonEmptyString(formConfig.getValues('roleId'))
+    ) {
+      formConfig.setValue('roleId', firstRoleId, { shouldValidate: true });
+    }
+  }, [rolesData, isCreationMode, formConfig]);
+
   useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
@@ -85,7 +104,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         description: webhook.description || '',
         operations,
         secret: webhook.secret || '',
-        roleId: webhook.role?.id ?? null,
+        roleId: webhook.role?.id ?? '',
       });
     }
   }, [webhookData, formConfig]);
@@ -97,10 +116,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleCreate = async (formValues: WebhookFormValues) => {
     try {
-      const input = createWebhookCreateInput({
-        formValues,
-        canAssignRole,
-      });
+      const input = createWebhookCreateInput(formValues);
       const { data } = await createWebhook({ variables: { input } });
       const createdWebhook = data?.createWebhook;
 
@@ -135,10 +151,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
 
     try {
-      const input = createWebhookUpdateInput({
-        formValues,
-        canAssignRole,
-      });
+      const input = createWebhookUpdateInput(formValues);
       const { data } = await updateWebhook({
         variables: { input: { id: webhookId, update: input } },
       });
@@ -224,14 +237,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   return {
     formConfig,
-    loading,
+    loading: loading || rolesLoading,
+    roles,
     canSave,
     handleSave,
     updateOperation,
     removeOperation,
     handleDelete,
     isCreationMode,
-    canAssignRole,
-    error,
+    error: error ?? rolesError,
   };
 };

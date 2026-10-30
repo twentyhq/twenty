@@ -29,7 +29,7 @@ export const resolveEventsReadableByRole = async <
   flatObjectMetadataMaps,
 }: {
   roleId: string | null;
-  owningApplicationId: string;
+  owningApplicationId: string | undefined;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
   rolesPermissions: ObjectsPermissionsByRoleId;

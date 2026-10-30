@@ -15,6 +15,7 @@ export class AddWebhookIdToRoleTargetFastInstanceCommand implements FastInstance
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DELETE FROM "core"."roleTarget" WHERE "webhookId" IS NOT NULL');
     await queryRunner.query('ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "FK_e3c4f91f74bc6092c81b63edf39"');
     await queryRunner.query('ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_WEBHOOK"');
     await queryRunner.query('DROP INDEX "core"."IDX_ROLE_TARGET_WEBHOOK_ID"');

@@ -84,6 +84,7 @@ export class WebhookController {
   }
 
   @Post()
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -105,6 +106,7 @@ export class WebhookController {
   }
 
   @Patch(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
   async update(
     @Param('id') id: string,
     @Body() updateWebhookDto: UpdateWebhookInputUpdates,

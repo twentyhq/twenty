@@ -12,7 +12,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-webhook-id-to-role-target-upgrade-command-name.constant';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
@@ -68,6 +70,9 @@ export class RoleTargetEntity extends SyncableEntity {
   @JoinColumn({ name: 'apiKeyId' })
   apiKey: Relation<ApiKeyEntity>;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME,
+  })
   @Column({ nullable: true, type: 'uuid' })
   webhookId: string | null;
 

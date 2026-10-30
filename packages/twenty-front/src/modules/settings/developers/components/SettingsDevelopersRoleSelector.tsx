@@ -1,5 +1,4 @@
 import { Select } from '@/ui/input/components/Select';
-import { useLingui } from '@lingui/react/macro';
 import { type Role } from '~/generated-metadata/graphql';
 import { type IconComponent, useIcons } from 'twenty-ui/icon';
 
@@ -14,7 +13,6 @@ type SettingsDevelopersRoleSelectorProps = {
   label?: string;
   description?: string;
   roles: ApiKeyAssignableRole[];
-  canSelectNoRole?: boolean;
 };
 
 export const SettingsDevelopersRoleSelector = ({
@@ -23,9 +21,7 @@ export const SettingsDevelopersRoleSelector = ({
   label,
   description,
   roles,
-  canSelectNoRole = false,
 }: SettingsDevelopersRoleSelectorProps) => {
-  const { t } = useLingui();
   const { getIcon } = useIcons();
 
   if (roles.length === 0) {
@@ -47,13 +43,7 @@ export const SettingsDevelopersRoleSelector = ({
     }
   }, []);
 
-  if (canSelectNoRole) {
-    options.unshift({ label: t`No role`, value: '' });
-  }
-
-  const selectValue = canSelectNoRole
-    ? (value ?? '')
-    : value || options[0]?.value;
+  const selectValue = value || options[0]?.value;
 
   return (
     <Select

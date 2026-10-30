@@ -1,5 +1,4 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Controller, FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -13,7 +12,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useQuery } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -25,7 +23,6 @@ import {
 import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { GetApiKeyRolesDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
@@ -53,15 +50,9 @@ export const SettingsDevelopersWebhookForm = ({
     removeOperation,
     handleDelete,
     isCreationMode,
-    canAssignRole,
+    roles,
     error,
   } = useWebhookForm({ webhookId, mode });
-
-  const { data: rolesData, loading: rolesLoading } = useQuery(
-    GetApiKeyRolesDocument,
-    { skip: !canAssignRole },
-  );
-  const roles = rolesData?.getApiKeyRoles ?? [];
 
   const getTitle = () => {
     if (isCreationMode) {
@@ -74,7 +65,7 @@ export const SettingsDevelopersWebhookForm = ({
     }
   };
 
-  if ((loading && !isCreationMode) || rolesLoading || isDefined(error)) {
+  if (loading || isDefined(error)) {
     return (
       <>
         <ToastOnQueryErrorEffect
@@ -192,28 +183,23 @@ export const SettingsDevelopersWebhookForm = ({
               )}
             />
           </Section.Root>
-          {canAssignRole && (
-            <Section.Root>
-              <Section.Header
-                title={t`Role`}
-                description={t`Only send records and fields this role can read. Without a role, the webhook receives every record shared with everyone.`}
-              />
-              <Controller
-                name="roleId"
-                control={formConfig.control}
-                render={({ field: { onChange, value } }) => (
-                  <SettingsDevelopersRoleSelector
-                    value={value}
-                    onChange={(roleId) =>
-                      onChange(isNonEmptyString(roleId) ? roleId : null)
-                    }
-                    roles={roles}
-                    canSelectNoRole
-                  />
-                )}
-              />
-            </Section.Root>
-          )}
+          <Section.Root>
+            <Section.Header
+              title={t`Role`}
+              description={t`Only records and fields this role can read are sent to this endpoint.`}
+            />
+            <Controller
+              name="roleId"
+              control={formConfig.control}
+              render={({ field: { onChange, value } }) => (
+                <SettingsDevelopersRoleSelector
+                  value={value}
+                  onChange={onChange}
+                  roles={roles}
+                />
+              )}
+            />
+          </Section.Root>
           <Section.Root>
             <Section.Header
               title={t`Secret`}

@@ -8,6 +8,7 @@ import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode
 import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWebhook';
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
+import { GET_API_KEY_ROLES } from '@/settings/developers/graphql/queries/getApiKeyRoles';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { WEBHOOK_EMPTY_OPERATION } from '@/settings/developers/constants/WebhookEmptyOperation';
@@ -44,6 +45,7 @@ const createSuccessfulCreateMock = (webhookData = {}) => ({
         operations: ['person.created'],
         description: 'Test webhook',
         secret: 'test-secret',
+        roleId: 'role-id',
         ...webhookData,
       },
     },
@@ -66,6 +68,7 @@ const createSuccessfulUpdateMock = (webhookId: string, webhookData = {}) => ({
           operations: ['person.updated'],
           description: 'Updated webhook',
           secret: 'updated-secret',
+          roleId: 'role-id',
           ...webhookData,
         },
       },
@@ -116,6 +119,24 @@ const createGetWebhookMock = (webhookId: string, webhookData = {}) => ({
   },
 });
 
+const rolesMock = {
+  request: { query: GET_API_KEY_ROLES },
+  result: {
+    data: {
+      getApiKeyRoles: [
+        {
+          __typename: 'Role',
+          id: 'role-id',
+          label: 'Admin',
+          icon: 'IconUserCog',
+          canBeAssignedToApiKeys: true,
+        },
+      ],
+    },
+  },
+  maxUsageCount: Number.POSITIVE_INFINITY,
+};
+
 const Wrapper = ({
   children,
   mocks = [],
@@ -123,7 +144,7 @@ const Wrapper = ({
   children: ReactNode;
   mocks?: any[];
 }) => (
-  <MockedProvider mocks={mocks}>
+  <MockedProvider mocks={[rolesMock, ...mocks]}>
     <MemoryRouter>{children}</MemoryRouter>
   </MockedProvider>
 );
@@ -146,7 +167,7 @@ describe('useWebhookForm', () => {
         description: '',
         operations: [{ object: '*', action: '*' }, WEBHOOK_EMPTY_OPERATION],
         secret: '',
-        roleId: null,
+        roleId: '',
       });
     });
 
@@ -167,7 +188,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
-        roleId: null,
+        roleId: 'role-id',
       };
 
       await act(async () => {
@@ -190,6 +211,7 @@ describe('useWebhookForm', () => {
               operations: ['person.created'],
               description: 'Test webhook',
               secret: 'test-secret',
+              roleId: 'role-id',
             },
           },
         },
@@ -214,7 +236,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
-        roleId: null,
+        roleId: 'role-id',
       };
 
       await act(async () => {
@@ -253,7 +275,7 @@ describe('useWebhookForm', () => {
           { object: null, action: 'test' },
         ],
         secret: 'test-secret',
-        roleId: null,
+        roleId: 'role-id',
       };
 
       await act(async () => {
@@ -313,7 +335,7 @@ describe('useWebhookForm', () => {
         description: 'Updated webhook',
         operations: [{ object: 'person', action: 'updated' }],
         secret: 'updated-secret',
-        roleId: null,
+        roleId: 'role-id',
       };
 
       await act(async () => {
@@ -339,6 +361,7 @@ describe('useWebhookForm', () => {
                 operations: ['person.created'],
                 description: 'Test webhook',
                 secret: 'test-secret',
+                roleId: 'role-id',
               },
             },
           },
@@ -368,7 +391,7 @@ describe('useWebhookForm', () => {
         description: 'Test webhook',
         operations: [{ object: 'person', action: 'created' }],
         secret: 'test-secret',
-        roleId: null,
+        roleId: 'role-id',
       };
 
       await act(async () => {

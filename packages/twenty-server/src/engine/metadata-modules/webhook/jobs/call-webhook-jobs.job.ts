@@ -18,7 +18,6 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -96,35 +95,13 @@ export class CallWebhookJobsJob {
         workspaceEventBatchWithFlatObjectMetadata,
       );
 
-    const webhooksWithoutRole = webhooks.filter(
-      (webhook) => !isDefined(webhookRoleMap[webhook.id]),
-    );
-    const webhooksWithRole = webhooks.filter((webhook) =>
-      isDefined(webhookRoleMap[webhook.id]),
-    );
-
     const webhookEvents: CallWebhookJobData[] = [];
 
-    if (webhooksWithoutRole.length > 0) {
-      // A webhook without a role carries no identity, so only a row granted to everyone lets an event out
-      const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds(
-          EVERYONE_ROW_ACCESS_POLICY_SUBJECT,
-        );
-
-      webhookEvents.push(
-        ...transformEventBatchToWebhookEvents({
-          workspaceEventBatch,
-          webhooks: webhooksWithoutRole,
-          admittedRecordIds,
-        }),
-      );
-    }
-
-    for (const webhook of webhooksWithRole) {
+    for (const webhook of webhooks) {
       const readableEvents = await resolveEventsReadableByRole({
-        roleId: webhookRoleMap[webhook.id],
-        owningApplicationId: webhook.applicationId,
+        // A webhook reads through its role only, never with its storing application's ownership rights
+        roleId: webhookRoleMap[webhook.id] ?? null,
+        owningApplicationId: undefined,
         workspaceEventBatch: workspaceEventBatchWithFlatObjectMetadata,
         eventRecordAccessGate,
         rolesPermissions,

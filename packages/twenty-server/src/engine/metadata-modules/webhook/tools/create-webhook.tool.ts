@@ -7,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
+import { buildWebhookCallerFromToolContext } from 'src/engine/metadata-modules/webhook/tools/utils/build-webhook-caller-from-tool-context.util';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
@@ -26,12 +27,20 @@ const createWebhookInputSchema = z.object({
     .describe(
       'Optional shared secret used to sign payloads. A secret is generated if omitted.',
     ),
+  roleId: z
+    .uuid()
+    .describe(
+      'Id of the role whose read permissions filter the payloads. Must be a role assignable to API keys.',
+    ),
 });
 
 @DefineTool({
   name: 'create_webhook',
   category: ToolCategory.WEBHOOK,
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  requiredPermissionFlags: [
+    PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    PermissionFlagType.ROLES,
+  ],
   description: `Register a new outgoing webhook for this workspace.
 
 Operations are structured entries discriminated by 'kind':
@@ -52,8 +61,8 @@ export class CreateWebhookTool extends BaseTool<
   }
 
   async execute({
-    input: { targetUrl, operations, description, secret },
-    context: { workspaceId },
+    input: { targetUrl, operations, description, secret, roleId },
+    context,
   }: ToolExecuteArgs<typeof createWebhookInputSchema>): Promise<ToolOutput> {
     const webhook = await this.webhookService.create({
       input: {
@@ -61,8 +70,10 @@ export class CreateWebhookTool extends BaseTool<
         operations: compileWebhookOperations(operations),
         description,
         secret,
+        roleId,
       },
-      workspaceId,
+      workspaceId: context.workspaceId,
+      caller: buildWebhookCallerFromToolContext(context),
     });
 
     return {

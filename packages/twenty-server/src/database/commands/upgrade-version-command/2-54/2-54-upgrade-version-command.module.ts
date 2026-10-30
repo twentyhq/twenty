@@ -8,6 +8,7 @@ import { UpdateCrmHygieneSkillMergeGuidanceCommand } from 'src/database/commands
 import { RemoveMessageCampaignFlagCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793266150123-remove-message-campaign-flag.command';
 import { AddCampaignsNavigationFolderCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793266210456-add-campaigns-navigation-folder.command';
 import { AddChatMentionResolutionCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793350721809-add-chat-mention-resolution.command';
+import { BackfillWebhookAdminRoleCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793355434587-backfill-webhook-admin-role.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RemoveMessageCampaignFlagCommand,
     AddCampaignsNavigationFolderCommand,
     AddChatMentionResolutionCommand,
+    BackfillWebhookAdminRoleCommand,
   ],
 })
 export class V2_54_UpgradeVersionCommandModule {}

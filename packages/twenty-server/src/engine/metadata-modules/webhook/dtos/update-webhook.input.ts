@@ -37,7 +37,7 @@ export class UpdateWebhookInputUpdates {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  roleId?: string | null;
+  roleId?: string;
 }
 
 @InputType()

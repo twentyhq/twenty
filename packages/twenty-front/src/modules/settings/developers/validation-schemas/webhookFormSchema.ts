@@ -28,7 +28,7 @@ export const getWebhookFormSchema = () =>
         },
       ),
     secret: z.string().optional(),
-    roleId: z.string().nullable(),
+    roleId: z.string().min(1, { error: () => t`A role is required` }),
   });
 
 export type WebhookFormValues = z.infer<

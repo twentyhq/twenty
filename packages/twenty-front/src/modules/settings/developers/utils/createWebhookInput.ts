@@ -1,16 +1,7 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type WebhookFormValues } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { cleanAndFormatOperations } from './cleanAndFormatOperations';
 
-type CreateWebhookInputArgs = {
-  formValues: WebhookFormValues;
-  canAssignRole: boolean;
-};
-
-export const createWebhookCreateInput = ({
-  formValues,
-  canAssignRole,
-}: CreateWebhookInputArgs) => {
+export const createWebhookCreateInput = (formValues: WebhookFormValues) => {
   const cleanedOperations = cleanAndFormatOperations(formValues.operations);
 
   return {
@@ -18,15 +9,11 @@ export const createWebhookCreateInput = ({
     operations: cleanedOperations,
     description: formValues.description,
     secret: formValues.secret,
-    ...(canAssignRole &&
-      isNonEmptyString(formValues.roleId) && { roleId: formValues.roleId }),
+    roleId: formValues.roleId,
   };
 };
 
-export const createWebhookUpdateInput = ({
-  formValues,
-  canAssignRole,
-}: CreateWebhookInputArgs) => {
+export const createWebhookUpdateInput = (formValues: WebhookFormValues) => {
   const cleanedOperations = cleanAndFormatOperations(formValues.operations);
 
   return {
@@ -34,6 +21,6 @@ export const createWebhookUpdateInput = ({
     operations: cleanedOperations,
     description: formValues.description,
     secret: formValues.secret,
-    ...(canAssignRole && { roleId: formValues.roleId }),
+    roleId: formValues.roleId,
   };
 };

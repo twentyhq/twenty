@@ -119,11 +119,12 @@ export class WebhookService {
     workspaceId: string;
     caller?: WebhookCaller;
   }): Promise<WebhookDTO> {
-    const { roleId, ...createWebhookInput } = input;
+    await this.assertCallerCanManageWebhookRolesOrThrow({
+      workspaceId,
+      caller,
+    });
 
-    if (isDefined(roleId)) {
-      await this.assertCallerCanAssignRoleOrThrow({ workspaceId, caller });
-    }
+    const { roleId, ...createWebhookInput } = input;
     const normalizedTargetUrl = this.normalizeTargetUrl(
       createWebhookInput.targetUrl,
     );
@@ -222,10 +223,11 @@ export class WebhookService {
     workspaceId: string;
     caller?: WebhookCaller;
   }): Promise<WebhookDTO> {
-    // Removing a role widens what the webhook receives, so null needs ROLES too
-    if (input.update.roleId !== undefined) {
-      await this.assertCallerCanAssignRoleOrThrow({ workspaceId, caller });
-    }
+    // Every webhook carries a role, so redirecting one can leak what that role reads
+    await this.assertCallerCanManageWebhookRolesOrThrow({
+      workspaceId,
+      caller,
+    });
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -382,7 +384,7 @@ export class WebhookService {
   }
 
   // Binding a role to a webhook requires ROLES to prevent privilege escalation.
-  private async assertCallerCanAssignRoleOrThrow({
+  private async assertCallerCanManageWebhookRolesOrThrow({
     workspaceId,
     caller,
   }: {
@@ -397,7 +399,7 @@ export class WebhookService {
         setting: PermissionFlagType.ROLES,
         apiKeyId: caller.apiKeyId,
         applicationId: caller.applicationId,
-        agentId: undefined,
+        agentId: caller.agentId,
       }));
 
     if (!canAssignRole) {
@@ -405,7 +407,7 @@ export class WebhookService {
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
-          userFriendlyMessage: msg`You need the Roles permission to assign a role to a webhook.`,
+          userFriendlyMessage: msg`You need the Roles permission to create or edit a webhook.`,
         },
       );
     }
