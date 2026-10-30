@@ -6,7 +6,11 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { buildAccessGroupSchemaDefinitions } from 'src/engine/metadata-modules/access-group/utils/build-access-group-schema-definitions.util';
+import { ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-column-definition.constant';
+import { ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-compact-id-index-definition.constant';
+import { ACCESS_GROUP_IDS_COLUMN_DEFINITION } from 'src/engine/metadata-modules/access-group/constants/access-group-ids-column-definition.constant';
+import { buildAccessGroupIdsIndexDefinition } from 'src/engine/metadata-modules/access-group/utils/build-access-group-ids-index-definition.util';
+import { isAccessGroupObject } from 'src/engine/metadata-modules/access-group/utils/is-access-group-object.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -74,62 +78,60 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           continue;
         }
 
-        const { columnDefinitions, indexDefinitions } =
-          buildAccessGroupSchemaDefinitions({
-            objectMetadata: flatObjectMetadata,
-          });
-        const conflictingColumnNames = columnDefinitions
-          .filter(
-            (columnDefinition) =>
-              existingColumnTypes.has(columnDefinition.name) &&
-              existingColumnTypes.get(columnDefinition.name) !==
-                (columnDefinition.isArray ? '_int4' : 'int4'),
-          )
-          .map((columnDefinition) => columnDefinition.name);
+        const isAccessGroup = isAccessGroupObject(flatObjectMetadata);
+        const columnDefinition = isAccessGroup
+          ? ACCESS_GROUP_COMPACT_ID_COLUMN_DEFINITION
+          : ACCESS_GROUP_IDS_COLUMN_DEFINITION;
+        const indexDefinition = isAccessGroup
+          ? ACCESS_GROUP_COMPACT_ID_INDEX_DEFINITION
+          : buildAccessGroupIdsIndexDefinition({
+              objectMetadataId: flatObjectMetadata.id,
+            });
+        const existingColumnType = existingColumnTypes.get(
+          columnDefinition.name,
+        );
+        const isColumnMissing = !isDefined(existingColumnType);
 
-        if (conflictingColumnNames.length > 0) {
+        if (
+          !isColumnMissing &&
+          existingColumnType !== (isAccessGroup ? 'int4' : '_int4')
+        ) {
           this.logger.error(
-            `Skipping ${tableName} in workspace ${workspaceId}: column(s) ${conflictingColumnNames.join(', ')} already exist with another type`,
+            `Skipping ${tableName} in workspace ${workspaceId}: column ${columnDefinition.name} already exists with type ${existingColumnType}`,
           );
 
           continue;
         }
 
-        const missingColumnDefinitions = columnDefinitions.filter(
-          (columnDefinition) => !existingColumnTypes.has(columnDefinition.name),
-        );
-
         if (options.dryRun) {
-          dryRunColumnCount += missingColumnDefinitions.length;
+          dryRunColumnCount += isColumnMissing ? 1 : 0;
           dryRunTableCount++;
 
           continue;
         }
 
-        if (missingColumnDefinitions.length > 0) {
-          await this.addColumnsWithLockTimeout({
+        if (isColumnMissing) {
+          await this.addColumnWithLockTimeout({
             queryRunner,
             schemaName,
             tableName,
-            columnDefinitions: missingColumnDefinitions,
+            columnDefinition,
           });
         }
 
-        await this.dropInvalidIndexes({
+        await this.dropInvalidIndex({
           queryRunner,
           schemaName,
-          indexNames: indexDefinitions.map((index) => index.name),
+          indexName: indexDefinition.name,
         });
 
-        for (const index of indexDefinitions) {
-          await this.workspaceSchemaManagerService.indexManager.createIndex({
-            queryRunner,
-            schemaName,
-            tableName,
-            index,
-            concurrently: true,
-          });
-        }
+        await this.workspaceSchemaManagerService.indexManager.createIndex({
+          queryRunner,
+          schemaName,
+          tableName,
+          index: indexDefinition,
+          concurrently: true,
+        });
       }
     } finally {
       if (isQueryRunnerConnected) {
@@ -181,16 +183,16 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
   }
 
   // Fail fast instead of queueing every query on the table behind the exclusive lock
-  private async addColumnsWithLockTimeout({
+  private async addColumnWithLockTimeout({
     queryRunner,
     schemaName,
     tableName,
-    columnDefinitions,
+    columnDefinition,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
-    columnDefinitions: WorkspaceSchemaColumnDefinition[];
+    columnDefinition: WorkspaceSchemaColumnDefinition;
   }): Promise<void> {
     await queryRunner.query(`SET lock_timeout = '8s'`);
 
@@ -199,7 +201,7 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
         queryRunner,
         schemaName,
         tableName,
-        columnDefinitions,
+        columnDefinitions: [columnDefinition],
       });
     } finally {
       await queryRunner.query('RESET lock_timeout');
@@ -207,22 +209,22 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
   }
 
   // An interrupted CREATE INDEX CONCURRENTLY leaves an invalid index that IF NOT EXISTS would keep
-  private async dropInvalidIndexes({
+  private async dropInvalidIndex({
     queryRunner,
     schemaName,
-    indexNames,
+    indexName,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-    indexNames: string[];
+    indexName: string;
   }): Promise<void> {
     const invalidIndexes: { name: string }[] = await queryRunner.query(
       `SELECT c.relname AS name
        FROM pg_index i
        JOIN pg_class c ON c.oid = i.indexrelid
        JOIN pg_namespace n ON n.oid = c.relnamespace
-       WHERE n.nspname = $1 AND c.relname = ANY($2) AND NOT i.indisvalid`,
-      [schemaName, indexNames],
+       WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
+      [schemaName, indexName],
     );
 
     for (const { name } of invalidIndexes) {
