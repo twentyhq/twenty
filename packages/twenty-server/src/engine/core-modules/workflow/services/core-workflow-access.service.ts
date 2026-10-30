@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
@@ -109,17 +109,15 @@ export class CoreWorkflowAccessService {
       return;
     }
 
-    const workflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: { id: In(coreWorkflowIds) },
-      select: { id: true, applicationId: true },
-    });
+    const hasWorkflowOfAnotherApplication =
+      await this.coreWorkflowRepository.exists(workspaceId, {
+        where: {
+          id: In(coreWorkflowIds),
+          applicationId: Not(reachableApplications.applicationId),
+        },
+      });
 
-    const isStartable = workflows.every(
-      (workflow) =>
-        workflow.applicationId === reachableApplications.applicationId,
-    );
-
-    if (!isStartable) {
+    if (hasWorkflowOfAnotherApplication) {
       throw new WorkflowQueryValidationException(
         `Application '${reachableApplications.applicationId}' cannot start a workflow owned by another application`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
