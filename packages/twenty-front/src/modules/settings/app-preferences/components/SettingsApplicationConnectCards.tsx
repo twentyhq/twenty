@@ -2,6 +2,7 @@ import { getApplicationDisplayName } from '@/applications/utils/getApplicationDi
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
+import { getApplicationPreferencesPostConnectPath } from '@/settings/app-preferences/utils/getApplicationPreferencesPostConnectPath';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -12,7 +13,7 @@ export const SettingsApplicationConnectCards = () => {
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
 
   const connectableProviders = applicationsWithPreferences.flatMap(
-    ({ application, connectionProviders }) => {
+    ({ application, connectionProviders, settingsMenuItems }) => {
       const authorizableProviders = connectionProviders.filter(
         canStartConnectionProviderAuthorization,
       );
@@ -21,6 +22,10 @@ export const SettingsApplicationConnectCards = () => {
         application,
         connectionProvider,
         hasMultipleConnectionProviders: authorizableProviders.length > 1,
+        redirectLocation: getApplicationPreferencesPostConnectPath({
+          applicationId: application.id,
+          settingsMenuItems,
+        }),
       }));
     },
   );
@@ -32,6 +37,7 @@ export const SettingsApplicationConnectCards = () => {
           application,
           connectionProvider,
           hasMultipleConnectionProviders,
+          redirectLocation,
         }) => {
           const applicationName = getApplicationDisplayName({
             application,
@@ -47,6 +53,7 @@ export const SettingsApplicationConnectCards = () => {
               applicationId={application.id}
               connectionProvider={connectionProvider}
               title={t`Connect with ${appName}`}
+              redirectLocation={redirectLocation}
             />
           );
         },

@@ -4,6 +4,7 @@ import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/com
 import { APPLICATION_PREFERENCES_GENERAL_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesGeneralTabId';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
+import { getApplicationPreferencesPostConnectPath } from '@/settings/app-preferences/utils/getApplicationPreferencesPostConnectPath';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
@@ -188,6 +189,10 @@ export const SettingsApplicationPreferencesDetail = ({
           application={application}
           displayName={appName}
           connectionProviders={connectionProviders}
+          connectionRedirectLocation={getApplicationPreferencesPostConnectPath({
+            applicationId: application.id,
+            settingsMenuItems,
+          })}
         />
       )}
       {activeTabId === APPLICATION_VARIABLES_TAB_ID && (
