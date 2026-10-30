@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
@@ -9,11 +10,12 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
@@ -41,6 +43,21 @@ import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgen
 import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
+
+const StyledScrollContainer = styled.div`
+  overflow: auto;
+  width: 100%;
+`;
+
+const StyledContent = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[8]};
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[3]}
+    ${themeCssVariables.spacing[20]};
+`;
 
 type CoreAgentFormContentProps = {
   agent: FindOneAgentQuery['findOneAgent'];
@@ -172,19 +189,21 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
           isReadOnly={isReadOnly}
           icon={<CoreAgentIcon agentId={agent.id} size={24} />}
         />
-        <SettingsPageContainer>
-          {isShowingRuns ? (
-            <CoreAgentRunsContent agentId={agent.id} />
-          ) : (
-            <CoreAgentSettingsContent
-              agent={agent}
-              formValues={draft}
-              onFieldChange={handleFieldChange}
-              isReadOnly={isReadOnly}
-              areTriggersEnabled={isAiChatInboxEnabled}
-            />
-          )}
-        </SettingsPageContainer>
+        <StyledScrollContainer>
+          <StyledContent>
+            {isShowingRuns ? (
+              <CoreAgentRunsContent agentId={agent.id} />
+            ) : (
+              <CoreAgentSettingsContent
+                agent={agent}
+                formValues={draft}
+                onFieldChange={handleFieldChange}
+                isReadOnly={isReadOnly}
+                areTriggersEnabled={isAiChatInboxEnabled}
+              />
+            )}
+          </StyledContent>
+        </StyledScrollContainer>
       </PageCardLayout>
       {!isReadOnly && (
         <CoreAgentDeleteConfirmationModal
