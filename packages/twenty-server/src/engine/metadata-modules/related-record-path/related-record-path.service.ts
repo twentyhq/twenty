@@ -31,7 +31,7 @@ export class RelatedRecordPathService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
-  private async assertHasRelatedRecordPathsEntitlement(
+  private async assertHasRelatedRecordPathsEntitlementOrThrow(
     workspaceId: string,
   ): Promise<void> {
     const hasEntitlement =
@@ -130,7 +130,7 @@ export class RelatedRecordPathService {
     input: CreateRelatedRecordPathInput;
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
-    await this.assertHasRelatedRecordPathsEntitlement(workspaceId);
+    await this.assertHasRelatedRecordPathsEntitlementOrThrow(workspaceId);
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -180,7 +180,7 @@ export class RelatedRecordPathService {
     id: string;
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
-    await this.assertHasRelatedRecordPathsEntitlement(workspaceId);
+    await this.assertHasRelatedRecordPathsEntitlementOrThrow(workspaceId);
 
     const flatRelatedRecordPathMaps =
       await this.getFlatRelatedRecordPathMaps(workspaceId);
