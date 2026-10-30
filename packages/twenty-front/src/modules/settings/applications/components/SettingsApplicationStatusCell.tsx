@@ -1,4 +1,5 @@
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
+import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { getHighestPrioritySettingsApplicationStatus } from '@/settings/applications/utils/getHighestPrioritySettingsApplicationStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -18,7 +19,7 @@ export const SettingsApplicationStatusCell = ({
     case 'accountSyncIssue':
       return <SettingsConnectedAccountSyncStatus account={status.account} />;
     case 'reconnectNeeded':
-      return <Status color="red" weight="medium">{t`Sync failed`}</Status>;
+      return <SettingsSyncFailedStatus />;
     case 'missingConfiguration':
       return (
         <Status color="orange" weight="medium">{t`Setup incomplete`}</Status>

@@ -1,4 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,7 +19,7 @@ export const SettingsApplicationConnectionStatus = ({
   }
 
   return isApplicationConnectionReconnectNeeded(connection) ? (
-    <Status color="red" weight="medium">{t`Sync failed`}</Status>
+    <SettingsSyncFailedStatus />
   ) : (
     <Status color="green" weight="medium">{t`Connected`}</Status>
   );

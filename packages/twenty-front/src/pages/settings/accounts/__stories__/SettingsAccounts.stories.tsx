@@ -208,6 +208,26 @@ export const AccountsGroupedByEmail: Story = {
   },
 };
 
+export const AccountsTabKeepsUsedByOnMobile: Story = {
+  ...accountsTabStory,
+  parameters: {
+    ...accountsTabStory.parameters,
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
+
+    expect(canvas.getByText('Used by')).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'tim@apple.dev').getByRole('img', {
+        name: 'Fathom',
+      }),
+    ).toBeVisible();
+  },
+};
+
 export const WorkspaceSharedAppConnectionsStayOff: Story = {
   ...accountsTabStory,
   play: async ({ canvasElement }) => {

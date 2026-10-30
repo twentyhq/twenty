@@ -84,6 +84,7 @@ export const SettingsAccountGroupTableRow = ({
         )
       }
       detailsAlign={isDefined(builtInAccountApp) ? 'left' : 'right'}
+      shouldShowDetailsOnMobile
       action={
         <SettingsAppPreferencesRowDropdownMenu
           group={group}

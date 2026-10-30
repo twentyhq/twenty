@@ -35,6 +35,7 @@ import {
   type ApplicationConnectedAccount,
   useApplicationConnectedAccounts,
 } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
+import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
@@ -204,7 +205,7 @@ export const SettingsApplicationConnectionDetail = () => {
         key: 'status',
         label: t`Status`,
         value: connection.authFailedAt ? (
-          <Status color="red" weight="medium">{t`Sync failed`}</Status>
+          <SettingsSyncFailedStatus />
         ) : (
           <Status color="green" weight="medium">{t`Connected`}</Status>
         ),

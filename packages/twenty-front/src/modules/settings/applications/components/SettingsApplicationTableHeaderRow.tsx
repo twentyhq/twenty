@@ -10,6 +10,7 @@ type SettingsApplicationTableHeaderRowProps = {
   nameLabel?: string;
   detailsLabel?: string;
   detailsAlign?: 'left' | 'right';
+  shouldShowDetailsOnMobile?: boolean;
 };
 
 export const SettingsApplicationTableHeaderRow = ({
@@ -17,6 +18,7 @@ export const SettingsApplicationTableHeaderRow = ({
   nameLabel,
   detailsLabel,
   detailsAlign,
+  shouldShowDetailsOnMobile = false,
 }: SettingsApplicationTableHeaderRowProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -26,13 +28,14 @@ export const SettingsApplicationTableHeaderRow = ({
       gridTemplateColumns={getApplicationTableRowGridTemplateColumns({
         middleColumn,
         isMobile,
+        shouldShowDetailsOnMobile,
       })}
     >
       <TableHeader>{nameLabel ?? t`Name`}</TableHeader>
       <TableHeader>
         {middleColumn === 'status' ? t`Status` : t`Type`}
       </TableHeader>
-      {!isMobile && (
+      {(!isMobile || shouldShowDetailsOnMobile) && (
         <TableHeader align={detailsAlign}>
           {detailsLabel ?? t`Description`}
         </TableHeader>

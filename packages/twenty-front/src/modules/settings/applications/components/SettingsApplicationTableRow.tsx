@@ -18,6 +18,7 @@ type SettingsApplicationTableRowProps = {
   action: ReactNode;
   middleColumn?: SettingsApplicationTableRowMiddleColumn;
   detailsAlign?: 'left' | 'right';
+  shouldShowDetailsOnMobile?: boolean;
   link?: string;
   hasActionMenu?: boolean;
 };
@@ -29,6 +30,7 @@ export const SettingsApplicationTableRow = ({
   action,
   middleColumn = 'type',
   detailsAlign,
+  shouldShowDetailsOnMobile = false,
   link,
   hasActionMenu = false,
 }: SettingsApplicationTableRowProps) => {
@@ -49,6 +51,7 @@ export const SettingsApplicationTableRow = ({
       gridTemplateColumns={getApplicationTableRowGridTemplateColumns({
         middleColumn,
         isMobile,
+        shouldShowDetailsOnMobile,
       })}
       to={hasActionMenu ? undefined : link}
       onClick={isNameLink ? () => navigate(link) : undefined}
@@ -63,7 +66,7 @@ export const SettingsApplicationTableRow = ({
       <TableCell color={themeCssVariables.font.color.tertiary}>
         {middle}
       </TableCell>
-      {!isMobile && (
+      {(!isMobile || shouldShowDetailsOnMobile) && (
         <TableCell
           align={detailsAlign}
           gap={themeCssVariables.spacing[2]}

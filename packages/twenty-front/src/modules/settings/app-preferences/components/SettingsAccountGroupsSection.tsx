@@ -68,6 +68,7 @@ export const SettingsAccountGroupsSection = ({
                 isDefined(builtInAccountApp) ? t`Permissions` : t`Used by`
               }
               detailsAlign={isDefined(builtInAccountApp) ? 'left' : 'right'}
+              shouldShowDetailsOnMobile
             />
             <StyledTableRows>
               {groups.map((group) => (
