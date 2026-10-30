@@ -1,6 +1,8 @@
 {
   "private": true,
   "devDependencies": {
+    "@neon/config": "^1.9.4",
+    "@neon/env": "^1.6.5",
     "@nx/jest": "22.7.12",
     "@nx/js": "22.7.12",
     "@nx/react": "22.7.12",
