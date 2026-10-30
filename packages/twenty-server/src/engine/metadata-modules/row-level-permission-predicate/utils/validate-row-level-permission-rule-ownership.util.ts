@@ -119,15 +119,25 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       );
     }
 
-    const relationFieldMetadata = isDefined(predicate.relationFieldMetadataId)
-      ? findFlatEntityByIdInFlatEntityMaps({
+    let expectedFieldObjectMetadataId = objectMetadataId;
+
+    if (isDefined(predicate.relationFieldMetadataId)) {
+      const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps(
+        {
           flatEntityId: predicate.relationFieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
+        },
+      )?.relationTargetObjectMetadataId;
 
-    const expectedFieldObjectMetadataId =
-      relationFieldMetadata?.relationTargetObjectMetadataId ?? objectMetadataId;
+      if (!isDefined(relationTargetObjectMetadataId)) {
+        throw new RowLevelPermissionPredicateException(
+          'relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.',
+          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        );
+      }
+
+      expectedFieldObjectMetadataId = relationTargetObjectMetadataId;
+    }
 
     if (fieldMetadata.objectMetadataId !== expectedFieldObjectMetadataId) {
       throw new RowLevelPermissionPredicateException(

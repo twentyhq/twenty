@@ -103,7 +103,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           isRelationHopEnabled:
             additionalCacheDataMaps.featureFlagsMap[
               FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-            ] === true,
+            ],
         }),
       );
 
@@ -333,7 +333,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
           isRelationHopEnabled:
             additionalCacheDataMaps.featureFlagsMap[
               FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-            ] === true,
+            ],
         }),
       );
     }
