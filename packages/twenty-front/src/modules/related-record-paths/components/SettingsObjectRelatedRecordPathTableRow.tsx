@@ -1,7 +1,9 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Fragment } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconTrash, useIcons } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
+import { IconChevronRight, IconTrash, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -14,6 +16,17 @@ import { getRelatedRecordPathSteps } from '@/related-record-paths/utils/getRelat
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type RelatedRecordPath } from '~/generated-metadata/graphql';
+
+const StyledInlineIcon = styled.span<{ isSeparator?: boolean }>`
+  color: ${({ isSeparator }) =>
+    isSeparator ? themeCssVariables.font.color.tertiary : 'inherit'};
+  display: inline-flex;
+  margin: ${({ isSeparator }) =>
+    isSeparator
+      ? `0 ${themeCssVariables.spacing[1]}`
+      : `0 ${themeCssVariables.spacing[1]} 0 0`};
+  vertical-align: middle;
+`;
 
 type SettingsObjectRelatedRecordPathTableRowProps = {
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
@@ -40,8 +53,7 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
   const reachedObjectMetadataItem = steps.at(-1)?.targetObjectMetadataItem;
   const relationLabel = steps
     .map(({ fieldMetadataItem }) => fieldMetadataItem.label)
-    .join(' › ');
-  const FirstFieldIcon = getIcon(steps.at(0)?.fieldMetadataItem.icon);
+    .join(' > ');
 
   return (
     <TableRow
@@ -58,12 +70,26 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
         {reachedObjectMetadataItem?.labelPlural ?? t`Unavailable object`}
       </TableCell>
       <TableCell minWidth="0" overflow="hidden">
-        <Chip
-          variant="soft"
-          startElement={<FirstFieldIcon size={theme.icon.size.sm} />}
-        >
-          {relationLabel}
-        </Chip>
+        <OverflowingTextWithTooltip
+          tooltipContent={relationLabel}
+          text={steps.map(({ fieldMetadataItem }, index) => {
+            const FieldIcon = getIcon(fieldMetadataItem.icon);
+
+            return (
+              <Fragment key={fieldMetadataItem.id}>
+                {index > 0 && (
+                  <StyledInlineIcon isSeparator>
+                    <IconChevronRight size={theme.icon.size.sm} />
+                  </StyledInlineIcon>
+                )}
+                <StyledInlineIcon>
+                  <FieldIcon size={theme.icon.size.sm} />
+                </StyledInlineIcon>
+                <span>{fieldMetadataItem.label}</span>
+              </Fragment>
+            );
+          })}
+        />
       </TableCell>
       <TableCell align="center">
         {!isReadOnly && (
