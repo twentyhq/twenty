@@ -3,6 +3,7 @@ import { join } from 'path';
 
 import { Sandbox } from '@e2b/code-interpreter';
 import { Logger } from '@nestjs/common';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -137,7 +138,7 @@ export class E2BDriver implements CodeInterpreterDriver {
         onStderr: (data) => callbacks?.onStderr?.(data.line),
         onResult: async (result) => {
           if (
-            !result.png ||
+            !isNonEmptyString(result.png) ||
             outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT
           ) {
             return;
