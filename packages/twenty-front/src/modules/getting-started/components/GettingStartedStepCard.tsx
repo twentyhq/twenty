@@ -63,7 +63,7 @@ const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
   & svg path:last-of-type {
     animation: ${({ isAnimating }) =>
       isAnimating
-        ? 'getting-started-step-card-draw-check 0.5s ease forwards'
+        ? `getting-started-step-card-draw-check calc(${themeCssVariables.animation.duration.normal} * 1s) ease forwards`
         : 'none'};
     stroke-dasharray: 9;
     stroke-dashoffset: ${({ isAnimating }) => (isAnimating ? 9 : 0)};
