@@ -285,6 +285,10 @@ export class LogicFunctionExecutorService {
     flatLogicFunction: FlatLogicFunction;
   }): Promise<void> {
     if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
+      await this.usageQuotaAdmissionService.assertWorkspaceNotSuspended(
+        workspaceId,
+      );
+
       return;
     }
 
