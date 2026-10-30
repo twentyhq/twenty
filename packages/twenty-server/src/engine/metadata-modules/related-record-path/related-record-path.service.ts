@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -107,6 +109,39 @@ export class RelatedRecordPathService {
   }): Promise<RelatedRecordPathDTO> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.getFlatMaps(workspaceId);
+
+    if (
+      !isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: input.objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      )
+    ) {
+      throw new RelatedRecordPathException(
+        'Related record path object not found',
+        RelatedRecordPathExceptionCode.INVALID_RELATED_RECORD_PATH_INPUT,
+        { userFriendlyMessage: msg`Related record path object not found` },
+      );
+    }
+
+    const hasUnknownField = input.fieldMetadataIds.some(
+      (fieldMetadataId) =>
+        !isDefined(
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          }),
+        ),
+    );
+
+    if (hasUnknownField) {
+      throw new RelatedRecordPathException(
+        'Related record path field not found',
+        RelatedRecordPathExceptionCode.INVALID_RELATED_RECORD_PATH_INPUT,
+        { userFriendlyMessage: msg`Related record path field not found` },
+      );
+    }
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
