@@ -85,9 +85,12 @@ export class AddStandardRelatedRecordPathsCommand extends ProvisionedWorkspaceCo
         );
 
       if (isDefined(existingFlatRelatedRecordPath)) {
+        // A path another application owns keeps the flag its owner chose.
         if (
+          existingFlatRelatedRecordPath.applicationUniversalIdentifier ===
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
           existingFlatRelatedRecordPath.isInherent !==
-          standardFlatRelatedRecordPath.isInherent
+            standardFlatRelatedRecordPath.isInherent
         ) {
           flatRelatedRecordPathsToUpdate.push({
             ...existingFlatRelatedRecordPath,
