@@ -1,42 +1,8 @@
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
-import { addSeconds, fromUnixTime } from 'date-fns';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
-import { decodeJwtPayload } from 'src/engine/core-modules/jwt/utils/decode-jwt-payload.util';
+import { parseAccessTokenExpiresAt } from 'src/engine/core-modules/application/connection-provider/utils/parse-access-token-expires-at.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-
-const parseExpiresInSeconds = (expiresIn: unknown): number | null => {
-  if (!isNumber(expiresIn) && !isNonEmptyString(expiresIn)) {
-    return null;
-  }
-
-  const expiresInSeconds = Number(expiresIn);
-
-  return Number.isFinite(expiresInSeconds) && expiresInSeconds > 0
-    ? expiresInSeconds
-    : null;
-};
-
-const parseAccessTokenExpiresAt = (
-  expiresIn: unknown,
-  accessToken: PlaintextString,
-): Date | null => {
-  const expiresInSeconds = parseExpiresInSeconds(expiresIn);
-
-  if (isDefined(expiresInSeconds)) {
-    return addSeconds(new Date(), expiresInSeconds);
-  }
-
-  const expirationEpochSeconds = decodeJwtPayload<{ exp?: unknown }>(
-    accessToken,
-  )?.exp;
-
-  return isNumber(expirationEpochSeconds) &&
-    Number.isFinite(expirationEpochSeconds)
-    ? fromUnixTime(expirationEpochSeconds)
-    : null;
-};
 
 export const parseTokenResponse = (
   json: Record<string, unknown>,
