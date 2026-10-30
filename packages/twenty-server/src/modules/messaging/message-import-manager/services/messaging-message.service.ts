@@ -8,6 +8,8 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
@@ -194,6 +196,14 @@ export class MessagingMessageService {
               messageAccumulator.existingMessageInDB.isDraft &&
               message.isDraft === false
             ) {
+              await this.removeObsoleteDraftRelations(
+                message,
+                newOrExistingMessageId,
+                messageAccumulator.existingMessageChannelMessageAssociationInDB
+                  ?.id,
+                transactionScope,
+              );
+
               await messageRepository.update(newOrExistingMessageId, {
                 headerMessageId: message.headerMessageId,
                 subject: message.subject,
@@ -373,6 +383,80 @@ export class MessagingMessageService {
     );
   }
 
+  private async removeObsoleteDraftRelations(
+    message: MessageWithParticipants,
+    messageId: string,
+    associationId: string | undefined,
+    transactionScope: WorkspaceTransactionScope,
+  ): Promise<void> {
+    const participantRepository =
+      transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const existingParticipants = await participantRepository.find({
+      where: { messageId },
+    });
+
+    const obsoleteParticipantIds = existingParticipants
+      .filter(
+        (existing) =>
+          !message.participants.some(
+            (participant) =>
+              participant.handle === existing.handle &&
+              participant.role === existing.role,
+          ),
+      )
+      .map(({ id }) => id);
+
+    if (obsoleteParticipantIds.length > 0) {
+      await participantRepository.delete({ id: In(obsoleteParticipantIds) });
+    }
+
+    for (const existing of existingParticipants) {
+      const participant = message.participants.find(
+        (candidate) =>
+          candidate.handle === existing.handle &&
+          candidate.role === existing.role,
+      );
+
+      if (
+        isDefined(participant) &&
+        participant.displayName !== existing.displayName
+      ) {
+        await participantRepository.update(existing.id, {
+          displayName: participant.displayName,
+        });
+      }
+    }
+
+    if (!isDefined(associationId) || !isDefined(message.messageFolderIds)) {
+      return;
+    }
+
+    const folderAssociationRepository =
+      transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+        'messageChannelMessageAssociationMessageFolder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const existingFolderAssociations = await folderAssociationRepository.find({
+      where: { messageChannelMessageAssociationId: associationId },
+    });
+
+    const folderIds = new Set(message.messageFolderIds);
+    const obsoleteFolderAssociationIds = existingFolderAssociations
+      .filter(({ messageFolderId }) => !folderIds.has(messageFolderId))
+      .map(({ id }) => id);
+
+    if (obsoleteFolderAssociationIds.length > 0) {
+      await folderAssociationRepository.delete({
+        id: In(obsoleteFolderAssociationIds),
+      });
+    }
+  }
+
   private async enrichMessageAccumulatorWithExistingMessages(
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
@@ -516,7 +600,22 @@ export class MessagingMessageService {
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
   ) {
-    for (const [index, message] of messages.entries()) {
+    const threadIdsByExternalId = new Map<string, string>();
+
+    // A reply can precede the finalized draft that identifies its existing thread.
+    for (const message of messages) {
+      const existingThreadId = messageAccumulatorMap.get(message.externalId)
+        ?.existingThreadInDB?.id;
+
+      if (isDefined(existingThreadId)) {
+        threadIdsByExternalId.set(
+          message.messageThreadExternalId,
+          existingThreadId,
+        );
+      }
+    }
+
+    for (const message of messages) {
       const messageAccumulator = messageAccumulatorMap.get(message.externalId);
 
       if (!isDefined(messageAccumulator)) {
@@ -525,46 +624,21 @@ export class MessagingMessageService {
         );
       }
 
-      const previousMessageWithSameThreadExternalId = messages.find(
-        (otherMessage, otherMessageIndex) =>
-          otherMessage.messageThreadExternalId ===
-            message.messageThreadExternalId && otherMessageIndex < index,
-      );
+      const newOrExistingMessageThreadId =
+        messageAccumulator.existingThreadInDB?.id ??
+        threadIdsByExternalId.get(message.messageThreadExternalId);
 
-      let newOrExistingMessageThreadId: string | undefined;
-
-      if (isDefined(messageAccumulator.existingThreadInDB)) {
-        newOrExistingMessageThreadId = messageAccumulator.existingThreadInDB.id;
-      }
-
-      if (isDefined(previousMessageWithSameThreadExternalId)) {
-        const previousMessageAccumulator = messageAccumulatorMap.get(
-          previousMessageWithSameThreadExternalId.externalId,
-        );
-
-        const previousMessageThreadId =
-          previousMessageAccumulator?.threadToCreate?.id ??
-          previousMessageAccumulator?.existingThreadInDB?.id;
-
-        if (!isDefined(previousMessageThreadId)) {
-          throw new Error(
-            `Previous message should have a thread id, either in the messageToCreate or existingMessageInDB`,
-          );
-        }
-
-        newOrExistingMessageThreadId = previousMessageThreadId;
+      if (isDefined(newOrExistingMessageThreadId)) {
         messageAccumulator.existingThreadInDB = {
-          id: previousMessageThreadId,
-        };
-      }
-
-      if (!isDefined(newOrExistingMessageThreadId)) {
-        newOrExistingMessageThreadId = v4();
-
-        messageAccumulator.threadToCreate = {
           id: newOrExistingMessageThreadId,
+        };
+      } else {
+        const newThreadId = v4();
+        messageAccumulator.threadToCreate = {
+          id: newThreadId,
           subject: message.subject,
         };
+        threadIdsByExternalId.set(message.messageThreadExternalId, newThreadId);
       }
 
       messageAccumulatorMap.set(message.externalId, messageAccumulator);
