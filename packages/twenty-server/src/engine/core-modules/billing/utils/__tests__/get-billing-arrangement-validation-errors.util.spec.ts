@@ -43,9 +43,9 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({ type: BillingArrangementType.FREE_SEATS, seats: 3 }),
     ],
     [
-      'a Stripe coupon',
+      'a coupon',
       draft({
-        type: BillingArrangementType.STRIPE_COUPON,
+        type: BillingArrangementType.COUPON,
         stripeCouponId: 'coupon_non_profit',
       }),
     ],
@@ -89,7 +89,7 @@ describe('getBillingArrangementValidationErrors', () => {
     expect(
       getBillingArrangementValidationErrors(
         draft({
-          type: BillingArrangementType.STRIPE_COUPON,
+          type: BillingArrangementType.COUPON,
           stripeCouponId: '',
         }),
       ),
@@ -151,7 +151,7 @@ describe('getBillingArrangementValidationErrors', () => {
           endsAt: new Date('2026-12-01T00:00:00.000Z'),
         }),
       ),
-    ).toEqual([{ code: 'END_DATE_ON_ONE_TIME_TYPE' }]);
+    ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'endsAt' }]);
   });
 
   it('requires an end date on a trial extension', () => {
@@ -159,7 +159,7 @@ describe('getBillingArrangementValidationErrors', () => {
       getBillingArrangementValidationErrors(
         draft({ type: BillingArrangementType.TRIAL_EXTENSION }),
       ),
-    ).toEqual([{ code: 'MISSING_END_DATE' }]);
+    ).toEqual([{ code: 'MISSING_SETTING', setting: 'endsAt' }]);
   });
 
   it.each([

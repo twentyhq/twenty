@@ -18,7 +18,7 @@ export class CreateBillingArrangementTableFastInstanceCommand
     }
 
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."billingArrangement_type_enum" AS ENUM ('COMMITTED_SEATS', 'FREE_SEATS', 'STRIPE_COUPON', 'TRIAL_EXTENSION', 'WORKSPACE_CREDIT_ALLOWANCE', 'USER_CREDIT_ALLOWANCE', 'LIMIT_OVERRIDE', 'REFUND', 'CREDIT_GRANT'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
+      `DO $$ BEGIN CREATE TYPE "core"."billingArrangement_type_enum" AS ENUM ('COMMITTED_SEATS', 'FREE_SEATS', 'COUPON', 'TRIAL_EXTENSION', 'WORKSPACE_CREDIT_ALLOWANCE', 'USER_CREDIT_ALLOWANCE', 'LIMIT_OVERRIDE', 'REFUND', 'CREDIT_GRANT'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
     await queryRunner.query(

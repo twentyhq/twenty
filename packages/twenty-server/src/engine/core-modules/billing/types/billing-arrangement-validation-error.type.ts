@@ -8,6 +8,4 @@ export type BillingArrangementValidationError =
   | { code: 'EMPTY_LABEL' }
   | { code: 'INVALID_SEATS' }
   | { code: 'INVALID_CREDIT_ALLOWANCE' }
-  | { code: 'ENDS_BEFORE_START' }
-  | { code: 'MISSING_END_DATE' }
-  | { code: 'END_DATE_ON_ONE_TIME_TYPE' };
+  | { code: 'ENDS_BEFORE_START' };

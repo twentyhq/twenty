@@ -4,10 +4,6 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BILLING_ARRANGEMENT_SETTINGS_BY_TYPE } from 'src/engine/core-modules/billing/constants/billing-arrangement-settings-by-type.constant';
-import {
-  BillingArrangementType,
-  ONE_TIME_BILLING_ARRANGEMENT_TYPES,
-} from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { type BillingArrangementSettingKey } from 'src/engine/core-modules/billing/types/billing-arrangement-setting-key.type';
 import { type BillingArrangementValidationError } from 'src/engine/core-modules/billing/types/billing-arrangement-validation-error.type';
@@ -65,21 +61,6 @@ export const getBillingArrangementValidationErrors = (
       arrangement.creditAllowanceMicro < 0)
   ) {
     errors.push({ code: 'INVALID_CREDIT_ALLOWANCE' });
-  }
-
-  const isOneTime = ONE_TIME_BILLING_ARRANGEMENT_TYPES.includes(
-    arrangement.type,
-  );
-
-  if (isOneTime && isDefined(arrangement.endsAt)) {
-    errors.push({ code: 'END_DATE_ON_ONE_TIME_TYPE' });
-  }
-
-  if (
-    arrangement.type === BillingArrangementType.TRIAL_EXTENSION &&
-    !isDefined(arrangement.endsAt)
-  ) {
-    errors.push({ code: 'MISSING_END_DATE' });
   }
 
   if (
