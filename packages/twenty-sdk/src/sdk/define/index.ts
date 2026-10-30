@@ -192,6 +192,7 @@ export {
 } from 'twenty-shared/types';
 export { SystemPermissionFlag } from '@/sdk/define/roles/system-permission-flag.constant';
 
+export { defineRelatedRecordPath } from '@/sdk/define/related-record-paths/define-related-record-path';
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 
 export { defineView } from '@/sdk/define/views/define-view';
