@@ -1,5 +1,7 @@
-import { isAcceptableExpiresInSeconds } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
-import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
+import {
+  isAcceptableExpiresInSeconds,
+  parseTokenResponse,
+} from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
 
 const ONE_YEAR_SECONDS = 365 * 24 * 3600;
 
