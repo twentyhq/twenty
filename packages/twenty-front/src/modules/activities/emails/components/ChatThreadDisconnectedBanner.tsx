@@ -1,21 +1,8 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
-import { Button } from 'twenty-ui/primitives/input';
 import { IconRefresh } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledBanner = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.color.red};
-  color: ${themeCssVariables.font.color.inverted};
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]};
-`;
 
 type ChatThreadDisconnectedBannerProps = {
   applicationId: string;
@@ -42,14 +29,13 @@ export const ChatThreadDisconnectedBanner = ({
     });
 
   return (
-    <StyledBanner role="alert">
-      {t`${channelName} is disconnected.`}
-      <Button
-        variant="outline"
-        size="sm"
-        startIcon={<IconRefresh />}
-        onClick={handleReconnect}
-      >{t`Reconnect`}</Button>
-    </StyledBanner>
+    <InformationBanner
+      componentInstanceId={`chat-thread-disconnected-${connectedAccountId}`}
+      status="error"
+      message={t`${channelName} is disconnected.`}
+      buttonTitle={t`Reconnect`}
+      buttonIcon={IconRefresh}
+      buttonOnClick={handleReconnect}
+    />
   );
 };
