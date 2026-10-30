@@ -38,7 +38,7 @@ export class ObjectRelatedRecordPathsOnDeleteSideEffectHandlerService extends Me
         continue;
       }
 
-      const touchesDeletedObject =
+      const isPathTouchingDeletedObject =
         getRelatedRecordPathFieldMetadataUniversalIdentifiers(
           flatRelatedRecordPath,
         ).some((fieldMetadataUniversalIdentifier) => {
@@ -47,16 +47,21 @@ export class ObjectRelatedRecordPathsOnDeleteSideEffectHandlerService extends Me
               fieldMetadataUniversalIdentifier
             ];
 
+          // A hop whose field is already gone leaves the path broken, so it goes too.
+          if (!isDefined(flatFieldMetadata)) {
+            return true;
+          }
+
           return (
-            flatFieldMetadata?.objectMetadataUniversalIdentifier ===
+            flatFieldMetadata.objectMetadataUniversalIdentifier ===
               flatObjectMetadata.universalIdentifier ||
-            flatFieldMetadata?.relationTargetObjectMetadataUniversalIdentifier ===
+            flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier ===
               flatObjectMetadata.universalIdentifier
           );
         });
 
       if (
-        touchesDeletedObject ||
+        isPathTouchingDeletedObject ||
         flatRelatedRecordPath.objectMetadataUniversalIdentifier ===
           flatObjectMetadata.universalIdentifier
       ) {
