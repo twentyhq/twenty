@@ -1,6 +1,7 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { getResolvedApplicationDescription } from '@/applications/utils/getResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
@@ -9,14 +10,15 @@ import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils
 import { i18n } from '@lingui/core';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-type WorkspaceLike = {
-  workspaceCustomApplication?: { id?: string | null } | null;
-};
+type RowItemsWorkspace = Pick<CurrentWorkspace, 'workspaceCustomApplication'>;
 
-const getApplicationRowItem = (
-  application: SettingsApplicationsTableApplication,
-  currentWorkspace: WorkspaceLike | null | undefined,
-): SettingsApplicationsTableRowItem => ({
+const getApplicationRowItem = ({
+  application,
+  currentWorkspace,
+}: {
+  application: SettingsApplicationsTableApplication;
+  currentWorkspace: RowItemsWorkspace | null | undefined;
+}): SettingsApplicationsTableRowItem => ({
   id: application.id,
   name: getApplicationDisplayName({ application, currentWorkspace }),
   description: getResolvedApplicationDescription({
@@ -44,12 +46,12 @@ export const getSettingsApplicationsTableRowItems = ({
 }: {
   applications: SettingsApplicationsTableApplication[];
   builtInAccountApps: BuiltInAccountApp[];
-  currentWorkspace: WorkspaceLike | null | undefined;
+  currentWorkspace: RowItemsWorkspace | null | undefined;
 }): SettingsApplicationsTableRowItem[] => {
   const sortedApplications = sortApplicationsWithOAuthOnlyLast(applications);
   const toApplicationRowItem = (
     application: SettingsApplicationsTableApplication,
-  ) => getApplicationRowItem(application, currentWorkspace);
+  ) => getApplicationRowItem({ application, currentWorkspace });
 
   if (!isNonEmptyArray(builtInAccountApps)) {
     return sortedApplications.map(toApplicationRowItem);
