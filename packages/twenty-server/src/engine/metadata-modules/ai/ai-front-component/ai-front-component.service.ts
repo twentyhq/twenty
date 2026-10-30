@@ -36,6 +36,7 @@ import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
 import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
+import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
 
 const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
@@ -189,9 +190,19 @@ export class AiFrontComponentService {
   }
 
   async createDraft(
-    input: FrontComponentDraftInput,
+    draftInput: FrontComponentDraftInput,
     context: ToolProviderContext,
   ) {
+    const validation = frontComponentDraftSchema.safeParse(draftInput);
+
+    if (!validation.success) {
+      throw new BadRequestException(
+        doNotTranslate('Invalid component draft input.'),
+      );
+    }
+
+    const input = validation.data;
+
     if (
       !isDefined(context.userWorkspaceId) ||
       !isDefined(context.threadId) ||
