@@ -41,7 +41,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
-import { throwToolCallNotPending } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/throw-tool-call-not-pending.util';
+import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -132,7 +132,7 @@ export class ToolCallAnswerService {
     });
 
     if (!isToolCallPending) {
-      throwToolCallNotPending();
+      throw buildToolCallNotPendingException();
     }
 
     const validation = pausingToolCall.validate(args.response);
@@ -179,7 +179,7 @@ export class ToolCallAnswerService {
         });
 
       if (!awaitingToolParts.some((part) => part.id === toolPart.id)) {
-        throwToolCallNotPending();
+        throw buildToolCallNotPendingException();
       }
 
       if (isDefined(wakeUp)) {
@@ -212,7 +212,7 @@ export class ToolCallAnswerService {
             wakeUpId: wakeUp.id,
           });
 
-          throwToolCallNotPending();
+          throw buildToolCallNotPendingException();
         }
       }
 

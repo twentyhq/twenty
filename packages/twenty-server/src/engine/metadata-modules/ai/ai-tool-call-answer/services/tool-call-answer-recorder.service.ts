@@ -11,7 +11,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
-import { throwToolCallNotPending } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/throw-tool-call-not-pending.util';
+import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 @Injectable()
 export class ToolCallAnswerRecorderService {
@@ -65,7 +65,7 @@ export class ToolCallAnswerRecorderService {
         );
 
         if (claimedParts.length !== 1) {
-          throwToolCallNotPending();
+          throw buildToolCallNotPendingException();
         }
       },
     });
