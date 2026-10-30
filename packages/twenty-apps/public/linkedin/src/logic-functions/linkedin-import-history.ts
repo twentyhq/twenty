@@ -4,6 +4,7 @@ import {
   getConnection,
   listMessageChannels,
   type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -169,17 +170,30 @@ export const linkedinImportHistoryHandler = async (
   try {
     return await importPage({ payload, state });
   } catch (error) {
-    if (isDefined(context) && context.retryCount >= context.maxRetries) {
-      await saveLinkedinHistoryImportState({
-        connectedAccountId: payload.connectedAccountId,
-        state: {
-          ...state,
-          status: 'FAILED',
-          finishedAt: new Date().toISOString(),
-          error: getLinkedinHistoryImportError(error),
-        },
-      });
+    const importError = getLinkedinHistoryImportError(error);
+
+    // Twenty only retries a RetryableLogicFunctionError: any other error ends the job, so the run must be closed here
+    if (
+      importError.code === 'UNREACHABLE' &&
+      isDefined(context) &&
+      context.retryCount < context.maxRetries
+    ) {
+      throw new RetryableLogicFunctionError(importError.message);
     }
+
+    console.error(
+      `[linkedin] history run ${payload.runId} page ${payload.pageIndex} failed: ${importError.message}`,
+    );
+
+    await saveLinkedinHistoryImportState({
+      connectedAccountId: payload.connectedAccountId,
+      state: {
+        ...state,
+        status: 'FAILED',
+        finishedAt: new Date().toISOString(),
+        error: importError,
+      },
+    });
 
     throw error;
   }

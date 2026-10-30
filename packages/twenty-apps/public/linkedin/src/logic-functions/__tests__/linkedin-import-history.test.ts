@@ -19,6 +19,7 @@ vi.mock('twenty-sdk/define', () => ({
 
 vi.mock('twenty-sdk/logic-function', () => ({
   AppConnectionAuthFailedError: class extends Error {},
+  RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {},
   getConnection: mocks.getConnection,
   listMessageChannels: mocks.listMessageChannels,
   enqueueJobs: mocks.enqueueJobs,
@@ -180,16 +181,50 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
-  it('marks the run failed once its last retry fails', async () => {
-    mocks.listUnipileChats.mockRejectedValue(new Error('Unipile is down'));
+  it('closes the run as failed on an error Twenty will not retry', async () => {
+    mocks.listUnipileChats.mockRejectedValue({
+      status: 422,
+      title: 'Invalid cursor',
+    });
 
     await expect(
-      linkedinImportHistoryHandler(PAYLOAD, { retryCount: 3, maxRetries: 3 }),
-    ).rejects.toThrow('Unipile is down');
+      linkedinImportHistoryHandler(PAYLOAD, { retryCount: 0, maxRetries: 3 }),
+    ).rejects.toEqual({ status: 422, title: 'Invalid cursor' });
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({
         status: 'FAILED',
-        error: { code: 'UNKNOWN', message: 'Unipile is down' },
+        error: { code: 'UNKNOWN', message: 'Invalid cursor' },
+      }),
+    );
+  });
+
+  it('asks Twenty to retry when Unipile is unreachable and retries are left', async () => {
+    mocks.listUnipileChats.mockRejectedValue({
+      status: 503,
+      title: 'Service unavailable',
+    });
+
+    await expect(
+      linkedinImportHistoryHandler(PAYLOAD, { retryCount: 1, maxRetries: 3 }),
+    ).rejects.toThrow('Service unavailable');
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({ status: 'IMPORTING' }),
+    );
+  });
+
+  it('closes the run once Unipile stays unreachable on the last retry', async () => {
+    mocks.listUnipileChats.mockRejectedValue({
+      status: 503,
+      title: 'Service unavailable',
+    });
+
+    await expect(
+      linkedinImportHistoryHandler(PAYLOAD, { retryCount: 3, maxRetries: 3 }),
+    ).rejects.toBeDefined();
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({
+        status: 'FAILED',
+        error: { code: 'UNREACHABLE', message: 'Service unavailable' },
       }),
     );
   });
