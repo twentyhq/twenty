@@ -170,7 +170,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
           namePlaceholder={t`Untitled`}
           onRename={handleRename}
           isReadOnly={isReadOnly}
-          icon={
+          avatar={
             <CoreAgentAvatarPicker
               agent={agent}
               isReadOnly={isReadOnly}
