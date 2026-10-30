@@ -31,8 +31,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsApplicationPreferences,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/app-preferences/:appId',
-    routeParams: { ':appId': FATHOM_APPLICATION_ID },
+    routePath: '/settings/app-preferences/:applicationId',
+    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
     additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedApplicationPreferencesStory,
@@ -265,7 +265,7 @@ export const SavedSecretCanBeCleared: Story = {
 
 export const SettingsOnlyAppOpensItsSettingsFromTheTabBar: Story = {
   args: {
-    routeParams: { ':appId': GRANOLA_APPLICATION_ID },
+    routeParams: { ':applicationId': GRANOLA_APPLICATION_ID },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -356,7 +356,7 @@ const LocationProbe = () => {
 
 export const FailedOAuthReturnShowsItsMessage: Story = {
   args: {
-    routeParams: { ':appId': FATHOM_APPLICATION_ID },
+    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
     searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
     routeHash: '#general',
   },
@@ -397,7 +397,7 @@ export const FailedOAuthReturnShowsItsMessage: Story = {
 
 export const UnknownAppGoesBackToAppPreferences: Story = {
   args: {
-    routeParams: { ':appId': '20202020-1a2b-4c3d-8e4f-000000000099' },
+    routeParams: { ':applicationId': '20202020-1a2b-4c3d-8e4f-000000000099' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

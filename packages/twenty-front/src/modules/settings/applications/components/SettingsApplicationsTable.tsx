@@ -124,9 +124,7 @@ export const SettingsApplicationsTable = ({
 
   const getApplicationLink = (applicationId: string) =>
     variant === 'member'
-      ? getSettingsPath(SettingsPath.AppPreferencesApp, {
-          appId: applicationId,
-        })
+      ? getSettingsPath(SettingsPath.AppPreferencesApp, { applicationId })
       : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId });
 
   const getBuiltInAccountAppLink = (
@@ -134,7 +132,7 @@ export const SettingsApplicationsTable = ({
   ) =>
     variant === 'member'
       ? getSettingsPath(SettingsPath.AppPreferencesApp, {
-          appId: builtInAccountAppId,
+          applicationId: builtInAccountAppId,
         })
       : getSettingsPath(SettingsPath.ApplicationDetail, {
           applicationId: builtInAccountAppId,

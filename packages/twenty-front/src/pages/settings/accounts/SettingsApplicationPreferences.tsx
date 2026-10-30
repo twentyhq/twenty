@@ -11,7 +11,7 @@ import { SettingsApplicationPreferencesDetail } from '~/pages/settings/accounts/
 
 export const SettingsApplicationPreferences = () => {
   const { t } = useLingui();
-  const { appId: applicationId } = useParams<{ appId: string }>();
+  const { applicationId } = useParams<{ applicationId: string }>();
   const { applicationsWithPreferences, loading, error, refetch } =
     useApplicationsWithPreferences();
 

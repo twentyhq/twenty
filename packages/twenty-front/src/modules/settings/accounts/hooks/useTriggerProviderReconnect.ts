@@ -3,13 +3,11 @@ import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useTriggerProviderReconnect = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const navigate = useNavigateSettings();
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
 
   const triggerProviderReconnect = useCallback(
     async (
@@ -19,33 +17,22 @@ export const useTriggerProviderReconnect = () => {
     ) => {
       if (provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV) {
         if (!accountId) {
-          navigate(
-            resolveAccountsSettingsPath(
-              SettingsPath.NewImapSmtpCaldavConnection,
-            ),
-          );
+          navigate(SettingsPath.NewImapSmtpCaldavConnection);
           return;
         }
 
-        navigate(
-          resolveAccountsSettingsPath(
-            SettingsPath.EditImapSmtpCaldavConnection,
-          ),
-          {
-            connectedAccountId: accountId,
-          },
-        );
+        navigate(SettingsPath.EditImapSmtpCaldavConnection, {
+          connectedAccountId: accountId,
+        });
         return;
       }
 
       await triggerApisOAuth(provider, {
-        redirectLocation: getSettingsPath(
-          resolveAccountsSettingsPath(SettingsPath.Accounts),
-        ),
+        redirectLocation: getSettingsPath(SettingsPath.Accounts),
         ...options,
       });
     },
-    [triggerApisOAuth, navigate, resolveAccountsSettingsPath],
+    [triggerApisOAuth, navigate],
   );
 
   return { triggerProviderReconnect };

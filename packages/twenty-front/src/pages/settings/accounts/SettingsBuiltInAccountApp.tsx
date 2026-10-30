@@ -29,7 +29,9 @@ import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
 
 export const SettingsBuiltInAccountApp = () => {
   const { t } = useLingui();
-  const { appId: builtInAccountAppId } = useParams<{ appId: string }>();
+  const { applicationId: builtInAccountAppId } = useParams<{
+    applicationId: string;
+  }>();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const app = enabledBuiltInAccountApps.find(
     (enabledApp) => enabledApp.id === builtInAccountAppId,

@@ -602,7 +602,7 @@ export const AppsFlagOnlyBrokenAccounts: Story = {
 export const AppPreferencesListInstalledApps: Story = {
   ...accountGroupsStory,
   args: {
-    additionalRoutes: ['/settings/app-preferences/:appId'],
+    additionalRoutes: ['/settings/app-preferences/:applicationId'],
   },
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
@@ -653,7 +653,9 @@ export const AppPreferencesListInstalledApps: Story = {
     await userEvent.click(fathomRow);
 
     expect(
-      await canvas.findByText('Navigated to /settings/app-preferences/:appId'),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences/:applicationId',
+      ),
     ).toBeVisible();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },

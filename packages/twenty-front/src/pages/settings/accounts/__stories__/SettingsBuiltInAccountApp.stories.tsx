@@ -32,8 +32,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsBuiltInAccountApp,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/app-preferences/:appId',
-    routeParams: { ':appId': 'google' },
+    routePath: '/settings/app-preferences/:applicationId',
+    routeParams: { ':applicationId': 'google' },
     additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedAccountGroupsStory,
@@ -146,7 +146,7 @@ export const GoogleCalendarTabShowsCalendarSettings: Story = {
 
 export const OutlookHasEmailsAndCalendarTabs: Story = {
   args: {
-    routeParams: { ':appId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -172,7 +172,7 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 
 export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
   args: {
-    routeParams: { ':appId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -203,7 +203,7 @@ export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
 
 export const CalendarPendingSetupHidesCalendarTab: Story = {
   args: {
-    routeParams: { ':appId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -236,7 +236,7 @@ export const CalendarPendingSetupHidesCalendarTab: Story = {
 
 export const DisabledAppGoesBackToAppPreferences: Story = {
   args: {
-    routeParams: { ':appId': 'imap' },
+    routeParams: { ':applicationId': 'imap' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -255,7 +255,7 @@ export const DisabledAppGoesBackToAppPreferences: Story = {
 
 export const OutlookWithoutAccountOffersOutlookOnly: Story = {
   args: {
-    routeParams: { ':appId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   parameters: {
     msw: {

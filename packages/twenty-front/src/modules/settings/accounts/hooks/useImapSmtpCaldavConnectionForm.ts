@@ -17,7 +17,6 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import {
   isProtocolConfigured,
   isProtocolConfiguredForUpdate,
@@ -68,7 +67,6 @@ export const useImapSmtpCaldavConnectionForm = ({
   connectedAccountId,
 }: UseConnectionFormProps = {}) => {
   const navigate = useNavigateSettings();
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
   const { i18n } = useLingui();
 
   const connectionSchema = useMemo(
@@ -202,12 +200,9 @@ export const useImapSmtpCaldavConnectionForm = ({
         const { connectedAccountId: returnedConnectedAccountId } =
           data?.saveImapSmtpCaldavAccount ?? {};
 
-        navigate(
-          resolveAccountsSettingsPath(SettingsPath.AccountsConfiguration),
-          {
-            connectedAccountId: returnedConnectedAccountId,
-          },
-        );
+        navigate(SettingsPath.AccountsConfiguration, {
+          connectedAccountId: returnedConnectedAccountId,
+        });
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
       }
@@ -219,7 +214,6 @@ export const useImapSmtpCaldavConnectionForm = ({
       connectedAccountId,
       enqueueToast,
       navigate,
-      resolveAccountsSettingsPath,
     ],
   );
 

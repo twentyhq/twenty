@@ -4,9 +4,9 @@ import { SettingsApplicationPreferences } from '~/pages/settings/accounts/Settin
 import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
 
 export const SettingsAppPreferencesApp = () => {
-  const { appId } = useParams<{ appId: string }>();
+  const { applicationId } = useParams<{ applicationId: string }>();
 
-  return isBuiltInAccountAppId(appId) ? (
+  return isBuiltInAccountAppId(applicationId) ? (
     <SettingsBuiltInAccountApp />
   ) : (
     <SettingsApplicationPreferences />

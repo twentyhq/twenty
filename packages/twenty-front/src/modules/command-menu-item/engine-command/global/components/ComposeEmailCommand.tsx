@@ -6,7 +6,6 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -16,7 +15,6 @@ export const ComposeEmailCommand = () => {
     useFirstConnectedAccount();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
 
   const {
     objectMetadataItem,
@@ -60,7 +58,7 @@ export const ComposeEmailCommand = () => {
 
   const handleExecute = () => {
     if (!isDefined(connectedAccountId)) {
-      navigateSettings(resolveAccountsSettingsPath(SettingsPath.NewAccount));
+      navigateSettings(SettingsPath.NewAccount);
 
       return;
     }

@@ -26,7 +26,7 @@ export const useAccountsConfigurationCompletionPath = (
 
   if (isDefined(builtInAccountApp)) {
     return getSettingsPath(SettingsPath.AppPreferencesApp, {
-      appId: builtInAccountApp.id,
+      applicationId: builtInAccountApp.id,
     });
   }
 

@@ -2,14 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
+import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { getSettingsPath } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
@@ -18,10 +16,7 @@ import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useIm
 export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
 
   const {
     formMethods,
@@ -44,14 +39,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             children: t`User`,
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
-          {
-            children: isAppPreferencesEnabled
-              ? t`Apps preferences`
-              : t`Accounts`,
-            href: getSettingsPath(
-              resolveAccountsSettingsPath(SettingsPath.Accounts),
-            ),
-          },
+          accountsBreadcrumbLink,
           { children: t`New Account` },
         ]}
         actionButton={
@@ -59,9 +47,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}
-            onCancel={() =>
-              navigate(resolveAccountsSettingsPath(SettingsPath.Accounts))
-            }
+            onCancel={() => navigate(SettingsPath.Accounts)}
             onSave={handleSubmit((data) => handleSave(data))}
           />
         }

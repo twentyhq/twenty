@@ -17,7 +17,6 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useCalendarEventForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useCalendarEventForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -54,7 +53,6 @@ export const WorkflowEditActionCreateCalendarEvent = ({
   });
 
   const navigate = useNavigateSettings();
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { accounts: myAccounts, loading } = useMyConnectedAccounts();
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -123,9 +121,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
               ? {
                   onClick: () => {
                     closeSidePanelMenu();
-                    navigate(
-                      resolveAccountsSettingsPath(SettingsPath.NewAccount),
-                    );
+                    navigate(SettingsPath.NewAccount);
                   },
                   Icon: IconPlus,
                   text: t`Add account`,

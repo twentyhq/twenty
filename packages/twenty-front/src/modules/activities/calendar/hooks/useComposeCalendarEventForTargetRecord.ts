@@ -5,7 +5,6 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useOpenComposeCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenComposeCalendarEventInSidePanel';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useResolveAccountsSettingsPath } from '@/settings/app-preferences/hooks/useResolveAccountsSettingsPath';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +14,6 @@ export const useComposeCalendarEventForTargetRecord = (
   targetRecord: ActivityTargetableObject,
 ) => {
   const navigateSettings = useNavigateSettings();
-  const { resolveAccountsSettingsPath } = useResolveAccountsSettingsPath();
   const { userTimezone } = useUserTimezone();
   const { accounts, loading: accountsLoading } = useMyConnectedAccounts();
   const { openComposeCalendarEventInSidePanel } =
@@ -43,7 +41,7 @@ export const useComposeCalendarEventForTargetRecord = (
     }
 
     if (!isDefined(preferredAccount)) {
-      navigateSettings(resolveAccountsSettingsPath(SettingsPath.NewAccount));
+      navigateSettings(SettingsPath.NewAccount);
 
       return;
     }

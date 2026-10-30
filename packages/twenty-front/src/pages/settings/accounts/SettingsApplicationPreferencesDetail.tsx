@@ -172,7 +172,7 @@ export const SettingsApplicationPreferencesDetail = ({
               navigate(
                 getSettingsPath(
                   SettingsPath.AppPreferencesApp,
-                  { appId: application.id },
+                  { applicationId: application.id },
                   undefined,
                   configurationTabId,
                 ),
