@@ -21,6 +21,7 @@ export const USER_QUERY_FRAGMENT = gql`
     lastName
     email
     hasPassword
+    mustChangePassword
     canAccessFullAdminPanel
     canImpersonate
     supportUserHash

@@ -32,6 +32,7 @@ import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input'
 import { AuthorizeAppDTO } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AvailableWorkspacesAndAccessTokensDTO } from 'src/engine/core-modules/auth/dto/available-workspaces-and-access-tokens.dto';
+import { ChangeRequiredPasswordInput } from 'src/engine/core-modules/auth/dto/change-required-password.input';
 import { EmailPasswordResetLinkDTO } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
@@ -40,6 +41,7 @@ import { GetAuthorizationUrlForSsoInput } from 'src/engine/core-modules/auth/dto
 import { InvalidatePasswordDTO } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 import { TransientTokenDTO } from 'src/engine/core-modules/auth/dto/transient-token.dto';
+import { UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetTokenDTO } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
@@ -1308,6 +1310,40 @@ export class AuthResolver {
     await this.authService.updatePassword(id, newPassword);
 
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
+  }
+
+  @Mutation(() => UpdatePasswordDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
+  @AllowSuspendedWorkspace()
+  async changeRequiredPassword(
+    @Args() { newPassword }: ChangeRequiredPasswordInput,
+    @AuthUser() user: AuthContextUser,
+    @Context() context: { req: Request },
+  ): Promise<UpdatePasswordDTO> {
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(context.req);
+    const currentSession = isDefined(sessionToken)
+      ? await this.userSessionService.findSessionByToken(sessionToken)
+      : null;
+
+    return await this.authService.changeRequiredPassword(
+      user.id,
+      newPassword,
+      currentSession?.userId === user.id ? currentSession.id : undefined,
+    );
   }
 
   @Query(() => ValidatePasswordResetTokenDTO)

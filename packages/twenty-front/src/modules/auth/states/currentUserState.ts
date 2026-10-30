@@ -15,6 +15,7 @@ export type CurrentUser = Pick<
   | 'firstName'
   | 'lastName'
   | 'hasPassword'
+  | 'mustChangePassword'
 >;
 
 export const currentUserState = createAtomState<CurrentUser | null>({

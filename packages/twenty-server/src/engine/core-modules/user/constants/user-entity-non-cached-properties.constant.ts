@@ -11,4 +11,5 @@ export const USER_ENTITY_NON_CACHED_PROPERTIES = [
   'previousOnboardingStatus',
   'currentWorkspace',
   'currentUserWorkspace',
+  'mustChangePassword',
 ] as const satisfies ReadonlyArray<keyof UserEntity>;

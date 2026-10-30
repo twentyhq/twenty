@@ -34,6 +34,12 @@ const PasswordReset = lazy(() =>
   })),
 );
 
+const ChangeRequiredPassword = lazy(() =>
+  import('~/pages/auth/ChangeRequiredPassword').then((module) => ({
+    default: module.ChangeRequiredPassword,
+  })),
+);
+
 const Authorize = lazy(() =>
   import('~/pages/auth/Authorize').then((module) => ({
     default: module.Authorize,
@@ -140,6 +146,14 @@ const createWorkspaceAppRouter = ({
                   element: (
                     <LazyRoute fallback={null}>
                       <PasswordReset />
+                    </LazyRoute>
+                  ),
+                },
+                {
+                  path: AppPath.ChangePassword,
+                  element: (
+                    <LazyRoute fallback={null}>
+                      <ChangeRequiredPassword />
                     </LazyRoute>
                   ),
                 },

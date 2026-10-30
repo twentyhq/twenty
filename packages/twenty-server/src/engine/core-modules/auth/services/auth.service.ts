@@ -25,6 +25,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
+  compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
@@ -702,6 +703,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
+    exceptSessionId?: string,
   ): Promise<UpdatePasswordDTO> {
     if (!userId) {
       throw new AuthException(
@@ -747,6 +749,7 @@ export class AuthService {
 
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
+      mustChangePassword: false,
     });
 
     await this.appTokenRepository.update(
@@ -763,6 +766,7 @@ export class AuthService {
     await this.userSessionService.revokeAllSessionsForUser({
       userId,
       reason: UserSessionRevokedReason.PasswordChanged,
+      exceptSessionId,
     });
 
     const emailTemplate = PasswordUpdateNotifyEmail({
@@ -790,6 +794,36 @@ export class AuthService {
     });
 
     return { success: true };
+  }
+
+  async changeRequiredPassword(
+    userId: string,
+    newPassword: string,
+    currentSessionId?: string,
+  ): Promise<UpdatePasswordDTO> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user?.mustChangePassword) {
+      throw new AuthException(
+        'Password change is not required',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      isDefined(user.passwordHash) &&
+      (await compareHash(newPassword, user.passwordHash))
+    ) {
+      throw new AuthException(
+        'New password must differ from the temporary password',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Choose a password different from your temporary one.`,
+        },
+      );
+    }
+
+    return await this.updatePassword(userId, newPassword, currentSessionId);
   }
 
   async findWorkspaceFromInviteHashOrFail(

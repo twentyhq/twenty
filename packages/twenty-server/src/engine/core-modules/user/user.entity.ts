@@ -77,6 +77,10 @@ export class UserEntity {
   canAccessFullAdminPanel: boolean;
 
   @Field()
+  @Column({ default: false })
+  mustChangePassword: boolean;
+
+  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

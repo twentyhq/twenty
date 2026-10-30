@@ -44,6 +44,7 @@ const mockCurrentUser = {
   firstName: 'fake-first-name',
   lastName: 'fake-last-name',
   hasPassword: true,
+  mustChangePassword: false,
 };
 
 const mockBilling: Billing = {

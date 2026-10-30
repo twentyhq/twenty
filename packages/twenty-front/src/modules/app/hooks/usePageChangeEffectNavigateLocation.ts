@@ -2,6 +2,7 @@ import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectP
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
@@ -85,6 +86,12 @@ export const usePageChangeEffectNavigateLocation = () => {
     isOnboardingCheckoutPendingState,
   );
 
+  const currentUser = useAtomStateValue(currentUserState);
+  const isOnChangePasswordPage = isMatchingLocation(
+    location,
+    AppPath.ChangePassword,
+  );
+
   if (
     (!isLogged || !isOnAWorkspace || !isDefined(currentWorkspace)) &&
     !someMatchingLocationOf([
@@ -93,6 +100,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     ])
   ) {
     return AppPath.SignInUp;
+  }
+
+  if (currentUser?.mustChangePassword === true) {
+    return isOnChangePasswordPage ? undefined : AppPath.ChangePassword;
   }
 
   if (
@@ -194,6 +205,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {
     return resolvedReturnToPath ?? defaultHomePagePath;
+  }
+
+  if (isOnChangePasswordPage) {
+    return defaultHomePagePath;
   }
 
   if (isMatchingLocation(location, AppPath.Dpa)) {

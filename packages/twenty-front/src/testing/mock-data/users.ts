@@ -32,6 +32,7 @@ type MockedUser = Pick<
   | 'userVars'
   | 'availableWorkspaces'
   | 'hasPassword'
+  | 'mustChangePassword'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -199,6 +200,7 @@ export const mockedUserData: MockedUser = {
   canAccessFullAdminPanel: false,
   canImpersonate: false,
   hasPassword: true,
+  mustChangePassword: false,
   supportUserHash:
     'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
   workspaceMember: mockedWorkspaceMemberData,
@@ -265,6 +267,7 @@ export const mockedOnboardingUserData = (
     firstName: '',
     lastName: '',
     hasPassword: false,
+    mustChangePassword: false,
     canAccessFullAdminPanel: false,
     canImpersonate: false,
     supportUserHash:

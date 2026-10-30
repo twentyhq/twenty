@@ -6,4 +6,5 @@ export const AUTH_AND_ONBOARDING_PATHS = [
   ...ONGOING_USER_CREATION_PATHS,
   ...ONBOARDING_PATHS,
   AppPath.ResetPassword,
+  AppPath.ChangePassword,
 ];

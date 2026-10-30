@@ -105,6 +105,7 @@ const setupMockState = (
   isBillingEnabled: boolean = true,
   isMinimalMetadataReady: boolean = true,
   isOnboardingCheckoutPending: boolean = false,
+  currentUser: object | null = null,
 ) => {
   jest
     .mocked(useAtomStateValue)
@@ -114,7 +115,8 @@ const setupMockState = (
     .mockReturnValueOnce(isMinimalMetadataReady)
     .mockReturnValueOnce(verifyEmailRedirectPath)
     .mockReturnValueOnce(returnToPath ?? '')
-    .mockReturnValueOnce(isOnboardingCheckoutPending);
+    .mockReturnValueOnce(isOnboardingCheckoutPending)
+    .mockReturnValueOnce(currentUser);
 };
 
 // prettier-ignore
@@ -174,6 +176,16 @@ const testCases: {
   { loc: AppPath.ResetPassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: '/invite-team' },
   { loc: AppPath.ResetPassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
   { loc: AppPath.ResetPassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.ChangePassword, isLogged: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.WorkspaceActivation },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_CALL, res: AppPath.BookCall },
+  { loc: AppPath.ChangePassword, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: defaultHomePagePath },
 
   { loc: AppPath.VerifyEmail, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.VerifyEmail, isLogged: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, verifyEmailRedirectPath: '/nextPath?key=value', res: '/nextPath?key=value' },
@@ -545,6 +557,71 @@ describe('usePageChangeEffectNavigateLocation — authenticated with no current 
       setupMockState(undefined, undefined, undefined, null);
 
       expect(usePageChangeEffectNavigateLocation()).toEqual(AppPath.SignInUp);
+    },
+  );
+});
+
+describe('usePageChangeEffectNavigateLocation — user must change password', () => {
+  it.each([
+    {
+      loc: AppPath.Index,
+      isLogged: true,
+      isWorkspaceSuspended: false,
+      onboardingStatus: OnboardingStatus.COMPLETED,
+      res: AppPath.ChangePassword,
+    },
+    {
+      loc: AppPath.TasksPage,
+      isLogged: true,
+      isWorkspaceSuspended: true,
+      onboardingStatus: OnboardingStatus.COMPLETED,
+      res: AppPath.ChangePassword,
+    },
+    {
+      loc: AppPath.CreateProfile,
+      isLogged: true,
+      isWorkspaceSuspended: false,
+      onboardingStatus: OnboardingStatus.PROFILE_CREATION,
+      res: AppPath.ChangePassword,
+    },
+    {
+      loc: AppPath.ChangePassword,
+      isLogged: true,
+      isWorkspaceSuspended: false,
+      onboardingStatus: OnboardingStatus.PROFILE_CREATION,
+      res: undefined,
+    },
+    {
+      loc: AppPath.ChangePassword,
+      isLogged: false,
+      isWorkspaceSuspended: false,
+      onboardingStatus: undefined,
+      res: AppPath.SignInUp,
+    },
+  ])(
+    'returns $res from $loc',
+    ({ loc, isLogged, isWorkspaceSuspended, onboardingStatus, res }) => {
+      setupMockIsMatchingLocation(loc);
+      setupMockOnboardingStatus(onboardingStatus);
+      setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
+      setupMockIsLogged(isLogged);
+      setupMockIsOnAWorkspace(true);
+      setupMockUseQuery();
+      setupMockUseLocation(loc);
+      setupMockState(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true,
+        true,
+        false,
+        {
+          mustChangePassword: true,
+        },
+      );
+
+      expect(usePageChangeEffectNavigateLocation()).toEqual(res);
     },
   );
 });
