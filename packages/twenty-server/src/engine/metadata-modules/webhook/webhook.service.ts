@@ -92,12 +92,12 @@ export class WebhookService {
       return null;
     }
 
-    const flatRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: roleId,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    return isDefined(flatRole) ? fromFlatRoleToRoleDto(flatRole) : null;
+    return fromFlatRoleToRoleDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: roleId,
+        flatEntityMaps: flatRoleMaps,
+      }),
+    );
   }
 
   async create({
@@ -147,10 +147,18 @@ export class WebhookService {
       flatRoleTargetMaps,
       flatRoleMaps,
       flatAgentMaps,
-      flatWebhookMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: flatWebhookToCreate,
-        flatEntityMaps: flatWebhookMaps,
-      }),
+      // A duplicate id is left for the migration validation to report
+      flatWebhookMaps: isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatWebhookToCreate.id,
+          flatEntityMaps: flatWebhookMaps,
+        }),
+      )
+        ? flatWebhookMaps
+        : addFlatEntityToFlatEntityMapsOrThrow({
+            flatEntity: flatWebhookToCreate,
+            flatEntityMaps: flatWebhookMaps,
+          }),
     });
 
     const validateAndBuildResult =

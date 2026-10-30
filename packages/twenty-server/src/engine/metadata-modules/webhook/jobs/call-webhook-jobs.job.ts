@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import groupBy from 'lodash.groupby';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -97,10 +98,15 @@ export class CallWebhookJobsJob {
 
     const webhookEvents: CallWebhookJobData[] = [];
 
-    for (const webhook of webhooks) {
+    const webhooksByRoleId = groupBy(
+      webhooks.filter((webhook) => isDefined(webhookRoleMap[webhook.id])),
+      (webhook) => webhookRoleMap[webhook.id],
+    );
+
+    for (const [roleId, roleWebhooks] of Object.entries(webhooksByRoleId)) {
       const readableEvents = await resolveEventsReadableByRole({
+        roleId,
         // A webhook reads through its role only, never with its storing application's ownership rights
-        roleId: webhookRoleMap[webhook.id] ?? null,
         owningApplicationId: undefined,
         workspaceEventBatch: workspaceEventBatchWithFlatObjectMetadata,
         eventRecordAccessGate,
@@ -118,7 +124,7 @@ export class CallWebhookJobsJob {
             ...workspaceEventBatch,
             events: readableEvents,
           },
-          webhooks: [webhook],
+          webhooks: roleWebhooks,
         }),
       );
     }
