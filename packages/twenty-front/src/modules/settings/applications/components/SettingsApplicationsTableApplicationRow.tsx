@@ -10,6 +10,7 @@ import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applica
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -50,23 +51,26 @@ export const SettingsApplicationsTableApplicationRow = ({
     middleColumn === 'type' &&
     statuses.some((status) => status.type === 'updateAvailable');
 
+  const middleByColumn: Record<
+    SettingsApplicationTableRowMiddleColumn,
+    ReactNode
+  > = {
+    type: sourceTypeLabel,
+    status: <SettingsApplicationStatusCell statuses={statuses} />,
+    typeOrStatus: (
+      <SettingsApplicationTypeOrStatusCell
+        typeLabel={sourceTypeLabel}
+        statuses={statuses}
+      />
+    ),
+  };
+
   return (
     <SettingsApplicationTableRow
       middleColumn={middleColumn}
       link={link}
       name={<ApplicationDisplay application={application} />}
-      middle={
-        middleColumn === 'type' ? (
-          sourceTypeLabel
-        ) : middleColumn === 'status' ? (
-          <SettingsApplicationStatusCell statuses={statuses} />
-        ) : (
-          <SettingsApplicationTypeOrStatusCell
-            typeLabel={sourceTypeLabel}
-            statuses={statuses}
-          />
-        )
-      }
+      middle={middleByColumn[middleColumn]}
       details={
         <>
           <OverflowingTextWithTooltip
