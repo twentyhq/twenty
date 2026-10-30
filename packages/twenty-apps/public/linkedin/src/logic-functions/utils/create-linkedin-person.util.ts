@@ -5,8 +5,6 @@ import { findPersonIdsByLinkedinHandle } from 'src/logic-functions/utils/find-pe
 import { getLinkedinPersonId } from 'src/logic-functions/utils/get-linkedin-person-id.util';
 import { getLinkedinProfileSlug } from 'src/logic-functions/utils/get-linkedin-profile-slug.util';
 
-const coreApiClient = new CoreApiClient({ runAs: 'application' });
-
 export const createLinkedinPerson = async ({
   firstName,
   lastName,
@@ -25,7 +23,9 @@ export const createLinkedinPerson = async ({
   const id = await getLinkedinPersonId(slug);
 
   try {
-    const { createPerson } = await coreApiClient.mutation({
+    const { createPerson } = await new CoreApiClient({
+      runAs: 'application',
+    }).mutation({
       createPerson: {
         __args: {
           data: {

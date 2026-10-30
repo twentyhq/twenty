@@ -1,7 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const coreApiClient = new CoreApiClient({ runAs: 'application' });
-
 export const setPersonLinkedinLink = async ({
   personId,
   handle,
@@ -9,7 +7,7 @@ export const setPersonLinkedinLink = async ({
   personId: string;
   handle: string;
 }): Promise<void> => {
-  await coreApiClient.mutation({
+  await new CoreApiClient({ runAs: 'application' }).mutation({
     updatePerson: {
       __args: {
         id: personId,
