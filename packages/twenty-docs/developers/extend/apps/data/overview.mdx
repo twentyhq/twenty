@@ -57,8 +57,9 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 | **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
 | **Index** | A database index to speed up a recurring query on one of your objects | `defineIndex()` |
 | **Timeline activity type** | An automatic audit event or explicit domain event shown in record timelines | `defineTimelineActivityType()` |
+| **Related record path** | A chain of up to three relations along which access to a record extends to its related records | `defineRelatedRecordPath()` |
 
-The CLI detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/indexes/`, and `src/timeline-activity-types/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+The CLI detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/`, and `src/related-record-paths/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 ## Indexes (optional)
 
@@ -103,6 +104,30 @@ defineIndex({
 - Each object is capped at 10 custom indexes (the framework's own indexes don't count).
 
 Order the `fields` array the way Postgres should use it — leftmost column first, like a phone book. Indexes are not free: every write to the table updates them. Add one only when you have a query that needs it.
+
+## Related record paths (optional)
+
+A related record path starts on an object and follows up to three relation fields, each on the object the previous one reached. Record permissions use these paths to extend access from a record to its related records.
+
+- An **inherent** path (`isInherent: true`) applies whenever the starting record is readable, however that access was granted. Use it for records that belong to their parent, such as a post card's attachments.
+- A **regular** path applies only when access to the starting record comes directly from a role, so workspaces choose which ones to rely on.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Add `secondFieldMetadataUniversalIdentifier` and `thirdFieldMetadataUniversalIdentifier` for longer paths. Each hop must be an active relation on the object reached so far, a path can't visit the same object twice, and two paths can't use the same hops.
 
 <Note>
 Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/developers/extend/apps/logic/connections).
