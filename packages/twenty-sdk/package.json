@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-sdk"
   },
-  "version": "2.54.2",
+  "version": "2.54.3",
   "sideEffects": false,
   "files": [
     "dist",
