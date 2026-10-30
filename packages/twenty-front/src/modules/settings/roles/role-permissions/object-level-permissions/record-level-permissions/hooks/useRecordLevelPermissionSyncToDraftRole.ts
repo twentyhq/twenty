@@ -35,10 +35,13 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
   const syncToDraftRole = useCallback(() => {
     setSettingsDraftRole((previousRole) => {
-      const otherObjectPredicates = (
+      // The filter editor cannot show predicates reached through a relation, so they are kept as stored
+      const predicatesNotManagedByFilters = (
         previousRole.rowLevelPermissionPredicates ?? []
       ).filter(
-        (predicate) => predicate.objectMetadataId !== objectMetadataItem.id,
+        (predicate) =>
+          predicate.objectMetadataId !== objectMetadataItem.id ||
+          isDefined(predicate.relationFieldMetadataId),
       );
 
       const currentObjectGroupIds = new Set(
@@ -76,7 +79,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
       return {
         ...previousRole,
         rowLevelPermissionPredicates: [
-          ...otherObjectPredicates,
+          ...predicatesNotManagedByFilters,
           ...newPredicates,
         ],
         rowLevelPermissionPredicateGroups: [
