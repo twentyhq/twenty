@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -17,7 +17,6 @@ import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-mo
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
-import { buildAgentChatInitialMessageQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-initial-message-query.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { resolveAgentChatAssistantParticipation } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-assistant-participation.util';
@@ -25,7 +24,9 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
@@ -41,6 +42,8 @@ export class AgentChatThreadService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
@@ -564,23 +567,33 @@ export class AgentChatThreadService {
     messageId?: string;
   }): Promise<boolean> {
     await this.getWritableThread(args);
-    const [messageState] = await this.threadRepository.query(
-      args.workspaceId,
-      ({ manager, table }) => {
-        const initialMessageQuery = buildAgentChatInitialMessageQuery({
-          ...args,
-          messageId,
-          messageTable: table('agentMessage'),
-        });
 
-        return manager.query<{ isInitialMessage: boolean }[]>(
-          initialMessageQuery.query,
-          initialMessageQuery.parameters,
-        );
-      },
+    const { workspaceId, threadId, workspaceMemberId } = args;
+    const firstMessage = await this.messageRepository.findOne(workspaceId, {
+      where: { threadId, role: Not(AgentMessageRole.SYSTEM) },
+      select: ['id', 'role', 'senderWorkspaceMemberId'],
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+
+    if (!isDefined(messageId)) {
+      return !isDefined(firstMessage);
+    }
+
+    const isFirstMessageFromMember =
+      firstMessage?.id === messageId &&
+      firstMessage.role === AgentMessageRole.USER &&
+      firstMessage.senderWorkspaceMemberId === workspaceMemberId;
+
+    if (!isFirstMessageFromMember) {
+      return false;
+    }
+
+    const hasOtherUserMessage = await this.messageRepository.existsBy(
+      workspaceId,
+      { threadId, role: AgentMessageRole.USER, id: Not(messageId) },
     );
 
-    return messageState.isInitialMessage;
+    return !hasOtherUserMessage;
   }
 
   async addAssistantParticipant(
