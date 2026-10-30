@@ -18,9 +18,14 @@ const applicationSecretSchema = z.string().trim().min(1);
 const MAX_BODY_BYTES = 16 * 1024;
 const WEBHOOK_TIMEOUT_MS = 8_000;
 
+// Twenty workflow webhooks cannot read headers, so they get the secret in the
+// body, and they answer { success: true } where logic functions answer { ok: true }.
+type UpstreamKind = 'logic-function' | 'workflow-webhook';
+
 type WebhookForwardingRouteConfig<TSchema extends z.ZodType> = {
   webhookUrlEnvVar: string;
   secretEnvVar: string;
+  upstreamKind?: UpstreamKind;
   schema: TSchema;
   buildPayload: (data: z.infer<TSchema>) => object;
   logTag: string;
@@ -28,9 +33,15 @@ type WebhookForwardingRouteConfig<TSchema extends z.ZodType> = {
   failureMessage: string;
 };
 
+const UPSTREAM_SUCCESS_KEY: Record<UpstreamKind, string> = {
+  'logic-function': 'ok',
+  'workflow-webhook': 'success',
+};
+
 export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
   webhookUrlEnvVar,
   secretEnvVar,
+  upstreamKind = 'logic-function',
   schema,
   buildPayload,
   logTag,
@@ -133,7 +144,11 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     const upstream = await fetchWithTimeout(
       webhookUrl,
       {
-        body: JSON.stringify(payload),
+        body: JSON.stringify(
+          upstreamKind === 'workflow-webhook'
+            ? { ...payload, applicationSecret }
+            : payload,
+        ),
         headers: {
           'Content-Type': 'application/json',
           'X-Application-Secret': applicationSecret,
@@ -184,10 +199,12 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     if (
       typeof logicResult !== 'object' ||
       logicResult === null ||
-      (logicResult as Record<string, unknown>)['ok'] !== true
+      (logicResult as Record<string, unknown>)[
+        UPSTREAM_SUCCESS_KEY[upstreamKind]
+      ] !== true
     ) {
       console.error(
-        `[${logTag}] logic function returned non-ok result`,
+        `[${logTag}] upstream returned a non-success result`,
         JSON.stringify({
           body: upstreamBody.slice(0, 2000),
           payloadKeys: Object.keys(payload),

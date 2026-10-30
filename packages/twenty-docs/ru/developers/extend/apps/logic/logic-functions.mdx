@@ -293,28 +293,25 @@ export default defineLogicFunction({
 Конечная точка доступна по адресу:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Идентификатор — это `id` резолвера: первичный ключ, который сервер назначает при первой синхронизации приложения с рабочим пространством владельца, а не `universalIdentifier` из вашего манифеста. Получите его из API `/metadata` рабочего пространства владельца, затем зарегистрируйте этот URL у провайдера:
+Первый сегмент — это идентификатор регистрации вашего приложения, второй — `universalIdentifier` резолвера из вашего манифеста. Маршрут разрешается только в резолвер этой регистрации в рабочем пространстве её владельца. Когда ваше приложение само регистрирует вебхук, сформируйте URL внутри логической функции с помощью `getServerRouteUrl`; Twenty внедряет базовый URL серверных маршрутов вашего приложения как `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  URL-адрес с `universalIdentifier` резолвера пока всё ещё разрешается,
-  а ответ содержит заголовок `Deprecation`. `universalIdentifier` является
-  уникальным для каждого рабочего пространства, а не глобально: если другая регистрация,
-  принадлежащая другому рабочему пространству, объявляет такой же идентификатор, платформа возвращает `404` для этого
-  URL-адреса вместо выбора между ними. Переведите URL-адреса, зарегистрированные у ваших
-  провайдеров, в форму `id`.
+  URL-адреса, содержащие только `id` или `universalIdentifier` резолвера
+  (`/webhooks/server/:identifier`), пока всё ещё разрешаются, и оба возвращают
+  заголовок `Deprecation`. Форма `universalIdentifier` возвращает `409`, когда две
+  регистрации объявляют один и тот же идентификатор. Переместите URL-адреса, зарегистрированные у ваших
+  провайдеров, в форму регистрации.
 </Note>
 
 **Ответ на проверочный `GET`.** Некоторые поставщики проверяют конечную точку перед отправкой данных на неё: они отправляют `GET` с проверочным запросом на тот же URL, на который позднее будут `POST` события. Meta's WhatsApp Cloud API — один из них. Маршрут сервера отвечает только на `POST`, если не указано иное, поэтому объявите оба метода:

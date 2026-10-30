@@ -40,6 +40,10 @@ const fallbackComponentRegistry =
 
 type FrontComponentRendererProps = {
   componentUrl: string;
+  componentSource?: string;
+  componentProps?: Record<string, unknown>;
+  sharedDependenciesSource?: string;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
@@ -57,6 +61,10 @@ type FrontComponentRendererProps = {
 
 export const FrontComponentRenderer = ({
   componentUrl,
+  componentSource,
+  componentProps,
+  sharedDependenciesSource,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
@@ -110,6 +118,10 @@ export const FrontComponentRenderer = ({
       >
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
+          componentSource={componentSource}
+          componentProps={componentProps}
+          sharedDependenciesSource={sharedDependenciesSource}
+          onReady={onReady}
           applicationAccessToken={applicationAccessToken}
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
