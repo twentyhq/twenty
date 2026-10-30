@@ -223,7 +223,7 @@ I workflow `ci.yml` e `cd.yml` fanno riferimento ad azioni riutilizzabili a `@ma
 
 ## Pubblicazione su npm
 
-La pubblicazione su npm rende la tua app idonea per il marketplace di Twenty. Dopo la sincronizzazione del catalogo e l'eventuale [configurazione delle route del server](#setting-up-server-routes) richiesta, gli spazi di lavoro possono sfogliarla, installarla e aggiornarla dall'interfaccia utente. Le app della community vengono visualizzate quando gli utenti disattivano il filtro **Solo verificate**.
+La pubblicazione su npm rende la tua app idonea per il marketplace di Twenty. Dopo la sincronizzazione del catalogo e qualsiasi [configurazione delle route del server](#setting-up-server-routes) richiesta, gli spazi di lavoro possono visualizzarla, installarla e aggiornarla dall'interfaccia utente una volta superata la [revisione del marketplace](/it/developers/extend/apps/operations/marketplace-review).
 
 ### Requisiti
 
@@ -373,17 +373,13 @@ Se riscontri problemi nel rivendicare la tua app, contattaci su [Discord](https:
   Questa configurazione è già gestita per te su Twenty Cloud.
 </Accordion>
 
-## Visibilità e verifica nel marketplace
+## Visibilità e revisione del Marketplace
 
-La rivendicazione stabilisce la proprietà; non assegna un badge **Verificata**. Il marketplace usa per impostazione predefinita **Solo verificate**. Per trovare le app della community, vai a **Impostazioni > Applicazioni > Marketplace**, apri il filtro e deseleziona **Solo verificate**. Puoi anche condividere la pagina di installazione diretta della tua app usando **Le mie app > la tua app > Distribuzione > Copia link di condivisione**.
+Ogni app elencata nel marketplace ha superato la revisione di sicurezza e qualità di Twenty. Un'app appena pubblicata resta non elencata finché non supera la [revisione del marketplace](/it/developers/extend/apps/operations/marketplace-review); rivendicarla ne stabilisce la proprietà, ma non la inserisce nell'elenco.
 
-L'etichetta Verificata si applica attualmente alle app gestite da Twenty, per le quali il team può garantire sicurezza e qualità. Le app di terze parti possono essere pubblicate e installate senza questa etichetta.
+Un'app non elencata può comunque essere installata. In **Impostazioni > Applicazioni > Marketplace**, apri il filtro e attiva **Mostra app non elencate**, oppure condividi la pagina di installazione diretta dell'app usando **Le mie app > la tua app > Distribuzione > Copia link di condivisione**. Gli spazi di lavoro visualizzano un avviso che indica che l'app non è stata revisionata da Twenty.
 
-La [checklist di valutazione del marketplace di terze parti](/it/developers/extend/apps/operations/marketplace-review)
-proposta è un lavoro in corso. Descrive criteri di revisione ed evidenze specifici della versione,
-non un programma di certificazione disponibile.
-
-Se la tua app continua a non essere visibile con **Solo verificate** disattivato, verifica che la sincronizzazione del catalogo sia stata completata, che tutte le variabili del server richieste siano compilate e che l'eventuale configurazione delle route del server sia completa.
+Se la tua app è elencata ma non è ancora presente nel marketplace, verifica che la sincronizzazione del catalogo sia stata completata, che tutte le variabili del server richieste siano compilate e che qualsiasi configurazione delle route del server sia completata.
 
 ## Installazione delle app
 

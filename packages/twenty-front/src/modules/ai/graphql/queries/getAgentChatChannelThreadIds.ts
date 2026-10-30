@@ -5,6 +5,7 @@ export const GET_AGENT_CHAT_CHANNEL_THREAD_IDS = gql`
     $channelId: UUID!
     $status: AgentChatChannelThreadStatus
     $assignment: AgentChatChannelAssignmentFilter
+    $filter: AgentChatChannelThreadFilter
     $first: Int
     $after: String
   ) {
@@ -12,6 +13,7 @@ export const GET_AGENT_CHAT_CHANNEL_THREAD_IDS = gql`
       channelId: $channelId
       status: $status
       assignment: $assignment
+      filter: $filter
       first: $first
       after: $after
     ) {

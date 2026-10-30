@@ -626,11 +626,6 @@ msgstr ""
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr ""
 
-#. js-lingui-id: AnO6CC
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr ""
-
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -3068,7 +3063,6 @@ msgstr ""
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -4179,7 +4173,6 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr ""
@@ -4194,6 +4187,11 @@ msgstr ""
 msgid "Assigned to"
 msgstr ""
 
+#. js-lingui-id: iU3XRS
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+msgid "Assigned to me"
+msgstr ""
+
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
@@ -4205,7 +4203,6 @@ msgid "Assigned to you"
 msgstr ""
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr ""
@@ -12789,10 +12786,10 @@ msgstr ""
 msgid "Filter by record ID"
 msgstr ""
 
-#. js-lingui-id: jge9hE
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-msgid "Filter channel chats"
+#. js-lingui-id: /+U0Y/
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+msgid "Filter chats"
 msgstr ""
 
 #. js-lingui-id: /VmB4B
@@ -17298,12 +17295,6 @@ msgstr ""
 #. js-lingui-id: JBisyL
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
-msgstr ""
-
-#. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "Mine"
 msgstr ""
 
 #. js-lingui-id: 8GG+Pa
@@ -28561,8 +28552,7 @@ msgid "Unanswered"
 msgstr ""
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Unassigned"
 msgstr ""
 
@@ -29981,7 +29971,6 @@ msgid "view"
 msgstr ""
 
 #. js-lingui-id: jpctdh
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx

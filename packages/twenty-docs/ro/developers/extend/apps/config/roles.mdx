@@ -50,9 +50,19 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+<Note>
+  `SystemPermissionFlag.USER_APPS` și `SystemPermissionFlag.WORKSPACE_APPS`
+  sunt disponibile începând cu versiunea 2.54 a `twenty-sdk`; versiunile anterioare le denumesc
+  `CONNECTED_ACCOUNTS` și `APPLICATIONS`. Denumirile vechi sunt aliasuri depreciate
+  pentru aceleași indicatori, iar un rol păstrează fiecare indicator o singură dată. Enumerarea
+  `SystemPermissionFlag`, de exemplu cu `Object.keys`, încă afișează denumirile
+  vechi. API-ul raportează, de asemenea, aceste indicatori sub cheile lor vechi, de exemplu în
+  `currentUserWorkspace.permissionFlags`.
+</Note>
 
 ## Securitate la nivel de rând
 
