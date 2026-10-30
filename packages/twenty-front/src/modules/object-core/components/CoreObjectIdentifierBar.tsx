@@ -68,21 +68,21 @@ export const CoreObjectIdentifierBar = ({
     }
   };
 
+  const avatar = isDefined(icon)
+    ? undefined
+    : {
+        src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
+        colorSeed: recordId,
+        name: recordIdentifier?.name ?? '',
+        shape: recordIdentifier?.avatarShape ?? 'circle',
+      };
+
   return (
     <StyledBar>
       <HeaderIdentifier
         fontSize="lg"
         icon={icon}
-        avatar={
-          isDefined(icon)
-            ? undefined
-            : {
-                src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? ''),
-                colorSeed: recordId,
-                name: recordIdentifier?.name ?? '',
-                shape: recordIdentifier?.avatarShape ?? 'circle',
-              }
-        }
+        avatar={avatar}
         title={
           <TitleInput
             instanceId={`core-object-name-${recordId}`}

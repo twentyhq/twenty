@@ -11,10 +11,9 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-export const useCoreAgentRole = (agent: {
-  id: CoreAgent['id'];
-  roleId?: CoreAgent['roleId'];
-}) => {
+export const useCoreAgentRole = (
+  agent: Pick<CoreAgent, 'id'> & Partial<Pick<CoreAgent, 'roleId'>>,
+) => {
   const coreAgentNewRoleId = useAtomFamilyStateValue(
     coreAgentNewRoleIdFamilyState,
     agent.id,

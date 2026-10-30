@@ -1,15 +1,9 @@
 import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
-import {
-  CommandMenuItemAvailabilityType,
-  type CommandMenuItemFieldsFragment,
-} from '~/generated-metadata/graphql';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const buildCommandMenuItem = (
   availabilityType: CommandMenuItemAvailabilityType,
-) =>
-  ({
-    availabilityType,
-  }) as CommandMenuItemFieldsFragment;
+) => ({ availabilityType });
 
 describe('doesCommandMenuItemMatchObjectContext', () => {
   it('should hide an object command on a page without an object', () => {

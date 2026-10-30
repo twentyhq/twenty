@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPencil, IconTrash } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -23,12 +23,18 @@ type CoreAgentSectionListProps = {
 export const CoreAgentSectionList = ({
   items,
   emptyMessage,
-}: CoreAgentSectionListProps) => (
-  <CoreAgentSectionCard>
-    {items.length === 0 ? (
-      <StyledEmptyMessage>{emptyMessage}</StyledEmptyMessage>
-    ) : (
-      items.map((item) => (
+}: CoreAgentSectionListProps) => {
+  if (!isNonEmptyArray(items)) {
+    return (
+      <CoreAgentSectionCard>
+        <StyledEmptyMessage>{emptyMessage}</StyledEmptyMessage>
+      </CoreAgentSectionCard>
+    );
+  }
+
+  return (
+    <CoreAgentSectionCard>
+      {items.map((item) => (
         <ListItem
           key={item.id}
           startIcon={<ListItemIconContainer>{item.icon}</ListItemIconContainer>}
@@ -59,7 +65,7 @@ export const CoreAgentSectionList = ({
         >
           {item.label}
         </ListItem>
-      ))
-    )}
-  </CoreAgentSectionCard>
-);
+      ))}
+    </CoreAgentSectionCard>
+  );
+};

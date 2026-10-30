@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -18,7 +19,7 @@ const StyledErrorMessage = styled.div`
 `;
 
 type CoreAgentModelSectionProps = {
-  formValues: CoreAgentFormValues;
+  formValues: Pick<CoreAgentFormValues, 'modelId' | 'modelConfiguration'>;
   onFieldChange: (
     field: keyof CoreAgentFormValues,
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
@@ -48,7 +49,7 @@ export const CoreAgentModelSection = ({
         title={t`Model`}
         description={t`What AI model should your agent run on`}
       />
-      {aiModels.length === 0 ? (
+      {!isNonEmptyArray(aiModels) ? (
         <StyledErrorMessage>
           {t`No AI provider is configured on this instance.`}
         </StyledErrorMessage>
