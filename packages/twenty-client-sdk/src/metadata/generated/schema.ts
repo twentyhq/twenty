@@ -1712,7 +1712,7 @@ export interface GettingStartedProgress {
     __typename: 'GettingStartedProgress'
 }
 
-export type GettingStartedStep = 'CONNECT_MAILBOX' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
+export type GettingStartedStep = 'CONNECT_MAILBOX' | 'CUSTOMIZE_DATA_MODEL' | 'FOLLOW_UP_DEALS' | 'HANDOVER_DEALS' | 'IMPORT_DATA' | 'INSTALL_APP' | 'INVITE_TEAM'
 
 export interface GettingStartedStepDefinition {
     description: Scalars['String']
@@ -12495,6 +12495,7 @@ export const enumFileFolder = {
 
 export const enumGettingStartedStep = {
    CONNECT_MAILBOX: 'CONNECT_MAILBOX' as const,
+   CUSTOMIZE_DATA_MODEL: 'CUSTOMIZE_DATA_MODEL' as const,
    FOLLOW_UP_DEALS: 'FOLLOW_UP_DEALS' as const,
    HANDOVER_DEALS: 'HANDOVER_DEALS' as const,
    IMPORT_DATA: 'IMPORT_DATA' as const,

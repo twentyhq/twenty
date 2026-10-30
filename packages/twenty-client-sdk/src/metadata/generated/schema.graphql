@@ -2564,6 +2564,7 @@ type GettingStartedProgress {
 
 enum GettingStartedStep {
   CONNECT_MAILBOX
+  CUSTOMIZE_DATA_MODEL
   FOLLOW_UP_DEALS
   HANDOVER_DEALS
   IMPORT_DATA

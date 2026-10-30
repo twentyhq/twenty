@@ -1,4 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 export type GettingStartedStepContent = {
   title: MessageDescriptor;
@@ -8,6 +9,8 @@ export type GettingStartedStepContent = {
   iconColor: string;
   prompt?: {
     label: MessageDescriptor;
-    text: MessageDescriptor;
+    getText: (
+      companyEnrichment: WorkspaceCompanyEnrichment | null,
+    ) => MessageDescriptor;
   };
 };

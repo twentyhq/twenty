@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { GettingStartedStep } from 'src/engine/core-modules/getting-started/enums/getting-started-step.enum';
 import { type GettingStartedStepContent } from 'src/engine/core-modules/getting-started/types/getting-started-step-content.type';
+import { getGettingStartedDataModelPrompt } from 'src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util';
 
 export const GETTING_STARTED_STEP_CONTENT: Record<
   GettingStartedStep,
@@ -20,6 +21,17 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     description: msg`Bring your companies, contacts and deals from any CRM export.`,
     icon: 'IconFileImport',
     iconColor: 'gray',
+  },
+  [GettingStartedStep.CUSTOMIZE_DATA_MODEL]: {
+    title: msg`Tailor your workspace`,
+    doneTitle: msg`Setup request sent`,
+    description: msg`An agent shapes your objects and fields around how you work.`,
+    icon: 'IconHierarchy',
+    iconColor: 'green',
+    prompt: {
+      label: msg`Setup instructions`,
+      getText: getGettingStartedDataModelPrompt,
+    },
   },
   [GettingStartedStep.INSTALL_APP]: {
     title: msg`Install an app`,
@@ -50,7 +62,8 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     iconColor: 'purple',
     prompt: {
       label: msg`Follow-up instructions`,
-      text: msg`Every Monday, draft a follow-up email for each deal closing in the next 30 days.`,
+      getText: () =>
+        msg`Every Monday, draft a follow-up email for each deal closing in the next 30 days.`,
     },
   },
 };

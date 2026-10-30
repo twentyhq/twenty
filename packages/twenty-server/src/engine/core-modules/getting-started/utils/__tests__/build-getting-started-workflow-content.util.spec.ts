@@ -41,9 +41,9 @@ describe('buildGettingStartedWorkflowContent', () => {
           (manifestStep) => manifestStep.universalIdentifier,
         ),
       );
-      expect(GETTING_STARTED_STEP_PERMISSION_FLAGS[step]).toBe(
+      expect(GETTING_STARTED_STEP_PERMISSION_FLAGS[step]).toEqual([
         PermissionFlagType.WORKFLOWS,
-      );
+      ]);
     },
   );
 

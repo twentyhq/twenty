@@ -113,7 +113,7 @@ describe('gettingStarted (e2e)', () => {
   afterAll(deleteGettingStartedUserVars);
 
   describe('gettingStartedProgress', () => {
-    it('lists the steps in order and completes the connected mailbox step', async () => {
+    it('lists the steps in order, without the app step on an empty catalog, and completes the connected mailbox step', async () => {
       const response = await makeMetadataApiRequest({
         query: GETTING_STARTED_PROGRESS_QUERY,
       });
@@ -126,7 +126,7 @@ describe('gettingStarted (e2e)', () => {
       expect(steps).toEqual([
         { step: 'CONNECT_MAILBOX', kind: 'CUSTOM' },
         { step: 'IMPORT_DATA', kind: 'CUSTOM' },
-        { step: 'INSTALL_APP', kind: 'CUSTOM' },
+        { step: 'CUSTOMIZE_DATA_MODEL', kind: 'PROMPT' },
         { step: 'INVITE_TEAM', kind: 'CUSTOM' },
         { step: 'HANDOVER_DEALS', kind: 'WORKFLOW' },
         { step: 'FOLLOW_UP_DEALS', kind: 'PROMPT' },

@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 import { GETTING_STARTED_STEP_CONTENT } from 'src/engine/core-modules/getting-started/constants/getting-started-step-content.constant';
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
@@ -9,9 +10,11 @@ import { type GettingStartedStep } from 'src/engine/core-modules/getting-started
 
 export const buildGettingStartedStepDefinition = ({
   step,
+  companyEnrichment,
   translate,
 }: {
   step: GettingStartedStep;
+  companyEnrichment: WorkspaceCompanyEnrichment | null;
   translate: (descriptor: MessageDescriptor) => string;
 }): GettingStartedStepDefinitionDTO => {
   const { title, doneTitle, description, icon, iconColor, prompt } =
@@ -30,6 +33,8 @@ export const buildGettingStartedStepDefinition = ({
     icon,
     iconColor,
     promptLabel: isDefined(prompt) ? translate(prompt.label) : null,
-    prompt: isDefined(prompt) ? translate(prompt.text) : null,
+    prompt: isDefined(prompt)
+      ? translate(prompt.getText(companyEnrichment))
+      : null,
   };
 };
