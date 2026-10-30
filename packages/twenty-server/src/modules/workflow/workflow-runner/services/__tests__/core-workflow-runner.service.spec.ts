@@ -74,13 +74,6 @@ const buildService = (triggerType: WorkflowTriggerType) => {
       increaseWorkflowRunNotStartedCount: jest.fn(),
     } as never,
     {} as never,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          workspaceCustomFlatApplication: { id: 'workspace-custom-app' },
-        }),
-    } as never,
     new WorkflowRunJobScopeWorkspaceService(
       workspaceCacheService as never,
       {} as never,
