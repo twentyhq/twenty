@@ -9,12 +9,34 @@ export type StandardRelatedRecordPath = {
     fieldNames:
       | [AllStandardObjectFieldName<O>]
       | [AllStandardObjectFieldName<O>, string]
-      | [AllStandardObjectFieldName<O>, string, string];
+      | [AllStandardObjectFieldName<O>, string, string]
+      | [AllStandardObjectFieldName<O>, string, string, string];
   };
 }[AllStandardObjectName];
 
 // A path grants every object it passes through, so only the longest chains are declared.
 export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
+  {
+    objectName: 'company',
+    fieldNames: ['people', 'noteTargets', 'note', 'attachments'],
+  },
+  {
+    objectName: 'company',
+    fieldNames: ['people', 'noteTargets', 'note', 'timelineActivities'],
+  },
+  {
+    objectName: 'company',
+    fieldNames: ['people', 'taskTargets', 'task', 'attachments'],
+  },
+  {
+    objectName: 'company',
+    fieldNames: ['people', 'taskTargets', 'task', 'timelineActivities'],
+  },
+  {
+    objectName: 'company',
+    fieldNames: ['people', 'messageParticipants', 'message'],
+  },
+  { objectName: 'person', fieldNames: ['messageParticipants', 'message'] },
   { objectName: 'company', fieldNames: ['noteTargets', 'note', 'attachments'] },
   {
     objectName: 'company',

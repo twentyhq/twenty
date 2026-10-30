@@ -61,8 +61,10 @@ export class FlatRelatedRecordPathValidatorService {
   }): FlatEntityValidationError[] {
     const {
       objectMetadataUniversalIdentifier,
+      firstFieldMetadataUniversalIdentifier,
       secondFieldMetadataUniversalIdentifier,
       thirdFieldMetadataUniversalIdentifier,
+      fourthFieldMetadataUniversalIdentifier,
     } = universalFlatRelatedRecordPath;
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
@@ -79,14 +81,27 @@ export class FlatRelatedRecordPathValidatorService {
       ];
     }
 
+    const hopFieldMetadataUniversalIdentifiers = [
+      firstFieldMetadataUniversalIdentifier,
+      secondFieldMetadataUniversalIdentifier,
+      thirdFieldMetadataUniversalIdentifier,
+      fourthFieldMetadataUniversalIdentifier,
+    ];
+    const firstMissingHopIndex = hopFieldMetadataUniversalIdentifiers.findIndex(
+      (hopFieldMetadataUniversalIdentifier) =>
+        !isDefined(hopFieldMetadataUniversalIdentifier),
+    );
+
     if (
-      isDefined(thirdFieldMetadataUniversalIdentifier) &&
-      !isDefined(secondFieldMetadataUniversalIdentifier)
+      firstMissingHopIndex !== -1 &&
+      hopFieldMetadataUniversalIdentifiers
+        .slice(firstMissingHopIndex)
+        .some(isDefined)
     ) {
       return [
         buildInvalidInputError({
-          message: t`Related record path cannot skip its second relation`,
-          userFriendlyMessage: msg`Related record path cannot skip its second relation`,
+          message: t`Related record path cannot skip a relation`,
+          userFriendlyMessage: msg`Related record path cannot skip a relation`,
         }),
       ];
     }

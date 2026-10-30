@@ -6,6 +6,7 @@ export const RELATED_RECORD_PATH_GQL_FIELDS = `
   firstFieldMetadataId
   secondFieldMetadataId
   thirdFieldMetadataId
+  fourthFieldMetadataId
 `;
 
 export type RelatedRecordPathResponse = {
@@ -14,4 +15,5 @@ export type RelatedRecordPathResponse = {
   firstFieldMetadataId: string;
   secondFieldMetadataId: string | null;
   thirdFieldMetadataId: string | null;
+  fourthFieldMetadataId: string | null;
 };

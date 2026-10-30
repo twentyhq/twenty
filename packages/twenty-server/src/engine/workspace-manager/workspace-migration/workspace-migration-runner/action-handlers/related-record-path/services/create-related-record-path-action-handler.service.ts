@@ -33,6 +33,7 @@ export class CreateRelatedRecordPathActionHandlerService extends WorkspaceMigrat
       firstFieldMetadataId,
       secondFieldMetadataId,
       thirdFieldMetadataId,
+      fourthFieldMetadataId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -52,6 +53,7 @@ export class CreateRelatedRecordPathActionHandlerService extends WorkspaceMigrat
         firstFieldMetadataId,
         secondFieldMetadataId,
         thirdFieldMetadataId,
+        fourthFieldMetadataId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

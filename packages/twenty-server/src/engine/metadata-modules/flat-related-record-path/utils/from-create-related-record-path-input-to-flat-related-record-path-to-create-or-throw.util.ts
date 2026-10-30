@@ -22,6 +22,7 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
       | 'firstFieldMetadataId'
       | 'secondFieldMetadataId'
       | 'thirdFieldMetadataId'
+      | 'fourthFieldMetadataId'
     >;
     workspaceId: string;
     flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
@@ -36,6 +37,8 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
         createRelatedRecordPathInput.secondFieldMetadataId ?? null,
       thirdFieldMetadataId:
         createRelatedRecordPathInput.thirdFieldMetadataId ?? null,
+      fourthFieldMetadataId:
+        createRelatedRecordPathInput.fourthFieldMetadataId ?? null,
     };
 
     const relationUniversalIdentifiers =

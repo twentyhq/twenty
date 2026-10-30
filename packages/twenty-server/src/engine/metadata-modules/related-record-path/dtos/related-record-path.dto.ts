@@ -20,4 +20,7 @@ export class RelatedRecordPathDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   thirdFieldMetadataId: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  fourthFieldMetadataId: string | null;
 }

@@ -8,14 +8,17 @@ export const getRelatedRecordPathFieldMetadataUniversalIdentifiers = ({
   firstFieldMetadataUniversalIdentifier,
   secondFieldMetadataUniversalIdentifier,
   thirdFieldMetadataUniversalIdentifier,
+  fourthFieldMetadataUniversalIdentifier,
 }: Pick<
   UniversalFlatRelatedRecordPath,
   | 'firstFieldMetadataUniversalIdentifier'
   | 'secondFieldMetadataUniversalIdentifier'
   | 'thirdFieldMetadataUniversalIdentifier'
+  | 'fourthFieldMetadataUniversalIdentifier'
 >): string[] =>
   [
     firstFieldMetadataUniversalIdentifier,
     secondFieldMetadataUniversalIdentifier,
     thirdFieldMetadataUniversalIdentifier,
+    fourthFieldMetadataUniversalIdentifier,
   ].filter(isDefined);

@@ -82,7 +82,7 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
   let flatRelatedRecordPathMaps = createEmptyFlatEntityMaps();
 
   for (const standardRelatedRecordPath of STANDARD_RELATED_RECORD_PATHS) {
-    const [firstHop, secondHop, thirdHop] =
+    const [firstHop, secondHop, thirdHop, fourthHop] =
       resolveStandardRelatedRecordPathHops({
         standardRelatedRecordPath,
         flatFieldMetadataMaps,
@@ -94,7 +94,12 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
         universalIdentifier: getRelatedRecordPathUniversalIdentifier({
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION.universalIdentifier,
-          fieldMetadataUniversalIdentifiers: [firstHop, secondHop, thirdHop]
+          fieldMetadataUniversalIdentifiers: [
+            firstHop,
+            secondHop,
+            thirdHop,
+            fourthHop,
+          ]
             .filter(isDefined)
             .map((hop) => hop.fieldMetadataUniversalIdentifier),
         }),
@@ -114,6 +119,9 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
         thirdFieldMetadataId: thirdHop?.fieldMetadataId ?? null,
         thirdFieldMetadataUniversalIdentifier:
           thirdHop?.fieldMetadataUniversalIdentifier ?? null,
+        fourthFieldMetadataId: fourthHop?.fieldMetadataId ?? null,
+        fourthFieldMetadataUniversalIdentifier:
+          fourthHop?.fieldMetadataUniversalIdentifier ?? null,
         workspaceId,
         applicationId: twentyStandardApplicationId,
         applicationUniversalIdentifier:

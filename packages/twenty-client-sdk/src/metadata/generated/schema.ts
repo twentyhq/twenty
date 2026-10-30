@@ -3198,6 +3198,7 @@ export interface RecordTableConfiguration {
 
 export interface RelatedRecordPath {
     firstFieldMetadataId: Scalars['UUID']
+    fourthFieldMetadataId?: Scalars['UUID']
     id: Scalars['UUID']
     objectMetadataId: Scalars['UUID']
     secondFieldMetadataId?: Scalars['UUID']
@@ -5681,7 +5682,7 @@ export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],obj
 
 export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
 
-export interface CreateRelatedRecordPathInput {firstFieldMetadataId?: (Scalars['UUID'] | null),objectMetadataId?: (Scalars['UUID'] | null),secondFieldMetadataId?: (Scalars['UUID'] | null),thirdFieldMetadataId?: (Scalars['UUID'] | null)}
+export interface CreateRelatedRecordPathInput {firstFieldMetadataId?: (Scalars['UUID'] | null),fourthFieldMetadataId?: (Scalars['UUID'] | null),objectMetadataId?: (Scalars['UUID'] | null),secondFieldMetadataId?: (Scalars['UUID'] | null),thirdFieldMetadataId?: (Scalars['UUID'] | null)}
 
 export interface CreateRoleInput {canAccessAllAgentChatChannels?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['String'] | null),label: Scalars['String']}
 
@@ -7766,6 +7767,7 @@ export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: 
 
 export interface RelatedRecordPathGenqlSelection{
     firstFieldMetadataId?: boolean | number
+    fourthFieldMetadataId?: boolean | number
     id?: boolean | number
     objectMetadataId?: boolean | number
     secondFieldMetadataId?: boolean | number

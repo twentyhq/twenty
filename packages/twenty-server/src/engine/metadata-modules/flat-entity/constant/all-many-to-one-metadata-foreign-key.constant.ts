@@ -367,6 +367,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     thirdFieldMetadata: {
       foreignKey: 'thirdFieldMetadataId',
     },
+    fourthFieldMetadata: {
+      foreignKey: 'fourthFieldMetadataId',
+    },
   },
   validationRule: {
     workspace: null,

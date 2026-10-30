@@ -27,4 +27,9 @@ export class CreateRelatedRecordPathInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   thirdFieldMetadataId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  fourthFieldMetadataId?: string | null;
 }
