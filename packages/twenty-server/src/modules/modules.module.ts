@@ -9,6 +9,7 @@ import { BlocklistQueryHookModule } from 'src/modules/blocklist/query-hooks/bloc
 import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
 import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
 import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
+import { IntegrityRulesModule } from 'src/modules/integrity-rules/integrity-rules.module';
 import { TimelineQueryHookModule } from 'src/modules/timeline/query-hooks/timeline-query-hook.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingWebhooksModule } from 'src/modules/messaging-webhooks/messaging-webhooks.module';
@@ -51,6 +52,7 @@ import { WorkspaceMemberModule } from 'src/modules/workspace-member/workspace-me
     NoteQueryHookModule,
     TaskQueryHookModule,
     TimelineQueryHookModule,
+    IntegrityRulesModule,
   ],
 })
 export class ModulesModule {}
