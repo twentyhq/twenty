@@ -7,7 +7,7 @@ import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRender
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
-import { AiChatTextPart } from '@/ai/components/AiChatTextPart';
+import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
@@ -50,9 +50,8 @@ const MessagePartRenderer = ({
   switch (part.type) {
     case 'text':
       return (
-        <AiChatTextPart
+        <LazyMarkdownContent
           text={part.text}
-          isStreaming={isStreaming && part.state === 'streaming'}
           displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
         />
       );
