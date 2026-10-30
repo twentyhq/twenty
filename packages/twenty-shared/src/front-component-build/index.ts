@@ -21,3 +21,5 @@ export type { SharedDependenciesBuildContext } from './shared-dependencies-build
 export type { SharedDependenciesExportNames } from './shared-dependencies-export-names.type';
 export { toSharedDependenciesNamespaceIdentifier } from './to-shared-dependencies-namespace-identifier';
 export { unwrapDefineFrontComponentToDirectExport } from './unwrap-define-front-component-to-direct-export';
+export type { SharedDependenciesBuildManifest } from './shared-dependencies-build-manifest.type';
+export { normalizeFrontComponentSharedDependencies } from './normalize-front-component-shared-dependencies';

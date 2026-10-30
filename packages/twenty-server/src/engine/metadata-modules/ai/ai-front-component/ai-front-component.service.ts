@@ -3,7 +3,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { type FrontComponentDraftReference } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-reference.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
-import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -23,7 +22,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 
-import { readFrontComponentSharedDependenciesChecksum } from 'twenty-shared/application';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -48,7 +46,6 @@ export class AiFrontComponentService {
     private readonly cache: CacheStorageService,
     private readonly locks: CacheLockService,
     private readonly permissions: PermissionsService,
-    private readonly sharedDependencies: FrontComponentSharedDependenciesService,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -329,12 +326,6 @@ export class AiFrontComponentService {
           threadId,
         };
 
-        await this.sharedDependencies.saveBuiltSharedDependenciesOrThrow({
-          applicationId: application.id,
-          workspaceId: context.workspaceId,
-          source: built.sharedDependencies.source,
-          checksum: built.sharedDependencies.checksum,
-        });
         await this.fileStorageService.writeFile({
           workspaceId: context.workspaceId,
           applicationUniversalIdentifier: application.universalIdentifier,
@@ -393,15 +384,20 @@ export class AiFrontComponentService {
       draftId,
     });
 
+    const application =
+      await this.applications.findOneApplicationWithRelationsOrThrow({
+        id: draft.applicationId,
+        workspaceId,
+      });
+
     return {
       draftId: draft.id,
       name: draft.name,
       isCurrent: await this.isCurrent({ workspaceId, draft }),
       componentSource: draft.compiledSource,
       applicationId: draft.applicationId,
-      sharedDependenciesChecksum: readFrontComponentSharedDependenciesChecksum(
-        draft.compiledSource,
-      ),
+      sharedDependenciesChecksum:
+        application.frontComponentSharedDependenciesChecksum,
       mockQueryResult: {
         [draft.objectNamePlural]: {
           edges: draft.sampleRecords.map((node) => ({ node })),

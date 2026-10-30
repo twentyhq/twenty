@@ -4,16 +4,19 @@ import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-call
 import {
   getSharedDependenciesEntrySource,
   type SharedDependenciesBuildContext,
+  type SharedDependenciesBuildManifest,
 } from 'twenty-shared/front-component-build';
 import { enumerateSharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
 import { getSharedDependenciesNamespaceCollisions } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-namespace-collisions';
-import { ensureDir } from '@/app/fs-utils';
+import { ensureDir, pathExists } from '@/app/fs-utils';
 import crypto from 'crypto';
 import * as esbuild from 'esbuild';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'path';
 import {
   OUTPUT_DIR,
+  computePackageJsonChecksum,
+  computeDependencyFileChecksum,
   type FrontComponentSharedDependenciesManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -87,6 +90,27 @@ export const buildSharedDependenciesBundle = async ({
     builtPath,
     sourcePath: 'package.json',
     checksum,
+  });
+
+  const yarnLockPath = join(appPath, 'yarn.lock');
+  const buildManifest: SharedDependenciesBuildManifest = {
+    checksum,
+    packageJsonChecksum: computePackageJsonChecksum(
+      await readFile(join(appPath, 'package.json'), 'utf-8'),
+    ),
+    yarnLockChecksum: (await pathExists(yarnLockPath))
+      ? computeDependencyFileChecksum(await readFile(yarnLockPath, 'utf-8'))
+      : null,
+    exports: Object.fromEntries(exportNamesBySpecifier),
+  };
+  const manifestSource = JSON.stringify(buildManifest);
+
+  await writeFile(`${absoluteBuiltPath}.json`, manifestSource);
+  await onFileBuilt({
+    fileFolder: FileFolder.Dependencies,
+    builtPath: `${builtPath}.json`,
+    sourcePath: 'package.json',
+    checksum: crypto.createHash('sha256').update(manifestSource).digest('hex'),
   });
 
   return { exportNamesBySpecifier };

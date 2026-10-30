@@ -5,6 +5,7 @@ import {
   getCommonFrontComponentBuildOptions,
   getSharedDependenciesEntrySource,
   enumerateSharedDependenciesExportNames,
+  normalizeFrontComponentSharedDependencies,
 } from 'twenty-shared/front-component-build';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
@@ -13,19 +14,20 @@ import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-module
 
 export const buildFrontComponentSharedDependencies = async ({
   resolveDirectory,
-}: {
-  resolveDirectory: string;
-}): Promise<FrontComponentSharedDependencies> => {
-  const dependencies = [
+  dependencies = [
     'react',
     'react-dom',
     'react-dom/client',
     'react/jsx-runtime',
     ...FRONT_COMPONENT_UI_IMPORTS,
-  ];
+  ],
+}: {
+  resolveDirectory: string;
+  dependencies?: string[];
+}): Promise<FrontComponentSharedDependencies> => {
   const exportNamesBySpecifier = new Map(
     await Promise.all(
-      dependencies.map(
+      normalizeFrontComponentSharedDependencies(dependencies).map(
         async (specifier) =>
           [
             specifier,

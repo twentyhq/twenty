@@ -1,4 +1,3 @@
-import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.module';
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -15,7 +14,6 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
 @Module({
   imports: [
     ApplicationModule,
-    FrontComponentSharedDependenciesModule,
     ApplicationPackageModule,
     CacheLockModule,
     PermissionsModule,

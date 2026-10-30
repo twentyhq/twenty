@@ -7,10 +7,7 @@ import {
   unwrapDefineFrontComponentToDirectExport,
 } from 'twenty-shared/front-component-build';
 
-import {
-  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-  FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX,
-} from 'twenty-shared/application';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
@@ -55,11 +52,6 @@ export const buildFrontComponent = async ({
       FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
       'twenty-client-sdk/core',
     ],
-    banner: {
-      js:
-        FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX +
-        sharedDependencies.checksum,
-    },
     plugins: [
       {
         name: 'front-component-imports',
