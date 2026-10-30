@@ -28,6 +28,8 @@ import {
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
 import { buildManifest } from '@/app/manifest/manifest-build';
+import { buildPullEntities } from '@/app/pull/build-pull-entities';
+import { writeDefineFile } from '@/app/pull/write-define-file';
 import { createAppProject } from '@/app/create-app-project';
 import { runAppWorker } from '@/app/run-app-worker';
 import { compileApplicationTranslations } from '@/app/translations/compile-application-translations';
@@ -241,6 +243,39 @@ describe('CLI manifest fixtures and worker transport', () => {
     },
     60000,
   );
+
+  it('builds pulled definitions while preserving an external default role reference', async () => {
+    const appPath = await copyFixture('minimal-app');
+    const { manifest } = await buildManifest(appPath);
+
+    if (!manifest) throw new Error('Failed to build the minimal app fixture');
+
+    const { entities } = buildPullEntities({
+      manifest: { ...manifest, roles: [] },
+    });
+    const application = entities.find(
+      (entity) => entity.kind === 'application',
+    );
+
+    if (!application) throw new Error('Pull did not generate the application');
+
+    await writeFile(
+      join(appPath, 'application.config.ts'),
+      writeDefineFile(application).content,
+    );
+    await rm(join(appPath, 'my.role.ts'));
+
+    const result = await compareManifest(appPath);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.manifest.application.defaultRoleUniversalIdentifier).toBe(
+        manifest.application.defaultRoleUniversalIdentifier,
+      );
+      expect(result.manifest.roles).toEqual([]);
+      expect(result.filePaths.roles).toEqual([]);
+    }
+  }, 60000);
 
   it('matches a freshly initialized app and its server requirement', async () => {
     const appPath = join(root, 'fresh-app');
