@@ -92,6 +92,7 @@ const importPage = async ({
     const ingestedMessageCount = await ingestLinkedinMessages({
       channel,
       settings,
+      chat,
       counterparts: await Promise.all(
         getLinkedinChatCounterparts(chat).map((user) =>
           withLinkedinPublicIdentifier({ unipileAccountId, user }),

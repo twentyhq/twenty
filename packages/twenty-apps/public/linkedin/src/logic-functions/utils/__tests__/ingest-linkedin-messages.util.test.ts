@@ -45,16 +45,35 @@ const buildMessage = (isSender: boolean): UnipileMessage => ({
   provider: 'linkedin',
 });
 
+const ONE_TO_ONE_CHAT = {
+  id: 'chat-1',
+  name: 'Priya Nair',
+  is_group: false,
+  is_1to1: true,
+  user: PRIYA,
+};
+
+const GROUP_CHAT = {
+  id: 'chat-2',
+  name: 'Q4 hiring',
+  is_group: true,
+  is_1to1: false,
+  participants: [{ is_self: false, user: PRIYA }],
+};
+
 const ingest = ({
   settings = DEFAULT_LINKEDIN_SETTINGS,
   messages = [buildMessage(true)],
+  chat = ONE_TO_ONE_CHAT,
 }: {
   settings?: typeof DEFAULT_LINKEDIN_SETTINGS;
   messages?: UnipileMessage[];
+  chat?: typeof ONE_TO_ONE_CHAT | typeof GROUP_CHAT;
 } = {}) =>
   ingestLinkedinMessages({
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
+    chat,
     counterparts: [PRIYA],
     messages,
   });
@@ -77,6 +96,43 @@ describe('ingestLinkedinMessages', () => {
     await expect(ingest()).resolves.toBe(1);
     expect(ingestedParticipantPersonIds()).toEqual([undefined, 'priya-id']);
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
+  });
+
+  it('names the conversation after the other person', async () => {
+    await ingest();
+
+    expect(mocks.ingestMessages.mock.calls[0][0].messages[0].subject).toBe(
+      'Priya Nair',
+    );
+  });
+
+  it('imports a group chat with a known member under its name', async () => {
+    mocks.matchLinkedinParticipantPersonId.mockResolvedValue('priya-id');
+
+    await expect(ingest({ chat: GROUP_CHAT })).resolves.toBe(1);
+    expect(mocks.ingestMessages.mock.calls[0][0].messages[0].subject).toBe(
+      'Q4 hiring',
+    );
+  });
+
+  it('skips a group chat where nobody is in Twenty, even with All chats', async () => {
+    await expect(ingest({ chat: GROUP_CHAT })).resolves.toBe(0);
+    expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
+  });
+
+  it('skips group chats when they are not imported', async () => {
+    mocks.matchLinkedinParticipantPersonId.mockResolvedValue('priya-id');
+
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        settings: {
+          ...DEFAULT_LINKEDIN_SETTINGS,
+          areGroupChatsImported: false,
+        },
+      }),
+    ).resolves.toBe(0);
+    expect(mocks.matchLinkedinParticipantPersonId).not.toHaveBeenCalled();
   });
 
   it('creates a person for an unknown profile the member messaged', async () => {

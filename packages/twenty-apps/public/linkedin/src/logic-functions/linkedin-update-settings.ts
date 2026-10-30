@@ -32,10 +32,8 @@ export const linkedinUpdateSettingsHandler = async (
   const { visibility, ...settingsUpdate } = parseLinkedinSettingsUpdate(
     routePayload.body,
   );
-  const settings = {
-    ...(await getLinkedinSettings(connection.id)),
-    ...settingsUpdate,
-  };
+  const previousSettings = await getLinkedinSettings(connection.id);
+  const settings = { ...previousSettings, ...settingsUpdate };
 
   await kv.set(
     getLinkedinConnectionKvKey({
@@ -57,13 +55,14 @@ export const linkedinUpdateSettingsHandler = async (
 
   const historyImport = await getLinkedinHistoryImportState(connection.id);
 
-  // Messages are imported once, so only chats Contacts only skipped are left to import
+  // Messages are imported once, so only chats an earlier setting skipped are left to import
   if (
     !isDefined(historyImport) ||
     historyImport.status === 'FAILED' ||
     isLinkedinHistoryImportStalled({ historyImport, now: Date.now() }) ||
     (settings.importPolicy === 'ALL' &&
-      historyImport.importPolicy === 'CONTACTS_ONLY')
+      historyImport.importPolicy === 'CONTACTS_ONLY') ||
+    (settings.areGroupChatsImported && !previousSettings.areGroupChatsImported)
   ) {
     await startLinkedinHistoryImport({
       connectedAccountId: connection.id,

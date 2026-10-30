@@ -3,6 +3,7 @@ import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type
 
 export type LinkedinSettings = {
   importPolicy: LinkedinImportPolicy;
+  areGroupChatsImported: boolean;
   contactAutoCreationPolicy: LinkedinContactAutoCreationPolicy;
   isNameMatchingEnabled: boolean;
 };

@@ -1,33 +1,40 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { Section } from 'twenty-ui/components/layout';
+import { IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LinkedinImportPolicyIcon } from 'src/front-components/components/LinkedinImportPolicyIcon';
 import { LinkedinSyncButton } from 'src/front-components/components/LinkedinSyncButton';
+import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
+import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 
 const StyledStack = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
+  gap: ${() => themeCssVariables.spacing[4]};
 `;
 
 type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
+  areGroupChatsImported: boolean;
   historyImport: LinkedinHistoryImportState | null;
   isSyncStarting: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
+  onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onSync: () => void;
 };
 
 export const LinkedinImportSection = ({
   importPolicy,
+  areGroupChatsImported,
   historyImport,
   isSyncStarting,
   onChange,
+  onGroupChatsImportChange,
   onSync,
 }: LinkedinImportSectionProps) => (
   <Section.Root>
@@ -58,6 +65,15 @@ export const LinkedinImportSection = ({
           },
         ]}
       />
+      <StyledSettingsCard>
+        <SettingsOptionCardContentToggle
+          Icon={IconUsers}
+          title={t('Import group chats')}
+          description={t('Groups where at least one member is a contact')}
+          checked={areGroupChatsImported}
+          onChange={onGroupChatsImportChange}
+        />
+      </StyledSettingsCard>
       <LinkedinSyncButton
         historyImport={historyImport}
         isStarting={isSyncStarting}

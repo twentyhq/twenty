@@ -37,6 +37,10 @@ export const parseLinkedinSettingsUpdate = (
     update.contactAutoCreationPolicy = body.contactAutoCreationPolicy;
   }
 
+  if (isBoolean(body?.areGroupChatsImported)) {
+    update.areGroupChatsImported = body.areGroupChatsImported;
+  }
+
   if (isBoolean(body?.isNameMatchingEnabled)) {
     update.isNameMatchingEnabled = body.isNameMatchingEnabled;
   }

@@ -86,6 +86,13 @@ describe('linkedinHandleWebhookEventHandler', () => {
     ]);
     mocks.kvGet.mockResolvedValue(null);
     mocks.query.mockResolvedValue({ people: { edges: [] } });
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      user: DAPHNE,
+    });
     mocks.mutation.mockResolvedValue({ createPerson: { id: 'created-id' } });
     mocks.getUnipileUser.mockResolvedValue({
       ...DAPHNE,

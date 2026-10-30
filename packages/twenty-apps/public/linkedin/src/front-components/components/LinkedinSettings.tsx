@@ -192,10 +192,14 @@ export const LinkedinSettings = () => {
             />
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
+              areGroupChatsImported={view.settings.areGroupChatsImported}
               historyImport={view.historyImport}
               isSyncStarting={isSyncStarting}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
+              }
+              onGroupChatsImportChange={(areGroupChatsImported) =>
+                handleSettingsChange({ areGroupChatsImported })
               }
               onSync={handleSync}
             />

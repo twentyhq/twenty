@@ -79,6 +79,7 @@ describe('linkedinUpdateSettingsHandler', () => {
         isConnected: true,
         settings: {
           importPolicy: 'ALL',
+          areGroupChatsImported: true,
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
           visibility: 'METADATA',
@@ -113,6 +114,16 @@ describe('linkedinUpdateSettingsHandler', () => {
     expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
       expect.objectContaining({ importPolicy: 'ALL', status: 'IMPORTING' }),
     );
+  });
+
+  it('imports the skipped group chats when they get turned back on', async () => {
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      areGroupChatsImported: false,
+    });
+
+    await updateSettings({ areGroupChatsImported: true });
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
   });
 
   it('does not re-import when switching to Contacts only', async () => {
