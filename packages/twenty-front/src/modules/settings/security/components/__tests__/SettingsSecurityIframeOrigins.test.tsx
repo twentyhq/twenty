@@ -9,8 +9,8 @@ import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 
 import { SettingsSecurityIframeOrigins } from '@/settings/security/components/SettingsSecurityIframeOrigins';
 import {
-  GetWorkspaceIframeOriginsDocument,
-  UpdateWorkspaceAllowedIframeOriginsDocument,
+  GetWorkspaceAllowedEmbeddingOriginsDocument,
+  UpdateWorkspaceAllowedEmbeddingOriginsDocument,
 } from '~/generated-metadata/graphql';
 
 const enqueueToast = jest.fn();
@@ -23,7 +23,7 @@ jest.mock('twenty-ui/components/feedback', () => ({
 const workspace = (origins: string[]) => ({
   __typename: 'Workspace' as const,
   id: 'workspace-id',
-  allowedIframeOrigins: origins,
+  allowedEmbeddingOrigins: origins,
 });
 
 const renderSettings = (
@@ -35,7 +35,7 @@ const renderSettings = (
       <MockedProvider
         mocks={[
           {
-            request: { query: GetWorkspaceIframeOriginsDocument },
+            request: { query: GetWorkspaceAllowedEmbeddingOriginsDocument },
             result: { data: { currentWorkspace: workspace(origins) } },
           },
           ...mutations,
@@ -61,20 +61,20 @@ it.each(['button', 'Enter'])(
   async (method) => {
     const added = jest.fn(() => ({
       data: {
-        updateWorkspaceAllowedIframeOrigins: workspace([
+        updateWorkspaceAllowedEmbeddingOrigins: workspace([
           'https://portal.example.com',
         ]),
       },
     }));
     const removed = jest.fn(() => ({
-      data: { updateWorkspaceAllowedIframeOrigins: workspace([]) },
+      data: { updateWorkspaceAllowedEmbeddingOrigins: workspace([]) },
     }));
     renderSettings(
       [],
       [
         {
           request: {
-            query: UpdateWorkspaceAllowedIframeOriginsDocument,
+            query: UpdateWorkspaceAllowedEmbeddingOriginsDocument,
             variables: {
               input: { operation: 'add', origin: 'https://portal.example.com' },
             },
@@ -83,7 +83,7 @@ it.each(['button', 'Enter'])(
         },
         {
           request: {
-            query: UpdateWorkspaceAllowedIframeOriginsDocument,
+            query: UpdateWorkspaceAllowedEmbeddingOriginsDocument,
             variables: {
               input: {
                 operation: 'remove',
@@ -131,7 +131,7 @@ it('keeps saved origins when the server rejects an update', async () => {
     [
       {
         request: {
-          query: UpdateWorkspaceAllowedIframeOriginsDocument,
+          query: UpdateWorkspaceAllowedEmbeddingOriginsDocument,
           variables: {
             input: {
               operation: 'remove',
@@ -163,12 +163,12 @@ it('allows an addition when another administrator frees a slot in a full list', 
   const newOrigin = 'https://new.example.com';
   const updatedOrigins = [...staleOrigins.slice(1), newOrigin];
   const saved = jest.fn(() => ({
-    data: { updateWorkspaceAllowedIframeOrigins: workspace(updatedOrigins) },
+    data: { updateWorkspaceAllowedEmbeddingOrigins: workspace(updatedOrigins) },
   }));
   renderSettings(staleOrigins, [
     {
       request: {
-        query: UpdateWorkspaceAllowedIframeOriginsDocument,
+        query: UpdateWorkspaceAllowedEmbeddingOriginsDocument,
         variables: { input: { operation: 'add', origin: newOrigin } },
       },
       result: saved,
@@ -198,7 +198,7 @@ it('keeps the saved list and input when the server rejects an addition at the li
   renderSettings(origins, [
     {
       request: {
-        query: UpdateWorkspaceAllowedIframeOriginsDocument,
+        query: UpdateWorkspaceAllowedEmbeddingOriginsDocument,
         variables: { input: { operation: 'add', origin: newOrigin } },
       },
       error: new Error(
