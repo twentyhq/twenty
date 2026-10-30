@@ -10,7 +10,6 @@ EuZs6PhKiH6l3sXY6kocC0ZV25rFhHgOChVA91BE8a+Wj0MtGGI/UL/b21G3zsr7
 6wIDAQAB
 -----END PUBLIC KEY-----`;
 
-// Retain older dev keys so existing tokens survive signing-key rotation.
 export const ENTERPRISE_JWT_DEV_PUBLIC_KEYS = [
   `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKswkzE4V6LMLvoIB2G3
