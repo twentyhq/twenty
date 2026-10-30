@@ -10,7 +10,9 @@ EuZs6PhKiH6l3sXY6kocC0ZV25rFhHgOChVA91BE8a+Wj0MtGGI/UL/b21G3zsr7
 6wIDAQAB
 -----END PUBLIC KEY-----`;
 
-export const ENTERPRISE_JWT_DEV_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+// Retain older dev keys so existing tokens survive signing-key rotation.
+export const ENTERPRISE_JWT_DEV_PUBLIC_KEYS = [
+  `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKswkzE4V6LMLvoIB2G3
 98EHrkwP789h97lnqBXPhLp4xP4lZurXRcD/ADx6Flyhu1YSVy1XolboUmC8IIgV
 wYiZXAc2FVoI11An4RYp5ZREq+lHpgIQ6GpPr1eTWiuB5xbwP2DLq3g+04vL3267
@@ -18,10 +20,8 @@ Q9CjEoBCN2QaaH+9B8TUiYMhRl07nCrX3zOtfiJcYgjhqT5YIQtAPnK+dqJhaICd
 yLVEbPBvCbURzepddxoJO8o7+PWhM43zpU8QOEF5I4CUu1goZG59nr7musiKQaLi
 XYTI35gIrM0BXW4b9ZShz/szEPLpSlBBS31IPl2RU28FlkvJ266X/j3fpmW+wsbV
 aQIDAQAB
------END PUBLIC KEY-----`;
-
-// Keep previously issued development tokens valid after the dev signing key changes.
-export const ENTERPRISE_JWT_PREVIOUS_DEV_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+-----END PUBLIC KEY-----`,
+  `-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsHEWc84t399KlYyhRkBO
 QCXE8/HE/TKvMk35ccoUeZXnBNhuGpWcHuM6+6ekHiToT239hkBy+Bk/Ybd6wVrs
 Vn0Vc0KarRsmeOrJu+sVREL5AUWt0gitpBoNeBzdfgW8dzdyVKDSCUNvXzEOQKkT
@@ -29,7 +29,8 @@ Vn0Vc0KarRsmeOrJu+sVREL5AUWt0gitpBoNeBzdfgW8dzdyVKDSCUNvXzEOQKkT
 Dmj1SnUz4yy11EeY48+wTguk9WBFjOsA/1Dnc6jL/MN8zH77xRlIs/iPjBriPhCN
 njn0rDVHHdat+3NqKlSbFcQPVzYicxDRXaakJ2IEJhxpEoOFWHJ9bNQKudRqfaoF
 BQIDAQAB
------END PUBLIC KEY-----`;
+-----END PUBLIC KEY-----`,
+] as const;
 
 // signed with ENTERPRISE_JWT_DEV_PRIVATE_KEY (expires 2125)
 export const ENTERPRISE_DEV_VALIDITY_TOKEN =
