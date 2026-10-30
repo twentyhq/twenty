@@ -1,5 +1,4 @@
 import satisfies from 'semver/functions/satisfies';
-import valid from 'semver/functions/valid';
 import { isDefined } from 'twenty-shared/utils';
 
 import { readStringArgument } from '@/catalog/read-command-values';
@@ -9,6 +8,7 @@ import { checkLocalRuntime } from '@/local/check-local-runtime';
 import { createLocalContainer } from '@/local/create-local-container';
 import { readLocalOptions } from '@/local/read-local-options';
 import { readLocalContainer } from '@/local/read-local-container';
+import { readLocalImageVersion } from '@/local/read-local-image-version';
 import { getLocalEngineRange } from '@/local/get-local-engine-range';
 import { getLocalImage } from '@/local/get-local-image';
 import { resolveLocalImage } from '@/local/resolve-local-image';
@@ -45,16 +45,26 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
   }
 
   const range = isDefined(existing) ? getLocalEngineRange() : undefined;
-  const existingVersion = valid(existing?.image.split(':').at(-1));
-  if (
-    isDefined(existing) &&
-    isDefined(range) &&
-    (!isDefined(existingVersion) || !satisfies(existingVersion, range))
-  ) {
-    output.warn({
-      code: 'LOCAL_VERSION_MISMATCH',
-      message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}. Use twenty local upgrade to change version.`,
-    });
+  if (isDefined(existing) && isDefined(range)) {
+    let existingVersion: string | undefined;
+    try {
+      existingVersion = await readLocalImageVersion({
+        imageId: existing.imageId,
+        signal,
+      });
+    } catch (error) {
+      signal.throwIfAborted();
+      if (!(error instanceof CliError) || error.code !== 'INVALID_RESPONSE') {
+        throw error;
+      }
+    }
+
+    if (!isDefined(existingVersion) || !satisfies(existingVersion, range)) {
+      output.warn({
+        code: 'LOCAL_VERSION_MISMATCH',
+        message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}. Use twenty local upgrade to change version.`,
+      });
+    }
   }
 
   if (isDefined(existing) && !existing.isRunning) {

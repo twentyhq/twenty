@@ -41,8 +41,12 @@ to five minutes for `/healthz`. For a new instance, version selection is:
 explicit version or image tag, the highest published version matching the nearest
 `package.json`'s `engines.twenty`, then `latest` when no range exists. A failed
 lookup or unmatched range is an error, never a fallback to another version.
+Versions such as `2.53` and `2.53.1` select `v2.53` and `v2.53.1`, respectively;
+`2.53` keeps the floating minor tag. Other image tags are used as given.
 New instances pull the selected image before creation, including when the tag
 is cached locally. Existing instances keep their image and port; use `upgrade` to change versions.
+Compatibility with `engines.twenty` uses the existing image's `APP_VERSION`.
+A missing, invalid or incompatible version warns without preventing startup.
 A readiness failure leaves the container and data in place for diagnosis.
 
 New instances bind to loopback on port `2020`. Use `--port <port>` when creating

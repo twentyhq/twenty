@@ -5,6 +5,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { checkLocalHealth } from '@/local/check-local-health';
 import { waitForLocalHealth } from '@/local/wait-for-local-health';
 import { getLocalEnvironment } from '@/local/get-local-environment';
@@ -12,6 +13,9 @@ import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
 
 vi.mock('@/local/run-docker', () => ({ runDocker: vi.fn() }));
+vi.mock('@/app/manifest/get-engine-version-range', () => ({
+  getEngineVersionRange: vi.fn(),
+}));
 vi.mock('@/local/check-local-health', () => ({
   checkLocalHealth: vi.fn(),
 }));
@@ -52,6 +56,7 @@ let previousContainer: ReturnType<typeof makeContainer> | undefined;
 let failure: string | undefined;
 let shouldCancelCreation = false;
 let nextImageId: string;
+let currentImageVersion: string | undefined;
 let nextImageVersion: string | undefined;
 
 const runJson = async (args: string[]) => {
@@ -81,7 +86,9 @@ describe('local commands', () => {
     failure = undefined;
     shouldCancelCreation = false;
     nextImageId = 'new-image';
+    currentImageVersion = '2.53.0';
     nextImageVersion = '2.54.0';
+    vi.mocked(getEngineVersionRange).mockReturnValue(null);
     vi.stubEnv('DOCKER_HOST', '');
     vi.stubEnv('DOCKER_CONTEXT', '');
     vi.stubEnv('TWENTY_REMOTE', '');
@@ -114,7 +121,12 @@ describe('local commands', () => {
             return nextImageId;
           }
           if (args.at(-1) === 'old-image') {
-            return JSON.stringify(['APP_VERSION=2.53.0', 'NODE_PORT=3000']);
+            return JSON.stringify([
+              ...(isDefined(currentImageVersion)
+                ? [`APP_VERSION=${currentImageVersion}`]
+                : []),
+              'NODE_PORT=3000',
+            ]);
           }
           return JSON.stringify(
             isDefined(nextImageVersion)
@@ -219,6 +231,60 @@ describe('local commands', () => {
     const { exitCode, envelope } = await runJson(['start', 'other/image:tag']);
     expect(exitCode).toBe(1);
     expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(mutations()).toEqual([]);
+  });
+
+  it.each(['start', 'upgrade'])(
+    'uses the floating minor tag for %s 2.53',
+    async (command) => {
+      if (command === 'start') {
+        container = undefined;
+      }
+      nextImageVersion = '2.53.1';
+      expect((await runJson([command, '2.53'])).exitCode).toBe(0);
+      expect(mutations()[0]).toEqual([
+        'pull',
+        'twentycrm/twenty-app-dev:v2.53',
+      ]);
+      expect(container?.Config.Image).toBe('twentycrm/twenty-app-dev:v2.53');
+    },
+  );
+
+  it.each(['latest', 'v2.53', 'v2.40.0'])(
+    'checks the actual image version behind %s instead of the tag or container overrides',
+    async (tag) => {
+      vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+      container!.Config.Image = `twentycrm/twenty-app-dev:${tag}`;
+      container!.Config.Env[0] = 'APP_VERSION=2.40.0';
+      const { exitCode, envelope } = await runJson(['start']);
+      expect(exitCode).toBe(0);
+      expect(envelope.warnings).toEqual([]);
+      expect(mutations()).toEqual([]);
+    },
+  );
+
+  it.each(['2.52.0', undefined, 'not-a-version'])(
+    'warns without blocking startup when the image version is %s',
+    async (version) => {
+      vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+      currentImageVersion = version;
+      container = makeContainer(false);
+      container.Config.Image = 'twentycrm/twenty-app-dev:latest';
+      const { exitCode, envelope } = await runJson(['start']);
+      expect(exitCode).toBe(0);
+      expect(envelope.warnings).toEqual([
+        expect.objectContaining({ code: 'LOCAL_VERSION_MISMATCH' }),
+      ]);
+      expect(mutations()).toEqual([['start', 'test-container']]);
+    },
+  );
+
+  it('reports Docker inspection failures during the compatibility check', async () => {
+    vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+    failure = 'image inspect';
+    const { exitCode, envelope } = await runJson(['start']);
+    expect(exitCode).toBe(1);
+    expect(envelope.error.code).toBe('LOCAL_ENVIRONMENT_FAILED');
     expect(mutations()).toEqual([]);
   });
 

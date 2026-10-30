@@ -22,6 +22,9 @@ separate step. To install your app afterward, run `twenty app apply --create
 For a new instance, pass a version explicitly or let the CLI select the highest
 published version matching your app's `engines.twenty`. Outside an app with that
 setting, it uses `latest`. Existing instances keep their version and data.
+For an existing instance, compatibility with `engines.twenty` is checked using
+the image's `APP_VERSION`, including when its tag is `latest`. A missing, invalid
+or incompatible version produces a warning and startup continues.
 
 ```bash
 twenty local start 2.53.1
@@ -48,6 +51,9 @@ Without a version, it follows the same version selection as a new start. Custom 
 layouts are rejected. Downgrades are rejected before replacing the container,
 including when using a tag such as `latest`. Both images must declare a valid
 `APP_VERSION` so the CLI can compare their actual versions.
+
+Pass `2.53` to start or upgrade using the floating `v2.53` image tag, or `2.53.1`
+to select a specific patch version.
 
 If replacement creation fails or is cancelled, the CLI
 restores the previous container and settings. Once the new version starts,
