@@ -28,35 +28,40 @@ export class RelatedRecordPathService {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  private getFlatMaps(workspaceId: string) {
-    return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatRelatedRecordPathMaps',
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-        ],
-      },
-    );
+  private async getFlatRelatedRecordPathMaps(workspaceId: string) {
+    const { flatRelatedRecordPathMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRelatedRecordPathMaps'],
+        },
+      );
+
+    return flatRelatedRecordPathMaps;
   }
 
-  private async runRelatedRecordPathMigrationOrThrow({
-    workspaceId,
-    flatEntityToCreate,
-    flatEntityToDelete,
-    errorMessage,
-  }: {
-    workspaceId: string;
-    flatEntityToCreate: FlatRelatedRecordPath[];
-    flatEntityToDelete: FlatRelatedRecordPath[];
-    errorMessage: string;
-  }): Promise<void> {
+  private async findWorkspaceCustomFlatApplication(workspaceId: string) {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
+    return workspaceCustomFlatApplication;
+  }
+
+  private async runRelatedRecordPathMigrationOrThrow({
+    workspaceId,
+    applicationUniversalIdentifier,
+    flatEntityToCreate,
+    flatEntityToDelete,
+    errorMessage,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    flatEntityToCreate: FlatRelatedRecordPath[];
+    flatEntityToDelete: FlatRelatedRecordPath[];
+    errorMessage: string;
+  }): Promise<void> {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -68,8 +73,7 @@ export class RelatedRecordPathService {
             },
           },
           workspaceId,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+          applicationUniversalIdentifier,
         },
       );
 
@@ -86,7 +90,8 @@ export class RelatedRecordPathService {
   }: {
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO[]> {
-    const { flatRelatedRecordPathMaps } = await this.getFlatMaps(workspaceId);
+    const flatRelatedRecordPathMaps =
+      await this.getFlatRelatedRecordPathMaps(workspaceId);
 
     return Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -106,12 +111,15 @@ export class RelatedRecordPathService {
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.getFlatMaps(workspaceId);
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
       );
+
+    const workspaceCustomFlatApplication =
+      await this.findWorkspaceCustomFlatApplication(workspaceId);
 
     const flatRelatedRecordPathToCreate =
       fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrThrow({
@@ -124,13 +132,16 @@ export class RelatedRecordPathService {
 
     await this.runRelatedRecordPathMigrationOrThrow({
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       flatEntityToCreate: [flatRelatedRecordPathToCreate],
       flatEntityToDelete: [],
       errorMessage:
         'Multiple validation errors occurred while creating related record path',
     });
 
-    const { flatRelatedRecordPathMaps } = await this.getFlatMaps(workspaceId);
+    const flatRelatedRecordPathMaps =
+      await this.getFlatRelatedRecordPathMaps(workspaceId);
 
     return fromFlatRelatedRecordPathToRelatedRecordPathDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -147,7 +158,8 @@ export class RelatedRecordPathService {
     id: string;
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
-    const { flatRelatedRecordPathMaps } = await this.getFlatMaps(workspaceId);
+    const flatRelatedRecordPathMaps =
+      await this.getFlatRelatedRecordPathMaps(workspaceId);
 
     const existingFlatRelatedRecordPath = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: id,
@@ -161,8 +173,13 @@ export class RelatedRecordPathService {
       );
     }
 
+    const workspaceCustomFlatApplication =
+      await this.findWorkspaceCustomFlatApplication(workspaceId);
+
     await this.runRelatedRecordPathMigrationOrThrow({
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       flatEntityToCreate: [],
       flatEntityToDelete: [existingFlatRelatedRecordPath],
       errorMessage:
