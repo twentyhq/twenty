@@ -3721,7 +3721,7 @@ msgstr "앱"
 #. js-lingui-id: Y5ZsYw
 #: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "App configuration could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "앱 구성을 불러올 수 없습니다. 연결을 확인한 후 다시 시도하세요."
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx

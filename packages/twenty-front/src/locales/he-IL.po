@@ -3721,7 +3721,7 @@ msgstr "אפליקציה"
 #. js-lingui-id: Y5ZsYw
 #: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "App configuration could not be loaded. Check your connection and try again."
-msgstr ""
+msgstr "לא ניתן היה לטעון את תצורת האפליקציה. בדוק את החיבור שלך ונסה שוב."
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
