@@ -101,6 +101,10 @@ export class ApplicationAuthorizationService {
     return await this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')
       .innerJoinAndSelect('applicationAuthorization.application', 'application')
+      .leftJoinAndSelect(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
       .where('applicationAuthorization.userId = :userId', { userId })
       .andWhere('applicationAuthorization.workspaceId = :workspaceId', {
         workspaceId,

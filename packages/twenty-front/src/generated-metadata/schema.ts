@@ -509,6 +509,7 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  redirectUriHostnames: Array<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
   workspaceId: Scalars['UUID']['output'];
 };

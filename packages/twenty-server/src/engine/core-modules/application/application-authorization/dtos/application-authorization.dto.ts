@@ -24,6 +24,10 @@ export class ApplicationAuthorizationDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
+  // Clients pick their own registration name, so the callback host is what identifies them
+  @Field(() => [String])
+  redirectUriHostnames: string[];
+
   @Field(() => Date, { nullable: true })
   lastAuthorizedAt: Date | null;
 

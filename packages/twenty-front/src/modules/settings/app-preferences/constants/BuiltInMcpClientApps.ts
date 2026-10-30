@@ -9,11 +9,13 @@ export const BUILT_IN_MCP_CLIENT_APPS: BuiltInMcpClientApp[] = [
     name: msg`ChatGPT`,
     description: msg`Work with your Twenty workspace from ChatGPT through the official Twenty app.`,
     logo: ChatGptLogo,
+    redirectUriHostnames: ['chatgpt.com', 'chat.openai.com'],
   },
   {
     id: 'claude',
     name: msg`Claude`,
     description: msg`Work with your Twenty workspace from Claude through the Twenty connector.`,
     logo: ClaudeLogo,
+    redirectUriHostnames: ['claude.ai', 'claude.com'],
   },
 ];

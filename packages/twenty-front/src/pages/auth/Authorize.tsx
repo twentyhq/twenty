@@ -1,4 +1,6 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
+import { OAUTH_SCOPE_ICONS } from '@/auth/constants/OAuthScopeIcons';
+import { OAUTH_SCOPE_LABELS } from '@/auth/constants/OAuthScopeLabels';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -13,11 +15,7 @@ import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { getUrlSafely, isDefined } from 'twenty-shared/utils';
-import {
-  type IconComponent,
-  IconDatabase,
-  IconUserCircle,
-} from 'twenty-ui/icon';
+import { IconDatabase } from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
 import {
   useTheme,
@@ -147,11 +145,6 @@ const StyledErrorText = styled.div`
   width: 100%;
 `;
 
-const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
-  api: IconDatabase,
-  profile: IconUserCircle,
-};
-
 export const Authorize = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -159,11 +152,6 @@ export const Authorize = () => {
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
-
-  const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access your workspace data`,
-    profile: t`Read your profile`,
-  };
 
   // Support both camelCase (legacy) and standard OAuth snake_case params
   const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
@@ -312,6 +300,7 @@ export const Authorize = () => {
               <StyledScopeList>
                 {requestedScopes.map((scope) => {
                   const ScopeIcon = OAUTH_SCOPE_ICONS[scope] ?? IconDatabase;
+                  const scopeLabel = OAUTH_SCOPE_LABELS[scope];
 
                   return (
                     <StyledScopeItem key={scope}>
@@ -321,7 +310,9 @@ export const Authorize = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledScopeIcon>
-                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                      <span>
+                        {isDefined(scopeLabel) ? t(scopeLabel) : scope}
+                      </span>
                     </StyledScopeItem>
                   );
                 })}
