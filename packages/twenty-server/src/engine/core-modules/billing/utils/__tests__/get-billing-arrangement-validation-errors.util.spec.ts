@@ -12,7 +12,7 @@ const draft = (
   overrides: Partial<BillingArrangementDraft> &
     Pick<BillingArrangementDraft, 'type'>,
 ): BillingArrangementDraft => ({
-  label: BillingArrangementLabel.CUSTOM_DEAL,
+  label: BillingArrangementLabel.OTHER,
   comment: null,
   startsAt: STARTS_AT,
   endsAt: null,
