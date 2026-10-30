@@ -35,8 +35,8 @@ const StyledValue = styled.div`
 
 const StyledLogo = styled.img`
   flex-shrink: 0;
-  height: ${() => themeCssVariables.icon.size.md};
-  width: ${() => themeCssVariables.icon.size.md};
+  height: ${() => themeCssVariables.spacing[4]};
+  width: ${() => themeCssVariables.spacing[4]};
 `;
 
 const StyledText = styled.span`
