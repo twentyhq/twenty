@@ -87,7 +87,7 @@ export const ChangingMonthClosesTheDatePanel: Story = {
       await within(panel).findByRole('button', { name: 'January' }),
     );
     await userEvent.click(
-      await body.findByRole('button', { name: 'February' }),
+      await body.findByRole('option', { name: 'February' }),
     );
 
     await waitFor(() => {
@@ -122,7 +122,7 @@ export const DismissesOnePanelAtATime: Story = {
       await userEvent.click(
         await within(panel).findByRole('button', { name: 'January' }),
       );
-      await body.findByRole('button', { name: 'February' });
+      await body.findByRole('option', { name: 'February' });
 
       if (dismissal === 'escape') {
         await userEvent.keyboard('{Escape}');
@@ -135,7 +135,7 @@ export const DismissesOnePanelAtATime: Story = {
 
       await waitFor(() => {
         expect(
-          body.queryByRole('button', { name: 'February' }),
+          body.queryByRole('option', { name: 'February' }),
         ).not.toBeInTheDocument();
       });
       await expect(panel).toBeVisible();
@@ -170,7 +170,7 @@ export const WidgetCalendarsKeepIndependentDates: Story = {
     await userEvent.click(
       await within(panel).findByRole('button', { name: '2026' }),
     );
-    await userEvent.click(await body.findByRole('button', { name: '2027' }));
+    await userEvent.click(await body.findByRole('option', { name: '2027' }));
     await waitFor(() => {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });

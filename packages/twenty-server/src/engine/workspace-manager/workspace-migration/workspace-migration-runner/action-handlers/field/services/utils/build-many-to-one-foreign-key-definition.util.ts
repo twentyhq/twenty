@@ -5,7 +5,7 @@ import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modul
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
+import { computeForeignKeyOnDelete } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/compute-foreign-key-on-delete.util';
 
 export const buildManyToOneForeignKeyDefinition = ({
   flatFieldMetadata,
@@ -27,7 +27,7 @@ export const buildManyToOneForeignKeyDefinition = ({
     }),
   ),
   referencedColumnName: 'id',
-  onDelete:
-    convertOnDeleteActionToOnDelete(flatFieldMetadata.settings?.onDelete) ??
-    'CASCADE',
+  onDelete: computeForeignKeyOnDelete({
+    onDelete: flatFieldMetadata.settings?.onDelete,
+  }),
 });

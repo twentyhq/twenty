@@ -20,6 +20,7 @@ import {
   isDefined,
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const { userTimezone } = useUserTimezone();
@@ -69,7 +70,9 @@ export const useApplyObjectFilterDropdownOperand = () => {
     } else if (isValuelessOperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(
-          'FieldMetadataItemUsedInDropdown is not defined, cannot create empty record filter, this should not happen',
+          doNotTranslate(
+            'FieldMetadataItemUsedInDropdown is not defined, cannot create empty record filter, this should not happen',
+          ),
         );
       }
 
@@ -168,7 +171,7 @@ const convertDateTimeFilterValue = (
 
   if (targetOperand === RecordFilterOperand.IS) {
     try {
-      const existingZoned = currentValue.includes('T')
+      const existingZoned = currentValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(currentValue).toZonedDateTimeISO(userTimezone)
         : Temporal.PlainDate.from(currentValue).toZonedDateTime(userTimezone);
 

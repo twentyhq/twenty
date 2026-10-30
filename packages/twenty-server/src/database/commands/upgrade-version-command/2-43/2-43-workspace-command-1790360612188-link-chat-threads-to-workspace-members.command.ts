@@ -130,6 +130,7 @@ export class LinkChatThreadsToWorkspaceMembersCommand extends ProvisionedWorkspa
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             allFlatEntityOperationByMetadataName,
             workspaceId,
             isSystemBuild: true,

@@ -104,13 +104,11 @@ export class ApplicationInstallResolver {
         applicationUniversalIdentifier: universalIdentifier,
       });
 
-    return await this.applicationService.findOneApplicationWithRelationsOrThrow(
-      {
-        id: targetApplicationId,
-        universalIdentifier: targetApplicationUniversalIdentifier,
-        workspaceId,
-      },
-    );
+    return await this.applicationService.findOneApplicationOrThrow({
+      id: targetApplicationId,
+      universalIdentifier: targetApplicationUniversalIdentifier,
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean, {
@@ -182,7 +180,7 @@ export class ApplicationInstallResolver {
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationWithRelationsOrThrow({
+    return this.applicationService.findOneApplicationOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
     });
@@ -327,11 +325,14 @@ export class ApplicationInstallResolver {
       requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findInstallApplicationJobStatus({
       universalIdentifier,
       workspaceId: workspace.id,
+      jobId,
     });
   }
 
@@ -346,10 +347,12 @@ export class ApplicationInstallResolver {
       requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
+    @Args('jobId', { type: () => String, nullable: true })
+    jobId: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<JobStatusDTO | null> {
     return this.applicationLifecycleJobService.findUninstallApplicationJobStatus(
-      { universalIdentifier, workspaceId: workspace.id },
+      { universalIdentifier, workspaceId: workspace.id, jobId },
     );
   }
 

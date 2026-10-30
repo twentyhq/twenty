@@ -14,13 +14,11 @@ export const getNavigationMenuItemComputedLink = ({
   objectMetadataItems,
   views,
   lastVisitedViewPerObjectMetadataItem,
-  isInitialObjectViewEnabled = false,
 }: {
   item: NavigationMenuItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewPerObjectMetadataItem?: Record<string, string> | null;
-  isInitialObjectViewEnabled?: boolean;
 }): string => {
   switch (item.type) {
     case NavigationMenuItemType.OBJECT: {
@@ -33,7 +31,6 @@ export const getNavigationMenuItemComputedLink = ({
         objectMetadataItems,
         views,
         lastVisitedViewId,
-        isInitialObjectViewEnabled,
       });
     }
     case NavigationMenuItemType.VIEW:

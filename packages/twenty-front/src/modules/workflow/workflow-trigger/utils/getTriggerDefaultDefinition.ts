@@ -6,6 +6,7 @@ import {
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
@@ -19,7 +20,9 @@ export const getTriggerDefaultDefinition = ({
 }): WorkflowTrigger => {
   if (activeNonSystemObjectMetadataItems.length === 0) {
     throw new Error(
-      'This function need to receive at least one object metadata item to run.',
+      doNotTranslate(
+        'This function need to receive at least one object metadata item to run.',
+      ),
     );
   }
 

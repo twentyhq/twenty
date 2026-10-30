@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { t } from '@lingui/core/macro';
 
 export const simpleQuotesStringSchema = z
   .string()
@@ -6,6 +7,6 @@ export const simpleQuotesStringSchema = z
     (value: string): value is `'${string}'` =>
       value.startsWith("'") && value.endsWith("'"),
     {
-      error: 'String should be wrapped in simple quotes',
+      error: () => t`String should be wrapped in simple quotes`,
     },
   );

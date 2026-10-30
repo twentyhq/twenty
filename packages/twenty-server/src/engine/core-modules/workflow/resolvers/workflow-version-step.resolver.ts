@@ -88,11 +88,26 @@ export class WorkflowVersionStepResolver {
   }
 
   @Mutation(() => WorkflowActionDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: false,
+    }),
+  )
   async updateWorkflowRunStep(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
+    await this.assertWorkflowRunIsReadableByRequesterOrThrow(workflowRunId);
+
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -101,7 +116,7 @@ export class WorkflowVersionStepResolver {
 
     if (!canUpdateWorkflowRunStep({ workflowRun, step })) {
       throw new WorkflowVersionStepException(
-        'Only the values of a form step can change on a workflow run bound to an application',
+        'Only the values of a form step can change on a workflow run',
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         {
           userFriendlyMessage: msg`Only the values of this form can be changed.`,
@@ -130,16 +145,7 @@ export class WorkflowVersionStepResolver {
       );
     }
 
-    if (
-      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
-        workflowRunId,
-      ))
-    ) {
-      throw new WorkflowVersionStepException(
-        'Workflow run not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
+    await this.assertWorkflowRunIsReadableByRequesterOrThrow(workflowRunId);
 
     await this.workflowRunnerWorkspaceService.submitFormStep({
       workspaceId,
@@ -166,5 +172,20 @@ export class WorkflowVersionStepResolver {
       },
       { workspaceId: workspace.id },
     );
+  }
+
+  private async assertWorkflowRunIsReadableByRequesterOrThrow(
+    workflowRunId: string,
+  ): Promise<void> {
+    if (
+      !(await this.workflowRunWorkspaceService.isWorkflowRunReadableByRequester(
+        workflowRunId,
+      ))
+    ) {
+      throw new WorkflowVersionStepException(
+        'Workflow run not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
   }
 }

@@ -1,0 +1,240 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP webhook tools (integration) should describe the webhook tools to the model 1`] = `
+[
+  {
+    "description": "List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+    },
+    "name": "list_webhooks",
+  },
+  {
+    "description": "Register a new outgoing webhook for this workspace.
+
+Operations are structured entries discriminated by 'kind':
+- {kind:'record', object:'person', event:'created'} → fires when a person is created (compiles to 'person.created').
+- {kind:'record', object:'*', event:'*'} → fires on every record event except 'workflowRun.updated', which only matches an explicit {kind:'record', object:'workflowRun', event:'updated'} entry.
+- {kind:'metadata', metadataName:'workflow', operation:'updated'} → fires when a workflow definition is updated (compiles to 'metadata.workflow.updated').
+- {kind:'metadata', metadataName:'*', operation:'*'} → fires on every metadata change.
+
+Mix as needed: pass one array containing both record and metadata operations.",
+    "inputSchema": {
+      "properties": {
+        "description": {
+          "description": "Optional human description for the webhook",
+          "type": "string",
+        },
+        "operations": {
+          "description": "Events that trigger the webhook. Record events compile to '<object>.<event>' (e.g. 'person.created'). Metadata events compile to 'metadata.<metadataName>.<operation>' (e.g. 'metadata.workflow.updated'). Use [{kind:'record',object:'*',event:'*'}] to subscribe to all record events. Exception: 'workflowRun.updated' never matches wildcards and requires an explicit {kind:'record',object:'workflowRun',event:'updated'} entry.",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "event": {
+                    "description": "Event kind. Use '*' to match every event for the given object.",
+                    "enum": [
+                      "created",
+                      "updated",
+                      "deleted",
+                      "*",
+                    ],
+                    "type": "string",
+                  },
+                  "kind": {
+                    "const": "record",
+                    "description": "Record event ('<objectNameSingular>.<event>')",
+                    "type": "string",
+                  },
+                  "object": {
+                    "description": "Object name singular (e.g. 'person', 'company', 'task'), or '*' for all objects.",
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "kind",
+                  "object",
+                  "event",
+                ],
+                "type": "object",
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "metadata",
+                    "description": "Metadata event ('metadata.<metadataName>.<operation>') — fires on changes to objects, fields, views, workflows, etc.",
+                    "type": "string",
+                  },
+                  "metadataName": {
+                    "description": "Metadata name (e.g. 'object', 'field', 'view', 'workflow'), or '*' for all.",
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                  "operation": {
+                    "description": "Operation kind. Use '*' to match every operation.",
+                    "enum": [
+                      "created",
+                      "updated",
+                      "deleted",
+                      "*",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "kind",
+                  "metadataName",
+                  "operation",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+          "minItems": 1,
+          "type": "array",
+        },
+        "secret": {
+          "description": "Optional shared secret used to sign payloads. A secret is generated if omitted.",
+          "type": "string",
+        },
+        "targetUrl": {
+          "description": "Absolute URL the webhook payload should be POSTed to",
+          "format": "uri",
+          "type": "string",
+        },
+      },
+      "required": [
+        "targetUrl",
+        "operations",
+      ],
+      "type": "object",
+    },
+    "name": "create_webhook",
+  },
+  {
+    "description": "Update an existing webhook. Only the fields you pass are modified; everything else is preserved.",
+    "inputSchema": {
+      "properties": {
+        "description": {
+          "type": "string",
+        },
+        "id": {
+          "description": "The id of the webhook to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "operations": {
+          "description": "Replaces the operations list. Leave unset to keep current.",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "event": {
+                    "description": "Event kind. Use '*' to match every event for the given object.",
+                    "enum": [
+                      "created",
+                      "updated",
+                      "deleted",
+                      "*",
+                    ],
+                    "type": "string",
+                  },
+                  "kind": {
+                    "const": "record",
+                    "description": "Record event ('<objectNameSingular>.<event>')",
+                    "type": "string",
+                  },
+                  "object": {
+                    "description": "Object name singular (e.g. 'person', 'company', 'task'), or '*' for all objects.",
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "kind",
+                  "object",
+                  "event",
+                ],
+                "type": "object",
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "metadata",
+                    "description": "Metadata event ('metadata.<metadataName>.<operation>') — fires on changes to objects, fields, views, workflows, etc.",
+                    "type": "string",
+                  },
+                  "metadataName": {
+                    "description": "Metadata name (e.g. 'object', 'field', 'view', 'workflow'), or '*' for all.",
+                    "minLength": 1,
+                    "type": "string",
+                  },
+                  "operation": {
+                    "description": "Operation kind. Use '*' to match every operation.",
+                    "enum": [
+                      "created",
+                      "updated",
+                      "deleted",
+                      "*",
+                    ],
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "kind",
+                  "metadataName",
+                  "operation",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+          "minItems": 1,
+          "type": "array",
+        },
+        "secret": {
+          "type": "string",
+        },
+        "targetUrl": {
+          "description": "New target URL. Leave unset to keep the current value.",
+          "format": "uri",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_webhook",
+  },
+  {
+    "description": "Delete a webhook by id. Use list_webhooks first if you don't know the id.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The id of the webhook to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_webhook",
+  },
+]
+`;
+
+exports[`MCP webhook tools (integration) should refuse delete_webhook with an id that is not a UUID 1`] = `
+{
+  "error": "The arguments do not match the input schema of delete_webhook: ✖ Invalid UUID
+  → at id",
+  "message": "Invalid arguments for delete_webhook",
+  "success": false,
+}
+`;

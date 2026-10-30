@@ -24,6 +24,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormUuidFieldInput } from '@/object-record/record-field/ui/form-types/components/FormUuidFieldInput';
 import { type FormFieldInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSettings';
+import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
@@ -71,6 +72,7 @@ type FormFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   placeholder?: string;
+  subFieldPlaceholders?: FormFieldInputSubFieldPlaceholders;
   error?: string;
   onError?: (error: string | undefined) => void;
   timeZone?: string;
@@ -85,6 +87,7 @@ export const FormFieldInput = ({
   VariablePicker,
   readonly,
   placeholder,
+  subFieldPlaceholders,
   error,
   onError,
   timeZone,
@@ -135,6 +138,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
     />
   ) : isFieldAddress(field) ? (
     <FormAddressFieldInput
@@ -143,6 +147,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
     />
   ) : isFieldLinks(field) ? (
     <FormLinksFieldInput
@@ -151,6 +156,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
       maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
     />
   ) : isFieldEmails(field) ? (
@@ -160,6 +166,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
     />
   ) : isFieldFiles(field) ? (
     <FormFilesFieldInput
@@ -177,6 +184,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
     />
   ) : isFieldDate(field) ? (
     <FormDateFieldInput
@@ -236,6 +244,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      subFieldPlaceholders={subFieldPlaceholders}
     />
   ) : isFieldRichText(field) ? (
     isDefined(VariablePicker) ? (

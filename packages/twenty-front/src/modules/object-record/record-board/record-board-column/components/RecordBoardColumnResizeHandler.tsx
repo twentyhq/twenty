@@ -15,7 +15,7 @@ export const RecordBoardColumnResizeHandler = () => {
   return (
     <RecordColumnResizeHandle
       isResizing={isResizing}
-      position="right"
+      position="end"
       onPointerDown={handleResizeStart}
     />
   );

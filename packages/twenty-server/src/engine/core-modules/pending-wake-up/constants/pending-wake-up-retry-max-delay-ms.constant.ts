@@ -1,0 +1,1 @@
+export const PENDING_WAKE_UP_RETRY_MAX_DELAY_MS = 60_000;

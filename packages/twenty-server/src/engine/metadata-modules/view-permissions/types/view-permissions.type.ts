@@ -11,4 +11,5 @@ export type ViewAccessContext = {
   userWorkspaceId?: string;
   apiKeyId?: string;
   applicationId?: string;
+  agentId?: string;
 };

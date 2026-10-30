@@ -16,6 +16,7 @@ import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/h
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
+import { isFrontComponentAvailableInWidgetPicker } from '@/side-panel/pages/page-layout/utils/isFrontComponentAvailableInWidgetPicker';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -89,7 +90,11 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   }>(FIND_MANY_FRONT_COMPONENTS);
 
   const frontComponents = (frontComponentsData?.frontComponents ?? []).filter(
-    (frontComponent) => !frontComponent.isHeadless,
+    (frontComponent) =>
+      isFrontComponentAvailableInWidgetPicker({
+        frontComponent,
+        pageLayoutType: PageLayoutType.DASHBOARD,
+      }),
   );
 
   const frontComponentsWithSelectItemId = frontComponents.map(
@@ -174,10 +179,10 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       const newWidget = createPageLayoutWidget({
         type: WidgetType.STANDALONE_RICH_TEXT,
-        title: 'Untitled Rich Text',
+        title: t`Untitled Rich Text`,
         configuration: {
           configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
-          body: { blocknote: '', markdown: null },
+          body: { tiptap: '', markdown: null },
         },
       });
       setPageLayoutEditingWidgetId(newWidget.id);
@@ -199,7 +204,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       const newRecordTableWidget = createPageLayoutWidget({
         type: WidgetType.RECORD_TABLE,
-        title: firstAvailableObjectMetadataItem?.labelPlural ?? 'Record Table',
+        title: firstAvailableObjectMetadataItem?.labelPlural ?? t`Record Table`,
         configuration: {
           configurationType: WidgetConfigurationType.RECORD_TABLE,
           isUIEditable: pageLayoutDraft.type === PageLayoutType.RECORD_PAGE,

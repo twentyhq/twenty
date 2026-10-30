@@ -1,32 +1,15 @@
-import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
 import { styled } from '@linaria/react';
 import { type MouseEvent, type PropsWithChildren } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRowContentContainer = styled.div`
-  > div {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    gap: ${themeCssVariables.spacing[2]};
-    height: ${themeCssVariables.spacing[12]};
-    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
-    position: relative;
-  }
-
-  > div:has(> .${CARD_ACTION_CLASS_NAME}:not(:disabled)):hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-    cursor: pointer;
-  }
-`;
-
-const StyledRowAction = styled.button`
-  &:disabled {
-    cursor: default;
-    pointer-events: none;
-  }
+const StyledRowContent = styled(Card.Content)`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[12]};
+  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[4]};
 `;
 
 const INDEPENDENT_ROW_ACTION_SELECTOR = [
@@ -45,6 +28,7 @@ const INDEPENDENT_ROW_ACTION_SELECTOR = [
 type ActivityRowProps = PropsWithChildren<{
   onClick?: () => void;
   disabled?: boolean;
+  divider?: boolean;
   label: string;
 }>;
 
@@ -52,6 +36,7 @@ export const ActivityRow = ({
   children,
   onClick,
   disabled,
+  divider = false,
   label,
 }: ActivityRowProps) => {
   const handleContentClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -70,19 +55,11 @@ export const ActivityRow = ({
   };
 
   return (
-    <StyledRowContentContainer>
-      <Card.Content onClick={handleContentClick}>
-        {isDefined(onClick) && (
-          <StyledRowAction
-            className={CARD_ACTION_CLASS_NAME}
-            type="button"
-            aria-label={label}
-            onClick={onClick}
-            disabled={disabled}
-          />
-        )}
-        {children}
-      </Card.Content>
-    </StyledRowContentContainer>
+    <StyledRowContent divider={divider} onClick={handleContentClick}>
+      {isDefined(onClick) && (
+        <Card.Action aria-label={label} onClick={onClick} disabled={disabled} />
+      )}
+      {children}
+    </StyledRowContent>
   );
 };

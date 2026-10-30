@@ -15,8 +15,9 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;DialogRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Manually unmounts the dialog.
-  Call this after any externally controlled closing animation finishes.
+  - `unmount`: Ends the closing phase of the dialog after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the dialog completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the dialog imperatively when called.
 </ParamField>
 
@@ -99,7 +100,7 @@
   A payload to pass to the dialog when it is opened.
 </ParamField>
 
-<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (RefObject&lt;...&gt; | ((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)))) | null">
+<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;...&gt;)) | null">
   Ref to the trigger button, or the element supplied through render.
 </ParamField>
 
@@ -255,7 +256,7 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Title.size" type="&quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xs&quot;" default="lg">
+<ParamField body="Title.size" type="&quot;lg&quot; | &quot;md&quot; | &quot;sm&quot; | &quot;xl&quot; | &quot;xs&quot; | &quot;xxl&quot;" default="lg">
   Visual font size, independent of the heading level. Defaults to `lg`.
 </ParamField>
 

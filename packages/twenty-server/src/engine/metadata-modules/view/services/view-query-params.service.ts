@@ -9,7 +9,6 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 import {
-  computeRecordGqlOperationFilter,
   convertViewFilterValueToString,
   isDefined,
   type RecordFilter,
@@ -31,6 +30,7 @@ import {
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type ViewQueryParams = {
@@ -108,7 +108,6 @@ export class ViewQueryParamsService {
           id: viewFilter.id,
           fieldMetadataId: viewFilter.fieldMetadataId,
           value: convertViewFilterValueToString(viewFilter.value ?? ''),
-          type: field.type,
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
@@ -129,10 +128,9 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const filter = computeRecordGqlOperationFilter({
-      fieldMetadataItems: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(isDefined),
+    const filter = computeRecordGqlOperationFilterFromFlatMaps({
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },

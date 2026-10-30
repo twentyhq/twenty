@@ -12,12 +12,14 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const OTHER_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 const READ_PARTICIPANT = {
+  __typename: 'AgentChatThreadParticipant' as const,
   threadId: THREAD_ID,
   lastReadAt: LAST_ACTIVITY_AT,
   archivedAt: null,
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
@@ -78,6 +80,8 @@ describe('useUpdateAgentChatThreadInboxState', () => {
       archivedAt: null,
       snoozedUntil: null,
       isSubscribed: false,
+      lastMentionedAt: null,
+      mentionsResolvedAt: null,
     });
   });
 

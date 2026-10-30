@@ -3,6 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 
 export const getSettingsObjectFieldType = (
   objectMetadataItem: EnrichedObjectMetadataItem,
@@ -23,15 +24,15 @@ export const getSettingsObjectFieldType = (
 
   if (variant === 'field-type') {
     return objectMetadataItem.isRemote
-      ? 'Remote'
+      ? t`Remote`
       : getIsMetadataItemCustom(fieldMetadataItem, workspaceCustomApplicationId)
-        ? 'Custom'
-        : 'Standard';
+        ? t`Custom`
+        : t`Standard`;
   } else {
     return isDefined(identifierType)
       ? identifierType === 'label'
-        ? 'Record text'
-        : 'Record image'
+        ? t`Record text`
+        : t`Record image`
       : null;
   }
 };

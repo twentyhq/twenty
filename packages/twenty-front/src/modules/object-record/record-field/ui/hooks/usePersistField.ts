@@ -56,6 +56,7 @@ import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/i
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -283,11 +284,13 @@ export const usePersistField = ({
         );
       } else {
         throw new Error(
-          `Invalid value to persist: ${JSON.stringify(
-            valueToPersist,
-          )} for type : ${
-            fieldDefinition.type
-          }, type may not be implemented in usePersistField.`,
+          doNotTranslate(
+            `Invalid value to persist: ${JSON.stringify(
+              valueToPersist,
+            )} for type : ${
+              fieldDefinition.type
+            }, type may not be implemented in usePersistField.`,
+          ),
         );
       }
     },

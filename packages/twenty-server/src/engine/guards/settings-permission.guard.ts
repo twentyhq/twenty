@@ -3,6 +3,7 @@ import {
   type ExecutionContext,
   Injectable,
   mixin,
+  SetMetadata,
   type Type,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -11,6 +12,7 @@ import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -19,9 +21,14 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 export const SettingsPermissionGuard = (
-  requiredPermission: PermissionFlagType,
+  requiredPermissions: PermissionFlagType | PermissionFlagType[],
 ): Type<CanActivate> => {
+  const requiredPermissionFlags = Array.isArray(requiredPermissions)
+    ? requiredPermissions
+    : [requiredPermissions];
+
   @Injectable()
+  @SetMetadata(SETTINGS_PERMISSION_GUARD_CONFIG_KEY, requiredPermissionFlags)
   class SettingsPermissionMixin implements CanActivate {
     constructor(private readonly permissionsService: PermissionsService) {}
 
@@ -41,26 +48,29 @@ export const SettingsPermissionGuard = (
         return true;
       }
 
-      const hasPermission =
-        await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId,
-          setting: requiredPermission,
-          workspaceId,
-          apiKeyId: ctx.getContext().req.apiKey?.id,
-          applicationId: ctx.getContext().req.application?.id,
-        });
+      for (const setting of requiredPermissionFlags) {
+        const hasPermission =
+          await this.permissionsService.userHasWorkspaceSettingPermission({
+            userWorkspaceId,
+            setting,
+            workspaceId,
+            apiKeyId: ctx.getContext().req.apiKey?.id,
+            applicationId: ctx.getContext().req.application?.id,
+            agentId: ctx.getContext().req.agentId,
+          });
 
-      if (hasPermission === true) {
-        return true;
+        if (!hasPermission) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+            PermissionsExceptionCode.PERMISSION_DENIED,
+            {
+              userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+            },
+          );
+        }
       }
 
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-        },
-      );
+      return true;
     }
   }
 

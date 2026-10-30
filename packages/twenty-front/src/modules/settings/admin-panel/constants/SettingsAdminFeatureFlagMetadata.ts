@@ -8,61 +8,25 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   FeatureFlagKey,
   { label: MessageDescriptor; description: MessageDescriptor }
 > = {
-  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
-    label: msg`Async CSV export`,
-    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
-  },
-  [FeatureFlagKey.IS_JSON_FILTER_ENABLED]: {
-    label: msg`JSON filters`,
-    description: msg`Allow filtering records by values inside JSON fields.`,
-  },
-  [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
-    label: msg`Email campaigns`,
-    description: msg`Enable email campaigns, lists, and unsubscribe management.`,
   },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {
     label: msg`Direct REST metadata responses`,
     description: msg`Return metadata directly instead of wrapping it in the legacy response envelope.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
-    label: msg`Application workflows`,
-    description: msg`Allow applications to install workflows and start new workflow runs.`,
-  },
-  [FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED]: {
-    label: msg`Initial object views`,
-    description: msg`Use a dedicated initial view for each object in navigation and the view picker.`,
-  },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_RECORD_SHARE_VISIBILITY_GATING_ENABLED]: {
-    label: msg`Record sharing visibility`,
-    description: msg`Apply record sharing visibility rules when accessing records.`,
-  },
-  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
-    label: msg`Deferred workspace migration actions`,
-    description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records.`,
+    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
   },
-  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
-    label: msg`Logs console`,
-    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
-  },
-  [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: {
-    label: msg`Validation rules`,
-    description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
-  },
-  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
-    label: msg`Skip unchanged calendar records`,
-    description: msg`Only write calendar events and participants that changed since the last sync.`,
+  [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
+    label: msg`Share calendar events across channels`,
+    description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,
@@ -71,5 +35,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
+  [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
+    label: msg`Related record paths`,
+    description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
 };

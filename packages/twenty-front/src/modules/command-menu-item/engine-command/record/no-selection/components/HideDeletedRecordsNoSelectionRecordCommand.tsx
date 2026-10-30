@@ -7,13 +7,16 @@ import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/h
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const HideDeletedRecordsNoSelectionRecordCommand = () => {
   const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
-      'Object metadata item and record index ID are required to hide deleted records',
+      doNotTranslate(
+        'Object metadata item and record index ID are required to hide deleted records',
+      ),
     );
   }
 

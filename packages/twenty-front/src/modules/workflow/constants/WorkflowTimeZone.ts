@@ -1,1 +1,3 @@
-export const WORKFLOW_TIMEZONE = 'UTC';
+import { doNotTranslate } from 'twenty-shared/i18n';
+
+export const WORKFLOW_TIMEZONE = doNotTranslate('UTC');

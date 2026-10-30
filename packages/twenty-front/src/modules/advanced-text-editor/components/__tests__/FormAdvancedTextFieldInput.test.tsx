@@ -13,6 +13,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const TEST_EDITOR_PROFILE = {
   chrome: 'field',
+  variant: 'app',
   minHeight: 200,
   enableFullScreen: true,
   buildExtensions: buildFullRichTextExtensions,

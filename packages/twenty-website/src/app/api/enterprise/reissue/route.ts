@@ -1,6 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 
 import { NextResponse } from 'next/server';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   getEnterpriseConfigError,
@@ -8,6 +9,7 @@ import {
   getStripeClient,
   signEnterpriseKey,
 } from '@/platform/enterprise';
+import { forwardToTwentyConnect } from '@/platform/enterprise/forward-to-twenty-connect';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,6 +32,12 @@ function isSecretValid(providedSecret: string): boolean {
 }
 
 export async function POST(request: Request) {
+  const forwardedResponse = await forwardToTwentyConnect(request);
+
+  if (isDefined(forwardedResponse)) {
+    return forwardedResponse;
+  }
+
   const configError = getEnterpriseConfigError({
     route: 'enterprise-reissue',
     feature: 'Organization key reissue',

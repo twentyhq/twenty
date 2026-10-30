@@ -9,7 +9,7 @@ export const TOOLTIP_PROP_DESCRIPTIONS = {
   triggerProps:
     'Full Trigger props, including native props, ref, render and payload. Overrides the shorthand trigger defaults.',
   positionerProps:
-    'Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults.',
+    'Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults.',
   portalProps:
     'Full Portal props, including native props, ref and render. Overrides shorthand portal defaults.',
   arrowPadding: 'Minimum distance from the arrow to the popup edges.',
@@ -23,7 +23,8 @@ export const TOOLTIP_PROP_DESCRIPTIONS = {
   arrow: 'Displays an arrow pointing to the trigger. Defaults to false.',
   withExitAnimation:
     'Fades and slides the popup out when it closes instead of hiding it at once.',
-  maxWidth: 'Maximum popup width. Defaults to 300 pixels.',
+  maxWidth:
+    'Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.',
   positionMethod: 'CSS positioning method for the popup.',
   open: 'Controlled visibility of the tooltip.',
   defaultOpen: 'Initial visibility when the tooltip manages its own state.',

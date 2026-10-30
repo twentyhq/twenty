@@ -8,6 +8,7 @@ const buildRoleEntity = (overrides: Partial<RoleEntity> = {}): RoleEntity =>
     id: 'role-id',
     label: 'Role',
     universalIdentifier: 'role-universal-identifier',
+    applicationId: 'application-id',
     canUpdateAllSettings: false,
     canAccessAllTools: false,
     description: null,
@@ -28,6 +29,12 @@ const buildRoleEntity = (overrides: Partial<RoleEntity> = {}): RoleEntity =>
   }) as RoleEntity;
 
 describe('fromRoleEntityToRoleDto', () => {
+  it('exposes the id of the application owning the role', () => {
+    const roleDto = fromRoleEntityToRoleDto(buildRoleEntity());
+
+    expect(roleDto.applicationId).toBe('application-id');
+  });
+
   it('returns undefined permission flags when role permission flags are not loaded', () => {
     const roleDto = fromRoleEntityToRoleDto(
       buildRoleEntity({

@@ -35,6 +35,7 @@ import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
@@ -46,6 +47,7 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
@@ -98,7 +100,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { getUpdatableWorkflowVersion } =
+  const { getUpdatableWorkflowVersionStepOrThrow } =
     useGetUpdatableWorkflowVersionOrThrow();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -117,9 +119,14 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { formValues, loading, onChange } = useLogicFunctionForm({
-    logicFunctionId,
-  });
+  const getUpdatableLogicFunctionIdOrThrow = async () => {
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
+      stepId: action.id,
+      stepType: 'CODE',
+    });
+
+    return updatableStep.settings.input.logicFunctionId;
+  };
 
   const {
     executeLogicFunction,
@@ -140,56 +147,53 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput ?? {},
     );
 
-  const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
+  const handleSourceHandlerCodeSaved = ({
+    targetLogicFunctionId,
+    inferredJsonSchema,
+  }: {
+    targetLogicFunctionId: string;
+    inferredJsonSchema: InputJsonSchema;
+  }) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
 
-      if (!isDefined(sourceCode)) {
-        return;
-      }
+    const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
 
-      const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
+    const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
-      const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
+    const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
+      newInput: newFunctionInput,
+      oldInput: action.settings.input.logicFunctionInput,
+    });
 
-      const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
-        newInput: newFunctionInput,
-        oldInput: action.settings.input.logicFunctionInput,
-      });
+    const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
+      newInput: newFunctionInput,
+      oldInput: logicFunctionTestData.input,
+    });
 
-      const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
-        newInput: newFunctionInput,
-        oldInput: logicFunctionTestData.input,
-      });
+    setFunctionInput(newMergedInput);
 
-      setFunctionInput(newMergedInput);
+    updateLogicFunctionInput(newMergedTestInput);
 
-      updateLogicFunctionInput(newMergedTestInput);
-
-      updateAction({
-        ...action,
-        settings: {
-          ...action.settings,
-          outputSchema: {
-            link: {
-              isLeaf: true,
-              icon: 'IconVariable',
-              tab: 'test',
-              label: t`Generate Function Output`,
-            },
-            _outputSchemaType: 'LINK',
-          },
-          input: {
-            ...action.settings.input,
-            logicFunctionInput: newMergedInput,
-          },
+    updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          logicFunctionId: targetLogicFunctionId,
+          logicFunctionInput: newMergedInput,
         },
-      });
-    },
-    500,
-  );
+      },
+    });
+  };
+
+  const { formValues, loading, onChange } = useLogicFunctionForm({
+    logicFunctionId,
+    getTargetLogicFunctionId: getUpdatableLogicFunctionIdOrThrow,
+    onSourceHandlerCodeSaved: handleSourceHandlerCodeSaved,
+  });
 
   const handleInputChange = async (value: any, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
@@ -273,18 +277,16 @@ export const WorkflowEditActionCode = ({
     500,
   );
 
-  const handleCodeChange = async (newCode: string) => {
-    if (actionOptions.readonly === true || !isDefined(workflow)) {
+  const handleCodeChange = async (newCode: string | undefined) => {
+    if (
+      actionOptions.readonly === true ||
+      !isDefined(workflow) ||
+      !isDefined(newCode)
+    ) {
       return;
     }
 
-    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
-
-    await getUpdatableWorkflowVersion();
-
-    if (isDefined(inferredJsonSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
-    }
+    await onChange('sourceHandlerCode')(newCode);
   };
 
   const tabs = [
@@ -317,7 +319,9 @@ export const WorkflowEditActionCode = ({
       href: '#',
     },
     {
-      children: isDefined(action.name) ? action.name : CODE_ACTION.defaultLabel,
+      children: isDefined(action.name)
+        ? getWorkflowStepDisplayName({ name: action.name, type: action.type })
+        : t(CODE_ACTION.defaultLabel),
       href: '#',
     },
     {
@@ -384,8 +388,11 @@ export const WorkflowEditActionCode = ({
     isFullScreen,
   );
 
+  const isInitialLoading =
+    loading && !isNonEmptyString(formValues.sourceHandlerCode);
+
   return (
-    !loading && (
+    !isInitialLoading && (
       <TabListRoot
         componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
       >

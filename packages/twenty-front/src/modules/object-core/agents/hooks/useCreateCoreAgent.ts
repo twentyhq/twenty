@@ -5,6 +5,7 @@ import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
@@ -43,9 +44,8 @@ export const useCreateCoreAgent = () => {
             name: `untitledAgent${v4().split('-')[0]}`,
             label: t`Untitled agent`,
             icon: 'IconLego',
-            prompt: 'You are a helpful AI assistant.',
+            prompt: doNotTranslate('You are a helpful AI assistant.'),
             modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-            responseFormat: { type: 'text' },
           },
         },
       });

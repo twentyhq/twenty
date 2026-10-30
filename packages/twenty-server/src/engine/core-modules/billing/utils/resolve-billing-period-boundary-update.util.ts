@@ -2,15 +2,23 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-type StoredBillingPeriod = {
-  currentPeriodStart: Date;
-  currentPeriodEnd: Date;
-};
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { getCurrentPeriodMaxSeats } from 'src/engine/core-modules/billing/utils/get-current-period-max-seats.util';
+
+type StoredBillingPeriod = Pick<
+  BillingSubscriptionEntity,
+  | 'currentPeriodStart'
+  | 'currentPeriodEnd'
+  | 'currentPeriodMaxSeats'
+  | 'billingSubscriptionItems'
+>;
 
 type BillingPeriodBoundaryUpdate = {
   previousPeriodStart?: Date;
   currentPeriodStart?: Date;
   currentPeriodEnd?: Date;
+  previousPeriodMaxSeats?: number;
+  currentPeriodMaxSeats?: number | null;
 };
 
 // Stripe only reports the current window, so the boundary a period moves off must be captured here or is lost;
@@ -27,15 +35,20 @@ export const resolveBillingPeriodBoundaryUpdate = ({
   }
 
   const { currentPeriodStart, currentPeriodEnd } = storedSubscription;
+  const currentPeriodMaxSeats = getCurrentPeriodMaxSeats(storedSubscription);
 
   if (incomingPeriodStart.getTime() > currentPeriodStart.getTime()) {
-    return { previousPeriodStart: currentPeriodStart };
+    return {
+      previousPeriodStart: currentPeriodStart,
+      previousPeriodMaxSeats: currentPeriodMaxSeats,
+      currentPeriodMaxSeats: null,
+    };
   }
 
   // Stripe never moves a period backwards, so an older window is a late event and must not rewind the boundary.
   if (incomingPeriodStart.getTime() < currentPeriodStart.getTime()) {
-    return { currentPeriodStart, currentPeriodEnd };
+    return { currentPeriodStart, currentPeriodEnd, currentPeriodMaxSeats };
   }
 
-  return {};
+  return { currentPeriodMaxSeats };
 };

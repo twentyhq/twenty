@@ -45,6 +45,38 @@ describe('formatResult', () => {
     jest.clearAllMocks();
   });
 
+  it.each([
+    '2026-01-01T00:00:00.123900Z',
+    '2026-01-01 00:00:00.1239+00',
+    '2026-01-01 05:30:00.1239+05:30',
+  ])('formats %s as a Date without changing the raw value', (createdAt) => {
+    const dateField = getFlatFieldMetadataMock({
+      universalIdentifier: '20202020-3c25-4d02-bf25-6aeccf7ea419',
+      objectMetadataId: '20202020-4c25-4d02-bf25-6aeccf7ea419',
+      name: 'createdAt',
+      type: FieldMetadataType.DATE_TIME,
+    });
+    const objectMetadata = getFlatObjectMetadataMock({
+      id: dateField.objectMetadataId,
+      universalIdentifier: dateField.objectMetadataUniversalIdentifier,
+      fieldIds: [dateField.id],
+    });
+    const rawRecords = [{ createdAt }, { createdAt: null }];
+
+    const records = formatResult(
+      rawRecords,
+      objectMetadata,
+      buildFlatEntityMaps([objectMetadata]),
+      buildFlatEntityMaps([dateField]),
+    );
+
+    expect(records).toEqual([
+      { createdAt: new Date('2026-01-01T00:00:00.123Z') },
+      { createdAt: null },
+    ]);
+    expect(rawRecords[0].createdAt).toBe(createdAt);
+  });
+
   it('reuses derived field metadata per object type within one invocation', () => {
     const companyObjectMetadataId = '20202020-3c25-4d02-bf25-6aeccf7ea419';
     const personObjectMetadataId = '20202020-4c25-4d02-bf25-6aeccf7ea419';

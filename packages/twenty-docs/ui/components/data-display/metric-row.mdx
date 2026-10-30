@@ -3,35 +3,39 @@ title: MetricRow
 description: Align a metric label and formatted value with optional progress.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## Overview
 
 `MetricRow` aligns a label, optional icon, and preformatted value. An optional [ProgressRing](/ui/primitives/feedback/progress-ring) uses the visible label as its accessible name.
 
 <StoryEmbed
-  storyId="ui-data-display-metricrow--default"
+  storyId="ui-data-display-metricrow--display"
   title="Metric row example"
-  height={160}
+  height={100}
 />
 
 ## Usage
 
-Pass a nonempty text label as required children and the formatted value through `value`. Add `progress` when the metric has a known percentage.
-
 ```tsx
 import { MetricRow } from 'twenty-ui/components/data-display';
-import { IconDatabase } from 'twenty-ui/icon';
+import { IconFiles } from 'twenty-ui/icon';
 
-export const StorageMetric = () => (
+export const ImportMetric = () => (
   <MetricRow
-    startIcon={<IconDatabase size={14} />}
-    value="12 / 20 GB"
-    progress={60}
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
   >
-    Storage
+    Imported files
   </MetricRow>
 );
 ```
+
+Pass a nonempty text label as required children and the formatted value through `value`. Add `progress` when the metric has a known percentage.
 
 The application owns calculations, units, number formatting, and the meaning of the metric. `progressColor` accepts a CSS color for the filled arc.
 
@@ -73,3 +77,5 @@ Native attributes, `className`, `style`, and `ref` target the outer row. `render
 ## Props
 
 <MetricRowReference />
+
+<PageBanner illustration="dashboards" />

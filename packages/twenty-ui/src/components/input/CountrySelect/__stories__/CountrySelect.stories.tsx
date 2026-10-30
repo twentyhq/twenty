@@ -20,18 +20,27 @@ const meta: Meta<typeof CountrySelectExample> = {
 export default meta;
 type Story = StoryObj<typeof CountrySelectExample>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  args: {
+    label: 'Shipping country',
+    countries: [
+      { value: 'FR', label: 'France', flag: '🇫🇷' },
+      { value: 'DE', label: 'Germany', flag: '🇩🇪' },
+      { value: 'JP', label: 'Japan', flag: '🇯🇵' },
+    ],
+  },
+};
 
 export const Disabled: Story = {
   args: { disabled: true },
 };
 
 export const Empty: Story = {
-  args: { value: '' },
+  args: { value: null },
 };
 
 export const ScopedTheme: Story = {
-  args: { value: 'Japan', label: 'Scoped country' },
+  args: { value: 'JP', label: 'Scoped country' },
   render: (args) => (
     <ThemeProvider colorScheme="dark" applyToRoot={false}>
       <div style={{ background: 'var(--t-background-primary)', padding: 16 }}>

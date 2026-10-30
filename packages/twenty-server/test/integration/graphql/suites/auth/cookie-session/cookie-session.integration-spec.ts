@@ -242,4 +242,32 @@ describe('Cookie sessions (integration)', () => {
       true,
     );
   });
+
+  it('should answer a workspace query sent without credentials with an auth error rather than a schema error', async () => {
+    const response = await asWorkspaceRequest(
+      request(SERVER_URL).post('/graphql'),
+    ).send({ query: FIND_COMPANIES_QUERY });
+
+    expect(response.body.errors).toBeDefined();
+
+    const messages = response.body.errors.map(
+      (graphQLError: { message: string }) => graphQLError.message,
+    );
+    const codes = response.body.errors.map(
+      (graphQLError: { extensions?: { code?: string } }) =>
+        graphQLError.extensions?.code,
+    );
+
+    expect(messages.join(' ')).not.toContain('Cannot query field');
+    expect(codes).toContain('UNAUTHENTICATED');
+  });
+
+  it('should keep serving introspection without credentials outside production for schema codegen', async () => {
+    const response = await asWorkspaceRequest(
+      request(SERVER_URL).post('/graphql'),
+    ).send({ query: '{ __schema { queryType { name } } }' });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.__schema.queryType.name).toBe('Query');
+  });
 });

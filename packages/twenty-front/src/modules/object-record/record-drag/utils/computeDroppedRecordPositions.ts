@@ -1,5 +1,6 @@
 import type { Store } from 'jotai/vanilla/store';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { extractRecordPositions } from '@/object-record/record-drag/utils/extractRecordPositions';
 import {
@@ -37,7 +38,11 @@ export const computeDroppedRecordPositions = ({
     : destinationRecordIds.at(destinationIndex);
 
   if (!isDefined(targetRecordId)) {
-    throw new Error('Target record id cannot be found, this should not happen');
+    throw new Error(
+      doNotTranslate(
+        'Target record id cannot be found, this should not happen',
+      ),
+    );
   }
 
   const recordsWithPosition = extractRecordPositions(

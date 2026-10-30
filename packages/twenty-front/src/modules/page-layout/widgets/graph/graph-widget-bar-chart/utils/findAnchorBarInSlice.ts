@@ -1,4 +1,5 @@
 import { type BarPosition } from '@/page-layout/widgets/graph/graph-widget-bar-chart/types/BarPosition';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const findAnchorBarInSlice = ({
   bars,
@@ -8,7 +9,7 @@ export const findAnchorBarInSlice = ({
   isVerticalLayout: boolean;
 }): BarPosition => {
   if (bars.length === 0) {
-    throw new Error('Cannot find anchor bar in empty slice');
+    throw new Error(doNotTranslate('Cannot find anchor bar in empty slice'));
   }
 
   return bars.reduce((anchor, bar) => {

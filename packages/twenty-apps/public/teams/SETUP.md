@@ -12,9 +12,6 @@
    Twenty. Use the secret **Value**, not its ID.
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
-5. In Teams admin center > Meetings > Meeting settings > Transcript API access,
-   enable **Microsoft Graph access**. Without it, Graph answers transcript
-   requests with `GraphAccessToTranscriptsDisabled`.
 
 | Permission                         | Purpose                                                        |
 | ---------------------------------- | -------------------------------------------------------------- |
@@ -29,11 +26,31 @@ with PKCE through Twenty's connection provider.
 
 These OAuth credentials are separate from the `TEAMS_BOT_*` credentials used by
 the chat Bot Connector. They are optional at registration so Teams can be
-installed without transcript setup. Both must be configured before users can add
-a Microsoft connection. See [Bot server variables](#bot-server-variables) for the
-bot configuration.
+installed without transcript setup. Both `MICROSOFT_CLIENT_ID` and
+`MICROSOFT_CLIENT_SECRET` must be configured before users can add a Microsoft
+connection. Bot credentials are not needed for transcript imports. See
+[Bot server variables](#bot-server-variables) for the unreleased chat feature.
+
+## Microsoft 365 organization settings
+
+Microsoft applies these per organization, so a Microsoft 365 admin of every
+organization whose users connect sets them in Teams admin center > Meetings >
+Meeting settings > Transcript API access:
+
+- Turn on **Microsoft Graph access**. Without it, Graph answers transcript
+  requests with `GraphAccessToTranscriptsDisabled`.
+- Select **Configure** and turn on **Include speaker attribution**, which is off
+  by default. Without it, Microsoft serves transcripts without speaker names.
+
+In Teams PowerShell, both are
+`Set-CsTeamsMeetingConfiguration -Identity Global -EnableGraphTranscriptAccess $true -EnableAttributedTranscripts $true`.
+The same admin consents to the delegated permissions when the organization
+requires it.
 
 ## Bot server variables
+
+These variables are for the Teams chat assistant, which is not available in
+this release. Skip this section when setting up transcript imports.
 
 The bot's identity is an Entra app registration behind an Azure Bot resource.
 An admin configures these on the Teams application registration under
@@ -47,40 +64,105 @@ three credentials before bot operations can run.
 | `TEAMS_BOT_APP_PASSWORD` | yes    | Client secret of that app registration. Used to mint Bot Connector tokens.                                                                                                                                        |
 | `TEAMS_BOT_TENANT_ID`    | no     | Directory (tenant) ID that owns the Azure Bot. Microsoft stopped issuing multi-tenant bots after 2025-07-31, so token minting is tenant-scoped rather than going through the shared `botframework.com` authority. |
 
+## Chat
+
+Chat is not available in this release. The following setup is for development
+and a future chat release.
+
+Chat lets workspace members message the Teams Assistant bot from Microsoft
+Teams. It needs the [bot server variables](#bot-server-variables), the
+`IS_CHAT_ASSISTANT_RELEASED` release flag, and the workspace's **Enable chat**
+setting.
+
+1. In the Azure Bot resource, set the messaging endpoint to
+   `https://<your-twenty-host>/webhooks/server/c78db1b1-a0ec-4183-9edd-63299ab5a477`
+   and enable the Microsoft Teams channel. The Twenty server must be reachable
+   from the internet over HTTPS.
+2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
+   `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
+3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
+   Adding it claims the connection's Microsoft tenant for this workspace, so
+   activities from that tenant route here. Personal connections do not claim a
+   tenant, and a tenant can only be claimed by one workspace.
+
+The route verifies the Bot Framework token on every activity and ignores
+activities from tenants no workspace has claimed. The bot answers direct
+messages, and channel or group messages that mention it. It answers as the
+workspace member whose email matches the sender's Microsoft account, links that
+account under **Linked Teams accounts**, and replies with a short notice when no
+member matches. Members who can manage roles can remove a link there; an
+account matched on email is linked again on its next message.
+
+## Twenty registration and shared webhook
+
+The transcript webhook uses a server route shared by all installations on a
+Twenty instance. Its resolver runs in the application's **owner workspace**.
+Before users connect Microsoft accounts:
+
+1. After publishing and catalog sync, [claim the
+   app](https://docs.twenty.com/developers/extend/apps/operations/publishing#claiming-your-app)
+   in **Settings → Developers → Apps** using `@twentyhq/teams`. This requires
+   npm provenance from the public GitHub repository and an authorized GitHub
+   owner. Ownership is separate on each Twenty instance.
+2. Open the registration under **My apps**, then set `MICROSOFT_CLIENT_ID` and
+   `MICROSOFT_CLIENT_SECRET` in **Config → Server Variables**.
+3. In **Distribution**, choose **See on marketplace** and install the app in
+   the owner workspace. Keep that installation enabled: removing it interrupts
+   transcript webhooks for every workspace on the instance.
+4. Install in a second workspace and verify that connecting an account creates
+   a Graph subscription and that a new meeting transcript imports. Check both
+   the resolver's logs in the owner workspace and the target function's logs in
+   the second workspace.
+
+An unclaimed app, or one not installed in its owner workspace, returns `404`
+(`LOGIC_FUNCTION_NOT_FOUND`) on the shared webhook even if another workspace
+has installed it. See [server-route
+setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#setting-up-server-routes).
+
 ## Connect
 
 Open **Settings > Applications > Microsoft Teams > Settings**, select
 **Add connection**, and sign in with your Microsoft work or school account.
 
-The transcript release flag and workspace setting are off by default, and
-connecting an account does not enable them. With both on, connecting an account
-also creates a Microsoft Graph subscription to the transcripts of the meetings
-that account organizes. Graph delivers its notifications to
+Transcript imports are on by default. Connecting an account creates a Microsoft
+Graph subscription to the transcripts of the meetings that account organizes.
+Graph delivers its notifications to
 `https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
 so the Twenty server must be reachable from the internet over HTTPS. New
 transcripts then import automatically into Call Recordings as Microsoft
-publishes them. Use the **Sync Teams Transcript** action for transcripts from
-before the connection existed, and for any that Microsoft has not published
-about two and a half hours after the meeting or whose import keeps failing. A
-connection added while transcripts were off has no subscription: reconnect it
-after turning transcripts on. Disconnecting the account or uninstalling the app
-deletes the subscription.
+publishes them. If upgrading from a development build with transcript imports
+disabled, reconnect existing accounts to start their subscription and initial
+import. Disconnecting the account or uninstalling the app deletes the
+subscription.
+
+Connecting also imports the transcripts of the last 31 days, once per
+connection. Reconnecting starts it again only when that import failed or
+stalled. The settings control for choosing a separate history import is not
+available in this release. Use the **Sync Teams Transcript** action for a single
+transcript, such as one that Microsoft had not published about two and a half
+hours after the meeting or whose import keeps failing.
 
 Transcripts link to the meeting's calendar event when that calendar is synced in
 Twenty. An occurrence of a recurring meeting links to the series' event.
 
+AI summaries are off by default. Turn on **Enable transcript summaries** in
+**Settings > Applications > Microsoft Teams > Settings** to summarize each Call
+Recording that Microsoft Teams imports, including the 31-day import on connect.
+Each summary uses AI credits. Run **Generate call summary** on selected Call
+Recordings, or on calendar events for the latest Teams recording of each, to
+write or rewrite their summary, up to 20 calls at a time. This command also
+requires **Enable transcript summaries** to be on.
+
 ## Test the transcript actions
 
-1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
-   and deploy the app, then enable transcripts in the Microsoft Teams settings.
-2. Schedule a Teams meeting with the connected account, join it at its
+1. Schedule a Teams meeting with the connected account, join it at its
    scheduled time, start transcription, speak, and end the meeting. Microsoft
    publishes the transcript a few minutes later.
-3. Ask the Twenty AI assistant to list your Teams transcripts, or add the
+2. Ask the Twenty AI assistant to list your Teams transcripts, or add the
    **List My Teams Transcripts** action to a workflow. The result carries one
    entry per transcript with the meeting subject, the Graph meeting ID, and the
    transcript ID.
-4. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
+3. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
    the workflow with that `meetingId` and `transcriptId`. The transcript appears
    as a Call Recording named after the meeting subject, linked to the meeting's
    calendar event when Twenty has synced it.
@@ -97,30 +179,35 @@ References: [Microsoft authorization code flow](https://learn.microsoft.com/en-u
 and [transcript permissions](https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0),
 plus [Teams transcript API access settings](https://learn.microsoft.com/en-us/microsoftteams/meeting-transcript-api-access).
 
-## Features, settings, and feature flags
+## Features, settings, and release flags
 
 - **Features** are the product areas: chat and transcripts. Their code, settings
   components, identifiers, and tests live in `src/features/chat` and
   `src/features/transcripts` respectively.
-- **Settings** are workspace choices. `TEAMS_CHAT_ENABLED` and
-  `TEAMS_TRANSCRIPTS_ENABLED` are Boolean application variables managed through
-  **Settings → Applications → Microsoft Teams → Settings**. Updates use the
+- **Settings** are workspace choices. `TEAMS_CHAT_ENABLED`,
+  `TEAMS_TRANSCRIPTS_ENABLED` and `TEAMS_TRANSCRIPT_SUMMARY_ENABLED` are Boolean
+  application variables. **Settings → Applications → Microsoft Teams →
+  Settings** manages chat and transcript summaries; transcripts are on by
+  default and have no switch, and summaries are off by default. Updates use the
   metadata API, which requires permission to manage applications.
-- **Feature flags** are developer-controlled release decisions, defined in
-  `src/constants/feature-flags.ts`. They follow the server's
-  `IS_…_ENABLED` naming and are bundled with the app. Changing them requires a
-  new build and deployment; a workspace setting cannot override them.
+- **Release flags** are developer-controlled release decisions, defined in
+  `src/constants/release-flags.ts` and bundled with the app. They are not the
+  server's workspace feature flags, so they are named `IS_…_RELEASED`. Changing
+  them requires a new build and deployment; a workspace setting cannot override
+  them.
 
-`IS_CHAT_ASSISTANT_ENABLED` controls availability of chat in this scaffold, and
-`IS_TRANSCRIPT_IMPORT_ENABLED` controls transcript imports. Both start as
-`false`. A disabled feature is shown as unavailable in settings, retaining any
-saved workspace preference.
+`IS_CHAT_ASSISTANT_RELEASED` controls availability of chat, and
+`IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED` shows the Import history section. Both
+start as `false`. Settings hides chat and Import history until their flags are
+on, retaining any saved workspace preference. Transcript imports and summaries
+have no release flag.
 
 The frontend and handlers share
-`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's development
+`isFeatureEnabled({ isAvailable, settingValue })`. Pass the feature's release
 flag as `isAvailable`; the serialized workspace setting must also be `'true'`.
-In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` or
-`process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY]` as `settingValue`.
+In a logic function, use `process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY]` as
+`settingValue`. Transcript handlers call `isTeamsTranscriptImportEnabled()`
+instead.
 The settings page initializes from `getApplicationVariable` and updates its
 local value after a successful save. Changes made by another client require a
 page refresh. Live updates need shared host/SDK support for application-variable
@@ -134,10 +221,11 @@ external resources, add its enable/disable reconciliation alongside that
 feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
-Feature flags do not exclude SDK definitions from the manifest or make broken
-code buildable. Disabled features must still pass typecheck and build. The
-Microsoft OAuth connection remains available independently of the transcript
-release flag; connecting an account only stores its credentials for future use.
+Release flags gate behavior at runtime, not installation. The build puts every
+file that default-exports a `define…` call in the manifest, so a disabled
+feature's objects, fields, indexes, roles, agents and logic functions are still
+installed, and its handlers return before doing any work. Disabled features
+must still pass typecheck and build.
 
 ## Development
 
@@ -149,31 +237,61 @@ yarn install --immutable
 yarn lint
 yarn typecheck
 yarn test:unit
-yarn twenty dev:build
+twenty app build
 ```
+
+Install the standalone CLI with `npm install -g twenty`.
 
 Installation tests use a disposable Twenty workspace. Configure
 `TWENTY_API_URL` and `TWENTY_API_KEY` for that workspace, then run `yarn test`.
 The test setup installs and uninstalls the application; do not use the shared QA
 workspace. Public apps use the monorepo CI workflows.
 
+## Release checklist
+
+- Deploy the Twenty server changes that add Teams to the featured and
+  billing-exempt application lists **before publishing and the first catalog
+  sync**. Publishing the npm package alone does not make imports free. Listing
+  is set when the catalog first creates the registration; a later catalog sync
+  does not change an existing registration's listing status.
+- Confirm the release version in `package.json`, run the development checks
+  above, and inspect the built package before publishing with npm provenance.
+  Publish through the Twenty CLI so the manifest and built files are included.
+- Complete [registration and shared-webhook setup](#twenty-registration-and-shared-webhook).
+  Confirm the app appears in the marketplace and that its owner
+  workspace and Microsoft OAuth credentials are configured.
+- Run a live pilot from a second workspace: consent and connection, the 31-day
+  initial import, a newly transcribed meeting, calendar linking, and a repeated
+  sync without duplicate Call Recordings. Verify the summaries switch, automatic
+  and manual summaries, and expected AI-credit usage. Confirm ordinary transcript
+  imports consume no logic-function credits, and check failed-consent/API errors
+  and disconnect cleanup. Record the results before announcing availability.
+
 ## Troubleshooting
 
+- Webhook returns `404` / `LOGIC_FUNCTION_NOT_FOUND`: claim the registration and
+  install the app in its owner workspace as described above.
 - No Add connection button: check that the provider was deployed and its two
   server variables are filled.
 - Redirect mismatch: register the exact `/auth/apps/callback` URI on the **Web**
   platform, including the correct scheme and hostname.
 - Admin approval required: the Microsoft tenant administrator must consent to
   the delegated permissions before the connection can finish.
-- `Teams transcripts are not enabled`: enable the transcript release flag in
-  the build and the workspace transcript setting.
+- `Teams transcripts are not enabled`: check that the application variable
+  `TEAMS_TRANSCRIPTS_ENABLED` is `true`. It defaults to `true` in this release;
+  there is no transcript release flag. Reconnect accounts added while imports
+  were disabled.
 - `Microsoft Teams is not connected`: the requesting user has no personal
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
-- Call Recording without speaker names: the tenant disallows speaker
-  attribution in Teams meeting settings, so Microsoft only serves the transcript
-  without speakers.
+- Call Recording without speaker names: the organization has **Include speaker
+  attribution** off, so Microsoft serves transcripts without speakers and the
+  app logs a warning starting with `[teams] Microsoft withheld speaker names`.
+  Turn it on as in
+  [Microsoft 365 organization settings](#microsoft-365-organization-settings);
+  it can take a while to apply. Run **Sync Teams Transcript** on a transcript
+  imported before then to add its speaker names.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.

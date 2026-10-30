@@ -5,6 +5,7 @@ import { DOM_EVENT_TYPE_TO_REACT_PROP } from '@/constants/DomEventTypeToReactPro
 import { type HostReactEventHandlerProp } from '@/host/elements/types/HostReactEventHandlerProp';
 import { isRemoteEventListenerActive } from '@/host/elements/utils/isRemoteEventListenerActive';
 import { LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE } from '@/host/events/constants/LowercaseEventPropToDomEventType';
+import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { wrapEventHandler } from '@/host/events/utils/wrapEventHandler';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
@@ -14,11 +15,13 @@ export const buildHostReactEventHandlerProp = ({
   remotePropName,
   remotePropValue,
   findRemoteElementIdContainingNode,
+  claimPointerEventForwarding,
 }: {
   remoteProps: Record<string, unknown>;
   remotePropName: string;
   remotePropValue: unknown;
   findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
+  claimPointerEventForwarding?: ClaimPointerEventForwarding;
 }): HostReactEventHandlerProp | undefined => {
   const domEventType =
     LOWERCASE_EVENT_PROP_TO_DOM_EVENT_TYPE[remotePropName.toLowerCase()];
@@ -36,6 +39,7 @@ export const buildHostReactEventHandlerProp = ({
     hostEventHandler: wrapEventHandler({
       remoteListener: remotePropValue as RemoteSerializedEventListener,
       findRemoteElementIdContainingNode,
+      claimPointerEventForwarding,
     }),
   };
 };

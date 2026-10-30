@@ -31,7 +31,7 @@ export class LocalPrebuiltBundleService {
 
   async installPrebuiltBundle({
     flatLogicFunction,
-    applicationUniversalIdentifier,
+    flatApplication,
   }: LogicFunctionInstallPrebuiltBundleParams): Promise<void> {
     if (!isNonEmptyString(flatLogicFunction.checksum)) {
       throw new LogicFunctionException(
@@ -57,7 +57,7 @@ export class LocalPrebuiltBundleService {
 
         await this.logicFunctionResourceService.copyBuiltCodeInMemory({
           workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           builtHandlerPath: flatLogicFunction.builtHandlerPath,
           inMemoryDestinationPath: prebuiltDir,
         });

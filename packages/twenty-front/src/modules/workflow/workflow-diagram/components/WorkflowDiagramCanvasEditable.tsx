@@ -24,7 +24,7 @@ import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import {
   addEdge,
   ReactFlowProvider,
@@ -34,6 +34,7 @@ import {
 } from '@xyflow/react';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const WorkflowDiagramCanvasEditable = () => {
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -60,9 +61,9 @@ export const WorkflowDiagramCanvasEditable = () => {
   // oxlint-disable-next-line twenty/no-state-useref
   const reconnectionQueueRef = useRef<Promise<void>>(Promise.resolve());
 
-  const { updateStep } = useUpdateStep();
+  const { updateStep, updateStepNow } = useUpdateStep();
 
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
+  const { updateTrigger } = useUpdateTrigger();
 
   const { startNodeCreation } = useStartNodeCreation();
 
@@ -80,13 +81,15 @@ export const WorkflowDiagramCanvasEditable = () => {
         targetStepId: edgeConnect.target,
       });
 
-      await updateStep(updatedStep);
+      await updateStepNow(updatedStep);
     }
 
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
-          'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+          doNotTranslate(
+            'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+          ),
         );
       }
 
@@ -181,7 +184,7 @@ export const WorkflowDiagramCanvasEditable = () => {
     const stepToUpdate = flow?.steps?.find((step) => step.id === node.id);
 
     if (isDefined(stepToUpdate)) {
-      await updateStep({
+      updateStep({
         ...stepToUpdate,
         position: node.position,
       });
@@ -192,7 +195,7 @@ export const WorkflowDiagramCanvasEditable = () => {
     const triggerToUpdate = flow?.trigger;
 
     if (isDefined(triggerToUpdate)) {
-      await updateTrigger({
+      updateTrigger({
         ...triggerToUpdate,
         position: node.position,
       });

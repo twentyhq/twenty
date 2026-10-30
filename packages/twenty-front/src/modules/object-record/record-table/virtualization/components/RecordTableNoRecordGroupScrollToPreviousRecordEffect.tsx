@@ -2,7 +2,7 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/state
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useScrollTableToPosition } from '@/object-record/record-table/hooks/useScrollTableToPosition';
-import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessTreadmillScrollTop';
+import { useProcessScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessScrollTop';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
 import { useTriggerInitialRecordTableDataLoad } from '@/object-record/record-table/virtualization/hooks/useTriggerInitialRecordTableDataLoad';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -32,7 +32,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
   const { triggerInitialRecordTableDataLoad } =
     useTriggerInitialRecordTableDataLoad();
 
-  const { processTreadmillScrollTop } = useProcessTreadmillScrollTop();
+  const { processScrollTop } = useProcessScrollTop();
 
   const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
 
@@ -79,7 +79,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
         verticalScrollInPx: targetScrollPositionInPx,
       });
 
-      processTreadmillScrollTop(targetScrollPositionInPx);
+      processScrollTop(targetScrollPositionInPx);
 
       setHasInitializedScroll(true);
 
@@ -94,7 +94,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     scrollTableToPosition,
     allRecordIds,
     triggerInitialRecordTableDataLoad,
-    processTreadmillScrollTop,
+    processScrollTop,
     getScrollWrapperElement,
     triggerFetchPagesWithoutDebounce,
   ]);

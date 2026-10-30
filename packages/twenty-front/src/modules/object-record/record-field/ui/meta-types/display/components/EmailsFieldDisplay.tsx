@@ -18,7 +18,7 @@ export const EmailsFieldDisplay = () => {
   const isOpenInApp =
     onClickAction === FieldMetadataSettingsOnClickAction.OPEN_IN_APP;
 
-  const { openEmail } = useOpenEmailInAppOrFallback({ skip: !isOpenInApp });
+  const { openEmail } = useOpenEmailInAppOrFallback();
 
   const handleEmailClick = (
     email: string,

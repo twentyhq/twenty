@@ -3,6 +3,7 @@ import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-calda
 type SmtpTlsOptions = {
   secure: boolean;
   ignoreTLS?: boolean;
+  requireTLS?: boolean;
 };
 
 export const buildSmtpTlsOptions = (
@@ -12,7 +13,7 @@ export const buildSmtpTlsOptions = (
     case EmailConnectionSecurity.SSL_TLS:
       return { secure: true };
     case EmailConnectionSecurity.STARTTLS:
-      return { secure: false };
+      return { secure: false, requireTLS: true };
     case EmailConnectionSecurity.NONE:
       return { secure: false, ignoreTLS: true };
   }

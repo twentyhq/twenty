@@ -1,25 +1,86 @@
 ---
 title: CurrencyPicker
-description: A compact currency trigger and searchable currency options for picker dropdowns.
+description: Choose a currency with a complete picker or compose its parts in a dropdown.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CurrencyPickerReference from '/snippets/ui/generated/components/input/currency-picker.mdx';
 
-`CurrencyPicker` provides a compact selected currency code and searchable currency options. Import it from `twenty-ui/components` and compose it inside a [Dropdown](/ui/components/navigation/dropdown) with `type="picker"`.
+## Overview
+
+`CurrencyPicker` combines a compact currency trigger, searchable options, and a [Dropdown](/ui/components/navigation/dropdown). Supply a currency catalogue and use one component for ordinary selection. Compose `Root`, `Trigger`, and `Options` with Dropdown when the popup needs other content or pages.
 
 <StoryEmbed
-  storyId="ui-input-currencypicker--documentation"
+  storyId="ui-input-currencypicker--display"
   title="Currency picker"
-  height={380}
+  height={420}
 />
 
 ## Usage
 
-Supply the available currencies and the selected code. `Options` calls `onValueChange` with the chosen code. The trigger requires a currency code through `value`; your application chooses its initial value and any fallback.
+Each currency has a unique `code`, a `name`, and optional `symbol` and `disabled` properties. The code is the stable selection identifier. The picker does not ship a currency catalogue or choose an application default.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+];
+
+export const InvoiceCurrency = () => (
+  <CurrencyPicker
+    currencies={CURRENCIES}
+    defaultValue="USD"
+    aria-label="Invoice currency"
+    optionsProps={{
+      searchLabel: 'Search currencies',
+      emptyLabel: 'No currencies found',
+    }}
+    contentProps={{ width: 280 }}
+  />
+);
+```
+
+Use `defaultValue` for uncontrolled selection. For controlled selection, pass `value` and update it from `onValueChange`. The callback receives the next code or `null` and Dropdown selection details containing `event`, `reason`, `trigger`, `cancel`, and `isCanceled`. Call `details.cancel()` to preserve the current selection and keep the popup open. Selecting the current code does not emit another change.
+
+`null` clears the selection. An empty string remains a valid code and does not clear it. An unknown value stays unchanged and appears as its raw code in the trigger; it does not add an option to the catalogue. A later controlled update or catalogue change updates the trigger and selected row.
 
 ```tsx
 import { useState } from 'react';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ClearableCurrency = () => {
+  const [value, setValue] = useState<string | null>('USD');
+
+  return (
+    <>
+      <CurrencyPicker
+        currencies={CURRENCIES}
+        value={value}
+        onValueChange={setValue}
+        aria-label="Invoice currency"
+        triggerProps={{ placeholder: 'Choose a currency' }}
+      />
+      <Button onClick={() => setValue(null)}>Clear currency</Button>
+    </>
+  );
+};
+```
+
+## Advanced composition
+
+`CurrencyPicker.Root` prepares the catalogue and owns selection for both parts. It adds no DOM element and must be inside `Dropdown.Root`. Keep `Trigger` and `Options` under the same picker root, including when the options live in another dropdown page. The root's render-function children expose `value`, `selectedCurrency`, and `disabled` for caller-owned labels and supporting content.
+
+```tsx
 import { CurrencyPicker } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -28,51 +89,69 @@ const CURRENCIES = [
   { code: 'USD', name: 'US Dollar' },
 ];
 
-export const InvoiceCurrency = () => {
-  const [currencyCode, setCurrencyCode] = useState('USD');
-
-  return (
-    <Dropdown.Root type="picker">
-      <CurrencyPicker.Trigger
-        value={currencyCode}
-        aria-label={`Invoice currency: ${currencyCode}`}
-      />
-      <Dropdown.Content aria-label="Invoice currency" width={280}>
-        <CurrencyPicker.Options
-          currencies={CURRENCIES}
-          value={currencyCode}
-          onValueChange={setCurrencyCode}
-          searchLabel="Search currencies"
-          emptyLabel="No currencies found"
-        />
-      </Dropdown.Content>
-    </Dropdown.Root>
-  );
-};
+export const ComposedCurrency = () => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      closeOnSelect={false}
+    >
+      {({ value }) => (
+        <>
+          <CurrencyPicker.Trigger
+            aria-label={`Invoice currency: ${value ?? 'none'}`}
+            placeholder="Choose a currency"
+          />
+          <Dropdown.Content aria-label="Invoice currency" width={280}>
+            <Dropdown.Title>Invoice currency</Dropdown.Title>
+            <CurrencyPicker.Options
+              searchLabel="Search currencies"
+              emptyLabel="No currencies found"
+            />
+          </Dropdown.Content>
+        </>
+      )}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
 ```
 
-`Trigger` and `Options` can be used separately. Use `Options` with a `Dropdown.Trigger` rendering a Twenty UI `Button` when the host needs a full button instead of the compact code control.
+Dropdown owns opening, popup placement, pages, search navigation, and focus. The picker uses a Dropdown selection group for persistent selected values and the close policy. `Root.closeOnSelect` defaults to `true`; use `false` to keep the popup open after choosing a currency. Arrow keys, Home, and End move focus without changing the value. Enter, Space, or pointer activation selects an enabled option. Disabled currencies stay visible and cannot be selected.
 
-## Search and selection
+## Search and ordering
 
-Search ignores surrounding whitespace and matches currency codes, names, and the displayed `Name (CODE)` label without case sensitivity, using the same matching rules in every browser locale. Results keep the supplied order, with the selected currency first when it matches the search. Each row shows `Name (CODE)` and exposes its selected state through `aria-pressed`.
+Options are searchable by default. Search ignores surrounding whitespace and matches codes, names, symbols, and the default `Name (CODE)` label without case sensitivity, using the same rules in every browser locale. `getSearchText` on the root replaces the searchable text for each currency. Display customization and search text are independent.
 
-Search receives focus when the picker opens. With a nonempty search, Enter selects the first enabled match. With an empty search, Enter does nothing until ArrowDown moves focus to an option. Empty results keep the picker open and show the empty label in a status region that stays in place while the picker is open, so screen readers announce it. Selection closes a single-selection dropdown; Escape and outside interaction use the dropdown's existing dismissal and focus behavior.
+Results retain catalogue order. Set `selectedFirst` on the shorthand or root to move the selected currency before the other matches. A query that excludes it also removes its row. An unknown value does not create a selected result. Empty results show `emptyLabel` in a status region.
 
-Set `disabled` on a currency to keep its row visible while preventing selection. `Trigger.disabled` prevents opening; `Options.disabled` disables search and all options in an already open host.
+Set `Options.searchable={false}` to omit the search field. `Options.searchProps` targets the native search input, including its `ref`, `render`, accessible attributes, and controlled `value` or uncontrolled `defaultValue`. `searchProps.onValueChange` receives the query. In shorthand use, pass these options through `optionsProps`.
 
-## Ownership and labels
+The search field receives focus when a searchable picker opens. Enter with a nonempty query activates the first enabled result. With an empty query, move focus to an option before selecting it. Search activation during IME composition and fresh search on reopen remain subject to the shared Dropdown search and page-session contracts.
 
-The picker owns searching, selected-first ordering, and currency selection. The application owns the currency catalogue, amount editing, formatting, default currency, persistence, and dropdown lifecycle. Currency names are data supplied by the caller.
+## Presentation and native targets
 
-`searchLabel` defaults to `Search` and provides both the search placeholder and accessible name. `emptyLabel` defaults to `No results`. Supply translated labels and accessible names from your application. Give the trigger an accessible name that includes its visible currency code, such as `Invoice currency: USD`, and give the dropdown content a name that describes the currency being selected.
+The trigger shows the selected code by default. `renderValue` receives `{ value, selectedCurrency, disabled }` to customize that display without looking up the currency again. `Trigger.children` overrides the value display, and `Trigger.placeholder` supplies the empty display. `getOptionLabel` customizes each option's content, with the default `Name (CODE)` label. Currency names, symbols, labels, and option content belong to the caller.
 
-Native attributes, `className`, `style`, `ref`, and `render` apply to each part's root element. The trigger forwards the shared dropdown trigger interface, except `children`, hover opening (`openOnHover`, `delay`, `closeDelay`), and the popover `handle` and `payload` props; the options root is a div by default.
+The shorthand's native button attributes, event handlers, `className`, `style`, `ref`, and `render` target its trigger. `triggerProps` customizes that same button. Use `optionsProps` for the options wrapper div and its nested `searchProps` for the input. `contentProps` customizes Dropdown's popup. `open`, `defaultOpen`, and `onOpenChange` coordinate the shorthand's open state.
+
+In compound use, native attributes, `ref`, and `render` on `Trigger` target its button, while those on `Options` target its wrapper div. `Options.listLabel` names only the inner selection listbox. Forward the supplied props and ref from a custom `render` component. Wrapper styling does not change the input's native target.
+
+Set `disabled` on the shorthand or root to disable opening, search, and selection. A part's `disabled` prop can additionally disable that part. Selection is a picker value; native form submission, reset, required validation, and Field integration remain outside this API.
+
+## Labels and application integration
+
+`searchLabel` defaults to `Search` and supplies the search placeholder and accessible name. `emptyLabel` defaults to `No results` and accepts content. Supply localized source labels, an accessible trigger name, and any placeholder from your application. Dropdown content takes the trigger name unless a `Dropdown.Title` or explicit content label names it. The selection listbox takes the registered Dropdown title or trigger name by default. Set `Options.listLabel` to give only that listbox its own accessible name, or pass `optionsProps.listLabel` in shorthand use. Native `aria-label` and `aria-labelledby` on `Options` label only its wrapper. The trigger keeps its own accessible name.
+
+The application owns amount editing, currency storage, formatting, catalogue loading, and its initial value. An adapter should map stored currency codes and clearing behavior to `value` and `onValueChange`, preserving the application's formatting and fallback rules. Keep translated currency names and labels in the application.
 
 ## Front-component renderer
 
-React and Preact sandbox fixtures verify code presentation and the disabled trigger. In both runtimes the trigger opens the popup, but the popup renders into the sandbox document instead of the page, so its content is not visible. Search, currency selection, popup focus, and closing from the popup are not supported in that sandbox until these limitations are resolved. Ordinary React hosts exercise the complete interaction.
+The React and Preact sandbox fixtures cover shorthand and compound search and selection, disabled controls and options, trigger refs, null clearing, external controlled updates, reopening, and Escape focus restoration. They also verify that clearing an earlier query and typing `$` preserves the symbol query.
+
+Popup visibility, geometry, scrolling, and dismissal depend on the shared renderer's Dropdown and portal support. The picker uses that shared implementation.
 
 ## Props
 
 <CurrencyPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

@@ -1,14 +1,24 @@
 .chip {
   @include focus-ring;
 
-  --tw-chip-padding: var(--t-spacing-1);
+  --tw-chip-padding-start: var(--t-spacing-1);
+  --tw-chip-padding-end: var(--t-spacing-1);
+  --tw-chip-border-width: 0px;
+  --tw-chip-default-max-width: calc(
+    100% + var(--tw-chip-padding-start) + var(--tw-chip-padding-end)
+  );
   box-sizing: content-box;
   align-items: center;
   display: inline-flex;
   gap: var(--t-spacing-1);
-  block-size: var(--t-spacing-3);
-  max-inline-size: var(--tw-chip-max-width, 100%);
-  padding: var(--t-spacing-1) var(--tw-chip-padding);
+  block-size: calc(var(--t-spacing-3) - 2 * var(--tw-chip-border-width));
+  max-inline-size: calc(
+    var(--tw-chip-max-width, var(--tw-chip-default-max-width)) -
+      var(--tw-chip-padding-start) - var(--tw-chip-padding-end) - 2 *
+      var(--tw-chip-border-width)
+  );
+  padding-block: var(--t-spacing-1);
+  padding-inline: var(--tw-chip-padding-start) var(--tw-chip-padding-end);
   user-select: none;
   font: inherit;
   color: var(--t-font-color-primary);
@@ -18,14 +28,11 @@
   corner-shape: round;
   text-decoration: none;
 
-  & > svg {
-    flex-shrink: 0;
-  }
-  &[data-truncate] {
-    overflow: hidden;
+  &[data-truncate] > .label {
+    min-inline-size: 0;
   }
   &[data-size='md'] {
-    block-size: var(--t-spacing-4);
+    block-size: calc(var(--t-spacing-4) - 2 * var(--tw-chip-border-width));
   }
   &[data-shape='round'] {
     border-radius: var(--t-border-radius-pill);
@@ -36,11 +43,23 @@
   &[data-weight='medium'] {
     font-weight: var(--t-font-weight-medium);
   }
+  &[data-variant='plain'] {
+    --tw-chip-padding-start: 0px;
+    background: transparent;
+  }
   &[data-variant='soft'] {
     background: var(--t-background-transparent-light);
   }
   &[data-variant='solid'] {
     background: var(--t-background-transparent-medium);
+  }
+  &[data-variant='outline'] {
+    --tw-chip-padding-start: var(--t-spacing-2);
+    --tw-chip-padding-end: var(--t-spacing-2);
+    --tw-chip-border-width: 1px;
+    --tw-chip-default-max-width: 100%;
+    background: var(--t-background-transparent-lighter);
+    border: var(--tw-chip-border-width) solid var(--t-border-color-strong);
   }
   &:disabled,
   &[aria-disabled='true'],

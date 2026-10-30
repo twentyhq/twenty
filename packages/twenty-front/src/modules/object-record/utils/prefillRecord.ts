@@ -10,6 +10,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type PrefillRecordArgs = {
@@ -84,7 +85,9 @@ const throwIfInputRelationDataIsInconsistent = (
   });
   if (isDefined(inputValue) && !isDefined(input[relationIdFieldName])) {
     throw new Error(
-      `Inconsistent input: ${fieldMetadataItem.name} is specified but ${relationIdFieldName} is missing`,
+      doNotTranslate(
+        `Inconsistent input: ${fieldMetadataItem.name} is specified but ${relationIdFieldName} is missing`,
+      ),
     );
   }
 };

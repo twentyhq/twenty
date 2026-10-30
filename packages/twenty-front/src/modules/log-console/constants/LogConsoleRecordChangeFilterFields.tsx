@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconBox, IconTimelineEvent } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 
@@ -8,14 +9,14 @@ import { LOG_CONSOLE_RECORD_ACTIONS } from '@/log-console/constants/LogConsoleRe
 import { type LogConsoleFilterField } from '@/log-console/types/LogConsoleFilterField';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 
-const LOGGED_RECORD_CHANGE_EVENTS = [
+const LOGGED_RECORD_CHANGE_EVENTS = doNotTranslate([
   'Object Record Created',
   'Object Record Updated',
   'Object Record Upserted',
   'Object Record Deleted',
   'Object Record Restored',
   'Object Record Destroyed',
-];
+]);
 
 export const LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS: LogConsoleFilterField[] =
   [
@@ -44,14 +45,20 @@ export const LOG_CONSOLE_RECORD_CHANGE_FILTER_FIELDS: LogConsoleFilterField[] =
       label: msg`Object`,
       Icon: IconBox,
       serverField: 'objectMetadataId',
+      // Object metadata persisted before isAuditLogged existed has no value for
+      // it until the metadata store refreshes; keep those objects listed.
       getOptions: ({ activeObjectMetadataItems }) =>
-        activeObjectMetadataItems.map((objectMetadataItem) => ({
-          label: objectMetadataItem.labelPlural,
-          values: [objectMetadataItem.id],
-          startIcon: (
-            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-          ),
-        })),
+        activeObjectMetadataItems
+          .filter(
+            (objectMetadataItem) => objectMetadataItem.isAuditLogged !== false,
+          )
+          .map((objectMetadataItem) => ({
+            label: objectMetadataItem.labelPlural,
+            values: [objectMetadataItem.id],
+            startIcon: (
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            ),
+          })),
     },
     LOG_CONSOLE_ACTOR_FILTER_FIELD,
   ];

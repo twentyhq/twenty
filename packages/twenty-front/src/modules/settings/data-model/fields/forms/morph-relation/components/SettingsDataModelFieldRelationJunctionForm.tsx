@@ -8,12 +8,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
+import { getFieldRelations } from '@/object-record/record-field/ui/utils/junction/getFieldRelations';
 import { isValidJunctionTargetField } from '@/object-record/record-field/ui/utils/junction/isValidJunctionTargetField';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { Select } from '@/ui/input/components/Select';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
@@ -32,8 +31,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const { watch, setValue } =
     useFormContext<SettingsDataModelFieldEditFormValues>();
 
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-
   const { objectMetadataItem: sourceObjectMetadataItem } =
     useObjectMetadataItem({ objectNameSingular });
 
@@ -47,7 +44,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const junctionTargetFieldId = currentSettings?.junctionTargetFieldId;
 
   if (
-    !isAdvancedModeEnabled ||
     relationType !== RelationType.ONE_TO_MANY ||
     targetObjectIds.length !== 1
   ) {
@@ -113,7 +109,18 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     ({ value }) => value === selectedJunctionTargetFieldId,
   );
 
-  if (junctionFieldOptions.length === 0 && !isJunctionConfigEnabled) {
+  const isJunctionLikeObject = junctionObjectMetadataItem.fields.every(
+    (field) =>
+      field.isSystem === true ||
+      getFieldRelations(field).every(
+        ({ type }) => type === RelationType.MANY_TO_ONE,
+      ),
+  );
+
+  if (
+    !isJunctionConfigEnabled &&
+    (junctionFieldOptions.length === 0 || !isJunctionLikeObject)
+  ) {
     return null;
   }
 
@@ -166,7 +173,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
         onChange={handleJunctionToggle}
         disabled={disabled}
         divider={isJunctionConfigEnabled && junctionFieldOptions.length > 0}
-        advancedMode
       />
 
       {isJunctionConfigEnabled && junctionFieldOptions.length > 0 && (

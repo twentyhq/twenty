@@ -1,11 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Section } from '@ui/components/layout/Section/Section';
-import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { OverflowingList } from '../OverflowingList';
 import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
+import { OverflowingListControlledExample } from './OverflowingListControlledExample';
 
 const meta: Meta<typeof OverflowingList> = {
   id: 'ui-components-overflowinglist',
@@ -26,16 +26,31 @@ const meta: Meta<typeof OverflowingList> = {
 export default meta;
 type Story = StoryObj<typeof OverflowingList>;
 
-export const Default: Story = {};
-
-export const Documentation: Story = {
+export const Display: Story = {
+  args: { overflowLabel: 'Show all company tags' },
   render: (args) => (
     <Section.Root>
-      <Section.Header title="Company tags" />
-      <Text>Open the count to see every tag.</Text>
-      <OverflowingList {...args} overflowLabel="Show all company tags" />
+      <Section.Header
+        title="Company tags"
+        description="Open the count to see all tags."
+      />
+      <OverflowingList {...args} />
     </Section.Root>
   ),
+};
+
+export const Default: Story = {};
+
+export const Controlled: Story = {
+  render: () => <OverflowingListControlledExample />,
+};
+
+export const InitiallyOpen: Story = {
+  args: { defaultOpen: true, maxInlineCount: 1 },
+};
+
+export const Empty: Story = {
+  args: { children: [] },
 };
 
 export const CountOnHoverOrFocus: Story = {

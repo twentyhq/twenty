@@ -50,6 +50,7 @@ export const runAppWorker = async ({
         | 'generateSourceClient'
         | 'readSourceIdentity'
         | 'buildManifest'
+        | 'extractTranslations'
         | 'typecheckSource'
         | 'bundleSnapshot'
         | 'pull';

@@ -3,22 +3,25 @@ title: SegmentedControl
 description: Choose one value from a compact group of labeled or icon options.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
 
+## Overview
+
 `SegmentedControl` is a preset assembled from [Radio](/ui/primitives/input/radio) and [RadioGroup](/ui/primitives/input/radio-group), with joined options. Use it for a short, mutually exclusive choice. For navigation between content panels, use [Tabs](/ui/primitives/navigation/tabs).
 
 <StoryEmbed
-  storyId="components-input-segmentedcontrol--documentation"
+  storyId="components-input-segmentedcontrol--display"
   title="SegmentedControl example"
+  height={110}
 />
 
 ## Usage
 
 Supply an accessible group name with `aria-label` or `aria-labelledby`. Each option needs a unique string `value`. Selection belongs to the group; options do not have independent checked state.
-
-## Uncontrolled state
 
 ```tsx
 import { SegmentedControl } from 'twenty-ui/components/input';
@@ -102,3 +105,5 @@ Native props, `className`, `style`, `render`, and `ref` target the group's `div`
 ## Props
 
 <SegmentedControlReference />
+
+<PageBanner illustration="page-cover-switch" />

@@ -1,36 +1,37 @@
 import { styled } from '@linaria/react';
-import { plural, t } from '@lingui/core/macro';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { Key } from 'ts-key-enum';
 import {
   CoreObjectNameSingular,
   MessageCampaignStatus,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { SegmentedControl } from 'twenty-ui/components/input';
 import { IconClock, IconSend } from 'twenty-ui/icon';
-import { Button, type SelectOption } from 'twenty-ui/primitives/input';
-import { Text } from 'twenty-ui/primitives/typography';
+import { Button, Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
+import { useCampaignSendPreview } from '@/activities/emails/hooks/useCampaignSendPreview';
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
+import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
+import { type CampaignDeliveryTiming } from '@/activities/emails/types/CampaignDeliveryTiming';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { buildCampaignDeliveryHint } from '@/activities/emails/utils/buildCampaignDeliveryHint';
+import { buildCampaignSendButtonTitle } from '@/activities/emails/utils/buildCampaignSendButtonTitle';
 import { buildDefaultCampaignScheduledAt } from '@/activities/emails/utils/buildDefaultCampaignScheduledAt';
-import { buildExcludedRecipientReasons } from '@/activities/emails/utils/buildExcludedRecipientReasons';
-import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
-import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { type CampaignDeliveryTiming } from '@/side-panel/pages/send-campaign/types/CampaignDeliveryTiming';
-import { buildCampaignDeliveryHint } from '@/side-panel/pages/send-campaign/utils/buildCampaignDeliveryHint';
-import { buildCampaignSendButtonTitle } from '@/side-panel/pages/send-campaign/utils/buildCampaignSendButtonTitle';
-import { Select } from '@/ui/input/components/Select';
+import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { SendCampaignRecipientsCard } from '@/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -42,51 +43,9 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[5]};
+  gap: ${themeCssVariables.spacing[4]};
   overflow-y: auto;
-  padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledSection = styled.div`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRecipientCount = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledValue = styled.span<{ $isEmpty: boolean }>`
-  color: ${({ $isEmpty }) =>
-    $isEmpty
-      ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledHint = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledErrorHint = styled.span`
-  color: ${themeCssVariables.font.color.danger};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledDeliveryFields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;
 
 type SendCampaignFormProps = {
@@ -96,15 +55,15 @@ type SendCampaignFormProps = {
 export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   const isAlreadyScheduled =
     campaign.status === MessageCampaignStatus.SCHEDULED;
+  const hasList = isNonEmptyString(campaign.listId);
 
-  const { goBackFromSidePanel } = useSidePanelHistory();
+  const { closeSidePanelMenu } = useSidePanelMenu();
   const { formatNumber } = useNumberFormat();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { sendMessageCampaign, loading: isSending } = useSendMessageCampaign();
+  const { unsubscribeTopics } = useUnsubscribeTopics();
 
   const [deliveryTiming, setDeliveryTiming] = useState<CampaignDeliveryTiming>(
-    isAlreadyScheduled ? 'LATER' : 'NOW',
+    isAlreadyScheduled ? 'LATER' : doNotTranslate('NOW'),
   );
   const [scheduledAt, setScheduledAt] = useState<string | null>(
     campaign.scheduledAt,
@@ -113,60 +72,47 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   const { record: list } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.MessageList,
     objectRecordId: campaign.listId ?? '',
-    skip: !isDefined(campaign.listId),
+    skip: !hasList,
   });
 
-  const { audiencePreview, hasFailed: hasAudiencePreviewFailed } =
-    useCampaignAudiencePreview({
-      listId: campaign.listId,
-      unsubscribeTopicId: campaign.unsubscribeTopicId,
+  const isScheduling = deliveryTiming === 'LATER';
+
+  const { sendPreview, hasFailed: hasSendPreviewFailed } =
+    useCampaignSendPreview({
+      campaignId: campaign.id,
+      scheduledAt: isScheduling ? scheduledAt : null,
     });
 
-  const fromAddress = campaign.fromAddress?.primaryEmail;
-  const subject = campaign.subject;
+  const audiencePreview = sendPreview?.audience ?? null;
 
-  const excludedReasons = isDefined(audiencePreview)
-    ? buildExcludedRecipientReasons({ counts: audiencePreview, formatNumber })
-    : [];
-
-  const isScheduling = deliveryTiming === 'LATER';
+  const listName = isNonEmptyString(list?.name) ? list.name : null;
+  const topicName =
+    unsubscribeTopics.find((topic) => topic.id === campaign.unsubscribeTopicId)
+      ?.name ?? null;
 
   const isScheduledInTheFuture =
     isNonEmptyString(scheduledAt) &&
     new Date(scheduledAt).getTime() > Date.now();
-
   const hasInvalidSendTime = isScheduling && !isScheduledInTheFuture;
-
-  const formattedSendTime = isScheduledInTheFuture
-    ? formatCampaignSendTime({
-        value: scheduledAt,
-        timeZone,
-        dateFormat,
-        timeFormat,
-        localeCatalog,
-      })
-    : null;
-
-  const isCampaignReady =
-    isDefined(list) &&
-    isNonEmptyString(fromAddress) &&
-    isNonEmptyString(subject) &&
-    isNonEmptyString(campaign.bodyTemplate) &&
-    isDefined(audiencePreview) &&
-    audiencePreview.sendable > 0;
-
-  const canSend = isCampaignReady && !hasInvalidSendTime;
-
-  const deliveryTimingOptions: SelectOption<CampaignDeliveryTiming>[] = [
-    { label: t`Send now`, value: 'NOW' },
-    { label: t`Send later`, value: 'LATER' },
-  ];
 
   const deliveryHint = buildCampaignDeliveryHint({
     deliveryTiming,
     isAlreadyScheduled,
-    formattedSendTime,
+    hasValidSendTime: isScheduledInTheFuture,
   });
+
+  const blockingMessage = sendPreview?.blockers[0]?.message ?? null;
+
+  const canSend =
+    isDefined(sendPreview) &&
+    !isDefined(blockingMessage) &&
+    !hasInvalidSendTime &&
+    !isSending;
+
+  const trackingRefusedHint =
+    isDefined(audiencePreview) && audiencePreview.trackingRefused > 0
+      ? t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their opens and clicks are not recorded.`
+      : null;
 
   const handleDeliveryTimingChange = (timing: CampaignDeliveryTiming) => {
     setDeliveryTiming(timing);
@@ -177,112 +123,102 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
   };
 
   const handleSend = async () => {
-    const sent = await sendMessageCampaign({
+    if (!canSend) {
+      return;
+    }
+
+    const isSent = await sendMessageCampaign({
       campaignId: campaign.id,
       scheduledAt: isScheduling ? (scheduledAt ?? undefined) : undefined,
       wasAlreadyScheduled: isAlreadyScheduled,
     });
 
-    if (sent) {
-      goBackFromSidePanel();
+    if (isSent) {
+      closeSidePanelMenu();
     }
   };
+
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
+    callback: handleSend,
+    focusId: SIDE_PANEL_FOCUS_ID,
+    dependencies: [handleSend],
+  });
 
   return (
     <StyledContainer>
       <StyledContent>
-        <StyledSection>
-          <StyledDisplayLabel>{t`Recipients`}</StyledDisplayLabel>
-          {isDefined(audiencePreview) ? (
-            <>
-              <StyledRecipientCount>
-                {plural(audiencePreview.sendable, {
-                  one: `${formatNumber(audiencePreview.sendable)} recipient`,
-                  other: `${formatNumber(audiencePreview.sendable)} recipients`,
-                })}
-              </StyledRecipientCount>
-              {excludedReasons.length > 0 && (
-                <StyledHint>
-                  {t`${formatNumber(audiencePreview.totalMembers)} in the list, skipping ${excludedReasons.join(', ')}`}
-                </StyledHint>
-              )}
-              {audiencePreview.trackingRefused > 0 && (
-                <StyledHint>
-                  {t`${formatNumber(audiencePreview.trackingRefused)} opted out of email tracking, their clicks are not recorded`}
-                </StyledHint>
-              )}
-              {isScheduling && (
-                <StyledHint>
-                  {t`Counted again when the campaign sends, so this can change.`}
-                </StyledHint>
-              )}
-            </>
-          ) : (
-            <StyledHint>
-              {hasAudiencePreviewFailed
-                ? t`Recipient count unavailable`
-                : t`Counting recipients...`}
-            </StyledHint>
-          )}
-        </StyledSection>
-        <StyledSection>
-          <StyledDisplayLabel>{t`List`}</StyledDisplayLabel>
-          {isDefined(list) ? (
-            <RecordChip
-              record={list}
-              objectNameSingular={CoreObjectNameSingular.MessageList}
-            />
-          ) : (
-            <StyledValue $isEmpty>{t`No list`}</StyledValue>
-          )}
-        </StyledSection>
-        <StyledSection>
-          <StyledDisplayLabel>{t`From`}</StyledDisplayLabel>
-          <StyledValue $isEmpty={!isNonEmptyString(fromAddress)}>
-            {isNonEmptyString(fromAddress) ? fromAddress : t`No sender`}
-          </StyledValue>
-        </StyledSection>
-        <StyledSection>
-          <StyledDisplayLabel>{t`Subject`}</StyledDisplayLabel>
-          <StyledValue $isEmpty={!isNonEmptyString(subject)}>
-            {isNonEmptyString(subject) ? subject : t`No subject`}
-          </StyledValue>
-        </StyledSection>
-        <StyledSection>
-          <StyledDisplayLabel>{t`Delivery`}</StyledDisplayLabel>
-          <StyledDeliveryFields>
-            <Select
-              dropdownId="send-campaign-delivery-timing"
-              fullWidth
-              value={deliveryTiming}
-              options={deliveryTimingOptions}
-              onChange={handleDeliveryTimingChange}
-            />
-            {hasInvalidSendTime ? (
-              <StyledErrorHint>{deliveryHint}</StyledErrorHint>
-            ) : (
-              <StyledHint>{deliveryHint}</StyledHint>
-            )}
-            {isScheduling && (
-              <FormDateTimeFieldInput
-                label={t`Send at`}
-                defaultValue={scheduledAt ?? undefined}
-                onChange={setScheduledAt}
+        {isDefined(blockingMessage) && (
+          <SidePanelInformationBanner
+            variant="warning"
+            message={blockingMessage}
+          />
+        )}
+        {hasList && (
+          <FormFieldInputContainer>
+            <Field.Label>{t`Recipients`}</Field.Label>
+            {isDefined(audiencePreview) && (
+              <SendCampaignRecipientsCard
+                audiencePreview={audiencePreview}
+                listName={listName}
+                topicName={topicName}
               />
             )}
-          </StyledDeliveryFields>
-        </StyledSection>
+            {!isDefined(sendPreview) && (
+              <Field.Description>
+                {hasSendPreviewFailed
+                  ? t`Recipient count unavailable`
+                  : t`Counting recipients...`}
+              </Field.Description>
+            )}
+            {isDefined(trackingRefusedHint) && (
+              <Field.Description>{trackingRefusedHint}</Field.Description>
+            )}
+          </FormFieldInputContainer>
+        )}
+        <FormFieldInputContainer>
+          <Field.Label>{t`Delivery`}</Field.Label>
+          <SegmentedControl
+            aria-label={t`Delivery`}
+            value={deliveryTiming}
+            onValueChange={handleDeliveryTimingChange}
+            options={[
+              { value: doNotTranslate('NOW'), label: t`Send now` },
+              { value: 'LATER', label: t`Send later` },
+            ]}
+          />
+          {hasInvalidSendTime ? (
+            <Field.Error match>{deliveryHint}</Field.Error>
+          ) : (
+            <Field.Description>{deliveryHint}</Field.Description>
+          )}
+        </FormFieldInputContainer>
+        {isScheduling && (
+          <FormDateTimeFieldInput
+            label={t`Send at`}
+            defaultValue={scheduledAt ?? undefined}
+            onChange={setScheduledAt}
+          />
+        )}
       </StyledContent>
       <SidePanelFooter
         actions={[
           <Button
-            key="send"
-            startIcon={isScheduling ? <IconClock /> : <IconSend />}
+            key="cancel"
             size="sm"
-            disabled={!canSend || isSending}
-            onClick={handleSend}
+            variant="outline"
+            onClick={closeSidePanelMenu}
+          >{t`Cancel`}</Button>,
+          <Button
+            key="send"
+            size="sm"
             variant="solid"
             color="accent"
+            startIcon={isScheduling ? <IconClock /> : <IconSend />}
+            shortcut={['Mod', 'Enter']}
+            loading={isSending}
+            disabled={!canSend}
+            onClick={handleSend}
           >
             {buildCampaignSendButtonTitle({
               deliveryTiming,
@@ -294,9 +230,3 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
     </StyledContainer>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

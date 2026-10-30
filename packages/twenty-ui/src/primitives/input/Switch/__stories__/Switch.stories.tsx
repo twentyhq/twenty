@@ -1,5 +1,7 @@
+import { useId } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -21,8 +23,28 @@ const meta: Meta<typeof Switch> = {
 export default meta;
 type Story = StoryObj<typeof Switch>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
-export const Checked: Story = { ...Default, args: { defaultChecked: true } };
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { 'aria-label': undefined },
+  render: (args) => <SwitchDisplayExample {...args} />,
+};
+
+const SwitchDisplayExample = (props: SwitchProps) => {
+  const generatedSwitchId = useId();
+  const switchId = props.id ?? generatedSwitchId;
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch {...props} id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+
+export const Checked: Story = { ...Display, args: { defaultChecked: true } };
 export const Small: Story = {
   ...Checked,
   args: { defaultChecked: true, size: 'sm' },

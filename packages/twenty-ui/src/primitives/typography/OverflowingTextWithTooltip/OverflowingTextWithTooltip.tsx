@@ -1,11 +1,13 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
-import { memo, useRef, useState, type MouseEvent } from 'react';
+import { memo, useContext, useRef, useState, type MouseEvent } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 import { TooltipBody } from '@ui/primitives/surfaces/Tooltip/internal/TooltipBody';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { isElementOverflowing } from './internal/isElementOverflowing';
+import { OverflowingTextTooltipModeContext } from './internal/OverflowingTextTooltipModeContext';
 import { type OverflowingTextWithTooltipProps } from './types/OverflowingTextWithTooltipProps';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
@@ -15,6 +17,9 @@ import styles from './OverflowingTextWithTooltip.module.scss';
 export const OverflowingTextWithTooltip = memo(
   function OverflowingTextWithTooltip({
     text,
+    size,
+    weight,
+    color,
     isTooltipMultiline,
     truncate,
     lineClamp,
@@ -28,18 +33,17 @@ export const OverflowingTextWithTooltip = memo(
     className,
     ...props
   }: OverflowingTextWithTooltipProps) {
+    const tooltipMode = useContext(OverflowingTextTooltipModeContext);
+    const areTooltipsDisabled = tooltipMode === 'disabled';
     const textRef = useRef<HTMLDivElement>(null);
-    const mergedRef = useMergedRefs(textRef, ref);
 
     const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
+    const mergedRef = useMergedRefs(textRef, ref);
+
     const updateOverflowState = () => {
-      const textElement = textRef.current;
-      const isOverflowing =
-        isDefined(textElement) &&
-        (textElement.scrollHeight > textElement.clientHeight ||
-          textElement.scrollWidth > textElement.clientWidth);
+      const isOverflowing = isElementOverflowing(textRef.current);
 
       setIsTitleOverflowing(isOverflowing);
 
@@ -71,6 +75,43 @@ export const OverflowingTextWithTooltip = memo(
 
     const isMultiline = isDefined(lineClamp);
 
+    const textElement = (
+      <Text
+        {...(isMultiline ? { lineClamp } : { truncate: truncate ?? true })}
+        dir="auto"
+        data-content-overflowing={isTitleOverflowing ? '' : undefined}
+        className={clsx(
+          isMultiline
+            ? styles.overflowingMultilineText
+            : styles.overflowingText,
+          className,
+        )}
+        render={render}
+        ref={mergedRef}
+        {...mergeProps<'div'>(
+          {
+            tabIndex: isFocusable ? 0 : undefined,
+            ...(areTooltipsDisabled
+              ? {}
+              : {
+                  onPointerEnter: updateOverflowState,
+                  onFocus: () => handleOpenChange(true),
+                }),
+          },
+          props,
+        )}
+        size={size}
+        weight={weight}
+        color={color}
+      >
+        {text}
+      </Text>
+    );
+
+    if (areTooltipsDisabled) {
+      return textElement;
+    }
+
     return (
       <Tooltip.Root
         open={isTooltipOpen && isDefined(tooltipText)}
@@ -90,47 +131,19 @@ export const OverflowingTextWithTooltip = memo(
           handleOpenChange(open);
         }}
         disabled={
-          !isDefined(tooltipText) || (!isTitleOverflowing && !alwaysShowTooltip)
+          !isDefined(tooltipText) ||
+          (tooltipMode === 'measure-on-hover' &&
+            !isTitleOverflowing &&
+            !alwaysShowTooltip)
         }
       >
         <Tooltip.Trigger
           delay={tooltipDelay}
           closeOnClick={false}
-          render={
-            <Text
-              {...(isMultiline
-                ? { lineClamp }
-                : { truncate: truncate ?? true })}
-              dir="auto"
-              data-content-overflowing={isTitleOverflowing ? '' : undefined}
-              className={clsx(
-                isMultiline
-                  ? styles.overflowingMultilineText
-                  : styles.overflowingText,
-                className,
-              )}
-              render={render}
-              ref={mergedRef}
-              {...mergeProps<'div'>(
-                {
-                  tabIndex: isFocusable ? 0 : undefined,
-                  onPointerEnter: updateOverflowState,
-                  onFocus: () => handleOpenChange(true),
-                },
-                props,
-              )}
-            >
-              {text}
-            </Text>
-          }
+          render={textElement}
         />
         <Tooltip.Portal>
-          <Tooltip.Positioner
-            sideOffset={5}
-            side={tooltipPlace}
-            positionMethod="absolute"
-            style={{ maxWidth: '300px' }}
-          >
+          <Tooltip.Positioner sideOffset={5} side={tooltipPlace}>
             <Tooltip.Popup
               className={
                 isTooltipMultiline ? styles.multilineTooltip : undefined

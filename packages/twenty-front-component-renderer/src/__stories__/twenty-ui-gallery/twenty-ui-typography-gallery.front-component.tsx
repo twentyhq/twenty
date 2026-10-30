@@ -36,7 +36,7 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {
     name: 'Heading',
     node: (
-      <Heading level={1} size="lg">
+      <Heading level={1} size="xxl">
         Heading 1
       </Heading>
     ),
@@ -48,7 +48,7 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {
     name: 'HeadingLevel',
     node: (
-      <Heading level={3} size="sm">
+      <Heading level={3} size="xl">
         Heading 3
       </Heading>
     ),

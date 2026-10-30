@@ -25,4 +25,13 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
+  channelLastActivityIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'channelLastActivityIndex',
+      relatedFieldNames: ['channelId', 'lastActivityAt'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
 });

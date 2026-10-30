@@ -1,3 +1,4 @@
+import { type ObjectPermissionAction } from '@/application/objectPermissionActionType';
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type MetadataReadability } from '@/types/MetadataReadability';
@@ -20,6 +21,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
+  disabledObjectPermissionActions?: ObjectPermissionAction[];
   sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];

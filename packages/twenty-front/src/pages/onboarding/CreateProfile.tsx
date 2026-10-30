@@ -13,12 +13,12 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,8 +29,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -140,10 +140,10 @@ export const CreateProfile = () => {
     async (data) => {
       try {
         if (!currentWorkspaceMember?.id) {
-          throw new Error('User is not logged in');
+          throw new Error(doNotTranslate('User is not logged in'));
         }
         if (!data.firstName || !data.lastName) {
-          throw new Error('First name or last name is missing');
+          throw new Error(doNotTranslate('First name or last name is missing'));
         }
 
         await updateWorkspaceMemberSettings({
@@ -154,7 +154,7 @@ export const CreateProfile = () => {
               lastName: data.lastName,
             },
             jobTitle: data.jobTitle,
-            colorScheme: 'System',
+            colorScheme: doNotTranslate('System'),
           },
         });
 
@@ -168,7 +168,7 @@ export const CreateProfile = () => {
                     lastName: data.lastName,
                   },
                   jobTitle: data.jobTitle,
-                  colorScheme: 'System',
+                  colorScheme: doNotTranslate('System'),
                 }
               : member,
           ),
@@ -209,19 +209,9 @@ export const CreateProfile = () => {
     ],
   );
 
-  const [isEditingMode, setIsEditingMode] = useState(false);
-
-  const handleEnter = () => {
-    if (isEditingMode) {
-      handleSubmit(onSubmit)();
-    }
-  };
-
-  useHotkeysOnFocusedElement({
-    keys: Key.Enter,
-    callback: handleEnter,
+  useOnboardingStepEnterHotkey({
     focusId: PageFocusId.CreateProfile,
-    dependencies: [handleEnter],
+    onEnter: handleSubmit(onSubmit),
   });
 
   return (
@@ -257,11 +247,7 @@ export const CreateProfile = () => {
                     autoFocus
                     label={t`First Name`}
                     value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
+                    onBlur={onBlur}
                     onChange={(firstName) => {
                       onChange(firstName);
                       setCreateProfileDraftFromForm();
@@ -284,11 +270,7 @@ export const CreateProfile = () => {
                   <TextInput
                     label={t`Last name`}
                     value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
+                    onBlur={onBlur}
                     onChange={(lastName) => {
                       onChange(lastName);
                       setCreateProfileDraftFromForm();
@@ -308,11 +290,7 @@ export const CreateProfile = () => {
               <TextInput
                 label={t`Job Title`}
                 value={value}
-                onFocus={() => setIsEditingMode(true)}
-                onBlur={() => {
-                  onBlur();
-                  setIsEditingMode(false);
-                }}
+                onBlur={onBlur}
                 onChange={onChange}
                 placeholder={t`Head of Partnerships`}
                 fullWidth

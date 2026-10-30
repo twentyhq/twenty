@@ -3,34 +3,58 @@ title: ImageInput
 description: Image selection, preview, and caller-owned upload actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ImageInputReference from '/snippets/ui/generated/components/input/image-input.mdx';
+
+## Overview
 
 `ImageInput` combines an image preview, a native file picker, and upload, remove, or abort actions. `onFileSelect` fires when a file is selected. Your application validates and uploads the file, owns upload progress and cancellation, and supplies the preview URL through `src`.
 
 <StoryEmbed
-  storyId="ui-input-imageinput--with-helper-text"
-  title="Image input with an existing image"
-  height={180}
+  storyId="ui-input-imageinput--display"
+  title="Choose, preview, and remove an image"
+  height={140}
 />
 
-```tsx
-import { ImageInput, type ImageInputProps } from 'twenty-ui/components/input';
+## Usage
 
-export const WorkspaceImage = ({
-  src,
-  onFileSelect,
-  onRemove,
-}: Pick<ImageInputProps, 'src' | 'onFileSelect' | 'onRemove'>) => (
-  <ImageInput
-    src={src}
-    onFileSelect={onFileSelect}
-    onRemove={onRemove}
-    accept="image/png, image/jpeg"
-    helperText="Choose a square image for your workspace."
-  />
-);
+```tsx
+import { useState } from 'react';
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImage = () => {
+  const [preview, setPreview] = useState<{
+    src?: string;
+    reader?: FileReader;
+  }>({});
+
+  return (
+    <ImageInput
+      helperText="Choose a square image for your workspace."
+      src={preview.src}
+      onFileSelect={(file) => {
+        const reader = new FileReader();
+        setPreview((current) => ({ src: current.src, reader }));
+        reader.onload = () => {
+          setPreview((current) => {
+            if (current.reader !== reader) {
+              return current;
+            }
+
+            return { src: reader.result?.toString() };
+          });
+        };
+        reader.readAsDataURL(file);
+      }}
+      onRemove={() => setPreview({})}
+    />
+  );
+};
 ```
+
+The example keeps the current preview while reading a replacement and ignores reads from removed or superseded selections.
 
 ## Selection and preview
 
@@ -61,7 +85,7 @@ Native `required` validation still sees an empty input after selection because t
 <StoryEmbed
   storyId="ui-input-imageinput--uploading"
   title="Image upload with an abort action"
-  height={180}
+  height={140}
 />
 
 ## Labels, instructions, and errors
@@ -73,7 +97,7 @@ Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They de
 <StoryEmbed
   storyId="ui-input-imageinput--with-error"
   title="Image input with instructions and an error"
-  height={200}
+  height={160}
 />
 
 ## Migration
@@ -87,14 +111,11 @@ export const WorkspaceImageSelector = ({
   uploadImage,
 }: {
   uploadImage: (file: File) => void;
-}) => (
-  <ImageInput
-    onFileSelect={uploadImage}
-    accept="image/png, image/jpeg"
-  />
-);
+}) => <ImageInput onFileSelect={uploadImage} accept="image/png, image/jpeg" />;
 ```
 
 ## Props
 
 <ImageInputReference />
+
+<PageBanner illustration="page-cover-image" />

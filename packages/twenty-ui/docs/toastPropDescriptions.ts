@@ -11,13 +11,14 @@ export const TOAST_PROP_DESCRIPTIONS = {
   iconLabel:
     'Accessible name of the default icon. Without it, the icon is decorative.',
   action: 'Optional footer node, such as a Button with a caller-owned action.',
-  progress: 'Completion percentage. Providing it disables the countdown.',
+  progress:
+    'Completion percentage. Providing it disables the countdown. Removing it starts a fresh duration.',
   duration:
-    'Milliseconds before onClose is called. The countdown pauses while the pointer is over the toast or keyboard focus is inside it.',
+    'Milliseconds before onClose is called, defaulting to 6000. Zero keeps the toast open. Changes restart the countdown; live updateToast duration patches restart it even when unchanged. Hover and keyboard focus pause it until both leave.',
   onCancel:
     'Called when the cancel button is clicked. Providing it and renderable cancelLabel content shows the button.',
   onClose:
-    'Called when the close button is clicked or the countdown completes. Providing it shows the close button.',
+    'For standalone Toast, called once per mount by the close button or expiry. For provider notifications, called once on close, expiry, closeToast, or limit eviction, after dismissal and before exit cleanup. Provider teardown does not call it.',
   cancelLabel:
     'Cancel button content node. Defaults to Cancel. Pass null to hide the control.',
   closeLabel: 'Accessible name of the close button. Defaults to Close.',

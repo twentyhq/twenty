@@ -1,6 +1,5 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
@@ -23,10 +22,6 @@ export class AgentRunPendingWakeUpHandlerService
 
   onModuleInit(): void {
     this.pendingWakeUpOwnerHandlerRegistryService.register('AGENT_RUN', this);
-  }
-
-  buildResumeJobOptions(): QueueJobOptions {
-    return {};
   }
 
   async getOwnerState({

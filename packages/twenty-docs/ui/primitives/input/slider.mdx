@@ -3,16 +3,58 @@ title: Slider
 description: Choose a numeric value or range with draggable, keyboard-accessible thumbs.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## Overview
 
 `Slider` supports a single number or an array of numbers for a range. Compose its label, track, indicator, and thumbs inside `Root`.
 
 <StoryEmbed
-  storyId="ui-input-slider--default"
+  storyId="ui-input-slider--display"
   title="Slider example"
-  height={240}
+  height={120}
+/>
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultValue` to set the initial volume. The slider owns subsequent changes.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Visual choices
+
+Compare the accent and success colors at minimum, middle, maximum, and disabled values. The enabled sliders remain interactive.
+
+<StoryEmbed
+  storyId="ui-input-slider--catalog"
+  title="Visual choices for slider"
+  height={340}
 />
 
 ## Anatomy
@@ -40,27 +82,6 @@ Slider.Root
 | `Indicator` | Optional                      | Shows the selected portion of the track.                        |
 
 For a range, add a thumb for each value with its matching `index` and a distinct accessible name. Labels and numeric output stay outside `Control`, so they do not become part of the draggable area.
-
-## Uncontrolled state
-
-Use `defaultValue` to set the initial volume. The slider owns subsequent changes.
-
-```tsx
-import { Slider } from 'twenty-ui/primitives/input';
-
-export const VolumeSlider = () => (
-  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
-    <Slider.Label>Volume</Slider.Label>
-    <Slider.Value />
-    <Slider.Control>
-      <Slider.Track>
-        <Slider.Indicator />
-        <Slider.Thumb />
-      </Slider.Track>
-    </Slider.Control>
-  </Slider.Root>
-);
-```
 
 ## Controlled state
 
@@ -136,6 +157,16 @@ Set `color="success"` for the alternative palette; the default is `accent`.
 
 The default `thumbAlignment` is `edge`. Pass `center` or `edge-client-only` to override it. Native `className`, `style`, and `render` composition remain available on each part, including state functions.
 
+<Note>
+  With `edge` and `edge-client-only` alignment, Base UI 1.8 and 1.9 never
+  re-measure a thumb after its `Slider.Control` resizes, and a slider mounted
+  while hidden keeps its thumbs hidden once shown
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). React front
+  components hit the same issue on their first render. Use
+  `thumbAlignment="center"` until a Base UI release includes the fix
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
 ## Native integration and types
 
 `Slider.Root` infers a number or a readonly numeric array from `value` or `defaultValue`, retaining that type in both callbacks. `SliderRootProps` accepts both by default; use `SliderRootProps<number>` for single-value helpers or `SliderRootProps<readonly number[]>` for range helpers.
@@ -149,3 +180,5 @@ Refs target div elements for Root, Control, Track, Indicator, Thumb, and Label, 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <SliderReference />
+
+<PageBanner illustration="section-apps-config" />

@@ -37,12 +37,60 @@
   Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
 </ParamField>
 
-<ParamField body="Root.rounded" type="boolean">
-  Cards already use the same rounded corners when omitted.
-</ParamField>
-
 <ParamField body="Root.style" type="CSSProperties">
   Native styles applied to the rendered part.
+</ParamField>
+
+<ParamField body="Root.variant" type="&quot;compact&quot; | &quot;default&quot;" default="default">
+  default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider.
+</ParamField>
+
+### Card.Action
+
+<ParamField body="Action.children" type="ReactNode">
+  Optional content inside the stretched action. Supply an accessible name for empty actions.
+</ParamField>
+
+<ParamField body="Action.className" type="string">
+  CSS class merged with the action class.
+</ParamField>
+
+<ParamField body="Action.disabled" type="boolean" default="false">
+  Disables native button owners and suppresses the action hover treatment. Links and associated controls remain responsible for their own disabled behavior.
+</ParamField>
+
+<ParamField body="Action.ref" type="Ref&lt;HTMLButtonElement&gt;">
+  Ref to the default button, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Action.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Native element or render callback composed through Base UI useRender. Links retain native navigation and labels activate their associated controls without an additional keyboard target.
+</ParamField>
+
+<ParamField body="Action.style" type="CSSProperties">
+  Native styles applied to the rendered action.
+</ParamField>
+
+### Card.Control
+
+<ParamField body="Control.children" type="ReactNode">
+  Independent controls or tooltip targets lifted above a sibling Card.Action.
+</ParamField>
+
+<ParamField body="Control.className" type="string">
+  CSS class merged with the control class.
+</ParamField>
+
+<ParamField body="Control.ref" type="Ref&lt;HTMLSpanElement&gt;">
+  Ref to the default span, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Control.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. The supplied control retains its native attributes, events and semantics.
+</ParamField>
+
+<ParamField body="Control.style" type="CSSProperties">
+  Native styles applied to the rendered control wrapper.
 </ParamField>
 
 ### Card.Header

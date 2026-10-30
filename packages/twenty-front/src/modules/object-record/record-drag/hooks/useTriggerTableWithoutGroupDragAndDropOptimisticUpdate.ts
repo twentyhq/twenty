@@ -2,71 +2,72 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useLoadRecordsToVirtualRows } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsToVirtualRows';
+import { useLoadRecordsAtRowIndexes } from '@/object-record/record-table/virtualization/hooks/useLoadRecordsAtRowIndexes';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilySelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
-import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { totalNumberOfRowsComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRowsComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
   const store = useStore();
-  const recordIdByRealIndexCallbackSelector =
-    useAtomComponentFamilySelectorCallbackState(
-      recordIdByRealIndexComponentFamilySelector,
+  const recordIdsByGroupCallbackState =
+    useAtomComponentFamilyStateCallbackState(
+      recordIndexRecordIdsByGroupComponentFamilyState,
     );
 
   const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
     lastScrollPositionComponentState,
   );
-  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
-  const totalNumberOfRecordsToVirtualizeCallbackState =
-    useAtomComponentStateCallbackState(
-      totalNumberOfRecordsToVirtualizeComponentState,
-    );
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
+  const totalNumberOfRowsCallbackState = useAtomComponentStateCallbackState(
+    totalNumberOfRowsComponentState,
+  );
 
-  const { loadRecordsToVirtualRows } = useLoadRecordsToVirtualRows();
+  const { loadRecordsAtRowIndexes } = useLoadRecordsAtRowIndexes();
 
   const triggerTableWithoutGroupDragAndDropOptimisticUpdate = useCallback(
     (updatedRecords: RecordWithPosition[]) => {
       const tableScrollWrapperHeight =
-        scrollWrapperHTMLElement?.clientHeight ?? 0;
+        getScrollWrapperElement().scrollWrapperElement?.clientHeight ?? 0;
 
       const lastScrollPosition = store.get(lastScrollPositionCallbackState);
 
-      const totalNumberOfRecordsToVirtualize =
-        store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
+      const totalNumberOfRows = store.get(totalNumberOfRowsCallbackState) ?? 0;
 
-      const { firstRealIndexInOverscanWindow, lastRealIndexInOverscanWindow } =
-        getVirtualizationOverscanWindow(
-          lastScrollPosition,
-          tableScrollWrapperHeight,
-          totalNumberOfRecordsToVirtualize,
-        );
+      const { firstRowIndexInOverscanWindow, lastRowIndexInOverscanWindow } =
+        getVirtualizationOverscanWindow({
+          scrollPosition: lastScrollPosition,
+          scrollWrapperHeight: tableScrollWrapperHeight,
+          totalNumberOfRows,
+        });
+
+      const recordIds = store.get(
+        recordIdsByGroupCallbackState(NO_RECORD_GROUP_FAMILY_KEY),
+      );
 
       const recordsInOverscanWindowToReorder: RecordWithPosition[] = [];
 
       for (
-        let realIndex = firstRealIndexInOverscanWindow;
-        realIndex <= lastRealIndexInOverscanWindow;
-        realIndex++
+        let rowIndex = firstRowIndexInOverscanWindow;
+        rowIndex <= lastRowIndexInOverscanWindow;
+        rowIndex++
       ) {
-        const recordIdAtRealIndex = store.get(
-          recordIdByRealIndexCallbackSelector(realIndex),
-        );
+        const recordIdAtRowIndex = recordIds[rowIndex];
 
-        if (!isDefined(recordIdAtRealIndex)) {
+        if (!isDefined(recordIdAtRowIndex)) {
           continue;
         }
 
         const correspondingRecordInStore = store.get(
-          recordStoreFamilyState.atomFamily(recordIdAtRealIndex),
+          recordStoreFamilyState.atomFamily(recordIdAtRowIndex),
         );
 
         if (
@@ -100,18 +101,18 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       const reorderedRecordsWithPosition =
         recordsInOverscanWindowToReorder.toSorted(sortByProperty('position'));
 
-      loadRecordsToVirtualRows({
+      loadRecordsAtRowIndexes({
         records: reorderedRecordsWithPosition as any[],
-        startingRealIndex: firstRealIndexInOverscanWindow,
+        startingRowIndex: firstRowIndexInOverscanWindow,
       });
     },
     [
       lastScrollPositionCallbackState,
-      loadRecordsToVirtualRows,
-      recordIdByRealIndexCallbackSelector,
-      scrollWrapperHTMLElement?.clientHeight,
+      loadRecordsAtRowIndexes,
+      recordIdsByGroupCallbackState,
+      getScrollWrapperElement,
       store,
-      totalNumberOfRecordsToVirtualizeCallbackState,
+      totalNumberOfRowsCallbackState,
     ],
   );
 

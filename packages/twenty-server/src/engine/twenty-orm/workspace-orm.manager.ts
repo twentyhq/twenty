@@ -148,6 +148,8 @@ export class WorkspaceOrmManager {
       roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -160,6 +162,8 @@ export class WorkspaceOrmManager {
       'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
@@ -195,6 +199,8 @@ export class WorkspaceOrmManager {
       roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
     };
   }
 
@@ -242,6 +248,8 @@ export class WorkspaceOrmManager {
       roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     };
   }
 }

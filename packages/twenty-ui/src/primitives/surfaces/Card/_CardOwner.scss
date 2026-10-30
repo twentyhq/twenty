@@ -35,4 +35,24 @@
       opacity: 0.5;
     }
   }
+
+  &:has(> [data-card-action]) {
+    cursor: default;
+    isolation: isolate;
+    position: relative;
+  }
+
+  &:has(
+    > [data-card-action]:not(:disabled, [aria-disabled='true'], [data-disabled])
+  ) {
+    cursor: pointer;
+
+    @include hover-capable {
+      &:hover:not(:has(:hover > [data-card-action])) {
+        --card-section-background-color: transparent;
+
+        background-color: var(--t-background-transparent-light);
+      }
+    }
+  }
 }

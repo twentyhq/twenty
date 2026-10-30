@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "Email de teste"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Obrigado por se registar no Twenty! Antes de começarmos, precisamos confirmar que é você. Clique abaixo para verificar o seu endereço de e-mail."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "O código pode ser usado uma vez e expira em {formattedExpiresAt}. Usá-lo remove seu autenticador atual deste espaço de trabalho e desconecta você das suas outras sessões nele."
@@ -292,6 +297,16 @@ msgstr "Este link só é válido para os próximos {duration}. Se o link não fu
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "Para manter o seu espaço de trabalho e tudo o que criou, adicione um método de pagamento e escolha um plano."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "E-mail da Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Logotipo da Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "Não gostamos de cobranças inesperadas, por isso aqui vai um aviso amigável."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Recebemos uma solicitação para alterar o endereço de e-mail associado à sua conta Twenty. Clique abaixo para confirmar essa alteração."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "Site"
@@ -353,6 +373,12 @@ msgstr "Site"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "O que é Twenty?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "Logo do espaço de trabalho"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

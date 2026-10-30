@@ -258,8 +258,19 @@ describe('successful createOne FieldMetadataService morph relation fields v2', (
           }),
         );
 
-      expect(createOneField.morphRelations).toMatchObject(
-        expectedMorphRelations,
+      // morphRelations follow the object field order, which is not the payload order
+      const byTargetObjectMetadataId = (
+        first: { targetObjectMetadata: { id: string } },
+        second: { targetObjectMetadata: { id: string } },
+      ) =>
+        first.targetObjectMetadata.id.localeCompare(
+          second.targetObjectMetadata.id,
+        );
+
+      expect(
+        [...createOneField.morphRelations].sort(byTargetObjectMetadataId),
+      ).toMatchObject(
+        [...expectedMorphRelations].sort(byTargetObjectMetadataId),
       );
     },
   );

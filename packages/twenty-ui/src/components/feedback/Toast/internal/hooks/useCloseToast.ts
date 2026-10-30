@@ -10,6 +10,10 @@ export const useCloseToast = () => {
   const store = useToastContext();
 
   const closeToast = (id?: string) => {
+    if (!store.lifecycle.isActive()) {
+      return;
+    }
+
     const toastsToClose = store.state.toasts.filter(
       (toast) =>
         isToastVisible(toast) &&

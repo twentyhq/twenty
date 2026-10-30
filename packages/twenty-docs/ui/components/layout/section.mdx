@@ -3,16 +3,37 @@ title: Section
 description: Group content with a heading, supporting description, and optional action.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Overview
 
 `Section.Root` groups related content. `Section.Header` combines [Heading](/ui/primitives/typography/heading) with a description and optional `actions` content. Descriptions are ordinary text associated with the heading, so they do not add levels to the document outline.
 
 <StoryEmbed
-  storyId="ui-components-section--documentation"
+  storyId="ui-components-section--display"
   title="Section example"
-  height={200}
+  height={150}
 />
+
+## Usage
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
 
 ## Add a description and action
 
@@ -54,3 +75,5 @@ When migrating, replace `adornment` with `actions`. Opt into description focus w
 ## Props
 
 <SectionReference />
+
+<PageBanner illustration="layout" />

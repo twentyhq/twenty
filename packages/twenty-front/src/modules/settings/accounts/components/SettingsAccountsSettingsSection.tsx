@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -19,7 +18,7 @@ const StyledCardsContainer = styled.div`
   }
 `;
 
-const StyledCardLinkSlot = styled.div`
+const StyledCardSlot = styled.div`
   flex: 1 1 0;
   min-width: 0;
 `;
@@ -34,34 +33,32 @@ export const SettingsAccountsSettingsSection = () => {
         description={t`Configure your emails and calendar settings.`}
       />
       <StyledCardsContainer>
-        <StyledCardLinkSlot>
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AccountsEmails)}>
-            <SettingsCard
-              Icon={
-                <IconMailCog
-                  size={theme.icon.size.lg}
-                  stroke={theme.icon.stroke.sm}
-                />
-              }
-              title={t`Emails`}
-              description={t`Set email visibility, manage your blocklist and more.`}
-            />
-          </UndecoratedLink>
-        </StyledCardLinkSlot>
-        <StyledCardLinkSlot>
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AccountsCalendars)}>
-            <SettingsCard
-              Icon={
-                <IconCalendarEvent
-                  size={theme.icon.size.lg}
-                  stroke={theme.icon.stroke.sm}
-                />
-              }
-              title={t`Calendar`}
-              description={t`Configure and customize your calendar preferences.`}
-            />
-          </UndecoratedLink>
-        </StyledCardLinkSlot>
+        <StyledCardSlot>
+          <SettingsCard
+            to={getSettingsPath(SettingsPath.AccountsEmails)}
+            Icon={
+              <IconMailCog
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title={t`Emails`}
+            description={t`Set email visibility, manage your blocklist and more.`}
+          />
+        </StyledCardSlot>
+        <StyledCardSlot>
+          <SettingsCard
+            to={getSettingsPath(SettingsPath.AccountsCalendars)}
+            Icon={
+              <IconCalendarEvent
+                size={theme.icon.size.lg}
+                stroke={theme.icon.stroke.sm}
+              />
+            }
+            title={t`Calendar`}
+            description={t`Configure and customize your calendar preferences.`}
+          />
+        </StyledCardSlot>
       </StyledCardsContainer>
     </Section.Root>
   );

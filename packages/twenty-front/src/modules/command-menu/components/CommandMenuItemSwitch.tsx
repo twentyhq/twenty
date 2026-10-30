@@ -15,7 +15,6 @@ type CommandMenuItemSwitchProps = {
   onCheckedChange?: SwitchProps['onCheckedChange'];
   size?: SwitchProps['size'];
   disabled?: boolean;
-  className?: string;
 };
 
 const StyledIconContainer = styled.span`
@@ -40,7 +39,6 @@ export const CommandMenuItemSwitch = ({
   onCheckedChange,
   size = 'md',
   disabled = false,
-  className,
 }: CommandMenuItemSwitchProps) => {
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -49,7 +47,6 @@ export const CommandMenuItemSwitch = ({
 
   return (
     <SettingsRow
-      labelRender={<label className={className} />}
       focused={isSelectedItemId}
       startElement={
         isDefined(LeftIcon) && (

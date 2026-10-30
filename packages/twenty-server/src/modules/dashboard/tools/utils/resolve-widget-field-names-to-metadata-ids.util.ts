@@ -4,7 +4,7 @@ import {
   type ChartRecordFilter,
   type ChartRecordFilterGroup,
 } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
@@ -87,12 +87,6 @@ export const getObjectMetadataId = ({
   return objectMetadataIdForName;
 };
 
-type ResolvedChartRecordFilter = ChartRecordFilter & {
-  id: string;
-  displayValue: string;
-  positionInRecordFilterGroup: number;
-};
-
 const resolveChartFilterFieldNamesToIds = (
   filter: ChartFilterInput | undefined,
   objectMetadataId: string | undefined,
@@ -129,7 +123,7 @@ const resolveChartFilterFieldNamesToIds = (
 
   const positionByGroupId = new Map<string, number>();
 
-  const recordFilters: ResolvedChartRecordFilter[] = inputRecordFilters.map(
+  const recordFilters: ChartRecordFilter[] = inputRecordFilters.map(
     (recordFilter) => {
       const { fieldName, fieldMetadataId, ...rest } = recordFilter;
 
@@ -159,16 +153,11 @@ const resolveChartFilterFieldNamesToIds = (
         positionInRecordFilterGroup + 1,
       );
 
-      const field = maps.fieldById.get(resolvedFieldMetadataId);
-      const value = rest.value ?? '';
-
       return {
         id: uuidv4(),
         fieldMetadataId: resolvedFieldMetadataId,
         operand: rest.operand,
-        value,
-        displayValue: value,
-        type: isDefined(field) ? getFilterTypeFromFieldType(field.type) : '',
+        value: rest.value ?? '',
         recordFilterGroupId,
         positionInRecordFilterGroup,
         ...(isDefined(rest.subFieldName)

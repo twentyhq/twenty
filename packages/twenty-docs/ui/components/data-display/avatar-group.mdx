@@ -3,10 +3,22 @@ title: AvatarGroup
 description: Overlapping avatars with a derived overflow indicator.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
 
+## Overview
+
 `AvatarGroup` receives rendered avatars and derives the hidden count. `maxVisible` counts actual avatars; the overflow indicator is additional. Eight supplied avatars with `maxVisible={3}` show three avatars and `+5`.
+
+<StoryEmbed
+  storyId="ui-data-display-avatargroup--display"
+  title="Eight avatars with three visible"
+  height={100}
+/>
+
+## Usage
 
 ```tsx
 import { AvatarGroup } from 'twenty-ui/components/data-display';
@@ -15,6 +27,9 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 export const TeamAvatars = () => (
   <AvatarGroup
     maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
     avatars={[
       'Ada',
       'Grace',
@@ -25,7 +40,12 @@ export const TeamAvatars = () => (
       'Katherine',
       'Joan',
     ].map((name) => (
-      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
     ))}
   />
 );
@@ -33,10 +53,14 @@ export const TeamAvatars = () => (
 
 Supply stable keys to keep surviving avatars mounted when the limit, total, or display order changes. Avatars are decorative by default. When the group is the only representation of its members, supply each member's name through `imageProps.alt` to label the image and default fallback. Keep avatars decorative when visible text or an owner label already supplies that identity.
 
+## Visual options
+
+Compare circle and square avatars at each size. The group keeps three visible members in this comparison.
+
 <StoryEmbed
-  storyId="ui-data-display-avatargroup--with-derived-overflow"
-  title="Eight avatars with three visible"
-  height={280}
+  storyId="ui-data-display-avatargroup--catalog"
+  title="Compare avatar shapes and sizes"
+  height={850}
 />
 
 ## Partially loaded collections
@@ -65,7 +89,7 @@ export const LoadedTeamAvatars = () => (
 <StoryEmbed
   storyId="ui-data-display-avatargroup--partially-loaded"
   title="Three loaded members from a team of twenty"
-  height={280}
+  height={100}
 />
 
 ## Custom overflow
@@ -106,7 +130,7 @@ export const TeamAvatarsWithAction = ({
 <StoryEmbed
   storyId="ui-data-display-avatargroup--custom-overflow"
   title="Custom overflow button"
-  height={280}
+  height={100}
 />
 
 ## Appearance
@@ -147,3 +171,5 @@ export const NamedTeamAvatars = () => {
 `AvatarGroupProps` is exported from `twenty-ui/components/data-display`.
 
 <AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

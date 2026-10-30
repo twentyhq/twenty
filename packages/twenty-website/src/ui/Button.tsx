@@ -15,6 +15,7 @@ import {
 } from '@/tokens';
 
 import { ButtonShape } from './ButtonShape';
+import { ExternalLink } from './ExternalLink';
 
 const BUTTON_HEIGHT_PX: Record<ButtonSize, number> = {
   regular: 40,
@@ -247,15 +248,9 @@ export function Button({
 
   if (isExternal) {
     return (
-      <a
-        {...sharedAttributes}
-        href={href}
-        onClick={onClick}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
+      <ExternalLink {...sharedAttributes} href={href} onClick={onClick}>
         {inner}
-      </a>
+      </ExternalLink>
     );
   }
 

@@ -1,18 +1,22 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
-import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
+import { useMemo } from 'react';
 
-import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
+import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { computeRelationFilterDisplayValue } from '@/views/utils/computeRelationFilterDisplayValue';
+
 import { t } from '@lingui/core/macro';
+import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import {
   arrayOfUuidOrVariableSchema,
   isDefined,
+  isNonEmptyArray,
   jsonRelationFilterValueSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type UseComputeRecordRelationFilterDisplayValueParams = {
   recordFilter: RecordFilter;
@@ -22,14 +26,12 @@ type UseComputeRecordRelationFilterDisplayValueParams = {
 export const useComputeRecordRelationFilterDisplayValue = ({
   recordFilter,
 }: UseComputeRecordRelationFilterDisplayValueParams) => {
-  const allowRequestsToTwentyIcons = useAtomStateValue(
-    allowRequestsToTwentyIconsState,
-  );
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
-    throw new Error('recordFilter.fieldMetadataId is not defined');
+    throw new Error(
+      doNotTranslate('recordFilter.fieldMetadataId is not defined'),
+    );
   }
 
   // Nested relation filters resolve records from the leaf relation's target object, direct filters from the source.
@@ -40,57 +42,56 @@ export const useComputeRecordRelationFilterDisplayValue = ({
     objectMetadataItems,
   });
 
-  const relationObjectMetadataNameSingular =
-    getRelationObjectMetadataNameSingular({
-      field: fieldMetadataItem,
-    });
+  const targetObjectMetadataItems = useMemo(() => {
+    const targetObjectMetadataIds =
+      getTargetObjectMetadataIdsFromField(fieldMetadataItem);
 
-  if (!isDefined(relationObjectMetadataNameSingular)) {
-    throw new Error('relationObjectMetadataNameSingular is not defined');
-  }
+    return objectMetadataItems.filter((objectMetadataItem) =>
+      targetObjectMetadataIds.includes(objectMetadataItem.id),
+    );
+  }, [fieldMetadataItem, objectMetadataItems]);
 
-  const relationObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === relationObjectMetadataNameSingular,
+  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = useMemo(
+    () =>
+      jsonRelationFilterValueSchema
+        .catch({
+          isCurrentWorkspaceMemberSelected: false,
+          selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+            recordFilter.value,
+          ),
+        })
+        .parse(recordFilter.value),
+    [recordFilter.value],
   );
 
-  if (!isDefined(relationObjectMetadataItem)) {
-    throw new Error('relationObjectMetadataItem is not defined');
-  }
+  const operationSignatures = useMemo(
+    () =>
+      isNonEmptyArray(selectedRecordIds)
+        ? targetObjectMetadataItems.map(
+            (targetObjectMetadataItem): RecordGqlOperationSignature => ({
+              objectNameSingular: targetObjectMetadataItem.nameSingular,
+              variables: { filter: { id: { in: selectedRecordIds } } },
+              fields: buildIdentifierGqlFields(targetObjectMetadataItem),
+            }),
+          )
+        : [],
+    [selectedRecordIds, targetObjectMetadataItems],
+  );
 
-  const relationObjectLabelPlural = relationObjectMetadataItem.labelPlural;
-
-  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-    jsonRelationFilterValueSchema
-      .catch({
-        isCurrentWorkspaceMemberSelected: false,
-        selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-          recordFilter.value,
-        ),
-      })
-      .parse(recordFilter.value);
-
-  const { selectedRecords, loading } = useRecordsForSelect({
-    searchFilterText: '',
-    selectedIds: selectedRecordIds,
-    objectNameSingular: relationObjectMetadataNameSingular,
-    limit: 10,
-    allowRequestsToTwentyIcons,
+  const { result, loading } = useCombinedFindManyRecords({
+    operationSignatures,
+    skip: !isNonEmptyArray(operationSignatures),
   });
 
   if (loading) {
     return { displayValue: t`Loading...`, loading };
   }
 
-  const labelValueItems = [
-    ...(isCurrentWorkspaceMemberSelected ? [t`Me`] : []),
-    ...selectedRecords.map((record) => record.name),
-  ];
-
-  const displayValue =
-    labelValueItems.length > MAX_RECORDS_TO_DISPLAY
-      ? `${labelValueItems.length} ${relationObjectLabelPlural.toLowerCase()}`
-      : labelValueItems.join(', ');
+  const displayValue = computeRelationFilterDisplayValue({
+    targetObjectMetadataItems,
+    selectedRecordsByObjectNamePlural: result,
+    isCurrentWorkspaceMemberSelected: isCurrentWorkspaceMemberSelected ?? false,
+  });
 
   return { displayValue, loading };
 };

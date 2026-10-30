@@ -18,7 +18,6 @@ type CollapsibleNavigationDrawerSectionProps = {
   sectionId: string;
   label: string;
   children: ReactNode;
-  wrapTitle?: (titleNode: ReactNode) => ReactNode;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
 };
@@ -27,7 +26,6 @@ export const CollapsibleNavigationDrawerSection = ({
   sectionId,
   label,
   children,
-  wrapTitle,
   rightIcon,
   alwaysShowRightIcon,
 }: CollapsibleNavigationDrawerSectionProps) => {
@@ -35,20 +33,17 @@ export const CollapsibleNavigationDrawerSection = ({
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection(sectionId);
 
-  const titleNode = (
-    <NavigationDrawerSectionTitle
-      label={label}
-      rightIcon={rightIcon}
-      alwaysShowRightIcon={alwaysShowRightIcon}
-      onClick={toggleNavigationSection}
-      isOpen={isNavigationSectionOpen}
-    />
-  );
-
   return (
     <NavigationDrawerSection>
-      {isNavigationDrawerExpanded &&
-        (wrapTitle ? wrapTitle(titleNode) : titleNode)}
+      {isNavigationDrawerExpanded && (
+        <NavigationDrawerSectionTitle
+          label={label}
+          rightIcon={rightIcon}
+          alwaysShowRightIcon={alwaysShowRightIcon}
+          onClick={toggleNavigationSection}
+          isOpen={isNavigationSectionOpen}
+        />
+      )}
       <Collapsible.Root
         open={!isNavigationDrawerExpanded || isNavigationSectionOpen}
       >

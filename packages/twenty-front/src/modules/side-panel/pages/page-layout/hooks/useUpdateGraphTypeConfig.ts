@@ -1,4 +1,4 @@
-import { GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME } from '@/side-panel/pages/page-layout/constants/GraphConfigurationTypeToConfigTypename';
+import { WIDGET_CONFIGURATION_TYPENAME_BY_CONFIGURATION_TYPE } from '@/page-layout/constants/WidgetConfigurationTypenameByConfigurationType';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { convertAggregateOperationForDateField } from '@/side-panel/pages/page-layout/utils/convertAggregateOperationForDateField';
@@ -19,6 +19,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const useGetConfigToUpdateAfterGraphTypeChange = ({
@@ -54,7 +55,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
       const currentlyEditingWidgetId = store.get(currentlyEditingWidgetIdState);
 
       if (!isDefined(currentlyEditingWidgetId)) {
-        throw new Error('No widget is currently being edited');
+        throw new Error(doNotTranslate('No widget is currently being edited'));
       }
 
       const draftPageLayout = store.get(pageLayoutDraftState);
@@ -67,20 +68,26 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         !isDefined(widgetInDraft) ||
         !isDefined(widgetInDraft.configuration)
       ) {
-        throw new Error('Widget configuration not found in draft state');
+        throw new Error(
+          doNotTranslate('Widget configuration not found in draft state'),
+        );
       }
 
       const currentConfiguration = widgetInDraft.configuration;
 
       if (!isWidgetConfigurationOfTypeGraph(currentConfiguration)) {
-        throw new Error('Widget configuration is not a chart configuration');
+        throw new Error(
+          doNotTranslate('Widget configuration is not a chart configuration'),
+        );
       }
 
       const newConfigurationType = getConfigurationTypeFromGraphType(graphType);
 
       let configToUpdate = {
         __typename:
-          GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME[newConfigurationType],
+          WIDGET_CONFIGURATION_TYPENAME_BY_CONFIGURATION_TYPE[
+            newConfigurationType
+          ],
         configurationType: newConfigurationType,
       } as Partial<ChartConfiguration>;
 

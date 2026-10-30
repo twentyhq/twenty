@@ -287,6 +287,8 @@ export class MessageCampaignBatchDeliveryService {
           recipients: chunk,
           rateLimitedAttemptCount: requeuedAttemptCount,
         },
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
       })),
       {
         delay,
@@ -309,7 +311,7 @@ export class MessageCampaignBatchDeliveryService {
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
-    const { template, plainTextSourceHtml, variableNames } =
+    const { template, plainTextSourceHtml, campaignVariables } =
       await compileCampaignBatchTemplate({
         subjectTemplate: campaign.subject ?? '',
         bodyTemplate: campaign.bodyTemplate ?? '',
@@ -338,7 +340,7 @@ export class MessageCampaignBatchDeliveryService {
 
       replacementsByDeliveryId.set(
         recipient.messageId,
-        buildCampaignBatchReplacements({ variableNames, variables }),
+        buildCampaignBatchReplacements({ campaignVariables, variables }),
       );
     }
 
@@ -348,7 +350,7 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         template,
         plainTextSourceHtml,
-        variableNames,
+        campaignVariables,
         recipients: claimedRecipients.map((recipient) => ({
           deliveryId: recipient.messageId,
           email: recipient.email,

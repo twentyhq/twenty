@@ -4,6 +4,7 @@ import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -23,10 +24,6 @@ import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/worksp
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { Logger } from '@nestjs/common';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AdminPanelGlobalChatThreadsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-global-chat-threads.service';
-import { AdminChatThreadScope } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-scope.enum';
-import { AdminChatThreadSortDirection } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-direction.enum';
-import { AdminChatThreadSortField } from 'src/engine/core-modules/admin-panel/enums/admin-chat-thread-sort-field.enum';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -115,6 +112,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
+        flatRoleTargetByAgentIdMaps: {},
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
         recordStock: {
@@ -215,28 +214,40 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           updatedAt: new Date(),
         }),
       } as never,
+      {} as never,
+      {} as never,
     );
+    const conversationWriter = new AgentConversationWriterService(
+      turns as never,
+      new AgentHistoryTransactionService(orm as never),
+      {
+        getOrRecompute: async () => ({
+          flatWorkspaceMemberMaps: {
+            idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
+          },
+        }),
+      } as never,
+    );
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
         turns,
         messageRepository,
-        messageParts,
-        {} as never,
         {} as never,
         chatSharing as never,
         chatRecordEvents as never,
-        new AgentConversationWriterService(
-          turns as never,
-          new AgentHistoryTransactionService(orm as never),
-          {
-            getOrRecompute: async () => ({
-              flatWorkspaceMemberMaps: {
-                idByUserWorkspaceId: { [OWNER_ID]: MEMBER_ID },
-              },
-            }),
-          } as never,
-        ),
+        conversationWriter,
+        chatThreadService,
+      );
+
+    const createQueueService = (messageRepository: typeof messages) =>
+      new AgentChatQueueService(
+        turns,
+        messageRepository,
+        messageParts,
+        {} as never,
+        conversationWriter,
         chatThreadService,
       );
 
@@ -709,10 +720,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       expect(created.totalInputCredits).toBe('0');
       expect(created).not.toHaveProperty('workspaceId');
       const checkpointId = '20202020-8888-4888-8888-888888888888';
-      const checkpointChatService = createChatService(messages);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
-          checkpointChatService.upsertAssistantMessage({
+          conversationWriter.upsertAssistantMessage({
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,
@@ -793,6 +803,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         target: 'workspace',
       });
       const chat = createChatService(messages);
+      const queue = createQueueService(messages);
       const actors = createActorService(messages);
       const thread = await threads.insertAndReturnOne(WORKSPACE_ID, {
         workspaceMemberId: MEMBER_ID,
@@ -809,14 +820,14 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           parts: [{ type: 'text', text: 'Live message after upgrade' }],
         },
       });
-      const queued = await chat.queueMessage({
+      const queued = await queue.queueMessage({
         workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,
         text: 'Queued after upgrade',
       });
-      await chat.promoteQueuedMessage({
+      await queue.promoteQueuedMessage({
         workspaceId: WORKSPACE_ID,
         threadId: thread.id,
         messageId: queued.id,
@@ -1075,6 +1086,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
           lastMessageText: null,
+          shouldRecordActivity: true,
           usage: {
             totalInputTokens: 1,
             totalOutputTokens: 2,
@@ -1256,63 +1268,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       });
     });
 
-    it('lists support threads only from workspaces with history tables', async () => {
-      const otherWorkspaceId = '20202020-9999-4999-8999-999999999999';
-      await dataSource.query(
-        `INSERT INTO core.workspace (id, "allowImpersonation") VALUES ($1, true)`,
-        [otherWorkspaceId],
-      );
-      const workspaceIds = [WORKSPACE_ID, otherWorkspaceId];
-      await workspaceStorage.runReadOnlyReport(
-        workspaceIds,
-        async ({ partitions }) =>
-          expect(partitions.map(({ workspaceIds }) => workspaceIds)).toEqual([
-            [WORKSPACE_ID],
-          ]),
-      );
-      const support = new AdminPanelGlobalChatThreadsService(
-        {
-          find: async () => workspaceIds.map((id) => ({ id })),
-        } as unknown as Repository<WorkspaceEntity>,
-        workspaceStorage,
-      );
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      await dataSource.query(
-        'INSERT INTO core."userWorkspace" (id, "workspaceId", "userId", "deletedAt") VALUES ($1, $2, $3, now())',
-        ['20202020-0000-4000-8000-000000009999', WORKSPACE_ID, OWNER_ID],
-      );
-      expect(
-        await support.getGlobalChatThreads({
-          scope: AdminChatThreadScope.ALL,
-          hasErrorOnly: false,
-          userNeverEngagedOnly: false,
-          sortBy: AdminChatThreadSortField.CREATED_AT,
-          sortDirection: AdminChatThreadSortDirection.ASC,
-          limit: 1,
-          offset: 0,
-        }),
-      ).toMatchObject({
-        totalCount: 1,
-        hasMore: false,
-        threads: [{ id: THREAD_ID }],
-      });
-    });
-
-    it('serves support search and thread lookup from workspace storage', async () => {
-      const otherWorkspaceId = '20202020-9999-4999-8999-999999999999';
-      await dataSource.query(
-        `INSERT INTO core.workspace (id, "allowImpersonation") VALUES ($1, true)`,
-        [otherWorkspaceId],
-      );
+    it('serves thread lookup from workspace storage', async () => {
       await migration.migrate({
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
       const workspaceRepository = {
-        find: async () => [{ id: otherWorkspaceId }, { id: WORKSPACE_ID }],
         findOne: async ({ where }: { where: { id: string } }) =>
           (
             await dataSource.query(
@@ -1321,21 +1282,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             )
           )[0],
       } as unknown as Repository<WorkspaceEntity>;
-      const support = new AdminPanelGlobalChatThreadsService(
-        workspaceRepository,
-        workspaceStorage,
-      );
-      expect(
-        await support.getGlobalChatThreads({
-          scope: AdminChatThreadScope.ALL,
-          hasErrorOnly: false,
-          userNeverEngagedOnly: false,
-          sortBy: AdminChatThreadSortField.CREATED_AT,
-          sortDirection: AdminChatThreadSortDirection.ASC,
-          limit: 10,
-          offset: 0,
-        }),
-      ).toMatchObject({ totalCount: 1, threads: [{ id: THREAD_ID }] });
       const chat = new AdminPanelChatService(
         workspaceRepository,
         threads,
@@ -1464,39 +1410,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: WORKSPACE_ID,
         target: 'workspace',
       });
-    });
-
-    it('keeps support search counts and revocation checks after the move', async () => {
-      const support = new AdminPanelGlobalChatThreadsService(
-        {
-          find: jest.fn().mockResolvedValue([{ id: WORKSPACE_ID }]),
-        } as unknown as Repository<WorkspaceEntity>,
-        workspaceStorage,
-      );
-      const options = {
-        scope: AdminChatThreadScope.ONBOARDING,
-        hasErrorOnly: false,
-        userNeverEngagedOnly: false,
-        sortBy: AdminChatThreadSortField.UPDATED_AT,
-        sortDirection: AdminChatThreadSortDirection.DESC,
-        limit: 10,
-        offset: 0,
-      };
-      await dataSource.query(
-        `INSERT INTO core."agentMessage" ("workspaceId", "threadId", "turnId", role) VALUES ($1, $2, $3, 'user')`,
-        [WORKSPACE_ID, THREAD_ID, TURN_ID],
-      );
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      const after = await support.getGlobalChatThreads(options);
-      expect(after.totalCount).toBe(1);
-      expect(after.threads[0].messageCount).toBe(1);
-      await dataSource.query(
-        'UPDATE core.workspace SET "allowImpersonation" = false',
-      );
-      expect((await support.getGlobalChatThreads(options)).threads).toEqual([]);
     });
   },
 );

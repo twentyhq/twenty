@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
+import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+import { validateRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
@@ -22,6 +28,8 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
+    additionalCacheDataMaps: { billingEntitlements },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'create'> {
@@ -54,6 +62,14 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleReadWritePermissionsConsistency({
         flatRole: flatEntityToValidate,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateRoleIsEntitled({
+        flatRole: flatEntityToValidate,
+        billingEntitlements,
+        buildOptions,
       }),
     );
 
@@ -94,11 +110,22 @@ export class FlatRoleValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateRoleIsEditable({
+      ...getRoleNotEditableErrors({
         flatRole: existingRole,
         buildOptions,
       }),
     );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      existingRole.universalIdentifier === MEMBER_ROLE_UNIVERSAL_IDENTIFIER
+    ) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED,
+        message: PermissionsExceptionMessage.MEMBER_ROLE_CANNOT_BE_DELETED,
+        userFriendlyMessage: msg`The Member role cannot be deleted.`,
+      });
+    }
 
     return validationResult;
   }
@@ -109,6 +136,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
+    additionalCacheDataMaps: { billingEntitlements },
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
@@ -137,7 +165,7 @@ export class FlatRoleValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateRoleIsEditable({
+      ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
         buildOptions,
       }),
@@ -174,6 +202,16 @@ export class FlatRoleValidatorService {
         flatRole: toFlatRole,
       }),
     );
+
+    if (!doesRoleRequireCustomRolesEntitlement(fromFlatRole)) {
+      validationResult.errors.push(
+        ...validateRoleIsEntitled({
+          flatRole: toFlatRole,
+          billingEntitlements,
+          buildOptions,
+        }),
+      );
+    }
 
     return validationResult;
   }

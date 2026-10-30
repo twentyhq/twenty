@@ -1,5 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+// Salesfarce: remove with the theme
+import { salesfarceIsActiveState } from '@/salesfarce/states/salesfarceIsActiveState';
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -7,6 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -16,6 +19,8 @@ import {
   IconSunMoon,
 } from 'twenty-ui/icon';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+// Salesfarce: remove with the theme
+import { reloadWindow } from '~/utils/reloadWindow';
 
 export const useColorScheme = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -24,7 +29,8 @@ export const useColorScheme = () => {
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
   const { enqueueToast } = useToast();
 
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+  const colorScheme =
+    currentWorkspaceMember?.colorScheme ?? doNotTranslate('System');
 
   const setColorScheme = useCallback(
     async (value: ColorScheme) => {
@@ -51,6 +57,11 @@ export const useColorScheme = () => {
             colorScheme: value,
           },
         });
+
+        // Salesfarce: remove with the theme
+        if (store.get(salesfarceIsActiveState.atom)) {
+          reloadWindow();
+        }
       } catch (error) {
         const latestWorkspaceMember = store.get(
           currentWorkspaceMemberState.atom,

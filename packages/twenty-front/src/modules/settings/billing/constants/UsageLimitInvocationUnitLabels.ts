@@ -15,6 +15,10 @@ export const USAGE_LIMIT_INVOCATION_UNIT_LABELS: Partial<
     name: msg`Searches`,
     suffix: msg`searches`,
   },
+  [UsageOperationType.AI_WORKFLOW_WEB_SEARCH]: {
+    name: msg`Searches`,
+    suffix: msg`searches`,
+  },
   [UsageOperationType.EMAIL_SEND]: { name: msg`Emails`, suffix: msg`emails` },
   [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: {
     name: msg`Emails`,

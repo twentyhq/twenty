@@ -1,29 +1,23 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { type UsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/interfaces/usage-limit-entitlement-provider.service';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { findEnforceableLimits } from 'src/engine/core-modules/usage-limit/utils/find-enforceable-limits.util';
-import { findUsageLimitEntitlementProvider } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-entitlement-provider.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 
 @Injectable()
-export class UsageLimitEntitlementService implements OnModuleInit {
+export class UsageLimitEntitlementService {
   private readonly logger = new Logger(UsageLimitEntitlementService.name);
 
-  private entitlementProvider: UsageLimitEntitlementProvider;
-
-  constructor(private readonly discoveryService: DiscoveryService) {}
-
-  onModuleInit() {
-    this.entitlementProvider = findUsageLimitEntitlementProvider(
-      this.discoveryService,
-    );
-  }
+  constructor(
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+  ) {}
 
   async isIntraWorkspaceLimitEntitled(workspaceId: string): Promise<boolean> {
-    return this.entitlementProvider.hasIntraWorkspaceLimitEntitlement(
+    return this.billingSubscriptionService.getWorkspaceEntitlementValue(
       workspaceId,
+      BillingEntitlementKey.USAGE_LIMIT,
     );
   }
 

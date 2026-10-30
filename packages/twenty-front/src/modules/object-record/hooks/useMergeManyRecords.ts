@@ -89,10 +89,12 @@ export const useMergeManyRecords = <
           ...(preview && {
             fetchPolicy: 'no-cache',
           }),
-          refetchQueries: [
-            getOperationName(findOneRecordQuery) ?? '',
-            getOperationName(findDuplicateRecordsQuery) ?? '',
-          ].filter(Boolean),
+          refetchQueries: preview
+            ? []
+            : [
+                getOperationName(findOneRecordQuery) ?? '',
+                getOperationName(findDuplicateRecordsQuery) ?? '',
+              ].filter(Boolean),
         });
 
         setLoading(false);

@@ -13,3 +13,32 @@
 [data-floating-ui-viewport] > * {
   zoom: var(--t-zoom, 1);
 }
+
+/* Base UI positions popups the same way. Body portals holding a positioner get
+     the inverse zoom from the document origin, and the popup restores the scale.
+     Base UI also exposes the anchor and available sizes in visual-viewport
+     pixels, so the popup reads them converted back to design pixels. Portals
+     into a container are left alone: floating-ui reads the zoom from there. */
+
+body > [data-base-ui-portal]:has(> [data-side]) {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  position: absolute;
+  zoom: calc(1 / var(--t-zoom, 1));
+}
+
+body > [data-base-ui-portal] > [data-side] {
+  --t-unzoomed-anchor-width: calc(var(--anchor-width) / var(--t-zoom, 1));
+  --t-unzoomed-available-width: calc(var(--available-width) / var(--t-zoom, 1));
+  --t-unzoomed-available-height: calc(
+    var(--available-height) / var(--t-zoom, 1)
+  );
+}
+
+body > [data-base-ui-portal] > [data-side] > * {
+  --anchor-width: var(--t-unzoomed-anchor-width);
+  --available-width: var(--t-unzoomed-available-width);
+  --available-height: var(--t-unzoomed-available-height);
+
+  zoom: var(--t-zoom, 1);
+}

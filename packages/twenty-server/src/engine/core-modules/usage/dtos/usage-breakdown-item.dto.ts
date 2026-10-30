@@ -12,4 +12,10 @@ export class UsageBreakdownItemDTO {
 
   @Field(() => Float)
   creditsUsed: number;
+
+  @Field(() => Float)
+  userCreditsUsed: number;
+
+  @Field(() => Float)
+  workspaceCreditsUsed: number;
 }

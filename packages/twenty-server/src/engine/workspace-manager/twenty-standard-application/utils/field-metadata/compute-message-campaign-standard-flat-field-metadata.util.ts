@@ -414,7 +414,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'sentCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Sent count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Sent`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -434,7 +434,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'deliveredCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Delivered count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Delivered`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -454,7 +454,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'failedCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Failed count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Failed`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -474,7 +474,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'bouncedCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Bounced count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Bounced`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -494,7 +494,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'complainedCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Complained count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Complaints`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
@@ -514,7 +514,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         fieldName: 'skippedCount',
         type: FieldMetadataType.NUMBER,
         label: i18nLabel(
-          msg({ message: `Skipped count`, context: 'fieldMetadata.label' }),
+          msg({ message: `Skipped`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({

@@ -14,8 +14,8 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -36,7 +36,6 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { assertStepTypeAvailableToApplicationRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-application-run.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -52,9 +51,11 @@ import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor
 import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/find-enclosing-iterator-with-continue-on-failure.util';
 import { getNextStepIdsForIterator } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-next-step-ids-for-iterator.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { ApplicationWorkflowStepPermissionService } from 'src/modules/workflow/workflow-executor/services/application-workflow-step-permission.service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
@@ -71,7 +72,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -79,6 +80,8 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly applicationWorkflowStepPermissionService: ApplicationWorkflowStepPermissionService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
 
   async executeFromSteps({
@@ -195,6 +198,7 @@ export class WorkflowExecutorWorkspaceService {
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
             workspaceId,
+            applicationId: workflow.applicationId,
           });
 
           return;
@@ -270,6 +274,7 @@ export class WorkflowExecutorWorkspaceService {
         lastExecutedStepId: stepId,
         workflowRunId,
         workspaceId,
+        applicationId: workflow.applicationId,
       });
 
       return;
@@ -414,7 +419,7 @@ export class WorkflowExecutorWorkspaceService {
     billingSpenders: WorkflowBillingSpenders;
   }): Promise<WorkflowActionOutput | undefined> {
     try {
-      await this.billingUsageService.assertUsageAllowed({
+      await this.usageQuotaAdmissionService.assertUsageAllowed({
         workspaceId,
         resourceType: UsageResourceType.WORKFLOW,
         operationType: UsageOperationType.WORKFLOW_EXECUTION,
@@ -601,10 +606,13 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
-      assertStepTypeAvailableToApplicationRun({
-        stepType: step.type,
-        runApplicationId,
-      });
+      await this.applicationWorkflowStepPermissionService.assertRunApplicationMayUseStepOrThrow(
+        {
+          workspaceId,
+          runApplicationId,
+          stepType: step.type,
+        },
+      );
 
       const nodeRunRefusal = await this.getNodeRunRefusal({
         workspaceId,
@@ -754,12 +762,14 @@ export class WorkflowExecutorWorkspaceService {
     retryDelayMs,
     workflowRunId,
     workspaceId,
+    applicationId,
   }: {
     stepId: string;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
     workspaceId: string;
+    applicationId: string;
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
@@ -776,7 +786,16 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           stepIdsToRetry: [stepId],
         },
-        { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
+        {
+          ...buildRunWorkflowJobOptions({
+            workflowRunId,
+            scope:
+              await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
+                { workspaceId, applicationId },
+              ),
+          }),
+          delay: retryDelayMs,
+        },
       );
     } catch (enqueueError) {
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
@@ -793,10 +812,12 @@ export class WorkflowExecutorWorkspaceService {
     lastExecutedStepId,
     workflowRunId,
     workspaceId,
+    applicationId,
   }: {
     lastExecutedStepId: string;
     workflowRunId: string;
     workspaceId: string;
+    applicationId: string;
   }) {
     await this.messageQueueService.add<RunWorkflowJobData>(
       RUN_WORKFLOW_JOB_NAME,
@@ -805,7 +826,14 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      buildRunWorkflowJobOptions({
+        workflowRunId,
+        scope:
+          await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+            workspaceId,
+            applicationId,
+          }),
+      }),
     );
   }
 }

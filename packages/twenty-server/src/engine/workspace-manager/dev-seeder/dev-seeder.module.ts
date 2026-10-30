@@ -1,4 +1,6 @@
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,6 +30,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
+import { DevSeederAgentChatChannelWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-channel.workspace-service';
 import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
@@ -43,8 +46,10 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
+    AgentChatThreadModule,
     AgentHistoryModule,
     AiAgentExecutionModule,
+    AiAgentModule,
     TimelineActivityModule,
     ObjectMetadataModule,
     FieldMetadataModule,
@@ -85,6 +90,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     TimelineActivitySeederService,
     DevSeederWorkflowPendingInputWorkspaceService,
     DevSeederAgentChatPendingInputWorkspaceService,
+    DevSeederAgentChatChannelWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),

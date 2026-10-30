@@ -19,6 +19,7 @@ describe('TriggerUpgradeApplicationJob', () => {
   };
 
   const jobContext: MessageQueueJobProgressContext = {
+    jobId: 'job-id',
     updateProgress: jest.fn(),
   };
 

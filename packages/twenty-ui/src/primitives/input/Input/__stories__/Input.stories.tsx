@@ -1,3 +1,4 @@
+import { type ComponentProps } from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -25,10 +26,26 @@ export default meta;
 
 type Story = StoryObj<typeof Input>;
 
-export const Default: Story = {
+export const Display: Story = {
+  args: { 'aria-label': undefined, placeholder: undefined },
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 240 } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 320 } },
+  render: (args) => <InputDisplayExample {...args} />,
 };
+
+const InputDisplayExample = (props: ComponentProps<typeof Input>) => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+      {...props}
+    />
+    <Field.Description>Use your work email address.</Field.Description>
+  </Field.Root>
+);
 
 export const WithField: Story = {
   decorators: [ComponentDecorator],
@@ -51,6 +68,12 @@ export const WithField: Story = {
 
     await expect(input).toHaveFocus();
   },
+};
+
+export const EndAligned: Story = {
+  args: { defaultValue: '2,100,000', textAlign: 'end' },
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240 } },
 };
 
 type InputCatalogState = 'default' | 'focus' | 'invalid' | 'disabled';

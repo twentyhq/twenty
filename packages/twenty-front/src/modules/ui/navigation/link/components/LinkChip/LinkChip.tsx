@@ -1,5 +1,4 @@
 import { css } from '@linaria/core';
-import { Link } from 'react-router-dom';
 import { type LinkChipProps } from './types/LinkChipProps';
 
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
@@ -12,10 +11,6 @@ const styles = {
       display: inline-flex;
       min-width: 0;
       vertical-align: middle;
-    }
-    & > a {
-      min-width: 0;
-      text-decoration: none;
     }
   `,
 };
@@ -38,8 +33,8 @@ export const LinkChip = ({
         clickable
         {...props}
         render={
-          <Link
-            to={to}
+          <a
+            href={to}
             ref={ref}
             onClick={(event) => {
               event.stopPropagation();

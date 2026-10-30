@@ -3,6 +3,7 @@ import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTri
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getTriggerDefaultLabel = (trigger: WorkflowTrigger): string => {
   if (trigger.type === 'DATABASE_EVENT') {
@@ -15,7 +16,7 @@ export const getTriggerDefaultLabel = (trigger: WorkflowTrigger): string => {
     )?.defaultLabel;
 
     if (!isDefined(label)) {
-      throw new Error('Unknown trigger event');
+      throw new Error(doNotTranslate('Unknown trigger event'));
     }
 
     return label;
@@ -26,7 +27,7 @@ export const getTriggerDefaultLabel = (trigger: WorkflowTrigger): string => {
   )?.defaultLabel;
 
   if (!isDefined(label)) {
-    throw new Error('Unknown trigger type');
+    throw new Error(doNotTranslate('Unknown trigger type'));
   }
 
   return label;

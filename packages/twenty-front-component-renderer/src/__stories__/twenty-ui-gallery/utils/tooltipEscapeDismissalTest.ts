@@ -38,13 +38,14 @@ export const tooltipEscapeDismissalTest: TwentyUiGalleryPlayFunction = async ({
   await user.keyboard('{Escape}');
 
   await waitFor(
-    () =>
+    () => {
       expect(canvas.getByRole('status')).toHaveTextContent(
         'Export help: closed',
-      ),
+      );
+      expect(page.queryByText(TOOLTIP_CONTENT)).not.toBeInTheDocument();
+    },
     { timeout: INTERACTION_TIMEOUT },
   );
-  expect(page.queryByText(TOOLTIP_CONTENT)).not.toBeInTheDocument();
   await user.tab();
   expect(canvas.getByRole('button', { name: 'Export details' })).toHaveFocus();
   await waitFor(

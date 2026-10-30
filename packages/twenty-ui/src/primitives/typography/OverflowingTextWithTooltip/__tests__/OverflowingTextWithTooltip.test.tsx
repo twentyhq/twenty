@@ -1,28 +1,13 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { describe, expect, it } from 'vitest';
+
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import styles from '../OverflowingTextWithTooltip.module.scss';
 
-import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
-
+import { OverflowingTextTooltipModeProvider } from '../OverflowingTextTooltipModeProvider';
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 
-const setTextDimensions = ({
-  element,
-  clientWidth,
-  scrollWidth,
-}: {
-  element: HTMLElement;
-  clientWidth: number;
-  scrollWidth: number;
-}) => {
-  Object.defineProperties(element, {
-    clientWidth: { value: clientWidth },
-    scrollWidth: { value: scrollWidth },
-  });
-};
+import styles from '../OverflowingTextWithTooltip.module.scss';
 
 runComponentConformance({
   name: 'OverflowingTextWithTooltip',
@@ -32,6 +17,28 @@ runComponentConformance({
 });
 
 describe('OverflowingTextWithTooltip', () => {
+  it('forwards semantic typography to the displayed text without adding native attributes', () => {
+    render(
+      <OverflowingTextWithTooltip
+        text="Caption"
+        size="xs"
+        weight="semibold"
+        color="light"
+        render={<span />}
+      />,
+    );
+
+    const text = screen.getByText('Caption');
+
+    expect(text.tagName).toBe('SPAN');
+    expect(text).toHaveAttribute('data-size', 'xs');
+    expect(text).toHaveAttribute('data-weight', 'semibold');
+    expect(text).toHaveAttribute('data-color', 'light');
+    expect(text).not.toHaveAttribute('size');
+    expect(text).not.toHaveAttribute('weight');
+    expect(text).not.toHaveAttribute('color');
+  });
+
   it('keeps URL strings plain inside a caller-provided anchor', () => {
     render(
       <a href="https://twenty.com">
@@ -43,234 +50,49 @@ describe('OverflowingTextWithTooltip', () => {
     expect(screen.getByRole('link')).toHaveTextContent('https://twenty.com');
   });
 
-  it('preserves explicit child links and their focus without adding a tab stop', async () => {
-    const user = userEvent.setup();
+  it('preserves explicit child links without adding a tab stop', () => {
     render(
       <OverflowingTextWithTooltip
         text={<a href="https://twenty.com">Documentation</a>}
         tooltipContent="Open the documentation"
         alwaysShowTooltip
-        tooltipDelay={0}
         data-testid="text"
       />,
     );
 
-    const link = screen.getByRole('link', { name: 'Documentation' });
     expect(screen.getByTestId('text')).not.toHaveAttribute('tabindex');
-    await user.tab();
-    expect(link).toHaveFocus();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Open the documentation',
+    expect(screen.getByRole('link', { name: 'Documentation' })).toHaveAttribute(
+      'href',
+      'https://twenty.com',
     );
-    await user.hover(link);
-    await user.unhover(link);
-    expect(screen.getByRole('tooltip')).toBeVisible();
-    await user.keyboard('{Escape}');
-    await waitFor(() =>
-      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
-    );
-    expect(link).toHaveFocus();
   });
 
-  it('targets the rendered anchor with native props, ref and composed handlers', async () => {
-    const user = userEvent.setup();
+  it('targets the rendered anchor with native props and ref', () => {
     const ref = createRef<HTMLDivElement>();
-    const onFocus = vi.fn();
-    const onPointerEnter = vi.fn();
-    const onClick = vi.fn((event) => event.preventDefault());
+
     render(
       <OverflowingTextWithTooltip
         text="Documentation"
         render={<a href="https://twenty.com" aria-label="Documentation" />}
         ref={ref}
         title="Read documentation"
-        onFocus={onFocus}
-        onPointerEnter={onPointerEnter}
-        onClick={onClick}
-        tooltipDelay={0}
       />,
     );
 
     const link = screen.getByRole('link', { name: 'Documentation' });
-    setTextDimensions({ element: link, clientWidth: 80, scrollWidth: 160 });
+
     expect(ref.current).toBe(link);
     expect(link).toHaveAttribute('title', 'Read documentation');
-    await user.tab();
-    expect(onFocus).toHaveBeenCalledOnce();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Documentation',
-    );
-    await user.click(link);
-    expect(onPointerEnter).toHaveBeenCalled();
-    expect(onClick).toHaveBeenCalledOnce();
   });
 
-  it('uses caller tabIndex for focus even when the convenience tab stop is off', async () => {
-    const user = userEvent.setup();
-    render(
-      <OverflowingTextWithTooltip
-        text="Keyboard label"
-        tabIndex={0}
-        alwaysShowTooltip
-      />,
-    );
-    const text = screen.getByText('Keyboard label');
-    await user.tab();
-    expect(text).toHaveFocus();
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Keyboard label',
-    );
-  });
-
-  it('does not open without a nonempty tooltip label', async () => {
-    const user = userEvent.setup();
-    render(
-      <OverflowingTextWithTooltip
-        text={<span>Value</span>}
-        tooltipContent=""
-        alwaysShowTooltip
-        isFocusable
-      />,
-    );
-    await user.tab();
-    await user.hover(screen.getByText('Value'));
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-  });
-
-  it('lets a parent tooltip open when the nested text fits', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Tooltip content="Field label" delay={0}>
-        <div>
-          <OverflowingTextWithTooltip text="Short value" tooltipDelay={0} />
-        </div>
-      </Tooltip>,
-    );
-
-    const text = screen.getByText('Short value');
-
-    setTextDimensions({ element: text, clientWidth: 100, scrollWidth: 80 });
-
-    await user.hover(text);
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent('Field label');
-  });
-
-  it('gives the nested tooltip priority when its text is truncated', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <Tooltip content="Field label" delay={0}>
-        <div>
-          <OverflowingTextWithTooltip text="Truncated value" tooltipDelay={0} />
-        </div>
-      </Tooltip>,
-    );
-
-    const text = screen.getByText('Truncated value');
-
-    setTextDimensions({ element: text, clientWidth: 80, scrollWidth: 160 });
-
-    await user.hover(text);
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Truncated value',
-    );
-    expect(screen.getAllByRole('tooltip')).toHaveLength(1);
-  });
-
-  it('opens only when the text is truncated without adding a layout wrapper', async () => {
-    const user = userEvent.setup();
+  it('renders the displayed text without a layout wrapper', () => {
     const { container } = render(
-      <OverflowingTextWithTooltip text="Truncated label" tooltipDelay={0} />,
-    );
-    const text = screen.getByText('Truncated label');
-
-    setTextDimensions({ element: text, clientWidth: 80, scrollWidth: 160 });
-
-    expect(container.firstElementChild).toBe(text);
-
-    await user.hover(text);
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Truncated label',
-    );
-  });
-
-  it('keeps text that fits hidden on keyboard focus', async () => {
-    const user = userEvent.setup();
-
-    render(<OverflowingTextWithTooltip text="Short label" isFocusable />);
-
-    const text = screen.getByText('Short label');
-
-    setTextDimensions({ element: text, clientWidth: 100, scrollWidth: 80 });
-
-    await user.tab();
-
-    expect(text).toHaveFocus();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-  });
-
-  it('opens on focus and dismisses with Escape while retaining focus', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <OverflowingTextWithTooltip
-        text="Short label"
-        tooltipContent="Additional information"
-        alwaysShowTooltip
-        isFocusable
-      />,
+      <OverflowingTextWithTooltip text="Truncated label" />,
     );
 
-    const text = screen.getByText('Short label');
-
-    await user.tab();
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Additional information',
+    expect(container.firstElementChild).toBe(
+      screen.getByText('Truncated label'),
     );
-
-    await user.keyboard('{Escape}');
-
-    await waitFor(() => {
-      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-    });
-    expect(text).toHaveFocus();
-  });
-
-  it('keeps the tooltip open while a clicked label retains focus', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <OverflowingTextWithTooltip
-        text="Clickable label"
-        alwaysShowTooltip
-        isFocusable
-        tooltipDelay={0}
-      />,
-    );
-
-    const text = screen.getByText('Clickable label');
-
-    await user.click(text);
-
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'Clickable label',
-    );
-    expect(text).toHaveFocus();
-
-    await user.unhover(text);
-
-    expect(screen.getByRole('tooltip')).toBeVisible();
-
-    await user.tab();
-
-    await waitFor(() => {
-      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
-    });
   });
 
   it('lays out each value by its own direction', () => {
@@ -286,5 +108,23 @@ describe('OverflowingTextWithTooltip', () => {
       'auto',
     );
     expect(screen.getByText('הטמעת CRM לאקמה')).toHaveAttribute('dir', 'auto');
+  });
+
+  it('preserves the text element and ref when the tooltip mode is disabled', () => {
+    const ref = createRef<HTMLDivElement>();
+
+    render(
+      <OverflowingTextTooltipModeProvider mode="disabled">
+        <OverflowingTextWithTooltip
+          text="Truncated label"
+          ref={ref}
+          alwaysShowTooltip
+          isFocusable
+        />
+      </OverflowingTextTooltipModeProvider>,
+    );
+
+    expect(ref.current).toBe(screen.getByText('Truncated label'));
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 });

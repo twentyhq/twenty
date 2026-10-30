@@ -3,19 +3,66 @@ title: AlertDialog
 description: Ask for confirmation before an action that needs an explicit decision.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## Overview
 
 Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides `alertdialog` semantics, focus management, and explicit confirmation or cancellation.
 
 This primitive is for standalone Twenty UI and host-owned interfaces. Front components must request a confirmation through the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api). Direct `Dialog`, `AlertDialog`, and native browser dialogs are prohibited inside the front component renderer.
 
 <StoryEmbed
-  storyId="ui-surfaces-alertdialog--documentation"
+  storyId="ui-surfaces-alertdialog--display"
   title="AlertDialog example"
   height={440}
 />
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. This example uses a synchronous confirmation callback and closes after the action runs.
 
 ## Anatomy
 
@@ -54,49 +101,6 @@ Set `container` and `keepMounted` on `Portal`, backdrop attributes on `Backdrop`
 
 The confirmation action is application content, not an exported part. Use `Close` with a synchronous handler or a `Button` with controlled open state for asynchronous confirmation.
 
-## Uncontrolled state
-
-Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
-
-```tsx
-import { Button } from 'twenty-ui/primitives/input';
-import { AlertDialog } from 'twenty-ui/primitives/surfaces';
-
-type DeleteConfirmationProps = { onDelete: () => void };
-
-export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
-  <AlertDialog.Root defaultOpen={false}>
-    <AlertDialog.Trigger
-      render={<Button color="danger">Delete record</Button>}
-    />
-    <AlertDialog.Portal>
-      <AlertDialog.Backdrop />
-      <AlertDialog.Viewport>
-        <AlertDialog.Popup>
-          <AlertDialog.Header>
-            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-            <AlertDialog.Description>
-              This action cannot be undone.
-            </AlertDialog.Description>
-          </AlertDialog.Header>
-          <AlertDialog.Footer>
-            <AlertDialog.Close
-              render={<Button variant="outline">Cancel</Button>}
-            />
-            <AlertDialog.Close
-              onClick={onDelete}
-              render={<Button color="danger">Delete</Button>}
-            />
-          </AlertDialog.Footer>
-        </AlertDialog.Popup>
-      </AlertDialog.Viewport>
-    </AlertDialog.Portal>
-  </AlertDialog.Root>
-);
-```
-
-`defaultOpen` defaults to `false`, so it can be omitted. This example uses a synchronous confirmation callback and closes after the action runs.
-
 ## Controlled state
 
 Pass `open` and update it with `onOpenChange` to own the same dialog's visibility in React state. The callback receives the requested boolean and upstream event details, including `reason`, `event`, and `cancel()`. Call `eventDetails.cancel()` to reject a requested change. `onOpenChangeComplete` runs after opening or closing transitions finish.
@@ -114,7 +118,7 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger
-        render={<Button color="danger">Delete record</Button>}
+        render={<Button variant="solid">Delete record</Button>}
       />
       <AlertDialog.Portal>
         <AlertDialog.Backdrop />
@@ -123,13 +127,12 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
             <AlertDialog.Header>
               <AlertDialog.Title>Delete this record?</AlertDialog.Title>
               <AlertDialog.Description>
-                This action cannot be undone.
+                This record will be permanently deleted. This action cannot be
+                undone.
               </AlertDialog.Description>
             </AlertDialog.Header>
             <AlertDialog.Footer>
-              <AlertDialog.Close
-                render={<Button variant="outline">Cancel</Button>}
-              />
+              <AlertDialog.Close render={<Button>Cancel</Button>} />
               <AlertDialog.Close
                 onClick={onDelete}
                 render={<Button color="danger">Delete</Button>}
@@ -158,7 +161,7 @@ type DeleteConfirmationProps = { onDelete: () => void };
 export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
   <AlertDialog.Root>
     <AlertDialog.Trigger
-      render={<Button color="danger">Delete record</Button>}
+      render={<Button variant="solid">Delete record</Button>}
     />
     <AlertDialog.Portal>
       <AlertDialog.Backdrop />
@@ -167,13 +170,12 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
           <AlertDialog.Header>
             <AlertDialog.Title>Delete this record?</AlertDialog.Title>
             <AlertDialog.Description>
-              This action cannot be undone.
+              This record will be permanently deleted. This action cannot be
+              undone.
             </AlertDialog.Description>
           </AlertDialog.Header>
           <AlertDialog.Footer>
-            <AlertDialog.Close
-              render={<Button variant="outline">Cancel</Button>}
-            />
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
             <AlertDialog.Close
               onClick={onDelete}
               render={<Button color="danger">Delete</Button>}
@@ -213,3 +215,5 @@ By default, focus moves to the first tabbable control, or to the popup for a tou
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

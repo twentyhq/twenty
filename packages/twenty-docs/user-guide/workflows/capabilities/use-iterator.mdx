@@ -3,8 +3,7 @@ title: Use Iterator
 description: Loop through arrays of records to perform actions on each item.
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
-
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## When to Use Iterator
 
@@ -107,12 +106,12 @@ In the variable picker, you can either drill into a specific field of the curren
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### Conditional Processing Inside Loop
@@ -179,3 +178,4 @@ Filter: {{searchRecords.length}} > 0
 - [How to Use Branches](/user-guide/workflows/capabilities/use-branches-in-workflows)
 - [Workflows FAQ](/user-guide/workflows/how-tos/need-more-help/workflows-faq)
 
+<PageBanner illustration="card-page-sync-recovery" />

@@ -3,14 +3,19 @@ title: ProgressBar
 description: Show measured or indeterminate progress with a horizontal bar.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Overview
 
 `ProgressBar` supplies a horizontal appearance for [Progress](/ui/primitives/feedback/progress). It preserves the complete root contract, including native attributes, refs, render composition, formatting, custom ranges, and indeterminate progress. Give it an `aria-label` that identifies the operation.
 
 <StoryEmbed
-  storyId="ui-feedback-progressbar-progressbar--default"
+  storyId="ui-feedback-progressbar-progressbar--display"
   title="ProgressBar example"
+  height={100}
 />
 
 ## Usage
@@ -22,15 +27,14 @@ import { Text } from 'twenty-ui/primitives/typography';
 type ImportProgressProps = { importedRecords: number | null };
 
 export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
-  <>
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
     <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
     <ProgressBar
       value={importedRecords}
       max={1000}
       aria-label="Importing records"
-      withBorderRadius
     />
-  </>
+  </Text>
 );
 ```
 
@@ -43,6 +47,7 @@ export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
 <StoryEmbed
   storyId="ui-feedback-progressbar-progressbar--custom-range"
   title="A nonzero minimum and custom maximum"
+  height={80}
 />
 
 Use `aria-valuetext`, `getAriaValueText`, `locale`, and `format` as described in [Progress](/ui/primitives/feedback/progress). Use composed Progress parts when labels and values need their own visible layout.
@@ -64,3 +69,5 @@ Replace `ariaLabel` with native `aria-label`. The `withGrowIn`, `withGlint`, `wi
 ## Props
 
 <ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

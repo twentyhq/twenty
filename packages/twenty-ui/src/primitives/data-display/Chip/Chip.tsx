@@ -8,6 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Chip.module.scss';
 import { type ChipProps } from './types/ChipProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const MEDIUM_LABEL_STYLE: CSSProperties = { height: 'var(--t-spacing-4)' };
 
@@ -53,7 +54,7 @@ export const Chip = ({
       style: {
         ...(isDefined(maxWidth)
           ? {
-              '--tw-chip-max-width': `calc(${maxWidth}px - 2 * var(--tw-chip-padding))`,
+              '--tw-chip-max-width': doNotTranslate(`${maxWidth}px`),
             }
           : {}),
         ...style,
@@ -65,6 +66,7 @@ export const Chip = ({
             <OverflowingTextWithTooltip
               {...textProps}
               render={<span />}
+              className={styles.label}
               style={size === 'md' ? MEDIUM_LABEL_STYLE : undefined}
               truncate={truncate}
               tooltipDelay={tooltipDelay}

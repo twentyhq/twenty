@@ -21,6 +21,11 @@ const meta: Meta<typeof LightIconButton> = {
 export default meta;
 type Story = StoryObj<typeof LightIconButton>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { onClick: fn() },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   args: { onClick: fn() },
@@ -32,11 +37,6 @@ export const Default: Story = {
     await userEvent.click(button);
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
-};
-
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: Default.args,
 };
 
 export const Appearance: Story = {
@@ -185,6 +185,10 @@ export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
       ],
     },
   },
+};
+
+export const CatalogInteractions: Story = {
+  ...Catalog,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button', { name: 'Search' });

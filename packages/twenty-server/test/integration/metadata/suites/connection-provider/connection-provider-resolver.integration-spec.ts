@@ -78,6 +78,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
             type
             name
             displayName
+            scope
             logoUrl
             oauth {
               scopes
@@ -100,6 +101,7 @@ describe('applicationConnectionProviders resolver (e2e)', () => {
       type: 'oauth',
       name: 'linear',
       displayName: 'Linear',
+      scope: 'WORKSPACE',
       logoUrl: null,
       oauth: {
         scopes: ['read', 'write'],

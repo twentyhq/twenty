@@ -8,6 +8,7 @@ export const getTabListItemContent = ({
   Icon,
   logo,
   title,
+  colorSeed,
   pill,
 }: SingleTabProps) => ({
   startIcon:
@@ -15,7 +16,13 @@ export const getTabListItemContent = ({
       <>
         {isDefined(Icon) && <Icon />}
         {isNonEmptyString(logo) && (
-          <Avatar src={logo} size="md" name={title} aria-hidden />
+          <Avatar
+            src={logo}
+            size="md"
+            name={title}
+            colorSeed={colorSeed}
+            aria-hidden
+          />
         )}
       </>
     ) : undefined,

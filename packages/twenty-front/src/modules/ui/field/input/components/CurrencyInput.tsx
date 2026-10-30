@@ -46,13 +46,7 @@ const StyledContainer = styled.div`
 const StyledIcon = styled.div`
   align-items: center;
   display: flex;
-
-  & > svg {
-    color: ${themeCssVariables.font.color.tertiary};
-    height: ${themeCssVariables.icon.size.md}px;
-    padding-left: ${themeCssVariables.spacing[1]};
-    width: ${themeCssVariables.icon.size.md}px;
-  }
+  padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 export type CurrencyInputProps = {
@@ -135,7 +129,11 @@ export const CurrencyInput = ({
       />
       <StyledIcon>
         {isDefined(Icon) && (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          <Icon
+            color={theme.font.color.tertiary}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
         )}
       </StyledIcon>
       <StyledIMaskInput>

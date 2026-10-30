@@ -70,8 +70,8 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     icon: 'IconShield',
   },
   [PermissionFlagType.APPLICATIONS]: {
-    label: 'Applications',
-    description: 'Install and manage applications',
+    label: 'Workspace Apps',
+    description: 'Install and manage workspace apps',
     icon: 'IconApps',
   },
   [PermissionFlagType.MARKETPLACE_APPS]: {
@@ -145,9 +145,9 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     icon: 'IconFileExport',
   },
   [PermissionFlagType.CONNECTED_ACCOUNTS]: {
-    label: 'Sync Account',
-    description: 'Sync email and calendar accounts',
-    icon: 'IconAt',
+    label: 'User Apps',
+    description: 'Manage own app preferences and accounts',
+    icon: 'IconApps',
   },
   [PermissionFlagType.PROFILE_INFORMATION]: {
     label: 'Edit Profile',

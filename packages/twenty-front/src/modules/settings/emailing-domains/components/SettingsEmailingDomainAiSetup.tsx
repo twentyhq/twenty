@@ -5,11 +5,11 @@ import { IconX } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import ClaudeLogo from '@/settings/mcp-and-apis/assets/mcp-clients/claude-color.png';
-import CursorLogo from '@/settings/mcp-and-apis/assets/mcp-clients/cursor.svg';
-import GeminiCliLogo from '@/settings/mcp-and-apis/assets/mcp-clients/gemini-cli.svg';
-import OpenAiLogo from '@/settings/mcp-and-apis/assets/mcp-clients/openai.svg';
-import { McpClientLogo } from '@/settings/mcp-and-apis/components/McpClientLogo';
+import ClaudeLogo from '@/settings/mcp/assets/mcp-clients/claude-color.png';
+import CursorLogo from '@/settings/mcp/assets/mcp-clients/cursor.svg';
+import GeminiCliLogo from '@/settings/mcp/assets/mcp-clients/gemini-cli.svg';
+import OpenAiLogo from '@/settings/mcp/assets/mcp-clients/openai.svg';
+import { McpClientLogo } from '@/settings/mcp/components/McpClientLogo';
 import { buildEmailingDomainAiSetupPrompt } from '@/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -135,7 +135,6 @@ export const SettingsEmailingDomainAiSetup = ({
     <StyledContainer>
       <Tooltip
         content={t`Copies a Cloudflare setup prompt for your AI coding tool`}
-        maxWidth="440px"
       >
         <StyledPromptButton type="button" onClick={handleCopy}>
           <StyledButtonLabel>{t`Set up DNS with AI`}</StyledButtonLabel>

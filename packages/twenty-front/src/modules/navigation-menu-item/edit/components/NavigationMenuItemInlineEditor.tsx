@@ -28,22 +28,28 @@ const StyledEditor = styled.div`
 
 const StyledIconPickerTrigger = styled.div`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
   display: flex;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
 `;
 
 const StyledButton = styled.button`
   align-items: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
-  font: inherit;
   font-weight: ${themeCssVariables.font.weight.medium};
   min-width: 0;
-  padding: 0;
   text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
 `;
 const StyledLabelButton = styled(StyledButton)`
   display: block;
@@ -51,6 +57,10 @@ const StyledLabelButton = styled(StyledButton)`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
 `;
 const StyledNameInput = styled(TextInput)`
   font-weight: ${themeCssVariables.font.weight.medium};
@@ -147,6 +157,7 @@ export const NavigationMenuItemInlineEditor = ({
     isFolder && isNameInputVisible ? (
       <StyledNameInput
         instanceId={focusId}
+        aria-label={t`Folder name`}
         autoFocus
         selectOnFocus
         copyButton={false}
@@ -170,6 +181,10 @@ export const NavigationMenuItemInlineEditor = ({
     ) : (
       <StyledLabelButton
         type="button"
+        aria-pressed={isFolder ? isSelected : undefined}
+        aria-description={
+          isFolder && isSelected ? t`Select again to rename` : undefined
+        }
         onClick={(event) => {
           event.stopPropagation();
           if (!isFolder) {

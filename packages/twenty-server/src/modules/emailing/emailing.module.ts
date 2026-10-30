@@ -15,7 +15,7 @@ import { ShortLinkModule } from 'src/engine/core-modules/short-link/short-link.m
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
@@ -28,6 +28,7 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
 import { RecordCampaignEngagementJob } from 'src/modules/emailing/jobs/record-campaign-engagement.job';
+import { RecoverWorkspaceStaleCampaignsJob } from 'src/modules/emailing/jobs/recover-workspace-stale-campaigns.job';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
@@ -40,6 +41,7 @@ import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-se
 import { MessageListResolver } from 'src/modules/emailing/resolvers/message-list.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
+import { CampaignSendingWorkspaceService } from 'src/modules/emailing/services/campaign-sending-workspace.service';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
@@ -59,7 +61,12 @@ import { MessageCampaignService } from 'src/modules/emailing/services/message-ca
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
+import { UnsubscribePreferencesService } from 'src/modules/emailing/services/unsubscribe-preferences.service';
+import { FindCampaignSuppressionsTool } from 'src/modules/emailing/tools/find-campaign-suppressions.tool';
+import { PreviewCampaignSendTool } from 'src/modules/emailing/tools/preview-campaign-send.tool';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
+import { SendCampaignTestTool } from 'src/modules/emailing/tools/send-campaign-test.tool';
+import { SendCampaignTool } from 'src/modules/emailing/tools/send-campaign.tool';
 
 @Module({
   imports: [
@@ -71,7 +78,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     EmailingDomainModule,
     ThrottlerModule,
     MessageChannelMetadataModule,
-    FeatureFlagModule,
+    FileUrlModule,
     PermissionsModule,
     UserRoleModule,
     BillingModule,
@@ -105,9 +112,14 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageCampaignRecoveryService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
+    UnsubscribePreferencesService,
     UnsubscribeTopicService,
     EmailingDomainSenderService,
     SaveCampaignTool,
+    PreviewCampaignSendTool,
+    SendCampaignTestTool,
+    SendCampaignTool,
+    FindCampaignSuppressionsTool,
     EmailingSendResolver,
     MessageListDuplicationService,
     AddPeopleToMessageListService,
@@ -122,8 +134,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementEventService,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
+    CampaignSendingWorkspaceService,
     EmailingOngoingStaleCronCommand,
     EmailingOngoingStaleCronJob,
+    RecoverWorkspaceStaleCampaignsJob,
     ReconcileCampaignStatsCronCommand,
     ReconcileCampaignStatsCronJob,
   ],

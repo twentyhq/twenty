@@ -50,7 +50,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentButton
               Icon={IconLock}
               title={t`Upgrade to access`}

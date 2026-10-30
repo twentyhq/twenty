@@ -13,7 +13,7 @@ const buildKey = (overrides: Partial<CounterIdentity> = {}) =>
     workspaceId: WORKSPACE_ID,
     counter: {
       resourceType: UsageResourceType.AI,
-      operationType: UsageOperationType.AI_CHAT_TOKEN,
+      operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
       spenderType: 'workspace',
       spenderId: null,
       unit: UsageUnit.CREDIT,
@@ -30,13 +30,26 @@ describe('buildQuotaCounterKey', () => {
     );
   });
 
-  it.each([
-    ['operationType', { operationType: UsageOperationType.WEB_SEARCH }],
+  it.each<[string, Partial<CounterIdentity>]>([
+    ['operationTypes', { operationTypes: [UsageOperationType.WEB_SEARCH] }],
     ['unit', { unit: UsageUnit.TOKEN }],
     ['spenderId', { spenderId: 'user-1' }],
     ['periodUnit', { periodUnit: 'week' as const }],
     ['periodStart', { periodStart: new Date('2026-10-01T00:00:00.000Z') }],
   ])('gives two counters differing only by %s their own key', (_, differs) => {
     expect(buildKey(differs)).not.toBe(buildKey());
+  });
+
+  it('keys a counter over several operations by their sorted list', () => {
+    expect(
+      buildKey({
+        operationTypes: [
+          UsageOperationType.WEB_SEARCH,
+          UsageOperationType.AI_CHAT_TOKEN,
+        ],
+      }),
+    ).toBe(
+      `{${WORKSPACE_ID}}:quota-consumed:AI:AI_CHAT_TOKEN+WEB_SEARCH:workspace:-:CREDIT:month:${PERIOD_START.getTime()}`,
+    );
   });
 });

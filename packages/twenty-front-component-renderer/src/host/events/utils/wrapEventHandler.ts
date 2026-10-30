@@ -1,11 +1,13 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
+import { forwardedBubblingHostEvents } from '@/host/events/states/forwardedBubblingHostEvents';
+import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
-
-const forwardedBubblingHostEvents = new WeakSet<object>();
 
 const nativeHostEventsWithForwardedFormControlState = new WeakSet<object>();
 
@@ -13,9 +15,11 @@ export const wrapEventHandler =
   ({
     remoteListener,
     findRemoteElementIdContainingNode,
+    claimPointerEventForwarding,
   }: {
     remoteListener: RemoteSerializedEventListener;
     findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
+    claimPointerEventForwarding?: ClaimPointerEventForwarding;
   }) =>
   (hostEvent: object): void => {
     if (forwardedBubblingHostEvents.has(hostEvent)) {
@@ -23,6 +27,13 @@ export const wrapEventHandler =
     }
 
     const nativeHostEvent = resolveNativeHostEvent(hostEvent);
+
+    if (
+      isDefined(claimPointerEventForwarding) &&
+      !claimPointerEventForwarding(nativeHostEvent)
+    ) {
+      return;
+    }
 
     const serializedEvent = serializeEvent(hostEvent, {
       includesFormControlState:
@@ -46,7 +57,7 @@ export const wrapEventHandler =
       nativeHostEventsWithForwardedFormControlState.add(nativeHostEvent);
     }
 
-    if (serializedEvent.bubbles === true) {
+    if (serializedEvent.bubbles) {
       forwardedBubblingHostEvents.add(hostEvent);
     }
   };

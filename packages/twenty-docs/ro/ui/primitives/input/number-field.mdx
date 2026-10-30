@@ -1,0 +1,166 @@
+---
+title: Câmp numeric
+description: Compuneți un câmp numeric cu formatare locală, incrementare, formulare native și ajustare prin glisare.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberFieldReference from '/snippets/ui/generated/input/number-field.mdx';
+
+## Prezentare generală
+
+`NumberField` expune toate cele șapte componente ale câmpului numeric Base UI instalat: `Root`, `Group`, `Input`, `Decrement`, `Increment`, `ScrubArea` și `ScrubAreaCursor`. Importați-l din `twenty-ui/primitives/input`. Păstrează starea numerică, formatarea, incrementarea, detaliile evenimentelor și integrarea formularelor native din Base UI, cu stilizarea Twenty UI pentru comenzile de introducere, grupare și ajustare.
+
+Pentru presetarea compactă cu formatare fixă și valori implicite pentru pașii modificatori, utilizați [NumberStepper](/ro/ui/components/input/number-stepper) din `twenty-ui/components/input`.
+
+<StoryEmbed storyId="ui-input-numberfield--display" title="Exemplu NumberField" height={140} />
+
+## Utilizare
+
+`Root` gestionează starea numerică. `Input` este introducerea de text vizibilă. Utilizați `Group` pentru a aranja în jurul acestuia controalele opționale de decrementare și incrementare. Furnizați conținut și nume accesibile pentru controale; primitiva nu inserează pictograme sau etichete.
+
+```tsx
+import { IconMinus, IconPlus } from 'twenty-ui/icon';
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberField.Root name="quantity" defaultValue={3} min={0} max={10}>
+      <NumberField.Group>
+        <NumberField.Decrement aria-label="Decrease quantity">
+          <IconMinus size={16} />
+        </NumberField.Decrement>
+        <NumberField.Input />
+        <NumberField.Increment aria-label="Increase quantity">
+          <IconPlus size={16} />
+        </NumberField.Increment>
+      </NumberField.Group>
+    </NumberField.Root>
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+`Field.Label`, `Field.Description` și `Field.Error` se asociază cu introducerea vizibilă. Alternativ, transmiteți `aria-label` sau `aria-labelledby` către `Input`. Valoarea implicită pentru `aria-roledescription` este `Number field`; aceasta nu oferă un nume accesibil.
+
+## Valori și callbackuri
+
+Omiteți `value` pentru un câmp necontrolat și furnizați un `defaultValue` numeric atunci când este necesară o valoare inițială. Omiterea lui `defaultValue` pornește cu un câmp gol. Pentru un câmp controlat, transmiteți un număr sau `null` prin `value` și actualizați-l din `onValueChange`.
+
+```tsx
+import { useState } from 'react';
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const PriceInput = () => {
+  const [price, setPrice] = useState<number | null>(null);
+  const [savedPrice, setSavedPrice] = useState<number | null>(null);
+
+  return (
+    <Field.Root>
+      <Field.Label>Price</Field.Label>
+      <NumberField.Root
+        value={price}
+        onValueChange={setPrice}
+        onValueCommitted={setSavedPrice}
+      >
+        <NumberField.Input placeholder="Enter a price" />
+      </NumberField.Root>
+      <Field.Description>
+        Last committed price: {savedPrice ?? 'empty'}
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Golirea raportează `null`, inclusiv când este setat `min`. Schițele incomplete, precum `-`, rămân editabile fără a raporta un număr nevalid. Tastarea care poate fi analizată actualizează valoarea numerică înainte ca editarea să fie confirmată. Primul pas de la o valoare goală pornește de la zero, limitat la granițe; pașii următori folosesc valoarea pasului activ.
+
+`onValueChange(value, details)` păstrează `event`, `reason`, `cancel`, `allowPropagation`, `isCanceled`, `isPropagationAllowed`, `trigger` și `direction` opțional. Motivele disting tastarea (`input-change`), golirea (`input-clear`), normalizarea la pierderea focalizării (`input-blur`), lipirea (`input-paste`), apăsările de taste, incrementarea sau decrementarea, rotița, ajustarea prin glisare și completarea automată nativă (`none`). Apelarea `cancel()` împiedică actualizarea stării numerice; apelanții controlați aleg în continuare valoarea acceptată.
+
+`onValueCommitted(value, details)` se execută la pierderea focalizării după editare, la eliberarea indicatorului după incrementare/decrementare sau ajustare prin glisare și imediat pentru ajustările prin tastatură și rotiță. Golirea confirmă `null` la pierderea focalizării. Detaliile confirmării conțin `event` și `reason`; sunt detalii generice fără metode de anulare a modificării. Focalizarea și pierderea focalizării unui câmp neatins nu confirmă prin ele însele o valoare atunci când nu este necesară nicio normalizare numerică. Opțiunile explicite de rotunjire pot normaliza și confirma o valoare neatinsă.
+
+## Setări regionale și formatare
+
+Setați `locale` și `format` pe `Root`. Acestea păstrează contractul Base UI instalat: `locale` acceptă `Intl.LocalesArgument`, iar `format` acceptă `Intl.NumberFormatOptions`. Formatarea afișării este separată de valoarea numerică brută transmisă de formular. Primitiva nu impune cifre latine, grupare, precizie sau pași modificatori.
+
+<StoryEmbed storyId="ui-input-numberfield--locale-currency" title="Formatarea setărilor regionale și a monedei" height={140} />
+
+```tsx
+import { Field, NumberField } from 'twenty-ui/primitives/input';
+
+export const AmountInput = () => (
+  <Field.Root>
+    <Field.Label>Amount in euros</Field.Label>
+    <NumberField.Root
+      name="amount"
+      defaultValue={1234.5}
+      locale="de-DE"
+      format={{ style: 'currency', currency: 'EUR' }}
+      step={0.5}
+      smallStep={0.01}
+      largeStep={10}
+    >
+      <NumberField.Input />
+    </NumberField.Root>
+  </Field.Root>
+);
+```
+
+Tastarea și lipirea folosesc setările regionale configurate și simbolurile de format acceptate. Pierderea focalizării normalizează textul afișat. Opțiunile explicite de precizie sau rotunjire pot normaliza și numărul confirmat; fără aceste opțiuni, formatarea singură nu înlocuiește o valoare numerică neatinsă cu text de afișare rotunjit.
+
+## Pași și limite
+
+`step` are implicit valoarea `1`, `smallStep` are valoarea `0.1` cât timp Alt este apăsată, iar `largeStep` are valoarea `10` cât timp Shift este apăsată. Pasul activ se aplică butoanelor, tastelor Săgeată sus și Săgeată jos, rotiței și deplasării în zona de ajustare prin glisare. `snapOnStep` are implicit valoarea `false`; activați-l pentru a alinia ajustările la pasul activ. Home și End selectează limita explicită corespunzătoare. Gestionarii nativi ai tastelor pot apela `event.preventBaseUIHandler()` atunci când proprietarul trebuie să suprascrie comportamentul de tastatură al Base UI.
+
+`min` și `max` sunt incluzive. Interacțiunile de incrementare/decrementare rămân în limite. În mod implicit, valorile tastate și lipite sunt și ele limitate numeric, iar schița este normalizată la pierderea focalizării. Setați `allowOutOfRange` pentru a accepta editări directe în afara acelor limite și pentru a permite validării native a intervalului sau validării aplicației să raporteze problema.
+
+`step="any"` dezactivează validarea nativă a pașilor, în timp ce incrementarea/decrementarea interactivă utilizează `1` și pașii modificatori configurați. Cu un pas numeric, furnizați explicit `min` atunci când transmiterea nativă trebuie să valideze alinierea la pas. Pasul numeric nu rotunjește fiecare valoare tastată la un pas.
+
+## Ajustare prin glisare
+
+`ScrubArea` modifică valoarea numerică pe măsură ce indicatorul se deplasează. Acceptă deplasarea orizontală sau verticală, `pixelSensitivity` și `teleportDistance` opțional. Pasul activ și limitele se aplică și ajustării prin glisare. Utilizați o etichetă vizibilă ca țintă pentru ajustarea prin glisare, păstrând în același timp introducerea disponibilă pentru editare cu tastatura.
+
+<StoryEmbed storyId="ui-input-numberfield--with-scrubbing" title="Ajustați prin glisare eticheta lățimii" height={150} />
+
+Compuneți `ScrubAreaCursor` în interiorul `ScrubArea` pentru un cursor personalizat în timpul ajustării prin glisare cu blocarea indicatorului. Acesta este portalizat în corpul documentului cât timp este activ. Base UI revine la cursorul normal pentru introducerea tactilă, blocarea indicatorului refuzată și WebKit. Setați `allowWheelScrub` pe `Root` pentru a permite ajustarea cu rotița cât timp introducerea este focalizată și sub indicator; valoarea implicită este `false`.
+
+## Formulare și stare dezactivată
+
+`Root` redă un `input type="number"` nativ ascuns pentru transmiterea numerică brută și validarea nativă. Setați `name`, `form`, `required`, `min`, `max` și `step` pe `Root`. `form` poate asocia câmpul cu un formular din altă parte a documentului. Controalele de ajustare implicite utilizează `type="button"`, astfel încât incrementarea/decrementarea nu transmite formularul.
+
+`disabled` împiedică interacțiunea și exclude valoarea de la transmitere. `readOnly` împiedică modificările, păstrând în același timp introducerea vizibilă focalizabilă și valoarea sa de formular disponibilă. Utilizați o valoare controlată atunci când aplicația trebuie să reseteze starea numerică; resetarea nativă a formularului nu o resetează.
+
+## Ținte DOM și personalizare
+
+| Parte sau proprietate     | Țintă DOM și ref implicită                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------ |
+| `Root` / `Root.ref`       | `div` exterior                                                                                   |
+| `Root.inputRef`           | Introducerea numerică nativă ascunsă                                                             |
+| `Root.id`                 | Asociază ID-ul introducerii de text vizibile                                                     |
+| `Group` / `Group.ref`     | `div` al grupului                                                                                |
+| `Input` / `Input.ref`     | `input type="text"` vizibil                                                                      |
+| `Decrement` / `Increment` | Butoane native                                                                                   |
+| `ScrubArea`               | Un `span`                                                                                        |
+| `ScrubAreaCursor`         | Un `span` portalizat în corpul documentului cât timp este activ; în rest, referința sa este nulă |
+
+Atributele native, `className`, `style` și `render` vizează partea care le primește. Personalizarea introducerii se aplică controlului vizibil; personalizarea învelișului aparține lui `Root` sau `Group`. Pentru a focaliza controlul, utilizați `Input.ref`, nu `Root.inputRef`.
+
+Fiecare parte acceptă un element sau un callback prin `render`, cu tipul de stare public corespunzător. Transmiteți proprietățile și referința furnizate către elementul DOM corespunzător, astfel încât editarea, focalizarea, etichetele și validarea să continue să funcționeze. Când un control de incrementare/decrementare redă un element care nu este buton, setați `nativeButton={false}`. `className` și `style` acceptă și callbackuri de stare. Starea include `value` numeric, `inputValue` formatat, `required`, `disabled`, `readOnly`, `scrubbing` și starea Field moștenită.
+
+Punctele de intrare publice exportă proprietățile și tipul de stare pentru fiecare parte, plus `NumberFieldRootChangeEventDetails`, `NumberFieldRootChangeEventReason`, `NumberFieldRootCommitEventDetails` și `NumberFieldRootCommitEventReason`.
+
+## Rendererul componentei Front
+
+Fixture-urile sandbox React și Preact verifică formatarea inițială a setărilor regionale, lipirea localizată, valorile brute numerice ale formularului, etichetele accesibile, referințele, compunerea redării, confirmările la pierderea focalizării, detaliile modificării și confirmării prin tastatură și detaliile modificării prin indicator.
+
+Tastarea secvențială după golirea unui câmp localizat controlat resetează în prezent cursorul de inserare în renderer: tastarea lui `2` și apoi a lui `3` poate produce `32`. O ajustare formatată cu indicatorul poate, de asemenea, să intre în concurență cu pierderea focalizării și să lase introducerea vizibilă afișând valoarea anterioară. Ajustările cu indicatorul raportează modificări, dar eliberarea indicatorului nu furnizează callbackul de confirmare corespunzător; pierderea focalizării ulterioară poate confirma în schimb cu `input-blur`. Glisarea zonei de ajustare și utilizarea cursorului său personalizat nu sunt disponibile nici în sandbox. Aceste limitări nu afectează gazdele React obișnuite.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentelor instalate. Atributele native și gestionarii de evenimente sunt, de asemenea, acceptați în părțile care redau elemente.
+
+<NumberFieldReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -16,16 +16,19 @@ import { InstallApplicationCommand } from 'src/engine/core-modules/application/a
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
 
 @Module({
   imports: [
     ApplicationRegistrationLookupModule,
+    ApplicationRegistrationVersionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       ApplicationEntity,
@@ -37,6 +40,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationPackageModule,
     MarketplaceModule,
     CacheLockModule,
+    EventLogEmitterModule,
     MetricsModule,
     PermissionsModule,
     WorkspaceCacheModule,

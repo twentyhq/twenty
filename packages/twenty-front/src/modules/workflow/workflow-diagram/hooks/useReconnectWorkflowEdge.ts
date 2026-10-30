@@ -7,7 +7,7 @@ import { getConnectionOptionsForSourceHandle } from '@/workflow/workflow-diagram
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getReconnectedStepIds } from '@/workflow/workflow-steps/utils/getReconnectedStepIds';
 import { reconnectWorkflowStep } from '@/workflow/workflow-steps/utils/reconnectWorkflowStep';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import { type Connection } from '@xyflow/react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,8 +18,8 @@ export const useReconnectWorkflowEdge = () => {
   const store = useStore();
   const flowCallbackState =
     useAtomComponentStateCallbackState(flowComponentState);
-  const { updateStep } = useUpdateStep();
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
+  const { updateStepNow } = useUpdateStep();
+  const { updateTriggerNow } = useUpdateTrigger();
 
   const reconnectEdge = async (
     oldEdge: WorkflowDiagramEdge,
@@ -59,7 +59,7 @@ export const useReconnectWorkflowEdge = () => {
       if (isDefined(trigger) && isDefined(nextStepIds)) {
         const updatedTrigger = { ...trigger, nextStepIds };
 
-        await updateTrigger(updatedTrigger);
+        await updateTriggerNow(updatedTrigger);
 
         return isDeeplyEqual(
           store.get(flowCallbackState)?.trigger?.nextStepIds,
@@ -88,7 +88,7 @@ export const useReconnectWorkflowEdge = () => {
     });
 
     if (isDefined(updatedStep)) {
-      const { updatedStep: savedStep } = await updateStep(updatedStep);
+      const { updatedStep: savedStep } = await updateStepNow(updatedStep);
 
       return isDefined(savedStep);
     }

@@ -62,6 +62,7 @@ import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
+import { WorkspaceCreationCaptchaGuard } from 'src/engine/core-modules/captcha/workspace-creation-captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { SubdomainAvailabilityDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/subdomain-availability.dto';
 import { WorkspaceCreationDefaultsDTO } from 'src/engine/core-modules/domain/subdomain-manager/dtos/workspace-creation-defaults.dto';
@@ -336,6 +337,8 @@ export class AuthResolver {
         origin,
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
+
+    await this.authService.joinWorkspaceIfInvited({ user, workspace });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -690,6 +693,7 @@ export class AuthResolver {
       oauthClient: false,
       application: false,
     }),
+    WorkspaceCreationCaptchaGuard,
     NoPermissionGuard,
   )
   @AllowSuspendedWorkspace()
@@ -1218,7 +1222,10 @@ export class AuthResolver {
       oauthClient: false,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

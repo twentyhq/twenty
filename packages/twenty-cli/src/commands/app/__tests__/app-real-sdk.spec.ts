@@ -369,7 +369,7 @@ describe('app commands with CLI snapshots', () => {
         0,
       );
       expect(uninstalled.envelope.data.completedPhases).toEqual([
-        'build',
+        'identity',
         'check',
         'uninstall',
       ]);

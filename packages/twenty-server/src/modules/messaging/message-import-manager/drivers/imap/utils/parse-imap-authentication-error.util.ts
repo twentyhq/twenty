@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { isMailServerCertificateError } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/is-mail-server-certificate-error.util';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -16,6 +17,14 @@ const TRANSIENT_IMAP_RESPONSE_CODES = new Set([
 export const parseImapAuthenticationError = (
   error: ImapFlowError,
 ): MessageImportDriverException => {
+  if (isMailServerCertificateError(error)) {
+    return new MessageImportDriverException(
+      `IMAP server certificate could not be verified: ${error.message}`,
+      MessageImportDriverExceptionCode.SERVER_CERTIFICATE_INVALID,
+      { cause: error },
+    );
+  }
+
   if (isImapNetworkError(error)) {
     return new MessageImportDriverException(
       `IMAP network error: ${error.message}`,

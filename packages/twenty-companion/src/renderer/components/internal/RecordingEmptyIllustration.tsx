@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { useEffect, useRef } from 'react';
 
-import { useThemeColorScheme } from '@ui/theme';
+import { useThemeColorScheme } from 'twenty-ui/theme';
 
 import styles from './RecordingEmptyIllustration.module.scss';
 

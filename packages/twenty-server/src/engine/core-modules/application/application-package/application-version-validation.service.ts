@@ -114,6 +114,18 @@ export class ApplicationVersionValidationService {
     });
   }
 
+  validatePackageVersion(incomingVersion: string): VersionProgressionResult {
+    if (!isDefined(semver.valid(incomingVersion))) {
+      return {
+        allowed: false,
+        reason: 'INVALID_INCOMING_VERSION',
+        message: `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+      };
+    }
+
+    return { allowed: true };
+  }
+
   // A current version that is not valid semver never blocks: there is
   // nothing reliable to compare against.
   validateVersionProgression({
@@ -127,12 +139,10 @@ export class ApplicationVersionValidationService {
     universalIdentifier: string;
     action: 'install' | 'deploy';
   }): VersionProgressionResult {
-    if (!isDefined(semver.valid(incomingVersion))) {
-      return {
-        allowed: false,
-        reason: 'INVALID_INCOMING_VERSION',
-        message: `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
-      };
+    const validation = this.validatePackageVersion(incomingVersion);
+
+    if (!validation.allowed) {
+      return validation;
     }
 
     if (!isDefined(semver.valid(currentVersion))) {

@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MessageQueueWorkerDrainService } from 'src/engine/core-modules/message-queue/services/message-queue-worker-drain.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -53,12 +54,14 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       providers: [
         ...(dynamicModule.providers ?? []),
         ApplicationJobEnqueueThrottlerService,
+        MessageQueueWorkerDrainService,
         driverProvider,
         ...queueProviders,
       ],
       exports: [
         ...(dynamicModule.exports ?? []),
         ApplicationJobEnqueueThrottlerService,
+        MessageQueueWorkerDrainService,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),
@@ -95,12 +98,14 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       providers: [
         ...(dynamicModule.providers ?? []),
         ApplicationJobEnqueueThrottlerService,
+        MessageQueueWorkerDrainService,
         driverProvider,
         ...queueProviders,
       ],
       exports: [
         ...(dynamicModule.exports ?? []),
         ApplicationJobEnqueueThrottlerService,
+        MessageQueueWorkerDrainService,
         ...Object.values(MessageQueue).map((queueName) =>
           getQueueToken(queueName),
         ),

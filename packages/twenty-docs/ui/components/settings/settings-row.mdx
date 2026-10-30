@@ -3,15 +3,42 @@ title: SettingsRow
 description: A labeled switch row with flat control props and native label composition.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## Overview
 
 `SettingsRow` combines the appearance of [ListItem](/ui/primitives/navigation/list-item) with [Switch](/ui/primitives/input/switch). It renders a native label associated with its switch. Your application supplies the row content and owns any preference updates.
 
 <StoryEmbed
-  storyId="ui-components-settingsrow--default"
+  storyId="ui-components-settingsrow--display"
   title="Settings row example"
-  height={160}
+  height={110}
+/>
+
+## Usage
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## Visual options
+
+Compare switch sizes and checked, disabled, and read-only states.
+
+<StoryEmbed
+  storyId="ui-components-settingsrow--catalog"
+  title="Settings row sizes and states"
+  height={520}
 />
 
 ## Configure the switch
@@ -62,7 +89,7 @@ export const WorkspaceSettings = () => (
 <StoryEmbed
   storyId="ui-components-settingsrow--with-description"
   title="Settings row with a description"
-  height={160}
+  height={110}
 />
 
 ```tsx
@@ -170,3 +197,5 @@ export const NotificationPreferences = () => {
 ## Props
 
 <SettingsRowReference />
+
+<PageBanner illustration="settings" />

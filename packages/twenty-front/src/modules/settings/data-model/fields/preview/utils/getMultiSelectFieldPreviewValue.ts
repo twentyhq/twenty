@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -30,7 +30,7 @@ export const getMultiSelectFieldPreviewValue = ({
       (value) =>
         value?.map(stripSimpleQuotesFromString).filter(isNonEmptyString) ?? [],
     )
-    .refine(isNonEmptyArray)
+    .refine((value) => value.length > 0)
     .catch(allOptionValues)
     .parse(fieldMetadataItem.defaultValue);
 };

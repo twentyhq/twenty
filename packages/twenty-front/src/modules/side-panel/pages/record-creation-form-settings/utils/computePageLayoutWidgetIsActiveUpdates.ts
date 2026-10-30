@@ -1,6 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFormField } from '@/object-record/record-form/types/RecordFormField';
-import { type PageLayoutWidgetIsActiveUpdate } from '@/page-layout/hooks/useUpdatePageLayoutWidgetsIsActive';
+import { type PageLayoutWidgetUpdate } from '@/page-layout/hooks/useUpdatePageLayoutWidgets';
 import { isDefined } from 'twenty-shared/utils';
 
 export const computePageLayoutWidgetIsActiveUpdates = ({
@@ -9,7 +9,7 @@ export const computePageLayoutWidgetIsActiveUpdates = ({
 }: {
   recordFormFields: RecordFormField<Pick<FieldMetadataItem, 'id'>>[];
   isVisibleByFieldMetadataId: Record<string, boolean>;
-}): PageLayoutWidgetIsActiveUpdate[] =>
+}): PageLayoutWidgetUpdate[] =>
   recordFormFields.flatMap(({ fieldMetadataItem, widgets, isVisible }) => {
     const isActive = isVisibleByFieldMetadataId[fieldMetadataItem.id];
 

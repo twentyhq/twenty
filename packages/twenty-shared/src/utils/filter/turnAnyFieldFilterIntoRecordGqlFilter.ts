@@ -45,7 +45,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'TEXT',
         } satisfies RecordFilter);
         break;
       }
@@ -56,7 +55,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'ADDRESS',
         } satisfies RecordFilter);
         break;
       }
@@ -67,7 +65,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'LINKS',
         } satisfies RecordFilter);
         break;
       }
@@ -78,7 +75,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'FULL_NAME',
         } satisfies RecordFilter);
         break;
       }
@@ -89,7 +85,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'ACTOR',
         } satisfies RecordFilter);
         break;
       }
@@ -100,7 +95,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'ARRAY',
         } satisfies RecordFilter);
         break;
       }
@@ -111,7 +105,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'EMAILS',
         } satisfies RecordFilter);
         break;
       }
@@ -122,7 +115,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
             fieldMetadataItem: field,
           }),
           operand: ViewFilterOperand.CONTAINS,
-          type: 'PHONES',
         } satisfies RecordFilter);
         break;
       }
@@ -134,7 +126,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
               fieldMetadataItem: field,
             }),
             operand: ViewFilterOperand.IS,
-            type: 'NUMBER',
           } satisfies RecordFilter);
         }
         break;
@@ -147,7 +138,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
               fieldMetadataItem: field,
             }),
             operand: ViewFilterOperand.IS,
-            type: 'CURRENCY',
           } satisfies RecordFilter);
         }
         if (isNonEmptyString(filterValue)) {
@@ -168,7 +158,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
                 fieldMetadataItem: field,
               }),
               operand: ViewFilterOperand.IS,
-              type: 'CURRENCY',
               subFieldName: 'currencyCode',
             } satisfies RecordFilter);
           }
@@ -196,7 +185,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
                 filterValue: arrayOfSelectValues,
               }),
               operand: ViewFilterOperand.IS,
-              type: 'SELECT',
             } satisfies RecordFilter);
           }
         }
@@ -223,7 +211,6 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
                 filterValue: arrayOfSelectValues,
               }),
               operand: ViewFilterOperand.CONTAINS,
-              type: 'MULTI_SELECT',
             } satisfies RecordFilter);
           }
         }

@@ -2,7 +2,7 @@ import { appendFile, copyFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { build } from 'esbuild';
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application-runtime';
 
 import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
@@ -11,7 +11,7 @@ import twentyClientTemplateSource from './twenty-client-template.ts?raw';
 
 const COMMON_SCALAR_TYPES = {
   DateTime: 'string',
-  JSON: 'Record<string, unknown>',
+  JSON: 'unknown',
   UUID: 'string',
 };
 

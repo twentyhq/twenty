@@ -35,6 +35,10 @@ export const useInstallMarketplaceApp = ({
     FindOneApplicationByUniversalIdentifierDocument,
     { fetchPolicy: 'network-only' },
   );
+  const [findInstallApplicationJobStatus] = useLazyQuery(
+    FindInstallApplicationJobStatusDocument,
+    { fetchPolicy: 'network-only' },
+  );
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
 
   const { data: jobStatusData } = useQuery(
@@ -119,9 +123,21 @@ export const useInstallMarketplaceApp = ({
     [enqueueToast, findInstalledApplication, onCompleted, setCurrentWorkspace],
   );
 
+  const fetchInstallJobStatus = useCallback(
+    async (jobId: string, trackedUniversalIdentifier: string) => {
+      const { data } = await findInstallApplicationJobStatus({
+        variables: { universalIdentifier: trackedUniversalIdentifier, jobId },
+      });
+
+      return data?.findInstallApplicationJobStatus;
+    },
+    [findInstallApplicationJobStatus],
+  );
+
   const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
     runningJob,
     onQueueJobSettled: handleInstallJobSettled,
+    fetchJobStatus: fetchInstallJobStatus,
   });
 
   const install = async (): Promise<void> => {

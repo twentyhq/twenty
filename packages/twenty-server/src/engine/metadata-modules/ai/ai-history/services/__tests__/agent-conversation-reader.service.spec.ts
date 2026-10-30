@@ -128,6 +128,36 @@ describe('AgentConversationReaderService', () => {
     ]);
   });
 
+  it('leaves reactions out of the conversation given to the model', async () => {
+    const [userMessage, assistantMessage] = buildTurn({
+      turnId: 'turn-1',
+      senderWorkspaceMemberId: MEMBER_A,
+      question: 'Who is our biggest customer?',
+      answer: 'Private Co',
+    });
+    const { service, messageRepository } = buildService([
+      userMessage,
+      {
+        ...assistantMessage,
+        reactions: [{ emoji: '👍', workspaceMemberId: MEMBER_B }],
+      },
+    ]);
+
+    const messages = await service.loadMessages({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+    });
+
+    expect(messageRepository.find).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ relations: ['parts', 'parts.file'] }),
+    );
+    expect(messages.map((message) => Object.keys(message).sort())).toEqual([
+      ['id', 'parts', 'role'],
+      ['id', 'parts', 'role'],
+    ]);
+  });
+
   it('keeps every part when no actor is given', async () => {
     const { service } = buildService([
       ...buildTurn({

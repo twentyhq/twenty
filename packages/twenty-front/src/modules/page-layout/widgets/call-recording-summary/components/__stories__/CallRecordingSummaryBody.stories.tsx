@@ -163,7 +163,7 @@ export const Loading: Story = {
   },
   play: async ({ canvasElement }) => {
     await waitFor(() => {
-      expect(canvasElement.querySelector('[data-skeleton]')).toBeVisible();
+      expect(canvasElement.querySelector('[aria-busy="true"]')).toBeVisible();
     });
   },
 };

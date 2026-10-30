@@ -3,7 +3,7 @@ title: Domain Settings
 description: Configure workspace domain, approved access domains, and app custom domains.
 ---
 
-Domain settings live in three places, depending on what you're configuring.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Workspace Domain
 
@@ -36,7 +36,7 @@ This is useful for allowing your entire team to self-register while keeping the 
 
 ## App Custom Domains
 
-Configure under **Settings → Apps → your app → General → App URL**. The **App URL** section only appears with **Advanced mode** on (toggle at the bottom left of the Settings sidebar).
+Configure under **Settings → Apps → your app → General → App URL**. The **App URL** section appears when the app has HTTP-triggered functions.
 
 Apps that expose routes on the web are served from a dedicated URL, shown in the **App URL** section. You can serve an app from a domain you own instead.
 
@@ -47,3 +47,5 @@ Apps that expose routes on the web are served from a dedicated URL, shown in the
 4. Verify the domain
 
 Only that app's routes are reachable on the domain. SSL certificates are provisioned automatically.
+
+<PageBanner illustration="card-page-tutorial-http" />

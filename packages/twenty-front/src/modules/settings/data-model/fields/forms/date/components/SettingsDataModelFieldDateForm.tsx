@@ -5,7 +5,6 @@ import { validateCustomDateFormat } from '@/localization/utils/validateCustomDat
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFieldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel';
 import { Select } from '@/ui/input/components/Select';
@@ -85,7 +84,6 @@ export const SettingsDataModelFieldDateForm = ({
           <SettingsOptionCardContentSelect
             Icon={IconSlash}
             title={t`Display Format`}
-            disabled={disabled}
             description={displayFormatSelectDescription}
           >
             <Select<FieldDateDisplayFormat>
@@ -106,13 +104,7 @@ export const SettingsDataModelFieldDateForm = ({
         )}
       />
       <Collapsible.Root open={showCustomFormatTextInput}>
-        <Collapsible.Panel
-          dimension="height"
-          style={{
-            transitionDuration: `${ADVANCED_SETTINGS_ANIMATION_DURATION.size}s, ${ADVANCED_SETTINGS_ANIMATION_DURATION.opacity}s`,
-          }}
-          containAnimation={false}
-        >
+        <Collapsible.Panel dimension="height" containAnimation={false}>
           <Controller
             name="settings.customUnicodeDateFormat"
             control={control}

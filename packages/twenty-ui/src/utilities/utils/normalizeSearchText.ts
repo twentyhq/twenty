@@ -1,4 +1,5 @@
 import { isDefined } from './isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 const SPACING_DIACRITICS = /[·ʻʼ´¨ˆ˜΄ˇ˘˙˚˛˝¯¸^`]/g;
 const MARKS_AFTER_LATIN_GREEK_ARABIC_OR_HEBREW_LETTER =
@@ -45,12 +46,14 @@ export const normalizeSearchText = (
 
   return text
     .toLowerCase()
-    .normalize('NFD')
+    .normalize(doNotTranslate('NFD'))
     .replace(SPACING_DIACRITICS, '')
     .replace(MARKS_AFTER_LATIN_GREEK_ARABIC_OR_HEBREW_LETTER, '$1')
     .replace(CYRILLIC_LETTER_WITH_MARKS, removeCyrillicStressAccents)
-    .normalize('NFC')
-    .replace(HANGUL_SYLLABLES, (syllables) => syllables.normalize('NFD'))
+    .normalize(doNotTranslate('NFC'))
+    .replace(HANGUL_SYLLABLES, (syllables) =>
+      syllables.normalize(doNotTranslate('NFD')),
+    )
     .replace(HANGUL_COMPATIBILITY_JAMO, (jamo) => jamo.normalize('NFKD'))
     .replace(
       LETTERS_WITH_SEARCH_REPLACEMENT,

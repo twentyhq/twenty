@@ -1,3 +1,4 @@
+import { Text } from '@ui/primitives/typography';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
@@ -15,7 +16,7 @@ import { type SliderRootProps } from '../types/SliderRootProps';
 const meta = {
   title: 'UI/Input/Slider',
   component: Slider.Root<number>,
-  args: { defaultValue: 40 },
+  args: { name: 'volume', defaultValue: 40, min: 0, max: 100, step: 1 },
   render: (args) => (
     <Slider.Root {...args}>
       <Slider.Control>
@@ -31,20 +32,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  decorators: [ComponentDecorator],
-  parameters: { container: { width: 240 } },
-};
-
-export const WithLabelAndValue: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240 } },
   render: (args) => (
     <Slider.Root {...args}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Text
+        render={<div />}
+        style={{ display: 'flex', justifyContent: 'space-between' }}
+      >
         <Slider.Label>Volume</Slider.Label>
         <Slider.Value />
-      </div>
+      </Text>
       <Slider.Control>
         <Slider.Track>
           <Slider.Indicator />
@@ -53,6 +52,15 @@ export const WithLabelAndValue: Story = {
       </Slider.Control>
     </Slider.Root>
   ),
+};
+
+export const TrackOnly: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240 } },
+};
+
+export const WithLabelAndValue: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const slider = canvas.getByRole('slider', { name: 'Volume' });
@@ -98,7 +106,7 @@ export const Range: Story = {
 };
 
 export const Vertical: Story = {
-  ...Default,
+  ...TrackOnly,
   args: { orientation: 'vertical' },
   play: async ({ canvasElement }) => {
     const slider = within(canvasElement).getByRole('slider', {
@@ -113,7 +121,7 @@ export const Vertical: Story = {
 };
 
 export const RightToLeft: Story = {
-  ...Default,
+  ...TrackOnly,
   render: (args) => (
     <DirectionProvider direction="rtl">
       <div dir="rtl" style={{ width: '100%' }}>

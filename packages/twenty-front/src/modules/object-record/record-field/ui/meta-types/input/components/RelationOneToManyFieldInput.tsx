@@ -8,15 +8,15 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useCreateJunctionRecordWithNestedTarget } from '@/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
+import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/input/components/FieldInputDropdown';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RelationOneToManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
@@ -34,7 +34,7 @@ export const RelationOneToManyFieldInput = () => {
   });
   if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
-      'Field metadata item or object metadata item not found',
+      doNotTranslate('Field metadata item or object metadata item not found'),
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -66,7 +66,7 @@ export const RelationOneToManyFieldInput = () => {
   );
   if (!relationFieldMetadataItem) {
     throw new CustomError(
-      'Relation field metadata item not found',
+      doNotTranslate('Relation field metadata item not found'),
       'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -83,17 +83,13 @@ export const RelationOneToManyFieldInput = () => {
 
   const {
     createJunctionRecordWithNestedTarget,
-    loading: isCreatingJunctionRecord,
+    isCreatePending: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
     sourceFieldName: relationFieldDefinition.metadata.fieldName,
     sourceObjectMetadataItem: objectMetadataItem,
     junctionConfig: isJunctionRelation ? junctionConfig : undefined,
   });
-
-  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
-    recordFieldInputLayoutDirectionComponentState,
-  );
 
   const handleCreateNew = useCallback(
     async ({
@@ -135,31 +131,29 @@ export const RelationOneToManyFieldInput = () => {
   }
 
   return (
-    <MultipleRecordPicker
-      focusId={instanceId}
-      componentInstanceId={instanceId}
-      onSubmit={handleSubmit}
-      onChange={(morphItem) => {
-        if (isJunctionRelation) {
-          updateJunctionRelationFromCell({
-            morphItem,
-          });
-        } else {
+    <FieldInputDropdown
+      onDismiss={handleSubmit}
+      multiple
+      shouldSkipPersist
+      shouldDismissOnOutsideInput
+    >
+      <MultipleRecordPicker
+        componentInstanceId={instanceId}
+        onChange={(morphItem) => {
+          if (isJunctionRelation) {
+            updateJunctionRelationFromCell({ morphItem });
+            return;
+          }
+
           updateRelation(morphItem);
+        }}
+        onCreate={
+          isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
+            ? handleCreateNew
+            : undefined
         }
-      }}
-      onCreate={
-        isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
-          ? handleCreateNew
-          : undefined
-      }
-      isCreatePending={isCreatingJunctionRecord}
-      onClickOutside={handleSubmit}
-      layoutDirection={
-        recordFieldInputLayoutDirection === 'downward'
-          ? 'search-bar-on-top'
-          : 'search-bar-on-bottom'
-      }
-    />
+        isCreatePending={isCreatingJunctionRecord}
+      />
+    </FieldInputDropdown>
   );
 };

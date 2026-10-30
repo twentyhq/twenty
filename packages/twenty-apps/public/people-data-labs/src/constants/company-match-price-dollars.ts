@@ -1,0 +1,1 @@
+export const COMPANY_MATCH_PRICE_DOLLARS = 0.075;

@@ -3,7 +3,7 @@ title: Настройка триггера вебхука
 description: Получайте данные из внешних сервисов, чтобы запускать рабочие процессы.
 ---
 
-Триггеры вебхуков позволяют внешним сервисам запускать ваши рабочие процессы, отправляя данные на уникальный URL. Используйте их для подключения форм, сторонних приложений и пользовательских интеграций.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Когда использовать вебхуки
 
@@ -61,12 +61,12 @@ description: Получайте данные из внешних сервисо�
 2. Выберите объект **People**
 3. Сопоставьте поля:
 
-| Поле              | Значение                                                  |
-| ----------------- | --------------------------------------------------------- |
-| Имя               | `{{trigger.body.firstName}}`                              |
-| Фамилия           | `{{trigger.body.lastName}}`                               |
-| Электронная почта | `{{trigger.body.email}}`                                  |
-| Компания          | Найдите или создайте на основе `{{trigger.body.company}}` |
+| Поле              | Значение                                             |
+| ----------------- | ---------------------------------------------------- |
+| Имя               | `{{trigger.firstName}}`                              |
+| Фамилия           | `{{trigger.lastName}}`                               |
+| Электронная почта | `{{trigger.email}}`                                  |
+| Компания          | Найдите или создайте на основе `{{trigger.company}}` |
 
 ### Шаг 5: Протестируйте вебхук
 
@@ -107,7 +107,7 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
 }
 ```
 
-Обращайтесь так: `{{trigger.body.contact.email}}`
+Обращайтесь так: `{{trigger.contact.email}}`
 
 ### Массивы
 
@@ -168,3 +168,5 @@ export const main = async (params: { items: any }) => {
 
 * [Триггеры рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-triggers)
 * [Действия рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="card-page-webhooks" />

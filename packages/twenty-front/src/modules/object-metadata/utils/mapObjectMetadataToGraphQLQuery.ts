@@ -14,6 +14,7 @@ import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -129,9 +130,9 @@ export const mapObjectMetadataToGraphQLQuery = ({
     );
 
   if (!isRootLevel && computeReferences) {
-    return `{
+    return doNotTranslate(`{
       __ref
-    }`;
+    }`);
   }
   const mappedFields = gqlFieldWithFieldMetadataThatSouldBeQueried
     .map((gqlFieldWithFieldMetadata) => {
@@ -154,8 +155,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
     .filter((field) => field !== '')
     .join('\n');
 
-  return `{
+  return doNotTranslate(`{
 __typename
 ${mappedFields}
-}`;
+}`);
 };

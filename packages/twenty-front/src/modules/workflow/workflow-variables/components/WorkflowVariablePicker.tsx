@@ -1,23 +1,17 @@
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
-import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSearchVariablesDropdownContainer = styled.div<{
   isReadonly?: boolean;
-  isUnfolded?: boolean;
   multiline?: boolean;
 }>`
   align-items: center;
-  background-color: ${({ isUnfolded, multiline }) =>
-    isUnfolded
-      ? themeCssVariables.background.transparent.light
-      : multiline
-        ? 'transparent'
-        : themeCssVariables.background.transparent.lighter};
+  background-color: ${({ multiline }) =>
+    multiline
+      ? 'transparent'
+      : themeCssVariables.background.transparent.lighter};
   border: ${({ multiline }) =>
     multiline ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
 
@@ -42,17 +36,23 @@ const StyledSearchVariablesDropdownContainer = styled.div<{
   width: ${({ multiline }) =>
     multiline ? themeCssVariables.spacing[7] : 'auto'};
 
+  &:has([data-popup-open]) {
+    background-color: ${themeCssVariables.background.transparent.light};
+  }
+
   &:hover {
-    background-color: ${({ isReadonly, isUnfolded, multiline }) => {
+    background-color: ${({ isReadonly, multiline }) => {
       if (isReadonly === true) {
         return multiline
           ? 'transparent'
           : themeCssVariables.background.transparent.lighter;
       }
-      return isUnfolded
-        ? themeCssVariables.background.transparent.medium
-        : themeCssVariables.background.transparent.light;
+      return themeCssVariables.background.transparent.light;
     }};
+  }
+
+  &:has([data-popup-open]):hover {
+    background-color: ${themeCssVariables.background.transparent.medium};
   }
 `;
 
@@ -65,16 +65,9 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   shouldDisplayRecordFields = true,
   objectNameSingularsToSelect,
 }) => {
-  const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
-
   return (
     <StyledSearchVariablesDropdownContainer
       isReadonly={disabled}
-      isUnfolded={isDropdownOpen}
       multiline={multiline}
     >
       <WorkflowVariablesDropdown

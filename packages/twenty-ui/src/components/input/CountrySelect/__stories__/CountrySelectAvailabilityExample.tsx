@@ -33,7 +33,7 @@ export const CountrySelectAvailabilityExample = ({
         searchLabel="Search countries"
         noCountryLabel="No country"
         noResultsLabel="No countries found"
-        value="France"
+        value="FR"
         onValueChange={() => undefined}
         open={controlled ? open : undefined}
         onOpenChange={(nextOpen) => {

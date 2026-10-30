@@ -1,33 +1,22 @@
 import { styled } from '@linaria/react';
+import { useId } from 'react';
+import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { parseCssSizeValue } from '@/advanced-text-editor/utils/parseCssSizeValue';
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-
-  & > :first-child {
-    flex: 1;
-  }
 `;
 
-const StyledUnitSelect = styled.select`
-  background: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
-  height: 32px;
-  padding: 0 ${themeCssVariables.spacing[1]};
-`;
-
-const SIZE_UNITS = ['px', '%', 'em'] as const;
+const SIZE_UNIT_OPTIONS: SelectOption<string>[] = ['px', '%', 'em'].map(
+  (sizeUnit) => ({ label: sizeUnit, value: sizeUnit }),
+);
 
 type EmailSizeInputProps = {
   label: string;
@@ -42,6 +31,7 @@ export const EmailSizeInput = ({
   onChange,
   placeholder,
 }: EmailSizeInputProps) => {
+  const instanceId = useId();
   const { amount, unit } = parseCssSizeValue(value);
   const displayedAmount = amount === '' ? value.trim() : amount;
 
@@ -62,8 +52,8 @@ export const EmailSizeInput = ({
   };
 
   return (
-    <div>
-      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+    <FormFieldInputContainer>
+      <Field.Label>{label}</Field.Label>
       <StyledRow>
         <TextInput
           value={displayedAmount}
@@ -71,17 +61,14 @@ export const EmailSizeInput = ({
           placeholder={placeholder ?? '0'}
           fullWidth
         />
-        <StyledUnitSelect
+        <Select
+          dropdownId={`email-size-unit-${instanceId}`}
           value={unit}
-          onChange={(event) => commit(displayedAmount, event.target.value)}
-        >
-          {SIZE_UNITS.map((sizeUnit) => (
-            <option key={sizeUnit} value={sizeUnit}>
-              {sizeUnit}
-            </option>
-          ))}
-        </StyledUnitSelect>
+          options={SIZE_UNIT_OPTIONS}
+          onChange={(nextUnit) => commit(displayedAmount, nextUnit)}
+          dropdownWidthAuto
+        />
       </StyledRow>
-    </div>
+    </FormFieldInputContainer>
   );
 };

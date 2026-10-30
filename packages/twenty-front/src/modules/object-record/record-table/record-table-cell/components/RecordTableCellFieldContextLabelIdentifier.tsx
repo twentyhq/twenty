@@ -2,6 +2,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useGetRecordTableRowIndex } from '@/object-record/record-table/record-table-row/hooks/useGetRecordTableRowIndex';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -23,8 +24,10 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
-  const { recordId, isRecordReadOnly, rowIndex } =
+  const { recordId, isRecordReadOnly, restrictedFieldNames } =
     useRecordTableRowContextOrThrow();
+
+  const { getRecordTableRowIndex } = useGetRecordTableRowIndex();
 
   const isRecordTableCellsNonEditable = useAtomComponentStateValue(
     isRecordTableCellsNonEditableComponentState,
@@ -53,7 +56,11 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   }
 
   const handleChipClick = () => {
-    onRecordIdentifierClick?.(rowIndex, recordId);
+    const rowIndex = getRecordTableRowIndex();
+
+    if (isDefined(rowIndex)) {
+      onRecordIdentifierClick?.(rowIndex, recordId);
+    }
   };
 
   return (
@@ -66,6 +73,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         displayedMaxRows: 1,
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
+          restrictedFieldNames.includes(fieldDefinition.metadata.fieldName) ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
             objectMetadataId: objectMetadataItem.id,

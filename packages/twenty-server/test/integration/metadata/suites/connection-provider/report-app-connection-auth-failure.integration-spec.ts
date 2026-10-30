@@ -92,27 +92,27 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     id,
     applicationId,
     connectionProviderId,
-    visibility,
+    scope,
     userWorkspaceId,
     provider = ConnectedAccountProvider.APP,
   }: {
     id: string;
     applicationId: string;
     connectionProviderId: string;
-    visibility: 'user' | 'workspace';
+    scope: 'USER' | 'WORKSPACE';
     userWorkspaceId: string;
     provider?: ConnectedAccountProvider;
   }): Promise<void> => {
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId",
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
           "applicationId", "connectionProviderId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         id,
         'slack-bot@apple.dev',
         provider,
-        visibility,
+        scope,
         SEED_APPLE_WORKSPACE_ID,
         userWorkspaceId,
         applicationId,
@@ -221,7 +221,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
       id: connectedAccountId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 
@@ -242,6 +242,27 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     );
   });
 
+  it('keeps the first failure time and the latest reason when the failure is reported again', async () => {
+    const connectedAccountId = uuidv4();
+
+    await insertAppConnection({
+      id: connectedAccountId,
+      applicationId: owningApplicationDbId,
+      connectionProviderId: owningProviderDbId,
+      scope: 'WORKSPACE',
+      userWorkspaceId: adminUserWorkspaceId,
+    });
+
+    await reportAuthFailure({ id: connectedAccountId, reason: 'first' });
+    const firstReport = await findAuthFailure(connectedAccountId);
+
+    await reportAuthFailure({ id: connectedAccountId, reason: 'second' });
+    const secondReport = await findAuthFailure(connectedAccountId);
+
+    expect(secondReport.authFailedAt).toEqual(firstReport.authFailedAt);
+    expect(secondReport.authFailedReason).toBe('second');
+  });
+
   it('leaves the reason empty when the caller gives none', async () => {
     const connectedAccountId = uuidv4();
 
@@ -249,7 +270,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
       id: connectedAccountId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 
@@ -271,7 +292,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
       id: connectedAccountId,
       applicationId: otherApplicationDbId,
       connectionProviderId: otherProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 
@@ -287,14 +308,14 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     });
   });
 
-  it("refuses another user's user-visibility connection", async () => {
+  it("refuses another user's USER-scoped connection", async () => {
     const connectedAccountId = uuidv4();
 
     await insertAppConnection({
       id: connectedAccountId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'user',
+      scope: 'USER',
       userWorkspaceId: uuidv4(),
     });
 
@@ -317,7 +338,7 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
       id: connectedAccountId,
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
-      visibility: 'workspace',
+      scope: 'WORKSPACE',
       userWorkspaceId: adminUserWorkspaceId,
     });
 

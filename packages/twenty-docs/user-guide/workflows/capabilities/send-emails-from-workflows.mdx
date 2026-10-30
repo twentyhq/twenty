@@ -3,7 +3,7 @@ title: Send Emails from Workflows
 description: Send personalized emails automatically using workflow actions.
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Prerequisites
 
@@ -30,9 +30,9 @@ Before you can send emails from workflows:
 
 | Field | Value |
 |-------|-------|
-| **To** | `{{trigger.object.email}}` |
+| **To** | `{{trigger.properties.after.emails.primaryEmail}}` |
 | **Subject** | `Welcome to {{Your Company Name}}` |
-| **Body** | `Hi {{trigger.object.firstName}}, ...` |
+| **Body** | `Hi {{trigger.properties.after.name.firstName}}, ...` |
 
 4. **Test and activate**: Test with a sample record, then activate
 
@@ -41,11 +41,9 @@ Before you can send emails from workflows:
 Reference data from previous steps using `{{variable}}` syntax:
 
 ```text
-Hi {{trigger.object.firstName}},
+Hi {{trigger.properties.after.name.firstName}},
 
 Thank you for connecting with us!
-
-Your company, {{trigger.object.company.name}}, is now in our system.
 
 Best regards,
 The Team
@@ -55,9 +53,12 @@ The Team
 
 | Trigger Type | Common Variables |
 |--------------|------------------|
-| **Record Created/Updated** | `{{trigger.object.fieldName}}` |
-| **Manual** | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook** | `{{trigger.body.fieldName}}` |
+| **Record Created/Updated** | `{{trigger.properties.after.fieldName}}` |
+| **Record Deleted** | `{{trigger.properties.before.fieldName}}` |
+| **Manual** (on a selected record) | `{{trigger.payload.fieldName}}` |
+| **Webhook** | `{{trigger.fieldName}}` |
+
+Relation fields only expose the related record's ID, for example `{{trigger.properties.after.companyId}}`. To use other fields of the related record, add a **Search Records** step first. The easiest way to get the right path is to insert the variable from the picker.
 
 ## Advanced: Conditional Emails
 
@@ -70,7 +71,7 @@ The Team
 1. **Trigger**: Record is Created (People)
 
 2. **Add Filter action**:
-   - Condition: `{{trigger.object.source}}` equals `"Website"`
+   - Condition: `{{trigger.properties.after.source}}` equals `"Website"`
    - If true → continue to website welcome email
 
 3. **Branch for other sources**:
@@ -87,15 +88,19 @@ The Team
 
 1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Search Records** (name it "Find Owner"): Find the opportunity owner
+   - Object: Workspace Members
+   - Filter: ID equals `{{trigger.properties.after.ownerId}}`
 
-3. **Send Email #1**: To opportunity owner
-   - To: `{{trigger.object.owner.email}}`
-   - Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Search Records**: Find the opportunity owner's manager
 
-4. **Send Email #2**: To manager
+4. **Send Email #1**: To opportunity owner
+   - To: `{{Find Owner.first.userEmail}}` (select it from the variable picker; typing the step name does not work)
+   - Subject: `Congratulations on closing {{trigger.properties.after.name}}!`
+
+5. **Send Email #2**: To manager
    - To: `{{searchRecords.manager.email}}`
-   - Subject: `Deal Won: {{trigger.object.name}}`
+   - Subject: `Deal Won: {{trigger.properties.after.name}}`
 
 ## Scheduled Follow-up Emails
 
@@ -161,3 +166,5 @@ Attachments are static—the same file is sent to all recipients. For dynamic do
 
 - [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="page-cover-email" />

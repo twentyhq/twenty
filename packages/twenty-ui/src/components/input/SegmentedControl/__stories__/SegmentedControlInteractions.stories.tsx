@@ -6,7 +6,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { IconComment, IconHome } from '@ui/icon';
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ComponentDecorator } from '@ui/testing';
+import { Field } from '@ui/primitives/input/Field/Field';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { SegmentedControl } from '../SegmentedControl';
 import { type SegmentedControlProps } from '../types/SegmentedControlProps';
@@ -81,6 +82,26 @@ const FormExample = (props: SegmentedControlProps<string>) => {
     </form>
   );
 };
+
+const FieldExample = (props: SegmentedControlProps<string>) => (
+  <>
+    <Field.Root>
+      <Field.Label>Appearance</Field.Label>
+      <SegmentedControl {...props} />
+    </Field.Root>
+    <Field.Root>
+      <Field.Label>Start page</Field.Label>
+      <SegmentedControl
+        aria-label="Start page"
+        defaultValue="home"
+        options={[
+          { startIcon: <IconHome />, 'aria-label': 'Home', value: 'home' },
+          { startIcon: <IconComment />, 'aria-label': 'Chat', value: 'chat' },
+        ]}
+      />
+    </Field.Root>
+  </>
+);
 
 const meta: Meta<typeof SegmentedControl> = {
   title: 'Components/Input/SegmentedControl/Interactions',
@@ -439,5 +460,32 @@ export const RightToLeft: Story = {
     await expect(dark).toBeChecked();
     await userEvent.keyboard('{ArrowRight}');
     await waitFor(() => expect(system).toBeChecked());
+  },
+};
+
+export const InsideField: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: (args) => <FieldExample {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const appearance = within(
+      canvas.getByRole('radiogroup', { name: 'Appearance' }),
+    );
+    const startPage = within(
+      canvas.getByRole('radiogroup', { name: 'Start page' }),
+    );
+    const dark = appearance.getByRole('radio', { name: 'Dark' });
+    const chat = startPage.getByRole('radio', { name: 'Chat' });
+
+    await expect(
+      appearance.getByRole('radio', { name: 'System' }),
+    ).toBeChecked();
+    await expect(startPage.getByRole('radio', { name: 'Home' })).toBeChecked();
+
+    await userEvent.click(dark);
+    await userEvent.click(chat);
+
+    await expect(dark).toBeChecked();
+    await expect(chat).toBeChecked();
   },
 };

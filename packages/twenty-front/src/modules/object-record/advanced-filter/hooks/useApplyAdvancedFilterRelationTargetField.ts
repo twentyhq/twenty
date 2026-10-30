@@ -13,6 +13,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterRelationTargetFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;
@@ -75,7 +76,9 @@ export const useApplyAdvancedFilterRelationTargetField = () => {
 
     if (!isDefined(firstOperand)) {
       throw new Error(
-        `No valid operand found for relation-traversal filter type: ${filterType}`,
+        doNotTranslate(
+          `No valid operand found for relation-traversal filter type: ${filterType}`,
+        ),
       );
     }
 

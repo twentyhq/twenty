@@ -1,0 +1,1 @@
+export const CODE_EDITOR_DEFAULT_HEIGHT = 450;

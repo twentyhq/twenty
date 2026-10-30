@@ -108,6 +108,13 @@ registry access is required for installation; the commands do not contact a
 Twenty workspace. Temporary files are removed afterward, and nothing is
 published. CI runs the same target for CLI and dependency changes.
 
+The CLI CI job also runs `scripts/test-app-publish.mjs` after building the CLI
+and SDK. It starts a disposable Verdaccio registry with no upstream registries,
+publishes a fixture with real npm, downloads and inspects the tarball, and checks
+version rejection, incomplete packages and cleanup. On Linux CI the test runs
+inside a network namespace with only loopback enabled, so it cannot reach public
+npm. It uses temporary npm configuration and a local test token.
+
 ## Releases
 
 Publish the CLI when its changes warrant a release. A server release does not
@@ -159,7 +166,11 @@ node packages/twenty-cli/scripts/prepublish.mjs
 
 ## App integration tests
 
-`app-template/src/__tests__` supplies the integration-test setup for CLI-created apps.
+`app-template/` contains the shared project scaffold. `app init` layers
+`app-template/example/files/` and `example/scripts.json` onto it; `app pull`
+uses only the shared scaffold before writing the exported definitions.
+
+`app-template/example/files/src/__tests__` supplies the integration-test setup for CLI-created apps.
 It deploys the app before tests and uninstalls it afterward by invoking the
 installed CLI with `--json`. Apps invoke the executable rather than import the
 CLI as a library or add it as a dependency. See the

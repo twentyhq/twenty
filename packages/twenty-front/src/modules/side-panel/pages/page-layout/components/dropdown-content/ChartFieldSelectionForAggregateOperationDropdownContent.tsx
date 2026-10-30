@@ -1,29 +1,23 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ChartAggregateOperationSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
+import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getChartAggregateDropdownPageId } from '@/side-panel/pages/page-layout/utils/getChartAggregateDropdownPageId';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { useIcons } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Fragment, useState } from 'react';
+import { IconCheck, useIcons } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
@@ -44,94 +38,90 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   );
 
   if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const currentFieldMetadataId = configuration.aggregateFieldMetadataId;
-
-  const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
-    currentFieldMetadataId,
-  );
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const availableFieldMetadataItems = filterBySearchQuery({
-    items: sourceObjectMetadataItem?.fields || [],
+  const availableFieldMetadataItems = (
+    sourceObjectMetadataItem?.fields ?? []
+  ).filter((field) => !isFieldRelation(field) && !isHiddenSystemField(field));
+  const filteredFieldMetadataItems = filterBySearchQuery({
+    items: availableFieldMetadataItems,
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
-    // TODO: remove the relation filter once group by is supported for relation fields
-  }).filter((field) => !isFieldRelation(field) && !isHiddenSystemField(field));
+  });
 
   const { getIcon } = useIcons();
 
-  if (isSubMenuOpen) {
-    return (
-      <ChartAggregateOperationSelectionDropdownContent
-        currentFieldMetadataId={selectedFieldMetadataId}
-        setIsSubMenuOpen={setIsSubMenuOpen}
-      />
-    );
-  }
-
   return (
     <>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
-        placeholder={t`Search fields`}
-        onChange={(event) => setSearchQuery(event.target.value)}
-        value={searchQuery}
-      />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={availableFieldMetadataItems.map(
-            (item) => item.id,
-          )}
-        >
-          {availableFieldMetadataItems.map((fieldMetadataItem) => (
-            <SelectableListItem
+      <Dropdown.Page id="root">
+        <Dropdown.Search
+          placeholder={t`Search fields`}
+          aria-label={t`Search fields`}
+          onValueChange={setSearchQuery}
+          value={searchQuery}
+        />
+        <Dropdown.Separator />
+        <ChartSettingsDropdownSection>
+          {filteredFieldMetadataItems.map((fieldMetadataItem) => (
+            <Dropdown.ActionItem
               key={fieldMetadataItem.id}
-              itemId={fieldMetadataItem.id}
-              onEnter={() => {
-                setIsSubMenuOpen(true);
-                setSelectedFieldMetadataId(fieldMetadataItem.id);
-              }}
+              page={getChartAggregateDropdownPageId({
+                fieldMetadataId: fieldMetadataItem.id,
+                page: 'operations',
+              })}
+              aria-current={
+                currentFieldMetadataId === fieldMetadataItem.id
+                  ? 'true'
+                  : undefined
+              }
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              }
+              endIcon={
+                currentFieldMetadataId === fieldMetadataItem.id ? (
+                  <SelectOptionIcon Icon={IconCheck} />
+                ) : undefined
+              }
             >
-              <ListItemButton
-                focused={selectedItemId === fieldMetadataItem.id}
-                onClick={() => {
-                  setIsSubMenuOpen(true);
-                  setSelectedFieldMetadataId(fieldMetadataItem.id);
-                }}
-                role="option"
-                aria-selected={selectedFieldMetadataId === fieldMetadataItem.id}
-                selected={selectedFieldMetadataId === fieldMetadataItem.id}
-                indicator="check"
-                hasSubmenu={true}
-                startIcon={
-                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-                }
-              >
-                {fieldMetadataItem.label}
-              </ListItemButton>
-            </SelectableListItem>
+              {fieldMetadataItem.label}
+            </Dropdown.ActionItem>
           ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+          {!isNonEmptyArray(filteredFieldMetadataItems) && (
+            <Dropdown.Empty>{t`No fields found`}</Dropdown.Empty>
+          )}
+        </ChartSettingsDropdownSection>
+      </Dropdown.Page>
+      {availableFieldMetadataItems.map((fieldMetadataItem) => (
+        <Fragment key={fieldMetadataItem.id}>
+          <Dropdown.Page
+            id={getChartAggregateDropdownPageId({
+              fieldMetadataId: fieldMetadataItem.id,
+              page: 'operations',
+            })}
+          >
+            <ChartAggregateOperationSelectionDropdownContent
+              currentFieldMetadataId={fieldMetadataItem.id}
+            />
+          </Dropdown.Page>
+          <Dropdown.Page
+            id={getChartAggregateDropdownPageId({
+              fieldMetadataId: fieldMetadataItem.id,
+              page: 'ratio',
+            })}
+          >
+            <ChartRatioOptionValueSelectionDropdownContent
+              currentFieldMetadataId={fieldMetadataItem.id}
+            />
+          </Dropdown.Page>
+        </Fragment>
+      ))}
     </>
   );
 };

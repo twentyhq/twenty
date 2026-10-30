@@ -26,6 +26,7 @@ import {
   type WorkflowRunEnqueueJobData,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -41,6 +42,7 @@ export class CoreWorkflowRunnerService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly applicationService: ApplicationService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -117,17 +119,14 @@ export class CoreWorkflowRunnerService {
       : isManualTrigger
         ? WorkflowRunStatus.ENQUEUED
         : WorkflowRunStatus.NOT_STARTED;
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
     const createdBy = buildWorkflowRunCreatedBy({
       source,
       workflowApplicationId: workflow.applicationId,
-      workspaceOwnedApplicationIds: [
-        workspaceCustomFlatApplication.id,
-        twentyStandardFlatApplication.id,
-      ],
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
     const createdWorkflowRunId =
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({
@@ -154,7 +153,13 @@ export class CoreWorkflowRunnerService {
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,
         { workspaceId, workflowRunId: createdWorkflowRunId },
-        buildRunWorkflowJobOptions(createdWorkflowRunId),
+        buildRunWorkflowJobOptions({
+          workflowRunId: createdWorkflowRunId,
+          scope:
+            await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
+              { workspaceId, applicationId: workflow.applicationId },
+            ),
+        }),
       );
     } else {
       await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
@@ -163,6 +168,10 @@ export class CoreWorkflowRunnerService {
       await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
         WorkflowRunEnqueueJob.name,
         { workspaceId, isCacheMode: true },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
 

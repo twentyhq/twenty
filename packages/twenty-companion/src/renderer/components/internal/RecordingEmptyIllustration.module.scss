@@ -23,7 +23,7 @@
   max-width: 130px;
   max-height: 130px;
   transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
-  transition: transform duration(normal) ease-out;
+  transition: transform calc(var(--t-animation-duration-normal) * 1s) ease-out;
 }
 
 .movingImageLarge {

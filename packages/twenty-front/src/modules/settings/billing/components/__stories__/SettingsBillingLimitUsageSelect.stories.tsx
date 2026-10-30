@@ -14,6 +14,19 @@ const DEFINITIONS = {
   definitions: [
     {
       __typename: 'UsageQuotaDefinition' as const,
+      resourceType: UsageResourceType.ALL,
+      allowedOperations: [
+        {
+          __typename: 'UsageLimitOperationDefinition' as const,
+          operationType: UsageOperationType.ALL,
+          allowedUnits: [UsageUnit.CREDIT],
+        },
+      ],
+      allowedSpenderTypes: ['application'],
+      operatorOnlyScopes: [],
+    },
+    {
+      __typename: 'UsageQuotaDefinition' as const,
       resourceType: UsageResourceType.AI,
       allowedOperations: [
         {
@@ -92,6 +105,34 @@ export const AllOperations: Story = {
   args: {
     resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.ALL,
+  },
+};
+
+export const AllUsage: Story = {
+  args: {
+    resourceType: UsageResourceType.ALL,
+    operationType: UsageOperationType.ALL,
+  },
+};
+
+export const SelectAllUsage: Story = {
+  args: {
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(within(canvasElement).getByRole('button'));
+    const popup = await body.findByRole('dialog', { name: 'Usage' });
+
+    await userEvent.click(
+      within(popup).getByRole('button', { name: 'All usage' }),
+    );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(args.onChange).toHaveBeenCalledWith({
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.ALL,
+    });
   },
 };
 

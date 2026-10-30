@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 
 type SettingsApplicationDetailAboutProps = {
   applicationId?: string | null;
@@ -146,16 +146,19 @@ export const SettingsApplicationDetailAbout = ({
 
   const descriptionSummary = getApplicationDescriptionSummary(description);
 
+  const trimmedAboutDescription = aboutDescription?.trim();
+  const trimmedDescription = description?.trim();
+
   // The sidebar already shows the first paragraph of the description
   const getMarkdownText = () => {
-    if (isNonEmptyString(aboutDescription)) {
-      return aboutDescription;
+    if (isNonEmptyString(trimmedAboutDescription)) {
+      return trimmedAboutDescription;
     }
 
-    if (isNonEmptyString(description)) {
-      return description.trim() === descriptionSummary
+    if (isNonEmptyString(trimmedDescription)) {
+      return trimmedDescription === descriptionSummary
         ? undefined
-        : description;
+        : trimmedDescription;
     }
 
     return t`No description available for this application`;

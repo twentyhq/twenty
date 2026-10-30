@@ -3,16 +3,54 @@ title: InputGroup
 description: Add prefixes, suffixes, and actions around a text input.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
+
+## Overview
 
 `InputGroup` gives an [Input](/ui/primitives/input/input) a shared border and optional leading or trailing content. Set `size` on the group to size the container and provide a default for its input. Explicit child size takes precedence over that default; the group still controls the shared layout height.
 
 <StoryEmbed
-  storyId="ui-input-inputgroup--default"
+  storyId="ui-input-inputgroup--display"
   title="InputGroup example"
-  height={240}
+  height={140}
+/>
+
+## Usage
+
+```tsx
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WebsiteField = () => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
+```
+
+`startElement` and `endElement` accept React nodes. Prefixes and suffixes are visual content; the input's submitted value contains only what the user enters.
+
+## Visual choices
+
+Compare prefix, suffix, and combined adornments at both input sizes. The group shares its size with the input.
+
+<StoryEmbed
+  storyId="ui-input-inputgroup--catalog"
+  title="Visual choices for input group"
+  height={300}
 />
 
 ## Anatomy
@@ -36,24 +74,6 @@ Field.Root
 | `Field.Root`, `Label`, `Description`, `Error` | Optional composition | Associates a label, helper text, and validation feedback with the input. |
 
 `startElement` and `endElement` are React node props, not separate components. `InputGroup` does not supply a label or manage validation. Give the input an accessible name, either through `Field.Label` or its own labeling attributes.
-
-## Prefix and suffix
-
-```tsx
-import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
-
-export const WebsiteField = () => (
-  <Field.Root name="website">
-    <Field.Label>Website</Field.Label>
-    <InputGroup startElement={<span aria-hidden>https://</span>}>
-      <Input placeholder="example.com" />
-    </InputGroup>
-    <Field.Description>Enter the domain without https://.</Field.Description>
-  </Field.Root>
-);
-```
-
-`startElement` and `endElement` accept React nodes. Prefixes and suffixes are visual content; the input's submitted value contains only what the user enters.
 
 ## Trailing action
 
@@ -103,3 +123,5 @@ Put `value`, `defaultValue`, `onValueChange`, `name`, `required`, `readOnly`, `d
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <InputGroupReference />
+
+<PageBanner illustration="page-cover-input" />

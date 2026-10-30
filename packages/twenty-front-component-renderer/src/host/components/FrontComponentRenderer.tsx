@@ -1,15 +1,22 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
+import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
+import { createHostOutsidePressController } from '@/host/events/utils/createHostOutsidePressController';
+import { createHostPointerCaptureController } from '@/host/events/utils/createHostPointerCaptureController';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
 import { createHostFocusController } from '@/host/focus/utils/createHostFocusController';
+import { FrontComponentHostScrollControllerContext } from '@/host/scroll/contexts/FrontComponentHostScrollControllerContext';
+import { createHostScrollController } from '@/host/scroll/utils/createHostScrollController';
 import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
 import { FrontComponentFocusTrackerEffect } from '@/host/effect-components/FrontComponentFocusTrackerEffect';
 import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
+import { FrontComponentPointerCaptureEffect } from '@/host/effect-components/FrontComponentPointerCaptureEffect';
+import { FrontComponentOutsidePressEffect } from '@/host/effect-components/FrontComponentOutsidePressEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -73,13 +80,34 @@ export const FrontComponentRenderer = ({
   const [hostFocusController] = useState(() =>
     createHostFocusController({ geometryTracker }),
   );
+  const [hostScrollController] = useState(() =>
+    createHostScrollController({ geometryTracker }),
+  );
+  const [pointerCaptureController] = useState(() =>
+    createHostPointerCaptureController({ geometryTracker }),
+  );
+  const [outsidePressController] = useState(() =>
+    createHostOutsidePressController({
+      geometryTracker,
+      pointerCaptureController,
+    }),
+  );
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
+      <div
+        ref={geometryTracker.setRoot}
+        style={ROOT_CONTAINER_STYLE}
+        onPointerDown={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerUp={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerCancel={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseDown={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
+        onClick={outsidePressController.forwardUnhandledOwnedPress}
+      >
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
           applicationAccessToken={applicationAccessToken}
@@ -92,6 +120,8 @@ export const FrontComponentRenderer = ({
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
           hostFocusController={hostFocusController}
+          hostScrollController={hostScrollController}
+          outsidePressController={outsidePressController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
@@ -123,6 +153,14 @@ export const FrontComponentRenderer = ({
             <FrontComponentFocusTrackerEffect
               thread={thread}
               geometryTracker={geometryTracker}
+            />
+            <FrontComponentPointerCaptureEffect
+              thread={thread}
+              pointerCaptureController={pointerCaptureController}
+            />
+            <FrontComponentOutsidePressEffect
+              thread={thread}
+              outsidePressController={outsidePressController}
             />
             {isDefined(mediaSessionHost) && (
               <FrontComponentMediaSessionEffect
@@ -158,10 +196,18 @@ export const FrontComponentRenderer = ({
               <FrontComponentHostFocusControllerContext.Provider
                 value={hostFocusController}
               >
-                <FrontComponentRemoteRootRenderer
-                  receiver={receiver}
-                  components={fallbackComponentRegistry}
-                />
+                <FrontComponentHostScrollControllerContext.Provider
+                  value={hostScrollController}
+                >
+                  <FrontComponentPointerCaptureControllerContext.Provider
+                    value={pointerCaptureController}
+                  >
+                    <FrontComponentRemoteRootRenderer
+                      receiver={receiver}
+                      components={fallbackComponentRegistry}
+                    />
+                  </FrontComponentPointerCaptureControllerContext.Provider>
+                </FrontComponentHostScrollControllerContext.Provider>
               </FrontComponentHostFocusControllerContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>

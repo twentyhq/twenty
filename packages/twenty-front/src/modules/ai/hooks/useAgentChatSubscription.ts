@@ -1,9 +1,12 @@
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
@@ -38,6 +41,7 @@ import { createMidStreamAdapter } from '@/ai/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { getAgentChatMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
 import { upsertAgentChatMessage } from '@/ai/utils/upsertAgentChatMessage';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -59,6 +63,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { refreshAiChatUsage } = useRefreshAiChatUsage();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const [resubscribeNonce, setResubscribeNonce] = useState(0);
@@ -87,6 +92,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const queuedMessagesAtom =
       agentChatQueuedMessagesFamilyState.atomFamily(familyKey);
     const usageAtom = agentChatUsageFamilyState.atomFamily(familyKey);
+    const liveReactionRevisionsAtom =
+      agentChatLiveReactionRevisionsFamilyState.atomFamily(familyKey);
+
+    // Changes made while unsubscribed were missed, so fetches must fill them in again
+    store.set(liveReactionRevisionsAtom, {});
 
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -255,8 +265,30 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
+        case 'message-added':
         case 'tool-call-resolved': {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          break;
+        }
+
+        case 'message-reactions-updated': {
+          const liveRevisions = store.get(liveReactionRevisionsAtom);
+          const appliedRevision = liveRevisions[event.messageId];
+
+          if (isDefined(appliedRevision) && event.revision < appliedRevision) {
+            break;
+          }
+
+          store.set(liveReactionRevisionsAtom, {
+            ...liveRevisions,
+            [event.messageId]: event.revision,
+          });
+          store.set(
+            agentChatMessageReactionsFamilyState.atomFamily({
+              messageId: event.messageId,
+            }),
+            event.reactions,
+          );
           break;
         }
 
@@ -305,6 +337,16 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
+          break;
+        }
+
+        case 'user-credits-exhausted': {
+          if (
+            event.workspaceMemberId ===
+            store.get(currentWorkspaceMemberState.atom)?.id
+          ) {
+            refreshAiChatUsage();
+          }
           break;
         }
       }
@@ -455,6 +497,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
+    refreshAiChatUsage,
     applyAgentChatThreadUpdate,
     currentUserWorkspace,
   ]);

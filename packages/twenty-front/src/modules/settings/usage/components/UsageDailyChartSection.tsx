@@ -66,7 +66,7 @@ export const UsageDailyChartSection = ({
       label: chartLabel,
       data: timeSeries.map((point) => ({
         x: formatDate(point.date, 'MMM d'),
-        y: point.creditsUsed,
+        y: point.workspaceCreditsUsed,
       })),
     },
   ];

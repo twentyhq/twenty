@@ -5,6 +5,7 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
@@ -18,7 +19,9 @@ export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
 
   if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
     throw new Error(
-      'Object metadata item and record index ID are required to create new index record',
+      doNotTranslate(
+        'Object metadata item and record index ID are required to create new index record',
+      ),
     );
   }
 

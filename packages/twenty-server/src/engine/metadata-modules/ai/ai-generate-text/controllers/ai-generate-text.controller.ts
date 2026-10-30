@@ -6,7 +6,9 @@ import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -65,6 +67,10 @@ export class AiGenerateTextController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
+    const usageSpenders = buildUsageSpendersFromAuthContext(
+      getWorkspaceAuthContext(),
+    );
+
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Please configure at least one AI provider API key.',
@@ -75,7 +81,7 @@ export class AiGenerateTextController {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId: workspace.id,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      spenders: { userWorkspaceId },
+      spenders: usageSpenders,
     });
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
@@ -114,18 +120,17 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        void this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: {
             usage: result.usage,
             cacheCreationTokens:
               result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
           },
-          workspace.id,
-          UsageOperationType.AI_WORKFLOW_TOKEN,
-          null,
-          userWorkspaceId,
-        );
+          workspaceId: workspace.id,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          spenders: usageSpenders,
+        });
       }
     }
   }

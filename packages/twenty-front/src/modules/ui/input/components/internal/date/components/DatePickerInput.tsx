@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 
@@ -24,26 +25,24 @@ const StyledInputContainer = styled.div<{
     $variant === 'transparent'
       ? 'none'
       : `1px solid ${themeCssVariables.border.color.light}`};
-  border-top-left-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   height: ${({ $variant }) =>
     $variant === 'transparent'
       ? themeCssVariables.spacing[6]
       : themeCssVariables.spacing[8]};
   width: 100%;
+
+  &:focus-within {
+    box-shadow: inset 0 -1px 0 ${themeCssVariables.color.blue};
+  }
 `;
 
 const StyledInput = styled.input<{
-  hasError?: boolean;
   $variant: FormFieldInputVariant;
 }>`
   background: transparent;
   border: none;
-  color: ${({ hasError }) =>
-    hasError
-      ? themeCssVariables.color.red
-      : themeCssVariables.font.color.primary};
+  color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${({ $variant }) =>
     $variant === 'transparent' ? themeCssVariables.font.weight.regular : 500};
@@ -65,6 +64,7 @@ export const DatePickerInput = ({
   readonly = false,
   variant = 'default',
 }: DatePickerInputProps) => {
+  const { t } = useLingui();
   const { dateFormat } = useDateTimeFormat();
 
   const [internalDate, setInternalDate] = useState(date);
@@ -91,7 +91,7 @@ export const DatePickerInput = ({
     ? (parsePlainDateToDateInputString(internalDate) ?? undefined)
     : undefined;
 
-  const { ref, setValue, value } = useIMask(
+  const { ref, setValue, value } = useIMask<HTMLInputElement>(
     {
       mask: Date,
       pattern,
@@ -130,8 +130,9 @@ export const DatePickerInput = ({
       <StyledInput
         $variant={variant}
         type="text"
+        aria-label={t`Date`}
         disabled={readonly}
-        ref={ref as any}
+        ref={ref}
         value={value}
         onChange={() => {}} // Prevent React warning
       />

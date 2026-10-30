@@ -55,6 +55,7 @@ export const BASE_FIELD_PERMISSION_OBJECT_METADATA_3: Omit<
 
 export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
   canAccessAllTools: false,
+  canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
@@ -63,6 +64,7 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  applicationId: 'application-id',
   id: MOCK_ROLE_ID_GRANTS_ALL,
   isEditable: true,
   label: 'Role grants all',
@@ -87,6 +89,7 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
 
 export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   canAccessAllTools: false,
+  canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -95,6 +98,7 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  applicationId: 'application-id',
   id: MOCK_ROLE_ID_REVOKES_ALL,
   isEditable: true,
   label: 'Role revokes all',

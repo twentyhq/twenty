@@ -2,6 +2,7 @@ import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS } from 'src/engine/core-modules/application/connection-provider/constants/connection-flow-logic-function-timeout-seconds.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -44,18 +45,59 @@ describe('fromLogicFunctionManifestToUniversalFlatLogicFunction', () => {
     logicFunctionManifest = buildLogicFunctionManifest(),
     applicationSourceType,
     existingFlatLogicFunctionMaps = emptyFlatLogicFunctionMaps,
+    connectionFlowLogicFunctionUniversalIdentifiers = new Set<string>(),
   }: {
     logicFunctionManifest?: LogicFunctionManifest;
     applicationSourceType: ApplicationRegistrationSourceType;
     existingFlatLogicFunctionMaps?: AllFlatEntityMaps['flatLogicFunctionMaps'];
+    connectionFlowLogicFunctionUniversalIdentifiers?: Set<string>;
   }) =>
     fromLogicFunctionManifestToUniversalFlatLogicFunction({
       logicFunctionManifest,
       applicationUniversalIdentifier,
       applicationSourceType,
       existingFlatLogicFunctionMaps,
+      connectionFlowLogicFunctionUniversalIdentifiers,
       now,
     });
+
+  it('caps the timeout of a function a connection provider runs during the connection flow', () => {
+    const result = convert({
+      logicFunctionManifest: buildLogicFunctionManifest({
+        timeoutSeconds: 120,
+      }),
+      applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
+      connectionFlowLogicFunctionUniversalIdentifiers: new Set([
+        logicFunctionUniversalIdentifier,
+      ]),
+    });
+
+    expect(result.timeoutSeconds).toBe(
+      CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS,
+    );
+  });
+
+  it('keeps a shorter timeout on a connection flow function and the declared one elsewhere', () => {
+    expect(
+      convert({
+        logicFunctionManifest: buildLogicFunctionManifest({
+          timeoutSeconds: 5,
+        }),
+        applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
+        connectionFlowLogicFunctionUniversalIdentifiers: new Set([
+          logicFunctionUniversalIdentifier,
+        ]),
+      }).timeoutSeconds,
+    ).toBe(5);
+    expect(
+      convert({
+        logicFunctionManifest: buildLogicFunctionManifest({
+          timeoutSeconds: 120,
+        }),
+        applicationSourceType: ApplicationRegistrationSourceType.LOCAL,
+      }).timeoutSeconds,
+    ).toBe(120);
+  });
 
   it.each([
     ApplicationRegistrationSourceType.TARBALL,

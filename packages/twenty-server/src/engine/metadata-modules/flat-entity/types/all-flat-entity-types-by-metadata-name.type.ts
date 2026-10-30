@@ -26,8 +26,12 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
+import { type FlatMessagingProviderMaps } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider-maps.type';
+import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
+import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -81,6 +85,8 @@ import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/f
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { type FlatMcpServerMaps } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server-maps.type';
+import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -92,7 +98,9 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
@@ -121,6 +129,7 @@ import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspa
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
+import { type UniversalFlatMcpServer } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-mcp-server.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -147,6 +156,14 @@ import {
   type UniversalUpdateConnectionProviderAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/types/workspace-migration-connection-provider-action.type';
 import {
+  type FlatCreateMessagingProviderAction,
+  type FlatDeleteMessagingProviderAction,
+  type FlatUpdateMessagingProviderAction,
+  type UniversalCreateMessagingProviderAction,
+  type UniversalDeleteMessagingProviderAction,
+  type UniversalUpdateMessagingProviderAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/types/workspace-migration-messaging-provider-action.type';
+import {
   type FlatCreateTimelineActivityTypeAction,
   type FlatDeleteTimelineActivityTypeAction,
   type FlatUpdateTimelineActivityTypeAction,
@@ -154,6 +171,14 @@ import {
   type UniversalDeleteTimelineActivityTypeAction,
   type UniversalUpdateTimelineActivityTypeAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
+import {
+  type FlatCreateRelatedRecordPathAction,
+  type FlatDeleteRelatedRecordPathAction,
+  type FlatUpdateRelatedRecordPathAction,
+  type UniversalCreateRelatedRecordPathAction,
+  type UniversalDeleteRelatedRecordPathAction,
+  type UniversalUpdateRelatedRecordPathAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/related-record-path/types/workspace-migration-related-record-path-action.type';
 import {
   type FlatCreateValidationRuleAction,
   type FlatDeleteValidationRuleAction,
@@ -379,6 +404,14 @@ import {
   type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
 import {
+  type FlatCreateMcpServerAction,
+  type FlatDeleteMcpServerAction,
+  type FlatUpdateMcpServerAction,
+  type UniversalCreateMcpServerAction,
+  type UniversalDeleteMcpServerAction,
+  type UniversalUpdateMcpServerAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/types/workspace-migration-mcp-server-action.type';
+import {
   type FlatCreateSearchFieldMetadataAction,
   type FlatDeleteSearchFieldMetadataAction,
   type FlatUpdateSearchFieldMetadataAction,
@@ -386,6 +419,28 @@ import {
   type UniversalDeleteSearchFieldMetadataAction,
   type UniversalUpdateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
+import { type FlatAgentChatChannelMaps } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel-maps.type';
+import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
+import { type UniversalFlatAgentChatChannel } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent-chat-channel.type';
+import {
+  type FlatCreateAgentChatChannelAction,
+  type FlatDeleteAgentChatChannelAction,
+  type FlatUpdateAgentChatChannelAction,
+  type UniversalCreateAgentChatChannelAction,
+  type UniversalDeleteAgentChatChannelAction,
+  type UniversalUpdateAgentChatChannelAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/types/workspace-migration-agent-chat-channel-action.type';
+import { type FlatAgentChatChannelRoleMaps } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role-maps.type';
+import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
+import { type UniversalFlatAgentChatChannelRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent-chat-channel-role.type';
+import {
+  type FlatCreateAgentChatChannelRoleAction,
+  type FlatDeleteAgentChatChannelRoleAction,
+  type FlatUpdateAgentChatChannelRoleAction,
+  type UniversalCreateAgentChatChannelRoleAction,
+  type UniversalDeleteAgentChatChannelRoleAction,
+  type UniversalUpdateAgentChatChannelRoleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/types/workspace-migration-agent-chat-channel-role-action.type';
 import { type FlatSettingsMenuItemMaps } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item-maps.type';
 import { type FlatSettingsMenuItem } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item.type';
 import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
@@ -850,6 +905,22 @@ export type AllFlatEntityTypesByMetadataName = {
     universalFlatEntity: UniversalFlatWebhook;
     entity: MetadataEntity<'webhook'>;
   };
+  mcpServer: {
+    flatEntityMaps: FlatMcpServerMaps;
+    universalActions: {
+      create: UniversalCreateMcpServerAction;
+      update: UniversalUpdateMcpServerAction;
+      delete: UniversalDeleteMcpServerAction;
+    };
+    flatActions: {
+      create: FlatCreateMcpServerAction;
+      update: FlatUpdateMcpServerAction;
+      delete: FlatDeleteMcpServerAction;
+    };
+    flatEntity: FlatMcpServer;
+    universalFlatEntity: UniversalFlatMcpServer;
+    entity: MetadataEntity<'mcpServer'>;
+  };
   applicationVariable: {
     flatEntityMaps: FlatApplicationVariableMaps;
     universalActions: {
@@ -881,6 +952,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatConnectionProvider;
     universalFlatEntity: UniversalFlatConnectionProvider;
     entity: MetadataEntity<'connectionProvider'>;
+  };
+  messagingProvider: {
+    flatEntityMaps: FlatMessagingProviderMaps;
+    universalActions: {
+      create: UniversalCreateMessagingProviderAction;
+      update: UniversalUpdateMessagingProviderAction;
+      delete: UniversalDeleteMessagingProviderAction;
+    };
+    flatActions: {
+      create: FlatCreateMessagingProviderAction;
+      update: FlatUpdateMessagingProviderAction;
+      delete: FlatDeleteMessagingProviderAction;
+    };
+    flatEntity: FlatMessagingProvider;
+    universalFlatEntity: UniversalFlatMessagingProvider;
+    entity: MetadataEntity<'messagingProvider'>;
   };
   searchFieldMetadata: {
     flatEntityMaps: FlatSearchFieldMetadataMaps;
@@ -914,6 +1001,38 @@ export type AllFlatEntityTypesByMetadataName = {
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
   };
+  agentChatChannel: {
+    flatEntityMaps: FlatAgentChatChannelMaps;
+    universalActions: {
+      create: UniversalCreateAgentChatChannelAction;
+      update: UniversalUpdateAgentChatChannelAction;
+      delete: UniversalDeleteAgentChatChannelAction;
+    };
+    flatActions: {
+      create: FlatCreateAgentChatChannelAction;
+      update: FlatUpdateAgentChatChannelAction;
+      delete: FlatDeleteAgentChatChannelAction;
+    };
+    flatEntity: FlatAgentChatChannel;
+    universalFlatEntity: UniversalFlatAgentChatChannel;
+    entity: MetadataEntity<'agentChatChannel'>;
+  };
+  agentChatChannelRole: {
+    flatEntityMaps: FlatAgentChatChannelRoleMaps;
+    universalActions: {
+      create: UniversalCreateAgentChatChannelRoleAction;
+      update: UniversalUpdateAgentChatChannelRoleAction;
+      delete: UniversalDeleteAgentChatChannelRoleAction;
+    };
+    flatActions: {
+      create: FlatCreateAgentChatChannelRoleAction;
+      update: FlatUpdateAgentChatChannelRoleAction;
+      delete: FlatDeleteAgentChatChannelRoleAction;
+    };
+    flatEntity: FlatAgentChatChannelRole;
+    universalFlatEntity: UniversalFlatAgentChatChannelRole;
+    entity: MetadataEntity<'agentChatChannelRole'>;
+  };
   settingsMenuItem: {
     flatEntityMaps: FlatSettingsMenuItemMaps;
     universalActions: {
@@ -929,6 +1048,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  relatedRecordPath: {
+    flatEntityMaps: FlatRelatedRecordPathMaps;
+    universalActions: {
+      create: UniversalCreateRelatedRecordPathAction;
+      update: UniversalUpdateRelatedRecordPathAction;
+      delete: UniversalDeleteRelatedRecordPathAction;
+    };
+    flatActions: {
+      create: FlatCreateRelatedRecordPathAction;
+      update: FlatUpdateRelatedRecordPathAction;
+      delete: FlatDeleteRelatedRecordPathAction;
+    };
+    flatEntity: FlatRelatedRecordPath;
+    universalFlatEntity: UniversalFlatRelatedRecordPath;
+    entity: MetadataEntity<'relatedRecordPath'>;
   };
   validationRule: {
     flatEntityMaps: FlatValidationRuleMaps;

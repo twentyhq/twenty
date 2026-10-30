@@ -25,7 +25,6 @@ import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components/input';
-import { Loader } from 'twenty-ui/primitives/feedback';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -164,7 +163,8 @@ export const SignInUpWithCredentials = ({
           <StyledSsoButtonContainer>
             <MainButton
               type="submit"
-              startIcon={form.formState.isSubmitting ? <Loader /> : null}
+              loading={form.formState.isSubmitting}
+              loadingPosition="start"
               disabled={isSubmitButtonDisabled}
               fullWidth
               variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}

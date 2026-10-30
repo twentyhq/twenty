@@ -134,11 +134,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           title={t`OAuth`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
-        <SettingsTableCard
-          rounded
-          items={credentialItems}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={credentialItems} gridAutoColumns="3fr 8fr" />
         <StyledRotateContainer>
           <Button
             startIcon={<IconRefresh />}

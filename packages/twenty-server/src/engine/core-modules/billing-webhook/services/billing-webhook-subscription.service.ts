@@ -167,7 +167,12 @@ export class BillingWebhookSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodMaxSeats: true,
         },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       },
     );
 
@@ -200,6 +205,7 @@ export class BillingWebhookSubscriptionService {
     await this.updateBillingSubscriptionItems(
       updatedBillingSubscription.id,
       event,
+      subscriptionWithSchedule,
       workspaceId,
     );
 
@@ -257,6 +263,10 @@ export class BillingWebhookSubscriptionService {
         await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
           CleanWorkspaceDeletionWarningUserVarsJob.name,
           { workspaceId },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       }
     }
@@ -319,6 +329,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
+    liveSubscription: SubscriptionWithSchedule,
     workspaceId: string,
   ) {
     const deletedSubscriptionItemIds =
@@ -334,7 +345,7 @@ export class BillingWebhookSubscriptionService {
     await this.billingSubscriptionItemRepository.upsert(
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         subscriptionId,
-        event.data,
+        { object: liveSubscription },
         workspaceId,
       ),
       {

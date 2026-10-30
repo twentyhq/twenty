@@ -158,7 +158,9 @@ describe('SettingsApplicationDetailAbout', () => {
       'https://cdn.example.com/screenshot-1.png',
     );
 
-    await user.click(screen.getByAltText('Stripe thumbnail 2'));
+    await user.click(
+      screen.getByRole('button', { name: 'Stripe screenshot 2' }),
+    );
 
     expect(screen.getByAltText('Stripe screenshot 2')).toHaveAttribute(
       'src',

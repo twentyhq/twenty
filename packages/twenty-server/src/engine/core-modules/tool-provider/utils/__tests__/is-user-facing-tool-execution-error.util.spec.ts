@@ -26,9 +26,22 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  RowLevelPermissionPredicateException,
+  RowLevelPermissionPredicateExceptionCode,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
+import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import {
+  WebhookException,
+  WebhookExceptionCode,
+} from 'src/engine/metadata-modules/webhook/webhook.exception';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -144,6 +157,67 @@ describe('isUserFacingToolExecutionError', () => {
       'a chat thread deleted during the turn',
       new AiException('Thread is deleted', AiExceptionCode.THREAD_NOT_FOUND),
       true,
+    ],
+    [
+      'an agent the model referenced that does not exist',
+      new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND),
+      true,
+    ],
+    [
+      'an agent change the model is not allowed to make',
+      new AiException(
+        'This agent is managed by a workflow AI step',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      ),
+      true,
+    ],
+    [
+      'an agent run that failed',
+      new AiException(
+        'Agent execution failed',
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
+      ),
+      false,
+    ],
+    [
+      'a webhook the model referenced that does not exist',
+      new WebhookException(
+        'Webhook not found',
+        WebhookExceptionCode.WEBHOOK_NOT_FOUND,
+      ),
+      true,
+    ],
+    [
+      'a role change that would lock the caller out',
+      new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+        PermissionsExceptionCode.CANNOT_REVOKE_OWN_SETTINGS_ACCESS,
+      ),
+      true,
+    ],
+    [
+      'a workspace missing its default role',
+      new PermissionsException(
+        PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
+        PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+      ),
+      false,
+    ],
+    [
+      'a row-level rule owned by another role',
+      new RowLevelPermissionPredicateException(
+        'Predicate belongs to a different role or object',
+        RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
+      ),
+      true,
+    ],
+    [
+      'a row-level rule internal failure',
+      new RowLevelPermissionPredicateException(
+        'Unexpected failure',
+        RowLevelPermissionPredicateExceptionCode.INTERNAL_SERVER_ERROR,
+      ),
+      false,
     ],
     [
       'a sender removed from the workspace during the turn',

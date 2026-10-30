@@ -48,12 +48,6 @@ const StyledHeaderRight = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledExecutionStatusTag = styled(Tag)`
-  && {
-    min-width: fit-content;
-  }
-`;
-
 const StyledTitle = styled.span`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.md};
@@ -212,7 +206,7 @@ export const CodeExecutionDisplay = ({
           <StyledTitle>{t`Python Code Execution`}</StyledTitle>
         </StyledHeaderLeft>
         <StyledHeaderRight>
-          <StyledExecutionStatusTag
+          <Tag
             color={
               status === 'success'
                 ? 'turquoise'
@@ -224,7 +218,7 @@ export const CodeExecutionDisplay = ({
             truncate={false}
           >
             {statusText}
-          </StyledExecutionStatusTag>
+          </Tag>
         </StyledHeaderRight>
       </StyledHeader>
 

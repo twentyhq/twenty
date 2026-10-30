@@ -4,6 +4,7 @@ export type Styles = {
   item: string;
   trigger: string;
   popup: string;
+  popupItem: string;
 };
 
 declare const styles: Styles;

@@ -20,6 +20,7 @@ import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-recor
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
@@ -110,7 +111,9 @@ export const useProcessCalendarCardDrop = () => {
 
         if (!isDefined(targetRecord)) {
           throw new Error(
-            `targetRecord cannot be found in passed recordsWithPosition, this should not happen.`,
+            doNotTranslate(
+              `targetRecord cannot be found in passed recordsWithPosition, this should not happen.`,
+            ),
           );
         }
 

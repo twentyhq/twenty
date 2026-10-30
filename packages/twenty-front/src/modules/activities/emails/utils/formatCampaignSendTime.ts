@@ -2,39 +2,40 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Locale } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
-import { type DateFormat } from '@/localization/constants/DateFormat';
-import { type TimeFormat } from '@/localization/constants/TimeFormat';
-import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
+import { TimeFormat } from '@/localization/constants/TimeFormat';
 
 const TIME_ZONE_ABBREVIATION_FORMAT = 'zzz';
 
 export const formatCampaignSendTime = ({
   value,
   timeZone,
-  dateFormat,
   timeFormat,
   localeCatalog,
 }: {
   value?: string | null;
   timeZone: string;
-  dateFormat: DateFormat;
   timeFormat: TimeFormat;
   localeCatalog: Locale;
 }): string => {
-  const sendTime = formatDateTimeString({
-    value,
-    timeZone,
-    dateFormat,
-    timeFormat,
-    localeCatalog,
-  });
-
-  if (!isNonEmptyString(sendTime) || !isNonEmptyString(value)) {
+  if (!isNonEmptyString(value)) {
     return '';
   }
 
+  const sendDate = new Date(value);
+
+  if (Number.isNaN(sendDate.getTime())) {
+    return '';
+  }
+
+  const sendTime = new Intl.DateTimeFormat(localeCatalog.code, {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    hourCycle: timeFormat === TimeFormat.HOUR_24 ? 'h23' : 'h12',
+    timeZone,
+  }).format(sendDate);
+
   const timeZoneAbbreviation = formatInTimeZone(
-    new Date(value),
+    sendDate,
     timeZone,
     TIME_ZONE_ABBREVIATION_FORMAT,
     { locale: localeCatalog },

@@ -1,11 +1,8 @@
-import { styled } from '@linaria/react';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsDataModelPreviewMiniCard } from '@/settings/data-model/components/SettingsDataModelPreviewMiniCard';
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
-import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelFieldPreviewWidgetProps = {
@@ -21,19 +18,6 @@ type SettingsDataModelFieldPreviewWidgetProps = {
   fullWidth?: boolean;
 };
 
-const StyledCardContainer = styled.div`
-  > div {
-    border-radius: ${themeCssVariables.border.radius.md};
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
-const StyledCardContentContainer = styled.div`
-  > div {
-    padding: ${themeCssVariables.spacing[2]};
-  }
-`;
-
 export const SettingsDataModelFieldPreviewWidget = ({
   className,
   fieldMetadataItem,
@@ -47,31 +31,27 @@ export const SettingsDataModelFieldPreviewWidget = ({
   });
 
   return (
-    <StyledCardContainer className={className}>
-      <Card.Root fullWidth>
-        <StyledCardContentContainer>
-          <Card.Content>
-            <SettingsDataModelObjectPreview
-              objectMetadataItems={[objectMetadataItem]}
-              pluralizeLabel={pluralizeLabel}
-            />
-            <SettingsDataModelFieldPreview
-              objectNameSingular={objectNameSingular}
-              fieldMetadataItem={{
-                label: fieldMetadataItem.label,
-                icon: fieldMetadataItem.icon,
-                defaultValue: fieldMetadataItem.defaultValue,
-                options: fieldMetadataItem.options,
-                settings: fieldMetadataItem.settings,
-                type: fieldMetadataItem.type,
-                name: computeMetadataNameFromLabel(fieldMetadataItem.label),
-              }}
-              shrink={shrink}
-              withFieldLabel={withFieldLabel}
-            />
-          </Card.Content>
-        </StyledCardContentContainer>
-      </Card.Root>
-    </StyledCardContainer>
+    <div className={className}>
+      <SettingsDataModelPreviewMiniCard>
+        <SettingsDataModelObjectPreview
+          objectMetadataItems={[objectMetadataItem]}
+          pluralizeLabel={pluralizeLabel}
+        />
+        <SettingsDataModelFieldPreview
+          objectNameSingular={objectNameSingular}
+          fieldMetadataItem={{
+            label: fieldMetadataItem.label,
+            icon: fieldMetadataItem.icon,
+            defaultValue: fieldMetadataItem.defaultValue,
+            options: fieldMetadataItem.options,
+            settings: fieldMetadataItem.settings,
+            type: fieldMetadataItem.type,
+            name: computeMetadataNameFromLabel(fieldMetadataItem.label),
+          }}
+          shrink={shrink}
+          withFieldLabel={withFieldLabel}
+        />
+      </SettingsDataModelPreviewMiniCard>
+    </div>
   );
 };

@@ -1,3 +1,4 @@
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -9,6 +10,7 @@ import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { isDefined } from 'twenty-shared/utils';
+import { OverflowingTextTooltipModeProvider } from 'twenty-ui/primitives/typography';
 
 export const RecordTableCellPortalContexts = ({
   position,
@@ -29,6 +31,8 @@ export const RecordTableCellPortalContexts = ({
 
   const recordId = allRecordIds.at(position.row);
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(recordId ?? '');
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: recordId ?? '',
     objectMetadataId: objectMetadataItem.id,
@@ -48,8 +52,8 @@ export const RecordTableCellPortalContexts = ({
     <RecordTableRowContextProvider
       value={{
         recordId,
-        rowIndex: position.row,
         isSelected: false,
+        restrictedFieldNames,
         pathToShowPage:
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,
@@ -61,11 +65,13 @@ export const RecordTableCellPortalContexts = ({
       <RecordTableCellContext.Provider
         value={{
           recordField,
-          cellPosition: position,
+          columnIndex: position.column,
         }}
       >
         <RecordTableCellFieldContextWrapper recordField={recordField}>
-          {children}
+          <OverflowingTextTooltipModeProvider mode="measure-on-open">
+            {children}
+          </OverflowingTextTooltipModeProvider>
         </RecordTableCellFieldContextWrapper>
       </RecordTableCellContext.Provider>
     </RecordTableRowContextProvider>

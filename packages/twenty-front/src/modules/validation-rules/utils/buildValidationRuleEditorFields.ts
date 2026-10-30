@@ -1,5 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import {
   compositeTypeDefinitions,
   FieldMetadataType,
@@ -8,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES } from '@/settings/data-model/constants/CompositeFieldSubFieldLabelMessages';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -24,14 +26,18 @@ const isRelationType = (type: FieldMetadataType) =>
   type === FieldMetadataType.MORPH_RELATION;
 
 const COMPOSITE_SUBFIELD_LABELS_BY_FIELD_TYPE: Partial<
-  Record<FieldMetadataType, Record<string, string>>
-> = COMPOSITE_FIELD_SUB_FIELD_LABELS;
+  Record<FieldMetadataType, Record<string, MessageDescriptor>>
+> = COMPOSITE_FIELD_SUB_FIELD_LABEL_MESSAGES;
 
 const getCompositeSubfieldLabel = (
   type: FieldMetadataType,
   subfieldName: string,
-): string =>
-  COMPOSITE_SUBFIELD_LABELS_BY_FIELD_TYPE[type]?.[subfieldName] ?? subfieldName;
+): string => {
+  const subfieldLabel =
+    COMPOSITE_SUBFIELD_LABELS_BY_FIELD_TYPE[type]?.[subfieldName];
+
+  return isDefined(subfieldLabel) ? t(subfieldLabel) : subfieldName;
+};
 
 const buildScalarEditorFields = ({
   fieldMetadataItem,

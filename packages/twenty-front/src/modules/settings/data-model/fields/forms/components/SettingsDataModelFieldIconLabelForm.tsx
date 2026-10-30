@@ -5,8 +5,6 @@ import { type z } from 'zod';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
-import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/object-metadata/utils/metadataLabelErrorMessages';
@@ -17,6 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
@@ -50,23 +49,12 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
-const StyledAdvancedSettingsSectionInputWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
-`;
-
-const StyledAdvancedSettingsOuterContainer = styled.div`
+const StyledApiSettingsContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledAdvancedSettingsContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  position: relative;
-  width: 100%;
+const StyledApiNameInputContainer = styled.div`
+  padding-top: ${themeCssVariables.spacing[4]};
 `;
 
 type SettingsDataModelFieldIconLabelFormProps = {
@@ -109,10 +97,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
       ? fieldMetadataItem.isLabelSyncedWithName
       : true);
 
-  const apiNameTooltipText = isLabelSyncedWithName
-    ? t`Deactivate "Synchronize Objects Labels and API Names" to set a custom API name`
-    : t`Input must be in camel case and cannot start with a number`;
-
   const fillNameFromLabel = (label: string) => {
     isDefined(label) &&
       setValue('name', computeMetadataNameFromLabel(label), {
@@ -128,9 +112,6 @@ export const SettingsDataModelFieldIconLabelForm = ({
 
   const canToggleSyncLabelWithName =
     !isCreationMode && isCustomButNotRelationField;
-
-  const isNameEditEnabled =
-    isLabelSyncedWithName === false && isCustomButNotRelationField;
 
   const isLabelEditEnabled =
     isCreationMode ||
@@ -182,93 +163,67 @@ export const SettingsDataModelFieldIconLabelForm = ({
         />
       </StyledInputsContainer>
       {canToggleSyncLabelWithName && (
-        <AdvancedSettingsWrapper hideDot>
-          <StyledAdvancedSettingsOuterContainer>
-            <StyledAdvancedSettingsContainer>
-              <StyledAdvancedSettingsSectionInputWrapper>
-                <StyledInputsContainer>
-                  <Controller
-                    name="name"
-                    control={control}
-                    defaultValue={fieldMetadataItem?.name}
-                    render={({ field: { onChange, value } }) => (
-                      <SettingsTextInput
-                        instanceId={nameTextInputId}
-                        label={t`API Name`}
-                        placeholder={t`employees`}
-                        value={value}
-                        onChange={onChange}
-                        readOnly={readonly}
-                        disabled={!isNameEditEnabled}
-                        fullWidth
-                        maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
-                        RightIcon={() =>
-                          apiNameTooltipText && (
-                            <>
-                              <Tooltip
-                                content={apiNameTooltipText}
-                                sideOffset={5}
-                                side="bottom"
-                                positionMethod="fixed"
-                                delay={TooltipDelay.shortDelay}
-                              >
-                                <IconInfoCircle
-                                  id="info-circle-id-name"
-                                  size={theme.icon.size.md}
-                                  color={theme.font.color.tertiary}
-                                  style={{ outline: 'none' }}
-                                />
-                              </Tooltip>
-                            </>
-                          )
-                        }
-                      />
-                    )}
-                  />
-                </StyledInputsContainer>
+        <StyledApiSettingsContainer>
+          <Controller
+            name="isLabelSyncedWithName"
+            control={control}
+            defaultValue={fieldMetadataItem?.isLabelSyncedWithName ?? true}
+            render={({ field: { onChange, value } }) => (
+              <Card.Root>
+                <SettingsOptionCardContentSwitch
+                  Icon={IconRefresh}
+                  title={t`Synchronize Field Label and API Name`}
+                  description={t`Should changing a field's label also change the API name?`}
+                  checked={value ?? true}
+                  disabled={readonly}
+                  onChange={(value) => {
+                    onChange(value);
+                    if (value) {
+                      fillNameFromLabel(label);
+                    }
+                  }}
+                />
+              </Card.Root>
+            )}
+          />
+          <Collapsible.Root open={!isLabelSyncedWithName}>
+            <Collapsible.Panel dimension="height" containAnimation={false}>
+              <StyledApiNameInputContainer>
                 <Controller
-                  name="isLabelSyncedWithName"
+                  name="name"
                   control={control}
-                  defaultValue={
-                    fieldMetadataItem?.isLabelSyncedWithName ?? true
-                  }
+                  defaultValue={fieldMetadataItem?.name}
                   render={({ field: { onChange, value } }) => (
-                    <AdvancedSettingsContentWrapperWithDot
-                      hideDot={false}
-                      dotPosition="centered"
-                    >
-                      <Card.Root rounded>
-                        <SettingsOptionCardContentSwitch
-                          Icon={IconRefresh}
-                          title={t`Synchronize Field Label and API Name`}
-                          description={t`Should changing a field's label also change the API name?`}
-                          checked={value ?? true}
-                          disabled={readonly}
-                          advancedMode
-                          onChange={(value) => {
-                            onChange(value);
-                            if (!isDefined(fieldMetadataItem)) {
-                              return;
-                            }
-
-                            if (value === false) {
-                              return;
-                            }
-
-                            if (isCustomField && !isRelation) {
-                              fillNameFromLabel(label);
-                              return;
-                            }
-                          }}
-                        />
-                      </Card.Root>
-                    </AdvancedSettingsContentWrapperWithDot>
+                    <SettingsTextInput
+                      instanceId={nameTextInputId}
+                      label={t`API Name`}
+                      placeholder={t`employees`}
+                      value={value}
+                      onChange={onChange}
+                      readOnly={readonly}
+                      fullWidth
+                      maxLength={IDENTIFIER_MAX_CHAR_LENGTH}
+                      RightIcon={() => (
+                        <Tooltip
+                          content={t`Input must be in camel case and cannot start with a number`}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
+                          delay={TooltipDelay.shortDelay}
+                        >
+                          <IconInfoCircle
+                            size={theme.icon.size.md}
+                            color={theme.font.color.tertiary}
+                          />
+                        </Tooltip>
+                      )}
+                    />
                   )}
                 />
-              </StyledAdvancedSettingsSectionInputWrapper>
-            </StyledAdvancedSettingsContainer>
-          </StyledAdvancedSettingsOuterContainer>
-        </AdvancedSettingsWrapper>
+              </StyledApiNameInputContainer>
+            </Collapsible.Panel>
+          </Collapsible.Root>
+        </StyledApiSettingsContainer>
       )}
     </>
   );

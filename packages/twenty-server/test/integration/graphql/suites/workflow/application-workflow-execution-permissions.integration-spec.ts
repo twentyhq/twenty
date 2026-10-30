@@ -8,8 +8,6 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
@@ -18,7 +16,6 @@ import {
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -153,18 +150,33 @@ const FORM_WORKFLOW = buildTestWorkflow([
   } as WorkflowStepManifestWithoutEdges,
 ]);
 
+const DRAFT_EMAIL_WORKFLOW = buildTestWorkflow([
+  {
+    name: 'Draft an email',
+    type: 'DRAFT_EMAIL',
+    input: {
+      connectedAccountId: randomUUID(),
+      recipients: { to: 'jane@example.com', cc: '', bcc: '' },
+      subject: `${RUN_PREFIX} draft`,
+    },
+  } as WorkflowStepManifestWithoutEdges,
+]);
+
 const TEST_WORKFLOWS = [
   CREATE_COMPANY_WORKFLOW,
   CREATE_OPPORTUNITY_WORKFLOW,
   LOGIC_FUNCTION_WORKFLOW,
   DELAYED_CREATE_COMPANY_WORKFLOW,
   FORM_WORKFLOW,
+  DRAFT_EMAIL_WORKFLOW,
 ];
 
 const buildManifest = ({
   canManageCompanies,
+  canSendEmail = false,
 }: {
   canManageCompanies: boolean;
+  canSendEmail?: boolean;
 }): Manifest =>
   buildBaseManifest({
     appId: APP_ID,
@@ -191,7 +203,10 @@ const buildManifest = ({
                 },
               ]
             : [],
-          permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKFLOWS],
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag.WORKFLOWS,
+            ...(canSendEmail ? [SystemPermissionFlag.SEND_EMAIL_TOOL] : []),
+          ],
         },
       ],
       logicFunctions: [
@@ -369,12 +384,6 @@ const countRecordsByName = async (
 
 describe('application workflow execution permissions', () => {
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
       name: 'Application workflow permissions',
@@ -426,11 +435,6 @@ describe('application workflow execution permissions', () => {
     });
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: OTHER_APP_ID,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
   });
 
@@ -535,42 +539,24 @@ describe('application workflow execution permissions', () => {
     expect(ownApplicationRun.status).toBe('COMPLETED');
   }, 120000);
 
-  it('keeps the application bound when its token starts a workspace workflow', async () => {
-    const { status, stepStatus } = await runWorkflowActionStep({
-      name: `${RUN_PREFIX} workspace workflow started by the application`,
-      stepType: 'CREATE_RECORD',
-      input: {
-        objectName: 'opportunity',
-        objectRecord: { name: NESTED_OPPORTUNITY_NAME },
-      },
-      runToken: await buildJaneTokenThroughApplication(APP_ID),
-    });
-
-    expect(status).toBe('FAILED');
-    expect(stepStatus).toBe('FAILED');
+  it('refuses an application token starting a workspace workflow', async () => {
+    await expect(
+      runWorkflowActionStep({
+        name: `${RUN_PREFIX} workspace workflow started by the application`,
+        stepType: 'CREATE_RECORD',
+        input: {
+          objectName: 'opportunity',
+          objectRecord: { name: NESTED_OPPORTUNITY_NAME },
+        },
+        runToken: await buildJaneTokenThroughApplication(APP_ID),
+      }),
+    ).rejects.toThrow('cannot start a workflow owned by another application');
     expect(
       await countRecordsByName('opportunity', NESTED_OPPORTUNITY_NAME),
     ).toBe(0);
   }, 120000);
 
-  it('refuses email steps when an application token starts a workspace workflow', async () => {
-    const { status, stepStatus, stepError } = await runWorkflowActionStep({
-      name: `${RUN_PREFIX} workspace email workflow started by the application`,
-      stepType: 'SEND_EMAIL',
-      input: {
-        recipients: { to: 'recipient@example.com' },
-        subject: 'Application workflow permissions',
-        body: JSON.stringify(buildEmailDocument('Should never be sent')),
-      },
-      runToken: await buildJaneTokenThroughApplication(APP_ID),
-    });
-
-    expect(status).toBe('FAILED');
-    expect(stepStatus).toBe('FAILED');
-    expect(stepError).toContain('Applications cannot use SEND_EMAIL steps');
-  }, 120000);
-
-  it('only lets the values of a form step change on an application workflow run', async () => {
+  it('only lets the values of a form step change on an application workflow run, and not through the application', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
 
@@ -610,6 +596,16 @@ describe('application workflow execution permissions', () => {
     });
 
     expect(filledStep.body.errors).toBeUndefined();
+
+    const stepFilledThroughApplication = await graphqlAs(
+      await buildJaneTokenThroughApplication(APP_ID),
+      UPDATE_WORKFLOW_RUN_STEP,
+      { input: { workflowRunId, step: runFormStep } },
+    );
+
+    expect(
+      stepFilledThroughApplication.body.errors?.[0]?.extensions?.code,
+    ).toBe('FORBIDDEN');
   }, 120000);
 
   it('reads the records picked in a form with the permissions of the run, keeping a refused form open', async () => {
@@ -668,6 +664,46 @@ describe('application workflow execution permissions', () => {
       workflowRun.state.stepInfos[formStep.universalIdentifier].result,
     ).not.toHaveProperty('opportunity');
   }, 120000);
+
+  it('refuses an email step when the application role lacks the send email permission', async () => {
+    const workflowRun = await waitForRunToEnd(
+      await runWorkflow(DRAFT_EMAIL_WORKFLOW),
+    );
+    const [draftStep] = DRAFT_EMAIL_WORKFLOW.steps;
+    const draftStepInfo =
+      workflowRun.state.stepInfos[draftStep.universalIdentifier];
+
+    expect(workflowRun.status).toBe('FAILED');
+    expect(draftStepInfo.status).toBe('FAILED');
+    expect(draftStepInfo.error).toContain(
+      'This application needs the SEND_EMAIL_TOOL permission to run DRAFT_EMAIL steps',
+    );
+  }, 120000);
+
+  it('lets an email step through the permission check once the application role has it', async () => {
+    const grant = await syncApplication({
+      manifest: buildManifest({ canManageCompanies: true, canSendEmail: true }),
+    });
+
+    expect(grant.errors).toBeUndefined();
+
+    const workflowRun = await waitForRunToEnd(
+      await runWorkflow(DRAFT_EMAIL_WORKFLOW),
+    );
+    const [draftStep] = DRAFT_EMAIL_WORKFLOW.steps;
+    const draftStepInfo =
+      workflowRun.state.stepInfos[draftStep.universalIdentifier];
+
+    // The step still fails on the made-up connected account, after the permission check
+    expect(draftStepInfo.status).toBe('FAILED');
+    expect(draftStepInfo.error).not.toContain('SEND_EMAIL_TOOL');
+
+    const revocation = await syncApplication({
+      manifest: buildManifest({ canManageCompanies: true }),
+    });
+
+    expect(revocation.errors).toBeUndefined();
+  }, 150000);
 
   it('checks the current application permissions again when a delayed run resumes', async () => {
     const workflowRunId = await runWorkflow(DELAYED_CREATE_COMPANY_WORKFLOW);

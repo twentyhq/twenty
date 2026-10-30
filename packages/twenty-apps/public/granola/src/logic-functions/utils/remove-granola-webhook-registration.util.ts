@@ -14,7 +14,7 @@ import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util'
 export const removeGranolaWebhookRegistration = async ({
   client,
 }: {
-  client: Pick<
+  client?: Pick<
     ReturnType<typeof createGranolaClientOrThrow>,
     'deleteWebhookEndpoint'
   >;
@@ -31,15 +31,21 @@ export const removeGranolaWebhookRegistration = async ({
 
   let deletedWebhookCount = 0;
 
-  try {
-    await deleteStaleGranolaWebhookEndpointOrThrow({
-      client,
-      webhookEndpointId: registration.webhookEndpointId,
-    });
-    deletedWebhookCount = 1;
-  } catch (error) {
+  if (isDefined(client)) {
+    try {
+      await deleteStaleGranolaWebhookEndpointOrThrow({
+        client,
+        webhookEndpointId: registration.webhookEndpointId,
+      });
+      deletedWebhookCount = 1;
+    } catch (error) {
+      console.error(
+        `[granola] Could not remove endpoint ${registration.webhookEndpointId}; remove it in Granola settings. ${toErrorMessage(error)}`,
+      );
+    }
+  } else {
     console.error(
-      `[granola] Could not remove endpoint ${registration.webhookEndpointId}; remove it in Granola settings. ${toErrorMessage(error)}`,
+      `[granola] Could not remove endpoint ${registration.webhookEndpointId} without an API key; remove it in Granola settings.`,
     );
   }
 

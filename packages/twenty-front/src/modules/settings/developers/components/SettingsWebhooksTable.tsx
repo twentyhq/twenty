@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
 import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
@@ -26,7 +27,7 @@ export const SettingsWebhooksTable = () => {
   return (
     <Table>
       <TableRow gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
-        <TableHeader>URL</TableHeader>
+        <TableHeader>{t`URL`}</TableHeader>
         <TableHeader></TableHeader>
       </TableRow>
       {!!webhooks?.length && (

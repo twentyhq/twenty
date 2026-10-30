@@ -15,6 +15,7 @@ export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSynce
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeatureFlags';
+export { WORKFLOW_TRIGGER_DEFAULT_NAMES } from './constants/WorkflowTriggerDefaultNames';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
 export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
 export { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from './constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
@@ -31,6 +32,7 @@ export type {
   WorkflowLayoutOptions,
 } from './layout/utils/compute-workflow-layout.util';
 export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.util';
+export { agentResponseFormatSchema } from './schemas/agent-response-format-schema';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
@@ -85,6 +87,8 @@ export {
   workflowPickRecordStrategySchema,
   workflowPickRecordActionSettingsSchema,
 } from './schemas/pick-record-action-settings-schema';
+export { recordFilterGroupSchema } from './schemas/record-filter-group-schema';
+export { recordFilterSchema } from './schemas/record-filter-schema';
 export { workflowSendChatMessageActionSchema } from './schemas/send-chat-message-action-schema';
 export { workflowSendChatMessageActionSettingsSchema } from './schemas/send-chat-message-action-settings-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
@@ -215,9 +219,9 @@ export type {
   FindRecordsOutputSchema,
   IteratorOutputSchema,
   FormFieldLeaf,
+  FormSelectFieldLeaf,
   FormFieldNode,
   FormOutputSchema,
-  LinkOutputSchema,
   CodeOutputSchema,
   ManualTriggerOutputSchema,
   OutputSchemaV2,

@@ -1,15 +1,21 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
-import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { isDefined } from 'twenty-shared/utils';
 
 export const sanitizeChartFiltersInPageLayoutDraft = ({
   pageLayoutDraft,
-  validFieldMetadataIdsByObjectMetadataId,
+  fieldMetadataItemsByObjectMetadataId,
 }: {
   pageLayoutDraft: DraftPageLayout;
-  validFieldMetadataIdsByObjectMetadataId: Map<string, Set<string>>;
+  fieldMetadataItemsByObjectMetadataId: Map<
+    string,
+    (Pick<FieldMetadataItem, 'id' | 'isActive'> & {
+      morphRelations?: { sourceFieldMetadata: { id: string } }[] | null;
+    })[]
+  >;
 }): DraftPageLayout => {
   return {
     ...pageLayoutDraft,
@@ -29,17 +35,17 @@ export const sanitizeChartFiltersInPageLayoutDraft = ({
           return widget;
         }
 
-        const validFieldMetadataIds = isDefined(widget.objectMetadataId)
-          ? validFieldMetadataIdsByObjectMetadataId.get(widget.objectMetadataId)
+        const fieldMetadataItems = isDefined(widget.objectMetadataId)
+          ? fieldMetadataItemsByObjectMetadataId.get(widget.objectMetadataId)
           : undefined;
 
-        if (!isDefined(validFieldMetadataIds)) {
+        if (!isDefined(fieldMetadataItems)) {
           return widget;
         }
 
-        const sanitizedChartFilters = dropChartRecordFiltersWithDeletedFields({
+        const sanitizedChartFilters = sanitizeChartRecordFilters({
           chartFilters,
-          validFieldMetadataIds,
+          fieldMetadataItems,
         });
 
         return {

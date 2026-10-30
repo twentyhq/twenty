@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_BOT_CONNECTOR_ISSUER } from 'src/features/chat/logic-functions/constants/teams-bot-connector-issuer';
 import { TEAMS_CHANNEL_ID } from 'src/features/chat/logic-functions/constants/teams-channel-id';
+import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsBotConnectorKey } from 'src/features/chat/logic-functions/types/teams-bot-connector-key.type';
 import { verifyTeamsActivityTokenOrThrow } from 'src/features/chat/logic-functions/utils/verify-teams-activity-token';
 
@@ -160,6 +161,16 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
     ).rejects.toThrow('Missing or malformed Authorization header');
   });
 
+  it('should let a signing key load failure through rather than report the token as invalid', async () => {
+    const keyLoadError = new Error('Key endpoint unavailable');
+
+    loadKeysMock.mockRejectedValue(keyLoadError);
+
+    await expect(verifyToken(await signActivityToken())).rejects.toBe(
+      keyLoadError,
+    );
+  });
+
   it('should reject a token signed with a key the Bot Connector does not publish', async () => {
     await expect(
       verifyToken(await signActivityToken({ keyId: 'unknown-key' })),
@@ -176,7 +187,7 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
   it('should reject a token from another issuer', async () => {
     await expect(
       verifyToken(await signActivityToken({ issuer: 'https://evil.example' })),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(TeamsActivityTokenInvalidError);
   });
 
   it('should reject a token minted for another bot', async () => {
@@ -184,13 +195,13 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
       verifyToken(
         await signActivityToken({ audience: 'someone-elses-app-id' }),
       ),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(TeamsActivityTokenInvalidError);
   });
 
   it('should reject an expired token beyond the clock tolerance', async () => {
     await expect(
       verifyToken(await signActivityToken({ expiresIn: '-10m' })),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(TeamsActivityTokenInvalidError);
   });
 
   it('should reject a token whose serviceUrl claim points elsewhere', async () => {
@@ -218,6 +229,8 @@ describe('verifyTeamsActivityTokenOrThrow', () => {
       .setExpirationTime('5m')
       .sign(symmetricSecret);
 
-    await expect(verifyToken(forgedToken)).rejects.toThrow();
+    await expect(verifyToken(forgedToken)).rejects.toBeInstanceOf(
+      TeamsActivityTokenInvalidError,
+    );
   });
 });

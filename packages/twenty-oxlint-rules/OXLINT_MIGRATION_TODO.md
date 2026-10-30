@@ -19,14 +19,14 @@ This file tracks what was lost or temporarily disabled during the ESLint to Oxli
 |------|-----------------|--------|
 | `twenty/sort-css-properties-alphabetically` | 578 | Auto-fix via `npx nx lint twenty-front --configuration=fix` |
 
-## Dropped Plugins (No Oxlint Equivalent)
+## Dropped or Partially Restored Plugins
 
-These plugins were in use but have no oxlint equivalent. Consider whether alternative tooling is needed.
+These plugins were in use before the Oxlint migration. Some still need replacement coverage.
 
 | Plugin | Where Used | What It Did | Replacement / Status |
 |--------|-----------|-------------|---------------------|
 | `eslint-plugin-project-structure` | Frontend | Enforced folder naming and structure conventions for `src/modules/` (kebab-case dirs, allowed subdirs like hooks/utils/components, file naming for hooks/utils). Config still in `folderStructure.json`. | Re-implemented as `twenty/folder-structure` custom oxlint rule. Enabled as `"warn"` — 403 pre-existing violations (160 non-kebab-case names, 215 depth > 4, 28 naming). |
-| `lingui/*` | Frontend, emails | i18n extraction and consistency rules | No equivalent |
+| `lingui/*` | Frontend, emails | i18n extraction and consistency rules | Frontend checks added source lines with `lingui/no-unlocalized-strings` through an Oxlint JS plugin. Other Lingui rules and email coverage remain disabled. |
 | `@stylistic/*` | Server | Formatting rules (indentation, spacing) | Use Prettier instead |
 | `import/order`, `simple-import-sort/imports` | Server | Import sorting and ordering | No equivalent |
 | `prefer-arrow/prefer-arrow-functions` | Frontend | Enforced arrow functions over function declarations | No equivalent |

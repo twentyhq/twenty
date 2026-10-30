@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { wrapCssInTwentyUiCascadeLayer } from '@/host/utils/wrapCssInTwentyUiCascadeLayer';
+
 type RemoteStyleRendererProps = {
   cssText?: string;
   styleKey?: string;
@@ -27,7 +29,7 @@ export const RemoteStyleRenderer = ({
 
   useEffect(() => {
     if (isDefined(styleRef.current) && isDefined(cssText)) {
-      styleRef.current.textContent = cssText;
+      styleRef.current.textContent = wrapCssInTwentyUiCascadeLayer(cssText);
     }
   }, [cssText]);
 

@@ -5,6 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const samplePythonCode = `import pandas as pd
 import matplotlib.pyplot as plt
@@ -106,13 +107,13 @@ export const WithImageFiles: Story = {
       {
         fileId: '550e8400-e29b-41d4-a716-446655440001',
         filename: 'revenue_chart.png',
-        url: 'https://picsum.photos/800/480',
+        url: IMAGE_URL_MOCK,
         mimeType: 'image/png',
       },
       {
         fileId: '550e8400-e29b-41d4-a716-446655440002',
         filename: 'pie_chart.png',
-        url: 'https://picsum.photos/600/400',
+        url: IMAGE_URL_MOCK,
         mimeType: 'image/png',
       },
     ],

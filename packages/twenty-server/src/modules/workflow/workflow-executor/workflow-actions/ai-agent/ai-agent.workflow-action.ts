@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -22,14 +25,14 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { resolveConversationThreadKey } from 'src/modules/workflow/workflow-executor/utils/resolve-conversation-thread-key.util';
 import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
-import { buildWorkflowAgentRunExecutionContext } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-execution-context.util';
+import { getWorkflowRunUserWorkspaceId } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/get-workflow-run-user-workspace-id.util';
 import { buildWorkflowAgentRunSpec } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-workflow-agent-run-spec.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/guards/is-workflow-ai-agent-action.guard';
 
-// Starts the step's agent and hands it to the engine: an agent that pauses is continued by the
-// engine, which calls the step back with its outcome
+// Starts the step's agent and hands it to the engine, which runs it on its own, continues it when it
+// pauses and calls the step back with its outcome
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
@@ -87,18 +90,26 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    let agent: AgentEntity | null = null;
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
 
-    if (agentId) {
-      agent = await this.agentRepository.findOne(workspaceId, {
-        where: { id: agentId },
-      });
-    }
-
-    if (agentId && !agent) {
+    if (!isDefined(agentRow)) {
       throw new WorkflowStepExecutorException(
         `Agent with id ${agentId} not found`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (!agent.isActive) {
+      const { label } = agent;
+
+      throw new WorkflowStepExecutorException(
+        `Agent "${label}" is archived`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        { userFriendlyMessage: msg`Agent "${label}" is archived.` },
       );
     }
 
@@ -107,16 +118,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const { application } = executionContext;
 
-    if (isDefined(agent)) {
-      await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
-        {
-          application,
-          workspaceId,
-          targetApplicationId: agent.applicationId,
-          targetLabel: `Agent "${agent.name}"`,
-        },
-      );
-    }
+    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      {
+        application,
+        targetApplicationId: agent.applicationId,
+        targetLabel: `Agent "${agent.name}"`,
+      },
+    );
 
     const conversation =
       await this.workflowAgentConversationService.openConversation({
@@ -138,14 +146,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         }),
       });
 
-    const agentExecutionContext = buildWorkflowAgentRunExecutionContext({
-      executionContext,
-      turnCreatedBy:
-        await this.workflowAgentConversationService.findTurnCreatedBy(runInfo),
-    });
     const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
-    const { threadId, outcome, summary } = await this.agentRunnerService.run({
+    // the conversation is linked from the start, so the run can be followed while it goes on
+    await this.workflowRunStepLogService.setAiAgentStepLog({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId,
+      stepId: currentStepId,
+      summary: buildStartedAgentRunSummary(agent.modelId),
+      threadId: conversation.threadId,
+    });
+
+    await this.agentRunnerService.start({
       workspaceId,
       conversation,
       caller: buildWorkflowStepCaller({
@@ -156,32 +168,16 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         step,
         isApplicationBound: isDefined(application),
       }),
-      agent,
       prompt: isDefined(resolvedPrompt)
         ? {
             messages: [{ role: 'user', content: resolvedPrompt }],
-            senderUserWorkspaceId: agentExecutionContext.userWorkspaceId,
+            senderUserWorkspaceId:
+              getWorkflowRunUserWorkspaceId(executionContext),
             senderApplicationId: null,
           }
         : null,
-      executionContext: agentExecutionContext,
     });
 
-    await this.workflowRunStepLogService.setAiAgentStepLog({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId,
-      stepId: currentStepId,
-      summary,
-      threadId,
-    });
-
-    switch (outcome.status) {
-      case 'COMPLETED':
-        return { result: outcome.result };
-      case 'SUSPENDED':
-        return { wait: { type: 'CALLBACK' } };
-      case 'FAILED':
-        return { error: outcome.error };
-    }
+    return { wait: { type: 'CALLBACK' } };
   }
 }

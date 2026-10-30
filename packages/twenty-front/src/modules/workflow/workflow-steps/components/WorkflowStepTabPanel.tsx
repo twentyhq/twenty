@@ -5,7 +5,6 @@ import { Tabs } from 'twenty-ui/primitives/navigation';
 const StyledPanel = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 0;
 `;
 
 type WorkflowStepTabPanelProps = {

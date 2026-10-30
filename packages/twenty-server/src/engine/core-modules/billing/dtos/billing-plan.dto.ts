@@ -13,6 +13,18 @@ export class BillingPlanDTO {
   @Field(() => BillingPlanKey)
   planKey: BillingPlanKey;
 
+  @Field(() => Boolean)
+  isSellable: boolean;
+
+  @Field(() => Boolean)
+  isCheckoutDefault: boolean;
+
+  @Field(() => [BillingPlanKey])
+  upgradePlanKeys: BillingPlanKey[];
+
+  @Field(() => [BillingPlanKey])
+  downgradePlanKeys: BillingPlanKey[];
+
   @Field(() => [BillingLicensedProduct])
   baseProducts: BillingLicensedProduct[];
 

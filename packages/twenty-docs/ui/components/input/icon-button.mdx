@@ -3,36 +3,45 @@ title: IconButton
 description: Trigger actions with accessible icon buttons.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
 
+## Overview
+
 `IconButton` composes [Button](/ui/primitives/input/button) with a square or round surface. Pass the icon as children and provide an accessible name with `aria-label` or `aria-labelledby`. Icon content is decorative and hidden from assistive technology.
+
+<StoryEmbed
+  storyId="ui-components-iconbutton--display"
+  title="Icon button with an accessible name"
+  height={110}
+/>
 
 ## Usage
 
 ```tsx
 import { IconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconSearch } from 'twenty-ui/icon';
 
-export const CreateRecordButton = () => (
-  <IconButton
-    aria-label="Create record"
-    variant="solid"
-    color="accent"
-    size="sm"
-  >
-    <IconPlus />
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
   </IconButton>
 );
 ```
 
 Sizes are `xs` (20px), `sm` (24px), and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use `shape="round"` for a circular button; the default shape is `square`.
 
+## Visual options
+
+Compare one visual choice at a time. Use the named tooltip, elevated, and grouped examples for composition.
+
 <StoryEmbed
-  title="Icon button example"
   storyId="ui-components-iconbutton--catalog"
-  height={620}
+  title="Icon button variants, colors, sizes, shapes, elevation, and states"
+  height={810}
 />
 
 ## Accessible names
@@ -45,21 +54,21 @@ import { IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const LabelledSearchButton = () => (
-  <>
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
     <Text render={<span />} id="records-search-label">
       Search records
     </Text>
     <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
       <IconSearch />
     </IconButton>
-  </>
+  </Text>
 );
 ```
 
 <StoryEmbed
   title="Icon button named by visible text"
   storyId="ui-components-iconbutton--labelled-by"
-  height={180}
+  height={140}
 />
 
 ## Tooltip
@@ -71,7 +80,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconSearch } from 'twenty-ui/icon';
 
 export const SearchRecordsButton = () => (
-  <IconButton aria-label="Search" tooltip="Search records" variant="ghost">
+  <IconButton aria-label="Search" tooltip="Search records">
     <IconSearch />
   </IconButton>
 );
@@ -80,7 +89,7 @@ export const SearchRecordsButton = () => (
 <StoryEmbed
   title="Icon button with tooltip"
   storyId="ui-components-iconbutton--tooltip-documentation"
-  height={180}
+  height={140}
 />
 
 The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `tooltipPlace`, `tooltipDelay`, and `tooltipOffset` to adjust it. Omitting `tooltip` renders the button directly.
@@ -109,7 +118,7 @@ export const AddWidgetButton = () => (
 <StoryEmbed
   title="Elevated icon action"
   storyId="ui-components-iconbutton--elevated"
-  height={180}
+  height={100}
 />
 
 Omit `elevated` or set it to `false` to restore the standard appearance. Elevated buttons support the same tooltips, loading states, links, and keyboard interactions.
@@ -117,7 +126,7 @@ Omit `elevated` or set it to `false` to restore the standard appearance. Elevate
 <StoryEmbed
   title="Elevated icon action with tooltip"
   storyId="ui-components-iconbutton--elevated-tooltip"
-  height={180}
+  height={140}
 />
 
 Replace existing `FloatingIconButton` controls with `IconButton elevated`. Pass the icon as children, use native `aria-label`, and map `small` to `sm` and `medium` to `md`. Supply `size="sm"` when the previous control used its default size. Native focus and `aria-pressed` replace synthetic focus and active flags.
@@ -132,11 +141,21 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconPlus, IconSearch } from 'twenty-ui/icon';
 
 export const RecordActions = () => (
-  <ButtonGroup aria-label="Record actions" size="sm" variant="outline">
-    <IconButton aria-label="Search records">
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
       <IconSearch />
     </IconButton>
-    <IconButton aria-label="Create record">
+    <IconButton aria-label="Create record" tooltip="Create record">
       <IconPlus />
     </IconButton>
   </ButtonGroup>
@@ -145,10 +164,12 @@ export const RecordActions = () => (
 
 [ButtonGroup](/ui/primitives/input/button-group) supplies defaults for size, variant, and color, plus adjoining corners. Explicit child props take precedence independently, including `size="xs"`. Individual buttons do not need a position prop.
 
+Keep attached buttons the same size so their edges align. Set the size on the group and let each button inherit it.
+
 <StoryEmbed
   storyId="ui-components-iconbutton--grouped-overrides"
   title="Individual icon button appearance in a group"
-  height={180}
+  height={140}
 />
 
 ## Links and forms
@@ -157,10 +178,18 @@ Without a custom `render`, `href` renders an anchor unless `nativeButton` is exp
 
 Native button and anchor attributes, event handlers, event details, refs, and render composition pass through to Button. The ref receives the actual root element. Tooltip composition preserves that root and its accessible name. The default is `type="button"`; set `type="submit"` explicitly for form submission.
 
+## Compact and round controls
+
+Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.
+
+<StoryEmbed
+  storyId="ui-components-iconbutton--round-documentation"
+  title="Round icon buttons in compact and regular sizes"
+  height={140}
+/>
+
 ## Props
 
 <IconButtonReference />
 
-## Compact and round controls
-
-Use `size="xs"` for a 20px control and `shape="round"` for circular corners. Existing `RoundedIconButton` controls become `IconButton` with `shape="round"`, `variant="solid"`, and `color="accent"`. Map their old `small` size to `xs` and `medium` size to `sm`. Supply icon children and an accessible name.
+<PageBanner illustration="page-cover-pointer" />

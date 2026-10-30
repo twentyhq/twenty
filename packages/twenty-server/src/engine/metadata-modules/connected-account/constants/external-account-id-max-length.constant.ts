@@ -1,0 +1,1 @@
+export const EXTERNAL_ACCOUNT_ID_MAX_LENGTH = 512;

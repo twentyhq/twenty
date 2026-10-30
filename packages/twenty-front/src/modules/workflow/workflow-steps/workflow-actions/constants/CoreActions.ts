@@ -1,4 +1,5 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { CREATE_CALENDAR_EVENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateCalendarEventAction';
 import { DRAFT_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DraftEmailAction';
@@ -6,7 +7,7 @@ import { HTTP_REQUEST_ACTION } from '@/workflow/workflow-steps/workflow-actions/
 import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
 
 export const CORE_ACTIONS: Array<{
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<
     WorkflowActionType,
     | 'CODE'

@@ -24,6 +24,8 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 type Story = StoryObj<typeof SegmentedControl>;
 
+export const Display: Story = {};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -40,8 +42,6 @@ export const Default: Story = {
     );
   },
 };
-
-export const Documentation: Story = {};
 
 export const Dark: Story = {
   globals: { colorScheme: 'dark' },
@@ -94,6 +94,33 @@ export const IconOnly: Story = {
     await userEvent.click(chat);
     await expect(chat).toBeChecked();
     await expect(home).not.toBeChecked();
+  },
+};
+
+export const Small: Story = {
+  args: { size: 'sm' },
+};
+
+export const Rectangle: Story = {
+  args: { variant: 'rectangle', style: { width: 280 } },
+  play: Default.play,
+};
+
+export const FullWidth: Story = {
+  args: { fullWidth: true, variant: 'rectangle' },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 360 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('radiogroup').getBoundingClientRect().width,
+    ).toBe(360);
   },
 };
 

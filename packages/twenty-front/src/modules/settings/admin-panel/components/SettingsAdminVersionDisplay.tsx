@@ -9,18 +9,10 @@ type SettingsAdminVersionDisplayProps = {
 };
 
 const StyledActionLink = styled.a`
-  align-items: center;
   color: ${themeCssVariables.font.color.primary};
-  display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
-  gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
-
-  :hover {
-    color: ${themeCssVariables.font.color.primary};
-    cursor: pointer;
-  }
 `;
 
 const StyledSpan = styled.span`

@@ -3,7 +3,6 @@ import { MetadataTranslationsTableRow } from '@/settings/translations/components
 import { type MetadataTranslationLanguageRow } from '@/settings/translations/types/MetadataTranslationLanguageRow';
 import { type MetadataTranslationRowValue } from '@/settings/translations/types/MetadataTranslationRowValue';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
-import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -70,13 +69,7 @@ export const MetadataTranslationsTable = ({
             <TableBody>
               {showSkeleton
                 ? Array.from({ length: 3 }).map((_, index) => (
-                    <SkeletonLine
-                      baseColor={LEGACY_SKELETON_COLORS.base}
-                      highlightColor={LEGACY_SKELETON_COLORS.highlight}
-                      height={32}
-                      borderRadius={4}
-                      key={index}
-                    />
+                    <SkeletonLine height={32} key={index} />
                   ))
                 : languageRows.map(({ locale, label, translations }) => (
                     <MetadataTranslationsTableRow

@@ -1,10 +1,17 @@
+import { type MarkdownDisplayMode } from '@/ai/types/MarkdownDisplayMode';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledMarkdownContainer = styled.div`
+export const StyledMarkdownContainer = styled.div<{
+  displayMode: MarkdownDisplayMode;
+}>`
   border-radius: ${themeCssVariables.border.radius.sm};
-  line-height: 150%;
-  margin: ${themeCssVariables.spacing['1.5']} 0;
+  line-height: ${({ displayMode }) =>
+    displayMode === 'default'
+      ? `calc(${themeCssVariables.text.lineHeight.lg} * 100%)`
+      : themeCssVariables.spacing[6]};
+  margin: ${({ displayMode }) =>
+    displayMode === 'bubble' ? '0' : `${themeCssVariables.spacing['1.5']} 0`};
   overflow-x: auto;
   position: relative;
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};
@@ -25,7 +32,7 @@ export const StyledMarkdownContainer = styled.div`
   }
 
   .markdown-link:hover {
-    text-decoration: underline !important;
+    text-decoration: underline;
   }
 
   strong,
@@ -36,7 +43,7 @@ export const StyledMarkdownContainer = styled.div`
   h1,
   h2,
   h3 {
-    font-weight: ${themeCssVariables.font.weight.semiBold} !important;
+    font-weight: ${themeCssVariables.font.weight.semiBold};
   }
 
   h1 {
@@ -82,28 +89,27 @@ export const StyledMarkdownContainer = styled.div`
   }
 
   hr {
-    background-color: ${themeCssVariables.border.color.light} !important;
+    background-color: ${themeCssVariables.border.color.light};
     border: none;
     height: 1px;
     margin: ${themeCssVariables.spacing[4]} 0;
   }
 
-  ol:first-of-type:not(.nested),
-  ul:first-of-type:not(.nested) {
-    margin-top: ${themeCssVariables.spacing[1]} !important;
+  ol,
+  ul {
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing[1]} 0;
+    padding-left: ${themeCssVariables.spacing[4]};
   }
 
-  ol:last-of-type:not(.nested),
-  ul:last-of-type:not(.nested) {
-    margin-bottom: ${themeCssVariables.spacing[1]} !important;
+  ul {
+    list-style-type: disc;
   }
 
   li {
-    line-height: 150%;
-    margin-bottom: ${themeCssVariables.spacing['0.5']} !important;
-    margin-top: ${themeCssVariables.spacing['0.5']} !important;
-    padding-bottom: ${themeCssVariables.spacing['0.5']} !important;
-    padding-top: ${themeCssVariables.spacing['0.5']} !important;
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing['0.5']} 0;
+    padding: ${themeCssVariables.spacing['0.5']} 0;
   }
 
   :not(pre) > code {
@@ -127,22 +133,18 @@ export const StyledMarkdownContainer = styled.div`
   }
 
   .markdown-code-outer-container {
-    border-radius: ${themeCssVariables.border.radius.md} !important;
+    border-radius: ${themeCssVariables.border.radius.md};
     overflow: hidden;
   }
 
   .markdown-block-code {
     background-color: ${themeCssVariables.background.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: ${themeCssVariables.border.radius.md} !important;
+    border-radius: ${themeCssVariables.border.radius.md};
     overflow-x: auto;
   }
 
-  .markdown-block-code * {
-    animation: none !important;
-  }
-
-  img {
+  .markdown-image {
     height: auto;
     max-width: 100%;
   }
@@ -163,10 +165,6 @@ export const StyledParagraph = styled.div`
 
 export const StyledSkeletonContainer = styled.div`
   max-width: 100%;
-
-  [data-skeleton] {
-    max-width: 100%;
-  }
 `;
 
 export const StyledTableScrollContainer = styled.div`

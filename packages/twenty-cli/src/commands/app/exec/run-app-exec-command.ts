@@ -38,9 +38,10 @@ export const runAppExecCommand: CommandRun<TargetCommandContext> = async (
   });
   const manifest = await readExecManifest(context);
   if (selector.kind === 'hook') {
-    output.progress(
-      'Executing the hook only; this does not install or uninstall the app.',
-    );
+    output.progress({
+      message:
+        'Executing the hook only; this does not install or uninstall the app.',
+    });
   }
   const result = await executeAppFunction({
     manifest,
@@ -49,9 +50,9 @@ export const runAppExecCommand: CommandRun<TargetCommandContext> = async (
     target,
     signal,
     onExecuting: (name) =>
-      output.progress(
-        `Executing ${formatDataValue(name)} on ${target.apiUrl}…`,
-      ),
+      output.progress({
+        message: `Executing ${formatDataValue(name)} on ${target.apiUrl}…`,
+      }),
   });
   const human = formatFunctionExecution(
     result,
@@ -60,7 +61,7 @@ export const runAppExecCommand: CommandRun<TargetCommandContext> = async (
 
   if (result.status !== 'SUCCESS') {
     if (outputMode === 'human') {
-      output.progress(human);
+      output.progress({ message: human });
     }
     throw new CliError({
       code: 'EXECUTION_FAILED',

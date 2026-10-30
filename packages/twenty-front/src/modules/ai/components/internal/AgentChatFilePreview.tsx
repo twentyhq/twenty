@@ -122,7 +122,6 @@ export const AgentChatFilePreview = ({
             render={<span />}
             text={content}
             tooltipContent={displayName}
-            style={{ minWidth: 0 }}
           />
         </StyledPreviewButton>
       }

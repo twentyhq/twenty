@@ -1,8 +1,9 @@
+import { type JsonRpcError } from 'src/engine/api/mcp/types/json-rpc-error.type';
+import { type McpResult } from 'src/engine/api/mcp/types/mcp-result.type';
+
 export const wrapJsonRpcResponse = (
   id: string | number,
-  payload:
-    | Record<'result', Record<string, unknown>>
-    | Record<'error', Record<string, unknown>>,
+  payload: { result: McpResult } | { error: JsonRpcError },
 ) => {
   return {
     id,

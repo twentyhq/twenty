@@ -6,6 +6,7 @@ on:
       - 'packages/twenty-companion/**'
       - 'packages/twenty-ui/**'
       - 'packages/twenty-front/**'
+      - 'packages/twenty-oxlint-rules/**'
       - 'packages/twenty-shared/**'
       - 'package.json'
       - 'yarn.lock'
@@ -16,6 +17,7 @@ on:
       - 'packages/twenty-companion/**'
       - 'packages/twenty-ui/**'
       - 'packages/twenty-front/**'
+      - 'packages/twenty-oxlint-rules/**'
       - 'packages/twenty-shared/**'
       - 'package.json'
       - 'yarn.lock'
@@ -35,8 +37,12 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: ./.github/actions/yarn-install
+      - name: Build Twenty UI
+        run: yarn nx build twenty-ui
       - name: Typecheck
         run: yarn workspace @twentyhq/companion typecheck
+      - name: Lingui strings
+        run: yarn workspace @twentyhq/companion lint:unlocalized-strings
       - name: Test
         run: yarn workspace @twentyhq/companion test
       - name: Build

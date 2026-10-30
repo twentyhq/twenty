@@ -45,16 +45,14 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
-    aggregateQuery,
-    {
+  const { data, loading, error, refetch } =
+    useQuery<RecordGqlOperationFindManyResult>(aggregateQuery, {
       skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
       variables: {
         filter,
       },
       client: apolloCoreClient,
-    },
-  );
+    });
 
   const formattedData: AggregateRecordsData = {};
 
@@ -77,5 +75,6 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
     data: formattedData as T,
     loading,
     error,
+    refetch,
   };
 };

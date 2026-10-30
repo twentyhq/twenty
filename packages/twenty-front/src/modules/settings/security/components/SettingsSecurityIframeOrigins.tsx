@@ -93,7 +93,7 @@ export const SettingsSecurityIframeOrigins = () => {
     <Section.Root>
       <Section.Header
         title={t`Iframe embedding`}
-        description={t`Allow trusted websites to display this workspace in an iframe. Users who are already signed in may see their workspace inside those websites, so only add origins you fully trust. Leave the list empty to block external embedding.`}
+        description={t`Websites allowed to embed this workspace. Only add ones you fully trust.`}
       />
       <StyledList>
         {isDefined(policyError) && (

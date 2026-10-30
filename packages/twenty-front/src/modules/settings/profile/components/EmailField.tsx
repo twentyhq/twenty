@@ -28,10 +28,6 @@ const StyledFieldRow = styled.div`
 const StyledActionWrapper = styled.div`
   align-items: stretch;
   display: flex;
-
-  & > button + button {
-    border-left: none;
-  }
 `;
 
 const StyledActionButtonContainer = styled.div`

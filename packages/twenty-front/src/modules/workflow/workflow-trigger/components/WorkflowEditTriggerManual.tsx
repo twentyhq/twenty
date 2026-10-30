@@ -95,7 +95,10 @@ export const WorkflowEditTriggerManual = ({
           fullWidth
           disabled={triggerOptions.readonly}
           value={availability?.type}
-          options={MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS}
+          options={MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           onChange={(availabilityType) => {
             if (triggerOptions.readonly === true) {
               return;
@@ -202,7 +205,10 @@ export const WorkflowEditTriggerManual = ({
           description={t`Display a button in the top navbar to trigger this workflow`}
           fullWidth
           value={trigger.settings.isPinned}
-          options={MANUAL_TRIGGER_IS_PINNED_OPTIONS}
+          options={MANUAL_TRIGGER_IS_PINNED_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           disabled={triggerOptions.readonly}
           onChange={(updatedValue) => {
             if (triggerOptions.readonly === true) {

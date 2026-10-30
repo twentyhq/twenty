@@ -33,6 +33,21 @@ describe('API key role assignment permission', () => {
       token,
     );
 
+  const generateApiKeyTokenAs = (token?: string) =>
+    makeMetadataApiRequest(
+      {
+        query: gql`
+          mutation GenerateApiKeyToken($apiKeyId: UUID!, $expiresAt: String!) {
+            generateApiKeyToken(apiKeyId: $apiKeyId, expiresAt: $expiresAt) {
+              token
+            }
+          }
+        `,
+        variables: { apiKeyId, expiresAt: '2099-01-01T00:00:00Z' },
+      },
+      token,
+    );
+
   const createApiKeyAsJony = (roleId: string) =>
     makeMetadataApiRequest(
       {
@@ -189,6 +204,25 @@ describe('API key role assignment permission', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('denies generating a token for an Admin API key when the caller lacks ROLES permission', async () => {
+    const response = await generateApiKeyTokenAs(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.data?.generateApiKeyToken ?? null).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('allows generating a token for an API key with ROLES permission', async () => {
+    const response = await generateApiKeyTokenAs();
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.generateApiKeyToken.token).toEqual(
+      expect.any(String),
+    );
   });
 
   // A rotated secret is redeemable at /oauth/token for the application's own

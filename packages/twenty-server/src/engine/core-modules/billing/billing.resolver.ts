@@ -21,8 +21,10 @@ import { BillingSessionDTO } from 'src/engine/core-modules/billing/dtos/billing-
 import { BillingUpdateDTO } from 'src/engine/core-modules/billing/dtos/billing-update.dto';
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
+import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-switch-plan.input';
+import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -133,41 +135,51 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const checkoutSessionParams = {
-      user,
-      workspace,
-      successUrlPath,
-      plan: plan ?? BillingPlanKey.PRO,
-      requirePaymentMethod,
-    };
-
     const billingPricesPerPlan =
-      await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: checkoutSessionParams.plan,
+      await this.billingPlanService.getSellablePlanPricesByIntervalOrThrow({
+        planKey: plan,
         interval: recurringInterval,
       });
 
-    if (!requirePaymentMethod) {
-      const successUrl =
-        await this.billingPortalWorkspaceService.createDirectSubscription({
-          ...checkoutSessionParams,
-          billingPricesPerPlan,
-        });
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      userEmail: user.email,
+      workspaceId: workspace.id,
+      createSubscription: async (isTrialLimitReached) => {
+        const isPaymentMethodRequired =
+          requirePaymentMethod || isTrialLimitReached;
 
-      return {
-        url: successUrl,
-      };
-    } else {
-      const checkoutSessionURL =
-        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
+        const checkoutSessionParams = {
+          user,
+          workspace,
+          successUrlPath,
+          plan,
+          requirePaymentMethod: isPaymentMethodRequired,
+          isTrialLimitReached,
           billingPricesPerPlan,
-        });
+        };
 
-      return {
-        url: checkoutSessionURL,
-      };
-    }
+        if (!isPaymentMethodRequired) {
+          const successUrl =
+            await this.billingPortalWorkspaceService.createDirectSubscription(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: successUrl,
+          };
+        } else {
+          const checkoutSessionURL =
+            await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: checkoutSessionURL,
+          };
+        }
+      },
+    });
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
@@ -202,20 +214,25 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const resolvedPlan = plan ?? BillingPlanKey.PRO;
-
     const billingPricesPerPlan =
-      await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: resolvedPlan,
+      await this.billingPlanService.getSellablePlanPricesByIntervalOrThrow({
+        planKey: plan,
         interval: recurringInterval,
       });
 
-    return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
-      user,
-      workspace,
-      plan: resolvedPlan,
-      billingPricesPerPlan,
-      idempotencyKey,
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      userEmail: user.email,
+      workspaceId: workspace.id,
+      createSubscription: (isTrialLimitReached) =>
+        this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
+          user,
+          workspace,
+          plan,
+          billingPricesPerPlan,
+          isTrialLimitReached,
+          idempotencyKey,
+        }),
     });
   }
 
@@ -289,8 +306,11 @@ export class BillingResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.BILLING),
   )
-  async switchBillingPlan(@AuthWorkspace() workspace: WorkspaceEntity) {
-    await this.billingSubscriptionUpdateService.changePlan(workspace.id);
+  async switchBillingPlan(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { plan }: BillingSwitchPlanInput,
+  ) {
+    await this.billingSubscriptionUpdateService.changePlan(workspace.id, plan);
 
     return {
       billingSubscriptions:
@@ -404,6 +424,31 @@ export class BillingResolver {
     };
   }
 
+  @Mutation(() => BillingCustomerEntity)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.BILLING),
+  )
+  async updateUserCreditsFallback(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args() { userCreditsFallback }: BillingUpdateUserCreditsFallbackInput,
+  ): Promise<BillingCustomerEntity> {
+    return this.billingService.updateUserCreditsFallbackOrThrow({
+      workspaceId: workspace.id,
+      userCreditsFallback,
+    });
+  }
+
   @Query(() => [BillingPlanDTO])
   @UseGuards(
     AuthPrincipalGuard({
@@ -419,10 +464,31 @@ export class BillingResolver {
     }),
     NoPermissionGuard,
   )
-  async listPlans(): Promise<BillingPlanDTO[]> {
+  async billingPlans(): Promise<BillingPlanDTO[]> {
     const plans = await this.billingPlanService.listPlans();
 
     return plans.map(formatBillingDatabaseProductToGraphqlDTO);
+  }
+
+  @Query(() => [BillingPlanDTO], {
+    deprecationReason: 'Use billingPlans instead.',
+  })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    NoPermissionGuard,
+  )
+  async listPlans(): Promise<BillingPlanDTO[]> {
+    return this.billingPlans();
   }
 
   @Mutation(() => BillingEndTrialPeriodDTO)
@@ -498,10 +564,18 @@ export class BillingResolver {
 
     return usageData.map((item) => ({
       ...item,
-      usedCredits: toDisplayCredits(item.usedCredits),
-      grantedCredits: toDisplayCredits(item.grantedCredits),
-      rolloverCredits: toDisplayCredits(item.rolloverCredits),
-      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      workspaceCreditsUsed: toDisplayCredits(item.workspaceCreditsUsed),
+      userCreditsUsed: toDisplayCredits(item.userCreditsUsed),
+      workspaceCreditsGranted: toDisplayCredits(item.workspaceCreditsGranted),
+      workspaceCreditsGrantedForSeats: toDisplayCredits(
+        item.workspaceCreditsGrantedForSeats,
+      ),
+      workspaceCreditsExtraGranted: toDisplayCredits(
+        item.workspaceCreditsExtraGranted,
+      ),
+      workspaceCreditsTotalGranted: toDisplayCredits(
+        item.workspaceCreditsTotalGranted,
+      ),
       unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
     }));
   }
@@ -571,6 +645,7 @@ export class BillingResolver {
         setting: PermissionFlagType.BILLING,
         apiKeyId,
         applicationId,
+        agentId: undefined,
       });
 
     if (!userHasPermission) {

@@ -20,6 +20,7 @@ import {
   ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
+  isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
@@ -37,14 +38,23 @@ const MessagePartRenderer = ({
   part,
   frontComponentIdByToolName,
   isStreaming,
+  isUserMessage,
 }: {
   part: ExtendedUIMessagePart;
   frontComponentIdByToolName: Map<string, string>;
   isStreaming: boolean;
+  isUserMessage?: boolean;
 }) => {
+  const displayMode = isUserMessage ? 'bubble' : 'chat';
+
   switch (part.type) {
     case 'text':
-      return <LazyMarkdownContent text={part.text} />;
+      return (
+        <LazyMarkdownContent
+          text={part.text}
+          displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
+        />
+      );
     case 'data-compaction':
       return <AiChatCompactionIndicator />;
     case 'data-code-execution':
@@ -111,12 +121,14 @@ const MessagePartRenderer = ({
 export const AiChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
+  isUserMessage,
   hasError,
   shouldHideThinkingSteps = false,
   workDurationMs,
 }: {
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
+  isUserMessage?: boolean;
   hasError?: boolean;
   shouldHideThinkingSteps?: boolean;
   workDurationMs?: number | null;
@@ -134,6 +146,7 @@ export const AiChatAssistantMessageRenderer = ({
       part.type !== 'data-thread-title' &&
       !isEmptyReasoningPart(part) &&
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
+      !isNoReplyToolPart(part) &&
       !(
         hasCodeExecutionData &&
         isToolUIPart(part) &&
@@ -209,6 +222,7 @@ export const AiChatAssistantMessageRenderer = ({
               part={renderItem.part}
               frontComponentIdByToolName={frontComponentIdByToolName}
               isStreaming={isLastMessageStreaming}
+              isUserMessage={isUserMessage}
             />
           ),
         )}

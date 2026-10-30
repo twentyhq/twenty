@@ -3,37 +3,12 @@ import { useTurnIntoBlockOptions } from '@/advanced-text-editor/hooks/useTurnInt
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useId } from 'react';
-import { IconPilcrow } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
-const StyledMenuItem = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  border-radius: ${themeCssVariables.spacing[1.5]};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  gap: 4px;
-  height: ${themeCssVariables.spacing[6]};
-  padding: 0 ${themeCssVariables.spacing[1.5]};
-  padding: 0;
-  width: 100%;
-
-  :hover {
-    background: ${themeCssVariables.background.transparent.medium};
-  }
-
-  :focus {
-    outline: none;
-  }
-`;
+import { LightButton } from 'twenty-ui/components/input';
+import { IconTextSize } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
 type TurnIntoBlockDropdownProps = {
   editor: Editor;
@@ -48,17 +23,16 @@ export const TurnIntoBlockDropdown = ({
 
   const options = useTurnIntoBlockOptions(editor);
   const activeItem = options.find((option) => option.isActive());
-  const { icon: ActiveIcon = IconPilcrow, title: activeTitle = t`Paragraph` } =
+  const { icon: ActiveIcon = IconTextSize, title: activeTitle = t`Text` } =
     activeItem ?? {};
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
       <Dropdown.Trigger
         render={
-          <StyledMenuItem>
-            <ActiveIcon size={theme.icon.size.md} />
+          <LightButton size="sm" startIcon={<ActiveIcon />}>
             {activeTitle}
-          </StyledMenuItem>
+          </LightButton>
         }
       />
       <DropdownContent

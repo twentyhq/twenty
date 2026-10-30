@@ -21,7 +21,6 @@ describe('computeRecordGqlOperationFilter', () => {
         id: 'uuid-filter',
         fieldMetadataId: companyIdField.id,
         value: uuidValue,
-        type: 'UUID',
         operand: ViewFilterOperand.IS,
       },
     ];

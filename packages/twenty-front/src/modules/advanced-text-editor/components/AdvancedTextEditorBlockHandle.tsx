@@ -1,6 +1,7 @@
 import { AdvancedTextEditorBlockHandleMenu } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandleMenu';
 import { AdvancedTextEditorDragPreview } from '@/advanced-text-editor/components/AdvancedTextEditorDragPreview';
 import { getAdvancedTextEditorBlockDisplay } from '@/advanced-text-editor/utils/getAdvancedTextEditorBlockDisplay';
+import { getBlockHandleAnchorRect } from '@/advanced-text-editor/utils/getBlockHandleAnchorRect';
 import { offset } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -9,8 +10,7 @@ import {
   DragHandle,
   type DragHandleProps,
 } from '@tiptap/extension-drag-handle-react';
-import { type CSSProperties, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useRef, useState } from 'react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -22,13 +22,23 @@ const DRAG_HANDLE_OPTIONS: Pick<
     edgeDetection: 'none',
     rules: [
       {
-        id: 'excludeColumn',
-        evaluate: ({ node }) =>
-          node.type.name === TIPTAP_NODE_TYPES.COLUMN ? 1000 : 0,
+        id: 'excludeColumnAndColumnOrTableContent',
+        evaluate: ({ node, $pos, depth }) =>
+          node.type.name === TIPTAP_NODE_TYPES.COLUMN ||
+          Array.from(
+            { length: depth },
+            (_, ancestorDepth) => $pos.node(ancestorDepth).type.name,
+          ).some(
+            (ancestorType) =>
+              ancestorType === TIPTAP_NODE_TYPES.COLUMN ||
+              ancestorType === TIPTAP_NODE_TYPES.TABLE,
+          )
+            ? 1000
+            : 0,
       },
     ],
   },
-  computePositionConfig: { middleware: [offset(8)] },
+  computePositionConfig: { placement: 'left', middleware: [offset(4)] },
 };
 
 const StyledHandleSlot = styled.div`
@@ -39,18 +49,9 @@ const StyledHandleSlot = styled.div`
   width: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledBlockOutline = styled.div`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  outline: 1px solid ${themeCssVariables.border.color.blue};
-  outline-offset: ${themeCssVariables.spacing[1]};
-  pointer-events: none;
-  position: absolute;
-`;
-
 type HoveredBlock = {
   pos: number;
   display: ReturnType<typeof getAdvancedTextEditorBlockDisplay>;
-  outline: CSSProperties;
 };
 
 type AdvancedTextEditorBlockHandleProps = {
@@ -64,33 +65,40 @@ export const AdvancedTextEditorBlockHandle = ({
 }: AdvancedTextEditorBlockHandleProps) => {
   const { i18n } = useLingui();
   const dragPreviewRef = useRef<HTMLDivElement>(null);
+  const handleSlotRef = useRef<HTMLDivElement>(null);
+  const hoveredBlockElementRef = useRef<HTMLElement>(null);
   const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null);
-  const outlineContainer = editor.view.dom.parentElement;
+
+  const getHoveredBlockAnchor = () => {
+    const blockElement = hoveredBlockElementRef.current;
+
+    if (!isDefined(blockElement)) {
+      return null;
+    }
+
+    return {
+      getBoundingClientRect: () =>
+        getBlockHandleAnchorRect({
+          blockElement,
+          handleHeight: handleSlotRef.current?.offsetHeight ?? 0,
+        }),
+    };
+  };
 
   const handleNodeChange = ({ pos }: { pos: number }) => {
     const blockElement = pos >= 0 ? editor.view.nodeDOM(pos) : null;
 
-    if (
-      !(blockElement instanceof HTMLElement) ||
-      !isDefined(outlineContainer)
-    ) {
-      setHoveredBlock(null);
-      return;
-    }
+    hoveredBlockElementRef.current =
+      blockElement instanceof HTMLElement ? blockElement : null;
 
-    const blockRect = blockElement.getBoundingClientRect();
-    const containerRect = outlineContainer.getBoundingClientRect();
-
-    setHoveredBlock({
-      pos,
-      display: getAdvancedTextEditorBlockDisplay(editor.state.doc, pos),
-      outline: {
-        top: blockRect.top - containerRect.top,
-        left: blockRect.left - containerRect.left,
-        width: blockRect.width,
-        height: blockRect.height,
-      },
-    });
+    setHoveredBlock(
+      blockElement instanceof HTMLElement
+        ? {
+            pos,
+            display: getAdvancedTextEditorBlockDisplay(editor.state.doc, pos),
+          }
+        : null,
+    );
   };
 
   const handleMenuOpenChange = (isOpen: boolean) =>
@@ -114,42 +122,36 @@ export const AdvancedTextEditorBlockHandle = ({
     );
 
   return (
-    <>
-      <DragHandle
-        editor={editor}
-        nested={DRAG_HANDLE_OPTIONS.nested}
-        computePositionConfig={DRAG_HANDLE_OPTIONS.computePositionConfig}
-        onNodeChange={handleNodeChange}
-        onElementDragStart={replaceDragImageAfterDragHandle}
-        onElementDragEnd={() => {
-          editor.view.dragging = null;
-          setHoveredBlock(null);
-        }}
-      >
-        <StyledHandleSlot>
-          {isDefined(hoveredBlock) && (
-            <>
-              <AdvancedTextEditorBlockHandleMenu
-                editor={editor}
-                blockPos={hoveredBlock.pos}
-                onOpenChange={handleMenuOpenChange}
-                onOpenBlockSettings={onOpenBlockSettings}
-              />
-              <AdvancedTextEditorDragPreview
-                ref={dragPreviewRef}
-                Icon={hoveredBlock.display.icon}
-                label={i18n._(hoveredBlock.display.title)}
-              />
-            </>
-          )}
-        </StyledHandleSlot>
-      </DragHandle>
-      {isDefined(hoveredBlock) &&
-        isDefined(outlineContainer) &&
-        createPortal(
-          <StyledBlockOutline style={hoveredBlock.outline} />,
-          outlineContainer,
+    <DragHandle
+      editor={editor}
+      nested={DRAG_HANDLE_OPTIONS.nested}
+      computePositionConfig={DRAG_HANDLE_OPTIONS.computePositionConfig}
+      getReferencedVirtualElement={getHoveredBlockAnchor}
+      onNodeChange={handleNodeChange}
+      onElementDragStart={replaceDragImageAfterDragHandle}
+      onElementDragEnd={() => {
+        editor.view.dragging = null;
+        editor.view.dispatch(editor.state.tr.setMeta('hideDragHandle', true));
+        setHoveredBlock(null);
+      }}
+    >
+      <StyledHandleSlot ref={handleSlotRef}>
+        {isDefined(hoveredBlock) && (
+          <>
+            <AdvancedTextEditorBlockHandleMenu
+              editor={editor}
+              blockPos={hoveredBlock.pos}
+              onOpenChange={handleMenuOpenChange}
+              onOpenBlockSettings={onOpenBlockSettings}
+            />
+            <AdvancedTextEditorDragPreview
+              ref={dragPreviewRef}
+              Icon={hoveredBlock.display.icon}
+              label={i18n._(hoveredBlock.display.title)}
+            />
+          </>
         )}
-    </>
+      </StyledHandleSlot>
+    </DragHandle>
   );
 };

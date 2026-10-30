@@ -41,7 +41,10 @@ const buildUserContext = (
     ...applicationFields,
   }) as WorkspaceAuthContext;
 
-const runInterpreter = async (authContext?: WorkspaceAuthContext) => {
+const runInterpreter = async (
+  authContext?: WorkspaceAuthContext,
+  agentId?: string,
+) => {
   const codeInterpreterService = {
     execute: jest.fn().mockResolvedValue({
       exitCode: 0,
@@ -107,6 +110,7 @@ const runInterpreter = async (authContext?: WorkspaceAuthContext) => {
         userId: USER_ID,
         userWorkspaceId: USER_WORKSPACE_ID,
         threadId: 'thread',
+        agentId,
       },
     );
 
@@ -223,6 +227,43 @@ describe('Code interpreter sandbox token', () => {
     expect(signAsyncOrThrow).not.toHaveBeenCalled();
     expect(sandboxContext.env).toEqual({ TWENTY_SERVER_URL: SERVER_URL });
   });
+
+  it.each([
+    [
+      'the person through the application',
+      buildUserContext({ viaApplication: { id: CALLING_APPLICATION_ID } }),
+      { userId: USER_ID, userWorkspaceId: USER_WORKSPACE_ID },
+    ],
+    [
+      'the application on its own',
+      {
+        type: 'application',
+        workspace: { id: WORKSPACE_ID },
+        application: { id: CALLING_APPLICATION_ID },
+      } as WorkspaceAuthContext,
+      {},
+    ],
+  ])(
+    'binds the token to the agent running the code for %s',
+    async (_, authContext, expectedUserFields) => {
+      const { signAsyncOrThrow } = await runInterpreter(
+        authContext,
+        'agent-id',
+      );
+
+      expect(signAsyncOrThrow).toHaveBeenCalledWith(
+        {
+          sub: CALLING_APPLICATION_ID,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          workspaceId: WORKSPACE_ID,
+          applicationId: CALLING_APPLICATION_ID,
+          agentId: 'agent-id',
+          ...expectedUserFields,
+        },
+        { expiresIn: '5m' },
+      );
+    },
+  );
 
   it('never shares a sandbox between the person running it directly and an application acting for them', async () => {
     const { sandboxContext: directRun } =

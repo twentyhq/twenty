@@ -1,14 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application registration instance flags (integration) updateAdminApplicationRegistration should fail for a caller without the SECURITY permission flag 1`] = `
+exports[`Application registration instance flags (integration) updateAdminApplicationRegistration should fail for a caller without server admin access 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "PERMISSION_DENIED",
-    "userFriendlyMessage": "User does not have permission.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Entity performing the request does not have permission",
-  "name": "ForbiddenError",
+  "message": "Forbidden resource",
 }
 `;
 
@@ -60,20 +58,6 @@ exports[`Application registration instance flags (integration) updateApplication
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Field "isPreInstalled" is not defined by type "UpdateApplicationRegistrationPayload".",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isVetted 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Field "isVetted" is not defined by type "UpdateApplicationRegistrationPayload".",
   "name": "GraphQLError",
 }
 `;

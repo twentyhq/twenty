@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const CREATE_RECORD_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'CREATE_RECORD'>;
   icon: string;
 } = {
-  defaultLabel: 'Create Record',
+  defaultLabel: msg`Create Record`,
   type: 'CREATE_RECORD',
   icon: 'IconPlus',
 };

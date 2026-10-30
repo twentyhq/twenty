@@ -1,7 +1,4 @@
 import { type InputSelectionRequest } from '@/types/InputSelectionRequest';
+import { type RemoteElementCommand } from '@/types/RemoteElementCommand';
 
-export type InputSelectionCommand = {
-  sequence: number;
-  acknowledgedNativeEditSequence?: number;
-  request: InputSelectionRequest;
-};
+export type InputSelectionCommand = RemoteElementCommand<InputSelectionRequest>;

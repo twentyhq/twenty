@@ -256,6 +256,32 @@ export const PageChangeEffect = () => {
         }
         break;
       }
+      case isMatchingLocation(location, AppPath.AiChatInbox): {
+        const isEnteringAiChatInbox = !matchPath(
+          AppPath.AiChatInbox,
+          previousLocation,
+        );
+
+        if (!isEnteringAiChatInbox) {
+          break;
+        }
+
+        resetFocusStackToFocusItem({
+          focusStackItem: {
+            focusId: PageFocusId.AiChatInbox,
+            componentInstance: {
+              componentType: FocusComponentType.PAGE,
+              componentInstanceId: PageFocusId.AiChatInbox,
+            },
+            globalHotkeysConfig: {
+              enableGlobalHotkeysWithModifiers: true,
+              enableGlobalHotkeysConflictingWithKeyboard: true,
+            },
+          },
+          shouldKeepItemsAbovePage: store.get(isSidePanelOpenedState.atom),
+        });
+        break;
+      }
       case isMatchingLocation(location, AppPath.PageLayoutPage): {
         resetFocusStackToFocusItem({
           focusStackItem: {

@@ -6,6 +6,8 @@ import { MEETING_HORIZON_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src
 import { scheduleUpcomingPersonMeetings } from 'src/utils/schedule-meetings';
 
 const handler = async (): Promise<void> => {
+  console.log('on-meeting-horizon-reached started');
+
   await scheduleUpcomingPersonMeetings(new CoreApiClient());
 };
 

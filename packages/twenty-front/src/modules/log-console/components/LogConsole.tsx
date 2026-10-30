@@ -1,11 +1,9 @@
-import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { ResizeHandle } from 'twenty-ui/primitives/layout';
 import {
@@ -14,7 +12,6 @@ import {
   IconLock,
   IconMaximize,
   IconMinimize,
-  IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -29,7 +26,9 @@ import { LOG_CONSOLE_NARROW_BODY_MAX_WIDTH } from '@/log-console/constants/LogCo
 import { LOG_CONSOLE_SOURCES } from '@/log-console/constants/LogConsoleSources';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
@@ -45,6 +44,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { TAB_LIST_ROW_HEIGHT_CSS_VARIABLE } from '@/ui/layout/tab-list/constants/TabListRowHeightCssVariable';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -258,10 +258,11 @@ export const LogConsole = () => {
   const { t } = useLingui();
   const store = useStore();
   const theme = useTheme();
-  const { enqueueToast } = useToast();
   const shouldReduceMotion = useReducedMotion();
 
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
@@ -274,6 +275,9 @@ export const LogConsole = () => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     LOG_CONSOLE_TAB_LIST_INSTANCE_ID,
+  );
+  const [logConsoleActiveSourceId, setLogConsoleActiveSourceId] = useAtomState(
+    logConsoleActiveSourceIdState,
   );
   const [logConsoleHeight, setLogConsoleHeight] = useAtomState(
     logConsoleHeightState,
@@ -294,7 +298,7 @@ export const LogConsole = () => {
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
-  const isVisible = isLogConsoleAllowed && logConsoleDisplayMode !== 'closed';
+  const isVisible = isLogConsoleAllowed && isLogConsoleEnabled;
 
   const [renderedLayout, setRenderedLayout] = useState<LogConsoleLayout | null>(
     isVisible ? { isOpen, isFullScreen } : null,
@@ -356,12 +360,10 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(false);
   };
 
-  const toggleHotkeyLabel = formatShortcut({
-    shortcut: ['Mod', 'J'],
-  });
-
   const toggleHotkeyEffect = isLogConsoleAllowed ? (
-    <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />
+    <LogConsoleToggleHotkeyEffect
+      onToggle={() => setIsLogConsoleEnabled(!isLogConsoleEnabled)}
+    />
   ) : null;
 
   if (!isDefined(displayedLayout)) {
@@ -399,7 +401,9 @@ export const LogConsole = () => {
   ];
 
   const activeSource =
-    sources.find((source) => source.id === activeTabId) ?? sources[0];
+    sources.find(
+      (source) => source.id === (activeTabId ?? logConsoleActiveSourceId),
+    ) ?? sources[0];
 
   const tabs = sources.map((source) => ({
     id: source.id,
@@ -424,7 +428,7 @@ export const LogConsole = () => {
   const handleResizeStart = (height: number) => {
     setIsResizing(true);
 
-    if (height > 0 && logConsoleDisplayMode === 'collapsed') {
+    if (height > 0 && !isOpen) {
       openLogConsole();
     }
   };
@@ -519,10 +523,11 @@ export const LogConsole = () => {
   };
 
   const changeSource = (sourceId: string) => {
-    const filterFields =
-      sources.find((source) => source.id === sourceId)?.filterFields ?? [];
+    const selectedSource = sources.find((source) => source.id === sourceId);
+    const filterFields = selectedSource?.filterFields ?? [];
 
     closeSelectedLog();
+    setLogConsoleActiveSourceId(selectedSource?.id ?? null);
     setLogConsoleFilters((filters) =>
       filters.filter((filter) =>
         filterFields.some(
@@ -530,16 +535,6 @@ export const LogConsole = () => {
         ),
       ),
     );
-  };
-
-  const closeLogConsole = () => {
-    closeSelectedLog();
-    setLogConsoleDisplayMode('closed');
-    setIsLogConsoleFullScreen(false);
-    enqueueToast({
-      status: 'info',
-      children: t`Logs console hidden. Press ${toggleHotkeyLabel} to open it again.`,
-    });
   };
 
   const handlePanelTransitionEnd = (event: TransitionEvent<HTMLDivElement>) => {
@@ -565,7 +560,6 @@ export const LogConsole = () => {
   const fullScreenLabel = displayedLayout.isFullScreen
     ? t`Exit full screen`
     : t`Full screen`;
-  const closeLabel = t`Close`;
 
   const renderActiveSource = () => {
     if (!isClickHouseConfigured) {
@@ -613,18 +607,11 @@ export const LogConsole = () => {
             tabs={tabs}
             behaveAsLinks={false}
             componentInstanceId={LOG_CONSOLE_TAB_LIST_INSTANCE_ID}
+            defaultActiveTabId={activeSource.id}
             onClickTab={openLogConsole}
             onChangeTab={changeSource}
             rightComponent={
               <StyledBarActions>
-                <LightIconButton
-                  emphasis="subtle"
-                  tooltip={closeLabel}
-                  aria-label={closeLabel}
-                  onClick={closeLogConsole}
-                >
-                  <IconX />
-                </LightIconButton>
                 <LightIconButton
                   emphasis="subtle"
                   tooltip={fullScreenLabel}
@@ -640,7 +627,7 @@ export const LogConsole = () => {
                 <IconButton
                   size="sm"
                   variant="outline"
-                  tooltip={`${openOrCollapseLabel} | ${toggleHotkeyLabel}`}
+                  tooltip={openOrCollapseLabel}
                   aria-label={openOrCollapseLabel}
                   onClick={toggleLogConsoleOpen}
                 >

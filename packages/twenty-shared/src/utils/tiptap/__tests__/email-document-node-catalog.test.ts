@@ -10,6 +10,7 @@ describe('EMAIL_DOCUMENT_NODE_CATALOG', () => {
     expect(isEmailDocumentNodeType(TIPTAP_NODE_TYPES.SECTION)).toBe(true);
     expect(isEmailDocumentNodeType(TIPTAP_NODE_TYPES.COLUMNS)).toBe(true);
     expect(isEmailDocumentNodeType(TIPTAP_NODE_TYPES.HTML)).toBe(true);
+    expect(isEmailDocumentNodeType(TIPTAP_NODE_TYPES.BLOCKQUOTE)).toBe(true);
   });
 
   it('distinguishes nodes rendered by their parent from renderer entries', () => {

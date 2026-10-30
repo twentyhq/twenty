@@ -29,16 +29,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const StyledButtonGroupContainer = styled.div`
-  > * > :not(:first-of-type) > button {
-    border-left: none;
-  }
-`;
-
-const StyledButtonContainer = styled.div`
-  align-self: flex-start;
-`;
-
 const StyledDomainFormWrapper = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -209,29 +199,23 @@ export const SettingPublicDomain = () => {
             fullWidth
           />
           {isDefined(selectedPublicDomain) && (
-            <StyledButtonGroupContainer>
-              <ButtonGroup>
-                <StyledButtonContainer>
-                  <Button
-                    loading={isLoading}
-                    startIcon={<IconReload />}
-                    onClick={() =>
-                      checkPublicDomainRecords(selectedPublicDomain.domain)
-                    }
-                    type="button"
-                    variant="outline"
-                  >{t`Reload`}</Button>
-                </StyledButtonContainer>
-                <StyledButtonContainer>
-                  <Button
-                    startIcon={<IconTrash />}
-                    aria-label={t`Delete`}
-                    onClick={onDelete}
-                    variant="outline"
-                  />
-                </StyledButtonContainer>
-              </ButtonGroup>
-            </StyledButtonGroupContainer>
+            <ButtonGroup>
+              <Button
+                loading={isLoading}
+                startIcon={<IconReload />}
+                onClick={() =>
+                  checkPublicDomainRecords(selectedPublicDomain.domain)
+                }
+                type="button"
+                variant="outline"
+              >{t`Reload`}</Button>
+              <Button
+                startIcon={<IconTrash />}
+                aria-label={t`Delete`}
+                onClick={onDelete}
+                variant="outline"
+              />
+            </ButtonGroup>
           )}
         </StyledDomainFormWrapper>
         {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (

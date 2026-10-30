@@ -1,4 +1,5 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
 import { DELAY_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DelayAction';
 import { FILTER_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FilterAction';
 import { IF_ELSE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/IfElseAction';
@@ -6,7 +7,7 @@ import { ITERATOR_ACTION } from '@/workflow/workflow-steps/workflow-actions/cons
 import { WAIT_FOR_EVENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/WaitForEventAction';
 
 export const FLOW_ACTIONS: Array<{
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<
     WorkflowActionType,
     'ITERATOR' | 'FILTER' | 'IF_ELSE' | 'DELAY' | 'WAIT_FOR_EVENT'

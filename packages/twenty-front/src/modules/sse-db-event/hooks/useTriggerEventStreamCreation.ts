@@ -13,6 +13,7 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isCurrentEventStream } from '@/sse-db-event/utils/isCurrentEventStream';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
@@ -22,6 +23,7 @@ import { print, type ExecutionResult } from 'graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
@@ -117,7 +119,9 @@ export const useTriggerEventStreamCreation = () => {
             ) {
               captureException(
                 new Error(
-                  `SSE subscription error: ${value.errors[0]?.message}`,
+                  doNotTranslate(
+                    `SSE subscription error: ${value.errors[0]?.message}`,
+                  ),
                 ),
               );
             }
@@ -156,7 +160,7 @@ export const useTriggerEventStreamCreation = () => {
             );
           } catch (error) {
             const errorProcessingSSEMessage = new Error(
-              'Error while processing SSE message',
+              doNotTranslate('Error while processing SSE message'),
               { cause: error instanceof Error ? error : undefined },
             );
 
@@ -168,6 +172,12 @@ export const useTriggerEventStreamCreation = () => {
           store.set(shouldDestroyEventStreamState.atom, true);
         },
         complete: () => {
+          if (
+            !isCurrentEventStream({ store, eventStreamId: newSseEventStreamId })
+          ) {
+            return;
+          }
+
           store.set(shouldDestroyEventStreamState.atom, true);
         },
       },

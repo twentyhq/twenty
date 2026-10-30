@@ -3,28 +3,43 @@ title: Status
 description: Show a named state with a colored indicator and optional loading feedback.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
 
+## Overview
+
 `Status` combines a colored dot, a text label, and an optional loader. Use it for workflow or record states. Use [Tag](/ui/primitives/data-display/tag) for a category without the status indicator.
 
 <StoryEmbed
-  storyId="ui-data-display-status--documentation"
+  storyId="ui-data-display-status--display"
   title="Status example"
+  height={90}
 />
 
-## Record state
+## Usage
 
 ```tsx
 import { Status } from 'twenty-ui/primitives/data-display';
 
-export const RecordStatus = () => <Status color="green">Active</Status>;
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
 ```
 
 `color` is required and uses the theme palette. The label communicates the meaning independently of the color. The default element is always a `span`, including when a native click handler is supplied; `weight="medium"` emphasizes its text.
 
 ## Loading and announcements
+
+<StoryEmbed
+  storyId="ui-data-display-status--loading"
+  title="Status while saving"
+  height={90}
+/>
 
 ```tsx
 import { Status } from 'twenty-ui/primitives/data-display';
@@ -80,3 +95,5 @@ Compose an interactive owner through `render`. Put its click handler, native att
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />

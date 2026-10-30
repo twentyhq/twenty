@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export type RecordWithPosition = {
@@ -22,7 +23,9 @@ export const computeNewPositionOfDraggedRecord = ({
   );
 
   if (!isDefined(targetItem)) {
-    throw new Error(`Cannot find item to move for id : ${idOfTargetItem}`);
+    throw new Error(
+      doNotTranslate(`Cannot find item to move for id : ${idOfTargetItem}`),
+    );
   }
 
   if (idOfItemToMove === idOfTargetItem) {

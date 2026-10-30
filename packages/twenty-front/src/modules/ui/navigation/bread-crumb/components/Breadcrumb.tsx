@@ -6,17 +6,16 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Breadcrumb as BreadcrumbPrimitive } from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
+export const Breadcrumb = ({ links }: BreadcrumbProps) => {
   const isMobile = useIsMobile();
 
   if (isMobile && isNonEmptyArray(links)) {
-    return <MobileBreadcrumb className={className} links={links} />;
+    return <MobileBreadcrumb links={links} />;
   }
 
   return (
     <BreadcrumbPrimitive
       aria-label={t`Breadcrumb`}
-      className={className}
       links={getBreadcrumbItems(links)}
     />
   );

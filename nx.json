@@ -193,7 +193,7 @@
       "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "vitest run --coverage --shard={args.shard}",
+        "command": "STORYBOOK_COVERAGE=true vitest run --coverage --shard={args.shard}",
         "shard": "1/1"
       }
     },

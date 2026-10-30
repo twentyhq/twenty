@@ -94,6 +94,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async updateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -114,6 +127,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async updateCoreWorkflowVisibility(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -127,6 +153,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMember() workspaceMember:
@@ -153,6 +192,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMember() workspaceMember:
@@ -174,6 +226,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => [DeletedCoreWorkflowDTO])
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async deleteCoreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -188,6 +253,19 @@ export class CoreWorkflowResolver {
   }
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async discardCoreWorkflowDraft(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })

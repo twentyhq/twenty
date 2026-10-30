@@ -95,6 +95,101 @@ export const WithNullOption: Story = {
   },
 };
 
+export const FirstOptionWithoutValue: Story = {
+  args: { value: undefined, onChange: fn(), onBlur: fn() },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Option A',
+    });
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(trigger);
+    const firstOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: false,
+    });
+    await userEvent.click(firstOption);
+    expect(args.onChange).toHaveBeenCalledOnce();
+    expect(args.onChange).toHaveBeenCalledWith('a');
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    const selectedOption = await body.findByRole('option', {
+      name: 'Option A',
+      selected: true,
+    });
+    await waitFor(() => expect(selectedOption).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const FirstOptionWithUnmatchedValue: Story = {
+  args: { value: 'missing', onChange: fn(), onBlur: fn() },
+  play: FirstOptionWithoutValue.play,
+};
+
+export const TypedOptionValues: Story = {
+  args: {
+    value: 1,
+    onChange: fn(),
+    options: [
+      { value: 1, label: 'Number one' },
+      { value: '1', label: 'String one' },
+      { value: false, label: 'Boolean false' },
+      { value: null, label: 'No value' },
+    ],
+  },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(trigger);
+    const numberOption = await body.findByRole('option', {
+      name: 'Number one',
+      selected: true,
+    });
+    await waitFor(() => expect(numberOption).toHaveFocus());
+    expect(body.getByRole('option', { name: 'String one' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
+    await userEvent.click(body.getByRole('option', { name: 'String one' }));
+    expect(args.onChange).toHaveBeenLastCalledWith('1');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Boolean false' }),
+    );
+    expect(args.onChange).toHaveBeenLastCalledWith(false);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('option', { name: 'No value' }),
+    );
+    expect(args.onChange).toHaveBeenLastCalledWith(null);
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await userEvent.click(trigger);
+    const emptyOption = await body.findByRole('option', {
+      name: 'No value',
+      selected: true,
+    });
+    await waitFor(() => expect(emptyOption).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
 export const WithoutOptions: Story = {
   args: {
     options: [],
@@ -120,15 +215,14 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog');
-    const buttons = within(popup).getAllByRole('button');
-    expect(buttons.map((button) => button.textContent)).toEqual([
+    const options = within(popup).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
       'Use default',
       'Éclair',
       'Option B',
       'Option C',
-      'Add option',
     ]);
-    const disabled = within(popup).getByRole('button', { name: 'Option B' });
+    const disabled = within(popup).getByRole('option', { name: 'Option B' });
     expect(disabled).toBeDisabled();
     await userEvent.click(disabled);
     expect(args.onChange).not.toHaveBeenCalled();
@@ -141,20 +235,20 @@ export const SearchWithPinnedDisabledAndAction: Story = {
     await userEvent.type(search, 'default');
     await waitFor(() =>
       expect(
-        within(popup).getByRole('button', { name: 'Use default' }),
+        within(popup).getByRole('option', { name: 'Use default' }),
       ).toHaveAttribute('data-highlighted'),
     );
     await userEvent.clear(search);
     await userEvent.type(search, 'pastry');
     expect(
-      within(popup).queryByRole('button', { name: 'Option C' }),
+      within(popup).queryByRole('option', { name: 'Option C' }),
     ).not.toBeInTheDocument();
     expect(
-      within(popup).queryByRole('button', { name: 'Use default' }),
+      within(popup).queryByRole('option', { name: 'Use default' }),
     ).not.toBeInTheDocument();
     await waitFor(() =>
       expect(
-        within(popup).getByRole('button', { name: 'Éclair' }),
+        within(popup).getByRole('option', { name: 'Éclair' }),
       ).toHaveAttribute('data-highlighted'),
     );
     await userEvent.keyboard('{Enter}');
@@ -176,9 +270,9 @@ export const KeyboardStartsAtSelection: Story = {
     const trigger = within(canvasElement).getByRole('button');
     await userEvent.click(trigger);
     const body = within(canvasElement.ownerDocument.body);
-    const selected = await body.findByRole('button', {
+    const selected = await body.findByRole('option', {
       name: 'Option B',
-      pressed: true,
+      selected: true,
     });
     await waitFor(() => expect(selected).toHaveFocus());
     expect(args.onBlur).not.toHaveBeenCalled();
@@ -279,7 +373,7 @@ export const ParentAndClickOutsideContainment: Story = {
     const trigger = canvas.getByRole('button', { name: 'Option A' });
     await userEvent.click(trigger);
     await userEvent.click(
-      await body.findByRole('button', { name: 'Option B' }),
+      await body.findByRole('option', { name: 'Option B' }),
     );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),

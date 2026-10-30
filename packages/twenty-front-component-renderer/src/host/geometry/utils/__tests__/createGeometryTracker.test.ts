@@ -322,6 +322,37 @@ describe('createGeometryTracker', () => {
     expect(pushGeometryUpdates).toHaveBeenCalledTimes(1);
   });
 
+  it('should omit an unchanged computed style from later pushes', () => {
+    const { tracker, pushGeometryUpdates } = createArmedTracker();
+    const observed = geometryGlobals.createStubNode({
+      x: 0,
+      y: 0,
+      width: 10,
+      height: 10,
+    });
+
+    observed.node.style.paddingTop = '2px';
+    tracker.registerNode('1', observed.node);
+    tracker.observe(['1']);
+    geometryGlobals.flushAnimationFrame();
+
+    observed.setGeometry({ x: 5, y: 0, width: 10, height: 10 });
+    geometryGlobals.flushAnimationFrame();
+
+    observed.node.style.paddingTop = '3px';
+    geometryGlobals.flushAnimationFrame();
+
+    const [firstBatch, secondBatch, thirdBatch] =
+      pushGeometryUpdates.mock.calls.map(([batch]) => batch);
+
+    expect(firstBatch.elements['1'].computedStyle['padding-top']).toBe('2px');
+    expect(firstBatch.viewport.computedStyle).toBeDefined();
+    expect(secondBatch.elements['1'].x).toBe(5);
+    expect(secondBatch.elements['1'].computedStyle).toBeUndefined();
+    expect(secondBatch.viewport.computedStyle).toBeUndefined();
+    expect(thirdBatch.elements['1'].computedStyle['padding-top']).toBe('3px');
+  });
+
   it('should include the viewport in every pushed batch', () => {
     const { tracker, pushGeometryUpdates } = createArmedTracker();
     const observed = geometryGlobals.createStubNode({

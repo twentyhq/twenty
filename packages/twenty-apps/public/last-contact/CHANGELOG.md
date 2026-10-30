@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.0
+
+- Log logic function executions and backfill progress, including batch counts, resume cursors, pauses, and completion.
+- Use the new Last contact logo from the Twenty app icon family: clock hands inside a message bubble on a violet tile.
+
 ## 1.9.1
 
 - Stop the backfill from restoring people trashed while it reads their emails and meetings. Writing a person's last contact restores the record if it is in the trash, and recreates it without a name if it was deleted. The people phase now reads its batch again right before writing, after the paced reads of their emails and meetings, and leaves out people that are gone. A person trashed during the write itself, or while it is retried after a rate limit, can still come back: closing that needs a server update that never restores a record.

@@ -1,7 +1,10 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
+import {
+  Avatar,
+  type AvatarSize,
+  Chip,
+} from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -26,7 +29,6 @@ const StyledContainer = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   min-width: 0;
@@ -48,22 +50,43 @@ export const AppChip = ({
     fallbackApplicationData,
   });
 
+  const avatar = (
+    <Avatar
+      shape={rounded ? 'circle' : 'square'}
+      variant={rounded ? 'soft' : 'outline'}
+      size={size}
+      src={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
+      name={applicationChipData.name}
+      colorSeed={applicationChipData.seed}
+      color={applicationChipData.colors?.color}
+      backgroundColor={applicationChipData.colors?.backgroundColor}
+      borderColor={applicationChipData.colors?.borderColor}
+      pulsing={pulsing}
+    />
+  );
+
   return (
     <StyledContainer className={className}>
-      <Avatar
-        shape={rounded ? 'circle' : 'square'}
-        variant={rounded ? 'soft' : 'outline'}
-        size={size}
-        src={getAbsoluteImageUrl(logoUrl ?? applicationChipData.logo)}
-        name={applicationChipData.name}
-        colorSeed={applicationChipData.seed}
-        color={applicationChipData.colors?.color}
-        backgroundColor={applicationChipData.colors?.backgroundColor}
-        borderColor={applicationChipData.colors?.borderColor}
-        pulsing={pulsing}
-      />
-      {!chipOnly && (
-        <OverflowingTextWithTooltip text={applicationChipData.name} />
+      {chipOnly ? (
+        avatar
+      ) : (
+        <Chip
+          variant="plain"
+          color="secondary"
+          weight="regular"
+          startElement={avatar}
+          style={{
+            blockSize: 'auto',
+            color: 'inherit',
+            fontSize: 'inherit',
+            fontWeight: themeCssVariables.font.weight.regular,
+            gap: 'inherit',
+            minWidth: 0,
+            paddingBlock: 0,
+          }}
+        >
+          {applicationChipData.name}
+        </Chip>
       )}
     </StyledContainer>
   );

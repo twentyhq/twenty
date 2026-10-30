@@ -1,8 +1,11 @@
 ---
 title: Application Config
 description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
-icon: "rocket"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Every app must have exactly one `defineApplication` call. It declares:
 
@@ -51,8 +54,8 @@ Notes:
 - An app can report its own configuration state with [`defineHealthCheck()`](/developers/extend/apps/logic/logic-functions#health-check), for what only the app can know — a key that is present but revoked, a third-party account on the wrong plan. `isRequired` covers what Twenty can see by itself; the health check covers the rest.
 - Both kinds of variable accept `isRequired: true`. A required variable the workspace has not filled in yet leaves the app unconfigured: its settings page shows a banner naming the missing variables, with a button that jumps to the tab where they are set. Mark as required only what the app genuinely cannot run without — an optional variable with a sensible default should stay optional.
 - Both kinds of variable accept `isDeprecated: true`. Use it to retire a variable instead of deleting it: keeping the key declared preserves the stored value (deleting it destroys the value the operator entered), and the variable is still injected, so your code can fall back to it — `process.env.NEW_API_KEY ?? process.env.API_KEY`. A deprecated variable disappears from the app's settings once it has no value, and never counts toward the app's configuration check, so `isDeprecated` beats `isRequired`.
-- Twenty sets these names for every logic function run, so they are reserved: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID`. A manifest that declares one of them as an application or server variable is rejected when the app is synced or published.
-- To add your own entries to the app's settings menu (in place of the generated **Variables** page), declare a front component and point a [`defineSettingsMenuItem()`](/developers/extend/apps/layout/front-components#settings-menu-items) at it, in its own file. Declare as many as you need and order them with `position`; `scope` puts an item under the workspace settings or under each member's own settings. The system-managed **General** item (auto-upgrade, App URL, connections) always comes first, and App URL only shows with **Advanced mode** on.
+- Twenty sets these names for every logic function run, so they are reserved: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID`. Every other name starting with `TWENTY_` is reserved too, for variables Twenty adds later. A manifest that declares a reserved name as an application or server variable is rejected when the app is synced or published.
+- To add your own entries to the app's settings menu (in place of the generated **Variables** page), declare a front component and point a [`defineSettingsMenuItem()`](/developers/extend/apps/layout/front-components#settings-menu-items) at it, in its own file. Declare as many as you need and order them with `position`; `scope` puts an item under the workspace settings or under each member's own settings. The system-managed **General** item (auto-upgrade, App URL, connections) always comes first, and App URL only shows when the app has HTTP-triggered functions.
 
 ## Requested media capabilities
 
@@ -160,7 +163,7 @@ A variable's scope is set when it is created and cannot change. To change it, de
 
 User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
 
-For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
+For user variables, `isRequired` describes a per-member requirement. A member with no value for it, their own or a default, sees your app marked **Missing configuration** in Apps preferences, with a banner naming the variables. It does not affect the workspace configuration warning, and nothing enforces it at runtime: your code still decides what an unset value means.
 
 A user variable is injected with the value of the member your code runs for, or its default until they set their own:
 
@@ -185,7 +188,9 @@ const { myUserApplicationVariables } = await client.query({
 
 Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
 
-A member saves their own value with `updateMyUserApplicationVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
+`updateMyUserApplicationVariable` saves a member's own value. It takes your app's `applicationUniversalIdentifier` and writes the value of the person behind the token: the member's own session, or your app's token when a member is behind it, such as in a front component or a logic function run for a member. Your app's token can only name your own app, and a token with nobody behind it, such as in a cron job or an install hook, is refused. An empty value removes the member's own value, so they read the default again, or an empty string for a variable without one.
+
+It needs no Workspace Apps permission, but it needs User Apps: on the member's role, and, when your app's token makes the call, on your app's default role too, if it declares one. If your app saves user variables, add `SystemPermissionFlag.USER_APPS` to `permissionFlagUniversalIdentifiers` in its [role](/developers/extend/apps/config/roles).
 
 ## Default function role
 
@@ -217,3 +222,5 @@ If you plan to [publish your app](/developers/extend/apps/operations/publishing)
 <Note>
 `logoUrl` and `screenshots` are deprecated aliases of `logo` and `galleryImages`. External absolute URLs (`http://` or `https://`) are not supported for these fields: they are dropped with a warning at build time. Bundle the images in your app's `public/` folder instead.
 </Note>
+
+<PageBanner illustration="card-page-application-config" />

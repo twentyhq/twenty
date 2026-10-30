@@ -10,6 +10,7 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { getRecordAggregateDisplayLabel } from '@/object-record/record-index/utils/getRecordndexAggregateDisplayLabel';
+import { useListenToJunctionRecordOperation } from '@/object-record/record-table-widget/hooks/useListenToJunctionRecordOperation';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
@@ -114,7 +115,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const { data, loading } = useAggregateRecords({
+  const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter: {
@@ -123,6 +124,14 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       ...anyFieldFilter,
     },
     skip: !isDefined(aggregateOperationForViewField),
+  });
+
+  useListenToJunctionRecordOperation({
+    onJunctionRecordOperation: () => {
+      if (isDefined(aggregateOperationForViewField)) {
+        void refetch();
+      }
+    },
   });
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);

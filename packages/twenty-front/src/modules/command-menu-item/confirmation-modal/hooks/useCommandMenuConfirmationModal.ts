@@ -9,6 +9,7 @@ import {
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isDialogOpenedComponentState } from '@/ui/layout/dialog/states/isDialogOpenedComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCommandMenuConfirmationModal = () => {
   const store = useStore();
@@ -33,7 +34,9 @@ export const useCommandMenuConfirmationModal = () => {
         isCommandMenuItemConfirmationModalOpened
       ) {
         throw new Error(
-          'Command menu item confirmation modal is already active for another caller',
+          doNotTranslate(
+            'Command menu item confirmation modal is already active for another caller',
+          ),
         );
       }
 

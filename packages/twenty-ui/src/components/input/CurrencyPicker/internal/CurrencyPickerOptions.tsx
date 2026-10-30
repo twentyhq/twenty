@@ -1,43 +1,53 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString, isUndefined } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { useDropdownContext } from '@ui/components/navigation/Dropdown/internal/useDropdownContext';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
+
 import styles from '../CurrencyPicker.module.scss';
-import { getCurrencyPickerLabel } from './getCurrencyPickerLabel';
 import { type CurrencyPickerOptionsProps } from '../types/CurrencyPickerOptionsProps';
+import { useCurrencyPickerContextOrThrow } from './useCurrencyPickerContextOrThrow';
 
 export const CurrencyPickerOptions = ({
-  currencies,
-  value,
-  onValueChange,
   disabled = false,
-  searchLabel = 'Search',
-  emptyLabel = 'No results',
+  searchable = true,
+  searchLabel = doNotTranslate('Search'),
+  listLabel,
+  emptyLabel = doNotTranslate('No results'),
+  searchProps,
   className,
   render,
   ref,
   ...props
 }: CurrencyPickerOptionsProps) => {
-  const [search, setSearch] = useState('');
-  const normalizedSearch = search.trim().toLowerCase();
-  const matchingCurrencies = currencies.filter((currency) =>
-    getCurrencyPickerLabel(currency).toLowerCase().includes(normalizedSearch),
+  const { state, groupId, options, selectionProps } =
+    useCurrencyPickerContextOrThrow();
+  const { titleId, triggerId } = useDropdownContext();
+  const {
+    value: controlledSearch,
+    defaultValue: defaultSearch = '',
+    onValueChange: onSearchChange,
+    ...searchElementProps
+  } = searchProps ?? {};
+  const [uncontrolledSearch, setUncontrolledSearch] = useState(defaultSearch);
+  const search = controlledSearch ?? uncontrolledSearch;
+  const normalizedSearch = searchable
+    ? String(search).trim().toLowerCase()
+    : '';
+  const matchingCurrencies = options.filter(({ searchText }) =>
+    searchText.includes(normalizedSearch),
   );
   const hasMatchingCurrencies = isNonEmptyArray(matchingCurrencies);
-  const selectedCurrency = matchingCurrencies.find(
-    ({ code }) => code === value,
-  );
-  const orderedCurrencies = isDefined(selectedCurrency)
-    ? [
-        selectedCurrency,
-        ...matchingCurrencies.filter(({ code }) => code !== value),
-      ]
-    : matchingCurrencies;
+  const isDisabled = state.disabled || disabled;
+  const defaultAriaLabelledBy = isDefined(listLabel)
+    ? undefined
+    : (titleId ?? triggerId);
 
   return useRender({
     render,
@@ -47,30 +57,51 @@ export const CurrencyPickerOptions = ({
       className: clsx(styles.options, className),
       children: (
         <>
-          <Dropdown.Search
-            value={search}
-            placeholder={searchLabel}
-            aria-label={searchLabel}
-            onValueChange={setSearch}
-            disabled={disabled}
-          />
-          <Dropdown.Separator />
-          {hasMatchingCurrencies && (
-            <Dropdown.Section scrollable>
-              {orderedCurrencies.map((currency) => (
-                <Dropdown.OptionItem
-                  key={currency.code}
-                  selected={currency.code === value}
-                  disabled={disabled || currency.disabled}
-                  onSelect={() => onValueChange(currency.code)}
-                >
-                  <OverflowingTextWithTooltip
-                    text={getCurrencyPickerLabel(currency)}
-                  />
-                </Dropdown.OptionItem>
-              ))}
-            </Dropdown.Section>
+          {searchable && (
+            <>
+              <Dropdown.Search
+                placeholder={searchLabel}
+                aria-label={searchLabel}
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...searchElementProps}
+                value={search}
+                onValueChange={(nextSearch) => {
+                  onSearchChange?.(nextSearch);
+
+                  if (isUndefined(controlledSearch)) {
+                    setUncontrolledSearch(nextSearch);
+                  }
+                }}
+                disabled={isDisabled || searchProps?.disabled}
+              />
+              <Dropdown.Separator />
+            </>
           )}
+          <Dropdown.SelectionGroup
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...selectionProps}
+            id={groupId}
+            aria-label={listLabel}
+            aria-labelledby={defaultAriaLabelledBy}
+          >
+            {hasMatchingCurrencies && (
+              <Dropdown.Section scrollable>
+                {matchingCurrencies.map(({ currency, label }) => (
+                  <Dropdown.OptionItem
+                    key={currency.code}
+                    value={currency.code}
+                    disabled={isDisabled || currency.disabled}
+                  >
+                    {isString(label) ? (
+                      <OverflowingTextWithTooltip text={label} />
+                    ) : (
+                      label
+                    )}
+                  </Dropdown.OptionItem>
+                ))}
+              </Dropdown.Section>
+            )}
+          </Dropdown.SelectionGroup>
           <Dropdown.Empty className={styles.emptyStatus}>
             {hasMatchingCurrencies ? null : emptyLabel}
           </Dropdown.Empty>

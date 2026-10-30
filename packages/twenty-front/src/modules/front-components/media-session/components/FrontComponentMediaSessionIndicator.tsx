@@ -5,31 +5,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { Popover } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledTrigger = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[6]};
-  justify-content: center;
-  padding: 0;
-  width: ${themeCssVariables.spacing[6]};
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.orange};
-    outline-offset: 2px;
-  }
-`;
 
 const StyledDot = styled.span<{ isCapturing: boolean }>`
   background: ${({ isCapturing }) =>
@@ -42,9 +20,7 @@ const StyledDot = styled.span<{ isCapturing: boolean }>`
   width: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledPopup = styled(Popover.Popup)`
   gap: ${themeCssVariables.spacing[3]};
   max-width: 300px;
   min-width: 220px;
@@ -78,29 +54,28 @@ export const FrontComponentMediaSessionIndicator = () => {
   return (
     <Popover.Root>
       <Popover.Trigger
-        render={<StyledTrigger />}
+        render={
+          <LightIconButton size="sm" aria-label={title}>
+            <StyledDot isCapturing={isCapturing} aria-hidden />
+          </LightIconButton>
+        }
         openOnHover
-        aria-label={title}
-      >
-        <StyledDot isCapturing={isCapturing} aria-hidden />
-      </Popover.Trigger>
+      />
       <Popover.Portal>
         <Popover.Positioner side="bottom" align="start">
-          <Popover.Popup initialFocus={false}>
-            <StyledContent>
-              <Popover.Title>{title}</Popover.Title>
-              <StyledApplications role="list" aria-label={title}>
-                {Object.entries(sessionsByApplication).map(
-                  ([applicationId, sessions]) => (
-                    <FrontComponentMediaSessionTooltipRow
-                      key={applicationId}
-                      sessions={sessions}
-                    />
-                  ),
-                )}
-              </StyledApplications>
-            </StyledContent>
-          </Popover.Popup>
+          <StyledPopup initialFocus={false}>
+            <Popover.Title>{title}</Popover.Title>
+            <StyledApplications role="list" aria-label={title}>
+              {Object.entries(sessionsByApplication).map(
+                ([applicationId, sessions]) => (
+                  <FrontComponentMediaSessionTooltipRow
+                    key={applicationId}
+                    sessions={sessions}
+                  />
+                ),
+              )}
+            </StyledApplications>
+          </StyledPopup>
         </Popover.Positioner>
       </Popover.Portal>
     </Popover.Root>

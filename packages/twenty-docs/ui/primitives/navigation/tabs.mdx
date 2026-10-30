@@ -3,15 +3,69 @@ title: Tabs
 description: Switch between related panels with accessible tab navigation.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Overview
 
 `Tabs` connects each tab to a related content panel using a shared `value`. Keep values unique within a root. Use [TabButton](/ui/components/navigation/tab-button) for route links and adjacent actions.
 
 <StoryEmbed
-  storyId="ui-navigation-tabs--documentation"
+  storyId="ui-navigation-tabs--display"
   title="Tabs example"
-  height={240}
+  height={160}
+/>
+
+## Usage
+
+Use `defaultValue` to set the initial selection. The root owns subsequent changes.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` accepts `startIcon`, `endIcon`, `badge`, and a `size` of `compact`, `sm`, or `md` (default `sm`). The remaining props retain the installed Base UI contract. Values are not restricted to strings or numbers. Reference values must use the same identity on their tab, panel, and root. A root value of `null` selects no panel.
+
+### Compact tabs
+
+Use `size="compact"` on each tab for short Input/Output controls inside a card. Compact tabs have a 24px minimum row height, small text, and 4px content padding on each side. The existing `sm` and `md` sizes keep their 40px minimum height. Compact tabs use the same indicator, focus ring, and keyboard activation as the other sizes.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed
+  storyId="ui-navigation-tabs--compact"
+  title="Compact Input and Output tabs"
+  height={110}
 />
 
 ## Anatomy
@@ -41,30 +95,6 @@ Give the list an accessible name and match each tab's `value` to its panel's `va
 When you provide a custom `id` on `Tabs.Panel`, set `aria-controls` on the matching `Tabs.Tab` to that same ID. The installed Base UI 1.8.0 implementation requires this explicit relationship. Custom tab IDs are registered correctly for the panel's `aria-labelledby`.
 
 Add one `Tabs.Indicator` when you want the active underline. `List` does not insert an indicator.
-
-## Uncontrolled state
-
-Use `defaultValue` to set the initial selection. The root owns subsequent changes.
-
-```tsx
-import { Tabs } from 'twenty-ui/primitives/navigation';
-
-export const RecordTabs = () => (
-  <Tabs.Root defaultValue="overview">
-    <Tabs.List aria-label="Record details">
-      <Tabs.Tab value="overview">Overview</Tabs.Tab>
-      <Tabs.Tab value="activity" badge={3}>
-        Activity
-      </Tabs.Tab>
-      <Tabs.Indicator />
-    </Tabs.List>
-    <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
-    <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
-  </Tabs.Root>
-);
-```
-
-`Tabs.Tab` accepts `startIcon`, `endIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The remaining props retain the installed Base UI contract. Values are not restricted to strings or numbers. Reference values must use the same identity on their tab, panel, and root. A root value of `null` selects no panel.
 
 ## Controlled state and event details
 
@@ -152,6 +182,10 @@ Use [DirectionProvider](/ui/primitives/layout/direction-provider) for RTL keyboa
 
 Use `keepMounted` when panel contents must retain their state while inactive. Inactive mounted panels remain hidden and do not occupy layout space.
 
+## Panel layout
+
+`Panel` fills the space left by the list and can shrink below its content on both axes, so it stays within a root of fixed height. To scroll its content, set `overflow: auto` on the panel, or on a child that fills it, such as a `flex: 1` child of a column flex panel.
+
 ## Native props, render composition, and refs
 
 All five parts preserve native props, event handlers, refs, and Base UI `render` composition. Their `className` and `style` can also be functions of the part's state. The default elements are a `div` for Root, List, and Panel, a `button` for Tab, and a `span` for Indicator. Refs point to the actual rendered elements.
@@ -200,3 +234,5 @@ The generated reference includes the public props for every part. Public part st
 ## Migration
 
 Add an explicit `Tabs.Indicator` to lists that should retain the active underline. Remove duplicate indicators from compositions that previously relied on `List` inserting one. Keep route links, create controls, and overflow controls outside `Tabs.List`, whose children select related panels.
+
+<PageBanner illustration="layout" />

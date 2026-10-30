@@ -3,10 +3,47 @@ title: Callout
 description: Feedback with node content, actions, and caller-owned dismissal.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
 
+## Overview
+
 `Callout` combines title, description, icon, and action nodes. Use `status` for `neutral`, `info`, `success`, `warning`, or `error`. It defaults to `info` and supports the `soft` appearance. The status selects a gray, blue, green, orange, or red palette; `color` overrides that palette without changing the meaning.
+
+<StoryEmbed
+  storyId="ui-feedback-callout--display"
+  title="Callout example"
+  height={230}
+/>
+
+## Usage
+
+```tsx
+import { Callout } from 'twenty-ui/components/feedback';
+
+export const WorkflowNotice = () => (
+  <Callout
+    status="neutral"
+    title="This form will appear in workflow runs."
+    description="Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
+    action={<Callout.Action>Learn more</Callout.Action>}
+  />
+);
+```
+
+## Visual options
+
+Compare semantic statuses using the same content. Choose a status for the message meaning, and override color only when the surrounding design requires it.
+
+<StoryEmbed
+  storyId="ui-feedback-callout--catalog"
+  title="Callout feedback statuses"
+  height={1010}
+/>
+
+## Dismissible notice
 
 ```tsx
 import { useState } from 'react';
@@ -26,9 +63,7 @@ export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
           description="Review the missing email addresses before importing."
           icon={<IconAlertTriangle size={16} aria-hidden="true" />}
           action={
-            <Callout.Action onClick={onReview}>
-              Review records
-            </Callout.Action>
+            <Callout.Action onClick={onReview}>Review records</Callout.Action>
           }
           onDismiss={() => setIsVisible(false)}
           closeLabel="Dismiss import notice"
@@ -56,12 +91,8 @@ The component adds no live-region role or announcements. Supply native `role`, `
 
 Replace the previous semantic `variant` with `status`, and constructor `Icon` with an `icon` node. Replace `{ label, onClick }` action objects with `Callout.Action` or custom controls. Replace `isClosable` and `onClose` with `onDismiss`, and conditionally render the callout in the caller when dismissal should hide it. Existing translated content and action labels stay in the application.
 
-<StoryEmbed
-  storyId="ui-feedback-callout--default"
-  title="Callout example"
-  height={280}
-/>
-
 ## Props
 
 <CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

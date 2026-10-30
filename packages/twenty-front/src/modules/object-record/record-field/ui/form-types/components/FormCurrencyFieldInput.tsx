@@ -6,7 +6,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { type FormFieldCurrencyInputSettings } from '@/object-record/record-field/ui/form-types/types/FormFieldCurrencyInputSettings';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FormFieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
+import { useCurrencies } from '@/ui/input/components/internal/hooks/useCurrencies';
 import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -20,6 +20,7 @@ type FormCurrencyFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;
   amountUnit?: FormFieldCurrencyInputSettings['amountUnit'];
+  subFieldPlaceholders?: Partial<Record<keyof FormFieldCurrencyValue, string>>;
 };
 
 export const FormCurrencyFieldInput = ({
@@ -29,7 +30,10 @@ export const FormCurrencyFieldInput = ({
   VariablePicker,
   readonly,
   amountUnit = 'micros',
+  subFieldPlaceholders,
 }: FormCurrencyFieldInputProps) => {
+  const localizedCurrencies = useCurrencies();
+
   const currencies = useMemo(() => {
     return [
       {
@@ -37,9 +41,9 @@ export const FormCurrencyFieldInput = ({
         value: '',
         Icon: IconCircleOff,
       },
-      ...CURRENCIES,
+      ...localizedCurrencies,
     ];
-  }, []);
+  }, [localizedCurrencies]);
 
   const handleAmountMicrosChange = (
     newAmountMicros: string | number | null,
@@ -71,6 +75,7 @@ export const FormCurrencyFieldInput = ({
           defaultValue={defaultValue?.currencyCode ?? ''}
           onChange={handleCurrencyCodeChange}
           options={currencies}
+          placeholder={t`Select a currency`}
           VariablePicker={VariablePicker}
           readonly={readonly}
         />
@@ -82,6 +87,7 @@ export const FormCurrencyFieldInput = ({
               : undefined
           }
           defaultValue={defaultValue?.amountMicros ?? ''}
+          placeholder={subFieldPlaceholders?.amountMicros}
           onChange={handleAmountMicrosChange}
           VariablePicker={VariablePicker}
           readonly={readonly}

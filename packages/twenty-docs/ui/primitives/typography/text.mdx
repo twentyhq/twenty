@@ -1,21 +1,25 @@
 ---
 title: Text
-description: Render text with single-line truncation or a limited number of lines.
+description: Compose theme typography with single-line truncation or a limited number of lines.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import TextReference from '/snippets/ui/generated/typography/text.mdx';
 
-`Text` provides overflow handling. It renders a `div` by default and inherits typography from its surroundings.
+## Overview
+
+`Text` provides typography and overflow handling. It renders a `div` by default. Omit `size`, `weight` and `color` to keep inheriting typography from its surroundings.
 
 <StoryEmbed
-  storyId="ui-typography-text--documentation"
+  storyId="ui-typography-text--display"
   title="Text example"
-  height={240}
+  height={90}
 />
 
-## Truncate one line
+## Usage
 
 Give the text a constrained width, then set `truncate` to show an ellipsis when it overflows:
 
@@ -29,7 +33,49 @@ export const ContactName = () => (
 );
 ```
 
+## Choose typography
+
+`size` uses the existing theme scale. It changes font size, with no height, font-family or line-height default:
+
+| Size  | Theme value |
+| ----- | ----------- |
+| `xxs` | `0.625rem`  |
+| `xs`  | `0.85rem`   |
+| `sm`  | `0.92rem`   |
+| `md`  | `1rem`      |
+| `lg`  | `1.23rem`   |
+| `xl`  | `1.54rem`   |
+| `xxl` | `1.85rem`   |
+
+`weight` accepts `regular` (400), `medium` (500) or `semibold` (600). `color` accepts `primary`, `secondary`, `tertiary` or `light`. Each omitted prop inherits independently. The visual size does not change the semantic element.
+
+<StoryEmbed
+  storyId="ui-typography-text--typography-catalog"
+  title="Text typography scale"
+  height={410}
+/>
+
+For captions, compose the small size, semibold weight and light color:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+Use native `style` for runtime colors and parent-layout constraints. Caller classes and render composition target the same text element. Text adds no typography defaults when these props are omitted.
+
 ## Limit the number of lines
+
+<StoryEmbed
+  storyId="ui-typography-text--catalog"
+  title="Text overflow options"
+  height={210}
+/>
 
 Use `lineClamp` with a positive integer. Choose either `truncate` or `lineClamp`; their props are mutually exclusive.
 
@@ -63,3 +109,9 @@ Truncation affects the visual presentation; it does not shorten the text in the 
 Native attributes, children, refs, class names, and styles target the rendered text element. `TextProps` is exported from `twenty-ui/primitives/typography`. Text content is rendered unchanged, including caller-provided links.
 
 <TextReference />
+
+## Migration
+
+`color` now selects a semantic theme color. Move arbitrary CSS color values from a native `color` attribute to `style={{ color: customColor }}`. Existing styles, classes and render composition continue to target the text element.
+
+<PageBanner illustration="section-document-generator" />

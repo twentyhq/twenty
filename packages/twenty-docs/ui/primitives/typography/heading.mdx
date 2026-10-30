@@ -3,34 +3,40 @@ title: Heading
 description: Render semantic headings with independent visual sizes.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## Overview
 
 `Heading` renders an `h2` by default. Use `children` for its content, `level` for document structure, and `size` for appearance.
 
 <StoryEmbed
-  storyId="ui-typography-heading--documentation"
+  storyId="ui-typography-heading--display"
   title="Heading example"
-  height={180}
+  height={90}
 />
 
-## Choose a heading level and size
+## Usage
 
 Choose levels in document order. A smaller visual size does not change the level announced by assistive technology.
 
 ```tsx
 import { Heading } from 'twenty-ui/primitives/typography';
 
-export const WorkspaceTitle = () => (
-  <Heading level={1} size="lg">
-    Workspace settings
-  </Heading>
-);
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
 ```
 
-Sizes `xs`, `sm`, `md`, and `lg` use the matching font tokens. Headings have no outer margin; their surrounding layout owns spacing.
+Sizes `xs`, `sm`, `md`, `lg`, `xl`, and `xxl` use the matching font tokens. The larger sizes use `1.54rem` and `1.85rem`, respectively. All sizes keep semibold weight and a `1.1` line height. `Section.Header` and `Dialog.Title` accept the same size values. Headings have no outer margin; their surrounding layout owns spacing.
 
 ## Color and composition
+
+<StoryEmbed
+  storyId="ui-typography-heading--catalog"
+  title="Heading sizes and colors"
+  height={480}
+/>
 
 Use `color="secondary"` for less prominent headings. `tertiary` is also available, but its contrast depends on the font size, theme, and background. Check readability when using it.
 
@@ -41,3 +47,5 @@ For a heading with supporting text or actions, use [Section](/ui/components/layo
 ## Props
 
 <HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

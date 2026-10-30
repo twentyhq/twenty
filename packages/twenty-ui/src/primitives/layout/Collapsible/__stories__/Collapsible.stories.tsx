@@ -116,8 +116,38 @@ const verifyExpansion: NonNullable<Story['play']> = async ({
   await waitFor(() => expect(canvas.getByText(content)).toBeVisible());
 };
 
+export const Display: Story = {
+  args: { defaultOpen: true },
+  argTypes: { hasFixedHeight: { control: false, table: { disable: true } } },
+  render: ({ defaultOpen, dimension, duration, style }) => (
+    <Collapsible.Root
+      defaultOpen={defaultOpen}
+      style={{ width: 360, maxWidth: '100%' }}
+    >
+      <Collapsible.Trigger render={<Button />}>
+        Import details
+      </Collapsible.Trigger>
+      <Collapsible.Panel
+        dimension={dimension}
+        duration={duration}
+        style={style}
+      >
+        <Text
+          style={{
+            paddingTop: 12,
+            color: 'var(--t-font-color-secondary)',
+            lineHeight: 1.5,
+          }}
+        >
+          Match each CSV column to a record field before importing.
+        </Text>
+      </Collapsible.Panel>
+    </Collapsible.Root>
+  ),
+};
+
 export const Default: Story = { play: verifyExpansion };
-export const Documentation: Story = {};
+
 export const FitContent: Story = {
   args: { hasFixedHeight: false, defaultOpen: true },
   play: verifyExpansion,
@@ -191,7 +221,7 @@ export const Disabled: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('button', { name: 'Disabled details' });
-    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    expect(trigger).toBeDisabled();
     await userEvent.click(trigger);
     expect(canvas.queryByText('Unavailable content')).not.toBeInTheDocument();
   },

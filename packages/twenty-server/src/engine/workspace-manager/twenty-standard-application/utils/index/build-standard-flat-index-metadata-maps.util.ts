@@ -2,6 +2,7 @@ import { buildCampaignDeliveryStandardFlatIndexMetadatas } from 'src/engine/work
 import { buildMessageSuppressionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util';
 import { buildAgentChatThreadParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-chat-thread-participant-standard-flat-index-metadata.util';
 import { buildAgentMessagePartStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-part-standard-flat-index-metadata.util';
+import { buildAgentMessageReactionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-reaction-standard-flat-index-metadata.util';
 import { buildAgentMessageStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-message-standard-flat-index-metadata.util';
 import { buildAgentTurnStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-turn-standard-flat-index-metadata.util';
 import { buildAgentChatThreadStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-chat-thread-standard-flat-index-metadata.util';
@@ -14,6 +15,7 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { buildAttachmentStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-attachment-standard-flat-index-metadata.util';
 import { buildBlocklistStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-blocklist-standard-flat-index-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-association-standard-flat-index-metadata.util';
+import { buildCalendarEventStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-standard-flat-index-metadata.util';
 import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-participant-standard-flat-index-metadata.util';
 import { buildCalendarEventTargetStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-target-standard-flat-index-metadata.util';
 import { buildCallRecordingStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-call-recording-standard-flat-index-metadata.util';
@@ -51,6 +53,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   campaignDelivery: buildCampaignDeliveryStandardFlatIndexMetadatas,
   messageSuppression: buildMessageSuppressionStandardFlatIndexMetadatas,
   agentMessagePart: buildAgentMessagePartStandardFlatIndexMetadatas,
+  agentMessageReaction: buildAgentMessageReactionStandardFlatIndexMetadatas,
   agentMessage: buildAgentMessageStandardFlatIndexMetadatas,
   agentTurn: buildAgentTurnStandardFlatIndexMetadatas,
   agentChatThread: buildAgentChatThreadStandardFlatIndexMetadatas,
@@ -61,6 +64,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   blocklist: buildBlocklistStandardFlatIndexMetadatas,
   calendarChannelEventAssociation:
     buildCalendarChannelEventAssociationStandardFlatIndexMetadatas,
+  calendarEvent: buildCalendarEventStandardFlatIndexMetadatas,
   calendarEventParticipant:
     buildCalendarEventParticipantStandardFlatIndexMetadatas,
   calendarEventTarget: buildCalendarEventTargetStandardFlatIndexMetadatas,

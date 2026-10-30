@@ -3,16 +3,64 @@ title: Popover
 description: Display contextual content anchored to a trigger.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+## Overview
 
 Use `Popover` for contextual information or lightweight controls. Compose its portal, positioning wrapper and popup separately. Use [Dropdown](/ui/components/navigation/dropdown) for menus, pickers and panels with higher-level navigation.
 
 <StoryEmbed
-  storyId="ui-surfaces-popover--documentation"
+  storyId="ui-surfaces-popover--display"
   title="Popover example"
-  height={440}
+  height={280}
+/>
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The popover owns subsequent changes from its trigger, close controls, and dismissal interactions.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => (
+  <Popover.Root defaultOpen={false}>
+    <Popover.Trigger render={<Button>Show details</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Title>Contact details</Popover.Title>
+          <Popover.Description>
+            Reach Alex at alex@example.com.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Close</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. Use `Title` and `Description` to identify the popup. The trigger renders a button by default; `render` lets you supply a compatible element.
+
+## Placement comparison
+
+Compare the supported sides with and without an arrow. These open examples keep each popup beside its trigger for inspection; use the Display example to try opening and dismissing a popover.
+
+<StoryEmbed
+  storyId="ui-surfaces-popover--catalog"
+  title="Placement comparison for popover"
+  height={640}
 />
 
 ## Anatomy
@@ -49,57 +97,39 @@ Popover.Root
 
 All rendered parts support the installed Base UI native attributes, handlers, refs and element/function `render` composition. Custom components must forward the supplied props and ref. Every part has a public `Popover<Part>Props` and `Popover<Part>State` type. `PopoverRootProps` and `PopoverTriggerProps` preserve payload generics. `PopoverHandle`, `PopoverRootActions`, `PopoverRootChangeEventDetails` and `PopoverRootChangeEventReason` are also exported from `twenty-ui/primitives/surfaces`.
 
-## Uncontrolled state
-
-Use `defaultOpen` to set the initial visibility. The popover owns subsequent changes from its trigger, close controls, and dismissal interactions.
-
-```tsx
-import { Popover } from 'twenty-ui/primitives/surfaces';
-
-export const ImportHelp = () => (
-  <Popover.Root defaultOpen={false}>
-    <Popover.Trigger>Import help</Popover.Trigger>
-    <Popover.Portal>
-      <Popover.Positioner>
-        <Popover.Popup>
-          <Popover.Arrow />
-          <Popover.Title>Import a CSV file</Popover.Title>
-          <Popover.Description>
-            Use a header row to identify your columns.
-          </Popover.Description>
-          <Popover.Close>Got it</Popover.Close>
-        </Popover.Popup>
-      </Popover.Positioner>
-    </Popover.Portal>
-  </Popover.Root>
-);
-```
-
-`defaultOpen` defaults to `false`, so it can be omitted. Use `Title` and `Description` to identify the popup. The trigger renders a button by default; `render` lets you supply a compatible element.
-
 ## Controlled state
 
 Pass `open` and update it with `onOpenChange` to own the same popover's visibility in React state.
 
 ```tsx
 import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { Popover } from 'twenty-ui/primitives/surfaces';
 
-export const ImportHelp = () => {
+export const ContactDetailsPopover = () => {
   const [open, setOpen] = useState(false);
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger>Import help</Popover.Trigger>
+      <Popover.Trigger render={<Button>Show details</Button>} />
       <Popover.Portal>
-        <Popover.Positioner>
-          <Popover.Popup>
-            <Popover.Arrow />
-            <Popover.Title>Import a CSV file</Popover.Title>
+        <Popover.Positioner align="start">
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
+            <Popover.Title>Contact details</Popover.Title>
             <Popover.Description>
-              Use a header row to identify your columns.
+              Reach Alex at alex@example.com.
             </Popover.Description>
-            <Popover.Close>Got it</Popover.Close>
+            <Popover.Close
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
@@ -122,14 +152,19 @@ export const ImportHelp = () => (
   <Popover.Root>
     <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
     <Popover.Portal>
-      <Popover.Positioner>
-        <Popover.Popup>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
           <Popover.Arrow />
           <Popover.Title>Import a CSV file</Popover.Title>
           <Popover.Description>
             Use a header row to identify your columns.
           </Popover.Description>
-          <Popover.Close render={<Button>Got it</Button>} />
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Got it</Button>}
+          />
         </Popover.Popup>
       </Popover.Positioner>
     </Popover.Portal>
@@ -210,7 +245,7 @@ export const OwnerHelp = () => {
       <Popover.Root handle={handle}>
         {({ payload }) => (
           <Popover.Portal>
-            <Popover.Positioner>
+            <Popover.Positioner align="start">
               <Popover.Popup aria-label="Account owner">
                 {payload?.name}
                 <Popover.Close>Close</Popover.Close>
@@ -237,3 +272,5 @@ Inside front components, use nonmodal composition within the existing scoped por
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <PopoverReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

@@ -2,7 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { In, LessThan, MoreThan } from 'typeorm';
 import { MessageCampaignStatus } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -57,6 +62,8 @@ export class MessageCampaignRecoveryService {
         });
       }, buildSystemAuthContext(workspaceId));
 
+    const failedCampaignIds: string[] = [];
+
     for (const campaign of staleCampaigns) {
       await this.recoverStaleCampaign({
         workspaceId,
@@ -68,7 +75,15 @@ export class MessageCampaignRecoveryService {
             error instanceof Error ? error.message : String(error)
           }`,
         );
+        failedCampaignIds.push(campaign.id);
       });
+    }
+
+    if (isNonEmptyArray(failedCampaignIds)) {
+      throw new EmailingDomainException(
+        `Failed to recover campaigns ${failedCampaignIds.join(', ')} of workspace ${workspaceId}`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_RECOVERY_FAILED,
+      );
     }
   }
 

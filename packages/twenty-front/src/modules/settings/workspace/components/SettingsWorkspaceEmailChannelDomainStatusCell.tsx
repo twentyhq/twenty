@@ -1,11 +1,17 @@
 import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
-import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import {
+  EmailingDomainStatus,
+  GetEmailingDomainsDocument,
+  UnsubscribeHostnameStatus,
+} from '~/generated-metadata/graphql';
 import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
   item: MessageChannel;
@@ -14,6 +20,7 @@ type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
 export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
   item,
 }: SettingsWorkspaceEmailChannelDomainStatusCellProps) => {
+  const { t } = useLingui();
   const { data } = useQuery(GetEmailingDomainsDocument);
 
   const channelDomain = getEmailChannelDomain(item.connectedAccount?.handle);
@@ -23,6 +30,22 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
 
   if (!isDefined(emailingDomain)) {
     return null;
+  }
+
+  const isUnsubscribeHostnamePending =
+    emailingDomain.status === EmailingDomainStatus.VERIFIED &&
+    emailingDomain.unsubscribeHostnameStatus !==
+      UnsubscribeHostnameStatus.ACTIVE;
+
+  if (isUnsubscribeHostnamePending) {
+    return (
+      <Tooltip
+        content={t`Unsubscribe record not verified`}
+        description={t`Emails can be sent. Add the unsubscribe record to send campaigns.`}
+      >
+        <Status color="orange">{t`1 of 2 done`}</Status>
+      </Tooltip>
+    );
   }
 
   const { label, color } = getEmailingDomainStatusDisplay(

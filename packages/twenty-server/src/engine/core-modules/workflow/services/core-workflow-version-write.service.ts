@@ -22,20 +22,25 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { ensureWorkflowStepsTipTapSchemaVersion } from 'src/engine/core-modules/workflow/utils/ensure-workflow-steps-tiptap-schema-version.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { assertWorkflowVersionIsNotMalformedOrThrow } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/assert-workflow-version-is-not-malformed-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export type ValidatedDraftCoreWorkflowVersion = {
-  coreWorkflowVersion: WorkflowVersionEntity;
+export type CoreWorkflowVersionContent = {
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
+};
+
+export type ValidatedDraftCoreWorkflowVersion = CoreWorkflowVersionContent & {
+  coreWorkflowVersion: WorkflowVersionEntity;
 };
 
 export class CoreWorkflowVersionPostCommitError extends Error {
@@ -61,6 +66,7 @@ export class CoreWorkflowVersionWriteService {
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -164,20 +170,29 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId,
     expectedVersion,
     trigger,
-    steps,
+    steps: callerSteps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
     expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
-  }): Promise<void> {
+  }): Promise<CoreWorkflowVersionContent> {
+    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
       trigger,
-      steps,
+      steps: versionedSteps,
     });
+
+    const steps =
+      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
+        trigger,
+        steps: versionedSteps,
+        workspaceId,
+      });
 
     // the runner cannot compare previous content inside its UPDATE, so concurrent draft edits serialize on this lock
     await this.withCoreWorkflowVersionEditLock(
@@ -255,6 +270,8 @@ export class CoreWorkflowVersionWriteService {
     } catch (error) {
       throw new CoreWorkflowVersionPostCommitError(error);
     }
+
+    return { trigger, steps };
   }
 
   private async withCoreWorkflowVersionEditLock<T>(
@@ -284,7 +301,7 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowId,
     workspaceWorkflowId,
     trigger,
-    steps,
+    steps: callerSteps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
@@ -292,12 +309,21 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
+    const versionedSteps = ensureWorkflowStepsTipTapSchemaVersion(callerSteps);
+
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId: 'new draft',
       trigger,
-      steps,
+      steps: versionedSteps,
     });
+
+    const steps =
+      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
+        trigger,
+        steps: versionedSteps,
+        workspaceId,
+      });
 
     const coreWorkflowVersionId = uuidv4();
 

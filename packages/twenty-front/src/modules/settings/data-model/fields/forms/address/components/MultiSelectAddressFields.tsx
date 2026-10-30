@@ -21,7 +21,6 @@ type CallToActionButton = {
 
 type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
   dropdownId: string;
-  className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownWidth?: number;
@@ -33,7 +32,6 @@ type MultiSelectAddressFieldsProps<TValue extends SelectValue> = {
 
 export const MultiSelectAddressFields = <TValue extends SelectValue>({
   dropdownId,
-  className,
   disabled = false,
   selectSizeVariant,
   dropdownWidth,
@@ -69,7 +67,6 @@ export const MultiSelectAddressFields = <TValue extends SelectValue>({
       }}
     >
       <Dropdown.Trigger
-        className={className}
         render={<div />}
         nativeButton={false}
         disabled={disabled}

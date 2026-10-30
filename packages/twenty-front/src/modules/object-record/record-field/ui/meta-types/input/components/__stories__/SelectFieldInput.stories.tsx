@@ -160,7 +160,11 @@ export const OutsidePress: Story = {
 export const Tab: Story = {
   play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
-    await body.findByRole('dialog', { name: 'Status' });
+    const popup = await body.findByRole('dialog', { name: 'Status' });
+
+    await waitFor(() => {
+      expect(within(popup).getByRole('searchbox')).toHaveFocus();
+    });
     await userEvent.tab();
 
     await waitFor(() => {

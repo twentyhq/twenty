@@ -101,8 +101,7 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
       ]);
 
     const snapshotFieldUniversalIdentifier =
-      TIMELINE_ACTIVITY.fields.timelineActivityTypeSnapshot
-        .universalIdentifier;
+      TIMELINE_ACTIVITY.fields.timelineActivityTypeSnapshot.universalIdentifier;
 
     if (
       isDefined(
@@ -144,6 +143,7 @@ export class AddTimelineActivityTypeSnapshotCommand extends ProvisionedWorkspace
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,

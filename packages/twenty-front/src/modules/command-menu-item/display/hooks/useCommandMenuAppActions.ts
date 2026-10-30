@@ -1,25 +1,20 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
-import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
-import { logConsoleSelectedLogState } from '@/log-console/states/logConsoleSelectedLogState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTogglePresentation';
-import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
+import { useSetIsLogConsoleEnabled } from '@/log-console/hooks/useSetIsLogConsoleEnabled';
 import { useToggleNavigationDrawer } from '@/ui/navigation/navigation-drawer/hooks/useToggleNavigationDrawer';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { useColorScheme } from '@/workspace-member/hooks/useColorScheme';
 import { normalizeSearchText, useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconCode, IconCopy, IconTerminal } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { IconCopy, IconTerminal } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
@@ -36,30 +31,17 @@ export const useCommandMenuAppActions = () => {
   );
   const { copyToClipboard } = useCopyToClipboard();
   const { colorScheme, setColorScheme, colorSchemeList } = useColorScheme();
-  const isLogsSettingsSectionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED,
-  );
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
-  const { setAdvancedMode } = useSetAdvancedMode();
+  const isLogConsoleEnabled = useAtomStateValue(isLogConsoleEnabledState);
+  const { setIsLogConsoleEnabled } = useSetIsLogConsoleEnabled();
   const isLogConsoleAllowed = useIsLogConsoleAllowed();
   const [logConsoleDisplayMode, setLogConsoleDisplayMode] = useAtomState(
     logConsoleDisplayModeState,
   );
-  const setIsLogConsoleFullScreen = useSetAtomState(
-    isLogConsoleFullScreenState,
-  );
-  const setLogConsoleSelectedLog = useSetAtomState(logConsoleSelectedLogState);
 
   const themeLabels: Record<ColorScheme, string> = {
     Light: t`Change theme to light`,
     Dark: t`Change theme to dark`,
     System: t`Change theme to system`,
-  };
-
-  const closeLogConsole = () => {
-    setLogConsoleSelectedLog(null);
-    setLogConsoleDisplayMode('closed');
-    setIsLogConsoleFullScreen(false);
   };
 
   const appActions = [
@@ -88,21 +70,22 @@ export const useCommandMenuAppActions = () => {
       isAvailable: theme.id !== colorScheme,
     })),
     {
-      id: 'turn-on-developer-mode',
+      id: 'show-logs',
       section: 'DEVELOPER',
-      label: t`Turn on developer mode`,
-      searchKeywords: t`logs`,
-      Icon: IconCode,
-      onClick: () => setAdvancedMode(true),
-      isAvailable: isLogsSettingsSectionEnabled && !isAdvancedModeEnabled,
+      label: t`Show logs`,
+      searchKeywords: t`developer`,
+      Icon: IconTerminal,
+      onClick: () => setIsLogConsoleEnabled(true),
+      isAvailable: isLogConsoleAllowed && !isLogConsoleEnabled,
     },
     {
-      id: 'turn-off-developer-mode',
+      id: 'hide-logs',
       section: 'DEVELOPER',
-      label: t`Turn off developer mode`,
-      Icon: IconCode,
-      onClick: () => setAdvancedMode(false),
-      isAvailable: isLogsSettingsSectionEnabled && isAdvancedModeEnabled,
+      label: t`Hide logs`,
+      searchKeywords: t`developer`,
+      Icon: IconTerminal,
+      onClick: () => setIsLogConsoleEnabled(false),
+      isAvailable: isLogConsoleAllowed && isLogConsoleEnabled,
     },
     {
       id: 'open-log-console',
@@ -111,16 +94,10 @@ export const useCommandMenuAppActions = () => {
       searchKeywords: t`developer`,
       Icon: IconTerminal,
       onClick: () => setLogConsoleDisplayMode('open'),
-      isAvailable: isLogConsoleAllowed && logConsoleDisplayMode !== 'open',
-    },
-    {
-      id: 'close-log-console',
-      section: 'DEVELOPER',
-      label: t`Close logs console`,
-      searchKeywords: t`developer`,
-      Icon: IconTerminal,
-      onClick: closeLogConsole,
-      isAvailable: isLogConsoleAllowed && logConsoleDisplayMode !== 'closed',
+      isAvailable:
+        isLogConsoleAllowed &&
+        isLogConsoleEnabled &&
+        logConsoleDisplayMode !== 'open',
     },
   ];
 

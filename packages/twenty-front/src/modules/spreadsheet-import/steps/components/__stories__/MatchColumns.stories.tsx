@@ -314,3 +314,34 @@ export const SubMatchingSearchSkipsUnmatchedSelection: Story = {
     await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
+
+export const UnmatchedOptionsBannerKeyboardToggle: Story = {
+  beforeEach: SubMatchingSearchSkipsUnmatchedSelection.beforeEach,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Open import' }),
+    );
+    const dialog = await body.findByRole('dialog', { name: 'Import data' });
+    const bannerTrigger = within(dialog).getByRole('button', {
+      name: 'Match Team (0 Unmatched)',
+    });
+    await expect(bannerTrigger).toHaveAttribute('aria-expanded', 'false');
+
+    bannerTrigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(bannerTrigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(
+      await within(dialog).findByRole('button', { name: 'Team Two' }),
+    ).toBeVisible();
+
+    await userEvent.keyboard(' ');
+    await expect(bannerTrigger).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(
+        within(dialog).queryByRole('button', { name: 'Team Two' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(bannerTrigger).toHaveFocus();
+  },
+};

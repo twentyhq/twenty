@@ -17,6 +17,7 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
 const APP_ID = 'application-id';
 const APP_UID = '11111111-1111-4111-8111-111111111111';
@@ -28,6 +29,7 @@ const CUSTOM_FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const ROLE_TARGET_UID = '55555555-5555-4555-8555-555555555555';
 const ROLE_UID = '66666666-6666-4666-8666-666666666666';
 const FOREIGN_ROLE_TARGET_UID = '77777777-7777-4777-8777-777777777777';
+const NON_EDITABLE_ROLE_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const COMPANY_UID = '88888888-8888-4888-8888-888888888888';
 const COMPANY_PET_FIELD_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const NOW = '2026-09-03T10:00:00.000Z';
@@ -200,6 +202,36 @@ describe('classifyApplicationFlatEntities', () => {
     );
   });
 
+  it('should exclude a non-editable role', () => {
+    const nonEditableRole = {
+      ...applicationRole,
+      id: 'non-editable-role-id',
+      universalIdentifier: NON_EDITABLE_ROLE_UID,
+      isEditable: false,
+    } as FlatRole;
+    const maps = buildMaps({
+      objects: [],
+      fields: [],
+      roles: [nonEditableRole],
+      roleTargets: [],
+    });
+
+    expect(
+      classifyApplicationFlatEntities({
+        flatApplication,
+        allFlatEntityMaps: maps,
+        applicationAllFlatEntityMaps: maps,
+        reconstructedCoverage: [],
+      }).find(
+        ({ universalIdentifier }) =>
+          universalIdentifier === NON_EDITABLE_ROLE_UID,
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'non-editable role',
+    });
+  });
+
   it('should exclude a member role assignment as runtime state', () => {
     expect(entryOf(ROLE_TARGET_UID)).toMatchObject({
       status: ApplicationExportCoverageStatus.EXCLUDED,
@@ -320,6 +352,40 @@ describe('classifyApplicationFlatEntities workflow commands', () => {
     ).toMatchObject({
       status: ApplicationExportCoverageStatus.EXCLUDED,
       reason: 'command without front component',
+    });
+  });
+});
+
+describe('classifyApplicationFlatEntities workflow versions', () => {
+  it('should exclude a version published from the workflow builder, which its workflow exports', () => {
+    const workflowVersionUniversalIdentifier =
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+    const maps = createEmptyAllFlatEntityMaps();
+
+    maps.flatWorkflowVersionMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: {
+        id: 'workflow-version-id',
+        universalIdentifier: workflowVersionUniversalIdentifier,
+        applicationId: APP_ID,
+        applicationUniversalIdentifier: APP_UID,
+        isSystemSideEffect: false,
+      } as FlatWorkflowVersion,
+      flatEntityMaps: maps.flatWorkflowVersionMaps,
+    });
+
+    expect(
+      classifyApplicationFlatEntities({
+        flatApplication,
+        allFlatEntityMaps: maps,
+        applicationAllFlatEntityMaps: maps,
+        reconstructedCoverage: [],
+      }).find(
+        (entry) =>
+          entry.universalIdentifier === workflowVersionUniversalIdentifier,
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'workflow version, exported through its workflow',
     });
   });
 });

@@ -14,10 +14,13 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { useGetRecordTableRowIndex } from '@/object-record/record-table/record-table-row/hooks/useGetRecordTableRowIndex';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
-  const { recordId, objectNameSingular, rowIndex } =
-    useRecordTableRowContextOrThrow();
+  const { recordId, objectNameSingular } = useRecordTableRowContextOrThrow();
+
+  const { getRecordTableRowIndex } = useGetRecordTableRowIndex();
 
   const { toggleRecordSelection } = useToggleRecordSelection();
 
@@ -50,10 +53,20 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
       isNewRecord: false,
     });
 
-    activateRecordTableRow(rowIndex);
+    const rowIndex = getRecordTableRowIndex();
+
+    if (isDefined(rowIndex)) {
+      activateRecordTableRow(rowIndex);
+    }
   };
 
   const handleEnterRow = () => {
+    const rowIndex = getRecordTableRowIndex();
+
+    if (!isDefined(rowIndex)) {
+      return;
+    }
+
     setIsRecordTableRowFocusActive(false);
     const cellPosition = {
       row: rowIndex,

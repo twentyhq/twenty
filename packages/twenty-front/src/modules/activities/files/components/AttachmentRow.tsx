@@ -19,6 +19,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { isNavigationModifierPressed } from '@/ui/navigation/utils/isNavigationModifierPressed';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { IconCalendar } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -40,8 +41,6 @@ const StyledRightContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing['0.5']};
-  position: relative;
-  z-index: 1;
 `;
 
 const StyledCalendarIconContainer = styled.div`
@@ -52,20 +51,11 @@ const StyledCalendarIconContainer = styled.div`
 
 const StyledLink = styled.a`
   align-items: center;
-  appearance: none;
-  background: none;
-  border: none;
   color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   display: flex;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 0;
-  position: relative;
-  text-align: left;
   text-decoration: none;
   width: 100%;
-  z-index: 1;
 
   :hover {
     color: ${themeCssVariables.font.color.secondary};
@@ -78,19 +68,19 @@ const StyledLinkContainer = styled.div`
 `;
 
 const StyledTextInputContainer = styled.div`
-  position: relative;
   width: 100%;
-  z-index: 1;
 `;
 
 type AttachmentRowProps = {
   attachment: AttachmentWithFile;
   onPreview?: (attachment: AttachmentWithFile) => void;
+  divider?: boolean;
 };
 
 export const AttachmentRow = ({
   attachment,
   onPreview,
+  divider = false,
 }: AttachmentRowProps) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
@@ -203,13 +193,18 @@ export const AttachmentRow = ({
       <ActivityRow
         onClick={handleRowClick}
         disabled={isEditing}
+        divider={divider}
         label={`${attachmentFileName}${attachmentFileExtension}`}
       >
         <StyledLeftContent>
           <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (
-            <StyledTextInputContainer
-              onClick={(event) => event.stopPropagation()}
+            <Card.Control
+              render={
+                <StyledTextInputContainer
+                  onClick={(event) => event.stopPropagation()}
+                />
+              }
             >
               <SettingsTextInput
                 instanceId={`attachment-${attachment.id}-name`}
@@ -219,23 +214,27 @@ export const AttachmentRow = ({
                 autoFocus
                 onKeyDown={handleOnKeyDown}
               />
-            </StyledTextInputContainer>
+            </Card.Control>
           ) : (
             <StyledLinkContainer>
-              <StyledLink
-                onClick={handleFileLinkClick}
-                href={safeFileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Card.Control
+                render={
+                  <StyledLink
+                    onClick={handleFileLinkClick}
+                    href={safeFileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
               >
                 <OverflowingTextWithTooltip
                   text={`${attachmentFileName}${attachmentFileExtension}`}
                 />
-              </StyledLink>
+              </Card.Control>
             </StyledLinkContainer>
           )}
         </StyledLeftContent>
-        <StyledRightContent>
+        <Card.Control render={<StyledRightContent />}>
           <StyledCalendarIconContainer>
             <IconCalendar size={theme.icon.size.md} />
           </StyledCalendarIconContainer>
@@ -247,7 +246,7 @@ export const AttachmentRow = ({
             onRename={handleRename}
             hasDownloadPermission={hasDownloadPermission}
           />
-        </StyledRightContent>
+        </Card.Control>
       </ActivityRow>
     </FieldContext.Provider>
   );

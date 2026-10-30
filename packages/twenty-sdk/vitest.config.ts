@@ -1,9 +1,6 @@
 import { defineConfig } from 'vitest/config';
 
-import { createBundledSourcePlugin } from './vite.bundled-source-plugin';
-
 export default defineConfig({
-  plugins: [createBundledSourcePlugin()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -23,7 +20,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.d.ts', 'src/cli/cli.ts', 'src/**/__stories__/**'],
+      exclude: ['src/**/*.d.ts', 'src/**/__stories__/**'],
       thresholds: {
         statements: 1,
         lines: 1,

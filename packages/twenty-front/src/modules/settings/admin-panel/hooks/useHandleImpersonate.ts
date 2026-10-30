@@ -59,7 +59,7 @@ export const useHandleImpersonate = () => {
       onError: (error) => {
         enqueueToast({
           status: 'error',
-          children: `Failed to impersonate user. ${error.message}`,
+          children: t`Failed to impersonate user. ${error.message}`,
         });
       },
     }).finally(() => {

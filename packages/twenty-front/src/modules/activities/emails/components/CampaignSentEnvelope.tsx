@@ -8,10 +8,8 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import {
-  CampaignEnvelopeBox,
-  CampaignEnvelopeRow,
-} from '@/activities/emails/components/CampaignEnvelopeBox';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { formatCampaignSendTime } from '@/activities/emails/utils/formatCampaignSendTime';
@@ -36,17 +34,15 @@ const StyledEmptyValue = styled.span`
 
 type CampaignSentEnvelopeProps = {
   campaign: MessageCampaign;
-  width: string;
 };
 
 // Doesn't reuse CampaignDetailsFields, which owns draft persistence state a sent campaign has no use for.
 export const CampaignSentEnvelope = ({
   campaign,
-  width,
 }: CampaignSentEnvelopeProps) => {
   const { unsubscribeTopics, loading: areTopicsLoading } =
     useUnsubscribeTopics();
-  const { dateFormat, timeFormat, timeZone } = useDateTimeFormat();
+  const { timeFormat, timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const hasList = isDefined(campaign.listId) && isValidUuid(campaign.listId);
@@ -83,22 +79,21 @@ export const CampaignSentEnvelope = ({
       ? formatCampaignSendTime({
           value: campaign.scheduledAt,
           timeZone,
-          dateFormat,
           timeFormat,
           localeCatalog,
         })
       : '';
 
   return (
-    <CampaignEnvelopeBox width={width}>
-      <CampaignEnvelopeRow label={t`From`}>
+    <CampaignEnvelopeBox>
+      <ComposerFieldRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </CampaignEnvelopeRow>
-      <CampaignEnvelopeRow label={t`To`}>
+      </ComposerFieldRow>
+      <ComposerFieldRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -111,9 +106,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {hasUnsubscribeTopic && (
-        <CampaignEnvelopeRow label={t`Unsubscribe topic`}>
+        <ComposerFieldRow label={t`Topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -123,19 +118,22 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
-      <CampaignEnvelopeRow label={t`Subject`}>
+      <ComposerFieldRow
+        label={t`Subject`}
+        hasDivider={isNonEmptyString(scheduledSendTime)}
+      >
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </CampaignEnvelopeRow>
+      </ComposerFieldRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <CampaignEnvelopeRow label={t`Scheduled at`}>
+        <ComposerFieldRow label={t`Send at`} hasDivider={false}>
           <StyledValue>{scheduledSendTime}</StyledValue>
-        </CampaignEnvelopeRow>
+        </ComposerFieldRow>
       )}
     </CampaignEnvelopeBox>
   );

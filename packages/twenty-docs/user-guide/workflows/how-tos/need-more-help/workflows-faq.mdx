@@ -3,6 +3,10 @@ title: Workflows FAQ
 description: Frequently asked questions about workflows in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Common questions
+
 <AccordionGroup>
 
   <Accordion title="Why can't I activate a workflow?">
@@ -91,7 +95,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Or type `{{stepName.fieldName}}` directly
 
     **Examples**:
-    - Trigger data: `{{trigger.object.email}}`
+    - Trigger data: `{{trigger.properties.after.name}}` for a record trigger, `{{trigger.payload.name}}` for a manual trigger on a selected record
     - Search results: `{{searchRecords[0].name}}`
     - Code output: `{{code.calculatedValue}}`
 
@@ -223,3 +227,4 @@ description: Frequently asked questions about workflows in Twenty.
 
 </AccordionGroup>
 
+<PageBanner illustration="card-page-billing-faq" />

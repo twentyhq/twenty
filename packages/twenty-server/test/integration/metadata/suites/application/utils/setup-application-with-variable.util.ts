@@ -1,3 +1,4 @@
+import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -17,15 +18,18 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// Application settings components need APPLICATIONS by default; tests can
-// override the permissions to exercise narrower access.
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,
   variableScope,
   isSecret = false,
   value = variableScope === 'USER' ? undefined : 'initial',
-  permissionFlagUniversalIdentifiers = [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers = variableScope === 'USER'
+    ? [
+        SystemPermissionFlag.APPLICATIONS,
+        SystemPermissionFlag.CONNECTED_ACCOUNTS,
+      ]
+    : [SystemPermissionFlag.APPLICATIONS],
   objectPermissions = [],
 }: {
   name: string;
@@ -66,7 +70,7 @@ export const setupApplicationWithVariable = async ({
               ...(isSecret || !isDefined(value) ? {} : { value }),
             },
           },
-          packageJsonChecksum: null,
+          packageJsonChecksum: TEST_APPLICATION_PACKAGE_JSON_CHECKSUM,
           yarnLockChecksum: null,
         },
         roles: [

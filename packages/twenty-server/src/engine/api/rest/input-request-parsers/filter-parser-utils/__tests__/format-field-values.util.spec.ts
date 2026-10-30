@@ -72,4 +72,14 @@ describe('formatFieldValue', () => {
       "'filter' invalid for 'containsAny' operator. Received '2024-12-01T14:23:23.914Z' but array value expected eg: 'field[containsAny]:[value_1,value_2]'",
     );
   });
+
+  it('should keep commas within quoted array items', () => {
+    expect(
+      formatFieldValue('["Acme, Inc.","Globex"]', FieldMetadataType.TEXT, 'in'),
+    ).toEqual(['Acme, Inc.', 'Globex']);
+
+    expect(
+      formatFieldValue(`['Acme, Inc.',"O'Brien"]`, undefined, 'containsAny'),
+    ).toEqual(['Acme, Inc.', "O'Brien"]);
+  });
 });

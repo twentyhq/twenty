@@ -1,6 +1,4 @@
 import isEqual from 'lodash.isequal';
-import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
@@ -13,15 +11,10 @@ export const canUpdateWorkflowRunStep = ({
   step,
 }: {
   workflowRun: {
-    createdBy: Pick<ActorMetadata, 'context'>;
     state: { flow?: { steps?: WorkflowAction[] } } | null;
   };
   step: WorkflowAction;
 }): boolean => {
-  if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
-    return true;
-  }
-
   const existingStep = workflowRun.state?.flow?.steps?.find(
     ({ id }) => id === step.id,
   );
@@ -34,13 +27,20 @@ export const canUpdateWorkflowRunStep = ({
     return false;
   }
 
-  return isEqual(withoutFormValues(existingStep), withoutFormValues(step));
+  return (
+    existingStep.name === step.name &&
+    isEqual(existingStep.nextStepIds, step.nextStepIds) &&
+    isEqual(
+      getFormFieldDefinitions(existingStep),
+      getFormFieldDefinitions(step),
+    )
+  );
 };
 
-const withoutFormValues = (step: WorkflowFormAction) => ({
-  ...step,
-  settings: {
-    ...step.settings,
-    input: step.settings.input.map((field) => ({ ...field, value: undefined })),
-  },
-});
+const getFormFieldDefinitions = (step: WorkflowFormAction) =>
+  step.settings.input.map(({ id, name, type, settings }) => ({
+    id,
+    name,
+    type,
+    settings,
+  }));

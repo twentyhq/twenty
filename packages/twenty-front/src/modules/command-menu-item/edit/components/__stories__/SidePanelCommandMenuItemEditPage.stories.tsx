@@ -43,6 +43,12 @@ const PINNED_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
   payload: null,
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
 };
 
 const OTHER_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
@@ -249,5 +255,24 @@ export const CommandMenuItemOptions: Story = {
           ?.find((item) => item.id === PINNED_COMMAND_MENU_ITEM.id)?.shortLabel,
       ).toBe('People'),
     );
+  },
+};
+
+export const PinsFromTheIndependentAction: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pin = await canvas.findByRole('button', { name: 'Pin' });
+
+    expect(pin.closest('button')).toBe(pin);
+    pin.focus();
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        jotaiStore
+          .get(commandMenuItemsDraftState.atom)
+          ?.find((item) => item.id === OTHER_COMMAND_MENU_ITEM.id)?.isPinned,
+      ).toBe(true);
+    });
   },
 };

@@ -43,7 +43,7 @@ export class SystemPromptBuilderService {
 
     const [toolCatalog, skillCatalog, canAttachConversationToRecords] =
       await Promise.all([
-        this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+        this.toolRegistry.buildToolIndex(workspaceId, {
           rolePermissionConfig: {
             intersectionOf: { userWorkspaceRoleId: roleId },
           },

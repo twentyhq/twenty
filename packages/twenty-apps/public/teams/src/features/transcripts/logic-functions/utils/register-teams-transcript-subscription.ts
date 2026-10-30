@@ -1,10 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getConnection, kv, listConnections } from 'twenty-sdk/logic-function';
+import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
-import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/types/teams-transcript-subscription.type';
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
@@ -12,9 +9,11 @@ import { buildTeamsTranscriptsConnectionKvKey } from 'src/features/transcripts/l
 import { buildTeamsTranscriptsWebhookUrl } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-webhook-url';
 import { createTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/create-teams-transcript-subscription';
 import { deleteTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-subscription';
+import { isTeamsConnectionListed } from 'src/features/transcripts/logic-functions/utils/is-teams-connection-listed';
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
 import { unregisterTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/unregister-teams-transcript-subscription';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 
 const renewStoredSubscriptionOrUndefined = async ({
   accessToken,
@@ -44,22 +43,12 @@ const renewStoredSubscriptionOrUndefined = async ({
   }
 };
 
-const isTeamsConnectionListed = async (
-  connectedAccountId: string,
-): Promise<boolean> =>
-  (await listConnections({ providerName: TEAMS_PROVIDER_NAME })).some(
-    (connection) => connection.id === connectedAccountId,
-  );
-
 export const registerTeamsTranscriptSubscription = async ({
   connectedAccountId,
 }: {
   connectedAccountId: string;
 }): Promise<{ transcriptSubscriptionId: string | null }> => {
-  const isTranscriptImportEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
-    settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-  });
+  const isTranscriptImportEnabled = isTeamsTranscriptImportEnabled();
 
   if (!isTranscriptImportEnabled) {
     await unregisterTeamsTranscriptSubscription({ connectedAccountId });
@@ -81,7 +70,9 @@ export const registerTeamsTranscriptSubscription = async ({
     buildTeamsTranscriptsConnectionKvKey(connectedAccountId);
   const storedSubscription =
     await kv.get<TeamsTranscriptSubscription>(subscriptionKvKey);
-  const { accessToken } = await getConnection(connectedAccountId);
+  const accessToken = getConnectionAccessTokenOrThrow(
+    await getConnection(connectedAccountId),
+  );
 
   const renewedSubscription = isDefined(storedSubscription)
     ? await renewStoredSubscriptionOrUndefined({

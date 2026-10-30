@@ -11,5 +11,13 @@ export type AuthPrincipalGuardConfig = {
       };
   apiKey: boolean;
   oauthClient: boolean | { withUser: boolean; withoutUser: boolean };
-  application: boolean | { withUser: boolean; withoutUser: boolean };
+  application:
+    | boolean
+    | {
+        withUser: boolean;
+        withoutUser: boolean;
+        // Tokens bound to an agent (the code interpreter's) also need this,
+        // which `application: true` leaves out so new endpoints stay closed
+        withAgent?: true;
+      };
 };

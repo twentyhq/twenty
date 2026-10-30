@@ -19,6 +19,7 @@ import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -74,7 +75,9 @@ export const useRecordGroupActions = ({
     setNavigationMemorizedUrl(location.pathname + location.search);
 
     if (!isDefined(recordIndexGroupFieldMetadataItem)) {
-      throw new Error('recordGroupFieldMetadata is not a non-empty string');
+      throw new Error(
+        doNotTranslate('recordGroupFieldMetadata is not a non-empty string'),
+      );
     }
 
     navigate(SettingsPath.ObjectFieldEdit, {

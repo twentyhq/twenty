@@ -38,12 +38,14 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 const CHANNEL_ID = 'C0123456789';
 const REQUEST_ID = '7b1a0f2e-1c2d-4a3b-9e8f-0a1b2c3d4e5f';
+const AGENT_CHAT_THREAD_ID = '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d';
 
 const ANSWER_PAYLOAD = {
   slackChannelId: CHANNEL_ID,
   messageText: 'here is your answer',
   parentMessageTimestamp: '1700000000.000100',
   slackAssistantRequestId: REQUEST_ID,
+  agentChatThreadId: AGENT_CHAT_THREAD_ID,
 };
 
 describe('slackDeliverMessageHandler', () => {
@@ -71,6 +73,7 @@ describe('slackDeliverMessageHandler', () => {
       id: REQUEST_ID,
       status: 'DONE',
       responseText: 'here is your answer',
+      agentChatThreadId: AGENT_CHAT_THREAD_ID,
     });
     expect(enqueueDeliveryMock).not.toHaveBeenCalled();
   });
@@ -123,6 +126,7 @@ describe('slackDeliverMessageHandler', () => {
         requestId: REQUEST_ID,
         slackChannelId: CHANNEL_ID,
         parentMessageTimestamp: '1700000000.000100',
+        agentChatThreadId: AGENT_CHAT_THREAD_ID,
       }),
     );
   });

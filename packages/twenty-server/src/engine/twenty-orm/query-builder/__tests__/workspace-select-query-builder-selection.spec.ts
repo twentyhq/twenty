@@ -1,3 +1,5 @@
+import { types } from 'pg';
+
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import {
   SCHEMA_NAME,
@@ -10,6 +12,32 @@ import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-co
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 describe('WorkspaceSelectQueryBuilder selection', () => {
+  it('should preserve raw dates only for pagination without global parser setup', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder();
+    const timestamp = '2026-01-01 00:00:00.1239+00';
+
+    await queryBuilder.getRawAndEntities();
+
+    const parsers = executedStatements[0].types;
+
+    expect(parsers?.getTypeParser(types.builtins.TIMESTAMPTZ)(timestamp)).toBe(
+      timestamp,
+    );
+    expect(parsers?.getTypeParser(types.builtins.DATE)('2026-01-01')).toBe(
+      '2026-01-01',
+    );
+    expect(
+      types.getTypeParser(types.builtins.TIMESTAMPTZ)(timestamp),
+    ).toBeInstanceOf(Date);
+    expect(
+      types.getTypeParser(types.builtins.DATE)('2026-01-01'),
+    ).toBeInstanceOf(Date);
+
+    await queryBuilder.getMany();
+
+    expect(executedStatements[1].types).toBeUndefined();
+  });
+
   it('should select the requested columns with alias-prefixed output names', () => {
     const { queryBuilder } = buildQueryBuilder();
 

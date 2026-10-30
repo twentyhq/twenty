@@ -1,5 +1,4 @@
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -137,22 +136,6 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
 
     expect(result.conditionalAvailabilityExpression).toBe(
       'targetObjectReadPermissions.person',
-    );
-  });
-
-  it('should additionally gate conditionalAvailabilityExpression behind the feature flag for feature-flagged objects', () => {
-    const result = buildObjectNavigationFlatCommandMenuItem({
-      ...baseArgs,
-      objectMetadata: {
-        ...baseObjectMetadata,
-        universalIdentifier:
-          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
-        nameSingular: 'messageCampaign',
-      },
-    });
-
-    expect(result.conditionalAvailabilityExpression).toBe(
-      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectReadPermissions.messageCampaign',
     );
   });
 

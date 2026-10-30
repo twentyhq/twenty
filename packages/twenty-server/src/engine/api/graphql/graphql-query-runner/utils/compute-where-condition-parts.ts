@@ -158,14 +158,12 @@ export const computeWhereConditionParts = ({
         sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
         params: {},
       };
+    case 'gtStrict':
+      return {
+        sql: `${fieldReference} > :${key}${paramSuffix}`,
+        params: { [`${key}${paramSuffix}`]: value },
+      };
     case 'eqStrict':
-      if (isDateTimeField) {
-        return {
-          sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')`,
-          params: { [`${key}${paramSuffix}`]: value },
-        };
-      }
-
       return {
         sql: `${fieldReference} = :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },

@@ -1,13 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
 import { Card } from '../Card';
 
 import rootStyles from '../Card.module.scss';
+import actionStyles from '../CardAction.module.scss';
+import controlStyles from '../CardControl.module.scss';
 import contentStyles from '../CardContent.module.scss';
 import footerStyles from '../CardFooter.module.scss';
 import headerStyles from '../CardHeader.module.scss';
@@ -37,24 +38,14 @@ for (const { name, Component, ownClassName } of [
     refInstanceOf: HTMLDivElement,
   });
 
-  it(`composes Card.${name} with a native button's attributes, handlers and ref`, async () => {
-    const user = userEvent.setup();
+  it(`composes Card.${name} with a native button's attributes and ref`, () => {
     const nativeRef = createRef<HTMLButtonElement>();
-    const onCardClick = vi.fn();
-    const onButtonClick = vi.fn();
 
     render(
       <Component
         aria-describedby="import-description"
-        onClick={onCardClick}
         render={
-          <button
-            type="button"
-            name="import"
-            value="ready"
-            ref={nativeRef}
-            onClick={onButtonClick}
-          />
+          <button type="button" name="import" value="ready" ref={nativeRef} />
         }
       >
         Import records
@@ -68,20 +59,72 @@ for (const { name, Component, ownClassName } of [
     expect(button).toHaveAttribute('name', 'import');
     expect(button).toHaveAttribute('value', 'ready');
     expect(button).toHaveAttribute('aria-describedby', 'import-description');
-
-    await user.click(button);
-
-    expect(onCardClick).toHaveBeenCalledTimes(1);
-    expect(onButtonClick).toHaveBeenCalledTimes(1);
   });
 }
 
+runComponentConformance({
+  name: 'Card.Action',
+  element: <Card.Action>Review import</Card.Action>,
+  ownClassName: actionStyles.action,
+  refInstanceOf: HTMLButtonElement,
+});
+
+runComponentConformance({
+  name: 'Card.Control',
+  element: <Card.Control>Independent control</Card.Control>,
+  ownClassName: controlStyles.control,
+  refInstanceOf: HTMLSpanElement,
+});
+
 describe('Card rendering', () => {
+  it('keeps native action and label contracts separate', () => {
+    const buttonRef = createRef<HTMLButtonElement>();
+    const composedButtonRef = createRef<HTMLButtonElement>();
+    const labelRef = createRef<HTMLLabelElement>();
+
+    render(
+      <Card.Root>
+        <Card.Content>
+          <Card.Action aria-label="Review import" disabled ref={buttonRef} />
+        </Card.Content>
+        <Card.Content>
+          <Card.Action
+            disabled
+            aria-label="Composed review"
+            render={<button ref={composedButtonRef} />}
+          />
+        </Card.Content>
+        <Card.Content>
+          <Card.Action
+            disabled
+            render={
+              <label
+                htmlFor="record-meetings"
+                aria-label="Record meetings"
+                ref={labelRef}
+              />
+            }
+          />
+        </Card.Content>
+      </Card.Root>,
+    );
+
+    expect(buttonRef.current).toHaveAttribute('type', 'button');
+    expect(buttonRef.current).toBeDisabled();
+    expect(composedButtonRef.current).toHaveAttribute('type', 'button');
+    expect(composedButtonRef.current).toBeDisabled();
+    expect(labelRef.current).toHaveAttribute('for', 'record-meetings');
+    expect(labelRef.current).toHaveAttribute('data-disabled');
+    expect(labelRef.current).not.toHaveAttribute('role');
+    expect(labelRef.current).not.toHaveAttribute('tabindex');
+    expect(labelRef.current).not.toHaveAttribute('type');
+    expect(labelRef.current).not.toBeDisabled();
+  });
+
   it('preserves the root appearance flags and merges a custom background with native styles', () => {
     render(
       <Card.Root
         fullWidth
-        rounded
         backgroundColor="rebeccapurple"
         style={{ marginTop: 7 }}
       >
@@ -92,7 +135,6 @@ describe('Card rendering', () => {
     const root = screen.getByText('Import summary');
 
     expect(root).toHaveAttribute('data-full-width', 'true');
-    expect(root).toHaveAttribute('data-rounded', 'true');
     expect(root).toHaveStyle({ marginTop: '7px' });
     expect(root.style.getPropertyValue('--card-background-color')).toBe(
       'rebeccapurple',
@@ -120,7 +162,6 @@ describe('Card rendering', () => {
       'Import actions',
     ]);
     expect(root).not.toHaveAttribute('data-full-width');
-    expect(root).not.toHaveAttribute('data-rounded');
     expect(screen.getByText('Ready records')).toHaveAttribute(
       'data-divider',
       'true',
@@ -137,12 +178,9 @@ describe('Card rendering', () => {
     );
   });
 
-  it('keeps display cards presentational when they observe click events', async () => {
-    const user = userEvent.setup();
-    const onClick = vi.fn();
-
+  it('keeps display cards presentational with an onClick prop', () => {
     render(
-      <Card.Root onClick={onClick}>
+      <Card.Root onClick={() => undefined}>
         <Card.Content>Import summary</Card.Content>
       </Card.Root>,
     );
@@ -155,9 +193,5 @@ describe('Card rendering', () => {
     expect(root).not.toHaveAttribute('tabindex');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
-
-    await user.click(content);
-
-    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

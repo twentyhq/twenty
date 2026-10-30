@@ -12,11 +12,11 @@
  */}
 
 <ParamField body="container" type="HTMLElement | null">
-  Portal destination. Omit to use the theme container or document.body; null defers rendering.
+  Portal destination. Omit to use the theme container or document.body; null defers rendering. The provider retains visible notifications and pauses their countdowns while no Toaster is rendered.
 </ParamField>
 
 <ParamField body="getToastProps" type="((toast: ToastNotification) =&gt; Partial&lt;Omit&lt;ToastProps, &quot;ref&quot; | &quot;id&quot; | &quot;onClose&quot;&gt;&gt;)">
-  Customizes each notification’s Toast props. The toaster owns id, ref, and dismissal.
+  Adapts notification content and presentation. The provider owns id, dismissal, and the shared countdown. Set timing through enqueueToast or updateToast; duration and progress overrides must match across Toasters sharing a provider.
 </ParamField>
 
 <ParamField body="render" type="RenderProp&lt;Record&lt;string, unknown&gt;&gt;">

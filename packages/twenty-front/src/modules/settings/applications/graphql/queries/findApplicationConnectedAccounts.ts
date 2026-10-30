@@ -7,11 +7,12 @@ export const FIND_APPLICATION_CONNECTED_ACCOUNTS = gql`
       handle
       authFailedAt
       authFailedReason
+      archivedAt
       scopes
       lastSignedInAt
       connectionProviderId
       name
-      visibility
+      scope
       lastCredentialsRefreshedAt
       createdAt
       updatedAt

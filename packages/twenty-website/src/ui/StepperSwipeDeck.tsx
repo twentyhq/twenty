@@ -5,6 +5,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 
 import { usePrefersReducedMotion } from '@/platform/motion';
 import { EASING } from '@/tokens';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const SWIPE_COMMIT_RATIO = 0.18;
 const EDGE_RESISTANCE = 0.28;
@@ -136,6 +137,7 @@ export function StepperSwipeDeck({
 
   const slideBasisPercent = 100 / stepCount;
   const translatePercent = (-100 * activeIndex) / stepCount;
+  const slideFlex = doNotTranslate(`0 0 calc(${slideBasisPercent}%)`);
 
   return (
     <Viewport
@@ -153,10 +155,7 @@ export function StepperSwipeDeck({
         }}
       >
         {Array.from({ length: stepCount }, (_, stepIndex) => (
-          <Slide
-            key={stepIndex}
-            style={{ flex: `0 0 calc(${slideBasisPercent}%)` }}
-          >
+          <Slide key={stepIndex} style={{ flex: slideFlex }}>
             {children(stepIndex)}
           </Slide>
         ))}

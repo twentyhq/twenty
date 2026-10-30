@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { delay, graphql } from 'msw';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -19,9 +20,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsAccountDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/detail/:connectedAccountId',
+    routePath: '/settings/app-preferences/accounts/:connectedAccountId',
     routeParams: { ':connectedAccountId': GOOGLE_ACCOUNT_ID },
-    additionalRoutes: ['/settings/accounts'],
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -42,7 +43,7 @@ export const EmailsAndCalendarTabs: Story = {
       await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
     );
 
-    expect(canvas.getByText('App preferences')).toBeVisible();
+    expect(canvas.getByText('Apps preferences')).toBeVisible();
     expect(await canvas.findByText('Visibility')).toBeVisible();
 
     await userEvent.click(canvas.getByTestId('tab-calendar'));
@@ -51,7 +52,31 @@ export const EmailsAndCalendarTabs: Story = {
   },
 };
 
-export const AccountWithoutSettingsGoesBackToAccounts: Story = {
+export const TitleStaysWhileLoading: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', async () => {
+          await delay('infinite');
+        }),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull(),
+    );
+    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText('Navigated to /settings/app-preferences'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AccountWithoutSettingsGoesBackToAppPreferences: Story = {
   args: {
     routeParams: { ':connectedAccountId': FATHOM_ONLY_ACCOUNT_ID },
   },
@@ -59,9 +84,13 @@ export const AccountWithoutSettingsGoesBackToAccounts: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };

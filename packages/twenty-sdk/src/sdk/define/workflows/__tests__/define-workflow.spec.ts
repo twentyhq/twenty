@@ -1,0 +1,143 @@
+import { type WorkflowManifest } from 'twenty-shared/application';
+
+import { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
+
+const STEP_ID = '44444444-4444-4444-8444-444444444444';
+
+const workflow: WorkflowManifest = {
+  universalIdentifier: '11111111-1111-4111-8111-111111111111',
+  name: 'Application greeting',
+  version: {
+    trigger: {
+      universalIdentifier: '33333333-3333-4333-8333-333333333333',
+      type: 'MANUAL',
+      nextStepIds: [STEP_ID],
+    },
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Greet',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier:
+          '55555555-5555-4555-8555-555555555555',
+        input: { greeting: 'Hello' },
+        nextStepIds: [],
+      },
+    ],
+  },
+};
+
+const withStep = (step: Record<string, unknown>) => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [{ ...workflow.version.steps[0], ...step }],
+  },
+});
+
+const withSendEmailStep = (input: Record<string, unknown>) => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Email',
+        type: 'SEND_EMAIL',
+        input: { recipients: { to: 'jane@example.com' }, ...input },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+
+describe('defineWorkflow', () => {
+  it('accepts a manual workflow', () => {
+    expect(defineWorkflow(workflow)).toEqual({
+      success: true,
+      config: workflow,
+      errors: [],
+      warnings: [],
+    });
+  });
+
+  it('accepts the trigger state a workflow built in the workflow builder pulls with', () => {
+    const { universalIdentifier: _universalIdentifier, ...trigger } =
+      workflow.version.trigger;
+    const pulled = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...trigger,
+          name: 'Launch manually',
+          position: null,
+          outputSchema: {},
+        },
+      },
+    };
+
+    expect(defineWorkflow(pulled).errors).toEqual([]);
+  });
+
+  it('accepts a workflow flagged as system', () => {
+    const systemWorkflow = { ...workflow, isSystem: true };
+
+    expect(defineWorkflow(systemWorkflow)).toMatchObject({
+      success: true,
+      config: systemWorkflow,
+    });
+  });
+
+  it('accepts an email step naming its account by handle', () => {
+    const definition = withSendEmailStep({
+      connectedAccountHandle: 'sales@example.com',
+    }) as WorkflowManifest;
+
+    expect(defineWorkflow(definition).errors).toEqual([]);
+  });
+
+  it.each([
+    {
+      problem: 'an email step naming its account by both id and handle',
+      definition: withSendEmailStep({
+        connectedAccountId: '{{trigger.accountId}}',
+        connectedAccountHandle: 'sales@example.com',
+      }),
+      error:
+        'version.steps.0.input.connectedAccountHandle: Set exactly one of connectedAccountId and connectedAccountHandle',
+    },
+    {
+      problem: 'a step type applications cannot use',
+      definition: withStep({ type: 'CODE' }),
+      error:
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, AI_AGENT',
+    },
+    {
+      problem: 'an unknown trigger type',
+      definition: {
+        ...workflow,
+        version: {
+          ...workflow.version,
+          trigger: { ...workflow.version.trigger, type: 'UNKNOWN' },
+        },
+      },
+      error: expect.stringMatching(/^version\.trigger\.type: .*MANUAL/),
+    },
+    {
+      problem: 'an isSystem that is not a boolean',
+      definition: { ...workflow, isSystem: 'true' },
+      error: 'isSystem: Invalid input: expected boolean, received string',
+    },
+    {
+      problem: 'a cycle',
+      definition: withStep({ nextStepIds: [STEP_ID] }),
+      error: `Workflow contains a cycle at step ${STEP_ID}`,
+    },
+  ])('rejects $problem', ({ definition, error }) => {
+    const result = defineWorkflow(definition as WorkflowManifest);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([error]);
+  });
+});

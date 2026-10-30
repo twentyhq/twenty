@@ -1,0 +1,1 @@
+export const DATE_PICKER_CONTAINER_WIDTH = 280;

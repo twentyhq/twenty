@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildObjectNavigationUniversalFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
@@ -19,7 +18,7 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
     metadataName: 'objectMetadata',
     name: 'objectNavigationCommandOnCreate',
     description:
-      'When an object is created, provision its singleton "Go to" navigation command menu item (engineComponentKey NAVIGATION, a null payload and the target in navigationTargetObjectMetadataId), isSystemSideEffect so the engine owns its lifecycle, and isActive mirrors the object so an object created inactive gets a disabled command rather than none. Label, shortLabel and icon are interpolation templates resolved from the object at render time, the availability expression gates on the object read permission plus a feature flag for gated standard objects, and hotKeys derive from the object shortcut. The identifier is name-free and keyed on (application, object), so an object rename keeps the same command. Position is derived from the synced maximum plus the object index in the creation batch, so batch object creation never double-books a position. Noops when the object create carries no workspace id (the manifest sync path mints entity ids after side-effect expansion), and for SYSTEM-readable objects, whose records the API never serves. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and seeds one navigation command per active, non-SYSTEM-readable object itself.',
+      'When an object is created, provision its singleton "Go to" navigation command menu item (engineComponentKey NAVIGATION, a null payload and the target in navigationTargetObjectMetadataId), isSystemSideEffect so the engine owns its lifecycle, and isActive mirrors the object so an object created inactive gets a disabled command rather than none. Label, shortLabel and icon are interpolation templates resolved from the object at render time, the availability expression gates on the object read permission plus a feature flag for gated standard objects, and hotKeys derive from the object shortcut. The identifier is name-free and keyed on (application, object), so an object rename keeps the same command. Position is derived from the synced maximum plus the object index in the creation batch, so batch object creation never double-books a position. Noops when the object create carries no workspace id (the manifest sync path mints entity ids after side-effect expansion), and for objects whose read action is disabled, since their records are never served. twenty-standard is not concerned: it synchronizes through the from/to migration path, which never runs the side-effect engine, and seeds one navigation command per active, readable object itself.',
   },
 ) {
   buildSideEffects({
@@ -32,7 +31,9 @@ export class ObjectNavigationCommandOnCreateSideEffectHandlerService extends Met
 
     if (
       !isDefined(sourceFlatObjectMetadata.id) ||
-      sourceFlatObjectMetadata.readability === MetadataReadability.SYSTEM
+      sourceFlatObjectMetadata.disabledObjectPermissionActions?.includes(
+        'canReadObjectRecords',
+      )
     ) {
       return { status: 'noop' };
     }

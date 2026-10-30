@@ -25,21 +25,30 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Display: Story = {
   render: (args) => (
-    <>
+    <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <StackIcon {...args} />
       <Text>Companies</Text>
-    </>
+    </Text>
   ),
+};
+
+export const Geometry: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const icon = canvasElement.querySelector('svg')!;
     const root = icon.parentElement!.parentElement!;
+    const label = canvas.getByText('Companies');
+    const stackedAvatar = canvas.getByText('S');
 
-    await expect(canvas.getByText('Companies')).toBeVisible();
+    await expect(label).toBeVisible();
     await expect(root.getBoundingClientRect().width).toBe(16);
     await expect(root.getBoundingClientRect().height).toBe(16);
     await expect(icon.getBoundingClientRect().width).toBe(16);
+    await expect(label.getBoundingClientRect().left).toBeGreaterThan(
+      stackedAvatar.getBoundingClientRect().right,
+    );
   },
 };

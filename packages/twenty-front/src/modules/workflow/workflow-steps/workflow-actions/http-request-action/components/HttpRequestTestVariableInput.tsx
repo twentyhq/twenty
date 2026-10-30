@@ -37,7 +37,7 @@ export const HttpRequestTestVariableInput = ({
   );
   const mockStep: WorkflowStep = {
     id: 'test-step',
-    name: 'Test Step',
+    name: t`Test Step`,
     type: 'HTTP_REQUEST',
     valid: true,
     settings: {

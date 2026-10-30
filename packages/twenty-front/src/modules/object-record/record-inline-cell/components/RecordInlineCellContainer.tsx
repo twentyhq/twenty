@@ -20,14 +20,6 @@ const StyledIconContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   width: 16px;
-
-  svg {
-    align-items: center;
-    display: flex;
-    height: 16px;
-    justify-content: center;
-    width: 16px;
-  }
 `;
 
 const StyledLabelAndIconContainer = styled.div`
@@ -113,7 +105,10 @@ export const RecordInlineCellContainer = () => {
           <StyledLabelAndIconContainer>
             {IconLabel && (
               <StyledIconContainer>
-                <IconLabel stroke={theme.icon.stroke.sm} />
+                <IconLabel
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
               </StyledIconContainer>
             )}
             {showLabel && (

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isArray } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
@@ -24,6 +25,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/common/common-query-runners/utils/compute-duplicate-key-column-groups-for-join-column.util';
+import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -33,10 +35,11 @@ import {
   CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -75,6 +78,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       args.ids,
       args.conflictPriorityIndex,
     );
+
+    await this.assertMergeKeepsUnreadableFieldValuesOrThrow({
+      queryRunnerContext,
+      ids: args.ids,
+      priorityRecordId: priorityRecord.id,
+    });
 
     const mergedData = this.performDeepMerge(
       recordsToMerge,
@@ -189,6 +198,111 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return priorityRecord;
   }
 
+  // Unreadable fields are left out of the merge, so a value only a deleted record holds would vanish unseen
+  private async assertMergeKeepsUnreadableFieldValuesOrThrow({
+    queryRunnerContext,
+    ids,
+    priorityRecordId,
+  }: {
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    ids: string[];
+    priorityRecordId: string;
+  }): Promise<void> {
+    const {
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      repository,
+      transactionScope,
+    } = queryRunnerContext;
+
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[flatObjectMetadata.id]
+        ?.restrictedFields ?? {};
+
+    const unreadableFieldIds = new Set(
+      Object.entries(restrictedFields)
+        .filter(([, fieldPermissions]) => fieldPermissions.canRead === false)
+        .map(([fieldMetadataId]) => fieldMetadataId),
+    );
+
+    if (unreadableFieldIds.size === 0) {
+      return;
+    }
+
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    const unreadableRecordKeys = Object.entries({
+      ...fieldIdByName,
+      ...fieldIdByJoinColumnName,
+    })
+      .filter(([, fieldMetadataId]) => unreadableFieldIds.has(fieldMetadataId))
+      .map(([recordKey]) => recordKey);
+
+    const bypassPermissionConfig = {
+      shouldBypassPermissionChecks: true,
+    } as const;
+
+    const unrestrictedRepository = isDefined(transactionScope)
+      ? transactionScope.getRepository<ObjectRecord>(
+          flatObjectMetadata.nameSingular,
+          bypassPermissionConfig,
+        )
+      : this.workspaceOrmManager.getRepository<ObjectRecord>(
+          flatObjectMetadata.nameSingular,
+          bypassPermissionConfig,
+        );
+
+    const fullRecords = await unrestrictedRepository.find({
+      where: { id: In(ids) },
+      select: getAllSelectableColumnNames({
+        restrictedFields: {},
+        objectMetadata: {
+          objectMetadataMapItem: flatObjectMetadata,
+          flatFieldMetadataMaps,
+        },
+      }),
+    });
+
+    const fullPriorityRecord = fullRecords.find(
+      (record) => record.id === priorityRecordId,
+    );
+
+    if (!isDefined(fullPriorityRecord)) {
+      return;
+    }
+
+    // Priority first, so array unions only differ when another record adds a value
+    const fullyMergedData = this.performDeepMerge(
+      [
+        fullPriorityRecord,
+        ...fullRecords.filter((record) => record.id !== priorityRecordId),
+      ],
+      priorityRecordId,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    const changedUnreadableRecordKeys = findRecordKeysChangedByMerge({
+      mergedData: fullyMergedData,
+      priorityRecord: fullPriorityRecord,
+      recordKeys: unreadableRecordKeys,
+    });
+
+    if (changedUnreadableRecordKeys.length > 0) {
+      throw new CommonQueryRunnerException(
+        `Merge would drop values in fields the requester cannot read: ${changedUnreadableRecordKeys.join(', ')}`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`These records hold data in fields your role cannot see. Ask someone with access to those fields to merge them.`,
+        },
+      );
+    }
+  }
+
   private performDeepMerge(
     recordsToMerge: ObjectRecord[],
     priorityRecordId: string,
@@ -198,10 +312,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
+    const { fieldIdByName, fieldIdByJoinColumnName } =
+      buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+    // Records carry many-to-one relations under their join column (companyId), not the field name
+    const fieldIdByRecordKey = { ...fieldIdByName, ...fieldIdByJoinColumnName };
 
     const allFieldNames = new Set<string>();
 
@@ -210,7 +328,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         if (
           !this.shouldExcludeFieldFromMerge(
             fieldName,
-            fieldIdByName,
+            fieldIdByRecordKey,
             flatFieldMetadataMaps,
           )
         ) {
@@ -236,7 +354,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
         const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldIdByName[fieldName],
+          flatEntityId: fieldIdByRecordKey[fieldName],
           flatEntityMaps: flatFieldMetadataMaps,
         });
 
@@ -266,11 +384,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   private shouldExcludeFieldFromMerge(
     fieldName: string,
-    fieldIdByName: Record<string, string>,
+    fieldIdByRecordKey: Record<string, string>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ): boolean {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldIdByName[fieldName],
+      flatEntityId: fieldIdByRecordKey[fieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -503,7 +621,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           rolePermissionConfig,
         );
 
-        await objectRepository.runMutation({
+        const deletedRecords = await objectRepository.runMutation({
           selectQueryBuilder: objectRepository
             .createQueryBuilder(alias)
             .where({ id: In(idsToDelete) }),
@@ -511,6 +629,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           kind: 'delete',
           columnsToReturn,
         });
+
+        // Row-level permissions filter the delete, so a record the role can read but not delete is skipped silently
+        if (deletedRecords.length !== idsToDelete.length) {
+          throw new CommonQueryRunnerException(
+            'Some records to merge cannot be deleted with the current role',
+            CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            {
+              userFriendlyMessage: msg`Your role cannot delete some of these records, so they cannot be merged.`,
+            },
+          );
+        }
 
         const [resolvedMergedData] = await this.resolveNestedRelations({
           records: [mergedData],
@@ -602,9 +731,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     assertMutationNotOnRemoteObject(flatObjectMetadata);
 
-    if (!isDefined(flatObjectMetadata.duplicateCriteria)) {
+    // Merge deletes through the repository, so it would bypass the delete and update hooks guarding system objects.
+    if (flatObjectMetadata.isSystem) {
       throw new CommonQueryRunnerException(
-        `Merge is only available for objects with duplicate criteria. Object '${flatObjectMetadata.nameSingular}' does not have duplicate criteria defined.`,
+        `Merge is not available on system object '${flatObjectMetadata.nameSingular}'.`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`This type of record cannot be merged.` },
       );
@@ -612,7 +742,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const { ids, conflictPriorityIndex } = args;
 
-    if (!ids || ids.length < 2) {
+    if (!isArray(ids) || ids.length < 2) {
       throw new CommonQueryRunnerException(
         'At least 2 record IDs are required for merge',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
@@ -632,7 +762,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    if (conflictPriorityIndex < 0 || conflictPriorityIndex >= ids.length) {
+    ids.forEach(assertIsValidUuid);
+
+    if (
+      !Number.isInteger(conflictPriorityIndex) ||
+      conflictPriorityIndex < 0 ||
+      conflictPriorityIndex >= ids.length
+    ) {
       throw new CommonQueryRunnerException(
         `Invalid conflict priority '${conflictPriorityIndex}'. Valid options for ${ids.length} records: 0-${ids.length - 1}`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,

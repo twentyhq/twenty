@@ -126,7 +126,7 @@ export const CallRecordingTranscriptEntryListItem = ({
     >
       <StyledEntryHeader>
         <Chip
-          variant="ghost"
+          variant="plain"
           startElement={
             <Avatar
               name={speakerName}
@@ -135,7 +135,6 @@ export const CallRecordingTranscriptEntryListItem = ({
               shape="circle"
             />
           }
-          style={{ paddingInlineStart: 0 }}
         >
           {getChipLabel(speakerName).content}
         </Chip>

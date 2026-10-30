@@ -11,6 +11,7 @@ export const GET_MY_CALENDAR_CHANNELS = gql`
       syncStageStartedAt
       isContactAutoCreationEnabled
       contactAutoCreationPolicy
+      excludePrivateEvents
       isSyncEnabled
       connectedAccountId
       createdAt

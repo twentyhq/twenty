@@ -1,6 +1,5 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCoins, IconList, IconTrash, IconUsers } from 'twenty-ui/icon';
 
@@ -14,11 +13,11 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const FILTER_DROPDOWN_ID = 'settings-billing-limits-filter';
 
 type SettingsBillingLimitsFilterDropdownProps = {
-  filterButton: ReactElement;
   resourceTypes: UsageResourceType[];
   spenderTypes: string[];
   selectedResourceType: UsageResourceType | null;
@@ -28,7 +27,6 @@ type SettingsBillingLimitsFilterDropdownProps = {
 };
 
 export const SettingsBillingLimitsFilterDropdown = ({
-  filterButton,
   resourceTypes,
   spenderTypes,
   selectedResourceType,
@@ -157,7 +155,7 @@ export const SettingsBillingLimitsFilterDropdown = ({
 
   return (
     <DropdownRoot dropdownId={FILTER_DROPDOWN_ID} type="picker">
-      <Dropdown.Trigger render={filterButton} />
+      <SettingsSearchFilterTrigger ariaLabel={t`Filter limits`} />
       <DropdownContent align="end" sideOffset={8}>
         <Dropdown.Page id="root">{renderMenuContent()}</Dropdown.Page>
         <Dropdown.Page id="usage">{renderUsageContent()}</Dropdown.Page>

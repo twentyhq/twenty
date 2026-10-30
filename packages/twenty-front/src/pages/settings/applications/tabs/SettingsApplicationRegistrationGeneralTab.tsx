@@ -1,8 +1,5 @@
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
-import { useLingui } from '@lingui/react/macro';
-import { Link, useLocation } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/components/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
 import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
@@ -12,53 +9,34 @@ import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/ap
 
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,
-  fromAdmin,
+  isAdminView,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
-  const { t } = useLingui();
-  const location = useLocation();
-
   return (
     <>
-      {!registration.isConfigured && fromAdmin && (
-        <InlineBanner
-          status="error"
-          action={
-            <InlineBanner.Action
-              href={`${location.pathname}${location.search}#config`}
-              nativeButton={false}
-              role="link"
-              render={
-                <Link
-                  to={{ search: location.search, hash: '#config' }}
-                  state={location.state}
-                />
-              }
-            >{t`Configure`}</InlineBanner.Action>
-          }
-        >{t`This app is not fully configured. Users won't be able to install it until all required server variables are set, and — for apps exposing a server route — until the app is claimed and installed on its owner workspace.`}</InlineBanner>
-      )}
-      <SettingsApplicationRegistrationGeneralInfo registration={registration} />
-      {fromAdmin && (
+      <SettingsApplicationRegistrationGeneralInfo
+        registration={registration}
+        isAdminView={isAdminView}
+      />
+      {isAdminView && (
         <SettingsAdminApplicationRegistrationGeneralSwitches
           registration={registration}
         />
       )}
-      {fromAdmin && (
+      {isAdminView && (
         <SettingsAdminApplicationRegistrationClaims
           applicationRegistrationId={registration.id}
         />
       )}
-      {fromAdmin && (
-        <SettingsApplicationRegistrationGeneralStats
-          registration={registration}
-        />
-      )}
+      <SettingsApplicationRegistrationGeneralStats
+        registration={registration}
+        isAdminView={isAdminView}
+      />
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
-        fromAdmin={fromAdmin}
+        isAdminView={isAdminView}
       />
     </>
   );

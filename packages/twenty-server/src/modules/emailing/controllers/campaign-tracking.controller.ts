@@ -9,6 +9,7 @@ import {
   Redirect,
   Req,
   Res,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,6 +24,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
+import { RecipientPageExceptionFilter } from 'src/modules/emailing/filters/recipient-page-exception.filter';
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
@@ -44,6 +46,7 @@ export class CampaignTrackingController {
 
   @Get('c/:token')
   @Redirect()
+  @UseFilters(RecipientPageExceptionFilter)
   @Header('Cache-Control', 'no-store')
   @Header('Referrer-Policy', 'no-referrer')
   async handleTrackedLinkClick(

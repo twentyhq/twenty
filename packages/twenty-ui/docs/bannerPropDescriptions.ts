@@ -12,6 +12,10 @@ export const BANNER_PROP_DESCRIPTIONS = {
   icon: 'Optional leading ReactNode. The caller supplies decorative or accessible icon semantics.',
   action:
     'Optional trailing ReactNode. Banner.Action supplies a small outline action that inherits the resolved banner color; arbitrary controls are also accepted.',
+  onDismiss:
+    'Renders a 24px ghost close control and calls this callback when activated. The caller owns visibility.',
+  closeLabel:
+    'Accessible label for the close control. Defaults to Close; supply localized text when needed.',
   className: 'Class merged onto the root div or composed element.',
   style: 'Inline styles applied to the root div or composed element.',
   ref: 'Ref to the root div, or to the DOM element supplied through render.',

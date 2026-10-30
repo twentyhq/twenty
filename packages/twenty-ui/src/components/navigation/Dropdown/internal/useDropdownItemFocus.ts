@@ -11,16 +11,11 @@ export const useDropdownItemFocus = ({
 }) => {
   const context = useDropdownContext();
   const type = isSubmenuTrigger ? context.parentType : context.type;
-  const activeItemId = isSubmenuTrigger
-    ? context.parentActiveItemId
-    : context.activeItemId;
-  const setActiveItemId = isSubmenuTrigger
-    ? context.setParentActiveItemId
-    : context.setActiveItemId;
-  const isOutsideMenuRovingFocus = type === 'menu' && activeItemId !== id;
+  const rowFocus = isSubmenuTrigger ? context.parentRowFocus : context.rowFocus;
+  const isRovingRow =
+    type !== 'panel' && (rowFocus?.rowIds?.includes(id) ?? true);
+  const isOutsideTabOrder =
+    disabled || (isRovingRow && rowFocus?.tabStopRowId !== id);
 
-  return {
-    tabIndex: disabled || isOutsideMenuRovingFocus ? -1 : 0,
-    activate: () => setActiveItemId?.(id),
-  };
+  return { tabIndex: isOutsideTabOrder ? -1 : 0 };
 };

@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Application token access to another application should fail with a user-bound application token should refuse activateSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
 exports[`Application token access to another application should fail with a user-bound application token should refuse applicationConnectedAccounts on another application 1`] = `
 {
   "extensions": {
@@ -53,6 +65,42 @@ exports[`Application token access to another application should fail with a user
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse deactivateSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse deleteOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with a user-bound application token should refuse deleteSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
 }
 `;
 
@@ -292,6 +340,18 @@ exports[`Application token access to another application should fail with a user
 }
 `;
 
+exports[`Application token access to another application should fail with a user-bound application token should refuse updateSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
 exports[`Application token access to another application should fail with a user-bound application token should refuse upgradeApplication on another application 1`] = `
 {
   "extensions": {
@@ -309,6 +369,18 @@ exports[`Application token access to another application should fail with a user
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse activateSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
 }
 `;
 
@@ -365,6 +437,42 @@ exports[`Application token access to another application should fail with an app
     "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse deactivateSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse deleteOneAgent on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse deleteSkill on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
 }
 `;
 
@@ -593,6 +701,18 @@ exports[`Application token access to another application should fail with an app
 `;
 
 exports[`Application token access to another application should fail with an application token without user binding should refuse updateOneLogicFunction on another application 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "An application token can only reach its own application",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application token access to another application should fail with an application token without user binding should refuse updateSkill on another application 1`] = `
 {
   "extensions": {
     "code": "FORBIDDEN",

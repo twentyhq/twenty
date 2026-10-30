@@ -1,4 +1,5 @@
 import { defineFrontComponent } from '@/sdk/define';
+import { PageLayoutType } from 'twenty-shared/types';
 
 const MockComponent = () => null;
 
@@ -80,5 +81,34 @@ describe('defineFrontComponent', () => {
 
     expect(result.success).toBe(true);
     expect(result.config?.name).toBeUndefined();
+  });
+
+  it('should accept a widgetAvailability restricted to objects', () => {
+    const result = defineFrontComponent({
+      ...validConfig,
+      widgetAvailability: {
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        objectUniversalIdentifiers: ['20202020-b374-4779-a561-80086cb2e17f'],
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should return error when widgetAvailability restricts record pages to no object', () => {
+    const result = defineFrontComponent({
+      ...validConfig,
+      widgetAvailability: {
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        objectUniversalIdentifiers: [],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      expect.stringContaining(
+        'widgetAvailability.objectUniversalIdentifiers must not be empty',
+      ),
+    ]);
   });
 });

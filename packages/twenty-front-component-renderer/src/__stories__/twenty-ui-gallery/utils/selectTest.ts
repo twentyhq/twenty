@@ -1,7 +1,9 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectElementBackdropToReachHostPage } from '@/__stories__/shared/test-utils/matchers/expectElementBackdropToReachHostPage';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
@@ -28,7 +30,10 @@ export const selectTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(trigger);
   const qualified = await page.findByRole('option', { name: 'Qualified' });
   const archived = page.getByRole('option', { name: 'Archived' });
-  await waitFor(() => expect(qualified).toBeVisible());
+  await waitFor(() => expect(qualified).toBeVisible(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
+  expectElementBackdropToReachHostPage(page.getByTestId('stage-popup'));
   expect(qualified.tagName).toBe('LI');
   expect(archived).toHaveAttribute('aria-disabled', 'true');
   expect(qualified.closest('[data-select-positioner="stage"]')).toHaveStyle({
@@ -57,7 +62,9 @@ export const selectTest: TwentyUiGalleryPlayFunction = async ({
 
   await userEvent.click(trigger);
   const newStage = await page.findByRole('option', { name: 'New' });
-  await waitFor(() => expect(newStage).toBeVisible());
+  await waitFor(() => expect(newStage).toBeVisible(), {
+    timeout: INTERACTION_TIMEOUT,
+  });
   expect(newStage.tagName).toBe('BUTTON');
   await userEvent.keyboard('q');
   await waitFor(() =>

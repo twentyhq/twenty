@@ -10,7 +10,7 @@ export const buildTeamsCalendarViewUrl = ({
     startDateTime,
     endDateTime,
     $select:
-      'id,iCalUId,seriesMasterId,isOrganizer,isCancelled,onlineMeetingProvider,onlineMeeting,start,end',
+      'id,iCalUId,seriesMasterId,isOrganizer,isCancelled,isOnlineMeeting,onlineMeetingProvider,onlineMeeting,start,end',
     $top: String(pageSize),
   });
 

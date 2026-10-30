@@ -4,6 +4,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowFormFieldsProps = {
@@ -31,7 +32,10 @@ export const WorkflowFormFields = ({
         return (
           <FormSingleRecordPicker
             key={field.name}
-            label={field.label}
+            label={getFormFieldDisplayText({
+              type: field.type,
+              text: field.label,
+            })}
             defaultValue={field.value?.id}
             onChange={(recordId) => {
               onChange(field.name, { id: recordId });
@@ -66,7 +70,10 @@ export const WorkflowFormFields = ({
         <FormFieldInput
           key={field.name}
           field={{
-            label: field.label,
+            label: getFormFieldDisplayText({
+              type: field.type,
+              text: field.label,
+            }),
             type: field.type,
             metadata: {} as FieldMetadata,
           }}
@@ -75,10 +82,12 @@ export const WorkflowFormFields = ({
           }}
           defaultValue={field.value}
           readonly={readonly}
-          placeholder={
-            field.placeholder ??
-            getDefaultFormFieldSettings(field.type).placeholder
-          }
+          placeholder={getFormFieldDisplayText({
+            type: field.type,
+            text:
+              field.placeholder ??
+              getDefaultFormFieldSettings(field.type).placeholder,
+          })}
           onError={onError}
         />
       );

@@ -1,14 +1,26 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import {
   type Decorator,
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -19,6 +31,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { IMAGE_URL_MOCK } from '~/testing/mock-data/image-url';
 
 const StyledConversationContainer = styled.div`
   display: flex;
@@ -38,7 +51,8 @@ const mockUserMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 120000).toISOString(),
+    createdAt: getMockedDateWithOffset({ minutes: -2 }),
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
   },
 };
 
@@ -79,7 +93,7 @@ print("Chart saved successfully!")`,
           {
             fileId: '550e8400-e29b-41d4-a716-446655440005',
             filename: 'sales_chart.png',
-            url: 'https://picsum.photos/800/480',
+            url: IMAGE_URL_MOCK,
             mimeType: 'image/png',
           },
         ],
@@ -91,7 +105,7 @@ print("Chart saved successfully!")`,
     },
   ],
   metadata: {
-    createdAt: new Date(Date.now() - 60000).toISOString(),
+    createdAt: getMockedDateWithOffset({ minutes: -1 }),
     usage: {
       inputTokens: 1250,
       outputTokens: 890,
@@ -113,7 +127,7 @@ const mockSimpleTextResponse: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -127,7 +141,7 @@ const mockStreamingMessage: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -152,7 +166,7 @@ print("Done!")`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -183,7 +197,7 @@ print(df.head())`,
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -205,7 +219,7 @@ const mockThinkingStepsStreaming: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
 };
 
@@ -231,7 +245,7 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
     startedAt: '2026-01-01T10:00:00.000Z',
     finishedAt: '2026-01-01T10:01:23.000Z',
   },
@@ -264,12 +278,83 @@ const mockAnsweredForm: ExtendedUIMessage = {
     },
   ],
   metadata: {
-    createdAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
   },
+};
+
+const mockTeammate = {
+  ...mockedWorkspaceMemberData,
+  id: 'teammate-marco',
+  name: { firstName: 'Marco', lastName: 'Rossi' },
+  avatarUrl: null,
+};
+
+const mockTeammateMessage: ExtendedUIMessage = {
+  id: 'msg-teammate',
+  role: 'user',
+  parts: [{ type: 'text', text: 'I will handle the security review.' }],
+  metadata: {
+    createdAt: getMockedDateWithOffset({ minutes: -1 }),
+    senderWorkspaceMemberId: mockTeammate.id,
+  },
+};
+
+const mockFormerMemberMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-former-member',
+  parts: [{ type: 'text', text: 'The proposal is ready for review.' }],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: 'former-member',
+  },
+};
+
+const mockUnknownSenderMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-unknown-sender',
+  parts: [{ type: 'text', text: 'A message without sender metadata.' }],
+  metadata: { createdAt: MOCKED_DATE },
+};
+
+const mockNamedAssistantMessage: ExtendedUIMessage = {
+  ...mockTeammateMessage,
+  id: 'msg-named-assistant',
+  role: 'assistant',
+  parts: [{ type: 'text', text: 'The recorded sender remains visible.' }],
+};
+
+const mockLongUserMessage: ExtendedUIMessage = {
+  ...mockUserMessage,
+  id: 'msg-user-long',
+  parts: [
+    {
+      type: 'text',
+      text: `Help me set up my workspace for our sales team.
+
+1. Create a Deal Stage field on Opportunities with the values Lead, Qualified, Proposal, Negotiation, Won and Lost.
+2. Import the companies from the spreadsheet I attached and link each one to its account owner.
+3. Build a Pipeline view grouped by Deal Stage, sorted by close date, showing amount and owner.
+4. Add a dashboard with won revenue per month and the number of open deals per owner.
+5. Create a workflow that assigns a follow-up task to the owner when a deal has had no activity for seven days.
+6. Draft a short welcome email I can send to the team explaining the new pipeline.
+7. Add a Lost Reason select field on Opportunities and make it required when a deal moves to Lost.
+8. Create a weekly view of deals closing this month for the Monday sales meeting.
+9. Tag the companies that have no open opportunity so we can plan outreach.
+10. Set up a reminder task for each owner to update their deal amounts every Friday.
+11. Merge duplicate companies that share the same domain and keep the most recent owner.
+12. Create a Renewal Date field on Companies and a view of renewals coming up in the next 90 days.
+13. Build a workflow that notifies the account owner when a renewal is 30 days away and no opportunity exists yet.
+14. Add a dashboard chart with the conversion rate from Qualified to Won per month for the last two quarters.
+15. Import last year's closed deals from the second sheet so the dashboard has history from day one.
+
+Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match. Follow the [pipeline guide](https://twenty.com/user-guide) for naming.`,
+    },
+  ],
 };
 
 const allMockMessages = [
   mockUserMessage,
+  mockLongUserMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -278,32 +363,88 @@ const allMockMessages = [
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
   mockAnsweredForm,
+  mockTeammateMessage,
+  mockFormerMemberMessage,
+  mockUnknownSenderMessage,
+  mockNamedAssistantMessage,
 ];
 
 const AgentChatMessagesSetterEffect = ({
   messages,
+  isInboxEnabled,
 }: {
   messages: ExtendedUIMessage[];
+  isInboxEnabled: boolean;
 }) => {
   const store = useStore();
 
   useEffect(() => {
-    const currentThreadId = store.get(currentAiChatThreadState.atom);
-
-    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
-
-    store.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: currentThreadId }),
-      messages,
+    const currentThreadId = 'conversation-presentation-story';
+    const previousCurrentThread = store.get(currentAiChatThreadState.atom);
+    const previousDisplayedThread = store.get(
+      agentChatDisplayedThreadState.atom,
     );
-  }, [messages, store]);
+    const previousWorkspace = store.get(currentWorkspaceState.atom);
+    const previousMember = store.get(currentWorkspaceMemberState.atom);
+    const previousMembers = store.get(currentWorkspaceMembersState.atom);
+    const previousVisit = store.get(agentChatThreadVisitState.atom);
+    const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+      threadId: currentThreadId,
+    });
+    const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+      messageId: mockTeammateMessage.id,
+    });
+
+    store.set(currentAiChatThreadState.atom, currentThreadId);
+    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
+    store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+    store.set(currentWorkspaceMembersState.atom, [
+      mockedWorkspaceMemberData,
+      mockTeammate,
+    ]);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
+      ],
+    });
+    store.set(agentChatThreadVisitState.atom, {
+      threadId: currentThreadId,
+      isUnread: true,
+      isKeptUnread: false,
+      lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
+    });
+    store.set(messagesAtom, messages);
+    store.set(reactionsAtom, [
+      {
+        emoji: '👍',
+        workspaceMemberIds: [mockedWorkspaceMemberData.id],
+        agentIds: [],
+        hasAssistantReacted: false,
+      },
+    ]);
+
+    return () => {
+      store.set(currentAiChatThreadState.atom, previousCurrentThread);
+      store.set(agentChatDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(currentWorkspaceState.atom, previousWorkspace);
+      store.set(currentWorkspaceMemberState.atom, previousMember);
+      store.set(currentWorkspaceMembersState.atom, previousMembers);
+      store.set(agentChatThreadVisitState.atom, previousVisit);
+      store.set(messagesAtom, []);
+      store.set(reactionsAtom, []);
+    };
+  }, [messages, isInboxEnabled, store]);
 
   return null;
 };
 
-const AgentChatMessagesDecorator: Decorator = (Story) => (
+const AgentChatMessagesDecorator: Decorator = (Story, { parameters }) => (
   <>
-    <AgentChatMessagesSetterEffect messages={allMockMessages} />
+    <AgentChatMessagesSetterEffect
+      messages={parameters.messages ?? allMockMessages}
+      isInboxEnabled={parameters.isInboxEnabled ?? false}
+    />
     <Suspense fallback={<MarkdownLoadingSkeleton />}>
       <Story />
     </Suspense>
@@ -338,6 +479,41 @@ export const ConversationWithCodeExecution: Story = {
 
 export const UserMessage: Story = {
   render: () => <AiChatMessage messageId={mockUserMessage.id} />,
+};
+
+export const LongUserMessage: Story = {
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockLongUserMessage.id} />
+      <AiChatMessage messageId={mockUserMessage.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const showMoreButton = await canvas.findByRole('button', {
+      name: 'Show more',
+    });
+
+    await expect(
+      canvas.getAllByRole('button', { name: 'Show more' }),
+    ).toHaveLength(1);
+    await expect(showMoreButton).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.tab();
+
+    await expect(
+      canvas.getByRole('link', { name: 'pipeline guide' }),
+    ).toHaveFocus();
+    await expect(
+      await canvas.findByRole('button', { name: 'Show less' }),
+    ).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show more' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+  },
 };
 
 export const AssistantTextResponse: Story = {
@@ -378,4 +554,58 @@ export const ThinkingStepsDoneExpanded: Story = {
 
 export const AnsweredForm: Story = {
   render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
+};
+
+export const MultiplayerConversation: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessage, mockTeammateMessage, mockSimpleTextResponse],
+  },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockTeammateMessage.id} />
+      <AiChatMessage messageId={mockSimpleTextResponse.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Marco Rossi')).toBeVisible();
+    await expect(await canvas.findByText('Assistant')).toBeVisible();
+    const unreadSeparator = canvas.getByRole('separator', { name: 'New' });
+    await expect(unreadSeparator).toBeVisible();
+    await expect(unreadSeparator).toHaveAttribute(
+      'aria-orientation',
+      'horizontal',
+    );
+    const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
+    await expect(selectedReaction).toBeVisible();
+    selectedReaction.focus();
+    await userEvent.tab();
+    const addReactionButton = canvas.getAllByRole('button', {
+      name: 'Add reaction',
+    })[1];
+    await expect(addReactionButton).toHaveFocus();
+    await waitFor(() => expect(addReactionButton).toBeVisible());
+  },
+};
+
+export const SenderFallbacks: Story = {
+  parameters: { isInboxEnabled: true },
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockFormerMemberMessage.id} />
+      <AiChatMessage messageId={mockUnknownSenderMessage.id} />
+      <AiChatMessage messageId={mockNamedAssistantMessage.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Former member')).toBeVisible();
+    await expect(canvas.getByText('Unknown sender')).toBeVisible();
+    await expect(canvas.getByText('Marco Rossi')).toBeVisible();
+    await expect(canvas.queryByText('Ada')).not.toBeInTheDocument();
+  },
 };

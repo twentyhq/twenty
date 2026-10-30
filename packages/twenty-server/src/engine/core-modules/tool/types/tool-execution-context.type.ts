@@ -6,6 +6,7 @@ export type ToolExecutionContext = {
   workspaceId: string;
   userId?: string;
   userWorkspaceId?: string;
+  agentId?: string;
   threadId?: string;
   rolePermissionConfig?: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;

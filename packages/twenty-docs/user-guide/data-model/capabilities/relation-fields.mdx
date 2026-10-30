@@ -3,6 +3,8 @@ title: Relation Fields
 description: Connect records across different objects using relation fields.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Types of Relations
 
 ### One-to-Many
@@ -40,7 +42,7 @@ Many records in Object A can be linked to many records in Object B.
 Many-to-many relations use a **junction object** pattern: an intermediate object that connects both sides. With the junction relation feature, Twenty displays the final linked records directly, hiding the intermediate object from the UI.
 
 <Note>
-Configuring a junction relation requires **Advanced mode** to be enabled (toggle at the bottom left of Settings).
+The **This is a relation to a Junction Object** toggle appears on a one-to-many relation field with a single target object, when that target looks like a junction object (its own relations, ignoring system ones, are all many-to-one) and has another relation to point through.
 </Note>
 
 See [How to Create Many-to-Many Relations](/user-guide/data-model/how-tos/create-many-to-many-relations) for a complete step-by-step guide.
@@ -86,3 +88,5 @@ Twenty comes with pre-built relations between standard objects:
 ## Limitations
 - **Deleting relations** removes the link but not the related records
 - **Circular relations** should be avoided for data integrity
+
+<PageBanner illustration="card-page-relations" />

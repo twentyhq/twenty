@@ -50,11 +50,10 @@ const StyledRoot = styled.div`
   width: 100%;
 `;
 
-const StyledCardContent = styled.div`
+const StyledCardContent = styled(Card.Content)`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSelectorRow = styled.div`
@@ -167,7 +166,7 @@ export const SettingsLogs = () => {
   };
 
   const renderUpgradeCard = () => (
-    <Card.Root rounded backgroundColor={themeCssVariables.background.secondary}>
+    <Card.Root backgroundColor={themeCssVariables.background.secondary}>
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
@@ -235,7 +234,6 @@ export const SettingsLogs = () => {
   return (
     <StyledRoot>
       <Card.Root
-        rounded
         fullWidth
         backgroundColor={themeCssVariables.background.secondary}
       >

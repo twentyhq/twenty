@@ -21,6 +21,11 @@ const meta: Meta<typeof AlertDialogExample> = {
 export default meta;
 type Story = StoryObj<typeof AlertDialogExample>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { defaultOpen: false },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   args: { defaultOpen: true },
@@ -32,6 +37,13 @@ export const Default: Story = {
     expect(dialog).toHaveAccessibleDescription(
       'This record will be permanently deleted. This action cannot be undone.',
     );
+    expect(
+      getComputedStyle(
+        within(dialog).getByText(
+          'This record will be permanently deleted. This action cannot be undone.',
+        ),
+      ).textAlign,
+    ).toBe('start');
     expect(dialog).toHaveAttribute(
       'aria-labelledby',
       body.getByRole('heading', { name: 'Delete this record?' }).id,
@@ -45,11 +57,6 @@ export const Default: Story = {
     expect(bounds.right).toBeLessThanOrEqual(viewport.clientWidth);
     expect(bounds.bottom).toBeLessThanOrEqual(viewport.clientHeight);
   },
-};
-
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: { defaultOpen: false },
 };
 
 export const Small: Story = {
@@ -69,7 +76,7 @@ export const Fullscreen: Story = {
   args: { defaultOpen: true, size: 'fullscreen' },
 };
 
-export const Catalog: Story = {
+export const WithRecordContext: Story = {
   ...Default,
   args: {
     defaultOpen: true,
@@ -77,8 +84,8 @@ export const Catalog: Story = {
   },
 };
 
-export const CatalogDark: Story = {
-  ...Catalog,
+export const WithRecordContextDark: Story = {
+  ...WithRecordContext,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

@@ -40,7 +40,7 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
+import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -59,7 +59,7 @@ export class UserWorkspaceService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    private readonly roleValidationService: RoleValidationService,
+    private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -272,25 +272,20 @@ export class UserWorkspaceService {
     roleId: string | null | undefined,
     workspace: WorkspaceEntity,
   ): Promise<string> {
-    if (isDefined(roleId)) {
-      await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
-        roleId,
-        workspace.id,
-      );
+    const resolvedRoleId = roleId ?? workspace.defaultRoleId;
 
-      return roleId;
-    }
-
-    const defaultRoleId = workspace.defaultRoleId;
-
-    if (!isDefined(defaultRoleId)) {
+    if (!isDefined(resolvedRoleId)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
         PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
       );
     }
 
-    return defaultRoleId;
+    await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
+      { roleId: resolvedRoleId, workspaceId: workspace.id },
+    );
+
+    return resolvedRoleId;
   }
 
   public async getUserCount(workspaceId: string): Promise<number | undefined> {
@@ -680,14 +675,24 @@ export class UserWorkspaceService {
         appToken?: AppTokenEntity;
       }>;
     },
-    user: Pick<UserEntity, 'email'>,
+    user: Pick<UserEntity, 'email' | 'isEmailVerified'>,
     authProvider: AuthProviderEnum,
     canAutoLoginIntoWorkspaces = true,
   ) {
+    const shouldHideInvitations =
+      this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
+      !user.isEmailVerified;
+
+    const availableWorkspacesForSignUpToList = shouldHideInvitations
+      ? availableWorkspaces.availableWorkspacesForSignUp.filter(
+          ({ appToken }) => !isDefined(appToken),
+        )
+      : availableWorkspaces.availableWorkspacesForSignUp;
+
     const [availableWorkspacesForSignUp, availableWorkspacesForSignIn] =
       await Promise.all([
         Promise.all(
-          availableWorkspaces.availableWorkspacesForSignUp.map(
+          availableWorkspacesForSignUpToList.map(
             async ({ workspace, appToken }) => {
               return {
                 ...(await this.castWorkspaceToAvailableWorkspace(workspace)),

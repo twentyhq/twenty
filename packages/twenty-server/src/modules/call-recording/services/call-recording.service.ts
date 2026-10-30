@@ -33,6 +33,8 @@ export class CallRecordingService {
         authContext: workspaceContext.authContext,
         userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
         apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps:
+          workspaceContext.flatRoleTargetByAgentIdMaps,
       });
 
       if (!isDefined(rolePermissionConfig)) {
@@ -46,6 +48,9 @@ export class CallRecordingService {
         resolveObjectRecordsPermissions({
           rolePermissionConfig,
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
+          flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
+          flatApplicationMaps: workspaceContext.flatApplicationMaps,
         });
       const callRecordingObjectMetadataId =
         workspaceContext.objectIdByNameSingular.callRecording;

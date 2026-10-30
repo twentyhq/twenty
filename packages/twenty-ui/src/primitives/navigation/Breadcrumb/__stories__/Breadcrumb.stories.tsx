@@ -28,7 +28,16 @@ const meta: Meta<typeof Breadcrumb> = {
 export default meta;
 type Story = StoryObj<typeof Breadcrumb>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  args: {
+    'aria-label': 'Breadcrumb',
+    links: [
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ],
+  },
+};
 
 export const Truncation: Story = {
   args: {

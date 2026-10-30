@@ -5,6 +5,11 @@ import {
   PageLayoutTabLayoutMode,
   WidgetType,
 } from 'twenty-shared/types';
+import {
+  TIPTAP_DOCUMENT_SCHEMA_VERSION,
+  TIPTAP_MARK_TYPES,
+  TIPTAP_NODE_TYPES,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -25,10 +30,7 @@ type DashboardWidgetBuilderArgs = Omit<
 
 const createFilterConfigs = (
   filters: Array<{
-    type: string;
-    label: string;
     value: string;
-    displayValue: string;
     operand: string;
     fieldMetadataId: string;
     fieldMetadataUniversalIdentifier: string;
@@ -43,13 +45,13 @@ const createFilterConfigs = (
     },
   ];
 
+  const filtersWithIds = filters.map((filter) => ({ ...filter, id: v4() }));
+
   return {
     configuration: {
-      recordFilters: filters.map((filter) => ({
-        type: filter.type,
-        label: filter.label,
+      recordFilters: filtersWithIds.map((filter) => ({
+        id: filter.id,
         value: filter.value,
-        displayValue: filter.displayValue,
         operand: filter.operand,
         fieldMetadataId: filter.fieldMetadataId,
         recordFilterGroupId: groupId,
@@ -57,11 +59,9 @@ const createFilterConfigs = (
       recordFilterGroups,
     },
     universal: {
-      recordFilters: filters.map((filter) => ({
-        type: filter.type,
-        label: filter.label,
+      recordFilters: filtersWithIds.map((filter) => ({
+        id: filter.id,
         value: filter.value,
-        displayValue: filter.displayValue,
         operand: filter.operand,
         fieldMetadataUniversalIdentifier:
           filter.fieldMetadataUniversalIdentifier,
@@ -80,143 +80,78 @@ const createWelcomeRichText = ({
   const configuration = {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
     body: {
-      blocknote: JSON.stringify([
-        {
-          id: v4(),
-          type: 'heading',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-            level: 3,
+      tiptap: JSON.stringify({
+        type: TIPTAP_NODE_TYPES.DOCUMENT,
+        attrs: { schemaVersion: TIPTAP_DOCUMENT_SCHEMA_VERSION },
+        content: [
+          {
+            type: TIPTAP_NODE_TYPES.HEADING,
+            attrs: { level: 3 },
+            content: [
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: 'Welcome to your workspace',
+              },
+            ],
           },
-          content: [
-            {
-              type: 'text',
-              text: 'Welcome to your workspace',
-              styles: {},
-            },
-          ],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
+          { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+          {
+            type: TIPTAP_NODE_TYPES.PARAGRAPH,
+            content: [
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: 'You can edit this dashboard by clicking the ',
+              },
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: 'Edit',
+                marks: [{ type: TIPTAP_MARK_TYPES.CODE }],
+              },
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: ' button in the top-right corner to add your own charts or customize this one.',
+              },
+            ],
           },
-          content: [],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
+          { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+          {
+            type: TIPTAP_NODE_TYPES.PARAGRAPH,
+            content: [
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: "Don't forget to replace the sample data with your own.",
+              },
+            ],
           },
-          content: [
-            {
-              type: 'text',
-              text: 'You can edit this dashboard by clicking the ',
-              styles: {},
-            },
-            { type: 'text', text: 'Edit', styles: { code: true } },
-            {
-              type: 'text',
-              text: ' button in the top-right corner to add your own charts or customize this one.',
-              styles: {},
-            },
-          ],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
+          { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+          {
+            type: TIPTAP_NODE_TYPES.PARAGRAPH,
+            content: [
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: 'If you have any issues, you can check ',
+              },
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: 'our documentation',
+                marks: [
+                  {
+                    type: TIPTAP_MARK_TYPES.LINK,
+                    attrs: {
+                      href: 'https://docs.twenty.com/getting-started/introduction',
+                    },
+                  },
+                ],
+              },
+              {
+                type: TIPTAP_NODE_TYPES.TEXT,
+                text: ' or contact us through the Support section in Settings.',
+              },
+            ],
           },
-          content: [],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [
-            {
-              type: 'text',
-              text: "Don't forget to replace the sample data with your own.",
-              styles: {},
-            },
-          ],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [
-            {
-              type: 'text',
-              text: 'If you have any issues, you can check ',
-              styles: {},
-            },
-            {
-              type: 'link',
-              href: 'https://docs.twenty.com/getting-started/introduction',
-              content: [
-                {
-                  type: 'text',
-                  text: 'our documentation',
-                  styles: {},
-                },
-              ],
-            },
-            {
-              type: 'text',
-              text: ' or contact us through the Support section in Settings.',
-              styles: {},
-            },
-          ],
-          children: [],
-        },
-        {
-          id: v4(),
-          type: 'paragraph',
-          props: {
-            textColor: 'default',
-            backgroundColor: 'default',
-            textAlignment: 'left',
-          },
-          content: [],
-          children: [],
-        },
-      ]),
+          { type: TIPTAP_NODE_TYPES.PARAGRAPH },
+        ],
+      }),
       markdown: null,
     },
   };
@@ -577,10 +512,7 @@ const createDealsCreatedThisMonth = ({
 
   const filterConfigs = createFilterConfigs([
     {
-      type: 'DATE_TIME',
-      label: 'Creation date',
       value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
       fieldMetadataUniversalIdentifier:
@@ -645,10 +577,7 @@ const createDealValueCreatedThisMonth = ({
 
   const filterConfigs = createFilterConfigs([
     {
-      type: 'DATE_TIME',
-      label: 'Creation date',
       value: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
-      displayValue: 'THIS_1_MONTH;;UTC;;SUNDAY;;',
       operand: 'IS_RELATIVE',
       fieldMetadataId: opportunityFields.createdAt.id,
       fieldMetadataUniversalIdentifier:

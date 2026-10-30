@@ -9,7 +9,8 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-} from 'twenty-shared/application';
+  DEFAULT_SERVER_ROUTES_URL_NAME,
+} from 'twenty-shared/application-runtime';
 import {
   type LogicFunctionExecutionContext,
   type LogicFunctionRetryContext,
@@ -25,7 +26,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -33,17 +34,17 @@ import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/fl
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
-import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
+import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -51,6 +52,7 @@ import {
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
@@ -105,22 +107,45 @@ export class LogicFunctionExecutorService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(ApplicationRegistrationVariableEntity)
-    private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
+
+  async executeOrThrow({
+    toException,
+    ...executeArgs
+  }: Parameters<LogicFunctionExecutorService['execute']>[0] & {
+    toException: (reason: string) => CustomException;
+  }): Promise<LogicFunctionExecuteResult['data']> {
+    const executionResult = await this.execute(executeArgs).catch(
+      (error: unknown) => {
+        if (error instanceof CustomException) {
+          throw error;
+        }
+
+        throw toException(
+          `could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      },
+    );
+
+    if (isDefined(executionResult.error)) {
+      throw toException(`failed: ${executionResult.error.errorMessage}`);
+    }
+
+    return executionResult.data;
+  }
 
   async execute({
     logicFunctionId,
@@ -198,7 +223,6 @@ export class LogicFunctionExecutorService {
       resultLogicFunction = await driver.execute({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
         payload,
         context,
         env: envVariables,
@@ -264,7 +288,7 @@ export class LogicFunctionExecutorService {
       return;
     }
 
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,
       operationType: UsageOperationType.CODE_EXECUTION,
@@ -431,9 +455,10 @@ export class LogicFunctionExecutorService {
       flatApplication,
     });
 
-    const serverVariables = await this.buildServerVariableEnvMap(
-      flatApplication.applicationRegistrationId,
-    );
+    const serverVariables =
+      await this.applicationRegistrationVariableService.getServerEnvVariables({
+        applicationRegistrationId: flatApplication.applicationRegistrationId,
+      });
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -463,6 +488,11 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
+      [DEFAULT_SERVER_ROUTES_URL_NAME]: isDefined(
+        flatApplication.applicationRegistrationId,
+      )
+        ? `${baseUrl ?? ''}/${SERVER_ROUTE_PATH}/${flatApplication.applicationRegistrationId}`
+        : '',
       APPLICATION_ID: flatApplication.id,
     };
   }
@@ -494,34 +524,6 @@ export class LogicFunctionExecutorService {
       workspace,
       primaryPublicDomain,
     });
-  }
-
-  private async buildServerVariableEnvMap(
-    applicationRegistrationId: string | null,
-  ): Promise<Record<string, string>> {
-    if (!isDefined(applicationRegistrationId)) {
-      return {};
-    }
-
-    const serverVariables =
-      await this.applicationRegistrationVariableRepository.find({
-        where: { applicationRegistrationId },
-      });
-
-    const envMap: Record<string, string> = {};
-
-    for (const variable of serverVariables) {
-      const plaintextValue =
-        this.secretEncryptionService.decryptVersionedOrThrow(
-          variable.encryptedValue,
-        );
-
-      if (plaintextValue !== '') {
-        envMap[variable.key] = plaintextValue;
-      }
-    }
-
-    return envMap;
   }
 
   private async publishLogicFunctionLogsToCli({
@@ -577,23 +579,36 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
-    const parsedLines = parseApplicationLogLines(result.logs);
-    const logEntries = parsedLines.map((line) => ({
-      ...line,
-      workspaceId,
-      applicationId: flatApplication.id,
-      logicFunctionId: flatLogicFunction.id,
-      logicFunctionName: flatLogicFunction.name,
-      executionId,
-    }));
+    const logLines = [
+      ...parseApplicationLogLines(result.logs),
+      ...(isDefined(result.error)
+        ? [buildLogicFunctionErrorLogLine(result.error)]
+        : []),
+    ];
 
-    if (this.eventLogEmitterService.isEnabled()) {
-      void this.eventLogEmitterService
-        .dispatch(buildApplicationLogEnvelopes(logEntries))
-        .catch((error) => {
-          this.logger.error('Failed to record application logs', error);
-        });
-    }
+    void this.eventLogEmitterService.recordApplicationLogs(
+      logLines.map((line) => ({
+        ...line,
+        workspaceId,
+        applicationId: flatApplication.id,
+        applicationRegistrationId:
+          flatApplication.applicationRegistrationId ?? '',
+        applicationVersion: flatApplication.version ?? '',
+        source: 'LOGIC_FUNCTION',
+        logicFunctionId: flatLogicFunction.id,
+        logicFunctionName: flatLogicFunction.name,
+        executionId,
+      })),
+    );
+
+    void this.eventLogEmitterService.recordApplicationMetricEvents([
+      buildLogicFunctionRunMetricEvent({
+        result,
+        flatApplication,
+        flatLogicFunction,
+        workspaceId,
+      }),
+    ]);
 
     void this.publishLogicFunctionLogsToCli({
       result,

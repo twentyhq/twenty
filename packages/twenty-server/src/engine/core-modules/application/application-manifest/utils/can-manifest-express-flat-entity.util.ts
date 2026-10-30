@@ -20,6 +20,7 @@ type ProbedPropertyName =
 
 type ProbedFlatEntity = {
   universalIdentifier: string;
+  isEditable?: boolean;
 } & Partial<Record<ProbedPropertyName, string | null>>;
 
 export const canManifestExpressFlatEntity = ({
@@ -38,6 +39,10 @@ export const canManifestExpressFlatEntity = ({
       isDefined(flatEntity[workspaceBoundProperty]),
     )
   ) {
+    return false;
+  }
+
+  if (metadataName === 'role' && flatEntity.isEditable === false) {
     return false;
   }
 

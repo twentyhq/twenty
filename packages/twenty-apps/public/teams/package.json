@@ -1,10 +1,11 @@
 {
   "name": "@twentyhq/teams",
-  "version": "0.1.0",
-  "description": "Microsoft Teams assistant and workflow steps for Twenty",
+  "version": "1.1.0",
+  "description": "Sync Microsoft Teams meeting transcripts into Twenty Call Recordings, with optional AI summaries.",
+  "author": "Twenty",
   "license": "MIT",
   "engines": {
-    "twenty": ">=2.45.0",
+    "twenty": ">=2.53.0",
     "node": "^24.5.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
@@ -18,7 +19,7 @@
     "directory": "packages/twenty-apps/public/teams"
   },
   "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/teams",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -45,11 +46,11 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-client-sdk": "^2.45.0",
-    "twenty-sdk": "^2.45.0",
+    "twenty-client-sdk": "^2.53.0",
+    "twenty-sdk": "^2.53.0",
     "twenty-ui": "^2.45.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   }
 }

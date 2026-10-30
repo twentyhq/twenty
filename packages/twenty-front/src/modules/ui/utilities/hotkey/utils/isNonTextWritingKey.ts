@@ -1,5 +1,7 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const isNonTextWritingKey = (key: string) => {
-  const nonTextWritingKeys = [
+  const nonTextWritingKeys = doNotTranslate([
     'Enter',
     'Tab',
     'Shift',
@@ -51,7 +53,7 @@ export const isNonTextWritingKey = (key: string) => {
     'MediaTrackPrevious',
     'MediaStop',
     'MediaPlayPause',
-  ];
+  ]);
 
   return nonTextWritingKeys.includes(key);
 };

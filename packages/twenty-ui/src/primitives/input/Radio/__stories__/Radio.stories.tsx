@@ -1,16 +1,20 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { IconLayoutKanban, IconTable } from '@ui/icon';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
+  GroupedCatalog,
 } from '@ui/testing';
 
 import { Radio } from '../Radio';
 import { type RadioProps } from '../types/RadioProps';
+
+import { RadioCardContent } from './RadioCardContent';
 
 const RadioExample = ({
   selected = false,
@@ -30,14 +34,21 @@ const meta: Meta<typeof RadioExample> = {
 export default meta;
 type Story = StoryObj<typeof RadioExample>;
 
-type RadioState = 'default' | 'hover' | 'focus' | 'disabled' | 'readOnly';
-
-const STATE_PROPS: Record<RadioState, Partial<RadioProps>> = {
-  default: {},
-  hover: { className: 'hover' },
-  focus: { className: 'focus' },
-  disabled: { disabled: true },
-  readOnly: { readOnly: true },
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 320 } },
+  argTypes: {
+    value: { control: false },
+    children: { control: false },
+    selected: { control: false },
+  },
+  render: (args) => (
+    <RadioDisplayExample
+      size={args.size}
+      variant={args.variant}
+      disabled={args.disabled}
+    />
+  ),
 };
 
 export const Default: Story = {
@@ -50,38 +61,93 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
-  decorators: Default.decorators,
-};
+const RadioDisplayExample = (
+  props: Pick<RadioProps, 'size' | 'variant' | 'disabled'>,
+) => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <Radio value="email" {...props}>
+      Email
+    </Radio>
+    <Radio value="phone" {...props}>
+      Phone
+    </Radio>
+    <Radio value="post" {...props} disabled>
+      Postal mail (unavailable)
+    </Radio>
+  </RadioGroup>
+);
 
-export const Catalog: CatalogStory<Story, typeof RadioExample> = {
+const RADIO_CATALOG_GROUPS: {
+  label: string;
+  examples: { label: string; selected?: boolean; props: Partial<RadioProps> }[];
+}[] = [
+  {
+    label: 'States',
+    examples: [
+      { label: 'Unselected', props: {} },
+      { label: 'Selected', selected: true, props: {} },
+      { label: 'Disabled', props: { disabled: true } },
+      { label: 'Disabled selected', selected: true, props: { disabled: true } },
+      { label: 'Read only', selected: true, props: { readOnly: true } },
+    ],
+  },
+  {
+    label: 'Sizes',
+    examples: [
+      { label: 'Small', selected: true, props: { size: 'sm' } },
+      { label: 'Medium', selected: true, props: { size: 'md' } },
+    ],
+  },
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Default', selected: true, props: { variant: 'default' } },
+      { label: 'Card', selected: true, props: { variant: 'card' } },
+    ],
+  },
+];
+
+export const Catalog: Story = {
+  decorators: [ComponentDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
-    pseudo: { hover: ['.hover'], focusVisible: ['.focus'] },
-    catalog: {
-      dimensions: [
-        {
-          name: 'selected',
-          values: [false, true],
-          props: (selected: boolean) => ({ selected }),
-        },
-        {
-          name: 'state',
-          values: Object.keys(STATE_PROPS),
-          props: (state: RadioState) => STATE_PROPS[state],
-        },
-        {
-          name: 'size',
-          values: ['sm', 'md'],
-          props: (size: RadioProps['size']) => ({ size }),
-        },
-      ],
-      options: { elementContainer: { style: { width: 160 } } },
-    },
+    container: { width: 640 },
   },
-  decorators: [CatalogDecorator],
+  render: () => (
+    <GroupedCatalog
+      groups={RADIO_CATALOG_GROUPS}
+      renderExample={({ label, selected, props }) => (
+        <RadioGroup
+          aria-label={label}
+          defaultValue={selected ? 'option' : ''}
+          style={props.variant === 'card' ? { width: 240 } : undefined}
+        >
+          <Radio
+            value="option"
+            disabled={props.disabled}
+            readOnly={props.readOnly}
+            size={props.size}
+            variant={props.variant}
+          >
+            {props.variant === 'card' ? (
+              <RadioCardContent
+                icon={<IconTable size={20} aria-hidden />}
+                title="Table view"
+                description="Browse records in rows."
+              />
+            ) : (
+              label
+            )}
+          </Radio>
+        </RadioGroup>
+      )}
+    />
+  ),
 };
-
 export const CatalogDark: typeof Catalog = {
   ...Catalog,
   tags: ['!autodocs'],
@@ -97,24 +163,21 @@ export const CardsDocumentation: Story = {
       style={{ width: 280 }}
     >
       <Radio variant="card" value="table">
-        Table view
+        <RadioCardContent
+          icon={<IconTable size={20} aria-hidden />}
+          title="Table view"
+          description="Browse records in rows."
+        />
       </Radio>
       <Radio variant="card" value="board">
-        Board view
+        <RadioCardContent
+          icon={<IconLayoutKanban size={20} aria-hidden />}
+          title="Board view"
+          description="Track progress across columns."
+        />
       </Radio>
     </RadioGroup>
   ),
-};
-
-export const CardsCatalog: typeof Catalog = {
-  ...Catalog,
-  args: { variant: 'card' },
-};
-
-export const CardsCatalogDark: typeof Catalog = {
-  ...CardsCatalog,
-  tags: ['!autodocs'],
-  globals: { colorScheme: 'dark' },
 };
 
 export const PartsDocumentation: Story = {
@@ -131,4 +194,60 @@ export const PartsDocumentation: Story = {
       </Radio.Root>
     </RadioGroup>
   ),
+};
+
+type RadioState = 'default' | 'hover' | 'focus' | 'disabled' | 'readOnly';
+
+const VISUAL_REGRESSION_STATE_PROPS: Record<RadioState, Partial<RadioProps>> = {
+  default: {},
+  hover: { className: 'hover' },
+  focus: { className: 'focus' },
+  disabled: { disabled: true },
+  readOnly: { readOnly: true },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof RadioExample> = {
+  tags: ['!autodocs'],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    pseudo: { hover: ['.hover'], focusVisible: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'selected',
+          values: [false, true],
+          props: (selected: boolean) => ({ selected }),
+        },
+        {
+          name: 'state',
+          values: Object.keys(VISUAL_REGRESSION_STATE_PROPS),
+          props: (state: RadioState) => VISUAL_REGRESSION_STATE_PROPS[state],
+        },
+        {
+          name: 'size',
+          values: ['sm', 'md'],
+          props: (size: RadioProps['size']) => ({ size }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 160 } } },
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const CardsVisualRegression: typeof VisualRegression = {
+  ...VisualRegression,
+  args: { variant: 'card' },
+};
+
+export const CardsVisualRegressionDark: typeof VisualRegression = {
+  ...CardsVisualRegression,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

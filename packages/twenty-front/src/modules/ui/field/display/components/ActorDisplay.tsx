@@ -23,7 +23,7 @@ export const ActorDisplay = ({
 
   return (
     <Chip
-      variant="ghost"
+      variant="plain"
       startElement={
         source === 'APPLICATION' && isDefined(context?.applicationId) ? (
           <AppChip
@@ -42,7 +42,6 @@ export const ActorDisplay = ({
           />
         )
       }
-      style={{ paddingInlineStart: 0 }}
     >
       {getChipLabel(name).content}
     </Chip>

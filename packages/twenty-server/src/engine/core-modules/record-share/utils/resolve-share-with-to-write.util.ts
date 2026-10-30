@@ -17,7 +17,10 @@ export const resolveShareWithToWrite = ({
   sharingMode: RecordSharingMode;
   shareWith?: ShareWithInput[] | null;
 }): ShareWithInput[] | null => {
-  if (sharingMode === RecordSharingMode.ROLE_ONLY) {
+  if (
+    sharingMode === RecordSharingMode.ROLE_ONLY ||
+    sharingMode === RecordSharingMode.INHERITED
+  ) {
     return null;
   }
 
@@ -33,7 +36,6 @@ export const resolveShareWithToWrite = ({
     case RecordSharingMode.OPEN_BY_DEFAULT:
       return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
     case RecordSharingMode.PRIVATE:
-    case RecordSharingMode.INHERITED:
       return shareWithToWrite;
     default:
       return assertUnreachable(sharingMode);

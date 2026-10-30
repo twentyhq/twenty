@@ -52,9 +52,13 @@ const FIND_UPGRADE_APPLICATION_JOB_STATUS = gql`
 `;
 
 const FIND_UNINSTALL_APPLICATION_JOB_STATUS = gql`
-  query FindUninstallApplicationJobStatus($universalIdentifier: String!) {
+  query FindUninstallApplicationJobStatus(
+    $universalIdentifier: String!
+    $jobId: String
+  ) {
     findUninstallApplicationJobStatus(
       universalIdentifier: $universalIdentifier
+      jobId: $jobId
     ) {
       jobId
       state
@@ -80,10 +84,13 @@ describe('Application lifecycle jobs', () => {
     return response.body.data.triggerUninstallApplication.jobId as string;
   };
 
-  const findUninstallApplicationJobStatus = async () => {
+  const findUninstallApplicationJobStatus = async ({
+    universalIdentifier = appId,
+    jobId,
+  }: { universalIdentifier?: string; jobId?: string } = {}) => {
     const response = await makeMetadataApiRequest({
       query: FIND_UNINSTALL_APPLICATION_JOB_STATUS,
-      variables: { universalIdentifier: appId },
+      variables: { universalIdentifier, jobId },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -162,6 +169,18 @@ describe('Application lifecycle jobs', () => {
     await waitForAllJobsToFinish();
 
     expect(await findUninstallApplicationJobStatus()).toBeNull();
+
+    expect(await findUninstallApplicationJobStatus({ jobId })).toMatchObject({
+      jobId,
+      state: JobStateEnum.COMPLETED,
+    });
+
+    expect(
+      await findUninstallApplicationJobStatus({
+        universalIdentifier: uuidv4(),
+        jobId,
+      }),
+    ).toBeNull();
 
     const { data } = await findManyApplications({ expectToFail: false });
 

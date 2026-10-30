@@ -82,6 +82,9 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     properties: {
       type: { type: 'string', optional: true },
       name: { type: 'string', optional: true },
+      min: { type: 'string', optional: true },
+      max: { type: 'string', optional: true },
+      step: { type: 'string', optional: true },
       value: { type: 'string', optional: true },
       placeholder: { type: 'string', optional: true },
       disabled: { type: 'boolean', optional: true },

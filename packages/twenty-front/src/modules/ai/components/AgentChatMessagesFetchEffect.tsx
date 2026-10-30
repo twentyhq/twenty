@@ -6,6 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
@@ -72,6 +74,25 @@ export const AgentChatMessagesFetchEffect = () => {
         return;
       }
       const uiMessages = mapDBMessagesToUIMessages(data.chatMessages ?? []);
+      // A live snapshot is at least as recent as a fetch, which may have been read before it
+      const liveReactionRevisions = store.get(
+        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+          threadId: currentAiChatThread,
+        }),
+      );
+
+      for (const message of data.chatMessages ?? []) {
+        if (isDefined(liveReactionRevisions[message.id])) {
+          continue;
+        }
+
+        store.set(
+          agentChatMessageReactionsFamilyState.atomFamily({
+            messageId: message.id,
+          }),
+          message.reactions,
+        );
+      }
       setAgentChatFetchedMessages(
         uiMessages.filter((message) => message.status !== 'queued'),
       );
@@ -167,9 +188,19 @@ export const AgentChatMessagesFetchEffect = () => {
     onBrowserEvent: handleRefetchMessages,
   });
 
+  const handleSseClientReconnected = useCallback(() => {
+    store.set(
+      agentChatLiveReactionRevisionsFamilyState.atomFamily({
+        threadId: currentAiChatThread,
+      }),
+      {},
+    );
+    handleRefetchMessages();
+  }, [currentAiChatThread, handleRefetchMessages, store]);
+
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
-    onBrowserEvent: handleRefetchMessages,
+    onBrowserEvent: handleSseClientReconnected,
   });
 
   return null;

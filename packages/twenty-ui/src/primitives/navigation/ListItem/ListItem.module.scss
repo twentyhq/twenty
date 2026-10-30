@@ -1,6 +1,5 @@
 .root {
   --tw-list-item-color: var(--t-font-color-secondary);
-  --tw-list-item-description-color: var(--t-font-color-secondary);
   --tw-list-item-background: transparent;
   --tw-list-item-hover-background: var(--t-background-transparent-light);
 
@@ -35,9 +34,15 @@
     }
   }
 
+  &[data-active],
   &[data-highlighted],
   &[data-selected][data-indicator='none'] {
     --tw-list-item-background: var(--t-background-transparent-light);
+  }
+
+  &[data-selected][data-selection-appearance='accent'] {
+    --tw-list-item-background: var(--t-accent-tertiary);
+    --tw-list-item-hover-background: var(--t-accent-tertiary);
   }
 
   &[data-color='danger'] {
@@ -47,7 +52,6 @@
 
   &[data-disabled] {
     --tw-list-item-color: var(--t-font-color-tertiary);
-    --tw-list-item-description-color: var(--t-font-color-light);
     --tw-list-item-hover-background: transparent;
 
     cursor: default;
@@ -97,7 +101,7 @@
 }
 
 .description {
-  color: var(--tw-list-item-description-color);
+  color: var(--t-font-color-light);
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -110,6 +114,7 @@
 }
 
 .endDescription {
+  color: var(--t-font-color-light);
   flex-shrink: 1;
   text-align: end;
 }
@@ -137,6 +142,19 @@
   .root:focus-within .actions {
     opacity: 1;
   }
+
+  .root[data-actions-placement='end'][data-actions-visibility='hover'] {
+    > .actions {
+      inset-block-start: 0;
+      inset-inline-end: var(--t-spacing-1);
+      position: absolute;
+    }
+
+    &:hover > .actions,
+    &:focus-within > .actions {
+      position: static;
+    }
+  }
 }
 
 .checkIndicator {
@@ -155,5 +173,55 @@
 
   &:dir(rtl) {
     transform: scaleX(-1);
+  }
+}
+
+.root[data-description-placement='below'] {
+  align-items: flex-start;
+  container-type: inline-size;
+  flex-wrap: wrap;
+  padding-block: var(--t-spacing-2);
+
+  .label {
+    align-items: stretch;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .text {
+    min-inline-size: 0;
+    overflow: visible;
+  }
+
+  .description {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    max-inline-size: 50%;
+  }
+}
+
+.root[data-description-placement='below'][data-actions-placement='end'] {
+  flex-wrap: nowrap;
+
+  .label {
+    gap: var(--t-spacing-0_5);
+  }
+
+  .actions {
+    flex-wrap: nowrap;
+    max-inline-size: none;
+  }
+}
+
+@container (max-width: 480px) {
+  .root[data-description-placement='below']:not([data-actions-placement='end'])
+    > .actions {
+    flex-basis: 100%;
+    max-inline-size: 100%;
   }
 }

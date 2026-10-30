@@ -21,6 +21,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type ComputeOptimisticCacheRecordInputArgs = {
@@ -46,7 +47,9 @@ export const computeOptimisticRecordFromInput = ({
 
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
-      `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
+      doNotTranslate(
+        `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,
+      ),
     );
   }
 
@@ -140,7 +143,9 @@ export const computeOptimisticRecordFromInput = ({
       );
       if (!isDefined(targetObjectMetataDataItem)) {
         throw new Error(
-          'Should never occur, encountered invalid relation definition',
+          doNotTranslate(
+            'Should never occur, encountered invalid relation definition',
+          ),
         );
       }
 
@@ -215,7 +220,9 @@ export const computeOptimisticRecordFromInput = ({
 
       if (!isDefined(fieldMetadataItem.morphRelations)) {
         throw new Error(
-          'Should never occur, encountered invalid relation definition',
+          doNotTranslate(
+            'Should never occur, encountered invalid relation definition',
+          ),
         );
       }
 
@@ -228,7 +235,9 @@ export const computeOptimisticRecordFromInput = ({
 
       if (!isDefined(fieldMetadataMorphRelation?.targetObjectMetadata)) {
         throw new Error(
-          'Should never occur, encountered invalid relation definition',
+          doNotTranslate(
+            'Should never occur, encountered invalid relation definition',
+          ),
         );
       }
 

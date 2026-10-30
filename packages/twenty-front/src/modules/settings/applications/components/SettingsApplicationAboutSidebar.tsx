@@ -4,7 +4,7 @@ import { getInstallCountEstimate } from '@/settings/applications/utils/getInstal
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isSafeUrl } from 'twenty-shared/utils';
+import { emailSchema, isDefined, isSafeUrl } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconAlertTriangle,
@@ -58,6 +58,15 @@ type ResourceLink = AboutRow & {
 
 const isResourceLinkUrl = (url: string | undefined): url is string =>
   isNonEmptyString(url) && isSafeUrl(url);
+
+const isSupportEmail = (email: string | undefined): email is string =>
+  isNonEmptyString(email) && emailSchema.safeParse(email.trim()).success;
+
+const toTrimmedText = (text: string | undefined): string | undefined => {
+  const trimmedText = text?.trim();
+
+  return isNonEmptyString(trimmedText) ? trimmedText : undefined;
+};
 
 const StyledSidebar = styled.div`
   display: flex;
@@ -158,6 +167,11 @@ export const SettingsApplicationAboutSidebar = ({
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
 
+  const trimmedAuthor = toTrimmedText(author);
+  const trimmedVersion = toTrimmedText(version);
+  const trimmedCategory = toTrimmedText(category);
+  const trimmedPricingDescription = toTrimmedText(pricingDescription);
+
   const getInstallCountRows = (): AboutRow[] => {
     if (!isDefined(installCount) || installCount <= 0) {
       return [];
@@ -185,22 +199,22 @@ export const SettingsApplicationAboutSidebar = ({
   };
 
   const aboutRows: AboutRow[] = [
-    ...(isNonEmptyString(author)
-      ? [{ Icon: IconUserCircle, label: t`by ${author}` }]
+    ...(isDefined(trimmedAuthor)
+      ? [{ Icon: IconUserCircle, label: t`by ${trimmedAuthor}` }]
       : []),
-    ...(isNonEmptyString(version)
-      ? [{ Icon: IconVersions, label: version }]
+    ...(isDefined(trimmedVersion)
+      ? [{ Icon: IconVersions, label: trimmedVersion }]
       : []),
     ...getInstallCountRows(),
-    ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
+    ...(isDefined(trimmedCategory)
+      ? [{ Icon: IconTag, label: trimmedCategory }]
+      : []),
     ...(billsCredits
       ? [
           {
             Icon: IconCurrencyDollar,
             label: t`Bills credits`,
-            tooltip: isNonEmptyString(pricingDescription)
-              ? pricingDescription
-              : undefined,
+            tooltip: trimmedPricingDescription,
           },
         ]
       : []),
@@ -221,12 +235,12 @@ export const SettingsApplicationAboutSidebar = ({
     ...(isResourceLinkUrl(termsUrl)
       ? [{ Icon: IconLink, label: t`Terms / Privacy`, href: termsUrl }]
       : []),
-    ...(isNonEmptyString(emailSupport)
+    ...(isSupportEmail(emailSupport)
       ? [
           {
             Icon: IconMail,
             label: t`Email support`,
-            href: `mailto:${emailSupport}`,
+            href: `mailto:${emailSupport.trim()}`,
           },
         ]
       : []),
@@ -251,7 +265,7 @@ export const SettingsApplicationAboutSidebar = ({
           applicationId={applicationId}
           logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
-          size="xl"
+          size="xxl"
           chipOnly
         />
         <StyledIdentity>

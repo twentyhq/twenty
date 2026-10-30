@@ -5,11 +5,12 @@ import {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
+import { redirectMorphRelationTargetViewFieldToHead } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/redirect-morph-relation-target-view-field-to-head.util';
 import { computeCallerFlatFieldMetadatasForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-caller-flat-field-metadatas-for-object.util';
 import {
   computeSameBatchViewFieldPositionByFieldUniversalIdentifier,
@@ -39,6 +40,10 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
     allFlatEntityOperationRecordByMetadataName,
     relatedFlatEntityMaps,
   }: BuildSideEffectsArgs<'fieldMetadata'>): MetadataSideEffectResult {
+    if (isMorphRelationHead(sourceFlatFieldMetadata)) {
+      return { status: 'noop' };
+    }
+
     const { objectMetadataUniversalIdentifier } = sourceFlatFieldMetadata;
 
     const parentFlatObjectMetadata =
@@ -90,10 +95,11 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       status: 'success',
       operations: {
         viewField: {
-          flatEntityToCreate: {
-            [flatIndexViewFieldToCreate.universalIdentifier]:
-              flatIndexViewFieldToCreate,
-          },
+          flatEntityToCreate: redirectMorphRelationTargetViewFieldToHead({
+            sourceFlatFieldMetadata,
+            flatViewFieldToCreate: flatIndexViewFieldToCreate,
+            relatedFlatEntityMaps,
+          }),
         },
       },
     };

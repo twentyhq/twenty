@@ -12,9 +12,21 @@ import { type AutocompleteInputProps } from '../types/AutocompleteInputProps';
 export const AutocompleteInput = ({
   size,
   className,
+  render,
   ...props
 }: AutocompleteInputProps) => {
   const inputGroup = useContext(InputGroupContext);
+
+  if (isDefined(render)) {
+    return (
+      <AutocompletePrimitive.Input
+        {...props}
+        className={className}
+        render={render}
+      />
+    );
+  }
+
   const resolvedSize = size ?? inputGroup?.size ?? 'md';
 
   return (

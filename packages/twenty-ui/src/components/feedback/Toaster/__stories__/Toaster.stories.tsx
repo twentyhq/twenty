@@ -456,11 +456,11 @@ export const ReopenDuringExit: Story = {
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
+    await waitFor(() => expect(toast).not.toBeInTheDocument());
     const restoredToasts = body.getAllByRole('status');
     expect(
       restoredToasts.slice(0, 2).map((notification) => notification.id),
     ).toEqual([secondToast.id, thirdToast.id]);
-    expect(toast).not.toBeInTheDocument();
     expect(restoredToasts[2]?.id).not.toBe(id);
     expect(restoredToasts[2]).toHaveTextContent('Already saved');
     expect(restoredToasts[2]).toBeVisible();

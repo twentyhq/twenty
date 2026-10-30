@@ -67,6 +67,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
           setting: permissionFlag,
           apiKeyId: request.apiKey?.id,
           applicationId: request.application?.id,
+          agentId: request.agentId,
         });
 
       if (hasPermission) {

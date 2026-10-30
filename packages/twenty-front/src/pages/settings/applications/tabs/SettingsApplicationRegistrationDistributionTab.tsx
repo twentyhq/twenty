@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCopy } from 'twenty-ui/icon';
@@ -13,10 +14,10 @@ import { type ApplicationRegistrationData } from '~/pages/settings/applications/
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,
-  fromAdmin,
+  isAdminView,
 }: {
   registration: ApplicationRegistrationData;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -32,11 +33,11 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     availableApplicationId: registration.universalIdentifier,
   });
 
-  const publishCommands = ['yarn twenty app:publish'];
+  const publishCommands = [doNotTranslate('twenty app publish')];
 
   return (
     <>
-      {isNpmSource && fromAdmin !== true && (
+      {isNpmSource && isAdminView !== true && (
         <Section.Root>
           <Section.Header
             title={t`Ownership`}

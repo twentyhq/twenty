@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { http, HttpResponse, passthrough, type RequestHandler } from 'msw';
 import {
   type AppConnection,
@@ -7,7 +9,10 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type AppKeyValueScope } from 'src/__tests__/types/app-key-value-scope.type';
-import { type AppRuntimeMock } from 'src/__tests__/types/app-runtime-mock.type';
+import {
+  type AppRuntimeAgentResult,
+  type AppRuntimeMock,
+} from 'src/__tests__/types/app-runtime-mock.type';
 
 // The app runtime services (`kv`, `listConnections`, `getConnection`,
 // `runAgent`) are GraphQL calls the server only answers for an
@@ -34,6 +39,21 @@ type StoredKeyValueEntry = {
   workspaceId: string | null;
 };
 
+const DEFAULT_AGENT_RESULT: AppRuntimeAgentResult = {
+  success: true,
+  result: { response: 'Agent answer.' },
+  error: null,
+};
+
+const completeAgentResult = ({
+  threadId = randomUUID(),
+  ...agentResult
+}: AppRuntimeAgentResult): RunAgentResult => ({
+  threadId,
+  status: agentResult.success ? 'COMPLETED' : 'FAILED',
+  ...agentResult,
+});
+
 export const createAppRuntimeMock = ({
   apiUrl,
   workspaceId,
@@ -44,11 +64,7 @@ export const createAppRuntimeMock = ({
   let agentRuns: RunAgentInput[] = [];
   let runAgentImplementation: (
     input: RunAgentInput,
-  ) => RunAgentResult = () => ({
-    success: true,
-    result: { response: 'Agent answer.' },
-    error: null,
-  });
+  ) => AppRuntimeAgentResult = () => DEFAULT_AGENT_RESULT;
 
   const getKeyValue = (key: string, scope: AppKeyValueScope): unknown => {
     const entry = keyValueStore.get(buildKeyValueStoreKey(key, scope));
@@ -186,7 +202,9 @@ export const createAppRuntimeMock = ({
         agentRuns.push(input);
 
         return HttpResponse.json({
-          data: { runAgent: runAgentImplementation(input) },
+          data: {
+            runAgent: completeAgentResult(runAgentImplementation(input)),
+          },
         });
       }
       default:
@@ -220,8 +238,8 @@ export const createAppRuntimeMock = ({
 
     setAgentResult: (
       implementation:
-        | RunAgentResult
-        | ((input: RunAgentInput) => RunAgentResult),
+        | AppRuntimeAgentResult
+        | ((input: RunAgentInput) => AppRuntimeAgentResult),
     ): void => {
       runAgentImplementation =
         typeof implementation === 'function'
@@ -258,11 +276,7 @@ export const createAppRuntimeMock = ({
       appConnections = connections;
       keyValueStore = new Map();
       agentRuns = [];
-      runAgentImplementation = () => ({
-        success: true,
-        result: { response: 'Agent answer.' },
-        error: null,
-      });
+      runAgentImplementation = () => DEFAULT_AGENT_RESULT;
     },
   };
 };

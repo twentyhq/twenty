@@ -52,12 +52,13 @@ describe('MobileNavigationBar', () => {
       'aria-hidden',
       'true',
     );
-    expect(
-      screen.getByRole('button', { name: 'Home', pressed: true }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole('button', { name: 'Search', pressed: false }),
-    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(screen.getByRole('button', { name: 'Search' })).not.toHaveAttribute(
+      'aria-current',
+    );
   });
 
   it('activates an item by pointer, Enter, and Space', async () => {

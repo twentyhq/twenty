@@ -1,6 +1,5 @@
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
-import { FieldMetadataType, FeatureFlagKey } from 'twenty-shared/types';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { randomUUID } from 'node:crypto';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -147,11 +146,6 @@ const findRun = async (runId: string): Promise<WorkflowRunWorkspaceEntity> => {
 
 describe('application-owned core workflows', () => {
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     await setupApplicationForSync({
       applicationUniversalIdentifier: REFERENCE_APP_ID,
       name: 'Workflow referenced application',
@@ -213,11 +207,6 @@ describe('application-owned core workflows', () => {
     });
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: REFERENCE_APP_ID,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
     jest.useFakeTimers();
   });

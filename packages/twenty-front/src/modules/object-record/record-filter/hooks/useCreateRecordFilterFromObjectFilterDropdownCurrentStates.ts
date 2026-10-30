@@ -7,6 +7,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
@@ -44,7 +45,9 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
 
         if (!isDefined(fieldMetadataItemUsedInDropdown)) {
           throw new Error(
-            `Field metadata item used in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
+            doNotTranslate(
+              `Field metadata item used in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
+            ),
           );
         }
 
@@ -54,7 +57,9 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
 
         if (!isDefined(selectedOperandInDropdown)) {
           throw new Error(
-            `Selected operand in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
+            doNotTranslate(
+              `Selected operand in dropdown is not defined when creating a record filter from object filter dropdown current states, this should not happen.`,
+            ),
           );
         }
 

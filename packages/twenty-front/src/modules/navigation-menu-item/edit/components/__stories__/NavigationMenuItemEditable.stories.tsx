@@ -226,7 +226,7 @@ export const EditFolderInPlace: Story = {
       await canvas.findByRole('button', { name: 'Choose icon and color' }),
     );
     await expect(
-      await body.findByRole('button', { name: 'Icon123' }),
+      await body.findByRole('option', { name: 'Icon123' }),
     ).toBeVisible();
     await userEvent.keyboard('{Escape}');
   },
@@ -404,7 +404,7 @@ export const ObjectColorDraftReturnsToPersistedValue: Story = {
     const changedColor = persistedColor === 'red' ? 'blue' : 'red';
     await userEvent.click(colorTrigger);
     await userEvent.click(
-      await body.findByRole('button', {
+      await body.findByRole('option', {
         name: DEFAULT_COLOR_LABELS[changedColor],
       }),
     );
@@ -418,7 +418,7 @@ export const ObjectColorDraftReturnsToPersistedValue: Story = {
     );
     await userEvent.click(colorTrigger);
     await userEvent.click(
-      await body.findByRole('button', {
+      await body.findByRole('option', {
         name: DEFAULT_COLOR_LABELS[persistedColor],
       }),
     );

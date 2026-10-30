@@ -40,24 +40,11 @@ const StyledChildrenWrapper = styled.span`
   white-space: nowrap;
 `;
 
-const StyledEndComponent = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: inline-flex;
-  margin-left: auto;
-  margin-right: 0;
-
-  & > svg {
-    height: ${themeCssVariables.icon.size.md}px;
-    width: ${themeCssVariables.icon.size.md}px;
-  }
-`;
-
 type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
   testId?: string;
   className?: string;
   StartComponent?: React.ReactNode;
-  EndComponent?: React.ReactNode;
 };
 
 export const DropdownMenuHeader = ({
@@ -66,15 +53,11 @@ export const DropdownMenuHeader = ({
   onClick,
   testId,
   className,
-  EndComponent,
 }: DropdownMenuHeaderProps) => {
   return (
     <StyledHeader data-testid={testId} className={className} onClick={onClick}>
       {isDefined(StartComponent) && StartComponent}
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-      {isDefined(EndComponent) && (
-        <StyledEndComponent>{EndComponent}</StyledEndComponent>
-      )}
     </StyledHeader>
   );
 };

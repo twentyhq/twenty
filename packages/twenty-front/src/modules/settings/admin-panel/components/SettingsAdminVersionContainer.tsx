@@ -38,7 +38,5 @@ export const SettingsAdminVersionContainer = () => {
     },
   ];
 
-  return (
-    <SettingsTableCard rounded items={versionItems} gridAutoColumns="3fr 8fr" />
-  );
+  return <SettingsTableCard items={versionItems} gridAutoColumns="3fr 8fr" />;
 };

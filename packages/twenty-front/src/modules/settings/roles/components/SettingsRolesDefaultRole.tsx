@@ -59,11 +59,13 @@ export const SettingsRoleDefaultRole = ({
     return null;
   }
 
-  const options = roles.map((role) => ({
-    label: role.label,
-    value: role.id,
-    Icon: getIcon(role.icon) ?? IconUserPin,
-  }));
+  const options = roles
+    .filter((role) => role.canBeAssignedToUsers)
+    .map((role) => ({
+      label: role.label,
+      value: role.id,
+      Icon: getIcon(role.icon) ?? IconUserPin,
+    }));
 
   if (options.length === 0) {
     return null;
@@ -75,7 +77,7 @@ export const SettingsRoleDefaultRole = ({
         title={t`Default Role`}
         description={t`Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted`}
       />
-      <Card.Root rounded>
+      <Card.Root>
         <SettingsOptionCardContentSelect
           Icon={IconUserPin}
           title={t`Default Role`}

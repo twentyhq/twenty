@@ -1,10 +1,14 @@
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
-  type EventLogRecord,
   EventLogTable,
+  type EventLogsQuery,
 } from '~/generated-metadata/graphql';
+import { workspaceLogoUrl } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+type MockedEventLogRecord = EventLogsQuery['eventLogs']['records'][number];
 
 type MockedLogicFunction = {
   id: string;
@@ -48,6 +52,31 @@ export const mockedEventLogApplications: Pick<
   },
 ];
 
+export const mockedEventLogInstalledApplications: CurrentWorkspace['installedApplications'] =
+  [
+    {
+      id: SYNC_STRIPE_INVOICES.applicationId,
+      name: 'Stripe Sync',
+      universalIdentifier: '91815f31-dfc4-467e-8c3f-b1ff8e474375',
+      logoUrl: null,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+    {
+      id: SCORE_INBOUND_LEAD.applicationId,
+      name: 'Lead Scoring',
+      universalIdentifier: '86eae777-f251-4ca7-94cd-f7c3319329c1',
+      logoUrl: null,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+    {
+      id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
+      name: 'Company Enrichment',
+      universalIdentifier: '5b0e7c2a-8f4d-4a91-b3e6-1d2c9f7a4e80',
+      logoUrl: workspaceLogoUrl,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+  ];
+
 const SYNC_STRIPE_INVOICES_EXECUTION_ID =
   '88637fa4-e95f-4901-85f1-4227b6e3a1c2';
 
@@ -71,7 +100,7 @@ const buildApplicationLogRecord = ({
   executionId: string;
   level: 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
   message: string;
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event: logicFunction.name,
   timestamp,
@@ -147,6 +176,13 @@ const ZAPIER_SYNC_API_KEY_ACTOR = {
   context: {},
 };
 
+const COMPANY_ENRICHMENT_APPLICATION_ACTOR = {
+  source: 'APPLICATION',
+  workspaceMemberId: null,
+  name: 'Company Enrichment',
+  context: { applicationId: ENRICH_COMPANY_FROM_DOMAIN.applicationId },
+};
+
 const LUMEN_HEALTH_PILOT_BEFORE_UPDATE = {
   id: 'f46932b8-6725-4931-aa5b-ea0144bdb789',
   name: 'Lumen Health - Pilot',
@@ -161,6 +197,13 @@ const OAKRIDGE_FOODS_BEFORE_UPDATE = {
   name: 'Oakridge Foods',
   employees: 120,
   updatedBy: ZAPIER_SYNC_API_KEY_ACTOR,
+};
+
+const NORTHWIND_LOGISTICS_BEFORE_UPDATE = {
+  id: '2c7e9b41-6d3a-4f8e-a1b5-0e9d4c2f7a68',
+  name: 'Northwind Logistics',
+  employees: 480,
+  updatedBy: COMPANY_ENRICHMENT_APPLICATION_ACTOR,
 };
 
 const ETHAN_BROOKS_AFTER_CREATION = {
@@ -201,7 +244,7 @@ const buildCompanyDeletionRecord = ({
 }: {
   timestamp: string;
   company: { id: string };
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event: 'Object Record Deleted',
   timestamp,
@@ -231,7 +274,7 @@ const buildWorkspaceEventRecord = ({
   timestamp: string;
   userId?: string | null;
   properties: Record<string, unknown>;
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event,
   timestamp,
@@ -242,7 +285,7 @@ const buildWorkspaceEventRecord = ({
 });
 
 export const mockedEventLogRecordsByTable: Partial<
-  Record<EventLogTable, EventLogRecord[]>
+  Record<EventLogTable, MockedEventLogRecord[]>
 > = {
   [EventLogTable.OBJECT_EVENT]: [
     {
@@ -286,6 +329,20 @@ export const mockedEventLogRecordsByTable: Partial<
         after: { ...OAKRIDGE_FOODS_BEFORE_UPDATE, employees: 135 },
         updatedFields: ['employees'],
         diff: { employees: { before: 120, after: 135 } },
+      },
+    },
+    {
+      __typename: 'EventLogRecord',
+      event: 'Object Record Updated',
+      timestamp: '2026-09-24T11:38:20.715Z',
+      userId: null,
+      recordId: NORTHWIND_LOGISTICS_BEFORE_UPDATE.id,
+      objectMetadataId: getMockObjectMetadataItemOrThrow('company').id,
+      properties: {
+        before: NORTHWIND_LOGISTICS_BEFORE_UPDATE,
+        after: { ...NORTHWIND_LOGISTICS_BEFORE_UPDATE, employees: 520 },
+        updatedFields: ['employees'],
+        diff: { employees: { before: 480, after: 520 } },
       },
     },
     {
@@ -535,7 +592,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'AI',
       timestamp: '2026-09-24T11:56:21.408Z',
-      userId: JONAS_WEBER.userWorkspaceId,
+      userId: JONAS_WEBER.userWorkspaceId ?? null,
       recordId: null,
       objectMetadataId: null,
       properties: {
@@ -551,7 +608,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'WORKFLOW',
       timestamp: '2026-09-24T11:41:09.772Z',
-      userId: SARAH_CHEN.userWorkspaceId,
+      userId: SARAH_CHEN.userWorkspaceId ?? null,
       recordId: null,
       objectMetadataId: null,
       properties: {
@@ -566,7 +623,7 @@ export const mockedEventLogRecordsByTable: Partial<
   ],
 };
 
-export const mockedEventLogLiveApplicationLogs: EventLogRecord[] = [
+export const mockedEventLogLiveApplicationLogs: MockedEventLogRecord[] = [
   buildApplicationLogRecord({
     timestamp: '2026-09-24T12:05:12.418Z',
     logicFunction: SCORE_INBOUND_LEAD,

@@ -3,17 +3,40 @@ title: Field
 description: Connect a form control to its label, description, and validation feedback.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+## Overview
 
 Use `Field` to group one control with its accessible label and helper text. Components such as [Input](/ui/primitives/input/input) integrate with the field directly.
 
 <StoryEmbed
-  storyId="ui-input-field--default"
+  storyId="ui-input-field--display"
   title="Field example"
-  height={240}
+  height={180}
 />
+
+## Usage
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` manages the control's name, disabled state, and validity. `Field.Label` and `Field.Description` connect their content to the control. Set validation timing with `validationMode`; use `validate` for custom validation.
 
 ## Anatomy
 
@@ -39,26 +62,6 @@ Field.Root
 | `Validity`                            | Optional            | Exposes validity through a children render function.                         |
 
 `Input` and `Textarea` already integrate with the field. Place them directly inside `Root`; they supply the control behavior themselves. Compound controls such as [Select](/ui/primitives/input/select#compose-with-a-field) keep their own root and parts inside the field.
-
-## Labeled control
-
-```tsx
-import { Field, Input } from 'twenty-ui/primitives/input';
-
-export const EmailField = () => (
-  <Field.Root name="email" validationMode="onBlur">
-    <Field.Label>Work email</Field.Label>
-    <Input type="email" required placeholder="you@example.com" />
-    <Field.Description>
-      We send account updates to this address.
-    </Field.Description>
-    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
-    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
-  </Field.Root>
-);
-```
-
-`Field.Root` manages the control's name, disabled state, and validity. `Field.Label` and `Field.Description` connect their content to the control. Set validation timing with `validationMode`; use `validate` for custom validation.
 
 ## External errors
 
@@ -87,27 +90,42 @@ Use `Field.Item` inside a radio or checkbox group to associate each choice with 
 <StoryEmbed
   storyId="ui-input-field--grouped-items"
   title="Field items"
-  height={360}
+  height={220}
 />
 
 ```tsx
 import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const NotificationsField = () => (
   <Field.Root name="notifications">
     <Field.Label>Notifications</Field.Label>
-    <RadioGroup defaultValue="important">
-      <Field.Item>
-        <Field.Label>Important updates</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
         <Radio value="important" />
-        <Field.Description>
-          Only messages that need your attention
-        </Field.Description>
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
       </Field.Item>
-      <Field.Item disabled>
-        <Field.Label>Daily digest</Field.Label>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
         <Radio value="digest" />
-        <Field.Description>Coming soon</Field.Description>
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
       </Field.Item>
     </RadioGroup>
   </Field.Root>
@@ -127,3 +145,5 @@ Import `FieldRootProps`, `FieldItemProps`, `FieldLabelProps`, `FieldControlProps
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <FieldReference />
+
+<PageBanner illustration="page-cover-input" />

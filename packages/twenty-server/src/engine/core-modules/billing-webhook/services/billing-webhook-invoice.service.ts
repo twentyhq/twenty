@@ -123,26 +123,27 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    const params =
-      await this.resourceCreditService.getResourceCreditRolloverParameters(
-        subscription.workspaceId,
-        subscription.id,
-      );
-
-    // Skipping the transition forfeits the unspent part of every grant of this workspace
-    if (!isDefined(params)) {
-      this.logger.error(
-        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no priced resource credit item`,
-      );
-
-      return;
-    }
-
     const boundary = resolveBillingTransitionBoundary({
       invoiceCreatedAt,
       subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
+
+    const params =
+      await this.resourceCreditService.getResourceCreditRolloverParameters({
+        workspaceId: subscription.workspaceId,
+        subscriptionId: subscription.id,
+        boundary,
+      });
+
+    // Skipping the transition forfeits the unspent part of every grant of this workspace
+    if (!isDefined(params)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} gives no workspace credits from a credit pack or seats`,
+      );
+
+      return;
+    }
 
     // Only needed while subscriptions predating previousPeriodStart transition for the first time
     const ledgerPeriodStart =
@@ -169,15 +170,18 @@ export class BillingWebhookInvoiceService {
     // Trial credits carry into the first paid period; the trial allowance comes from config, not the price
     const closingAllowanceMicro = isFirstPeriodAfterTrial
       ? this.billingUsageService.getTrialResourceUsageCap(subscription)
-      : params.tierQuantity;
+      : params.workspaceCreditsForPackMicro;
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
       closingPeriodStart,
       closingPeriodEnd,
       closingAllowanceMicro,
+      closingSeatAllowanceMicro: isFirstPeriodAfterTrial
+        ? 0
+        : params.workspaceCreditsForSeatsMicro,
       nextPeriodStart,
-      nextAllowanceMicro: params.tierQuantity,
+      nextAllowanceMicro: params.workspaceCreditsForPackMicro,
     });
   }
 

@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -22,9 +23,10 @@ const StyledThreadsContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   height: 100%;
+  min-width: 0;
   overflow: auto;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 type ChatThreadsCardContentProps = {
@@ -33,6 +35,8 @@ type ChatThreadsCardContentProps = {
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
   threads: AgentChatThreadRecord[];
+  hasNextPage?: boolean;
+  pagination?: ReactNode;
 };
 
 export const ChatThreadsCardContent = ({
@@ -41,6 +45,8 @@ export const ChatThreadsCardContent = ({
   onRetry,
   onDetachThread,
   threads,
+  hasNextPage = false,
+  pagination,
 }: ChatThreadsCardContentProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -54,7 +60,7 @@ export const ChatThreadsCardContent = ({
       CoreObjectNameSingular.AgentChatThread
       ? sidePanelRecord.objectRecordId
       : undefined;
-  const isThreadsEmpty = threads.length === 0;
+  const isThreadsEmpty = !isNonEmptyArray(threads);
 
   if (loading && isThreadsEmpty) {
     return <SkeletonLoader />;
@@ -81,7 +87,7 @@ export const ChatThreadsCardContent = ({
     );
   }
 
-  if (isThreadsEmpty) {
+  if (isThreadsEmpty && !hasNextPage) {
     return (
       <EmptyState.Root>
         <AnimatedPlaceholder type="emptyInbox" />
@@ -99,6 +105,7 @@ export const ChatThreadsCardContent = ({
     <StyledThreadsContainer>
       <AiChatThreadList
         threads={threads}
+        variant="compact"
         selectedThreadIds={
           isDefined(sidePanelThreadId) ? [sidePanelThreadId] : []
         }
@@ -110,6 +117,7 @@ export const ChatThreadsCardContent = ({
         }
         onDetachThread={onDetachThread}
       />
+      {pagination}
     </StyledThreadsContainer>
   );
 };

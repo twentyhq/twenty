@@ -3,6 +3,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import { type AgentMessageReactionWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-reaction.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
@@ -11,6 +12,7 @@ export class AgentMessageWorkspaceEntity extends BaseWorkspaceEntity {
   thread: EntityRelation<AgentChatThreadWorkspaceEntity>;
   turn: EntityRelation<AgentTurnWorkspaceEntity> | null;
   parts: EntityRelation<AgentMessagePartWorkspaceEntity[]>;
+  reactions: EntityRelation<AgentMessageReactionWorkspaceEntity[]>;
 
   threadId: string;
   turnId: string | null;

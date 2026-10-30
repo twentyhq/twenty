@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
+import { userCanServerImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-server-impersonate-target.util';
+import { userCanWorkspaceImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-workspace-impersonate-target.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
@@ -72,6 +73,15 @@ export class ImpersonationAuthorizationService {
         }
       }
 
+      if (
+        !userCanServerImpersonateTarget({
+          impersonatorUser: impersonatorUserWorkspace.user,
+          targetUser: targetUserWorkspace.user,
+        })
+      ) {
+        return { allowed: false, level, reason: 'TARGET_HAS_ADMIN_PRIVILEGES' };
+      }
+
       return { allowed: true, level };
     }
 
@@ -81,6 +91,7 @@ export class ImpersonationAuthorizationService {
         setting: PermissionFlagType.IMPERSONATE,
         workspaceId: targetUserWorkspace.workspace.id,
         applicationId: undefined,
+        agentId: undefined,
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
@@ -88,8 +99,10 @@ export class ImpersonationAuthorizationService {
     }
 
     if (
-      userHasAdminPrivileges(targetUserWorkspace.user) &&
-      !userHasAdminPrivileges(impersonatorUserWorkspace.user)
+      !userCanWorkspaceImpersonateTarget({
+        impersonatorUser: impersonatorUserWorkspace.user,
+        targetUser: targetUserWorkspace.user,
+      })
     ) {
       return { allowed: false, level, reason: 'TARGET_HAS_ADMIN_PRIVILEGES' };
     }

@@ -1,4 +1,4 @@
-import { basename, isAbsolute, relative, resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -16,25 +16,8 @@ import {
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
+import { formatDisplayPath } from '@/output/format-display-path';
 import { hasConfiguredTarget } from '@/target/has-configured-target';
-
-const toDisplayPath = ({
-  workingDirectory,
-  appDirectory,
-}: {
-  workingDirectory: string;
-  appDirectory: string;
-}) => {
-  const relativePath = relative(workingDirectory, appDirectory);
-
-  if (relativePath === '') {
-    return '.';
-  }
-
-  return relativePath.startsWith('..') || isAbsolute(relativePath)
-    ? appDirectory
-    : relativePath;
-};
 
 export const runAppInitCommand: CommandRun = async ({
   arguments: commandArguments,
@@ -63,10 +46,13 @@ export const runAppInitCommand: CommandRun = async ({
     ? displayName
     : convertToLabel(appName);
   const appDescription = readStringOption(options, 'description')?.trim() ?? '';
-  const displayPath = toDisplayPath({ workingDirectory, appDirectory });
+  const displayPath = formatDisplayPath({
+    workingDirectory,
+    targetPath: appDirectory,
+  });
   const location = displayPath === '.' ? 'the current directory' : displayPath;
 
-  output.progress(`Creating ${appName} in ${location}…`);
+  output.progress({ message: `Creating ${appName} in ${location}…` });
 
   await createAppProject({
     appDirectory,
@@ -86,6 +72,14 @@ export const runAppInitCommand: CommandRun = async ({
     remoteName,
   });
   const packageNames = [...APP_TEMPLATE_FIRST_PARTY_PACKAGES];
+
+  if (process.platform === 'win32') {
+    output.warn({
+      code: 'PLATFORM_UNSUPPORTED',
+      message:
+        'Building apps is only supported on macOS and Linux. On Windows, work inside WSL 2.',
+    });
+  }
 
   return {
     data: {

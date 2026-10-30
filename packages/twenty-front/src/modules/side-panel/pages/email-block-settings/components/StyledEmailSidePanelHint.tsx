@@ -4,5 +4,5 @@ import { themeCssVariables } from 'twenty-ui/theme';
 export const StyledEmailSidePanelHint = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[3]};
 `;

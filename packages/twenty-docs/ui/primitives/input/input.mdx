@@ -3,19 +3,24 @@ title: Input
 description: A text input with native attributes, field integration, and two sizes.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import InputReference from '/snippets/ui/generated/input/input.mdx';
+
+## Overview
 
 `Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
 
 <StoryEmbed
-  storyId="ui-input-input--default"
+  storyId="ui-input-input--display"
   title="Input example"
-  height={240}
+  height={140}
 />
 
-## Uncontrolled state
+## Usage
+
+### Uncontrolled state
 
 Use `defaultValue` to set the initial email address. The input owns subsequent changes.
 
@@ -35,6 +40,33 @@ export const EmailField = () => (
   </Field.Root>
 );
 ```
+
+## Visual choices
+
+Compare small and medium inputs in their default, focused, invalid, and disabled states. Use validation feedback alongside invalid styling.
+
+<StoryEmbed
+  storyId="ui-input-input--catalog"
+  title="Visual choices for input"
+  height={380}
+/>
+
+## Plain appearance
+
+Use `variant="plain"` inside an existing row or surface. It removes the fill, border, rounded corners and padding and uses natural height. The parent supplies spacing and row dimensions. Text, placeholder and disabled styling remain shared. The blue outline follows the browser's native `:focus-visible` behavior. For text controls this can include pointer focus and autofocus as well as keyboard focus. Invalid state uses a danger outline without changing layout.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+`InputGroup` automatically gives its input the plain appearance and keeps the group as the only focus and validation frame. Its `sm` and `md` heights remain 24px and 32px. Standalone plain inputs do not use the fixed height associated with `size`.
 
 ## Controlled state
 
@@ -91,3 +123,5 @@ Put layout styles, attributes, and refs on `InputGroup` when customizing the sur
 The reference includes component-specific and inherited Base UI props. Native input attributes are also accepted. A standalone input defaults to `md`; inside a group, an omitted input `size` inherits the group's size.
 
 <InputReference />
+
+<PageBanner illustration="page-cover-input" />

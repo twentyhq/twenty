@@ -1,4 +1,5 @@
-import { type ReactNode } from 'react';
+import { type ReactElement, type ReactNode } from 'react';
+import { expectTypeOf, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
@@ -6,6 +7,8 @@ import listItemStyles from '@ui/primitives/navigation/ListItem/ListItem.module.s
 
 import { Autocomplete } from '@ui/primitives/input';
 import styles from '../Autocomplete.module.scss';
+import { type AutocompleteInputProps } from '../types/AutocompleteInputProps';
+import { type AutocompleteItemProps } from '../types/AutocompleteItemProps';
 
 const RootWrapper = ({ children }: { children: ReactNode }) => (
   <Autocomplete.Root>{children}</Autocomplete.Root>
@@ -44,6 +47,7 @@ runComponentConformance({
   refInstanceOf: HTMLInputElement,
   wrapper: RootWrapper,
   ownClassName: inputStyles.input,
+  renderPropKeepsOwnClassName: false,
   renderPropTagName: 'input',
 });
 runComponentConformance({
@@ -130,4 +134,19 @@ runComponentConformance({
   refInstanceOf: HTMLButtonElement,
   wrapper: RootWrapper,
   renderPropTagName: 'button',
+});
+
+it('accepts size only on an Autocomplete.Input without render', () => {
+  expectTypeOf<{ size: 'sm' }>().toExtend<AutocompleteInputProps>();
+  expectTypeOf<{ render: ReactElement }>().toExtend<AutocompleteInputProps>();
+  expectTypeOf<{
+    render: ReactElement;
+    size: 'sm';
+  }>().not.toExtend<AutocompleteInputProps>();
+});
+
+it('keeps autocomplete descriptions limited to their supported placements', () => {
+  expectTypeOf<AutocompleteItemProps['descriptionPlacement']>().toEqualTypeOf<
+    'inline' | 'end' | undefined
+  >();
 });

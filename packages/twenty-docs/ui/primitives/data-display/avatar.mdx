@@ -3,23 +3,35 @@ title: Avatar
 description: Represent a person or record with an image, initial, or icon.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
 
+## Overview
+
 `Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
-<StoryEmbed storyId="ui-data-display-avatar--app" title="Avatar example" />
+<StoryEmbed
+  storyId="ui-data-display-avatar--display"
+  title="Avatar example"
+  height={90}
+/>
 
-## Image and fallback
+## Usage
 
 ```tsx
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-type PersonAvatarProps = { name: string; imageUrl?: string | null };
-
-export const PersonAvatar = ({ name, imageUrl }: PersonAvatarProps) => (
-  <Avatar src={imageUrl} name={name} shape="circle" size="lg" />
+export const WorkspaceAvatar = () => (
+  <Avatar
+    name="Acme"
+    colorSeed="acme-app"
+    shape="square"
+    variant="outline"
+    size="md"
+  />
 );
 ```
 
@@ -71,7 +83,7 @@ export const ContactAvatar = ({
   imageUrl,
   initials,
 }: ContactAvatarProps) => (
-  <Avatar.Root name={name} shape="circle" size="xl">
+  <Avatar.Root name={name} shape="circle" size="xxl">
     <Avatar.Image src={imageUrl} alt={name} decoding="async" />
     <Avatar.Fallback role="img" aria-label={name} delay={150}>
       {initials}
@@ -80,7 +92,11 @@ export const ContactAvatar = ({
 );
 ```
 
-<StoryEmbed storyId="ui-data-display-avatar--parts" title="Avatar parts" />
+<StoryEmbed
+  storyId="ui-data-display-avatar--parts"
+  title="Avatar parts"
+  height={110}
+/>
 
 The parts share Base UI's image loading state. Image renders an `img` after a successful load by default, and Fallback renders a `span` while the image is absent, loading, or has failed. `delay` postpones the initial fallback display in milliseconds and defaults to `0`. A changed source is loaded again and can replace either the current image or fallback.
 
@@ -94,7 +110,17 @@ The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `Avatar
 
 ## Shape and appearance
 
-`shape` accepts `square`, `rounded-square`, or `circle`. Sizes run from `xs` (12px) to `xl` (40px); `md` is 16px. `variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
+<StoryEmbed
+  storyId="ui-data-display-avatar--catalog"
+  title="Avatar sizes and shapes"
+  height={320}
+/>
+
+`shape` accepts `square`, `rounded-square`, or `circle`. Sizes are `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), and `xxl` (40px). Both `xl` and `xxl` use 16px fallback text.
+
+The former 40px `xl` size is now `xxl`. Update existing `size="xl"` usages to `size="xxl"` when they should remain 40px.
+
+`variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
 
 ```tsx
 import { IconUser } from 'twenty-ui/icon';
@@ -104,7 +130,7 @@ export const ContactIcon = () => (
   <Avatar
     icon={<IconUser />}
     shape="rounded-square"
-    size="xl"
+    size="xxl"
     role="img"
     aria-label="Contact"
   />
@@ -146,6 +172,7 @@ export const ProfileAvatar = ({
 <StoryEmbed
   storyId="ui-data-display-avatar--button-composition"
   title="Avatar composed as a button"
+  height={110}
 />
 
 Compose a native button for actions. It owns focus, Enter and Space activation, and disabled behavior. Supply an action-specific accessible name. Put `onClick` and `disabled` on the rendered button; shorthand Avatar has no `onClick`, `disabled`, or `nativeButton` prop.
@@ -176,3 +203,5 @@ Shorthand avatars are decorative by default. `name` does not name the image, fal
 Types and defaults are generated from the public component types. The explicit parts accept native attributes and event handlers. Shorthand Avatar omits `onClick`; supply it on the owner passed through `render`.
 
 <AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

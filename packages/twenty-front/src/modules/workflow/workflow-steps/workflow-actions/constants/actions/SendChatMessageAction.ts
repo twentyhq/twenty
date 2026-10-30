@@ -1,11 +1,13 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export const SEND_CHAT_MESSAGE_ACTION: {
-  defaultLabel: string;
+  defaultLabel: MessageDescriptor;
   type: Extract<WorkflowActionType, 'SEND_CHAT_MESSAGE'>;
   icon: string;
 } = {
-  defaultLabel: 'Send to Inbox',
+  defaultLabel: msg`Send to Inbox`,
   type: 'SEND_CHAT_MESSAGE',
   icon: 'IconMessage',
 };

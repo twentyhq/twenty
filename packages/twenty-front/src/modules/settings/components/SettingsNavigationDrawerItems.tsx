@@ -1,4 +1,3 @@
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import {
   type SettingsNavigationItem,
@@ -114,15 +113,6 @@ export const SettingsNavigationDrawerItems = () => {
             key={section.label}
             sectionId={`settings/${section.label}`}
             label={section.label}
-            wrapTitle={
-              section.isAdvanced
-                ? (titleNode) => (
-                    <AdvancedSettingsWrapper hideDot>
-                      {titleNode}
-                    </AdvancedSettingsWrapper>
-                  )
-                : undefined
-            }
           >
             {section.items.map((item, index) =>
               renderSectionItem(

@@ -12,7 +12,6 @@ type MentionRecordChipProps = {
   objectNameSingular: string;
   label: string;
   imageUrl: string;
-  className?: string;
 };
 
 export const MentionRecordChip = ({
@@ -20,26 +19,13 @@ export const MentionRecordChip = ({
   objectNameSingular,
   label,
   imageUrl,
-  className,
 }: MentionRecordChipProps) => {
   if (!isNonEmptyString(objectNameSingular)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Unknown object`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Unknown object`}</Chip>;
   }
 
   if (!isNonEmptyString(recordId)) {
-    return (
-      <Chip
-        variant="ghost"
-        aria-disabled
-        style={{ paddingInlineStart: 0 }}
-      >{t`Deleted record`}</Chip>
-    );
+    return <Chip variant="plain" aria-disabled>{t`Deleted record`}</Chip>;
   }
 
   const linkToShowPage = getLinkToShowPage(objectNameSingular, {
@@ -50,7 +36,6 @@ export const MentionRecordChip = ({
     <LinkChip
       to={linkToShowPage}
       variant="soft"
-      className={className}
       startElement={
         <AvatarOrIcon
           name={label}

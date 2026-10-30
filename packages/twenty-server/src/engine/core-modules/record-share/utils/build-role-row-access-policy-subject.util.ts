@@ -8,6 +8,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
@@ -21,6 +22,7 @@ export const buildRoleRowAccessPolicySubject = ({
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
   workspaceMember,
 }: {
   roleId: string | undefined;
@@ -30,6 +32,7 @@ export const buildRoleRowAccessPolicySubject = ({
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
 }): RowAccessPolicySubject => {
   const roleIds = isDefined(roleId) ? [roleId] : [];
@@ -56,6 +59,7 @@ export const buildRoleRowAccessPolicySubject = ({
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
         objectMetadata,
         roleIds,
         workspaceMember,

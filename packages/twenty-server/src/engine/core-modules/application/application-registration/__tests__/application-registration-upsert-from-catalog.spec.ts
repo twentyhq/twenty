@@ -1,21 +1,29 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  type Manifest,
+} from 'twenty-shared/application';
 
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
@@ -54,13 +62,20 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
   beforeEach(async () => {
     applicationRegistrationRepository = {
       findOne: jest.fn(),
-      save: jest.fn(),
+      save: jest.fn(async (entity) => entity),
       create: jest.fn((entity) => entity),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
+        { provide: UsageAnalyticsService, useValue: {} },
+        {
+          provide: ApplicationRegistrationVersionService,
+          useValue: {
+            findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
+          },
+        },
         ApplicationRegistrationLookupService,
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
@@ -81,6 +96,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: ApplicationRegistrationAssetUrlService,
           useValue: { resolveAssetUrls: jest.fn() },
+        },
+        {
+          provide: FileStorageService,
+          useValue: { deleteByFileId: jest.fn() },
         },
         {
           provide: ServerFileStorageService,
@@ -148,7 +167,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     },
   );
 
-  it('should leave the operator listing and vetting choices untouched on update', async () => {
+  it('should leave the operator listing choice untouched on update', async () => {
     const existingRegistration = buildExistingRegistration({
       sourceType: ApplicationRegistrationSourceType.NPM,
       isListed: false,
@@ -239,13 +258,44 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(updateFromManifestSpy).not.toHaveBeenCalled();
   });
 
-  it('should create new catalog registrations as listed', async () => {
+  it('should create new catalog registrations as unlisted until reviewed', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(null);
 
     await service.upsertFromCatalog(catalogParams);
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ isListed: false }),
+    );
+  });
+
+  it('should create featured catalog registrations as listed', async () => {
+    const [featuredApplication] = MARKETPLACE_FEATURED_APPLICATIONS;
+
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await service.upsertFromCatalog({
+      ...catalogParams,
+      universalIdentifier: featuredApplication.universalIdentifier,
+      sourcePackage: featuredApplication.sourcePackage,
+    });
+
+    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),
     );
+  });
+
+  it('should refuse a catalog entry claiming the standard application identifier', async () => {
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.upsertFromCatalog({
+        ...catalogParams,
+        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      }),
+    ).rejects.toMatchObject({
+      code: ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+    });
+
+    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
   });
 });

@@ -6,7 +6,7 @@ import { Dropdown } from '../Dropdown';
 
 export const DropdownNestedExample = () => {
   const [open, setOpen] = useState(false);
-  const [direction, setDirection] = useState('Ascending');
+  const [direction, setDirection] = useState<string | null>('Ascending');
   const [search, setSearch] = useState('');
   const fields = ['Name', 'Created at', 'Company'].filter((field) =>
     field.toLowerCase().includes(search.toLowerCase()),
@@ -24,17 +24,18 @@ export const DropdownNestedExample = () => {
           <Dropdown.Root type="picker">
             <Dropdown.Trigger render={<Button>{direction}</Button>} />
             <Dropdown.Content aria-label="Sort direction">
-              <Dropdown.Section>
+              <Dropdown.SelectionGroup
+                id="direction"
+                aria-label="Sort direction"
+                value={direction}
+                onValueChange={setDirection}
+              >
                 {['Ascending', 'Descending'].map((option) => (
-                  <Dropdown.OptionItem
-                    key={option}
-                    selected={option === direction}
-                    onSelect={() => setDirection(option)}
-                  >
+                  <Dropdown.OptionItem key={option} value={option}>
                     {option}
                   </Dropdown.OptionItem>
                 ))}
-              </Dropdown.Section>
+              </Dropdown.SelectionGroup>
             </Dropdown.Content>
           </Dropdown.Root>
         </Dropdown.Section>
@@ -45,13 +46,13 @@ export const DropdownNestedExample = () => {
           value={search}
           onValueChange={setSearch}
         />
-        <Dropdown.Section label="Fields">
+        <Dropdown.SelectionGroup id="field" aria-label="Fields">
           {fields.map((field) => (
-            <Dropdown.OptionItem key={field} selected={false}>
+            <Dropdown.OptionItem key={field} value={field}>
               {field}
             </Dropdown.OptionItem>
           ))}
-        </Dropdown.Section>
+        </Dropdown.SelectionGroup>
       </Dropdown.Content>
     </Dropdown.Root>
   );

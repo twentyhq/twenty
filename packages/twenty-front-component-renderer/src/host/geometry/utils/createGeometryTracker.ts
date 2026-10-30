@@ -7,9 +7,11 @@ import { GEOMETRY_UNREGISTERED_OBSERVATION_EXPIRY_FRAMES } from '@/host/geometry
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type PushGeometryUpdates } from '@/host/geometry/types/PushGeometryUpdates';
 import { createGeometryWakeSources } from '@/host/geometry/utils/createGeometryWakeSources';
+import { createTextareaIntrinsicScrollHeightMeasurer } from '@/host/geometry/utils/createTextareaIntrinsicScrollHeightMeasurer';
 import { isGeometrySnapshotEqualWithinEpsilon } from '@/host/geometry/utils/isGeometrySnapshotEqualWithinEpsilon';
 import { measureNodeGeometry } from '@/host/geometry/utils/measureNodeGeometry';
 import { measureViewportGeometry } from '@/host/geometry/utils/measureViewportGeometry';
+import { omitUnchangedComputedStyle } from '@/host/geometry/utils/omitUnchangedComputedStyle';
 import { updateFrontComponentPortalLayer } from '@/host/geometry/utils/updateFrontComponentPortalLayer';
 import { sanitizeRemoteElementIds } from '@/host/geometry/utils/sanitizeRemoteElementIds';
 import { type ElementGeometrySnapshot } from '@/types/ElementGeometrySnapshot';
@@ -46,6 +48,11 @@ export const createGeometryTracker = (): GeometryTracker => {
   };
 
   const wakeSources = createGeometryWakeSources(wake);
+  const textareaIntrinsicScrollHeightMeasurer =
+    createTextareaIntrinsicScrollHeightMeasurer();
+
+  const resolveRegisteredRemoteElementId = (element: Element): string | null =>
+    remoteElementIdByRegisteredNode.get(element) ?? null;
 
   const readViewportGeometry = (): ViewportGeometrySnapshot =>
     measureViewportGeometry(rootContainer);
@@ -99,16 +106,27 @@ export const createGeometryTracker = (): GeometryTracker => {
 
       unregisteredObservedFrameCounts.delete(remoteElementId);
 
-      const snapshot = measureNodeGeometry({ node, rootContainerOrigin });
+      const snapshot = measureNodeGeometry({
+        node,
+        rootContainerOrigin,
+        resolveRemoteElementId: resolveRegisteredRemoteElementId,
+        measureTextareaIntrinsicScrollHeight:
+          textareaIntrinsicScrollHeightMeasurer.measure,
+      });
+
+      const previousSnapshot = lastElementSnapshots.get(remoteElementId);
 
       if (
-        !isGeometrySnapshotEqualWithinEpsilon(
-          lastElementSnapshots.get(remoteElementId),
-          snapshot,
-        )
+        !isGeometrySnapshotEqualWithinEpsilon({
+          previousSnapshot,
+          nextSnapshot: snapshot,
+        })
       ) {
         lastElementSnapshots.set(remoteElementId, snapshot);
-        changedElements[remoteElementId] = snapshot;
+        changedElements[remoteElementId] = omitUnchangedComputedStyle({
+          previousSnapshot,
+          nextSnapshot: snapshot,
+        });
       }
     }
 
@@ -124,10 +142,14 @@ export const createGeometryTracker = (): GeometryTracker => {
       wakeSources.detachElementSources();
     }
 
-    const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon(
-      lastViewportSnapshot,
-      viewport,
-    );
+    const hasViewportChanged = !isGeometrySnapshotEqualWithinEpsilon({
+      previousSnapshot: lastViewportSnapshot,
+      nextSnapshot: viewport,
+    });
+    const pushedViewport = omitUnchangedComputedStyle({
+      previousSnapshot: lastViewportSnapshot,
+      nextSnapshot: viewport,
+    });
 
     lastViewportSnapshot = viewport;
 
@@ -140,7 +162,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     ) {
       idleFrameCount = 0;
       pushGeometryUpdates({
-        viewport,
+        viewport: pushedViewport,
         elements: changedElements,
         removedRemoteElementIds,
       });
@@ -254,7 +276,7 @@ export const createGeometryTracker = (): GeometryTracker => {
       rootContainer,
       viewport: readViewportGeometry(),
     });
-    wakeSources.attachPortalLayerSources();
+    wakeSources.attachPortalLayerSources(element);
     wake();
   };
 
@@ -283,6 +305,7 @@ export const createGeometryTracker = (): GeometryTracker => {
     }
 
     wakeSources.detachAllSources();
+    textareaIntrinsicScrollHeightMeasurer.dispose();
 
     observedRemoteElementIds.clear();
     lastElementSnapshots.clear();

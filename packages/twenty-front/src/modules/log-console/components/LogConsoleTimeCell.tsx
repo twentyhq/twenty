@@ -14,6 +14,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledTimeAndDate = styled.span`
   align-items: center;
@@ -34,8 +35,9 @@ export const LogConsoleTimeCell = ({ timestamp }: LogConsoleTimeCellProps) => {
 
   const dayAndMonthFormat =
     DATE_FORMAT_WITHOUT_YEAR[getWorkspaceDateFormatFromDateFormat(dateFormat)];
-  const timeWithMillisecondsFormat =
-    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS';
+  const timeWithMillisecondsFormat = doNotTranslate(
+    timeFormat === TimeFormat.HOUR_12 ? 'h:mm:ss.SSS aa' : 'HH:mm:ss.SSS',
+  );
 
   const formatTimestamp = (format: string) =>
     formatInTimeZone(timestamp, timeZone, format, { locale: localeCatalog });

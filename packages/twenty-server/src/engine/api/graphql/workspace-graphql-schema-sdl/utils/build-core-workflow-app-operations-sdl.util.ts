@@ -14,20 +14,11 @@ import {
 } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
 
 export const CORE_WORKFLOW_APP_QUERY_NAMES = [
   'coreWorkflows',
   'coreWorkflowVersionsByCoreWorkflowId',
-];
-
-export const CORE_WORKFLOW_APP_MUTATION_NAMES = [
-  'createCoreWorkflow',
-  'updateCoreWorkflowVersionTrigger',
-  'createCoreWorkflowVersionStep',
-  'updateCoreWorkflowVersionStep',
-  'activateCoreWorkflowVersion',
 ];
 
 type RootTypeConfig = ReturnType<GraphQLObjectType['toConfig']>;
@@ -67,28 +58,21 @@ const buildSlice = async (): Promise<string> => {
   try {
     const coreSchema = await applicationContext
       .get(GraphQLSchemaFactory)
-      .create([CoreWorkflowResolver, CoreWorkflowVersionMutationResolver]);
+      .create([CoreWorkflowResolver]);
 
     const queryTypeConfig = coreSchema.getQueryType()?.toConfig();
-    const mutationTypeConfig = coreSchema.getMutationType()?.toConfig();
 
-    if (!isDefined(queryTypeConfig) || !isDefined(mutationTypeConfig)) {
-      throw new Error(
-        'Core workflow resolvers produced no Query or Mutation type',
-      );
+    if (!isDefined(queryTypeConfig)) {
+      throw new Error('Core workflow resolvers produced no Query type');
     }
 
     const query = pickRootType({
       rootTypeConfig: queryTypeConfig,
       operationNames: CORE_WORKFLOW_APP_QUERY_NAMES,
     });
-    const mutation = pickRootType({
-      rootTypeConfig: mutationTypeConfig,
-      operationNames: CORE_WORKFLOW_APP_MUTATION_NAMES,
-    });
 
     const reachableTypes = Object.values(
-      new GraphQLSchema({ query, mutation }).getTypeMap(),
+      new GraphQLSchema({ query }).getTypeMap(),
     );
     const interfaceImplementations = reachableTypes
       .filter(isInterfaceType)
@@ -96,7 +80,7 @@ const buildSlice = async (): Promise<string> => {
 
     return printSchema(
       lexicographicSortSchema(
-        new GraphQLSchema({ query, mutation, types: interfaceImplementations }),
+        new GraphQLSchema({ query, types: interfaceImplementations }),
       ),
     );
   } finally {

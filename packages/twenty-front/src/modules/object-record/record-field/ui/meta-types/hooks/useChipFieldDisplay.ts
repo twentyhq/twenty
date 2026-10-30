@@ -11,6 +11,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
@@ -37,7 +38,9 @@ export const useChipFieldDisplay = () => {
   );
 
   if (!isDefined(chipGeneratorPerObjectPerField)) {
-    throw new Error('Chip generator per object per field is not defined');
+    throw new Error(
+      doNotTranslate('Chip generator per object per field is not defined'),
+    );
   }
 
   const objectNameSingular =
@@ -52,7 +55,9 @@ export const useChipFieldDisplay = () => {
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   if (!isNonEmptyString(objectNameSingular)) {
-    throw new Error('Object metadata name singular is not a non-empty string');
+    throw new Error(
+      doNotTranslate('Object metadata name singular is not a non-empty string'),
+    );
   }
 
   return {

@@ -1,7 +1,7 @@
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
 import { isTerminalJobState } from '@/queue-job/utils/isTerminalJobState';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
@@ -25,6 +25,10 @@ export const useUpgradeApplication = ({
   const { enqueueToast } = useToast();
   const [triggerUpgradeApplication, { loading: isTriggeringUpgrade }] =
     useMutation(TriggerUpgradeApplicationDocument);
+  const [findUpgradeApplicationJobStatus] = useLazyQuery(
+    FindUpgradeApplicationJobStatusDocument,
+    { fetchPolicy: 'network-only' },
+  );
 
   const { data: jobStatusData } = useQuery(
     FindUpgradeApplicationJobStatusDocument,
@@ -68,9 +72,21 @@ export const useUpgradeApplication = ({
     [enqueueToast, onCompleted],
   );
 
+  const fetchUpgradeJobStatus = useCallback(
+    async (jobId: string, trackedUniversalIdentifier: string) => {
+      const { data } = await findUpgradeApplicationJobStatus({
+        variables: { universalIdentifier: trackedUniversalIdentifier, jobId },
+      });
+
+      return data?.findUpgradeApplicationJobStatus;
+    },
+    [findUpgradeApplicationJobStatus],
+  );
+
   const { activeJobId, activeJobProgress, trackJob } = useTrackedQueueJob({
     runningJob,
     onQueueJobSettled: handleUpgradeJobSettled,
+    fetchJobStatus: fetchUpgradeJobStatus,
   });
 
   const upgrade = async (targetVersion: string): Promise<void> => {

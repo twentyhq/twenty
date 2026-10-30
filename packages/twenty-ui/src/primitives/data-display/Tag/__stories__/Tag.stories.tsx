@@ -24,16 +24,11 @@ const meta: Meta<typeof Tag> = {
 export default meta;
 type Story = StoryObj<typeof Tag>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     color: 'red',
   },
   decorators: [ComponentDecorator],
-};
-
-export const Documentation: Story = {
-  args: Default.args,
-  decorators: Default.decorators,
 };
 
 export const WithLongText: Story = {
@@ -67,26 +62,11 @@ export const WithoutTruncation: Story = {
     color: 'green',
     children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     truncate: false,
-    style: { minWidth: 'fit-content' },
+    title: 'Full category label',
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
-  },
-};
-
-export const WithoutPadding: Story = {
-  ...Default,
-  args: {
-    ...Default.args,
-    style: { padding: 0 },
-    title: 'Unpadded category',
-  },
-  play: async ({ canvasElement }) => {
-    const tag = within(canvasElement).getByTitle('Unpadded category');
-
-    await expect(tag).toBeVisible();
-    await expect(getComputedStyle(tag).padding).toBe('0px');
   },
 };
 
@@ -114,11 +94,20 @@ export const Truncation: Story = {
 
 export const FullLabel: Story = {
   ...WithoutTruncation,
+  args: {
+    ...WithoutTruncation.args,
+    variant: 'outline',
+    startIcon: <IconUser />,
+  },
   play: async ({ canvasElement }) => {
     const text = within(canvasElement).getByText(
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     );
 
+    const tag = within(canvasElement).getByTitle('Full category label');
+
+    await expect(tag.getBoundingClientRect().width).toBeGreaterThan(100);
+    await expect(tag.getBoundingClientRect().height).toBe(22);
     await expect(getComputedStyle(text).textOverflow).not.toBe('ellipsis');
     await expect(text.scrollWidth).toBeLessThanOrEqual(text.clientWidth);
     await userEvent.hover(text);
@@ -129,6 +118,7 @@ export const FullLabel: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Tag> = {
+  args: { color: 'blue', children: 'Customer' },
   argTypes: {
     color: { control: false },
   },
@@ -144,15 +134,24 @@ export const Catalog: CatalogStory<Story, typeof Tag> = {
             variant,
           }),
         },
-        {
-          name: 'colors',
-          values: MAIN_COLOR_NAMES,
-          props: (color: ThemeColor) => ({ color }),
-        },
       ],
     },
   },
   decorators: [CatalogDecorator],
+};
+
+export const Colors: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 600 }, a11y: A11Y_DEFER_COLOR_CONTRAST },
+  render: () => (
+    <Text style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+      {MAIN_COLOR_NAMES.map((color) => (
+        <Tag key={color} color={color}>
+          {color}
+        </Tag>
+      ))}
+    </Text>
+  ),
 };
 
 export const EmptyTag: Story = {
@@ -183,7 +182,6 @@ export const PointerAndKeyboard: Story = {
     ref: fn(),
     color: 'blue',
     variant: 'solid',
-    style: { padding: 0 },
   },
   render: ({ onClick, ...args }) => (
     <Tag {...args} render={<button type="button" onClick={onClick} />} />
@@ -199,7 +197,6 @@ export const PointerAndKeyboard: Story = {
     await expect(control).toHaveFocus();
     await expect(args.ref).toHaveBeenCalledWith(control);
     await expect(control).toHaveAttribute('data-variant', 'solid');
-    await expect(getComputedStyle(control).padding).toBe('0px');
     await expect(args.onClick).toHaveBeenLastCalledWith(
       expect.objectContaining({ type: 'click' }),
     );
@@ -240,9 +237,9 @@ export const RenderCallback: Story = {
 };
 
 export const DefaultSemantics: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     title: 'Category label',
     onClick: fn(),
     ref: fn(),
@@ -300,9 +297,9 @@ export const Navigation: Story = {
 };
 
 export const NodeContent: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     children: (
       <>
         Category:{' '}
@@ -327,4 +324,37 @@ export const NodeContent: Story = {
     await expect(link).toHaveAttribute('href', '#enterprise-customers');
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
   },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Tag> = {
+  tags: ['!autodocs'],
+  argTypes: {
+    color: { control: false },
+  },
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      options: { elementContainer: { style: { width: 80 } } },
+      dimensions: [
+        {
+          name: 'variants',
+          values: ['soft', 'solid', 'outline', 'ghost'],
+          props: (variant: 'soft' | 'solid' | 'outline' | 'ghost') => ({
+            variant,
+          }),
+        },
+        {
+          name: 'colors',
+          values: MAIN_COLOR_NAMES,
+          props: (color: ThemeColor) => ({ color }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
+  globals: { colorScheme: 'dark' },
 };

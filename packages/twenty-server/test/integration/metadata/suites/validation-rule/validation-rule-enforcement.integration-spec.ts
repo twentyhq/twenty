@@ -55,7 +55,7 @@ describe('Validation rules should be enforced on record writes', () => {
 
   beforeAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
       value: true,
       expectToFail: false,
     });

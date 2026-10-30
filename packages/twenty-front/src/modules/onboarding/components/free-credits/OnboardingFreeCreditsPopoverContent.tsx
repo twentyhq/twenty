@@ -25,14 +25,6 @@ import { MetricRow } from 'twenty-ui/components/data-display';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  max-width: 100%;
-  width: 284px;
-`;
-
 const StyledSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -97,7 +89,7 @@ export const OnboardingFreeCreditsPopoverContent = ({
   });
 
   return (
-    <StyledContent>
+    <>
       <StyledSection>
         <StyledSectionTitle>{t`Free credits`}</StyledSectionTitle>
         <MetricRow
@@ -181,6 +173,6 @@ export const OnboardingFreeCreditsPopoverContent = ({
         <IconInfoCircle size={theme.icon.size.sm} />
         {t`Stacks on top of your plan and never expires`}
       </StyledFooter>
-    </StyledContent>
+    </>
   );
 };

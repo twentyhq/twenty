@@ -99,6 +99,7 @@ export class ChartDataQueryService {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       userTimezone,
       currentWorkspaceMemberId,
     });

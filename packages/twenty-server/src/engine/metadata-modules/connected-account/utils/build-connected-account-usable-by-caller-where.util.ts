@@ -10,6 +10,6 @@ export const buildConnectedAccountUsableByCallerWhere = ({
   baseWhere: FindOptionsWhere<ConnectedAccountEntity>;
   userWorkspaceId: string;
 }): FindOptionsWhere<ConnectedAccountEntity>[] => [
-  { ...baseWhere, visibility: 'workspace' },
+  { ...baseWhere, scope: 'WORKSPACE' },
   { ...baseWhere, userWorkspaceId },
 ];

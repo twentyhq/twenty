@@ -65,6 +65,8 @@ const backfillPhaseInBatches = async ({
     }
 
     try {
+      console.log('Backfill batch started', { phase, after, batchSize });
+
       const result = await executeWithRetry(() =>
         client.query({
           [phase]: {
@@ -87,10 +89,19 @@ const backfillPhaseInBatches = async ({
       after = connection?.pageInfo.hasNextPage
         ? (connection.pageInfo.endCursor ?? undefined)
         : undefined;
+
+      console.log('Backfill batch completed', {
+        phase,
+        batchCount: recordIds.length,
+        processedCount: count,
+        nextCursor: after,
+      });
     } catch (error) {
       if (error instanceof RetryableLogicFunctionError) {
         return { count, pause: { reason: 'rate-limited', after } };
       }
+
+      console.error('Backfill batch failed', { phase, after, count }, error);
 
       throw error;
     }

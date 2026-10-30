@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
 import { UserSessionCleanupCronJob } from 'src/engine/core-modules/user-session/crons/jobs/user-session-cleanup.cron.job';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
@@ -16,6 +17,7 @@ import { UserSessionResolver } from 'src/engine/core-modules/user-session/user-s
     TypeOrmModule.forFeature([UserSessionEntity, AppTokenEntity]),
     JwtModule,
     EventLogEmitterModule,
+    MetricsModule,
   ],
   providers: [
     UserSessionService,

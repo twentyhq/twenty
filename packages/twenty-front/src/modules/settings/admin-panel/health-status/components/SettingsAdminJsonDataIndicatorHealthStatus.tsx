@@ -12,7 +12,6 @@ const StyledDetailsContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
-  font-size: ${themeCssVariables.font.size.sm};
   overflow-x: auto;
   padding: ${themeCssVariables.spacing[4]};
 `;

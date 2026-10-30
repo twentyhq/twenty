@@ -29,6 +29,8 @@ const formatGoogleCalendarEvent = (
   const calendarEvent: FetchedCalendarEvent = {
     title: event.summary ?? '',
     isCanceled: event.status === 'cancelled',
+    isPrivate:
+      event.visibility === 'private' || event.visibility === 'confidential',
     isFullDay: event.start?.dateTime == null,
     startsAt: event.start?.dateTime ?? event.start?.date ?? '',
     endsAt: event.end?.dateTime ?? event.end?.date ?? '',
@@ -43,6 +45,7 @@ const formatGoogleCalendarEvent = (
     conferenceLinkLabel: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     conferenceLinkUrl: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     recurringEventExternalId: event.recurringEventId ?? '',
+    organizerHandle: event.organizer?.email?.toLowerCase() ?? '',
     participants:
       event.attendees?.map((attendee) => ({
         handle: attendee.email?.toLowerCase() ?? '',
@@ -67,6 +70,7 @@ const formatGoogleCalendarEvent = (
     'conferenceLinkLabel',
     'conferenceLinkUrl',
     'recurringEventExternalId',
+    'organizerHandle',
     'status',
   ];
 

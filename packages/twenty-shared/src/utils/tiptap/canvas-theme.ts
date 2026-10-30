@@ -16,7 +16,7 @@ export const CANVAS_THEME_DEFAULTS: CanvasTheme = {
   pagePadding: '24px',
   textAlign: 'left',
   bodyBackground: '',
-  textColor: '#18181b',
+  textColor: '#333333',
   width: '600px',
   padding: '24px',
   cornerRadius: '0px',

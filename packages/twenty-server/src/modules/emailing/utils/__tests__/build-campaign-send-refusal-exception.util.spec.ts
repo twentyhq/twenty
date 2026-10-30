@@ -13,7 +13,10 @@ const buildException = (sendRefusal: UsageRefusal) =>
     sendRefusal,
   });
 
-const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
+const buildQuotaRefusal = (
+  exhaustedKind: ExhaustedKind,
+  { isDefault }: { isDefault?: boolean } = {},
+): UsageRefusal => ({
   kind: 'quotaExhausted',
   exhaustedScope: {
     resourceType: UsageResourceType.EMAIL,
@@ -27,12 +30,13 @@ const buildQuotaRefusal = (exhaustedKind: ExhaustedKind): UsageRefusal => ({
     periodCount: 1,
     periodUnit: 'month',
     retryAfterMs: 0,
+    isDefault,
   } satisfies ExhaustedScope,
 });
 
 describe('buildCampaignSendRefusalException', () => {
   it('advises topping up credits only when the allowance is what ran out', () => {
-    const exception = buildException(buildQuotaRefusal('allowance'));
+    const exception = buildException(buildQuotaRefusal('workspaceAllowance'));
 
     expect(exception.code).toBe(
       EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS,
@@ -53,6 +57,21 @@ describe('buildCampaignSendRefusalException', () => {
     );
   });
 
+  it('tells the sender to contact us when the default daily limit is what the list exceeds', () => {
+    const exception = buildException(
+      buildQuotaRefusal('limit', { isDefault: true }),
+    );
+
+    expect(exception.code).toBe(
+      EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED,
+    );
+    expect(exception.userFriendlyMessage.message).toContain('Contact us');
+    expect(exception.userFriendlyMessage.values).toEqual({ limitValue: 1000 });
+    expect(exception.userFriendlyMessage).not.toEqual(
+      buildException(buildQuotaRefusal('limit')).userFriendlyMessage,
+    );
+  });
+
   it.each(['NO_SUBSCRIPTION', 'WORKSPACE_SUSPENDED'] as const)(
     'reports %s as a subscription problem rather than missing credits',
     (reason) => {
@@ -70,7 +89,7 @@ describe('buildCampaignSendRefusalException', () => {
 
   it('gives each refusal its own user facing advice', () => {
     const userFriendlyMessages = [
-      buildException(buildQuotaRefusal('allowance')),
+      buildException(buildQuotaRefusal('workspaceAllowance')),
       buildException(buildQuotaRefusal('limit')),
       buildException({
         kind: 'subscriptionInactive',

@@ -16,6 +16,7 @@ export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useTranslate } from './hooks/useTranslate';
 export type { UseTranslateResult } from './hooks/useTranslate';
 export { useLocale } from './hooks/useLocale';
+export { useLocation } from './hooks/useLocation';
 export { useRecordId } from './hooks/useRecordId';
 export { useToolCall } from './hooks/useToolCall';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
@@ -30,6 +31,7 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentLocation } from './types/FrontComponentLocation';
 export type { FrontComponentSelectedObjectMetadata } from './types/FrontComponentSelectedObjectMetadata';
 export type { FrontComponentToolCall } from './types/FrontComponentToolCall';
 export type { FrontComponentToolCallStatus } from './types/FrontComponentToolCallStatus';
@@ -71,6 +73,16 @@ export type {
   CommandOpenSidePanelPageProps,
   CommandProps,
 } from './command';
+
+export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
+export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
+export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
+export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
+export { attachRecordToInboxThread } from '@/sdk/inbox/attach-record-to-inbox-thread';
+export { detachRecordFromInboxThread } from '@/sdk/inbox/detach-record-from-inbox-thread';
+export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
+export type { SendInboxMessageResult } from 'twenty-shared/application';
+export type { InboxThreadRecordInput } from 'twenty-shared/application';
 
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {

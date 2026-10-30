@@ -25,6 +25,7 @@ const StyledCard = styled.div<{ $depth: number }>`
   box-shadow: ${themeCssVariables.boxShadow.light};
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
+  isolation: isolate;
   margin: 0 calc(${themeCssVariables.spacing[3]} * ${({ $depth }) => $depth});
   padding: ${themeCssVariables.spacing[4]};
   text-align: left;

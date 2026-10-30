@@ -13,6 +13,7 @@ export const getStandardPageLayoutWidgetTitles = () => [
   msg({ message: `Task`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Thread`, context: 'pageLayoutWidget.title' }),
+  msg({ message: `Chat`, context: 'pageLayoutWidget.title' }),
   msg({ message: `People`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Opportunities`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Company`, context: 'pageLayoutWidget.title' }),

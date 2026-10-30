@@ -16,9 +16,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
@@ -33,6 +31,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '@/settings/data-model/object-details/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '@/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -89,8 +88,6 @@ export const SettingsObjectFieldTable = ({
     objectMetadataItemId: objectMetadataItem.id,
     skip: mode !== 'view',
   });
-
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_FIELD_TABLE_METADATA;
 
@@ -174,12 +171,12 @@ export const SettingsObjectFieldTable = ({
           placeholder={t`Search a field...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -202,19 +199,17 @@ export const SettingsObjectFieldTable = ({
                       checked={showOnlyMostlyEmpty}
                     >{t`Mostly empty`}</SettingsRow>
                   )}
-                  {isAdvancedModeEnabled && (
-                    <SettingsRow
-                      startElement={<IconSettings />}
-                      onCheckedChange={() =>
-                        setShowSystemFields(!showSystemFields)
-                      }
-                      checked={showSystemFields}
-                    >{t`System fields`}</SettingsRow>
-                  )}
+                  <SettingsRow
+                    startElement={<IconSettings />}
+                    onCheckedChange={() =>
+                      setShowSystemFields(!showSystemFields)
+                    }
+                    checked={showSystemFields}
+                  >{t`System fields`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <Table>

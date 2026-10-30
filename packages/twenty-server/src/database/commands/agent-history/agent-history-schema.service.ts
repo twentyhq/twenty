@@ -24,6 +24,7 @@ export class AgentHistorySchemaService {
         'flatFieldMetadataMaps',
         'flatIndexMaps',
         'featureFlagsMap',
+        'billingEntitlements',
       ]),
     );
     const { twentyStandardFlatApplication } =
@@ -60,6 +61,7 @@ export class AgentHistorySchemaService {
     // Same from/to path as standard application sync; custom-object side effects must not expand this schema
     const result =
       await this.migrations.validateBuildAndRunWorkspaceMigrationFromTo({
+        shouldDeferActions: false,
         workspaceId,
         dryRun,
         buildOptions: {
@@ -68,7 +70,10 @@ export class AgentHistorySchemaService {
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
         },
-        additionalCacheDataMaps: { featureFlagsMap: existing.featureFlagsMap },
+        additionalCacheDataMaps: {
+          featureFlagsMap: existing.featureFlagsMap,
+          billingEntitlements: existing.billingEntitlements,
+        },
         idByUniversalIdentifierByMetadataName,
         fromToAllFlatEntityMaps: {
           flatObjectMetadataMaps: {

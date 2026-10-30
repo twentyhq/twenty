@@ -27,6 +27,7 @@ import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pen
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
+import { WorkspaceDataExportModule } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { AddPeopleToMessageListJob } from 'src/modules/emailing/jobs/add-people-to-message-list.job';
 import { MaterializeCampaignChunkJob } from 'src/modules/emailing/jobs/materialize-campaign-chunk.job';
@@ -52,7 +53,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { AiAgentTriggerModule } from 'src/engine/metadata-modules/ai/ai-agent-trigger/ai-agent-trigger.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
-import { WarmUpApplicationLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job';
+import { WarmUpLogicFunctionJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-logic-function.job';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -78,6 +79,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TypeOrmModule.forFeature([WorkspaceEntity]),
     ObjectMetadataModule,
     RecordExportModule,
+    WorkspaceDataExportModule,
     TypeORMModule,
     UserModule,
     UserVarsModule,
@@ -144,7 +146,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TriggerInstallApplicationJob,
     TriggerUninstallApplicationJob,
     TriggerUpgradeApplicationJob,
-    WarmUpApplicationLogicFunctionsJob,
+    WarmUpLogicFunctionJob,
     RunDeferredWorkspaceMigrationActionsJob,
     DeferredWorkspaceMigrationActionRecoveryCronJob,
   ],

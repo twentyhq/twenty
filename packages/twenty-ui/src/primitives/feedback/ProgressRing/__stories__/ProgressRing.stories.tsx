@@ -25,7 +25,18 @@ export default meta;
 
 type Story = StoryObj<typeof ProgressRing>;
 
-export const Default: Story = {};
+export const Display: Story = {
+  argTypes: {
+    value: { control: { type: 'range', min: 0, max: 1000, step: 1 } },
+  },
+  args: {
+    value: 600,
+    max: 1000,
+    'aria-label': 'Importing records',
+    'aria-valuetext': '600 of 1,000 records',
+    children: '600 / 1,000',
+  },
+};
 
 export const Small: Story = {
   args: { size: 'sm' },

@@ -16,4 +16,5 @@ export type CommandMenuItemProps = {
   hasSubMenu?: boolean;
   isSubMenuOpened?: boolean;
   disabled?: boolean;
+  'aria-controls'?: string;
 };

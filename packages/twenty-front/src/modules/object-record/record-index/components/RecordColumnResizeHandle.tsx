@@ -4,13 +4,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordColumnResizeHandle = styled.div<{
   isResizing: boolean;
-  position: 'left' | 'right';
+  position: 'start' | 'end';
 }>`
   bottom: 0;
   cursor: col-resize;
-  left: ${({ position }) => (position === 'left' ? '-1px' : 'auto')};
+  inset-inline-end: ${({ position }) => (position === 'end' ? '-1px' : 'auto')};
+  inset-inline-start: ${({ position }) =>
+    position === 'start' ? '-1px' : 'auto'};
   position: absolute;
-  right: ${({ position }) => (position === 'right' ? '-1px' : 'auto')};
   top: 0;
   width: 10px;
   z-index: 1;
@@ -20,9 +21,11 @@ const StyledRecordColumnResizeHandle = styled.div<{
     bottom: 0;
     content: '';
     display: ${({ isResizing }) => (isResizing ? 'block' : 'none')};
-    left: ${({ position }) => (position === 'left' ? '-1px' : 'auto')};
+    inset-inline-end: ${({ position }) =>
+      position === 'end' ? '-1px' : 'auto'};
+    inset-inline-start: ${({ position }) =>
+      position === 'start' ? '-1px' : 'auto'};
     position: absolute;
-    right: ${({ position }) => (position === 'right' ? '-1px' : 'auto')};
     top: 0;
     width: 2px;
   }
@@ -30,7 +33,7 @@ const StyledRecordColumnResizeHandle = styled.div<{
 
 type RecordColumnResizeHandleProps = {
   isResizing: boolean;
-  position: 'left' | 'right';
+  position: 'start' | 'end';
   onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
 };
 

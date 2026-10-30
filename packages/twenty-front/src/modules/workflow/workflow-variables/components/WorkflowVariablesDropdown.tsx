@@ -23,7 +23,6 @@ const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;
 }>`
   align-items: center;
-  background-color: transparent;
   border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
   border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};

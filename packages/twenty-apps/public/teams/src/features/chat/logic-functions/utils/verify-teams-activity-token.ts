@@ -1,10 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { decodeProtectedHeader, importJWK, jwtVerify } from 'jose';
+import { decodeProtectedHeader, errors, importJWK, jwtVerify } from 'jose';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_BOT_CONNECTOR_ISSUER } from 'src/features/chat/logic-functions/constants/teams-bot-connector-issuer';
 import { TEAMS_JWT_CLOCK_TOLERANCE_SECONDS } from 'src/features/chat/logic-functions/constants/teams-jwt-clock-tolerance-seconds';
 import { type LoadTeamsBotConnectorKeys } from 'src/features/chat/logic-functions/types/load-teams-bot-connector-keys.type';
+import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { isTeamsEndorsedKey } from 'src/features/chat/logic-functions/utils/is-teams-endorsed-key';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
 import { resolveTeamsBotConnectorKeyOrThrow } from 'src/features/chat/logic-functions/utils/resolve-teams-bot-connector-key-or-throw';
@@ -58,7 +59,7 @@ export const verifyTeamsActivityTokenOrThrow = async ({
   const token = extractBearerToken(authorizationHeader);
 
   if (!isDefined(token)) {
-    throw new Error(
+    throw new TeamsActivityTokenInvalidError(
       'Missing or malformed Authorization header on the Teams activity',
     );
   }
@@ -66,7 +67,9 @@ export const verifyTeamsActivityTokenOrThrow = async ({
   const keyId = readKeyId(token);
 
   if (!isDefined(keyId)) {
-    throw new Error('Teams activity token names no signing key');
+    throw new TeamsActivityTokenInvalidError(
+      'Teams activity token names no signing key',
+    );
   }
 
   const signingKey = await resolveTeamsBotConnectorKeyOrThrow({
@@ -75,7 +78,7 @@ export const verifyTeamsActivityTokenOrThrow = async ({
   });
 
   if (!isTeamsEndorsedKey(signingKey)) {
-    throw new Error(
+    throw new TeamsActivityTokenInvalidError(
       'Teams activity token is signed with a key not endorsed for Teams',
     );
   }
@@ -89,18 +92,26 @@ export const verifyTeamsActivityTokenOrThrow = async ({
       algorithms: ['RS256'],
       clockTolerance: TEAMS_JWT_CLOCK_TOLERANCE_SECONDS,
     },
-  );
+  ).catch((error: unknown) => {
+    if (error instanceof errors.JOSEError) {
+      throw new TeamsActivityTokenInvalidError(error.message);
+    }
+
+    throw error;
+  });
 
   const serviceUrlClaim = readServiceUrlClaim(payload);
 
   if (!isDefined(serviceUrlClaim)) {
-    throw new Error('Teams activity token has no serviceUrl claim');
+    throw new TeamsActivityTokenInvalidError(
+      'Teams activity token has no serviceUrl claim',
+    );
   }
 
   const verifiedServiceUrl = normalizeTeamsServiceUrl(serviceUrlClaim);
 
   if (verifiedServiceUrl !== normalizeTeamsServiceUrl(activityServiceUrl)) {
-    throw new Error(
+    throw new TeamsActivityTokenInvalidError(
       'Teams activity serviceUrl does not match the serviceUrl claim',
     );
   }

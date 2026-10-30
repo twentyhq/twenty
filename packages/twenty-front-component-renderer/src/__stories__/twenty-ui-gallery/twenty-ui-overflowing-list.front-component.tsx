@@ -55,6 +55,8 @@ const OverflowingListExample = () => {
         <OverflowingList
           showOverflowCount
           overflowLabel="Show all measured items"
+          role="group"
+          aria-label="Measured list"
           style={{ width: listWidth }}
         >
           {INITIAL_TARGETS.map((target) => (
@@ -65,6 +67,8 @@ const OverflowingListExample = () => {
         </OverflowingList>
       )}
       <Button onClick={() => setListWidth(500)}>Widen measured list</Button>
+      <Button onClick={() => setListWidth(220)}>Narrow measured list</Button>
+      <Button onClick={() => setListWidth(208)}>Fit one measured item</Button>
       <Button onClick={() => setIsMeasuredListMounted(false)}>
         Remove measured list
       </Button>

@@ -3,6 +3,10 @@ title: Visualizza i dati dei record correlati
 description: Mostra i dati dei record correlati (ad es., informazioni sull'Azienda nelle Opportunità) usando i flussi di lavoro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Visualizza i dati dei record correlati direttamente sui tuoi record — ad esempio, mostra il numero di dipendenti di un'Azienda nelle sue Opportunità. Questa soluzione alternativa con i flussi di lavoro è utile finché i campi annidati non sono disponibili nativamente.
 
 ## Casi d'Uso Comuni
@@ -34,11 +38,11 @@ Crea i campi di destinazione in **Impostazioni → Modello dati → Opportunità
 
 3. **Cerca record**: Trova la persona collegata
    * Oggetto: Persone
-   * Filtro: ID uguale a `{{trigger.object.pointOfContact.id}}`
+   * Filtro: ID uguale a `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Aggiorna record**:
    * Oggetto: Opportunità
-   * Record: `{{trigger.object.id}}`
+   * Record: `{{trigger.properties.after.id}}`
    * Email del contatto: `{{searchRecords[0].email}}`
    * Telefono del contatto: `{{searchRecords[0].phone}}`
 
@@ -55,16 +59,16 @@ Crea i campi di destinazione in **Impostazioni → Modello dati → Opportunità
 
 2. **Cerca record**: Trova tutte le opportunità per questa azienda
    * Oggetto: Opportunità
-   * Filtro: ID Azienda uguale a `{{trigger.object.id}}`
+   * Filtro: ID Azienda uguale a `{{trigger.properties.after.id}}`
 
 3. **Iteratore**: Itera su ciascuna opportunità
 
 4. **Aggiorna record** (all'interno dell'iteratore):
    * Oggetto: Opportunità
    * Record: `{{iterator.currentItem.id}}`
-   * Settore aziendale: `{{trigger.object.industry}}`
-   * Dimensione aziendale: `{{trigger.object.companySize}}`
-   * ARR dell'azienda: `{{trigger.object.annualRevenue}}`
+   * Settore aziendale: `{{trigger.properties.after.industry}}`
+   * Dimensione aziendale: `{{trigger.properties.after.companySize}}`
+   * ARR dell'azienda: `{{trigger.properties.after.annualRevenue}}`
 
 ## Copia alla creazione del record
 
@@ -86,11 +90,11 @@ Crea i campi di destinazione in **Impostazioni → Modello dati → Opportunità
 
 2. **Cerca record**: Recupera i dettagli dell'azienda collegata
    * Oggetto: Aziende
-   * Filtro: ID uguale a `{{trigger.object.company.id}}`
+   * Filtro: ID uguale a `{{trigger.properties.after.companyId}}`
 
 3. **Aggiorna record**:
    * Oggetto: Opportunità
-   * Record: `{{trigger.object.id}}`
+   * Record: `{{trigger.properties.after.id}}`
    * Settore aziendale: `{{searchRecords[0].industry}}`
    * Dimensione aziendale: `{{searchRecords[0].employees}}`
 
@@ -168,3 +172,5 @@ export const main = async (params) => {
 
 * [Azioni dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-actions)
 * [Trigger dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-triggers)
+
+<PageBanner illustration="card-page-relations" />

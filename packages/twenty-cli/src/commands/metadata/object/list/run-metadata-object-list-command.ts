@@ -49,7 +49,7 @@ export const runMetadataObjectListCommand: CommandRun<
     output.warn({
       code: 'OWNERS_UNAVAILABLE',
       message:
-        'Owners other than Custom show as unknown: listing apps needs the Applications permission.',
+        'Owners other than Custom show as unknown: listing apps needs the Workspace Apps permission.',
     });
   }
 

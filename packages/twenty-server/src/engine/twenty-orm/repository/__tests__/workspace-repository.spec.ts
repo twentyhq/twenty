@@ -129,6 +129,7 @@ const buildRepository = ({
         restrictedFields: {},
       },
     },
+    rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
     tableShapeByObjectMetadataId: () => tableShape,

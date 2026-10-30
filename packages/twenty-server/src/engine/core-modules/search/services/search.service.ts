@@ -118,6 +118,8 @@ export class SearchService {
                   authContext: context.authContext,
                   userWorkspaceRoleMap: context.userWorkspaceRoleMap,
                   apiKeyRoleMap: context.apiKeyRoleMap,
+                  flatRoleTargetByAgentIdMaps:
+                    context.flatRoleTargetByAgentIdMaps,
                 }) ?? undefined;
 
               const repository =

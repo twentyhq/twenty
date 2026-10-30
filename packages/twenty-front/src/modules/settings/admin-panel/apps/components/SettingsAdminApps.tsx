@@ -11,10 +11,13 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -36,6 +39,7 @@ import {
   type FindAllApplicationRegistrationsQuery,
   SyncMarketplaceCatalogDocument,
 } from '~/generated-admin/graphql';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 type AdminApplicationRegistration =
   FindAllApplicationRegistrationsQuery['findAllApplicationRegistrations']['registrations'][number];
@@ -57,12 +61,21 @@ const PAGE_SIZE = 25;
 
 const SOURCE_TYPE_FILTER_OPTIONS: {
   sourceType: ApplicationRegistrationSourceType;
-  label: string;
+  label: string | MessageDescriptor;
 }[] = [
-  { sourceType: ApplicationRegistrationSourceType.NPM, label: 'NPM' },
-  { sourceType: ApplicationRegistrationSourceType.TARBALL, label: 'Tarball' },
-  { sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY, label: 'OAuth' },
-  { sourceType: ApplicationRegistrationSourceType.LOCAL, label: 'Local' },
+  {
+    sourceType: ApplicationRegistrationSourceType.NPM,
+    label: doNotTranslate('NPM'),
+  },
+  {
+    sourceType: ApplicationRegistrationSourceType.TARBALL,
+    label: msg`Tarball`,
+  },
+  {
+    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    label: doNotTranslate('OAuth'),
+  },
+  { sourceType: ApplicationRegistrationSourceType.LOCAL, label: msg`Local` },
 ];
 
 export const SettingsAdminApps = () => {
@@ -187,12 +200,12 @@ export const SettingsAdminApps = () => {
           placeholder={t`Search registrations...`}
           value={searchQuery}
           onValueChange={setSearchQuery}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-admin-apps-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent align="end" sideOffset={8}>
                 <Dropdown.Section>
                   <SettingsRow
@@ -203,6 +216,7 @@ export const SettingsAdminApps = () => {
                     checked={showPreInstalledOnly}
                   >{t`Pre-installed only`}</SettingsRow>
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Source`}>
                   {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
                     <SettingsRow
@@ -210,10 +224,11 @@ export const SettingsAdminApps = () => {
                       onCheckedChange={() => toggleSourceTypeFilter(sourceType)}
                       checked={sourceTypeFilters.includes(sourceType)}
                     >
-                      {label}
+                      {isString(label) ? label : t(label)}
                     </SettingsRow>
                   ))}
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Listed`}>
                   <SettingsRow
                     onCheckedChange={() =>
@@ -232,6 +247,7 @@ export const SettingsAdminApps = () => {
                     checked={isListedFilter === false}
                   >{t`Not listed`}</SettingsRow>
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Configured`}>
                   <SettingsRow
                     onCheckedChange={() =>
@@ -252,7 +268,7 @@ export const SettingsAdminApps = () => {
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
         {loading && registrations.length === 0 ? (
           <SettingsEmptyPlaceholder>{t`Loading apps...`}</SettingsEmptyPlaceholder>
@@ -267,7 +283,7 @@ export const SettingsAdminApps = () => {
               >
                 <TableHeader>{t`Name`}</TableHeader>
                 <TableHeader>{t`Author`}</TableHeader>
-                <TableHeader align="right">{t`Vetted`}</TableHeader>
+                <TableHeader align="right">{t`Listed`}</TableHeader>
                 <TableHeader align="right">{t`Installs`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
@@ -328,7 +344,7 @@ const SettingsAdminAppsTableRow = ({
       </StyledNameTableCell>
       <TableCell overflow="hidden">{registration.author ?? '—'}</TableCell>
       <TableCell align="right">
-        {registration.isVetted ? t`Yes` : t`No`}
+        {registration.isListed ? t`Yes` : t`No`}
       </TableCell>
       <TableCell align="right">{registration.installCount}</TableCell>
       <TableCell align="right">

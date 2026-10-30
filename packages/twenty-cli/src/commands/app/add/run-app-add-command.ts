@@ -16,7 +16,11 @@ export const runAppAddCommand: CommandRun = async (context) => {
     explicitPath: readStringOption(options, 'path'),
     workingDirectory: process.cwd(),
   });
-  const identity = await readAppIdentity({ appPath: project.path, signal });
+  const identity = await readAppIdentity({
+    appPath: project.path,
+    signal,
+    warn: output.warn,
+  });
 
   if (!isDefined(identity.application)) {
     throw new CliError({
@@ -27,7 +31,7 @@ export const runAppAddCommand: CommandRun = async (context) => {
   }
 
   for (const diagnostic of identity.diagnostics) {
-    output.progress(formatToolingDiagnostic(diagnostic));
+    output.progress({ message: formatToolingDiagnostic(diagnostic) });
   }
 
   const { entity, name, files } = await prepareAppAddFiles({

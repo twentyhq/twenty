@@ -73,6 +73,7 @@ export class NavigationMenuItemRecordIdentifierService {
           authContext: context.authContext,
           userWorkspaceRoleMap: context.userWorkspaceRoleMap,
           apiKeyRoleMap: context.apiKeyRoleMap,
+          flatRoleTargetByAgentIdMaps: context.flatRoleTargetByAgentIdMaps,
         });
 
         if (!rolePermissionConfig) {

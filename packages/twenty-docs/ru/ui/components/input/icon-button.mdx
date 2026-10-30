@@ -1,0 +1,163 @@
+---
+title: Кнопка с иконкой
+description: Выполняйте действия с помощью доступных кнопок со значками.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
+
+## Обзор
+
+`IconButton` сочетает [Button](/ru/ui/primitives/input/button) с квадратной или круглой поверхностью. Передавайте значок как children и задавайте доступное имя с помощью `aria-label` или `aria-labelledby`. Содержимое иконки является декоративным и скрыто от вспомогательных технологий.
+
+<StoryEmbed storyId="ui-components-iconbutton--display" title="Кнопка со значком с доступным именем" height={110} />
+
+## Использование
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+Размеры: `xs` (20px), `sm` (24px) и `md` (32px). Значения по умолчанию: `md`, `outline` и `neutral`. Варианты и цвета соответствуют Button. Используйте `shape="round"` для круглой кнопки; по умолчанию используется форма `square`.
+
+## Визуальные параметры
+
+Сравнивайте по одному визуальному варианту за раз. Используйте для композиции примеры с именованной всплывающей подсказкой, приподнятые и сгруппированные.
+
+<StoryEmbed storyId="ui-components-iconbutton--catalog" title="Варианты, цвета, размеры, формы, приподнятость и состояния кнопок со значками" height={810} />
+
+## Доступные имена
+
+Используйте `aria-label` для имени, заданного непосредственно у элемента управления. Если видимый текст уже задает имя действия, используйте `aria-labelledby`, чтобы ссылаться на него. Требуется как минимум один проп для задания имени.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </Text>
+);
+```
+
+<StoryEmbed title="Кнопка со значком, именуемая видимым текстом" storyId="ui-components-iconbutton--labelled-by" height={140} />
+
+## Подсказка
+
+Добавьте `tooltip`, чтобы показывать текст при наведении и фокусе с клавиатуры. Сохраняйте `aria-label` или `aria-labelledby` в качестве доступного имени действия. Отключенные кнопки и кнопки в состоянии загрузки сохраняют подсказки при наведении.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Кнопка с иконкой и подсказкой" storyId="ui-components-iconbutton--tooltip-documentation" height={140} />
+
+По умолчанию подсказка отображается снизу, с задержкой 1000ms и смещением 5px. Используйте `tooltipPlace`, `tooltipDelay` и `tooltipOffset`, чтобы настроить её. Без `tooltip` кнопка рендерится напрямую.
+
+## Управление состоянием
+
+Ваше приложение задаёт `loading` и `disabled`. Оба предотвращают активацию. При загрузке сохраняются квадратные размеры и доступная метка. Кнопка не отслеживает выбранное значение и не устанавливает состояние загрузки автоматически после нажатия. Нативный фокус с клавиатуры определяется браузером; используйте `aria-pressed`, когда ваше приложение управляет состоянием переключателя.
+
+## Приподнятые действия
+
+Используйте `elevated`, чтобы добавить тень и размытие фона. Нейтральная контурная кнопка по умолчанию также получает поверхность с рамкой и соответствующими цветами значка и взаимодействия. Другие варианты и семантические цвета сохраняют текущую палитру.
+
+Значение `elevated` по умолчанию — `false`. Это не изменяет позиционирование, видимость или размер. По умолчанию размер остаётся `md` (32px); для элемента управления размером 24px задайте `size="sm"`.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Приподнятая кнопка с иконкой" storyId="ui-components-iconbutton--elevated" height={100} />
+
+Не указывайте `elevated` или задайте для него значение `false`, чтобы восстановить стандартный вид. Приподнятые кнопки поддерживают те же всплывающие подсказки, состояния загрузки, ссылки и взаимодействия с клавиатурой.
+
+<StoryEmbed title="Приподнятая кнопка с иконкой и всплывающей подсказкой" storyId="ui-components-iconbutton--elevated-tooltip" height={140} />
+
+Замените существующие элементы управления `FloatingIconButton` на `IconButton elevated`. Передавайте иконку как children, используйте нативный `aria-label` и сопоставьте `small` с `sm`, а `medium` с `md`. Укажите `size="sm"`, если предыдущий элемент управления использовал размер по умолчанию. Нативные фокус и `aria-pressed` заменяют синтетические флаги фокуса и активности.
+
+`FloatingIconButtonGroup` удалён. Используйте ButtonGroup вместе с IconButton для сгруппированных действий и сохраните общую плавающую поверхность в своём макете.
+
+## Сгруппированные действия
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record" tooltip="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+[ButtonGroup](/ru/ui/primitives/input/button-group) задает значения по умолчанию для размера, варианта и цвета, а также для примыкающих углов. Явно заданные пропы дочернего элемента имеют приоритет независимо друг от друга, включая `size="xs"`. Для отдельных кнопок не требуется свойство позиции.
+
+Сохраняйте одинаковый размер объединенных кнопок, чтобы их края выравнивались. Задайте размер для группы, и каждая кнопка унаследует его.
+
+<StoryEmbed storyId="ui-components-iconbutton--grouped-overrides" title="Внешний вид отдельной кнопки со значком в группе" height={140} />
+
+## Ссылки и формы
+
+Без пользовательского `render` `href` рендерит ссылку, если только `nativeButton` явно не имеет значение true. Для пользовательской навигационной ссылки или ссылки маршрутизатора задайте `nativeButton={false}` и `role="link"`. Рендерер может сам задавать место назначения без `href` у IconButton. Сохраняйте `nativeButton` равным true для пользовательской нативной кнопки и используйте false для ненативного элемента действия. Явно заданные пропы nativeButton и role сохраняются. Отключенные и загружающиеся ссылки нельзя активировать. Маршрутизация остаётся в приложении.
+
+Атрибуты нативной кнопки и ссылки, обработчики событий, сведения о событиях, refs и композиция рендеринга передаются в Button. Ссылка ref получает фактический корневой элемент. Композиция Tooltip сохраняет этот корневой элемент и его доступное имя. По умолчанию используется `type="button"`; для отправки формы явно задайте `type="submit"`.
+
+## Компактные и круглые элементы управления
+
+Используйте `size="xs"` для элемента управления размером 20px и `shape="round"` для круглых углов. Существующие элементы управления `RoundedIconButton` становятся `IconButton` с `shape="round"`, `variant="solid"` и `color="accent"`. Сопоставьте их прежний размер `small` с `xs`, а размер `medium` — с `sm`. Укажите дочерние элементы-значки и доступное имя.
+
+<StoryEmbed storyId="ui-components-iconbutton--round-documentation" title="Круглые кнопки со значками компактного и обычного размеров" height={140} />
+
+## Свойства
+
+<IconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -3,28 +3,33 @@ title: Tooltip
 description: Show supplementary information when a trigger is hovered or focused.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+## Overview
 
 Use `Tooltip` for a short explanation of a control or truncated text. Keep essential information visible, give controls an accessible name, and use [Popover](/ui/primitives/surfaces/popover) when the content contains links, buttons, or other controls.
 
 <StoryEmbed
-  storyId="ui-surfaces-tooltip--documentation"
+  storyId="ui-surfaces-tooltip--display"
   title="Tooltip example"
+  height={180}
 />
 
-## Single trigger
+## Usage
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
 
 export const ExportHelp = () => (
   <Tooltip content="Download the visible records as a CSV file" side="top">
-    <span>
+    <Text render={<span />}>
       <Button>Export records</Button>
-    </span>
+    </Text>
   </Tooltip>
 );
 ```
@@ -81,12 +86,11 @@ export const ExportDetails = () => (
 );
 ```
 
-Compound usage exposes every installed Base UI part. Assemble the portal, positioning, popup and optional arrow explicitly. Popup renders its children as supplied.
+Compound usage exposes every installed Base UI part and the optional `Tooltip.Body` layout. Assemble the portal, positioning, popup and optional arrow explicitly. Popup renders its children as supplied; Body provides the same title, description and decorative icon layout as shorthand.
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Text } from 'twenty-ui/primitives/typography';
 
 export const ComposedExportDetails = () => (
   <Tooltip.Provider delay={300} closeDelay={100} timeout={400}>
@@ -97,10 +101,9 @@ export const ComposedExportDetails = () => (
           <Tooltip.Popup>
             <Tooltip.Arrow />
             <Tooltip.Viewport>
-              <Text style={{ fontWeight: 500 }}>Export visible records</Text>
-              <Text>
-                Only records matching your current filters are included.
-              </Text>
+              <Tooltip.Body description="Only records matching your current filters are included.">
+                Export visible records
+              </Tooltip.Body>
             </Tooltip.Viewport>
           </Tooltip.Popup>
         </Tooltip.Positioner>
@@ -118,8 +121,11 @@ export const ComposedExportDetails = () => (
 | `Portal`     | The portal div. Defaults to the theme container, then document body.                                                        |
 | `Positioner` | The positioning div. Owns anchor, physical/logical side, offsets, collision handling, sticky positioning and arrow padding. |
 | `Popup`      | The popup div. Owns content, native props, styles, `render` and ref.                                                        |
+| `Body`       | The optional body div inside Popup or Viewport. Native props, styles, `render` and ref target its root.                     |
 | `Arrow`      | The arrow div inside Popup.                                                                                                 |
 | `Viewport`   | The optional div for transitions between trigger payloads.                                                                  |
+
+`Tooltip.Body` accepts optional title children, `description` and `startIcon` nodes. Titles use medium weight; descriptions use the secondary tooltip color, preserve line breaks and wrap long text. Omit title children for a description-only tooltip. The icon is decorative and appears only with a title. Body adds no tooltip role, popup styling, sizing or positioning. Arbitrary Popup content remains supported. Import `TooltipBodyProps` from `twenty-ui/primitives/surfaces` when typing a wrapper.
 
 Every DOM part accepts native props, refs, and element or callback `render` composition. Shorthand's top-level native props, `render` and ref target Popup. Use `triggerProps`, `positionerProps` and `portalProps` to customize the other targets; these override shorthand defaults. Children supply the default trigger render element. Both forms preserve controlled/uncontrolled Root state and Base UI callback event details, including cancellation, reason, original event and active trigger.
 
@@ -127,9 +133,9 @@ Every DOM part accepts native props, refs, and element or callback `render` comp
 
 ## Migration
 
-Replace `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` with `content={title} description={description} startIcon={icon}`. In compound usage, compose title and description nodes directly. `Tooltip.Content` and `TooltipContentProps` are removed.
+Replace `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` with `content={title} description={description} startIcon={icon}`. In compound usage, use `Tooltip.Body` for the shared title and description layout or compose your own content. `Tooltip.Content` and `TooltipContentProps` are removed.
 
-Existing compound Popup positioning props move to Positioner. Wrap it in Portal, move `container` and `keepMounted` to Portal, replace `maxWidth` with Positioner `style`, and replace `arrow` with an Arrow child. Preserve the former assembly defaults explicitly with `sideOffset={10}` and `style={{ maxWidth: '300px' }}` when needed. Compound Positioner keeps Base UI's `sideOffset={0}` and does not impose a maximum width.
+Existing compound Popup positioning props move to Positioner. Wrap it in Portal, move `container` and `keepMounted` to Portal, keep `maxWidth` on Popup, and replace `arrow` with an Arrow child. Preserve the former spacing explicitly with `sideOffset={10}` when needed. Compound Positioner keeps Base UI's `sideOffset={0}`. Both forms cap Popup at 300 pixels by default.
 
 ## Disabled controls
 
@@ -152,7 +158,7 @@ Setting `disabled` on shorthand or Root suppresses the tooltip itself. Trigger `
 
 ## Placement and overflowing text
 
-Shorthand defaults to `side="top"`, `align="center"`, `sideOffset={10}`, and a maximum width of `300` pixels. Placement adjusts to available space. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
+Shorthand defaults to `side="top"`, `align="center"`, and `sideOffset={10}`. Both shorthand and compound tooltips have a maximum width of 300 pixels, capped by the available space beside the anchor. Pass `maxWidth` to shorthand or `Tooltip.Popup` to choose a different maximum, including wider previews. Native popup styles remain available for custom sizing. Placement adjusts to available space. An open tooltip hides while its anchor is scrolled out of view, including out of a scroll container. Use `arrow` for an arrow and `container` to override the theme's portal destination; see [theming](/ui/theming).
 
 Use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) when a text label should show its full value only when truncated. Its existing `text`, `tooltipContent`, and `tooltipPlace` props remain available.
 
@@ -161,3 +167,5 @@ Use [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with
 The reference is generated from the public component types. Native popup attributes and event handlers are also accepted.
 
 <TooltipReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

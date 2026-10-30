@@ -32,6 +32,19 @@ export default meta;
 
 type Story = StoryObj<typeof JsonTree>;
 
+export const Display: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    value: { name: 'Acme', active: true, contacts: [] },
+    emptyStringLabel: 'Empty text',
+    emptyArrayLabel: 'No items',
+    emptyObjectLabel: 'No properties',
+    arrowButtonCollapsedLabel: 'Expand node',
+    arrowButtonExpandedLabel: 'Collapse node',
+    shouldExpandNodeInitially: isTwoFirstDepths,
+  },
+};
+
 export const String: Story = {
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {

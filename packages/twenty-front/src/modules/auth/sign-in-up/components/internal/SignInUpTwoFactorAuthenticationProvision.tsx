@@ -12,12 +12,15 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MainButton } from 'twenty-ui/components/input';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -32,26 +35,7 @@ const StyledForm = styled.div`
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
-const StyledCopySetupKeyLink = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
-  margin-top: ${themeCssVariables.spacing[2]};
-  padding: 0;
-  text-decoration: underline;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
-
 export const SignInUpTwoFactorAuthenticationProvision = () => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);
@@ -62,10 +46,12 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
   };
 
   const handleCopySetupKey = async () => {
-    if (!qrCode) return;
+    if (!isNonEmptyString(qrCode)) {
+      return;
+    }
 
     const secret = extractSecretFromOtpUri(qrCode);
-    if (secret !== null) {
+    if (isDefined(secret)) {
       await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
@@ -83,10 +69,16 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
         <StyledTwoFactorMainContent>
           {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
           {qrCode && (
-            <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
-              <IconCopy size={theme.icon.size.sm} />
-              <Trans>Copy Setup Key</Trans>
-            </StyledCopySetupKeyLink>
+            <div style={{ marginTop: themeCssVariables.spacing[2] }}>
+              <Button
+                variant="link"
+                size="sm"
+                startIcon={<IconCopy />}
+                onClick={handleCopySetupKey}
+              >
+                <Trans>Copy Setup Key</Trans>
+              </Button>
+            </div>
           )}
         </StyledTwoFactorMainContent>
         <MainButton onClick={handleClick} fullWidth>{t`Next`}</MainButton>

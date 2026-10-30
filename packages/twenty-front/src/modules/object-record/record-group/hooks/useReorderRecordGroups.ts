@@ -13,6 +13,7 @@ import { type ViewType } from '@/views/types/ViewType';
 import { mapRecordGroupDefinitionsToViewGroups } from '@/views/utils/mapRecordGroupDefinitionsToViewGroups';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -87,7 +88,9 @@ export const useReorderRecordGroups = ({
       }, []);
 
       if (!isDefined(recordIndexGroupFieldMetadataItem?.id)) {
-        throw new Error('mainGroupByFieldMetadataId is required');
+        throw new Error(
+          doNotTranslate('mainGroupByFieldMetadataId is required'),
+        );
       }
 
       setRecordGroups({

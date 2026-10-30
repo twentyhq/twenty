@@ -3,10 +3,14 @@ title: Create Many-to-Many Relations
 description: Connect records where many items on both sides can be linked together using junction objects.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Many-to-many relations let you connect multiple records on both sides. For example: many People can work on many Projects, and each Project can have many People.
 
 <Note>
-This feature also requires **Advanced mode** to be enabled (toggle at the bottom left of Settings).
+The **This is a relation to a Junction Object** toggle appears on a one-to-many relation field with a single target object, when that target looks like a junction object (its own relations, ignoring system ones, are all many-to-one) and has another relation to point through.
 </Note>
 
 ## When to Use Many-to-Many
@@ -35,10 +39,9 @@ When you enable the junction relation toggle, Twenty displays linked records dir
 
 ## Prerequisites
 
-1. **Enable Advanced mode**: Toggle on **Advanced mode** at the bottom left of the Settings sidebar
-2. Plan your data model:
-   - Which two objects are you connecting?
-   - What should the junction object be called?
+Plan your data model:
+- Which two objects are you connecting?
+- What should the junction object be called?
 
 ## Step 1: Create the Junction Object
 
@@ -163,3 +166,5 @@ To access this data, navigate to the junction object directly or query it via th
 - [Relation Fields](/user-guide/data-model/capabilities/relation-fields) — relation types explained
 - [Create Custom Objects](/user-guide/data-model/how-tos/create-custom-objects) — how to create objects
 - [Create Relation Fields](/user-guide/data-model/how-tos/create-relation-fields) — basic relation setup
+
+<PageBanner illustration="card-page-relations" />

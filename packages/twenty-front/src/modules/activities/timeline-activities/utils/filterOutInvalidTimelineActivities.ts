@@ -6,6 +6,7 @@ import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeli
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const keepActivityWithReadableDiff = <
   TTimelineActivity extends FilterableTimelineActivity,
@@ -46,7 +47,7 @@ export const filterOutInvalidTimelineActivities = <
   );
 
   if (!isDefined(mainObjectMetadataItem)) {
-    throw new Error('Object metadata item not found');
+    throw new Error(doNotTranslate('Object metadata item not found'));
   }
 
   return timelineActivities

@@ -1,4 +1,5 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { t } from '@lingui/core/macro';
 
 type GetObjectNavigationMenuItemSecondaryLabelProps = {
   objectMetadataItems: Pick<
@@ -15,7 +16,7 @@ export const getObjectNavigationMenuItemSecondaryLabel = ({
   isView = false,
 }: GetObjectNavigationMenuItemSecondaryLabelProps) => {
   if (navigationMenuItemObjectNameSingular === 'view') {
-    return 'View';
+    return t`View`;
   }
 
   const objectMetadataItem = objectMetadataItems.find(

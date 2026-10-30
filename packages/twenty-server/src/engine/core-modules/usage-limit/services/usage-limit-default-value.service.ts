@@ -1,29 +1,19 @@
-import { Injectable, type OnModuleInit } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable } from '@nestjs/common';
 
 import { isUndefined } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
-import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
-import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { getPlanLimitDefaultValue } from 'src/engine/core-modules/usage-limit/utils/get-plan-limit-default-value.util';
 
 @Injectable()
-export class UsageLimitDefaultValueService implements OnModuleInit {
-  private creditAllowanceProvider: CreditAllowanceProvider;
-
+export class UsageLimitDefaultValueService {
   constructor(
-    private readonly discoveryService: DiscoveryService,
+    private readonly billingCreditAllowanceService: BillingCreditAllowanceService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
-
-  onModuleInit() {
-    this.creditAllowanceProvider = findCreditAllowanceProvider(
-      this.discoveryService,
-    );
-  }
 
   async findDefaultLimitValue({
     workspaceId,
@@ -48,15 +38,17 @@ export class UsageLimitDefaultValueService implements OnModuleInit {
       return instanceValue;
     }
 
-    const planKey = await this.creditAllowanceProvider.getPlanKey(workspaceId);
+    const subscriptionPlan =
+      await this.billingCreditAllowanceService.getSubscriptionPlan(workspaceId);
 
-    if (!isDefined(planKey)) {
+    if (!isDefined(subscriptionPlan)) {
       return instanceValue;
     }
 
     return getPlanLimitDefaultValue({
       usageLimitDefaultsByPlan,
-      planKey,
+      planKey: subscriptionPlan.planKey,
+      isTrialing: subscriptionPlan.isTrialing,
       limitValueConfigVariable,
       instanceValue,
     });

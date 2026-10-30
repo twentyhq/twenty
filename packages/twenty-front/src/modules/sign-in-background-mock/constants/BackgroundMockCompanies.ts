@@ -1,22 +1,22 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export type BackgroundMockCompany = {
   id: string;
   name: string;
   domainName: string;
   createdBy: string | null;
   accountOwner: string | null;
-  creationDate: string;
   employees: number;
   address: string;
 };
 
-export const BACKGROUND_MOCK_COMPANIES = [
+export const BACKGROUND_MOCK_COMPANIES = doNotTranslate([
   {
     id: 'google',
     name: 'Google',
     domainName: 'goo.gle',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 284571,
     address: 'Mountain View',
   },
@@ -26,7 +26,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'microsoft.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 226067,
     address: 'Redmond',
   },
@@ -36,7 +35,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'metacareers.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 119511,
     address: 'Menlo Park',
   },
@@ -46,7 +44,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'slb.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 113151,
     address: 'Houston',
   },
@@ -56,7 +53,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'cisco.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 99625,
     address: 'San Jose',
   },
@@ -66,7 +62,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'uber.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Tim Apple',
-    creationDate: 'about 13 hours ago',
     employees: 90545,
     address: 'San Francisco',
   },
@@ -76,7 +71,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'salesforce.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 71322,
     address: 'San Francisco',
   },
@@ -86,7 +80,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'amdocs.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 35731,
     address: 'Chesterfield',
   },
@@ -96,7 +89,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'vmware.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 34759,
     address: 'Palo Alto',
   },
@@ -106,7 +98,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'globallogic.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 24461,
     address: 'Santa Clara',
   },
@@ -116,7 +107,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'servicenow.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Tim Apple',
-    creationDate: 'about 13 hours ago',
     employees: 24104,
     address: 'Santa Clara',
   },
@@ -126,7 +116,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'ssctech.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 20311,
     address: 'Windsor',
   },
@@ -136,7 +125,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'workday.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 20036,
     address: 'Pleasanton',
   },
@@ -146,7 +134,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'redhat.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 19945,
     address: 'Raleigh',
   },
@@ -156,7 +143,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'netsuite.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 19269,
     address: 'Austin',
   },
@@ -166,7 +152,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'synopsys.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 18061,
     address: 'Sunnyvale',
   },
@@ -176,7 +161,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'sw.siemens.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Tim Apple',
-    creationDate: 'about 13 hours ago',
     employees: 17262,
     address: 'Plano',
   },
@@ -186,7 +170,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'sas.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 16287,
     address: 'Cary',
   },
@@ -196,7 +179,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'intuit.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 15851,
     address: 'Mountain View',
   },
@@ -206,7 +188,6 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'broadcom.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Phil Schiller',
-    creationDate: 'about 13 hours ago',
     employees: 15127,
     address: 'San Jose',
   },
@@ -216,8 +197,7 @@ export const BACKGROUND_MOCK_COMPANIES = [
     domainName: 'autodesk.com',
     createdBy: 'Tim Apple',
     accountOwner: 'Jony Ive',
-    creationDate: 'about 13 hours ago',
     employees: 14593,
     address: 'San Francisco',
   },
-] satisfies BackgroundMockCompany[];
+] satisfies BackgroundMockCompany[]);

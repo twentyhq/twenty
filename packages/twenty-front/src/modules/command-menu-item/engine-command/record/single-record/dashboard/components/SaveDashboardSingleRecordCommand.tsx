@@ -5,13 +5,16 @@ import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLay
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const SaveDashboardSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
-    throw new Error('Selected record is required to save dashboard');
+    throw new Error(
+      doNotTranslate('Selected record is required to save dashboard'),
+    );
   }
 
   const pageLayoutId = selectedRecord.pageLayoutId;

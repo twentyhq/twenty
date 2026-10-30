@@ -3,15 +3,20 @@ title: DirectionProvider
 description: Coordinate directional keyboard and pointer interactions with the document direction.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
 
+## Overview
+
 `DirectionProvider` supplies `ltr` or `rtl` direction to Twenty UI controls. It does not render a DOM element or set an HTML `dir` attribute. Set both the provider direction and the matching document direction.
 
 <StoryEmbed
-  storyId="components-input-segmentedcontrol--right-to-left-documentation"
+  storyId="ui-layout-directionprovider--display"
   title="DirectionProvider example"
+  height={160}
 />
 
 ## Usage
@@ -19,12 +24,13 @@ import DirectionProviderReference from '/snippets/ui/generated/layout/direction-
 ```tsx
 import { SegmentedControl } from 'twenty-ui/components/input';
 import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
 
 type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
 
 export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
   <DirectionProvider direction={direction}>
-    <div dir={direction}>
+    <Text dir={direction}>
       <SegmentedControl
         aria-label="Billing period"
         defaultValue="annual"
@@ -33,7 +39,7 @@ export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
           { label: 'Monthly', value: 'monthly' },
         ]}
       />
-    </div>
+    </Text>
   </DirectionProvider>
 );
 ```
@@ -54,10 +60,12 @@ Text, indentation, attached button corners, and directional disclosure icons fol
 
 <StoryEmbed
   storyId="ui-layout-directionprovider--reading-directions"
-  title="Light and dark reading directions"
-  height={1500}
+  title="Left-to-right and right-to-left layouts"
+  height={1260}
 />
 
 ## Props
 
 <DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

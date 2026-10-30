@@ -7,8 +7,6 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
-import { TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcripts-enabled-application-variable-key';
 import { TEAMS_TRANSCRIPTS_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/features/transcripts/constants/universal-identifiers';
 import { GRAPH_CREATED_CHANGE_TYPE } from 'src/features/transcripts/logic-functions/constants/graph-created-change-type';
 import { GRAPH_REAUTHORIZATION_REQUIRED_LIFECYCLE_EVENT } from 'src/features/transcripts/logic-functions/constants/graph-reauthorization-required-lifecycle-event';
@@ -20,8 +18,9 @@ import { importTeamsTranscriptOrScheduleRetry } from 'src/features/transcripts/l
 import { parseTeamsTranscriptResource } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-resource';
 import { parseTeamsTranscriptSubscriptionNotifications } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-subscription-notifications';
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
 type TeamsTranscriptsWebhookResult =
   | {
@@ -41,7 +40,9 @@ const renewStoredTeamsTranscriptSubscription = async ({
   subscriptionKvKey: string;
   subscription: TeamsTranscriptSubscription;
 }): Promise<string> => {
-  const { accessToken } = await getConnection(connectedAccountId);
+  const accessToken = getConnectionAccessTokenOrThrow(
+    await getConnection(connectedAccountId),
+  );
   const expirationDateTime = await renewTeamsTranscriptSubscription({
     accessToken,
     subscriptionId: subscription.subscriptionId,
@@ -110,12 +111,7 @@ export const teamsTranscriptsWebhookHandler = async (
     return { success: false, error: 'Invalid Microsoft Graph notification' };
   }
 
-  if (
-    !isFeatureEnabled({
-      isAvailable: FEATURE_FLAGS.IS_TRANSCRIPT_IMPORT_ENABLED,
-      settingValue: process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY],
-    })
-  ) {
+  if (!isTeamsTranscriptImportEnabled()) {
     return {
       success: true,
       skipped: true,

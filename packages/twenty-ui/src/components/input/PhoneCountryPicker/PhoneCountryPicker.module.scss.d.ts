@@ -4,5 +4,7 @@ declare const classNames: {
   readonly optionFlag: 'optionFlag';
   readonly chevron: 'chevron';
   readonly selectedCountryLabel: 'selectedCountryLabel';
+  readonly options: 'options';
+  readonly emptyStatus: 'emptyStatus';
 };
 export default classNames;

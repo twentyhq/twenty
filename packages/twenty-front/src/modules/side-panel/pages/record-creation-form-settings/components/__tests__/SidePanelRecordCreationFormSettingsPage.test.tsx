@@ -11,6 +11,7 @@ import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/reco
 import { recordCreationFormSettingsObjectMetadataIdComponentState } from '@/side-panel/pages/record-creation-form-settings/states/recordCreationFormSettingsObjectMetadataIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -64,7 +65,7 @@ const COMPANY_OBJECT = {
   ],
 };
 
-const updatePageLayoutWidgetsIsActive = jest.fn();
+const updatePageLayoutWidgets = jest.fn();
 const goBackFromSidePanel = jest.fn(() =>
   jotaiStore.set(sidePanelNavigationStackState.atom, (navigationStack) =>
     navigationStack.slice(0, -1),
@@ -94,10 +95,32 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   }),
 }));
 
-jest.mock('@/page-layout/hooks/useUpdatePageLayoutWidgetsIsActive', () => ({
-  useUpdatePageLayoutWidgetsIsActive: () => ({
-    updatePageLayoutWidgetsIsActive,
+jest.mock('@/page-layout/hooks/useUpdatePageLayoutWidgets', () => ({
+  useUpdatePageLayoutWidgets: () => ({
+    updatePageLayoutWidgets,
   }),
+}));
+
+let mockDropDraggableItem: (result: DraggableListDropResult) => void;
+
+jest.mock('@/ui/layout/draggable-list/components/DraggableList', () => ({
+  DraggableList: ({
+    draggableItems,
+    onDragEnd,
+  }: {
+    draggableItems: ReactNode;
+    onDragEnd: (result: DraggableListDropResult) => void;
+  }) => {
+    mockDropDraggableItem = onDragEnd;
+
+    return <>{draggableItems}</>;
+  },
+}));
+
+jest.mock('@/ui/layout/draggable-list/components/DraggableItem', () => ({
+  DraggableItem: ({ itemComponent }: { itemComponent: ReactNode }) => (
+    <>{itemComponent}</>
+  ),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelHistory', () => ({
@@ -185,7 +208,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    updatePageLayoutWidgetsIsActive.mockResolvedValue({
+    updatePageLayoutWidgets.mockResolvedValue({
       status: 'successful',
     });
     seedRecordFormPageLayout();
@@ -221,6 +244,59 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     ).toEqual(['Hide Name', 'Hide Domain', 'Show Nickname', 'Show Secret']);
   });
 
+  it('saves the new order of the dragged fields and keeps the other form fields in their slot', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    act(() => {
+      mockDropDraggableItem({
+        draggableId: 'field-name',
+        source: { index: 0 },
+        destination: { index: 3 },
+      });
+    });
+
+    expect(
+      screen
+        .getAllByRole('button', { name: /^(Hide|Show) / })
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['Hide Domain', 'Show Nickname', 'Show Secret', 'Hide Name']);
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(updatePageLayoutWidgets).toHaveBeenCalledWith([
+      {
+        widgetId: 'widget-field-domain',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 0,
+        },
+      },
+      {
+        widgetId: 'widget-field-nickname',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 1,
+        },
+      },
+      {
+        widgetId: 'widget-field-secret',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 2,
+        },
+      },
+      {
+        widgetId: 'widget-field-name',
+        position: {
+          layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+          index: 3,
+        },
+      },
+    ]);
+  });
+
   it('saves only the fields whose visibility changed, then goes back', async () => {
     const user = userEvent.setup();
 
@@ -232,8 +308,8 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Show Name' }));
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledTimes(1);
-    expect(updatePageLayoutWidgetsIsActive).toHaveBeenCalledWith([
+    expect(updatePageLayoutWidgets).toHaveBeenCalledTimes(1);
+    expect(updatePageLayoutWidgets).toHaveBeenCalledWith([
       { widgetId: 'widget-field-domain', isActive: false },
       { widgetId: 'widget-field-nickname', isActive: true },
     ]);
@@ -248,7 +324,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     await user.click(screen.getByRole('button', { name: 'Hide Domain' }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(updatePageLayoutWidgetsIsActive).not.toHaveBeenCalled();
+    expect(updatePageLayoutWidgets).not.toHaveBeenCalled();
     expect(goBackFromSidePanel).toHaveBeenCalled();
   });
 
@@ -256,7 +332,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
     const user = userEvent.setup();
     let resolveSave: (value: { status: 'successful' }) => void = () => {};
 
-    updatePageLayoutWidgetsIsActive.mockReturnValue(
+    updatePageLayoutWidgets.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;
       }),
@@ -279,7 +355,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
   it('ignores visibility toggles while a save is running', async () => {
     const user = userEvent.setup();
 
-    updatePageLayoutWidgetsIsActive.mockReturnValue(new Promise(() => {}));
+    updatePageLayoutWidgets.mockReturnValue(new Promise(() => {}));
 
     renderPage();
 
@@ -295,7 +371,7 @@ describe('SidePanelRecordCreationFormSettingsPage', () => {
   it('stays on the page when saving fails', async () => {
     const user = userEvent.setup();
 
-    updatePageLayoutWidgetsIsActive.mockResolvedValue({ status: 'failed' });
+    updatePageLayoutWidgets.mockResolvedValue({ status: 'failed' });
 
     renderPage();
 

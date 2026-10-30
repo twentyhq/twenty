@@ -101,13 +101,15 @@
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
         "!{projectRoot}/scripts/front-component-stories/__tests__/**/*",
+        "!{projectRoot}/scripts/front-component-stories/native-tests/**/*",
         "{projectRoot}/src/__stories__/html-tag/**/*",
         "{projectRoot}/src/__stories__/host-api/**/*",
         "{projectRoot}/src/__stories__/showcase/**/*",
         "{projectRoot}/src/__stories__/twenty-ui-gallery/**/*",
         "{projectRoot}/src/__stories__/shared/front-components/**/*",
-        "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*",
-        "{workspaceRoot}/packages/twenty-sdk/vite.bundled-source-plugin.ts"
+        "{workspaceRoot}/packages/twenty-sdk/src/front-component-renderer/build/**/*",
+        "{workspaceRoot}/packages/twenty-shared/src/front-component-build/**/*",
+        "{workspaceRoot}/packages/twenty-shared/vite.bundled-source-plugin.ts"
       ],
       "outputs": [
         "{projectRoot}/src/__stories__/example-sources-built/*",
@@ -156,6 +158,14 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "node --import tsx --test scripts/front-component-stories/__tests__/image-input.browser.test.ts"
+      }
+    },
+    "storybook:test:layout": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "playwright test --config playwright.layout.config.ts"
       }
     },
     "storybook:coverage": {}

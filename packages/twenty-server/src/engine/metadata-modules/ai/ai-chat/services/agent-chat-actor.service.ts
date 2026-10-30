@@ -142,6 +142,7 @@ export class AgentChatActorService {
         workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         applicationId: sender.applicationId ?? undefined,
+        agentId: authContext.agentId,
         setting: PermissionFlagType.AI,
       }))
     ) {
@@ -152,7 +153,6 @@ export class AgentChatActorService {
     }
     const rolePermissions = await this.resolveRolePermissions({
       workspaceId,
-      userWorkspaceId: sender.userWorkspaceId,
       authContext,
     });
     if (!isDefined(rolePermissions)) {
@@ -167,15 +167,11 @@ export class AgentChatActorService {
   // the permissions a member acts with in the chat, also used to run the calls they approve
   async resolveRolePermissions({
     workspaceId,
-    userWorkspaceId,
     authContext,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
-  }): Promise<
-    { rolePermissionConfig: RolePermissionConfig; roleId: string } | undefined
-  > {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig } | undefined> {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
@@ -184,11 +180,11 @@ export class AgentChatActorService {
       authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
     });
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
-    return isDefined(rolePermissionConfig) && isDefined(roleId)
-      ? { rolePermissionConfig, roleId }
+    return isDefined(rolePermissionConfig)
+      ? { rolePermissionConfig }
       : undefined;
   }
 

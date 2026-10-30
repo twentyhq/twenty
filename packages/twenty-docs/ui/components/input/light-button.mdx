@@ -3,25 +3,47 @@ title: LightButton
 description: Present lightweight actions with standard or subtle emphasis.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
+
+## Overview
 
 Use the shared `LightButton` component for a lightweight action. It composes
 [Button](/ui/primitives/input/button) with a ghost surface, small size, regular
 font weight, and no elevation.
 
 <StoryEmbed
-  storyId="ui-components-lightbutton--default"
+  storyId="ui-components-lightbutton--display"
   title="LightButton example"
-  height={240}
+  height={100}
+/>
+
+## Usage
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+
+export const FilterAction = () => <LightButton>Add filter</LightButton>;
+```
+
+## Visual options
+
+Compare standard and subtle emphasis across common action states.
+
+<StoryEmbed
+  storyId="ui-components-lightbutton--catalog"
+  title="Light button emphasis and states"
+  height={230}
 />
 
 ## State ownership
 
 `LightButton` uses Button's state model and adds no state of its own. Your application supplies `loading` and `disabled`; `emphasis` only changes appearance. See [Button's state ownership example](/ui/primitives/input/button#state-ownership) for managing an asynchronous action. There are no controlled and uncontrolled selection modes.
 
-## Usage
+## Emphasis and icons
 
 ```tsx
 import { LightButton } from 'twenty-ui/components/input';
@@ -55,3 +77,5 @@ Custom native buttons keep `nativeButton` true.
 ## Props
 
 <LightButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

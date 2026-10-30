@@ -1,7 +1,6 @@
 ---
 title: Key-Value-Store
 description: Bewahren Sie Zwischenergebnisse auf, zwischenspeichern Sie Daten und teilen Sie den Zustand zwischen Ausführungen von Logikfunktionen mit dem integrierten Key-Value-Speicher der Anwendung.
-icon: database
 ---
 
 Logikfunktionen laufen isoliert in kurzlebigen Node.js-Prozessen – sobald ein Durchlauf abgeschlossen ist, überlebt nichts, was im Speicher gehalten wurde. Wenn Sie sich **zwischen Durchläufen etwas merken müssen** (eine teure API-Antwort zwischenspeichern, einen Cursor für inkrementelle Synchronisierungen speichern, Arbeit entprellen oder Zustand von einer Funktion an eine andere übergeben), speichern Sie es im integrierten Key-Value-Speicher.

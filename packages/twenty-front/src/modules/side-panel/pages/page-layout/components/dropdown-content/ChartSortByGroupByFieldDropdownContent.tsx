@@ -1,5 +1,9 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { CHART_SORT_DROPDOWN_PAGE } from '@/side-panel/pages/page-layout/constants/ChartSortDropdownPage';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCheck } from 'twenty-ui/icon';
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -13,29 +17,19 @@ import { filterSortOptionsByFieldType } from '@/side-panel/pages/page-layout/uti
 import { getDefaultManualSortOrder } from '@/side-panel/pages/page-layout/utils/getDefaultManualSortOrder';
 import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   GraphOrderBy,
   type GraphOrderBy as GraphOrderByType,
 } from '~/generated-metadata/graphql';
 
 export const ChartSortByGroupByFieldDropdownContent = () => {
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-  const { closeDropdown } = useCloseDropdown();
 
   const configuration = widgetInEditMode?.configuration;
 
@@ -44,29 +38,25 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
 
   if (!isBarOrLineChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   if (!isDefined(widgetInEditMode?.objectMetadataId)) {
-    throw new Error('No data source in chart');
+    throw new Error(doNotTranslate('No data source in chart'));
   }
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
 
   const objectMetadataItem = objectMetadataItems.find(
     (item) => item.id === widgetInEditMode.objectMetadataId,
   );
 
-  const secondaryAxisField = objectMetadataItem?.fields.find(
-    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
-  );
+  const secondaryAxisField = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  )
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: configuration.secondaryAxisGroupByFieldMetadataId,
+      })
+    : undefined;
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
     objectMetadataId: widgetInEditMode.objectMetadataId,
@@ -80,101 +70,94 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     const configToUpdate: Record<string, unknown> = {
       secondaryAxisOrderBy: orderBy,
     };
+    const shouldInitializeManualSortOrder =
+      orderBy === GraphOrderBy.MANUAL &&
+      !isDefined(configuration.secondaryAxisManualSortOrder);
+    const shouldClearManualSortOrder =
+      configuration.secondaryAxisOrderBy === GraphOrderBy.MANUAL &&
+      orderBy !== GraphOrderBy.MANUAL;
 
-    if (orderBy === GraphOrderBy.MANUAL) {
-      const existingManualSortOrder =
-        configuration.secondaryAxisManualSortOrder;
-
-      if (!isDefined(existingManualSortOrder)) {
-        configToUpdate.secondaryAxisManualSortOrder = getDefaultManualSortOrder(
-          secondaryAxisField?.options,
-        );
-      }
-
-      updateCurrentWidgetConfig({ configToUpdate });
-      setIsSubMenuOpen(true);
-      return;
+    if (shouldInitializeManualSortOrder) {
+      configToUpdate.secondaryAxisManualSortOrder = getDefaultManualSortOrder(
+        secondaryAxisField.options,
+      );
     }
 
-    if (configuration.secondaryAxisOrderBy === GraphOrderBy.MANUAL) {
+    if (shouldClearManualSortOrder) {
       configToUpdate.secondaryAxisManualSortOrder = null;
     }
 
     updateCurrentWidgetConfig({ configToUpdate });
-    closeDropdown();
   };
 
   const availableOptions = filterSortOptionsByFieldType({
     options: AGGREGATE_SORT_BY_OPTIONS,
-    fieldType: secondaryAxisField?.type,
+    fieldType: secondaryAxisField.type,
   });
 
-  if (isSubMenuOpen && isDefined(secondaryAxisField)) {
-    return (
-      <ChartManualSortSubMenuContent
-        fieldMetadataItem={secondaryAxisField}
-        axis="secondary"
-        onBack={() => setIsSubMenuOpen(false)}
-      />
-    );
-  }
-
   return (
-    <DropdownMenuItemsContainer>
-      <SelectableList
-        selectableListInstanceId={dropdownId}
-        focusId={dropdownId}
-        selectableItemIdArray={availableOptions.map((option) => option.value)}
-      >
-        {availableOptions.map((sortOption) => {
-          const isManualOption = sortOption.value === GraphOrderBy.MANUAL;
+    <>
+      <Dropdown.Page id={CHART_SORT_DROPDOWN_PAGE.ROOT}>
+        <ChartSettingsDropdownSection>
+          {availableOptions.map((sortOption) => {
+            const isManualOption = sortOption.value === GraphOrderBy.MANUAL;
+            const isSelected =
+              configuration.secondaryAxisOrderBy === sortOption.value;
+            const startIcon = (
+              <SelectOptionIcon
+                Icon={
+                  sortOption.icon ??
+                  getSortIconForFieldType({
+                    fieldType: secondaryAxisField.type,
+                    orderBy: sortOption.value,
+                  })
+                }
+              />
+            );
+            const label = (
+              <OverflowingTextWithTooltip
+                text={getGroupBySortOptionLabel({
+                  graphOrderBy: sortOption.value,
+                  groupByFieldMetadataId:
+                    configuration.secondaryAxisGroupByFieldMetadataId ?? '',
+                })}
+              />
+            );
 
-          return (
-            <SelectableListItem
-              key={sortOption.value}
-              itemId={sortOption.value}
-              onEnter={() => {
-                handleSelectSortOption(sortOption.value);
-              }}
-            >
-              <ListItemButton
-                focused={selectedItemId === sortOption.value}
-                onClick={() => {
-                  handleSelectSortOption(sortOption.value);
-                }}
-                role="option"
-                aria-selected={
-                  configuration.secondaryAxisOrderBy === sortOption.value
-                }
-                selected={
-                  configuration.secondaryAxisOrderBy === sortOption.value
-                }
-                indicator="check"
-                hasSubmenu={isManualOption}
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={
-                      sortOption.icon ??
-                      getSortIconForFieldType({
-                        fieldType: secondaryAxisField?.type,
-                        orderBy: sortOption.value,
-                      })
-                    }
-                  />
-                }
+            if (isManualOption) {
+              return (
+                <Dropdown.ActionItem
+                  key={sortOption.value}
+                  page={CHART_SORT_DROPDOWN_PAGE.MANUAL}
+                  onClick={() => handleSelectSortOption(sortOption.value)}
+                  aria-current={isSelected ? 'true' : undefined}
+                  startIcon={startIcon}
+                  endIcon={isSelected ? <IconCheck /> : undefined}
+                >
+                  {label}
+                </Dropdown.ActionItem>
+              );
+            }
+
+            return (
+              <Dropdown.OptionItem
+                key={sortOption.value}
+                selected={isSelected}
+                onSelect={() => handleSelectSortOption(sortOption.value)}
+                startIcon={startIcon}
               >
-                <OverflowingTextWithTooltip
-                  text={getGroupBySortOptionLabel({
-                    graphOrderBy: sortOption.value,
-                    groupByFieldMetadataId:
-                      configuration.secondaryAxisGroupByFieldMetadataId ?? '',
-                  })}
-                />
-              </ListItemButton>
-            </SelectableListItem>
-          );
-        })}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+                {label}
+              </Dropdown.OptionItem>
+            );
+          })}
+        </ChartSettingsDropdownSection>
+      </Dropdown.Page>
+      <Dropdown.Page id={CHART_SORT_DROPDOWN_PAGE.MANUAL} type="panel">
+        <ChartManualSortSubMenuContent
+          fieldMetadataItem={secondaryAxisField}
+          axis="secondary"
+        />
+      </Dropdown.Page>
+    </>
   );
 };

@@ -5,7 +5,6 @@ import { type IconComponent } from 'twenty-ui/icon';
 
 type BubbleMenuIconButtonProps = {
   label: string;
-  className?: string;
   Icon?: IconComponent;
   disabled?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -14,7 +13,6 @@ type BubbleMenuIconButtonProps = {
 
 export const BubbleMenuIconButton = ({
   label,
-  className,
   Icon,
   disabled = false,
   onClick,
@@ -22,11 +20,10 @@ export const BubbleMenuIconButton = ({
 }: BubbleMenuIconButtonProps) => {
   return (
     <LightIconButton
-      className={className}
       disabled={disabled}
       aria-pressed={isActive}
       onClick={onClick}
-      emphasis={isActive === true ? 'standard' : 'subtle'}
+      variant={isActive ? 'soft' : 'ghost'}
       size="sm"
       aria-label={label}
     >

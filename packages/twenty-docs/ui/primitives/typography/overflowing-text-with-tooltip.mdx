@@ -3,15 +3,20 @@ title: OverflowingTextWithTooltip
 description: Truncate long text and reveal its full value in a tooltip.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
 
-`OverflowingTextWithTooltip` truncates content within the available width. It checks for overflow on pointer entry and focus, then shows a tooltip only when needed. It manages tooltip visibility internally and exposes no controlled or uncontrolled open-state props.
+## Overview
+
+`OverflowingTextWithTooltip` truncates content within the available width. It checks for overflow on pointer entry and focus, then shows a tooltip only when needed. It manages tooltip visibility internally and exposes no controlled or uncontrolled open-state props. Use [OverflowingTextTooltipModeProvider](/ui/primitives/typography/overflowing-text-tooltip-mode-provider) to change when a subtree checks truncation or to turn the tooltip off.
 
 <StoryEmbed
-  storyId="ui-surfaces-overflowingtextwithtooltip--single-line-overflowing-documentation"
+  storyId="ui-surfaces-overflowingtextwithtooltip--display"
   title="OverflowingTextWithTooltip example"
+  height={180}
 />
 
 ## Usage
@@ -33,6 +38,24 @@ export const RecordTitle = () => (
 ```
 
 Constrain the width of the surrounding layout so truncation can occur. `isFocusable` gives the text a tab stop and opens the tooltip on focus or click. Keep essential information available to users who cannot hover.
+
+## Choose typography
+
+`size`, `weight` and `color` match [Text](/ui/primitives/typography/text). They are optional and inherit independently when omitted. Explicit typography applies to the displayed text; the tooltip retains its shared appearance.
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceCaption = () => (
+  <OverflowingTextWithTooltip
+    text="Quarterly account review and renewal preparation"
+    size="xs"
+    weight="semibold"
+    color="light"
+    style={{ maxWidth: 220 }}
+  />
+);
+```
 
 ## Multiline content
 
@@ -81,7 +104,7 @@ React content requires a plain-string `tooltipContent`. With string text, that p
 
 `alwaysShowTooltip` allows the tooltip even without truncation. `tooltipDelay` controls the hover delay and defaults to 500 milliseconds. `tooltipPlace` defaults to `bottom`.
 
-Native attributes, styles, class names, event handlers, and refs target the displayed Text element, a `div` by default. `render` can replace that element while retaining truncation and tooltip behavior. `OverflowingTextWithTooltipProps` is exported from `twenty-ui/primitives/typography`. Typography inherits from the surrounding layout. Set `truncate={false}` to wrap; choose either `truncate` or `lineClamp`. Focusable rendered elements and a caller-supplied `tabIndex` also reveal the tooltip on focus. Use [Text](/ui/primitives/typography/text) and [Tooltip](/ui/primitives/surfaces/tooltip) directly when you need custom composition. Interactive popup content belongs in [Popover](/ui/primitives/surfaces/popover).
+Native attributes, styles, class names, event handlers, and refs target the displayed Text element, a `div` by default. `render` can replace that element while retaining truncation and tooltip behavior. `OverflowingTextWithTooltipProps` is exported from `twenty-ui/primitives/typography`. Typography inherits from the surrounding layout unless an explicit typography prop is supplied. Set `truncate={false}` to wrap; choose either `truncate` or `lineClamp`. Focusable rendered elements and a caller-supplied `tabIndex` also reveal the tooltip on focus. Use [Text](/ui/primitives/typography/text) and [Tooltip](/ui/primitives/surfaces/tooltip) directly when you need custom composition. Interactive popup content belongs in [Popover](/ui/primitives/surfaces/popover).
 
 ## Explicit links
 
@@ -103,8 +126,10 @@ Use a single anchor for the whole label, or supply individual anchors in React c
 
 ## Migration
 
-Replace `displayedMaxRows` with `lineClamp`. The removed `size` option controlled height, not font size; use native `style` or `className` for sizing. Move intentional URL recognition into caller-owned content. No automatic linkification remains in this component.
+Replace `displayedMaxRows` with `lineClamp`. The former `size="small"` and `size="large"` options controlled height, not font size. `large` set a 16px height. The new `size` selects theme font sizes and accepts no legacy aliases; use native `style` or `className` for height constraints. `color` now accepts semantic colors; move arbitrary CSS colors to `style={{ color: customColor }}`. Move intentional URL recognition into caller-owned content. No automatic linkification remains in this component.
 
 ## Props
 
 <OverflowingTextWithTooltipReference />
+
+<PageBanner illustration="section-document-generator" />

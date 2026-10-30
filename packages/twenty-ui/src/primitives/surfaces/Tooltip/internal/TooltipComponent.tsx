@@ -13,7 +13,6 @@ import { TooltipPortal } from './TooltipPortal';
 import { TooltipPositioner } from './TooltipPositioner';
 
 const DEFAULT_SIDE_OFFSET = 10;
-const DEFAULT_MAX_WIDTH = '300px';
 
 export const TooltipComponent = <TPayload,>({
   content,
@@ -47,7 +46,7 @@ export const TooltipComponent = <TPayload,>({
   arrowPadding,
   disableAnchorTracking,
   arrow = false,
-  maxWidth = DEFAULT_MAX_WIDTH,
+  maxWidth,
   container,
   keepMounted,
   triggerProps,
@@ -104,10 +103,9 @@ export const TooltipComponent = <TPayload,>({
             sticky={sticky}
             arrowPadding={arrowPadding}
             disableAnchorTracking={disableAnchorTracking}
-            style={{ maxWidth }}
             {...positionerProps}
           >
-            <TooltipPopup {...popupProps}>
+            <TooltipPopup maxWidth={maxWidth} {...popupProps}>
               {hasTextLayout ? (
                 <TooltipBody description={description} startIcon={startIcon}>
                   {resolvedContent}

@@ -1,7 +1,7 @@
 import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
+import { IconArrowBarToDown, IconPinned } from 'twenty-ui/icon';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { UpdateAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
@@ -33,11 +33,11 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
     <Section.Root>
       <Section.Header title={t`Installation`} />
       <StyledSwitchContainer>
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconArrowBarToDown}
-            title={t`Allow installation`}
-            description={t`Display this app in the NPM packages list`}
+            title={t`Listed on the marketplace`}
+            description={t`Mark this app as reviewed and show it in the marketplace`}
             checked={registration.isListed}
             onChange={(checked) =>
               updateRegistration({
@@ -51,25 +51,7 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
             }
           />
         </Card.Root>
-        <Card.Root rounded fullWidth>
-          <SettingsOptionCardContentSwitch
-            Icon={IconShield}
-            title={t`Vetted`}
-            description={t`Mark this app as reviewed and approved`}
-            checked={registration.isVetted}
-            onChange={(checked) =>
-              updateRegistration({
-                variables: {
-                  input: {
-                    id: registration.id,
-                    update: { isVetted: checked },
-                  },
-                },
-              })
-            }
-          />
-        </Card.Root>
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconPinned}
             title={t`Pre-install on new workspaces`}

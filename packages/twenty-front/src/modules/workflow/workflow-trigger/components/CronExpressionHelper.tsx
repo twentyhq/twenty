@@ -12,6 +12,7 @@ import { CronExpressionParser } from 'cron-parser';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const getNextExecutions = (
   cronExpression: string,
@@ -34,7 +35,7 @@ const getNextExecutions = (
     }
 
     const interval = CronExpressionParser.parse(normalized, {
-      tz: 'UTC',
+      tz: doNotTranslate('UTC'),
     });
     return interval.take(3).map((date) => date.toDate());
   } catch {

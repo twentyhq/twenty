@@ -327,7 +327,6 @@ export const SettingsAdminAiProviderDetail = () => {
 
           {provider && (
             <SettingsTableCard
-              rounded
               items={providerInfoItems}
               gridAutoColumns="120px 1fr"
             />

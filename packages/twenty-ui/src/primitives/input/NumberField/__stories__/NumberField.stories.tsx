@@ -14,7 +14,7 @@ const meta = {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 280 },
   },
-  args: { defaultValue: 3, min: 0, max: 10 },
+  args: { name: 'quantity', defaultValue: 3, min: 0, max: 10 },
   render: (args) => (
     <Field.Root>
       <Field.Label>Quantity</Field.Label>
@@ -37,7 +37,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const Empty: Story = {
   args: { defaultValue: undefined },
@@ -77,7 +77,7 @@ export const WithScrubbing: Story = {
   args: { defaultValue: 240, min: 0, max: 1000, step: 1 },
   render: (args) => (
     <Field.Root>
-      <NumberField.Root {...args}>
+      <NumberField.Root {...args} style={{ display: 'grid', gap: 8 }}>
         <NumberField.ScrubArea style={{ cursor: 'ew-resize' }}>
           <Field.Label>Width</Field.Label>
           <NumberField.ScrubAreaCursor>↔</NumberField.ScrubAreaCursor>

@@ -5,6 +5,7 @@ import { isFunction, isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ToolingResult } from '@/app/types/tooling-result.type';
+import { getClientSdkPackagePath } from '@/app/get-client-sdk-package-path';
 import { readJsonObject } from '@/app/read-json-object';
 import { resolveInsideSdk } from '@/app/project/resolve-inside-sdk';
 import { validateAppPath } from '@/app/snapshots/validate-app-path';
@@ -31,7 +32,7 @@ export const generateApplicationClient = async ({
       throw new Error('schema must be a non-empty GraphQL schema string.');
     }
 
-    const packageRoot = join(appPath, 'node_modules', 'twenty-client-sdk');
+    const packageRoot = getClientSdkPackagePath({ appPath });
     const packageJson = await readJsonObject(join(packageRoot, 'package.json'));
 
     if (packageJson?.name !== 'twenty-client-sdk') {

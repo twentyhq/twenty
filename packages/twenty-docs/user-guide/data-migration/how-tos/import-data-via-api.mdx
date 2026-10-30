@@ -3,6 +3,8 @@ title: Import Data via API
 description: When and how to use Twenty's APIs for large-scale data imports.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Overview
 
 Twenty provides both **GraphQL** and **REST APIs** for programmatic data import. Use the API when CSV import isn't practical for your data volume or when you need automated, recurring imports.
@@ -112,7 +114,7 @@ The GraphQL API supports **batch upsert** — update if the record exists, creat
 
 To see available objects and fields:
 
-1. Go to **Settings → API and Webhooks**
+1. Go to **Settings → Developers → API**
 2. Browse the **Metadata API**
 3. View all standard and custom objects with their fields
 
@@ -166,3 +168,5 @@ Contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Im
 For full implementation details, code examples, and schema reference:
 
 - [API Documentation](/developers/extend/api)
+
+<PageBanner illustration="dev-api" />

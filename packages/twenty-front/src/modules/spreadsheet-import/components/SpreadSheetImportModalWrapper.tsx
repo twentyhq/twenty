@@ -5,8 +5,12 @@ import { styled } from '@linaria/react';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
+
+const StyledPopup = styled(Dialog.Popup)`
+  height: ${themeCssVariables.modal.size.xl.height};
+`;
 
 const StyledInnerContainer = styled.div`
   display: flex;
@@ -50,11 +54,10 @@ export const SpreadSheetImportModalWrapper = ({
       closeOnDismiss={false}
     >
       {({ onKeyDown }) => (
-        <Dialog.Popup
+        <StyledPopup
           aria-label={t`Import data`}
           onKeyDown={onKeyDown}
           size="xl"
-          style={{ padding: 0, height: 'var(--t-modal-size-xl-height)' }}
         >
           <StyledInnerContainer>
             <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
@@ -62,7 +65,7 @@ export const SpreadSheetImportModalWrapper = ({
               {children}
             </StyledRtlLtr>
           </StyledInnerContainer>
-        </Dialog.Popup>
+        </StyledPopup>
       )}
     </DialogInstance>
   );

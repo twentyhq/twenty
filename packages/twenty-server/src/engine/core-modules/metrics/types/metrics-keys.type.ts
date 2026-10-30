@@ -6,6 +6,7 @@ export enum MetricsKeys {
   CalendarEventSyncJobFailedInsufficientPermissions = 'calendar-event-sync-job/failed-insufficient-permissions',
   CalendarEventSyncJobFailedUnknown = 'calendar-event-sync-job/failed-unknown',
   InvalidCaptcha = 'invalid-captcha',
+  CaptchaScore = 'captcha/score',
   GraphqlOperation200 = 'graphql-operation/200',
   GraphqlOperation400 = 'graphql-operation/400',
   GraphqlOperation401 = 'graphql-operation/401',
@@ -66,6 +67,8 @@ export enum MetricsKeys {
   JobStalled = 'job/stalled',
   JobWaiting = 'job/waiting',
   JobLatencyMs = 'job/latency-ms',
+  JobDurationMs = 'job/duration-ms',
+  JobFairTagFallback = 'job/fair-tag-fallback',
   AiChatTurnLatencyMs = 'ai-chat/turn-latency-ms',
   AiChatStepLatencyMs = 'ai-chat/step-latency-ms',
   AiChatTtftMs = 'ai-chat/ttft-ms',
@@ -98,4 +101,5 @@ export enum MetricsKeys {
   OrmV2WritePathUsed = 'orm-v2/write-path-used',
   CampaignEngagementCaptureFailed = 'campaign-engagement/capture-failed',
   CampaignEngagementCaptureThrottled = 'campaign-engagement/capture-throttled',
+  UserSessionCookieLegacyAccess = 'user-session/cookie-legacy-access',
 }

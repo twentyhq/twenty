@@ -13,6 +13,7 @@ export const Skeleton = ({
   baseColor,
   highlightColor,
   animated = true,
+  layout = 'block',
   className,
   style,
   render,
@@ -28,6 +29,7 @@ export const Skeleton = ({
       ...props,
       'data-skeleton': '',
       'data-animated': animated || undefined,
+      'data-layout': layout,
       className: clsx(styles.root, className),
       style: {
         width,
@@ -38,7 +40,7 @@ export const Skeleton = ({
         '--skeleton-highlight-color': highlightColor,
         ...style,
       } as CSSProperties,
-      children: '\u200c',
+      children: layout === 'inline' ? '\u200c' : undefined,
     },
   });
 };

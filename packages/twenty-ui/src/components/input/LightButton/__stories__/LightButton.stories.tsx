@@ -23,10 +23,10 @@ const meta: Meta<typeof LightButton> = {
 export default meta;
 type Story = StoryObj<typeof LightButton>;
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Display: Story = { decorators: [ComponentDecorator] };
 
 export const Emphasis: Story = {
-  ...Default,
+  ...Display,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   render: () => (
     <>
@@ -57,7 +57,7 @@ export const Emphasis: Story = {
 };
 
 export const SemanticAndGroupAppearance: Story = {
-  ...Default,
+  ...Display,
   render: () => (
     <>
       <LightButton emphasis="subtle" color="danger">

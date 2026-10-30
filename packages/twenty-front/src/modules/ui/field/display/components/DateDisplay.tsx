@@ -5,6 +5,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type DateDisplayProps = {
   value: string | null | undefined;
@@ -16,7 +17,7 @@ export const DateDisplay = ({ value, dateFieldSettings }: DateDisplayProps) => {
 
   const formattedDate = formatDateString({
     value,
-    timeZone: 'UTC', // Needed because we have db-stored date (yyyy-mm-dd) is converted to UTC dateTime by TypeORM
+    timeZone: doNotTranslate('UTC'), // Needed because we have db-stored date (yyyy-mm-dd) is converted to UTC dateTime by TypeORM
     dateFormat,
     dateFieldSettings,
     localeCatalog: dateLocale.localeCatalog,

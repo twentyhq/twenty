@@ -7,6 +7,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useOpenRecordFilterChipFromTableHeader = () => {
   const { filterableFieldMetadataItems } =
@@ -34,7 +35,9 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
 
     if (!isDefined(correspondingFieldMetadataItem)) {
       throw new Error(
-        `Cannot find field metadata item with id : ${fieldMetadataItemId}`,
+        doNotTranslate(
+          `Cannot find field metadata item with id : ${fieldMetadataItemId}`,
+        ),
       );
     }
 

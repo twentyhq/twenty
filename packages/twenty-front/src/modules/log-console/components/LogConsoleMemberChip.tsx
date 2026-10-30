@@ -22,9 +22,8 @@ export const LogConsoleMemberChip = (props: LogConsoleMemberChipProps) => {
 
   return (
     <Chip
-      variant="ghost"
+      variant="plain"
       startElement={<LogConsoleMemberAvatar member={member} />}
-      style={{ paddingInlineStart: 0 }}
     >
       {getChipLabel(member.name).content}
     </Chip>

@@ -9,6 +9,12 @@ const SHARED_LABEL_BY_MORPH_ID: Record<string, string> = {
   [STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId]: i18nLabel(
     msg({ message: `Attached to`, context: 'fieldMetadata.label' }),
   ),
+  [STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId]: i18nLabel(
+    msg({ message: `Linked to`, context: 'fieldMetadata.label' }),
+  ),
+  [STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId]: i18nLabel(
+    msg({ message: `Linked to`, context: 'fieldMetadata.label' }),
+  ),
 };
 
 export const computeSystemMorphTargetFieldLabel = ({

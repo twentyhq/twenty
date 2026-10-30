@@ -68,7 +68,7 @@ export const SettingsRolePermissionsToolSection = ({
       <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`Logic All Access`}
@@ -90,11 +90,7 @@ export const SettingsRolePermissionsToolSection = ({
           !shouldShowAllAccessToggle || !settingsDraftRole.canAccessAllTools
         }
       >
-        <Collapsible.Panel
-          dimension="height"
-          style={{ transitionDuration: '0.4s, 0.2s' }}
-          containAnimation={false}
-        >
+        <Collapsible.Panel dimension="height" containAnimation={false}>
           <StyledTable>
             <SettingsRolePermissionsSettingsTableHeader
               roleId={roleId}

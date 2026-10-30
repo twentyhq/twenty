@@ -40,6 +40,7 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldTsVector } from '@/object-record/record-field/ui/types/guards/isFieldTsVectorValue';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const isValueEmpty = (value: unknown) =>
   !isDefined(value) || (isString(value) && value === '');
@@ -180,12 +181,15 @@ export const isFieldValueEmpty = ({
   if (isFieldRichText(fieldDefinition)) {
     return (
       !isFieldRichTextValue(fieldValue) ||
-      (isValueEmpty(fieldValue?.blocknote) &&
+      (isValueEmpty(fieldValue?.tiptap) &&
+        isValueEmpty(fieldValue?.blocknote) &&
         isValueEmpty(fieldValue?.markdown))
     );
   }
 
   throw new Error(
-    `Entity field type not supported in isFieldValueEmpty : ${fieldDefinition.type}}`,
+    doNotTranslate(
+      `Entity field type not supported in isFieldValueEmpty : ${fieldDefinition.type}}`,
+    ),
   );
 };

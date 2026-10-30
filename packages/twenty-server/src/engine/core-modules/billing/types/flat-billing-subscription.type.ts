@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { type UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -26,6 +27,7 @@ export type FlatBillingSubscription = {
   collectionMethod: BillingSubscriptionCollectionMethod;
   planAllowanceMicro: number | null;
   planKey: BillingPlanKey | null;
+  userCreditsFallback: UserCreditsFallback;
   creditGrants: CreditAllowanceGrant[];
 };
 

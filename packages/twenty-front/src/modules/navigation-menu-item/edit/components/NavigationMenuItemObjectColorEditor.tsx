@@ -22,12 +22,7 @@ import {
 
 const StyledIconButton = styled.button`
   align-items: center;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
   display: flex;
-  padding: 0;
 `;
 
 const StyledPopupScope = styled.div`

@@ -6,6 +6,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableFooter } from '@/ui/layout/table/components/TableFooter';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,16 +16,6 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const StyledCreateObjectOverrideSectionContainer = styled.div`
-  > * {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
-    display: flex;
-    justify-content: flex-end;
-    padding-bottom: ${themeCssVariables.spacing[2]};
-    padding-top: ${themeCssVariables.spacing[2]};
-  }
-`;
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -105,19 +96,17 @@ export const SettingsRolePermissionsObjectLevelSection = ({
         </StyledTableRows>
       </Table>
       {isEditable && (
-        <StyledCreateObjectOverrideSectionContainer>
-          <Section.Root>
-            <Button
-              startIcon={<IconPlus />}
-              size="sm"
-              disabled={
-                !settingsDraftRole.isEditable || allObjectsHaveSetPermission
-              }
-              onClick={handleAddRule}
-              variant="outline"
-            >{t`Add rule`}</Button>
-          </Section.Root>
-        </StyledCreateObjectOverrideSectionContainer>
+        <TableFooter>
+          <Button
+            startIcon={<IconPlus />}
+            size="sm"
+            disabled={
+              !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+            }
+            onClick={handleAddRule}
+            variant="outline"
+          >{t`Add rule`}</Button>
+        </TableFooter>
       )}
     </Section.Root>
   );

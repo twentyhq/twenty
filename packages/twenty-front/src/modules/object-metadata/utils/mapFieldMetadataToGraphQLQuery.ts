@@ -15,6 +15,7 @@ import {
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -79,7 +80,9 @@ export const mapFieldMetadataToGraphQLQuery = ({
       ) {
         if (!isDefined(morphRelation.targetObjectMetadata.id)) {
           throw new Error(
-            `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+            doNotTranslate(
+              `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+            ),
           );
         }
 
@@ -98,7 +101,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
           continue;
         }
 
-        gqlMorphField += `${relationFieldName}
+        gqlMorphField += doNotTranslate(`${relationFieldName}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({
@@ -110,7 +113,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       objectPermissionsByObjectMetadataId,
     })}
   }
-}`;
+}`);
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
@@ -158,7 +161,9 @@ ${mapObjectMetadataToGraphQLQuery({
     ) {
       if (!isDefined(fieldMetadata.relation?.targetObjectMetadata.id)) {
         throw new Error(
-          `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          doNotTranslate(
+            `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          ),
         );
       }
 
@@ -210,7 +215,9 @@ ${mapObjectMetadataToGraphQLQuery({
     ) {
       if (!isDefined(fieldMetadata.relation?.targetObjectMetadata.id)) {
         throw new Error(
-          `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          doNotTranslate(
+            `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          ),
         );
       }
 
@@ -224,7 +231,7 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({
@@ -236,11 +243,11 @@ ${mapObjectMetadataToGraphQLQuery({
       objectPermissionsByObjectMetadataId,
     })}
   }
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.LINKS) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   primaryLinkUrl
   primaryLinkLabel
@@ -248,28 +255,28 @@ ${mapObjectMetadataToGraphQLQuery({
     label
     url
   }
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.CURRENCY) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   amountMicros
   currencyCode
 }
-    `;
+    `);
   }
 
   if (fieldType === FieldMetadataType.FULL_NAME) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   firstName
   lastName
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.ADDRESS) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   addressStreet1
   addressStreet2
@@ -279,11 +286,11 @@ ${mapObjectMetadataToGraphQLQuery({
   addressPostcode
   addressLat
   addressLng
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.ACTOR) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
     source
     workspaceMemberId
@@ -292,19 +299,19 @@ ${mapObjectMetadataToGraphQLQuery({
       provider
       applicationId
     }
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.EMAILS) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   primaryEmail
   additionalEmails
-}`;
+}`);
   }
 
   if (fieldType === FieldMetadataType.PHONES) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
@@ -314,25 +321,26 @@ ${mapObjectMetadataToGraphQLQuery({
         callingCode
         countryCode
       }
-    }`;
+    }`);
   }
 
   if (fieldType === FieldMetadataType.FILES) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
     {
       fileId
       label
       extension
       url
-    }`;
+    }`);
   }
 
   if (fieldType === FieldMetadataType.RICH_TEXT) {
-    return `${gqlField}
+    return doNotTranslate(`${gqlField}
 {
   blocknote
   markdown
-}`;
+  tiptap
+}`);
   }
 
   return '';

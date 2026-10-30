@@ -35,6 +35,9 @@ export class RoleDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;
 
+  @Field(() => UUIDScalarType)
+  applicationId: string;
+
   @Field({ nullable: false })
   label: string;
 
@@ -59,13 +62,13 @@ export class RoleDTO {
   @HideField()
   roleTargets?: Relation<RoleTargetEntity[]>;
 
-  @Field(() => [WorkspaceMemberDTO], { nullable: true })
+  @Field(() => [WorkspaceMemberDTO])
   workspaceMembers?: WorkspaceMemberDTO[];
 
-  @Field(() => [AgentDTO], { nullable: true })
+  @Field(() => [AgentDTO])
   agents?: AgentDTO[];
 
-  @Field(() => [ApiKeyForRoleDTO], { nullable: true })
+  @Field(() => [ApiKeyForRoleDTO])
   apiKeys?: ApiKeyForRoleDTO[];
 
   @Field({ nullable: false })
@@ -73,6 +76,9 @@ export class RoleDTO {
 
   @Field({ nullable: false })
   canAccessAllTools: boolean;
+
+  @Field({ nullable: false })
+  canAccessAllAgentChatChannels: boolean;
 
   @Field({ nullable: false })
   canReadAllObjectRecords: boolean;

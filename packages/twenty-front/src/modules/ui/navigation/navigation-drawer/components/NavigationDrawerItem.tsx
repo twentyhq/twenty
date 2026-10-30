@@ -5,10 +5,12 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { NavigationDrawerItemIcon } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemIcon';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/hooks/useNavigationDrawerTooltip';
+import { useShortcutAccessibleKeyLabels } from '@/ui/navigation/hooks/useShortcutAccessibleKeyLabels';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNavigation';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -18,6 +20,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
@@ -27,6 +30,9 @@ import {
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 const DEFAULT_INDENTATION_LEVEL = 1;
+const INTERACTIVE_OPTIONS_SELECTOR = doNotTranslate(
+  'button, a, [role="button"]',
+);
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
@@ -111,8 +117,9 @@ const StyledItem = styled.button<StyledItemProps>`
         : themeCssVariables.font.color.primary};
   }
 
-  &:hover .keyboard-shortcuts {
-    visibility: visible;
+  &:has(.navigation-drawer-item-label:focus-visible) {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -134,6 +141,10 @@ const StyledLabelParent = styled.div`
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
+
+  &:focus-visible {
+    outline: none;
+  }
 `;
 
 const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
@@ -210,11 +221,15 @@ export const NavigationDrawerItem = ({
   secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
+  trailingIcon,
+  'aria-expanded': ariaExpanded,
+  'aria-controls': ariaControls,
   to,
   onClick,
   active,
   modifier,
   subItemState,
+  subItemIndentation = 'default',
   rightOptions,
   alwaysShowRightOptions = false,
   isDragging,
@@ -226,6 +241,7 @@ export const NavigationDrawerItem = ({
   isUnread = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
+  const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -241,6 +257,14 @@ export const NavigationDrawerItem = ({
 
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = isDefined(modifier) || isDefined(rightOptions);
+  const isRowButton =
+    !isDefined(editingContent) &&
+    !isDefined(to) &&
+    isDefined(rightOptions) &&
+    isDefined(onClick);
+  const isRowKeyboardEnabled =
+    isRowButton && !isSoon && variant !== 'placeholder';
+  const ariaCurrentWhenActive = isDefined(to) ? 'page' : true;
 
   const handleMobileNavigation = () => {
     if (isMobile && !preventCollapseOnMobile) {
@@ -309,7 +333,11 @@ export const NavigationDrawerItem = ({
             handleMouseDown(event);
           }}
           active={active}
-          aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
+          aria-current={
+            active && !isRowButton ? ariaCurrentWhenActive : undefined
+          }
+          aria-expanded={isRowButton ? undefined : ariaExpanded}
+          aria-controls={isRowButton ? undefined : ariaControls}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}
@@ -321,11 +349,6 @@ export const NavigationDrawerItem = ({
             isSelectedInEditMode || editingContent?.isSelected
           }
           as={elementType}
-          role={
-            !isDefined(editingContent) && !to && isDefined(rightOptions)
-              ? 'button'
-              : undefined
-          }
           to={isInternalLink ? to : undefined}
           href={isExternalLink ? to : undefined}
           target={isExternalLink ? '_blank' : undefined}
@@ -335,7 +358,10 @@ export const NavigationDrawerItem = ({
           <StyledItemElementsContainer>
             {showBreadcrumb && (
               <NavigationDrawerAnimatedCollapseWrapper>
-                <NavigationDrawerItemBreadcrumb state={subItemState} />
+                <NavigationDrawerItemBreadcrumb
+                  state={subItemState}
+                  isCompact={subItemIndentation === 'compact'}
+                />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
 
@@ -344,9 +370,8 @@ export const NavigationDrawerItem = ({
             ) : (
               isDefined(Icon) && (
                 <StyledIcon>
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.md}
+                  <NavigationDrawerItemIcon
+                    Icon={Icon}
                     color={
                       showBreadcrumb && !isExpanded
                         ? theme.font.color.light
@@ -360,7 +385,35 @@ export const NavigationDrawerItem = ({
               )
             )}
 
-            <StyledLabelParent>
+            <StyledLabelParent
+              className="navigation-drawer-item-label"
+              role={isRowButton ? 'button' : undefined}
+              tabIndex={isRowKeyboardEnabled ? 0 : undefined}
+              aria-current={
+                active && isRowButton ? ariaCurrentWhenActive : undefined
+              }
+              aria-expanded={isRowButton ? ariaExpanded : undefined}
+              aria-controls={isRowButton ? ariaControls : undefined}
+              onKeyDown={(event) => {
+                const isRowKeyboardActivation =
+                  event.target === event.currentTarget &&
+                  isRowKeyboardEnabled &&
+                  (event.key === 'Enter' || event.key === ' ');
+
+                if (!isRowKeyboardActivation) {
+                  return;
+                }
+
+                event.preventDefault();
+
+                if (event.repeat) {
+                  return;
+                }
+
+                handleMobileNavigation();
+                onClick?.();
+              }}
+            >
               {editingContent?.label ?? (
                 <OverflowingTextWithTooltip
                   text={
@@ -403,9 +456,9 @@ export const NavigationDrawerItem = ({
             {isDefined(keyboardKeys) && (
               <NavigationDrawerAnimatedCollapseWrapper>
                 <Shortcut
-                  className="keyboard-shortcuts"
                   shortcut={keyboardKeys}
                   sequenceJoinLabel={t`then`}
+                  accessibleKeyLabels={accessibleKeyLabels}
                 />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
@@ -419,6 +472,19 @@ export const NavigationDrawerItem = ({
                     stopPropagation blocks Link's own preventDefault */}
                 <StyledRightOptionsContainer
                   onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(event) => {
+                    const interactiveOption =
+                      event.target instanceof Element
+                        ? event.target.closest(INTERACTIVE_OPTIONS_SELECTOR)
+                        : null;
+                    const isClickInsideInteractiveOption =
+                      isDefined(interactiveOption) &&
+                      event.currentTarget.contains(interactiveOption);
+
+                    if (isClickInsideInteractiveOption) {
+                      event.stopPropagation();
+                    }
+                  }}
                   onClickCapture={(event) => {
                     const isClickInsideLinkedOptions =
                       isDefined(to) &&
@@ -442,6 +508,12 @@ export const NavigationDrawerItem = ({
                     {rightOptions}
                   </StyledRightOptionsVisbility>
                 </StyledRightOptionsContainer>
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
+
+            {isDefined(trailingIcon) && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                {trailingIcon}
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
           </StyledItemElementsContainer>

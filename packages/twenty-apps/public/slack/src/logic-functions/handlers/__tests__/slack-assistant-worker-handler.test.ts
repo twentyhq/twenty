@@ -53,6 +53,13 @@ vi.mock('src/logic-functions/data/claim-slack-assistant-request', () => ({
   claimSlackAssistantRequest: claimSlackAssistantRequestMock,
 }));
 
+vi.mock(
+  'src/logic-functions/utils/resolve-slack-conversation-messages',
+  () => ({
+    resolveSlackConversationMessages: async () => [],
+  }),
+);
+
 vi.mock('src/logic-functions/data/update-slack-assistant-request', () => ({
   updateSlackAssistantRequest: updateSlackAssistantRequestMock,
 }));
@@ -123,7 +130,7 @@ const REQUESTER_IDENTITY = {
 };
 
 const SLACK_CONTEXT = {
-  conversationMessages: [],
+  conversationThreadMessages: [],
   sharedFiles: [],
   requesterName: 'Ada',
   requesterIdentity: undefined,
@@ -206,7 +213,7 @@ describe('slackAssistantWorkerHandler', () => {
       expect.anything(),
       expect.objectContaining({
         id: REQUEST_RECORD.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );
@@ -234,7 +241,7 @@ describe('slackAssistantWorkerHandler', () => {
       expect.anything(),
       expect.objectContaining({
         id: REQUEST_RECORD.id,
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_REQUEST_NOT_ATTRIBUTABLE_TEXT,
       }),
     );
@@ -258,7 +265,7 @@ describe('slackAssistantWorkerHandler', () => {
     expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DECLINED,
         responseText: SLACK_ACCESS_DENIED_TEXT,
       }),
     );

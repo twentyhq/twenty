@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -21,36 +20,39 @@ export class AppConnectionAccessService {
     userWorkspaceId,
     apiKeyId,
     applicationId,
+    agentId,
   }: {
     isWorkspaceShared: boolean;
     workspaceId: string;
     userWorkspaceId?: string;
     apiKeyId?: string;
     applicationId?: string;
+    agentId?: string;
   }): Promise<void> {
-    if (!isWorkspaceShared) {
-      return;
-    }
-
     const hasPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        setting: getConnectedAccountAdministrationPermissionFlag(
-          ConnectedAccountProvider.APP,
-        ),
+        setting: isWorkspaceShared
+          ? PermissionFlagType.APPLICATIONS
+          : PermissionFlagType.CONNECTED_ACCOUNTS,
         apiKeyId,
         applicationId,
+        agentId,
       });
 
-    if (!hasPermission) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access.`,
-        },
-      );
+    if (hasPermission) {
+      return;
     }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+      {
+        userFriendlyMessage: isWorkspaceShared
+          ? msg`You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access.`
+          : msg`You do not have permission to connect accounts. Please contact your workspace administrator for access.`,
+      },
+    );
   }
 }

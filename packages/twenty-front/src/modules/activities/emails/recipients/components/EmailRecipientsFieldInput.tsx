@@ -9,6 +9,7 @@ import {
   type ClipboardEvent,
   type MouseEvent,
   type ReactNode,
+  type RefObject,
   useContext,
   useId,
   useMemo,
@@ -93,6 +94,11 @@ const StyledInput = styled.input`
   outline: none;
   padding: 0;
 
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+
   &::placeholder {
     ${FORM_FIELD_PLACEHOLDER_STYLES}
   }
@@ -100,6 +106,7 @@ const StyledInput = styled.input`
 
 type EmailRecipientsFieldInputProps = {
   fieldId: EmailRecipientsFieldId;
+  inputRef?: RefObject<HTMLInputElement | null>;
   // null when the drag started in another field.
   draggedSourceIndices: number[] | null;
   label: string;
@@ -112,6 +119,7 @@ type EmailRecipientsFieldInputProps = {
 
 export const EmailRecipientsFieldInput = ({
   fieldId,
+  inputRef: providedInputRef,
   draggedSourceIndices,
   label,
   recipients,
@@ -124,7 +132,8 @@ export const EmailRecipientsFieldInput = ({
   const focusId = `email-recipients-field-${instanceId}`;
   const suggestionsDropdownId = `${focusId}-suggestions`;
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const localInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = providedInputRef ?? localInputRef;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -581,10 +590,7 @@ export const EmailRecipientsFieldInput = ({
   const recipientsInput = (
     <Autocomplete.Input
       key="email-recipients-input"
-      render={(inputProps) => (
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        <StyledInput {...inputProps} className={undefined} />
-      )}
+      render={<StyledInput />}
       ref={inputRef}
       type="text"
       autoComplete="off"

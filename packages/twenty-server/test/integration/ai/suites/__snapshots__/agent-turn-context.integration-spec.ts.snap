@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`what an agent turn offers the model (integration) offers a chat turn the assistant tools 1`] = `
+[
+  "ask_question",
+  "attach_conversation_to_record",
+  "execute_tool",
+  "learn_tools",
+  "load_skills",
+  "propose_tool_call",
+  "react_to_message",
+  "request_form",
+  "search_help_center",
+]
+`;
+
+exports[`what an agent turn offers the model (integration) offers a runAgent call its agent tools 1`] = `
+[
+  "execute_tool",
+  "learn_tools",
+  "wait_for_duration",
+  "wait_for_event",
+]
+`;

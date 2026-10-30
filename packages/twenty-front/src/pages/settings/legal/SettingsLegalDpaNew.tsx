@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -82,7 +83,7 @@ export const SettingsLegalDpaNew = () => {
       const result = data?.generateSignedDpa;
 
       if (!result) {
-        throw new Error('No result returned');
+        throw new Error(doNotTranslate('No result returned'));
       }
 
       const safeLegalEntityName = trimmedLegalEntityName.replace(

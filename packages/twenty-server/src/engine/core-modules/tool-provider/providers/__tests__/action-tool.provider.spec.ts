@@ -27,7 +27,6 @@ const USER_AUTH_CONTEXT = {
 
 const CONTEXT: ToolProviderContext = {
   workspaceId: WORKSPACE_ID,
-  roleId: 'role-id',
   rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: 'role-id' } },
   authContext: USER_AUTH_CONTEXT,
   userId: 'user-id',

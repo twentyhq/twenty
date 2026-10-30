@@ -3,6 +3,8 @@ title: Fields
 description: Understand the role of fields and how to manage them.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 
@@ -99,7 +101,7 @@ If you get an error when setting uniqueness, check for duplicate values in your 
 
 ## Indexes (Advanced)
 
-Database indexes are managed automatically — adding your own is rarely necessary and easy to get wrong. With Advanced mode on, each object has an **Indexes** section under `Settings → Data Model → <object>` for the cases where you know you need one.
+Database indexes are managed automatically — adding your own is rarely necessary and easy to get wrong. For the cases where you know you need one, open `Settings → Data Model → <object>`, go to the **Settings** tab and click **Manage indexes** in the **Advanced** section.
 
 ## Field Configuration Best Practices
 
@@ -116,3 +118,5 @@ Database indexes are managed automatically — adding your own is rarely necessa
 
 ### Record Text Fields
 - **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.
+
+<PageBanner illustration="section-apps-data" />

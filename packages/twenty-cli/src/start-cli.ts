@@ -1,6 +1,5 @@
-import { engines } from '../package.json';
-
 import { checkNodeRequirement } from '@/app/project/check-node-requirement';
+import { CLI_NODE_VERSION_RANGE } from '@/constants/cli-node-version-range.constant';
 
 type CliModule = { runCli: (args: string[]) => Promise<void> };
 
@@ -14,24 +13,21 @@ export const startCli = async ({
   loadCli: () => Promise<CliModule>;
 }) => {
   const isNodeSupported =
-    checkNodeRequirement({ version: nodeVersion, range: engines.node }) ===
-    'satisfied';
-  let cli: CliModule;
+    checkNodeRequirement({
+      version: nodeVersion,
+      range: CLI_NODE_VERSION_RANGE,
+    }) === 'satisfied';
 
-  try {
-    cli = await loadCli();
-  } catch (error) {
-    if (isNodeSupported) {
-      throw error;
-    }
-
+  if (!isNodeSupported) {
     process.stderr.write(
-      `twenty requires Node.js ${engines.node}; this is Node.js ${nodeVersion}. Switch to a supported Node.js version, then try again.\n`,
+      `twenty requires Node.js ${CLI_NODE_VERSION_RANGE}; this is Node.js ${nodeVersion}. Switch to a supported Node.js version, then try again.\n`,
     );
     process.exitCode = 1;
 
     return;
   }
+
+  const cli = await loadCli();
 
   await cli.runCli(args);
 };

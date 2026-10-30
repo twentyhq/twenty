@@ -15,8 +15,10 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;SelectRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Manually unmounts the select.
-  Call this after any externally controlled closing animation finishes.
+  - `unmount`: Ends the closing phase of the select after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the select completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
+  - `close`: Closes the select imperatively when called.
 </ParamField>
 
 <ParamField body="Root.autoComplete" type="string">
@@ -33,7 +35,7 @@
   To render a controlled select popup, use the `open` prop instead.
 </ParamField>
 
-<ParamField body="Root.defaultValue" type="SelectValueType&lt;Value, Multiple&gt; | null">
+<ParamField body="Root.defaultValue" type="SelectInputValue&lt;Value, Multiple&gt; | null">
   The uncontrolled value of the select when it's initially rendered.
 
   To render a controlled select, use the `value` prop instead.
@@ -97,7 +99,7 @@
   Identifies the field when a form is submitted.
 </ParamField>
 
-<ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: SelectRootChangeEventDetails) =&gt; void)">
+<ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: SelectRootOpenChangeEventDetails) =&gt; void)">
   Receives the requested open state and unchanged Base UI event details.
 </ParamField>
 
@@ -105,7 +107,7 @@
   Event handler called after any animations complete when the select popup is opened or closed.
 </ParamField>
 
-<ParamField body="Root.onValueChange" type="((value: SelectValueType&lt;Value, Multiple&gt; | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) =&gt; void)">
+<ParamField body="Root.onValueChange" type="((value: SelectOutputValue&lt;Value, Multiple&gt; | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) =&gt; void)">
   Receives the requested generic value and unchanged Base UI event details, including reason, event and cancel(). Multiple selection receives an array; a cleared single value is null.
 </ParamField>
 
@@ -121,7 +123,7 @@
   Whether the user must choose a value before submitting a form.
 </ParamField>
 
-<ParamField body="Root.value" type="SelectValueType&lt;Value, Multiple&gt; | null">
+<ParamField body="Root.value" type="SelectInputValue&lt;Value, Multiple&gt; | null">
   The value of the select. Use when controlled.
 </ParamField>
 

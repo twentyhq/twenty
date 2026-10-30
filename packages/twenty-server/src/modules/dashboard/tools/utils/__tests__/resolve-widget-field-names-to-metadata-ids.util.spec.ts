@@ -1,6 +1,5 @@
 import {
   AggregateOperations,
-  FieldMetadataType,
   PageLayoutTabLayoutMode,
   ViewFilterOperand,
   WidgetType,
@@ -16,7 +15,6 @@ const OBJECT_ID = '11111111-1111-4111-8111-111111111111';
 const AMOUNT_FIELD_ID = '22222222-2222-4222-8222-222222222222';
 const STAGE_FIELD_ID = '33333333-3333-4333-8333-333333333333';
 const CREATED_AT_FIELD_ID = '44444444-4444-4444-8444-444444444444';
-const OWNER_FIELD_ID = '55555555-5555-4555-8555-555555555555';
 
 const buildMaps = (): DashboardIdentifierMaps => ({
   objectIdByName: { opportunity: OBJECT_ID, opportunities: OBJECT_ID },
@@ -27,13 +25,6 @@ const buildMaps = (): DashboardIdentifierMaps => ({
       buildFieldByObjectIdAndNameKey(OBJECT_ID, 'createdAt'),
       CREATED_AT_FIELD_ID,
     ],
-    [buildFieldByObjectIdAndNameKey(OBJECT_ID, 'owner'), OWNER_FIELD_ID],
-  ]),
-  fieldById: new Map([
-    [AMOUNT_FIELD_ID, { type: FieldMetadataType.CURRENCY }],
-    [STAGE_FIELD_ID, { type: FieldMetadataType.SELECT }],
-    [CREATED_AT_FIELD_ID, { type: FieldMetadataType.DATE_TIME }],
-    [OWNER_FIELD_ID, { type: FieldMetadataType.MORPH_RELATION }],
   ]),
 });
 
@@ -106,7 +97,7 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     ).not.toHaveProperty('fieldName');
   });
 
-  it('enriches the filter with a root group, type and displayValue for the UI', () => {
+  it('places the filter in a root group and references its field by id only', () => {
     const widget = buildAggregateWidget({
       recordFilters: [
         {
@@ -127,34 +118,13 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     expect(rootGroup).toMatchObject({ logicalOperator: 'AND' });
     expect(rootGroup.parentRecordFilterGroupId).toBeUndefined();
 
-    expect(filter.recordFilters[0]).toMatchObject({
+    expect(filter.recordFilters[0]).toEqual({
+      id: expect.any(String),
       fieldMetadataId: STAGE_FIELD_ID,
       operand: ViewFilterOperand.IS_NOT,
       value: '["NEW"]',
-      displayValue: '["NEW"]',
-      type: 'SELECT',
       recordFilterGroupId: rootGroup.id,
       positionInRecordFilterGroup: 0,
-    });
-    expect(filter.recordFilters[0].id).toEqual(expect.any(String));
-  });
-
-  it('stores the filter type rather than the raw field type', () => {
-    const widget = buildAggregateWidget({
-      recordFilters: [
-        {
-          fieldName: 'owner',
-          operand: ViewFilterOperand.IS_EMPTY,
-        },
-      ],
-    });
-
-    const result = resolveWidgetFieldNamesToIds(widget, buildMaps());
-    const filter = getResolvedFilter(result.configuration);
-
-    expect(filter.recordFilters[0]).toMatchObject({
-      fieldMetadataId: OWNER_FIELD_ID,
-      type: 'RELATION',
     });
   });
 

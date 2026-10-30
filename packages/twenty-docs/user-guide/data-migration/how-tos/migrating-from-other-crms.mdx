@@ -3,6 +3,8 @@ title: Migrating from Other CRMs
 description: Step-by-step guide to migrate your data from any CRM to Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Overview
 
 This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
@@ -223,7 +225,7 @@ After importing data, complete your workspace configuration:
 | **Duplicate errors** | Email/domain already exists | Remove duplicates from file, or include unique identifier to update existing records |
 | **Relation not found** | Parent record doesn't exist | Import parent objects first (Companies before People) |
 | **Missing fields** | Custom field doesn't exist | Create field in Settings → Data Model before importing |
-| **Select field errors** | Using display labels | Use API names (enable Advanced mode in Settings to find them) |
+| **Select field errors** | Using display labels | Use API names (choose **Show API values** in the field's options menu to find them) |
 | **User relation empty** | User hasn't accepted invite | Ensure all users accept invitations before importing |
 
 See [How to Fix Import Errors](/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
@@ -272,3 +274,5 @@ See [How to Fix Import Errors](/user-guide/data-migration/how-tos/fix-import-err
 <Tip>
   Want help with your migration? [Find a certified Twenty partner](https://twenty.com/partners/list?categories=SOLUTIONING&ref=docs-migrate-crm) to move your data, pipelines, and users end-to-end.
 </Tip>
+
+<PageBanner illustration="data-migration" />

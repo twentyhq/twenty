@@ -9,6 +9,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { parseEditorContent } from '@/workflow/workflow-variables/utils/parseEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type FormTextFieldInputProps = {
   label?: string;
@@ -21,6 +22,8 @@ type FormTextFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
+  ariaLabel?: string;
+  enableTemplateVariableFallback?: boolean;
 };
 
 export const FormTextFieldInput = ({
@@ -34,6 +37,8 @@ export const FormTextFieldInput = ({
   multiline,
   readonly,
   VariablePicker,
+  ariaLabel,
+  enableTemplateVariableFallback,
 }: FormTextFieldInputProps) => {
   const instanceId = useId();
   const labelId = `${instanceId}-label`;
@@ -44,6 +49,8 @@ export const FormTextFieldInput = ({
     readonly,
     defaultValue,
     ariaLabelledBy: label ? labelId : undefined,
+    ariaLabel,
+    enableTemplateVariableFallback,
     onUpdate: (editor) => {
       const jsonContent = editor.getJSON();
       const parsedContent = parseEditorContent(jsonContent);
@@ -55,7 +62,9 @@ export const FormTextFieldInput = ({
   const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
-        'Expected the editor to be defined when a variable is selected',
+        doNotTranslate(
+          'Expected the editor to be defined when a variable is selected',
+        ),
       );
     }
 

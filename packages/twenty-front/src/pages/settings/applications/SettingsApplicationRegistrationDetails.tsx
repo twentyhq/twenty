@@ -1,6 +1,7 @@
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -114,12 +115,12 @@ export const SettingsApplicationRegistrationDetails = () => {
           href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`Applications - Developer`,
+          children: t`Developers`,
           href: getSettingsPath(
-            SettingsPath.Applications,
+            SettingsPath.Developers,
             undefined,
             undefined,
-            'developer',
+            SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
           ),
         },
         { children: registration.name },

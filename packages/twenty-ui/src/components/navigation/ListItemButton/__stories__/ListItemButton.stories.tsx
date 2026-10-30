@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ListItemButton } from '@ui/components/navigation/ListItemButton/ListItemButton';
 import { IconCopy, IconUser } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const ROW_STYLE = { width: 280 };
 const SIBLING_STYLE = { display: 'flex', alignItems: 'center', gap: 8 };
@@ -12,6 +12,7 @@ const meta: Meta<typeof ListItemButton> = {
   title: 'UI/Components/Navigation/ListItemButton',
   component: ListItemButton,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     children: 'Duplicate',
     startIcon: <IconCopy />,
@@ -27,7 +28,7 @@ const meta: Meta<typeof ListItemButton> = {
 export default meta;
 type Story = StoryObj<typeof ListItemButton>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const Disabled: Story = {
   args: { disabled: true },
@@ -58,4 +59,13 @@ export const IndependentAction: Story = {
       </Button>
     </div>
   ),
+};
+
+export const Multiline: Story = {
+  args: {
+    children: 'Duplicate document',
+    description: 'Create a copy with the same settings.',
+    descriptionPlacement: 'below',
+    active: true,
+  },
 };

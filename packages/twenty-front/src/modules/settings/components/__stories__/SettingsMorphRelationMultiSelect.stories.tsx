@@ -52,7 +52,7 @@ export const SearchAndToggleStayOpen: Story = {
     expect(args.onBlur).not.toHaveBeenCalled();
     expect(
       within(within(popup).getByRole('group', { name: 'Advanced' })).getByRole(
-        'button',
+        'option',
         { name: 'Attachment' },
       ),
     ).toBeVisible();
@@ -63,16 +63,20 @@ export const SearchAndToggleStayOpen: Story = {
     ).not.toBeInTheDocument();
     await waitFor(() =>
       expect(
-        within(popup).getByRole('button', { name: 'Pet' }),
+        within(popup).getByRole('option', { name: 'Pet' }),
       ).toHaveAttribute('data-highlighted'),
     );
     await userEvent.keyboard('{Enter}');
     expect(args.onChange).toHaveBeenLastCalledWith([expect.any(String)]);
-    expect(within(popup).getByRole('button', { name: 'Pet' })).toBeVisible();
+    expect(within(popup).getByRole('option', { name: 'Pet' })).toBeVisible();
+    expect(within(popup).getByRole('option', { name: 'Pet' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     expect(trigger).toHaveTextContent('Pet');
 
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Pet Care Agreement' }),
+      within(popup).getByRole('option', { name: 'Pet Care Agreement' }),
     );
     expect(args.onChange).toHaveBeenLastCalledWith([
       expect.any(String),
@@ -86,9 +90,15 @@ export const SearchAndToggleStayOpen: Story = {
     await waitFor(() => expect(trigger).toHaveFocus());
 
     await userEvent.click(trigger);
-    expect(await body.findByRole('searchbox', { name: 'Search' })).toHaveValue(
-      '',
-    );
+    const reopened = await body.findByRole('dialog', {
+      name: 'Select objects',
+    });
+    expect(
+      within(reopened).getByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
+    expect(
+      within(reopened).getByRole('option', { name: 'Pet' }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Escape}');
   },
 };

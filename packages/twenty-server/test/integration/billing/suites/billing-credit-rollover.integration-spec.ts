@@ -71,7 +71,10 @@ describe('Billing credit rollover (integration)', () => {
     });
 
     // ClickHouse inserts are asynchronous, so the read is stubbed rather than racing ingestion
-    usageSpy = jest.spyOn(billingUsageService, 'getCreditsUsedBetweenOrNull');
+    usageSpy = jest.spyOn(
+      billingUsageService,
+      'getWorkspaceCreditsUsedMicroBetweenOrNull',
+    );
   });
 
   afterEach(async () => {

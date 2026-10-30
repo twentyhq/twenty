@@ -3,17 +3,35 @@ title: ButtonGroup
 description: Group related buttons with shared appearance and an optional frame.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-
-<StoryEmbed
-  storyId="ui-input-button-buttongroup--documentation"
-  title="Button group"
-  height={220}
-/>
-
 import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
 
+## Overview
+
 Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply defaults for size, variant, and color. Buttons retain their own tab stops.
+
+<StoryEmbed
+  storyId="ui-input-button-buttongroup--display"
+  title="Button group"
+  height={100}
+/>
+
+## Usage
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
 
 ## State ownership
 
@@ -21,22 +39,13 @@ Give a group an accessible name and place related buttons inside it. The group j
 
 For a mutually exclusive choice, use [RadioGroup](/ui/primitives/input/radio-group), which owns selection for its radio controls.
 
-## Usage
-
-```tsx
-import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-
-export const RecordActions = () => (
-  <ButtonGroup aria-label="Record actions" size="sm">
-    <Button>Edit</Button>
-    <Button>Duplicate</Button>
-  </ButtonGroup>
-);
-```
-
 ## Appearance precedence
 
 Each appearance prop resolves independently: the child's explicit prop, then the group default, then the component default. This applies to both Button and IconButton, including an explicit `IconButton size="xs"`. Defaults reach children through fragments, wrappers, and tooltip anchors.
+
+A group can supply `color="inherit"` on a colored surface. A child that resolves to inherited color must also resolve to a non-solid variant. Explicit child color and variant overrides take precedence, so a child may choose a non-solid variant or a semantic color when the group supplies solid and inherit together.
+
+Keep attached buttons at the same size so their edges align. This example overrides variant and color while inheriting the group size.
 
 ```tsx
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
@@ -48,11 +57,11 @@ export const ActivityActions = () => (
     color="accent"
     size="sm"
   >
-    <Button>New activity</Button>
-    <Button variant="ghost" color="danger" size="md">
+    <Button variant="ghost" color="danger">
       Delete activity
     </Button>
     <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
   </ButtonGroup>
 );
 ```
@@ -60,12 +69,8 @@ export const ActivityActions = () => (
 <StoryEmbed
   storyId="ui-input-button-buttongroup--appearance-overrides"
   title="Individual appearance in a button group"
-  height={180}
+  height={100}
 />
-
-## Props
-
-<ButtonGroupReference />
 
 ## Detached controls
 
@@ -78,7 +83,7 @@ Set `framed` to add a translucent background, border, 2px padding, and concentri
 <StoryEmbed
   storyId="ui-components-iconbutton--framed-group-documentation"
   title="Framed button group"
-  height={180}
+  height={100}
 />
 
 ```tsx
@@ -101,3 +106,9 @@ export const CompactRecordActions = () => (
 ## Updating existing groups
 
 Replace `IconButtonGroup` and its `iconButtons` array with `ButtonGroup framed attached={false}` and explicit children. Replace `InsideButton` with `LightIconButton size="xs"`. Each button owns its accessible name, action handler, disabled state, and optional tooltip.
+
+## Props
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

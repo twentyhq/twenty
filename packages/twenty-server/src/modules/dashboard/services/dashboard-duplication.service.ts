@@ -69,6 +69,8 @@ export class DashboardDuplicationService {
         authContext: workspaceContext.authContext,
         userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
         apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps:
+          workspaceContext.flatRoleTargetByAgentIdMaps,
       });
 
       if (!isDefined(rolePermissionConfig)) {
@@ -161,6 +163,9 @@ export class DashboardDuplicationService {
       resolveObjectRecordsPermissions({
         rolePermissionConfig,
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
+        flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
+        flatApplicationMaps: workspaceContext.flatApplicationMaps,
       });
 
     if (shouldBypassPermissionChecks) {

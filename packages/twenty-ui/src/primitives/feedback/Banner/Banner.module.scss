@@ -15,7 +15,7 @@
 
   &[data-color='gray'] {
     --banner-solid-background: var(--t-color-gray);
-    --banner-soft-background: var(--t-background-transparent-secondary);
+    --banner-soft-background: var(--t-background-transparent-light);
     --banner-soft-color: var(--t-font-color-primary);
   }
 
@@ -61,4 +61,20 @@
   align-items: center;
   display: flex;
   flex-shrink: 0;
+}
+
+.dismissible {
+  padding-inline: calc(
+    var(--t-spacing-2) + var(--t-spacing-6) + var(--t-spacing-3)
+  );
+  position: relative;
+}
+
+.closeButton {
+  @include square-button;
+
+  inset-inline-end: var(--t-spacing-2);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }

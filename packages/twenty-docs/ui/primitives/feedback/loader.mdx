@@ -3,15 +3,20 @@ title: Loader
 description: Display a compact animated loading indicator beside a status label.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import LoaderReference from '/snippets/ui/generated/feedback/loader.mdx';
 
+## Overview
+
 `Loader` shows an animated dot inside a small bordered capsule. Use it while an operation is in progress and the percentage is unknown. For numeric progress, use [ProgressBar](/ui/primitives/feedback/progress-bar).
 
 <StoryEmbed
-  storyId="ui-feedback-loader--with-color-documentation"
+  storyId="ui-feedback-loader--display"
   title="Loader example"
+  height={90}
 />
 
 ## Usage
@@ -23,7 +28,11 @@ import { Text } from 'twenty-ui/primitives/typography';
 type SaveFeedbackProps = { isSaving: boolean };
 
 export const SaveFeedback = ({ isSaving }: SaveFeedbackProps) => (
-  <Text render={<div />} role="status" style={{ display: 'flex', gap: 8 }}>
+  <Text
+    render={<div />}
+    role="status"
+    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+  >
     {isSaving && <Loader color="blue" aria-hidden="true" render={<span />} />}
     {isSaving ? 'Saving changes' : 'Changes saved'}
   </Text>
@@ -63,3 +72,5 @@ Pass a theme palette color to set both the border and dot. Without a color, the 
 ## Props
 
 <LoaderReference />
+
+<PageBanner illustration="card-page-background-jobs" />

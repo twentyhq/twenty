@@ -42,6 +42,10 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => false,
 }));
 
+jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
+  useHasPermissionFlag: () => true,
+}));
+
 jest.mock(
   '@/object-record/record-index/components/RecordIndexContainerGater',
   () => ({

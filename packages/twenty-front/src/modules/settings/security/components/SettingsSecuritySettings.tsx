@@ -228,7 +228,7 @@ export const SettingsSecuritySettings = () => {
             actions={<OrganizationAdornment />}
           />
           {hasAuditLogsEntitlement ? (
-            <Card.Root rounded>
+            <Card.Root>
               {isEventLogsEnabled ? (
                 <SettingsOptionCardContentCounter
                   Icon={IconClockHour8}
@@ -264,7 +264,7 @@ export const SettingsSecuritySettings = () => {
             title={t`Other`}
             description={t`Other security settings`}
           />
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentCounter
               Icon={IconTrash}
               title={t`Erasure of soft-deleted records`}

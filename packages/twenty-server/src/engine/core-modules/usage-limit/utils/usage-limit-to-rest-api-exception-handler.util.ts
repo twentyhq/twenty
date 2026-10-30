@@ -11,7 +11,7 @@ import { getUsageLimitErrorCode } from 'src/engine/core-modules/usage-limit/util
 const getStatusCode = (
   exhaustedScope: UsageLimitException['exhaustedScope'],
 ): HttpStatus => {
-  if (exhaustedScope?.exhaustedKind === 'allowance') {
+  if (exhaustedScope?.exhaustedKind === 'workspaceAllowance') {
     return HttpStatus.PAYMENT_REQUIRED;
   }
 

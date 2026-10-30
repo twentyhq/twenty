@@ -26,6 +26,7 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('keeps the agent from asking without human input instructions', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({
+        agentId: 'agent-id',
         prompt: 'Draft the quote',
         humanInputInstructions: '  ',
       }),
@@ -33,7 +34,7 @@ describe('buildWorkflowAgentRunSpec', () => {
     });
 
     expect(spec).toMatchObject({
-      agentId: null,
+      agentId: 'agent-id',
       title: 'Draft the quote',
       instructions: null,
       capabilities: {
@@ -62,9 +63,35 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('keeps tools out of reach of an application-bound run', () => {
     expect(
       buildWorkflowAgentRunSpec({
-        step: buildStep({ prompt: 'Draft the quote' }),
+        step: buildStep({ agentId: 'agent-id', prompt: 'Draft the quote' }),
         isApplicationBound: true,
       }).additionalExcludedToolNames,
     ).toContain('send_email');
+  });
+
+  it("asks for the step's output format", () => {
+    const responseFormat = {
+      type: 'json' as const,
+      schema: {
+        type: 'object' as const,
+        properties: { summary: { type: 'string' as const } },
+      },
+    };
+
+    const spec = buildWorkflowAgentRunSpec({
+      step: buildStep({ agentId: 'agent-id', responseFormat }),
+      isApplicationBound: false,
+    });
+
+    expect(spec.responseFormat).toEqual(responseFormat);
+  });
+
+  it("leaves the agent's output format to apply when the step gives none", () => {
+    const spec = buildWorkflowAgentRunSpec({
+      step: buildStep({ agentId: 'agent-id' }),
+      isApplicationBound: false,
+    });
+
+    expect(spec).not.toHaveProperty('responseFormat');
   });
 });

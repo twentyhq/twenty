@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
+import { BubbleMenuSeparator } from '@/advanced-text-editor/components/BubbleMenuSeparator';
 import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
 import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type Editor } from '@tiptap/core';
@@ -86,6 +87,7 @@ export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
             isActive={isActive}
           />
         ))}
+        <BubbleMenuSeparator />
         <BubbleMenuIconButton
           key="image-delete"
           label={t`Delete image`}

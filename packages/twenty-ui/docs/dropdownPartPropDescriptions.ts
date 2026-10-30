@@ -7,8 +7,10 @@ import { type DropdownOptionItemProps } from '../src/components/navigation/Dropd
 import { type DropdownPageProps } from '../src/components/navigation/Dropdown/types/DropdownPageProps';
 import { type DropdownRootProps } from '../src/components/navigation/Dropdown/types/DropdownRootProps';
 import { type DropdownSearchProps } from '../src/components/navigation/Dropdown/types/DropdownSearchProps';
+import { type DropdownSelectionGroupProps } from '../src/components/navigation/Dropdown/types/DropdownSelectionGroupProps';
 import { type DropdownSectionProps } from '../src/components/navigation/Dropdown/types/DropdownSectionProps';
 import { type DropdownSubmenuTriggerProps } from '../src/components/navigation/Dropdown/types/DropdownSubmenuTriggerProps';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 
 const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   type: 'Interaction model: `menu` for commands and links, `picker` for search and selectable options, or `panel` for forms. It sets the ARIA roles, initial focus, and keyboard navigation.',
@@ -21,12 +23,14 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   onInteractOutside:
     'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab, and `event.type` is the type of the DOM event that triggered it. Call `event.preventDefault()` to keep it open.',
   multiple:
-    'Allows selecting several options. Options then keep the popup open and show a checkbox by default.',
+    'Default for standalone options. Use `SelectionGroup.multiple` for independently owned selection values.',
   defaultPage:
     'ID of the `Page` shown when the popup opens. Closing the popup resets the page history to it. Defaults to `root`.',
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
+  descriptionPlacement:
+    'Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.',
   actions:
     'Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.',
   actionsVisibility:
@@ -61,16 +65,38 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   } satisfies Partial<Record<keyof DropdownActionItemProps, string>>,
   OptionItem: {
     ...DROPDOWN_ITEM_PROP_DESCRIPTIONS,
+    value:
+      'Stable option identifier within its nearest `SelectionGroup`. The group supplies selected state and commits this value on activation.',
     selected:
-      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state.',
+      'Selected state for standalone options. Options inside a `SelectionGroup` derive it from their owner. Grouped picker options expose `aria-selected`, menu options expose `aria-checked`, and panel options expose `aria-pressed`.',
     onSelect:
-      'Called when the option is activated. The application owns the selected value.',
+      'Called before the nearest group commits selection, with `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` prevents the value change and automatic close.',
     closeOnSelect:
-      'Closes the dropdown after selection. Defaults to `true`, or `false` when `multiple` is set.',
+      'Overrides the nearest group close policy for this option. A cancelled selection never closes automatically.',
+    render:
+      'Element or function rendered as the row. Functions receive the supplied props and `{ selected, multiple, disabled }` state. Forward the props and ref to the rendered control.',
     indicator:
       'Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted.',
   } satisfies Partial<Record<keyof DropdownOptionItemProps, string>>,
+  SelectionGroup: {
+    id: 'Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups.',
+    multiple:
+      'Uses an array of selected identifiers when true. Otherwise the value is one identifier or null.',
+    value:
+      'Controlled selection: a string or null for single selection, or an array for multiple selection. Undefined leaves selection uncontrolled.',
+    defaultValue:
+      'Initial uncontrolled selection. Defaults to null for single selection and an empty array for multiple selection.',
+    onValueChange:
+      'Called with the next value and cancellable event details: `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` preserves the value and keeps the popup open. Repeated single selection does not emit another change.',
+    closeOnSelect:
+      'Default close policy for owned options: true for single selection, false for multiple selection. Individual options can override it.',
+    render:
+      'Element or function rendered as the group. Functions receive supplied props and `{ value, multiple }` state. Forward the props and ref.',
+  } satisfies Partial<Record<keyof DropdownSelectionGroupProps, string>>,
   Search: {
+    textAlign: INPUT_PROP_DESCRIPTIONS.textAlign,
+    hasFocusRing:
+      'Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible.',
     onValueChange:
       'Called with the search text on every change. The application filters the results.',
   } satisfies Partial<Record<keyof DropdownSearchProps, string>>,

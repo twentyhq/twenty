@@ -1,0 +1,65 @@
+---
+title: ProgressBar
+description: Показывает измеряемый или неопределенный прогресс с помощью горизонтальной полосы.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Обзор
+
+`ProgressBar` обеспечивает горизонтальное представление для [прогресса](/ru/ui/primitives/feedback/progress). Он сохраняет полный контракт корневого элемента, включая нативные атрибуты, refs, композицию рендеринга, форматирование, пользовательские диапазоны и неопределенный прогресс. Укажите для него `aria-label`, идентифицирующий операцию.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--display" title="Пример ProgressBar" height={100} />
+
+## Использование
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { importedRecords: number | null };
+
+export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+    <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
+    <ProgressBar
+      value={importedRecords}
+      max={1000}
+      aria-label="Importing records"
+    />
+  </Text>
+);
+```
+
+## Управление состоянием и диапазоны
+
+`value` является обязательным и управляется приложением. Режим `defaultValue` отсутствует. Компонент не запускает запрос и не увеличивает прогресс самостоятельно. Передайте `null`, если ход выполнения неизвестен. Неконечные значения также остаются неопределёнными.
+
+Значение `min` по умолчанию равно `0`, а `max` — `100`. Конечные значения ограничиваются диапазоном для семантического значения и нормализованного заполнения. Значение `70` в диапазоне от `20` до `120` заполняет половину полосы и сообщает `50%`, при этом `aria-valuenow` остаётся равным `70`.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--custom-range" title="Ненулевой минимум и пользовательский максимум" height={80} />
+
+Используйте `aria-valuetext`, `getAriaValueText`, `locale` и `format`, как описано в [Progress](/ru/ui/primitives/feedback/progress). Используйте составные части Progress, когда меткам и значениям требуется собственное видимое расположение.
+
+Используйте [Toast](/ru/ui/components/feedback/toast) для уведомлений с обратным отсчетом до закрытия и приостановкой при наведении.
+
+## Внешний вид и композиция
+
+`size` выбирает полосу шириной 6px или 8px. `barColor` и `backgroundColor` принимают цвета CSS, включая переменные темы. `withBorderRadius` скругляет дорожку и индикатор. `withMinimumFillWidth` сохраняет небольшое декоративное заполнение только между минимумом и завершением. Этот минимум составляет не более 12px и половины ширины полосы, поэтому узкая полоса всё равно отличает незавершённый прогресс от завершения. Он не заполняет пустую полосу и не изменяет семантические значения.
+
+Нативные атрибуты, `className`, `style` и `ref` нацелены на корневой элемент. `className` и `style` могут получать состояние прогресса. `render` может заменять корневой элемент, сохраняя его семантику. Неопределённый прогресс имеет собственный вид без указания числового процента. Настройки уменьшения движения отключают переходы заполнения и движение неопределённого прогресса.
+
+Комбинируйте [части Progress](/ru/ui/primitives/feedback/progress) для пользовательских макетов или анимации функций. Сроки функций, анимация появления, блики, пружинная анимация и обратные вызовы завершения относятся к композиции приложения.
+
+## Миграция
+
+Замените `ariaLabel` на нативный `aria-label`. Свойства `withGrowIn`, `withGlint`, `withSpringFill` и `onGrowInComplete` удалены. Реализуйте их внешний вид, сроки и обратные вызовы завершения в композиции приложения, используя [части Progress](/ru/ui/primitives/feedback/progress). Нативный `onAnimationEnd` остаётся доступным в корневом элементе.
+
+## Свойства
+
+<ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

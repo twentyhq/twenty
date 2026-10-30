@@ -3,19 +3,60 @@ title: Dialog
 description: Present a focused task above the current page.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## Overview
 
 Use `Dialog` for forms, details, and other tasks that open above the page. It manages focus, keyboard dismissal, outside clicks, and scrolling. Use [AlertDialog](/ui/primitives/surfaces/alert-dialog) when the user must explicitly respond to a decision.
 
 This API is for standalone Twenty UI and the Twenty host application. Front components must use the SDK's [`openCommandConfirmationModal`](/developers/extend/apps/layout/front-components#host-communication-api) instead of rendering `Dialog` or `AlertDialog` directly. Native browser dialogs and popovers are also prohibited in the front component renderer.
 
 <StoryEmbed
-  storyId="ui-surfaces-dialog--documentation"
+  storyId="ui-surfaces-dialog--display"
   title="Dialog example"
   height={440}
 />
+
+## Usage
+
+### Uncontrolled state
+
+`Root` owns visibility by default. Set `defaultOpen` for its initial state. Triggers, close controls, Escape, and outside clicks update that state.
+
+```tsx
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger render={<Button>Edit account</Button>} />
+    <Dialog.Portal>
+      <Dialog.Backdrop />
+      <Dialog.Viewport>
+        <Dialog.Popup>
+          <Dialog.Header>
+            <Dialog.Title>Edit account</Dialog.Title>
+            <Dialog.Description>Update the account details.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Field.Root name="company">
+              <Field.Label>Company name</Field.Label>
+              <Input defaultValue="Acme" />
+            </Field.Root>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
+            <Dialog.Close render={<Button>Save</Button>} />
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  </Dialog.Root>
+);
+```
 
 ## Anatomy
 
@@ -49,45 +90,13 @@ Dialog.Root
 
 Assemble `Portal`, `Backdrop`, `Viewport` and `Popup` explicitly. Each DOM part accepts its own native attributes, handlers, `className`, `style`, ref and `render` composition. A ref targets that part's rendered element. `Popup` does not create a portal, backdrop or viewport.
 
-## Uncontrolled state
-
-`Root` owns visibility by default. Set `defaultOpen` for its initial state. Triggers, close controls, Escape, and outside clicks update that state.
-
-```tsx
-import { Button } from 'twenty-ui/primitives/input';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
-
-export const AccountDialog = () => (
-  <Dialog.Root defaultOpen={false}>
-    <Dialog.Trigger render={<Button>Account details</Button>} />
-    <Dialog.Portal>
-      <Dialog.Backdrop />
-      <Dialog.Viewport>
-        <Dialog.Popup>
-          <Dialog.Header>
-            <Dialog.Title>Account details</Dialog.Title>
-            <Dialog.Description>
-              Review your account information.
-            </Dialog.Description>
-          </Dialog.Header>
-          <Dialog.Body>Acme</Dialog.Body>
-          <Dialog.Footer>
-            <Dialog.Close render={<Button>Close</Button>} />
-          </Dialog.Footer>
-        </Dialog.Popup>
-      </Dialog.Viewport>
-    </Dialog.Portal>
-  </Dialog.Root>
-);
-```
-
 ## Controlled state
 
 Pass `open` and `onOpenChange` when the application owns visibility. The callback receives the requested state and Base UI event details, including `reason`, `event`, `trigger` and `cancel()`. Update state to accept a change, or call `eventDetails.cancel()` to reject it. `onOpenChangeComplete` runs when the opening or closing animation finishes.
 
 ```tsx
 import { useState } from 'react';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 
 export const AccountDialog = () => {
@@ -95,20 +104,26 @@ export const AccountDialog = () => {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger render={<Button>Account details</Button>} />
+      <Dialog.Trigger render={<Button>Edit account</Button>} />
       <Dialog.Portal>
         <Dialog.Backdrop />
         <Dialog.Viewport>
           <Dialog.Popup>
             <Dialog.Header>
-              <Dialog.Title>Account details</Dialog.Title>
+              <Dialog.Title>Edit account</Dialog.Title>
               <Dialog.Description>
-                Review your account information.
+                Update the account details.
               </Dialog.Description>
             </Dialog.Header>
-            <Dialog.Body>Acme</Dialog.Body>
+            <Dialog.Body>
+              <Field.Root name="company">
+                <Field.Label>Company name</Field.Label>
+                <Input defaultValue="Acme" />
+              </Field.Root>
+            </Dialog.Body>
             <Dialog.Footer>
-              <Dialog.Close render={<Button>Close</Button>} />
+              <Dialog.Close render={<Button variant="outline">Close</Button>} />
+              <Dialog.Close render={<Button>Save</Button>} />
             </Dialog.Footer>
           </Dialog.Popup>
         </Dialog.Viewport>
@@ -138,7 +153,9 @@ To open one dialog from triggers outside `Root`, create a handle once with `Dial
 
 Imperative actions take effect only while the associated Root is mounted. Root's `actionsRef` also exposes `close()` and `unmount()` for explicit transition control. To control an external closing animation, call `eventDetails.preventUnmountOnClose()` in `onOpenChange`, then call the `unmount()` action when the animation finishes.
 
-`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`.
+`Title` uses `Heading` and defaults to an `h2` with large type, primary text color, centered alignment, and spacing-4 below it. Use `level` to change the heading level independently of `size`, or `color` to change its text color. Native `className`, `style`, refs, and `render` are forwarded to the heading. Keep a heading element when using `render`. `Description` is centered like `Title`; AlertDialog keeps both left-aligned.
+
+`Popup` has no padding. `Header`, `Body` and `Footer` provide the inset, so content placed directly in `Popup` sits against its edges.
 
 ## Focus, scrolling, and dismissal
 
@@ -182,3 +199,5 @@ Root, Trigger, Close, Title, Description, Header, Body, Footer and existing hand
 ## Props
 
 <DialogReference />
+
+<PageBanner illustration="layout" />

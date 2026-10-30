@@ -541,9 +541,9 @@ describe('ObjectRecordEventPublisher', () => {
     });
 
     it('should not evaluate the record share gate for a stream whose queries target another object', async () => {
-      const inheritedObjectMetadata: FlatObjectMetadata = {
+      const privateObjectMetadata: FlatObjectMetadata = {
         ...companyObjectMetadata,
-        readability: MetadataReadability.INHERITED,
+        readability: MetadataReadability.PRIVATE,
       };
       mockEventStreamService.getStreamsData.mockResolvedValue(
         new Map([
@@ -562,7 +562,7 @@ describe('ObjectRecordEventPublisher', () => {
       await service.publish({
         name: 'company.created',
         workspaceId,
-        objectMetadata: inheritedObjectMetadata,
+        objectMetadata: privateObjectMetadata,
         events: [createMockEvent()],
       } as WorkspaceEventBatch<never>);
 
@@ -572,49 +572,6 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
-    });
-
-    it('should not forward the child records captured with a deletion to the stream', async () => {
-      await service.publish({
-        name: 'company.deleted',
-        workspaceId,
-        objectMetadata: companyObjectMetadata,
-        events: [
-          createMockEvent({
-            properties: {
-              before: { id: 'record-1', name: 'Test Company' },
-              after: {
-                id: 'record-1',
-                name: 'Test Company',
-                deletedAt: '2026-09-15T00:00:00.000Z',
-              },
-              updatedFields: ['deletedAt'],
-              diff: {},
-              inheritedReadabilityChildRecords: {
-                noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
-              },
-            },
-          }),
-        ],
-      } as WorkspaceEventBatch<never>);
-
-      const publishCall = (
-        mockSubscriptionService.publishToEventStream as jest.Mock
-      ).mock.calls[0][0];
-
-      expect(
-        publishCall.payload.objectRecordEventsWithQueryIds[0].objectRecordEvent
-          .properties,
-      ).toEqual({
-        before: { id: 'record-1', name: 'Test Company' },
-        after: {
-          id: 'record-1',
-          name: 'Test Company',
-          deletedAt: '2026-09-15T00:00:00.000Z',
-        },
-        updatedFields: ['deletedAt'],
-        diff: {},
-      });
     });
 
     it('only publishes shared private records after metadata activation', async () => {

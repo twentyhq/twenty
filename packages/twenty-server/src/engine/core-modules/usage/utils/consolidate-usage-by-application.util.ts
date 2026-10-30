@@ -17,7 +17,7 @@ export const consolidateUsageByApplication = ({
   items,
   flatApplicationMaps,
 }: ConsolidateUsageByApplicationParams): UsageBreakdownItem[] => {
-  const creditsByKey = new Map<string, number>();
+  const itemsByKey = new Map<string, UsageBreakdownItem>();
 
   for (const item of items) {
     const application = flatApplicationMaps.byId[item.applicationId];
@@ -33,10 +33,21 @@ export const consolidateUsageByApplication = ({
       ? `${applicationName} · ${declaredCharge.label}`
       : applicationName;
 
-    creditsByKey.set(key, (creditsByKey.get(key) ?? 0) + item.creditsUsed);
+    const consolidatedItem = itemsByKey.get(key);
+
+    itemsByKey.set(key, {
+      key,
+      label: key,
+      creditsUsed: (consolidatedItem?.creditsUsed ?? 0) + item.creditsUsed,
+      userCreditsUsed:
+        (consolidatedItem?.userCreditsUsed ?? 0) + item.userCreditsUsed,
+      workspaceCreditsUsed:
+        (consolidatedItem?.workspaceCreditsUsed ?? 0) +
+        item.workspaceCreditsUsed,
+    });
   }
 
-  return [...creditsByKey.entries()]
-    .map(([key, creditsUsed]) => ({ key, label: key, creditsUsed }))
-    .sort((a, b) => b.creditsUsed - a.creditsUsed);
+  return [...itemsByKey.values()].sort(
+    (a, b) => b.workspaceCreditsUsed - a.workspaceCreditsUsed,
+  );
 };

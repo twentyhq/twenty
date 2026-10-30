@@ -1,4 +1,9 @@
 .button {
   --tw-button-font-weight: var(--t-font-weight-semi-bold);
   --tw-button-padding-inline: var(--t-spacing-3);
+
+  &[data-color='neutral'][data-variant='outline'],
+  &[data-elevated][data-color='neutral'][data-variant='outline'] {
+    --tw-button-color: var(--t-font-color-primary);
+  }
 }

@@ -1,132 +1,174 @@
 ---
 title: CLI
-description: yarn twenty commands for executing functions, streaming logs, managing app installations, and switching remotes.
-icon: "terminal"
+description: Sign in to a workspace, explore its data and build apps from your terminal with the twenty CLI.
 ---
 
-The `yarn twenty` CLI is your interface to everything app-related. Full command list:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| Command | What it does | Documented in |
-|---------|--------------|---------------|
-| `dev` | Watch source files and live-sync changes | [Quick Start](/developers/extend/apps/getting-started/quick-start) |
-| `plan` | Preview metadata changes without applying them | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
-| `apply` | Apply metadata changes after showing the plan | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) |
-| `pull` | **Experimental.** Write the installed application back to local source files | [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source) |
-| `dev:build` | Compile the app and generate the API client (`--tarball` to pack a `.tgz`) | [Publishing](/developers/extend/apps/operations/publishing) |
-| `dev:typecheck` | Run TypeScript type checking | [Testing](/developers/extend/apps/operations/testing) |
-| `dev:add` | Scaffold a new entity | [Scaffolding](/developers/extend/apps/getting-started/scaffolding) |
-| `dev:generate-client` | Regenerate the typed API client | this page |
-| `dev:function:exec` / `dev:function:logs` | Execute functions and stream their logs | this page |
-| `dev:translations-extract` | Extract translatable strings into `locales/` catalogs | [Translations](/developers/extend/apps/operations/translations) |
-| `dev:catalog-sync` | Trigger a marketplace catalog sync | [Publishing](/developers/extend/apps/operations/publishing#how-marketplace-discovery-works) |
-| `app:publish` / `app:install` / `app:uninstall` | Release lifecycle | [Publishing](/developers/extend/apps/operations/publishing) and this page |
-| `docker:*` | Manage the local Twenty server container | [Local Server](/developers/extend/apps/getting-started/local-server) |
-| `remote:*` | Manage server connections | this page |
+## Running the CLI
 
-Every command accepts `-r, --remote <name>` to target a specific remote instead of the default one.
+The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5+ or 26.5+**.
 
-## Executing functions (`yarn twenty dev:function:exec`)
-
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Run any command through `npx`, without installing anything:
 
 ```bash filename="Terminal"
-# Execute by function name
-yarn twenty dev:function:exec -n create-new-post-card
-
-# Execute by universalIdentifier
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-
-# Pass a JSON payload
-yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
-
-# Execute the install and uninstall hooks
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
-yarn twenty dev:function:exec --uninstall
+npx twenty@latest --version
 ```
 
-## Viewing function logs (`yarn twenty dev:function:logs`)
-
-Stream execution logs for your app's logic functions:
+Or install it once globally and call `twenty` directly:
 
 ```bash filename="Terminal"
-# Stream all function logs
-yarn twenty dev:function:logs
-
-# Filter by function name
-yarn twenty dev:function:logs -n create-new-post-card
-
-# Filter by universalIdentifier
-yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+npm install -g twenty
+twenty --version
 ```
 
-<Note>
-This is different from `yarn twenty docker:logs`, which shows the Docker container logs. `yarn twenty dev:function:logs` shows your app's function execution logs from the Twenty server.
-</Note>
+The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
 
-## Generating the typed client (`yarn twenty dev:generate-client`)
+| Command    | What it does                                                |
+| ---------- | ----------------------------------------------------------- |
+| `auth`     | Sign in, check and remove credentials                       |
+| `remote`   | List, select, rename and remove saved workspace connections |
+| `metadata` | Inspect objects and fields                                  |
+| `data`     | List and read records                                       |
+| `api`      | Send raw REST or GraphQL requests                           |
+| `open`     | Open the workspace in your browser                          |
+| `app`      | Create, build, sync, debug and uninstall apps               |
+| `doctor`   | Diagnose the CLI, app SDK and workspace connection          |
 
-Regenerate the typed API client (`twenty-client-sdk`) for your app from the active remote. The client is scoped to the application declared in your manifest, so the command reads the build output: run `yarn twenty dev:build` (or `yarn twenty dev`) first.
+Every command that talks to a workspace accepts `--remote <name>` to target a saved connection other than the default one, and `--json` for structured output.
+
+## Connecting to a workspace
+
+Sign in with your browser. `--use` makes this connection the default one:
 
 ```bash filename="Terminal"
-# Connect to the Twenty instance to generate the client from
-yarn twenty remote:add
-
-# Build the app so the manifest exists
-yarn twenty dev:build
-
-# Generate the typed client into node_modules/twenty-client-sdk
-yarn twenty dev:generate-client
+twenty auth login --url https://acme.twenty.com --use
+twenty auth status
 ```
 
-Then import the client in your code:
+Use your workspace's address, or the server's address for a local setup: `http://localhost:2020` for the [local Docker server](/developers/extend/apps/getting-started/local-server), `http://localhost:3000` for a source checkout. You can copy the exact command from **Settings > Developers > CLI**. Browser sign-in needs Twenty 2.42 or later.
 
-```typescript
-import { CoreApiClient } from 'twenty-client-sdk/core';
-```
-
-Re-run the command whenever your data model changes to refresh the generated types.
-
-<Note>
-The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:build` then `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
-</Note>
-
-## Uninstalling an app (`yarn twenty app:uninstall`)
-
-Remove your app from the active workspace:
+Keep several connections by naming them:
 
 ```bash filename="Terminal"
-yarn twenty app:uninstall
-
-# Skip the confirmation prompt
-yarn twenty app:uninstall --yes
+twenty auth login --url http://localhost:2020 --name local
+twenty remote list
+twenty remote use local
 ```
 
-## Managing remotes
-
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
+In CI or scripts, pipe an API key instead of signing in with the browser:
 
 ```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote:add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote:add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote:list
-
-# Set the active remote
-yarn twenty remote:use <name>
-
-# Check that the active remote's authentication is still valid
-yarn twenty remote:status
-
-# Remove a remote
-yarn twenty remote:remove <name>
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name ci
 ```
 
-Your credentials are stored in `~/.twenty/config.json`.
+You can also set `TWENTY_API_URL` and `TWENTY_API_KEY` for a single run without saving anything. Saved connections live in `~/.twenty/config.json`.
+
+## Exploring your data
+
+```bash filename="Terminal"
+# Objects and fields
+twenty metadata object list
+twenty metadata field list companies
+
+# Records
+twenty data list companies --limit 5
+twenty data list companies --filter 'employees[gte]:5000' --order-by 'employees[DescNullsLast]'
+twenty data get people <id>
+
+# Raw API requests
+twenty api rest '/rest/companies?limit=5'
+twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
+
+# Open the workspace, or a page inside it
+twenty open
+twenty open settings/developers
+```
+
+Object names are exact API names, singular or plural (`company` or `companies`). Raw API writes run without a confirmation step, and your permissions in the workspace still apply.
+
+## Building an app
+
+```bash filename="Terminal"
+npx twenty@latest app init my-app
+cd my-app
+yarn install
+npx twenty@latest app apply --create
+npx twenty@latest app dev
+```
+
+- `app init` writes a new project from the template. It does not install dependencies or contact a workspace.
+- `app apply --create` builds the app, registers it in the workspace, installs it and syncs its metadata.
+- `app dev` watches your source and syncs every successful build.
+
+Other app commands:
+
+| Command                       | What it does                                               |
+| ----------------------------- | ---------------------------------------------------------- |
+| `app add`                     | Scaffold an object, field, logic function or other entity  |
+| `app build` / `app typecheck` | Build or typecheck the app locally                         |
+| `app plan`                    | Preview the metadata changes an apply would make           |
+| `app apply`                   | Build, upload and sync the app                             |
+| `app generate-client`         | Regenerate the typed API client without syncing            |
+| `app pull`                    | Restore metadata, translations and stored dependencies    |
+| `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
+| `app publish`                 | Publish the app to npm or to a private Twenty registry     |
+| `app install`                 | Install an already registered app package in the workspace |
+| `app uninstall`               | Remove the app and everything it owns from the workspace   |
+
+Definitions missing from your source are deleted from the workspace by default. Pass `--no-prune` to keep them. The workspace Custom application keeps them unless you pass `--prune`. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery) for details.
+
+## Executing functions
+
+Run a deployed logic function without triggering it through a route, a cron or a database event. Sync your local changes with `app apply` or `app dev` first.
+
+```bash filename="Terminal"
+twenty app exec --name create-new-post-card
+twenty app exec --name create-new-post-card --payload '{"name": "Hello"}'
+
+# Install and uninstall hooks
+twenty app exec --post-install
+twenty app exec --pre-install
+twenty app exec --uninstall-hook
+```
+
+Executing functions requires a browser sign-in. API keys cannot execute them.
+
+## Watching function logs
+
+Stream the output of your app's logic functions as executions finish:
+
+```bash filename="Terminal"
+twenty app logs
+twenty app logs --name create-new-post-card
+```
+
+It only shows new executions, not past ones.
+
+## Uninstalling an app
+
+```bash filename="Terminal"
+twenty app uninstall
+twenty app uninstall --yes
+```
+
+This runs the app's uninstall hook and deletes everything it owns, including its objects, fields and their data. The app stays registered, so `twenty app apply` can install it again.
+
+## Diagnosing problems
+
+```bash filename="Terminal"
+twenty doctor
+twenty doctor --offline
+```
+
+`doctor` checks your Node version, which `twenty` binary is on your `PATH`, your saved connections and the app SDK, then reports what to fix.
+
+## Scripts and tests
+
+Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or import internal build code; read `data.manifest` from `twenty app build --json`.
+
+## Full reference
+
+The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
+
+<PageBanner illustration="card-page-cli" />

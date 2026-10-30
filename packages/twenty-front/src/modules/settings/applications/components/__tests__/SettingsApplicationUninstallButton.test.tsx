@@ -22,14 +22,20 @@ const DISABLED_REASON =
 
 const renderUninstallButton = ({
   disabledReason,
+  isUninstalling,
+  uninstallProgress,
 }: {
   disabledReason?: string;
+  isUninstalling?: boolean;
+  uninstallProgress?: number;
 } = {}) =>
   render(
     <I18nProvider i18n={i18n}>
       <SettingsApplicationUninstallButton
         onUninstall={jest.fn()}
         disabledReason={disabledReason}
+        isUninstalling={isUninstalling}
+        uninstallProgress={uninstallProgress}
       />
     </I18nProvider>,
   );
@@ -83,5 +89,29 @@ describe('SettingsApplicationUninstallButton', () => {
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       DISABLED_REASON,
     );
+  });
+
+  it('starts the uninstall progress at 10% before the first progress event', () => {
+    renderUninstallButton({ isUninstalling: true });
+
+    expect(
+      screen.getByRole('button', { name: 'Uninstalling (10%)' }),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the uninstall progress at 10% while the job reports less', () => {
+    renderUninstallButton({ isUninstalling: true, uninstallProgress: 0 });
+
+    expect(
+      screen.getByRole('button', { name: 'Uninstalling (10%)' }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows the uninstall progress once it passes 10%', () => {
+    renderUninstallButton({ isUninstalling: true, uninstallProgress: 60 });
+
+    expect(
+      screen.getByRole('button', { name: 'Uninstalling (60%)' }),
+    ).toBeInTheDocument();
   });
 });

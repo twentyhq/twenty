@@ -38,6 +38,7 @@ import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workf
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import {
   Background,
   ReactFlow,
@@ -68,6 +69,7 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { WORKFLOW_DIAGRAM_DEFAULT_NODE_DIMENSIONS } from 'twenty-shared/workflow';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import {
@@ -175,6 +177,7 @@ export const WorkflowDiagramCanvasBase = ({
     event: MouseEvent | React.MouseEvent<Element, MouseEvent>;
   }) => void;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const colorScheme = useThemeColorScheme();
   const allowPageScroll = useContext(WorkflowDiagramAllowPageScrollContext);
@@ -250,6 +253,7 @@ export const WorkflowDiagramCanvasBase = ({
         measured: emptyNodeMeasuredDimensions,
         data: {
           ...WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION.data,
+          name: t`Add an Action`,
           position: workflowInsertStepIds.position,
         },
       };
@@ -276,7 +280,7 @@ export const WorkflowDiagramCanvasBase = ({
     }
 
     return { nodes, edges };
-  }, [workflowDiagram, workflowInsertStepIds, emptyNodeMeasuredDimensions]);
+  }, [workflowDiagram, workflowInsertStepIds, emptyNodeMeasuredDimensions, t]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const { commandMenuContextApi } = useContext(CommandMenuContext);
@@ -288,7 +292,9 @@ export const WorkflowDiagramCanvasBase = ({
     setWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
-          'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+          doNotTranslate(
+            'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+          ),
         );
       }
 

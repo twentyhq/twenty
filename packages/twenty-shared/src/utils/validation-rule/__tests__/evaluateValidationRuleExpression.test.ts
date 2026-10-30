@@ -295,6 +295,7 @@ describe('evaluateValidationRuleExpression', () => {
     expect(evaluate('stage', { stage: 'WON' })).toEqual({
       status: 'errored',
       errorMessage: 'Expression did not return true or false',
+      errorCode: 'NON_BOOLEAN_RESULT',
     });
   });
 

@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -26,7 +27,7 @@ const buildMessage = (
   role: 'user' | 'assistant',
   createdAt: string,
   senderWorkspaceMemberId?: string,
-) => ({
+): ExtendedUIMessage => ({
   id,
   role,
   parts: [],
@@ -158,5 +159,37 @@ describe('agentChatFirstUnreadMessageIdSelector', () => {
         ],
       ),
     ).toBe('legacy');
+  });
+
+  it('skips a reply Ada chose not to send', () => {
+    expect(
+      getFirstUnreadMessageId(
+        {
+          threadId: THREAD_ID,
+          isUnread: true,
+          lastReadAt: '2026-10-01T10:00:00.000Z',
+        },
+        [
+          {
+            ...buildMessage('silent', 'assistant', '2026-10-01T10:05:00.000Z'),
+            parts: [
+              {
+                type: 'tool-no_reply',
+                toolCallId: 'call-1',
+                state: 'output-available',
+                input: {},
+                output: { success: true },
+              },
+            ],
+          },
+          buildMessage(
+            'teammate',
+            'user',
+            '2026-10-01T10:07:00.000Z',
+            TEAMMATE,
+          ),
+        ],
+      ),
+    ).toBe('teammate');
   });
 });

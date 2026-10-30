@@ -147,12 +147,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     input: CreateNavigationMenuItemInput;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const createdItems = await this.createMany({
       inputs: [input],
@@ -160,6 +162,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentId,
     });
 
     const created = createdItems[0];
@@ -180,12 +183,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     inputs: CreateNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -198,6 +203,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
+          agentId: authAgentId,
           inputUserWorkspaceId: input.userWorkspaceId,
         },
       );
@@ -213,6 +219,7 @@ export class NavigationMenuItemService {
       flatObjectMetadataMaps,
       flatViewMaps,
       flatPageLayoutMaps,
+      flatAgentChatChannelMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -221,6 +228,7 @@ export class NavigationMenuItemService {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatPageLayoutMaps',
+          'flatAgentChatChannelMaps',
         ],
       },
     );
@@ -259,6 +267,7 @@ export class NavigationMenuItemService {
           flatObjectMetadataMaps,
           flatViewMaps,
           flatPageLayoutMaps,
+          flatAgentChatChannelMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -319,12 +328,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     input: UpdateNavigationMenuItemInput & { id: string };
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const { id, ...update } = input;
 
@@ -334,6 +345,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentId,
     });
 
     const updated = updatedItems[0];
@@ -354,12 +366,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     inputs: UpdateOneNavigationMenuItemInput[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (inputs.length === 0) {
       return [];
@@ -401,6 +415,7 @@ export class NavigationMenuItemService {
             workspaceId,
             apiKeyId: authApiKeyId,
             applicationId: authApplicationId,
+            agentId: authAgentId,
             existingUserWorkspaceId: existingNavigationMenuItem.userWorkspaceId,
           },
         );
@@ -465,12 +480,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     id: string;
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO> {
     const deletedItems = await this.deleteMany({
       ids: [id],
@@ -478,6 +495,7 @@ export class NavigationMenuItemService {
       authUserWorkspaceId,
       authApiKeyId,
       authApplicationId,
+      authAgentId,
     });
 
     const deleted = deletedItems[0];
@@ -498,12 +516,14 @@ export class NavigationMenuItemService {
     authUserWorkspaceId,
     authApiKeyId,
     authApplicationId,
+    authAgentId,
   }: {
     ids: string[];
     workspaceId: string;
     authUserWorkspaceId?: string;
     authApiKeyId?: string;
     authApplicationId?: string;
+    authAgentId?: string;
   }): Promise<NavigationMenuItemDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -552,6 +572,7 @@ export class NavigationMenuItemService {
           workspaceId,
           apiKeyId: authApiKeyId,
           applicationId: authApplicationId,
+          agentId: authAgentId,
           existingUserWorkspaceId: flatNavigationMenuItemRoot.userWorkspaceId,
         },
       );

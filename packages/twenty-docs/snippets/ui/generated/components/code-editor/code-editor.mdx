@@ -15,28 +15,64 @@
   Grows the editor to fit its content instead of using `height`. Ignored when `resizable` is set.
 </ParamField>
 
+<ParamField body="beforeMount" type="BeforeMount">
+  Called with Monaco before editor creation, after the Twenty theme has been defined. Use it to register custom themes or languages.
+</ParamField>
+
+<ParamField body="className" type="string">
+  Class applied to the Monaco editor-container div.
+</ParamField>
+
+<ParamField body="containerProps" type="Omit&lt;Omit&lt;DetailedHTMLProps&lt;HTMLAttributes&lt;HTMLDivElement&gt;, HTMLDivElement&gt;, &quot;ref&quot;&gt;, &quot;children&quot;&gt;">
+  Native props, className and style for the outer Twenty group div. Its default `display: contents` preserves the Monaco section's parent sizing and flex layout without creating a layout box. Background, border, padding and dimensions require overriding `display`. Prefer `wrapperProps` for section layout styles. Its keyboard handler runs before focused editor keystrokes stop propagating.
+</ParamField>
+
 <ParamField body="contentPadding" type="&quot;comfortable&quot; | &quot;default&quot;" default="default">
-  `default` pads the top and bottom of the content. `comfortable` also widens the gap between line numbers and code.
+  `default` supplies top and bottom padding. `comfortable` also widens the gap between line numbers and code. Explicit Monaco options override these defaults.
+</ParamField>
+
+<ParamField body="defaultLanguage" type="string">
+  Initial Monaco language for a newly created model.
+</ParamField>
+
+<ParamField body="defaultPath" type="string">
+  Initial model URI, used when `path` is omitted.
+</ParamField>
+
+<ParamField body="defaultValue" type="string">
+  Initial content for a model created by Monaco React.
 </ParamField>
 
 <ParamField body="height" type="string | number" default="450">
-  Editor height in pixels or as a CSS length. With `resizable`, a numeric height sets the initial height.
+  Editor height in pixels or as a CSS length, defaulting to 450px. Resizing starts from this rendered height and resets when this prop changes. Auto-height uses it until content is measured.
 </ParamField>
 
 <ParamField body="isLoading" type="boolean" default="false">
   Shows a loader at the editor height instead of the editor. A loader also shows while Monaco loads.
 </ParamField>
 
+<ParamField body="keepCurrentModel" type="boolean" default="false">
+  Keeps the current model when the editor unmounts. Defaults to false. The caller owns disposal of retained models.
+</ParamField>
+
 <ParamField body="language" type="string">
   Monaco language identifier for highlighting and language services, such as `json` or `typescript`.
 </ParamField>
 
-<ParamField body="onChange" type="((value: string) =&gt; void)">
-  Called with the full content whenever it changes.
+<ParamField body="line" type="number">
+  Line revealed when the editor mounts or this prop changes.
+</ParamField>
+
+<ParamField body="loading" type="ReactNode" default="&lt;Loader /&gt;">
+  Content shown while Monaco loads or `isLoading` is true. Defaults to the Twenty Loader.
+</ParamField>
+
+<ParamField body="onChange" type="OnChange">
+  Monaco React callback with the full content (string or undefined) and the original IModelContentChangedEvent.
 </ParamField>
 
 <ParamField body="onMount" type="OnMount">
-  Called when the editor is ready, with the editor instance and the Monaco namespace. The Twenty theme is already applied.
+  Called when the editor is ready, with the editor instance and the Monaco namespace. The selected theme is already applied.
 </ParamField>
 
 <ParamField body="onValidate" type="OnValidate">
@@ -44,19 +80,39 @@
 </ParamField>
 
 <ParamField body="options" type="IStandaloneEditorConstructionOptions">
-  Monaco editor options merged over the Twenty defaults. `padding` is ignored; use `contentPadding` instead.
+  Monaco editor options merged over Twenty defaults. Explicit values, including padding, replace the corresponding defaults. The `theme` prop takes precedence over `options.theme`.
+</ParamField>
+
+<ParamField body="overrideServices" type="IEditorOverrideServices">
+  Monaco services passed through when the editor is created.
+</ParamField>
+
+<ParamField body="path" type="string">
+  URI of the current model. Changing it selects or creates a model using Monaco React behavior.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the outer Twenty group div, which has no measurable layout box with its default `display: contents`. Use `wrapperProps` for a measurable section ref or `onMount` for the Monaco editor instance.
 </ParamField>
 
 <ParamField body="resizable" type="boolean" default="false">
-  Adds a handle below the editor to drag its height.
+  Adds a height resize handle after Monaco mounts, bounded from 50px to 500px. Takes precedence over autoHeight. A changed height prop resets the resized height within these bounds.
 </ParamField>
 
 <ParamField body="resizeLabel" type="string" default="Resize editor">
   Accessible name of the resize handle. Pass a localized label when `resizable` is enabled.
 </ParamField>
 
+<ParamField body="saveViewState" type="boolean" default="true">
+  Preserves Monaco React view state between model changes. Defaults to true.
+</ParamField>
+
 <ParamField body="setMarkers" type="((value: string) =&gt; IMarkerData[])">
-  Returns custom validation markers for the content. Runs when the editor mounts and after every change, replacing the previous custom markers.
+  Returns custom validation markers for the current model content. Runs on mount, model selection and content changes, including controlled updates.
+</ParamField>
+
+<ParamField body="theme" type="string" default="Twenty theme">
+  Monaco theme name. Takes precedence over `options.theme`, which takes precedence over the Twenty theme. Define custom themes in `beforeMount`.
 </ParamField>
 
 <ParamField body="transparentBackground" type="boolean">
@@ -69,4 +125,12 @@
 
 <ParamField body="variant" type="&quot;borderless&quot; | &quot;default&quot; | &quot;with-header&quot;" default="default">
   Border treatment: `default` draws a rounded border, `with-header` attaches the editor below a `CodeEditorHeader`, and `borderless` removes the border.
+</ParamField>
+
+<ParamField body="width" type="string | number" default="100%">
+  Width of the Monaco React section, in pixels or as a CSS length.
+</ParamField>
+
+<ParamField body="wrapperProps" type="object">
+  Native props passed unchanged to the Monaco React section around the editor and Monaco React loading content. Use this section for layout styles and a measurable native ref. Not applied to the separate Twenty loader during initial Monaco configuration or `isLoading`. Native styles can override the section sizing.
 </ParamField>

@@ -9,17 +9,20 @@ export class AdminPanelWorkspaceUsageDTO {
   periodEnd: Date;
 
   @Field(() => Float)
-  usedCredits: number;
+  workspaceCreditsUsed: number;
 
   @Field(() => Float)
-  grantedCredits: number;
+  workspaceCreditsGranted: number;
 
   @Field(() => Float)
-  rolloverCredits: number;
+  workspaceCreditsExtraGranted: number;
 
   @Field(() => Float)
-  totalGrantedCredits: number;
+  workspaceCreditsTotalGranted: number;
 
   @Field(() => Float)
-  remainingCredits: number;
+  workspaceCreditsRemaining: number;
+
+  @Field(() => Float)
+  userCreditsUsed: number;
 }

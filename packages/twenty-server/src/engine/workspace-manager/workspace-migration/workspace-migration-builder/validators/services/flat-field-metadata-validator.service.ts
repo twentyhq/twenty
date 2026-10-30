@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -13,6 +13,7 @@ import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modul
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
@@ -243,6 +244,12 @@ export class FlatFieldMetadataValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...validateFlatFieldMetadataDisabledFieldPermissionActions(
+        flatFieldMetadataToValidate,
+      ),
+    );
+
     const fieldMetadataTypeValidationErrors =
       this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
@@ -267,6 +274,7 @@ export class FlatFieldMetadataValidatorService {
   }
 
   validateFlatFieldMetadataDeletion({
+    remainingFlatEntityMapsToValidate,
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
@@ -315,6 +323,34 @@ export class FlatFieldMetadataValidatorService {
     const parentObjectMetadataHasBeenDeleted = !isDefined(
       relatedFlatObjectMetadata,
     );
+
+    if (
+      !buildOptions.isSystemBuild &&
+      isDefined(relatedFlatObjectMetadata) &&
+      isMorphRelationHead(flatFieldMetadataToDelete)
+    ) {
+      const hasRemainingTargets =
+        relatedFlatObjectMetadata.fieldUniversalIdentifiers.some(
+          (fieldUniversalIdentifier) =>
+            fieldUniversalIdentifier !== universalIdentifier &&
+            optimisticFlatFieldMetadataMaps.byUniversalIdentifier[
+              fieldUniversalIdentifier
+            ]?.morphId === flatFieldMetadataToDelete.morphId &&
+            !isDefined(
+              remainingFlatEntityMapsToValidate.byUniversalIdentifier[
+                fieldUniversalIdentifier
+              ],
+            ),
+        );
+
+      if (hasRemainingTargets) {
+        validationResult.errors.push({
+          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+          message: 'Delete the morph field together with its targets',
+          userFriendlyMessage: msg`Delete the relation field together with its targets`,
+        });
+      }
+    }
 
     if (
       !buildOptions.isSystemBuild &&
@@ -452,6 +488,9 @@ export class FlatFieldMetadataValidatorService {
         name: flatFieldMetadataToValidate.name,
         buildOptions,
       }),
+      ...validateFlatFieldMetadataDisabledFieldPermissionActions(
+        flatFieldMetadataToValidate,
+      ),
     );
 
     validationResult.errors.push(

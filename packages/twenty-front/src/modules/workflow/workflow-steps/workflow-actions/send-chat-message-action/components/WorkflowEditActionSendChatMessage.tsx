@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -140,7 +141,7 @@ export const WorkflowEditActionSendChatMessage = ({
         <WorkflowConversationFields
           dropdownId={`workflow-send-chat-message-conversation-${action.id}`}
           conversation={formData.conversation}
-          defaultScope="RUN"
+          defaultScope={doNotTranslate('RUN')}
           readonly={actionOptions.readonly}
           onChange={handleConversationChange}
         />

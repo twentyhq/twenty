@@ -44,7 +44,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
         {
           fieldMetadataId: 'f1',
           value: 'test',
-          type: 'TEXT',
           operand: ViewFilterOperand.CONTAINS,
           recordFilterGroupId: 'group1',
         },
@@ -69,7 +68,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
         {
           fieldMetadataId: 'f1',
           value: 'test',
-          type: 'TEXT',
           operand: ViewFilterOperand.CONTAINS,
           recordFilterGroupId: 'group1',
         },
@@ -94,7 +92,6 @@ describe('turnRecordFilterGroupsIntoGqlOperationFilter', () => {
         {
           fieldMetadataId: 'f1',
           value: 'test',
-          type: 'TEXT',
           operand: ViewFilterOperand.CONTAINS,
           recordFilterGroupId: 'subgroup1',
         },

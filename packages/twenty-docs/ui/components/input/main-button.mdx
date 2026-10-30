@@ -3,25 +3,47 @@ title: MainButton
 description: Present prominent actions with shared design defaults.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## Overview
 
 Use the shared `MainButton` component for a prominent action. It composes
 [Button](/ui/primitives/input/button) with a solid surface, elevation, semibold
 text, and 12px horizontal padding. Its default color is neutral and size is `md`.
 
 <StoryEmbed
-  storyId="ui-components-mainbutton--default"
+  storyId="ui-components-mainbutton--display"
   title="MainButton example"
-  height={240}
+  height={110}
+/>
+
+## Usage
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveAction = () => <MainButton>Save changes</MainButton>;
+```
+
+## Visual options
+
+Compare solid and outline appearances across default and small sizes, plus disabled and loading states.
+
+<StoryEmbed
+  storyId="ui-components-mainbutton--catalog"
+  title="Main button variants and states"
+  height={230}
 />
 
 ## State ownership
 
 `MainButton` uses Button's state model and adds no state of its own. Your application supplies `loading` and `disabled`; there are no controlled and uncontrolled selection modes. See [Button's state ownership example](/ui/primitives/input/button#state-ownership) for managing an asynchronous action.
 
-## Usage
+## Forms and width
 
 ```tsx
 import { MainButton } from 'twenty-ui/components/input';
@@ -36,6 +58,9 @@ export const SaveProfile = () => (
 Width follows the content unless you set `fullWidth` or provide application
 layout styling. Override `variant`, `color`, `size`, and `elevated` as needed;
 for example, use `variant="outline"` and `elevated={false}` for an outlined action.
+
+With `color="inherit"`, choose a non-solid variant explicitly or inherit one from ButtonGroup. The standalone solid default with inherited color throws a runtime error.
+
 Keep page layout in your application's styling.
 
 ## Interaction
@@ -56,3 +81,5 @@ to the root.
 ## Props
 
 <MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

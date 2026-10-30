@@ -29,7 +29,7 @@ describe('Validation rules should follow the fields they read', () => {
 
   beforeAll(async () => {
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
       value: true,
       expectToFail: false,
     });

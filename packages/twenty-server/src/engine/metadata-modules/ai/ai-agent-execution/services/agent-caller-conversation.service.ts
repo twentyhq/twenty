@@ -22,7 +22,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
 const MAX_ASK_ATTEMPTS = 10;
 
@@ -125,11 +124,12 @@ export class AgentCallerConversationService {
     const isKeyedConversationUnavailable =
       !isDefined(keyedConversation) ||
       isDefined(keyedConversation.thread.deletedAt) ||
-      isDefined(keyedConversation.thread.pendingQuestionMessageId) ||
-      (await this.agentRunSuspensionService.isConversationWaiting({
-        workspaceId,
-        threadId: keyedConversation.thread.id,
-      }));
+      (
+        await this.agentRunSuspensionService.findConversationWait({
+          workspaceId,
+          thread: keyedConversation.thread,
+        })
+      ).isWaiting;
     const { thread, isCreated } = isKeyedConversationUnavailable
       ? await openThreadUnderKey(fallbackThreadKey)
       : keyedConversation;
@@ -275,7 +275,6 @@ export class AgentCallerConversationService {
 
     const toolContext = {
       workspaceId,
-      roleId: getRoleIdsFromRolePermissionConfig(rolePermissionConfig)[0] ?? '',
       rolePermissionConfig,
       authContext,
       application,

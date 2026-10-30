@@ -1,0 +1,85 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["eslint-plugin-lingui"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": [
+    "**/__tests__/**",
+    "**/__stories__/**",
+    "**/testing/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "src/theme/**",
+    "src/icon/constants/TwentyIconDictionary.ts",
+    "src/icon/internal/generateTwentyIconDictionaryMarkdown.ts"
+  ],
+  "rules": {
+    "lingui/no-unlocalized-strings": [
+      "error",
+      {
+        "ignore": [
+          "^\\s*$",
+          "^\\d+(\\.\\d+)?(px|rem|em|%|vh|vw|s|ms)?$",
+          "^#[0-9a-fA-F]{3,8}$",
+          "^https?://",
+          "^Icon[A-Z]\\w*$"
+        ],
+        "ignoreNames": [
+          "className",
+          "data-testid",
+          "testId",
+          "id",
+          "key",
+          "type",
+          "icon",
+          "iconName",
+          "src",
+          "href",
+          "path",
+          "target",
+          "rel",
+          "htmlFor",
+          "width",
+          "height",
+          "fill",
+          "stroke",
+          "viewBox",
+          "d",
+          "transform",
+          "color",
+          "variant",
+          "size",
+          "position",
+          "align",
+          "justify",
+          "direction",
+          "orientation",
+          "status",
+          "state",
+          "mode",
+          "css",
+          "query",
+          "mutation",
+          "fragment",
+          "displayName",
+          "aria-keyshortcuts",
+          "gridTemplateColumns",
+          "maxWidth",
+          "border"
+        ],
+        "ignoreFunctions": [
+          "console.*",
+          "doNotTranslate",
+          "require",
+          "styled",
+          "css",
+          "keyframes",
+          "createStyledDiv"
+        ]
+      }
+    ]
+  }
+}

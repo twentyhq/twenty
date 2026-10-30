@@ -7,15 +7,15 @@ import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfo
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getAgentIdFromStep } from '@/workflow/utils/getAgentIdFromStep';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { useUpdateAgentLabel } from '@/workflow/workflow-steps/hooks/useUpdateAgentLabel';
-import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
+import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
@@ -59,12 +59,8 @@ export const SidePanelWorkflowStepInfo = ({
   const instanceId = getWorkflowVisualizerComponentInstanceId({
     recordId: workflowId,
   });
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow(instanceId);
-
-  const { updateWorkflowVersionStep } =
-    useUpdateWorkflowVersionStep(instanceId);
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger(instanceId);
+  const { updateStep } = useUpdateStep(instanceId);
+  const { updateTrigger } = useUpdateTrigger(instanceId);
 
   const workflowVersionId = workflowWithCurrentVersion?.currentVersion?.id;
 
@@ -110,10 +106,24 @@ export const SidePanelWorkflowStepInfo = ({
         : (stepDefinition.definition.name ?? t`Action`)
       : '';
 
+  const displayedStepName =
+    isReadonly &&
+    isDefined(stepDefinition) &&
+    isDefined(stepDefinition.definition) &&
+    isDefined(stepDefinition.definition.name)
+      ? getWorkflowStepDisplayName({
+          name: stepDefinition.definition.name,
+          type: stepDefinition.definition.type,
+        })
+      : stepName;
+
   const [editedTitle, setEditedTitle] = useState<string | null>(null);
 
   const title =
-    editedTitle ?? (isDefined(stepName) && stepName !== '' ? stepName : '');
+    editedTitle ??
+    (isDefined(displayedStepName) && displayedStepName !== ''
+      ? displayedStepName
+      : '');
 
   const handleTitleChange = (newTitle: string) => {
     setEditedTitle(newTitle);
@@ -157,20 +167,15 @@ export const SidePanelWorkflowStepInfo = ({
       pageIcon: Icon,
     });
 
-    const targetWorkflowVersionId = await getUpdatableWorkflowVersion();
-
     if (isTrigger) {
-      await updateTrigger({
+      updateTrigger({
         ...stepDefinition.definition,
         name: title,
       } as typeof stepDefinition.definition);
     } else {
-      await updateWorkflowVersionStep({
-        workflowVersionId: targetWorkflowVersionId,
-        step: {
-          ...stepDefinition.definition,
-          name: title,
-        },
+      updateStep({
+        ...stepDefinition.definition,
+        name: title,
       });
 
       if (isDefined(agentId)) {

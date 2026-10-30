@@ -42,6 +42,7 @@ import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowReq
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
+import { t } from '@lingui/core/macro';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -264,7 +265,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         const error =
           err instanceof Error
             ? err
-            : new Error('Failed to fetch client config');
+            : new Error(t`Failed to fetch client config`);
         setClientConfigApiStatus((prev) => ({
           ...prev,
           isLoading: false,

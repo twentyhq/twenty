@@ -1,7 +1,8 @@
 import { RECORD_TABLE_HORIZONTAL_SCROLL_SHADOW_VISIBILITY_CSS_VARIABLE_NAME } from '@/object-record/record-table/constants/RecordTableHorizontalScrollShadowVisibilityCssVariableName';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
-export const HorizontalScrollBoxShadowCSS = `
+export const HorizontalScrollBoxShadowCSS = doNotTranslate(`
   &::after {
     content: '';
     position: absolute;
@@ -18,4 +19,4 @@ export const HorizontalScrollBoxShadowCSS = `
       hidden
     );
   }
-`;
+`);

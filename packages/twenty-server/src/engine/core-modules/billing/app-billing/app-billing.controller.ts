@@ -19,16 +19,18 @@ import { Request } from 'express';
 import {
   type CreditAvailability,
   type CreditUnavailableReason,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppBillingService } from 'src/engine/core-modules/billing/app-billing/app-billing.service';
 import { ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type SubscriptionInactiveReason } from 'src/engine/core-modules/billing/types/subscription-inactive-reason.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -37,13 +39,12 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 
-const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
-  SubscriptionInactiveReason | 'NO_CREDITS',
+const CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON: Record<
+  SubscriptionInactiveReason,
   CreditUnavailableReason
 > = {
   WORKSPACE_SUSPENDED: 'workspace-suspended',
   NO_SUBSCRIPTION: 'no-subscription',
-  NO_CREDITS: 'no-credits',
 };
 
 @Controller(`${ApiPath.App}/billing`)
@@ -60,7 +61,7 @@ const CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON: Record<
 export class AppBillingController {
   constructor(
     private readonly appBillingService: AppBillingService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly throttlerService: ThrottlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -81,20 +82,30 @@ export class AppBillingController {
       APP_BILLING_CHARGE_THROTTLE_TTL_MS,
     );
 
-    const creditAvailability =
-      await this.billingUsageService.getCreditAvailability(
-        request.workspace.id,
-      );
+    const usageRefusal = await this.usageQuotaAdmissionService.findUsageRefusal(
+      {
+        workspaceId: request.workspace.id,
+        resourceType: UsageResourceType.APP,
+        operationType: UsageOperationType.ALL,
+        spenders: { applicationId: request.application.id },
+      },
+    );
 
-    return creditAvailability.hasAvailableCredits
-      ? { hasAvailableCredits: true }
-      : {
-          hasAvailableCredits: false,
-          reason:
-            CREDIT_UNAVAILABLE_REASON_BY_SERVER_REASON[
-              creditAvailability.reason
-            ],
-        };
+    if (!isDefined(usageRefusal)) {
+      return { hasAvailableCredits: true };
+    }
+
+    if (usageRefusal.kind === 'subscriptionInactive') {
+      return {
+        hasAvailableCredits: false,
+        reason:
+          CREDIT_UNAVAILABLE_REASON_BY_SUBSCRIPTION_INACTIVE_REASON[
+            usageRefusal.reason
+          ],
+      };
+    }
+
+    return { hasAvailableCredits: false, reason: 'no-credits' };
   }
 
   @Post('charge')

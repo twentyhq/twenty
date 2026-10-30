@@ -165,6 +165,7 @@ export class WorkspaceInvitationResolver {
           workspaceId: workspace.id,
           setting: PermissionFlagType.ROLES,
           applicationId: application?.id,
+          agentId: undefined,
         });
 
       if (!canAssignRoles) {

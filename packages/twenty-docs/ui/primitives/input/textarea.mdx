@@ -3,19 +3,24 @@ title: Textarea
 description: Enter multiple lines of text with optional automatic resizing.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## Overview
 
 Use `Textarea` for notes, descriptions, and other multiline values. It integrates with [Field](/ui/primitives/input/field) for labels and validation.
 
 <StoryEmbed
-  storyId="ui-input-textarea--default"
+  storyId="ui-input-textarea--display"
   title="Textarea example"
-  height={240}
+  height={190}
 />
 
-## Uncontrolled state
+## Usage
+
+### Uncontrolled state
 
 Use `defaultValue` to set the initial notes. The textarea owns subsequent changes.
 
@@ -32,6 +37,33 @@ export const NotesField = () => (
 ```
 
 Native textarea attributes such as `rows`, `maxLength`, `required`, and `readOnly` are available. `size` accepts `sm` or `md` and defaults to `md`.
+
+## Visual choices
+
+Compare the two sizes in default, focused, invalid, and disabled states. Automatic resizing is demonstrated separately below.
+
+<StoryEmbed
+  storyId="ui-input-textarea--catalog"
+  title="Visual choices for textarea"
+  height={440}
+/>
+
+## Plain appearance
+
+Use `variant="plain"` for multiline text inside an existing surface. It removes the fill, border, rounded corners and all padding while keeping the shared text, placeholder and disabled styling. The blue outline follows the browser's native `:focus-visible` behavior. For text controls this can include pointer focus and autofocus as well as keyboard focus. Invalid state uses a danger outline without changing layout.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+The parent supplies spacing. `rows`, `maxRows` and automatic sizing still control the content height. The row limit excludes padding and borders in the plain appearance. Changing `variant` while automatic sizing is enabled measures the new layout.
 
 ## Controlled state
 
@@ -84,7 +116,7 @@ export const DescriptionField = () => {
 };
 ```
 
-`autoResize` measures the committed value after controlled updates and measures uncontrolled edits directly. Rejected controlled edits do not change the height. It also updates after native form resets, `rows`, `size`, `maxRows`, and available width changes. Use `maxRows` to cap growth and scroll longer content.
+`autoResize` measures the committed value after controlled updates and measures uncontrolled edits directly. Rejected controlled edits do not change the height. It also updates after native form resets, `rows`, `size`, `variant`, `maxRows`, and available width changes. Use `maxRows` to cap growth and scroll longer content.
 
 Automatic sizing owns inline `blockSize` while enabled. Turning it off restores the current `style.blockSize`, or clears the automatic size if none is supplied. With automatic sizing off, `rows` and native styles control height. Manual resizing is disabled by default; set `style={{ resize: 'vertical' }}` when callers should resize the control themselves.
 
@@ -101,3 +133,5 @@ Native `name`, `form`, `required`, `readOnly`, `disabled`, submission, and reset
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <TextareaReference />
+
+<PageBanner illustration="page-cover-input" />

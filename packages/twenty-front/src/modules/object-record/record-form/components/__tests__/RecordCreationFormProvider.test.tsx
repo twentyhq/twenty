@@ -129,6 +129,45 @@ it('resolves with the error the server rejected the draft with and keeps the for
   expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
 });
 
+it('creates the record and keeps the request open when asked to keep the form open', async () => {
+  const { result, store } = setup();
+  const createdRecord = { id: 'created-company', __typename: 'Company' };
+  const createRecord = jest.fn(() => Promise.resolve(createdRecord));
+  let requestResult: unknown = 'pending';
+  act(() => {
+    void result.current
+      .requestRecordCreation({
+        objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+        createRecord,
+      })
+      .then((record) => {
+        requestResult = record;
+      });
+  });
+  const [formPage] = store.get(sidePanelNavigationStackState.atom);
+
+  await act(async () => {
+    await result.current.settleRecordCreationDraft({
+      requestId: formPage.pageId,
+      draftRecord: { name: 'First' },
+      shouldKeepOpen: true,
+    });
+  });
+
+  await act(async () => {
+    await result.current.settleRecordCreationDraft({
+      requestId: formPage.pageId,
+      draftRecord: { name: 'Second' },
+      shouldKeepOpen: true,
+    });
+  });
+
+  expect(createRecord).toHaveBeenNthCalledWith(1, { name: 'First' });
+  expect(createRecord).toHaveBeenNthCalledWith(2, { name: 'Second' });
+  expect(requestResult).toBe('pending');
+  expect(store.get(sidePanelNavigationStackState.atom)).toEqual([formPage]);
+});
+
 it('keeps the open creation form of the same object instead of stacking another', async () => {
   const { result, store } = setup();
   act(() => {

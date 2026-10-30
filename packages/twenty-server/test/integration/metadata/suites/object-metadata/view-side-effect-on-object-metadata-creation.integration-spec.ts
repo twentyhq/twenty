@@ -5,8 +5,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -115,9 +114,6 @@ describe('View side effect on object creation', () => {
       type: ViewType.TABLE,
     });
 
-    expect(createdViews.length).toBe(2);
-    expect(findInitialViews(createdViews)).toHaveLength(0);
-
     const {
       data: { getViewFields: indexViewFields },
     } = await findViewFields({
@@ -128,55 +124,40 @@ describe('View side effect on object creation', () => {
     expect(indexViewFields.length).toBe(5);
   });
 
-  it('should expose the initial view and its view fields once the feature flag is enabled', async () => {
+  it('should expose the initial view and its view fields', async () => {
     const createOneObject = await createDishesObject();
 
     createdObjectMetadataId = createOneObject.id;
 
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-      value: true,
+    const {
+      data: { getViews: createdViews },
+    } = await findViews({
+      objectMetadataId: createdObjectMetadataId,
       expectToFail: false,
     });
 
-    try {
-      const {
-        data: { getViews: createdViews },
-      } = await findViews({
-        objectMetadataId: createdObjectMetadataId,
-        expectToFail: false,
-      });
+    const [initialView, ...extraInitialViews] = findInitialViews(createdViews);
 
-      const [initialView, ...extraInitialViews] =
-        findInitialViews(createdViews);
-
-      if (!isDefined(initialView)) {
-        throw new Error('expected a initial user-owned view to be exposed');
-      }
-
-      expect(extraInitialViews).toHaveLength(0);
-
-      expect(initialView).toMatchObject<Partial<FlatView>>({
-        objectMetadataId: createdObjectMetadataId,
-        type: ViewType.TABLE,
-        name: 'All Dishes I love',
-      });
-
-      const {
-        data: { getViewFields: initialViewFields },
-      } = await findViewFields({
-        viewId: initialView.id,
-        expectToFail: false,
-      });
-
-      expect(initialViewFields.length).toBe(5);
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
+    if (!isDefined(initialView)) {
+      throw new Error('expected a initial user-owned view to be exposed');
     }
+
+    expect(extraInitialViews).toHaveLength(0);
+
+    expect(initialView).toMatchObject<Partial<FlatView>>({
+      objectMetadataId: createdObjectMetadataId,
+      type: ViewType.TABLE,
+      name: 'All Dishes I love',
+    });
+
+    const {
+      data: { getViewFields: initialViewFields },
+    } = await findViewFields({
+      viewId: initialView.id,
+      expectToFail: false,
+    });
+
+    expect(initialViewFields.length).toBe(5);
   });
 
   it('should keep the same INDEX view when the object is renamed (lossless, deterministic identifier)', async () => {

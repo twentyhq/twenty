@@ -1,0 +1,2 @@
+export const AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR =
+  'agentChatAssistant';

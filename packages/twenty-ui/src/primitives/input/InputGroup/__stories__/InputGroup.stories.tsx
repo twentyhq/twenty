@@ -1,5 +1,8 @@
+import { Text } from '@ui/primitives/typography';
+import { type ComponentProps } from 'react';
+import { Field } from '@ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -8,7 +11,6 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import { IconSearch } from '@ui/icon';
 import { Input } from '@ui/primitives/input/Input/Input';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { InputGroup } from '@ui/primitives/input/InputGroup/InputGroup';
@@ -23,16 +25,28 @@ export default meta;
 
 type Story = StoryObj<typeof InputGroup>;
 
-const SEARCH_ICON = <IconSearch size={16} />;
-
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 240 } },
-  args: {
-    startElement: SEARCH_ICON,
-    children: <Input placeholder="Search" />,
-  },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 320 } },
+  render: (args) => <InputGroupDisplayExample {...args} />,
 };
+
+const InputGroupDisplayExample = (props: ComponentProps<typeof InputGroup>) => (
+  <Field.Root name="website">
+    <Field.Label>Website</Field.Label>
+    <InputGroup
+      startElement={
+        <Text render={<span />} aria-hidden>
+          https://
+        </Text>
+      }
+      {...props}
+    >
+      <Input placeholder="example.com" />
+    </InputGroup>
+    <Field.Description>Enter the domain without https://.</Field.Description>
+  </Field.Root>
+);
 
 export const WithEndElement: Story = {
   decorators: [ComponentDecorator],
@@ -115,12 +129,12 @@ type InputGroupCatalogAdornment = 'start' | 'end' | 'both';
 const getInputGroupCatalogAdornmentProps = (
   adornment: InputGroupCatalogAdornment,
 ) => ({
-  startElement: adornment === 'end' ? undefined : SEARCH_ICON,
-  endElement: adornment === 'start' ? undefined : 'USD',
+  startElement: adornment === 'end' ? undefined : 'https://',
+  endElement: adornment === 'start' ? undefined : '.com',
 });
 
 export const Catalog: CatalogStory<Story, typeof InputGroup> = {
-  args: { children: <Input placeholder="Search" /> },
+  args: { children: <Input aria-label="Website" placeholder="example" /> },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
@@ -152,4 +166,42 @@ export const CatalogDark: CatalogStory<Story, typeof InputGroup> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const SharedPlainFrame: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <InputGroup size="sm" role="group" aria-label="Compact frame">
+        <Input variant="plain" aria-label="Compact input" />
+      </InputGroup>
+      <Field.Root invalid>
+        <InputGroup role="group" aria-label="Invalid frame">
+          <Input aria-label="Invalid grouped input" />
+        </InputGroup>
+      </Field.Root>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole('group', { name: 'Compact frame' });
+    const input = canvas.getByRole('textbox', { name: 'Compact input' });
+    const invalidGroup = canvas.getByRole('group', { name: 'Invalid frame' });
+    const invalidInput = canvas.getByRole('textbox', {
+      name: 'Invalid grouped input',
+    });
+
+    await expect(group.getBoundingClientRect().height).toBe(24);
+    await expect(invalidGroup.getBoundingClientRect().height).toBe(32);
+    await expect(input).toHaveAttribute('data-variant', 'plain');
+    await expect(getComputedStyle(input).borderWidth).toBe('0px');
+    await userEvent.tab();
+    await expect(input).toHaveFocus();
+    await expect(getComputedStyle(input).outlineStyle).toBe('none');
+    await expect(getComputedStyle(invalidInput).outlineStyle).toBe('none');
+    await expect(getComputedStyle(group).borderWidth).toBe('1px');
+    await expect(getComputedStyle(invalidGroup).borderColor).not.toBe(
+      getComputedStyle(group).borderColor,
+    );
+  },
 };

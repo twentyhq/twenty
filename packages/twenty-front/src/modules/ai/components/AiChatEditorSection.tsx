@@ -13,6 +13,7 @@ import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMe
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
+import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
@@ -32,9 +33,11 @@ import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasM
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
+  isCentered?: boolean;
 }>`
   align-items: flex-end;
   background: ${themeCssVariables.background.primary};
@@ -45,10 +48,14 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   margin-top: auto;
   padding-block: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[3]};
-  padding-inline: ${themeCssVariables.spacing[3]};
+  padding-inline: ${({ isCentered }) =>
+    isCentered ? themeCssVariables.spacing[4] : themeCssVariables.spacing[3]};
 `;
 
-const StyledInputBox = styled.div<{ isMobile: boolean }>`
+const StyledInputBox = styled.div<{
+  isMobile: boolean;
+  isCentered: boolean;
+}>`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: calc(
@@ -58,7 +65,13 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile }) => (isMobile ? 'auto' : '140px')};
+  min-height: ${({ isMobile, isCentered }) => {
+    if (isMobile) {
+      return 'auto';
+    }
+
+    return isCentered ? themeCssVariables.spacing[20] : '140px';
+  }};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -68,7 +81,10 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
   }
 `;
 
-const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
+const StyledEditorWrapper = styled.div<{
+  isMobile: boolean;
+  isCentered: boolean;
+}>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -84,7 +100,15 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile }) => (isMobile ? 'auto' : '48px')};
+    min-height: ${({ isMobile, isCentered }) => {
+      if (isMobile) {
+        return 'auto';
+      }
+
+      return isCentered
+        ? themeCssVariables.spacing[6]
+        : themeCssVariables.spacing[12];
+    }};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -141,15 +165,16 @@ const EditableAiChatEditorSection = () => {
     !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
+  const canSendAgentChatMessage = useCanSendAgentChatMessage();
 
-  const { editor, handleSendAndClear } = useAiChatEditor();
+  const { editor } = useAiChatEditor();
 
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
   const composer = (
-    <StyledInputBox isMobile={isMobile}>
-      <StyledEditorWrapper isMobile={isMobile}>
+    <StyledInputBox isMobile={isMobile} isCentered={isComposerCentered}>
+      <StyledEditorWrapper isMobile={isMobile} isCentered={isComposerCentered}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       <AiChatDictationHint interimText={dictationInterimText} />
@@ -161,12 +186,7 @@ const EditableAiChatEditorSection = () => {
           </>
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
-        sendButton={
-          <SendMessageButton
-            onSend={handleSendAndClear}
-            isDisabled={hasNoEnabledModels}
-          />
-        }
+        sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
       />
     </StyledInputBox>
   );
@@ -185,18 +205,20 @@ const EditableAiChatEditorSection = () => {
       />
       {!agentChatHasMessage && (
         <StyledMessageListPlaceholder>
-          <AiChatEmptyState isCentered={isComposerCentered} />
+          {!isComposerCentered && <AiChatEmptyState />}
           <AiChatStandaloneError />
         </StyledMessageListPlaceholder>
       )}
 
-      <StyledInputArea isMobile={isMobile}>
+      <StyledInputArea isMobile={isMobile} isCentered={isComposerCentered}>
+        {isComposerCentered && <AiChatEmptyState isCentered />}
         <AgentChatContextPreview />
         {hasNoEnabledModels && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}
         {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
+        <AiChatUserCreditsExhaustedBanner />
         <AiChatParticipantMentionBar editor={editor} />
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>

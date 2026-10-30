@@ -274,6 +274,11 @@ msgid "Test email"
 msgstr "Kiểm tra email"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Cảm ơn bạn đã đăng ký tài khoản trên Twenty! Trước khi bắt đầu, chúng tôi cần xác nhận đây chính là bạn. Nhấn vào bên dưới để xác minh địa chỉ email của bạn."
+
+#. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
 msgstr "Mã chỉ có thể được sử dụng một lần và hết hạn vào {formattedExpiresAt}. Việc sử dụng mã sẽ xóa trình xác thực hiện tại của bạn cho không gian làm việc này và đăng xuất bạn khỏi các phiên khác tại đó."
@@ -292,6 +297,16 @@ msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} k�
 #: src/emails/billing-trial-ending.email.tsx
 msgid "To keep your workspace and everything you've built, add a payment method and pick a plan."
 msgstr "Để giữ không gian làm việc và mọi thứ bạn đã xây dựng, hãy thêm phương thức thanh toán và chọn một gói."
+
+#. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "Email Twenty"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "Logo Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -345,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "Chúng tôi không thích những khoản phí bất ngờ, nên đây là một lời nhắc thân thiện."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "Chúng tôi đã nhận được yêu cầu thay đổi địa chỉ email liên kết với tài khoản Twenty của bạn. Nhấp vào bên dưới để xác nhận thay đổi này."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "Trang web"
@@ -353,6 +373,12 @@ msgstr "Trang web"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "Twenty là gì?"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "Logo không gian làm việc"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

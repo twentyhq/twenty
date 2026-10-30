@@ -3,16 +3,20 @@ title: Breadcrumb
 description: Show a page's location with a trail of ancestor links.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
 
-`Breadcrumb` renders an ordered navigation trail. It includes decorative separators, link focus styles, and truncation of the final item's label. Items preserve native anchor behavior and support custom routing through `render`.
+## Overview
+
+`Breadcrumb` renders an ordered navigation trail. It includes decorative separators, link focus styles, and truncation of the final item's label. Items preserve native anchor behavior and support custom routing through `render`. The trail uses medium font weight consistently, including inside headers with a different weight.
 
 <StoryEmbed
-  storyId="primitives-navigation-breadcrumb--default"
+  storyId="primitives-navigation-breadcrumb--display"
   title="Breadcrumb example"
-  height={160}
+  height={100}
 />
 
 ## Usage
@@ -97,7 +101,7 @@ The final item shrinks and truncates with an ellipsis when the container has lim
 <StoryEmbed
   storyId="primitives-navigation-breadcrumb--truncation"
   title="Breadcrumb with a long current page label"
-  height={160}
+  height={100}
 />
 
 ## Rich content
@@ -107,7 +111,7 @@ An item's `children` can include text and supporting visual content. Keep the la
 <StoryEmbed
   storyId="primitives-navigation-breadcrumb--rich-content"
   title="Breadcrumb with supporting content"
-  height={160}
+  height={100}
 />
 
 ## Text direction
@@ -117,7 +121,7 @@ The trail follows the surrounding text direction. Set `dir="rtl"` on `Breadcrumb
 <StoryEmbed
   storyId="primitives-navigation-breadcrumb--rtl"
   title="Breadcrumb in right-to-left content"
-  height={160}
+  height={100}
 />
 
 ## Root customization
@@ -158,3 +162,5 @@ export const HeaderBreadcrumb = () => {
 ## Props
 
 <BreadcrumbReference />
+
+<PageBanner illustration="card-page-navigation" />

@@ -6,19 +6,19 @@ const OTHER_USER_WORKSPACE_ID = '20202020-3333-4333-8333-333333333333';
 const ownAccount = {
   id: 'own-account-id',
   userWorkspaceId: USER_WORKSPACE_ID,
-  visibility: 'user' as const,
+  scope: 'USER' as const,
 };
 
 const colleagueAccount = {
   id: 'colleague-account-id',
   userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-  visibility: 'user' as const,
+  scope: 'USER' as const,
 };
 
 const sharedAccount = {
   id: 'shared-account-id',
   userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-  visibility: 'workspace' as const,
+  scope: 'WORKSPACE' as const,
 };
 
 describe('selectConnectedAccountIdForCaller', () => {

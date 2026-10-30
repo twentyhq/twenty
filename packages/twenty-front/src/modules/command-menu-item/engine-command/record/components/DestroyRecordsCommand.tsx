@@ -13,6 +13,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroyRecordsCommand = () => {
@@ -25,7 +26,9 @@ export const DestroyRecordsCommand = () => {
   } = useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata is required to destroy records');
+    throw new Error(
+      doNotTranslate('Object metadata is required to destroy records'),
+    );
   }
 
   const isSingleRecord = selectedRecords.length === 1;
@@ -66,7 +69,7 @@ export const DestroyRecordsCommand = () => {
     }
 
     if (!isDefined(graphqlFilter)) {
-      throw new Error('Cannot destroy records without a valid filter');
+      throw new Error(t`Cannot destroy records without a valid filter`);
     }
 
     if (!isSingleRecord || isInSidePanel) {

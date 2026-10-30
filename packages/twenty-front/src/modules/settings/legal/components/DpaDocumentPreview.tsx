@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type DpaDocument } from '@/settings/legal/types/Dpa';
@@ -63,9 +64,7 @@ export const DpaDocumentPreview = ({ document }: DpaDocumentPreviewProps) => (
   // scroll the agreement with the arrow keys.
   <StyledDocument tabIndex={0} role="region" aria-label={document.title}>
     <StyledTitle>{document.title}</StyledTitle>
-    <StyledLastUpdated>
-      Last Updated: {document.lastUpdatedLabel}
-    </StyledLastUpdated>
+    <StyledLastUpdated>{t`Last Updated: ${document.lastUpdatedLabel}`}</StyledLastUpdated>
     {document.blocks.map((block, index) => {
       if (block.kind === 'heading') {
         return <StyledHeading key={index}>{block.text}</StyledHeading>;

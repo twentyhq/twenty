@@ -15,5 +15,7 @@ type FilterableCompositeFieldType = (typeof COMPOSITE_TYPES_FILTERABLE)[number];
 export const areCompositeTypeSubFieldsFilterable = (
   fieldType: FieldType,
 ): fieldType is FilterableCompositeFieldType => {
-  return COMPOSITE_TYPES_FILTERABLE.includes(fieldType as any);
+  return COMPOSITE_TYPES_FILTERABLE.some(
+    (filterableType) => filterableType === fieldType,
+  );
 };

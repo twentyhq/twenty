@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { MetadataReadability, ObjectRecord } from 'twenty-shared/types';
+import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   Brackets,
@@ -37,7 +37,7 @@ import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -77,15 +77,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const isPrivateObject =
-      queryRunnerContext.flatObjectMetadata.readability ===
-      MetadataReadability.PRIVATE;
     const { sharingMode } = resolveObjectSharing(queryRunnerContext);
-    const isGatedThroughRecordShares =
-      sharingMode === RecordSharingMode.PRIVATE ||
-      sharingMode === RecordSharingMode.INHERITED;
+    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
 
-    // An inherited record is reachable through its parent, so shareWith is optional there
     if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
@@ -164,8 +158,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        isGatedThroughRecordShares &&
-        isDefined(queryRunnerContext.transactionScope)
+        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
               { shouldBypassPermissionChecks: true },

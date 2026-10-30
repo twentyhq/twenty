@@ -100,6 +100,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     body {
       blocknote
       markdown
+      tiptap
     }
   }
 `;

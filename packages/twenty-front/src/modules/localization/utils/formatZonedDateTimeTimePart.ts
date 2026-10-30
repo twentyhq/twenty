@@ -1,4 +1,5 @@
 import { detectTimeFormat } from '@/localization/utils/detection/detectTimeFormat';
+import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { WorkspaceMemberTimeFormatEnum } from '~/generated-metadata/graphql';
 
@@ -17,7 +18,7 @@ export const formatZonedDateTimeTimePart = (
     }
     case WorkspaceMemberTimeFormatEnum.HOUR_12: {
       const hour12 = zonedDateTime.hour % 12 || 12;
-      const suffix = zonedDateTime.hour < 12 ? 'AM' : 'PM';
+      const suffix = zonedDateTime.hour < 12 ? t`AM` : t`PM`;
 
       return `${hour12}:${m} ${suffix}`;
     }

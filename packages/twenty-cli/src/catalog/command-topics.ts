@@ -1,11 +1,16 @@
 import { HELP_GROUP } from '@/catalog/constants/help-group.constant';
 import { type CommandTopicDefinition } from '@/catalog/types/command-topic-definition.type';
+import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.command-definition';
 
 export const COMMAND_TOPICS: CommandTopicDefinition[] = [
   {
     path: ['app'],
     description: 'Create, develop and manage applications',
     helpGroup: HELP_GROUP.APP,
+  },
+  {
+    path: ['app', 'translations'],
+    description: 'Manage app translation catalogs',
   },
   {
     path: ['data'],
@@ -21,6 +26,9 @@ export const COMMAND_TOPICS: CommandTopicDefinition[] = [
     path: ['remote'],
     description: 'Manage saved workspace connections',
     helpGroup: HELP_GROUP.WORKSPACE,
+    helpHint:
+      'Add a remote using browser sign-in or an API key. See: twenty auth login --help',
+    examples: AUTH_LOGIN_COMMAND_DEFINITION.examples,
   },
   {
     path: ['metadata'],

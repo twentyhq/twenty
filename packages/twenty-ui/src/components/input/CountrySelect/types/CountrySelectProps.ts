@@ -1,29 +1,20 @@
 import { type DropdownContentProps } from '@ui/components/navigation/Dropdown/types/DropdownContentProps';
-import { type DropdownTriggerProps } from '@ui/components/navigation/Dropdown/types/DropdownTriggerProps';
+import { type DropdownRootProps } from '@ui/components/navigation/Dropdown/types/DropdownRootProps';
 
-import { type CountryChoice } from './CountryChoice';
+import { type CountrySelectRootProps } from './CountrySelectRootProps';
+import { type CountrySelectTriggerProps } from './CountrySelectTriggerProps';
+import { type CountrySelectOptionsProps } from './CountrySelectOptionsProps';
 
-export type CountrySelectProps = Omit<
-  DropdownTriggerProps,
-  | 'children'
-  | 'value'
-  | 'defaultValue'
-  | 'onChange'
-  | 'openOnHover'
-  | 'delay'
-  | 'closeDelay'
-> & {
-  countries: readonly CountryChoice[];
-  value: string;
-  onValueChange: (value: string) => void;
-  label?: string;
-  searchLabel?: string;
-  noCountryLabel?: string;
-  noResultsLabel?: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  popupProps?: Omit<
-    DropdownContentProps,
-    'children' | 'aria-label' | 'aria-labelledby' | 'keepMounted'
-  >;
-};
+export type CountrySelectProps = Omit<CountrySelectRootProps, 'children'> &
+  CountrySelectTriggerProps &
+  Omit<DropdownRootProps, 'children' | 'type' | 'multiple'> &
+  Pick<
+    CountrySelectOptionsProps,
+    'searchLabel' | 'noResultsLabel' | 'searchProps' | 'closeOnSelect'
+  > & {
+    popupProps?: Omit<DropdownContentProps, 'children'>;
+    optionsProps?: Omit<
+      CountrySelectOptionsProps,
+      'searchLabel' | 'noResultsLabel' | 'searchProps' | 'closeOnSelect'
+    >;
+  };

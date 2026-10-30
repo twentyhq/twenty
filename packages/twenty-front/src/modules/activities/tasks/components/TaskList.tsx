@@ -61,8 +61,12 @@ export const TaskList = ({
           )}
         </StyledTitleBar>
         <ActivityList>
-          {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} />
+          {tasks.map((task, index) => (
+            <TaskRow
+              key={task.id}
+              task={task}
+              divider={index < tasks.length - 1}
+            />
           ))}
         </ActivityList>
       </StyledContainer>

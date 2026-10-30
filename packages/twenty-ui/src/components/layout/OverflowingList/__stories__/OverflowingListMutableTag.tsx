@@ -9,7 +9,6 @@ export const OverflowingListMutableTag = () => {
     <Tag
       color="blue"
       truncate={false}
-      style={{ minWidth: 'fit-content' }}
       render={
         <button
           type="button"

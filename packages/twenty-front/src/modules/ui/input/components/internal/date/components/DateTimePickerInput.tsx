@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { useIMask } from 'react-imask';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
@@ -25,19 +26,19 @@ const StyledInputContainer = styled.div<{
   $variant: FormFieldInputVariant;
 }>`
   align-items: center;
-
-  border-top-left-radius: ${themeCssVariables.border.radius.md};
-  border-top-right-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   height: ${({ $variant }) =>
     $variant === 'transparent'
       ? themeCssVariables.spacing[6]
       : themeCssVariables.spacing[8]};
   width: 100%;
+
+  &:focus-within {
+    box-shadow: inset 0 -1px 0 ${themeCssVariables.color.blue};
+  }
 `;
 
 const StyledInput = styled.input<{
-  hasError?: boolean;
   $variant: FormFieldInputVariant;
 }>`
   background: transparent;
@@ -69,6 +70,7 @@ export const DateTimePickerInput = ({
   timeZone,
   variant = 'default',
 }: DateTimePickerInputProps) => {
+  const { t } = useLingui();
   const [internalDate, setInternalDate] = useState(date);
 
   const { userTimezone } = useUserTimezone();
@@ -107,7 +109,7 @@ export const DateTimePickerInput = ({
       )
     : null;
 
-  const { ref, setValue } = useIMask(
+  const { ref, setValue } = useIMask<HTMLInputElement>(
     {
       mask: Date,
       pattern,
@@ -186,7 +188,8 @@ export const DateTimePickerInput = ({
         $variant={variant}
         disabled={shouldDisplayReadOnly}
         type="text"
-        ref={ref as any}
+        aria-label={t`Date and time`}
+        ref={ref}
         onFocus={!shouldDisplayReadOnly ? onFocus : undefined}
       />
       <TimeZoneAbbreviation

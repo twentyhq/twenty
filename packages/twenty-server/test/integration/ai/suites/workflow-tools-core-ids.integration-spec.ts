@@ -204,6 +204,24 @@ describe('workflow MCP tools on core identities (integration)', () => {
       expect(loopBodyStep?.nextStepIds).toEqual([iteratorStepId]);
     });
 
+    it('should persist the iterator output schema computed by the server, not the empty one sent by the tool', async () => {
+      const coreVersion = await readCoreVersionRow(coreWorkflowVersionId);
+      const iteratorStep = (
+        (coreVersion.steps ?? []) as {
+          id: string;
+          settings?: { outputSchema?: Record<string, unknown> };
+        }[]
+      ).find((step) => step.id === iteratorStepId);
+
+      expect(iteratorStep?.settings?.outputSchema).toEqual(
+        expect.objectContaining({
+          currentItem: expect.objectContaining({ label: 'Current Item' }),
+          currentItemIndex: expect.anything(),
+          hasProcessedAllItems: expect.anything(),
+        }),
+      );
+    });
+
     it('should read the current version back by core workflow id', async () => {
       const current = await callWorkflowTool<{
         success: boolean;

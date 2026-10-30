@@ -1,7 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type createElement, type Fragment, type ReactNode } from 'react';
@@ -101,6 +101,7 @@ let mockValidationRules: ValidationRule[] = [];
 const openRecordCreationFormSettingsInSidePanel = jest.fn();
 const mockHasPermissionFlag = jest.fn();
 const mockEnqueueToast = jest.fn();
+const scrollIntoView = jest.fn();
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -159,6 +160,13 @@ jest.mock(
       createElement: typeof createElement;
       Fragment: typeof Fragment;
     };
+    const jotaiStoreModuleForMock = require('@/ui/utilities/state/jotai/jotaiStore');
+    const {
+      recordFieldInputIsFieldInErrorComponentState: errorStateForMock,
+    } = require('@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState');
+    const {
+      getRecordFormFieldInputInstanceId: getInstanceIdForMock,
+    } = require('@/object-record/record-form/utils/getRecordFormFieldInputInstanceId');
 
     return {
       RecordFormFieldInputs: ({
@@ -166,6 +174,7 @@ jest.mock(
         draftRecord,
         validationRuleViolationsByFieldMetadataId = {},
         onFieldValueChange,
+        formInstanceId,
       }: {
         fieldMetadataItems: { id: string; name: string; label: string }[];
         draftRecord: Record<string, unknown>;
@@ -174,6 +183,7 @@ jest.mock(
           { ruleId: string; message: string }[]
         >;
         onFieldValueChange: (gqlFieldName: string, value: string) => void;
+        formInstanceId: string;
       }) =>
         ReactForMock.createElement(
           ReactForMock.Fragment,
@@ -189,11 +199,21 @@ jest.mock(
               ReactForMock.createElement('input', {
                 'aria-label': fieldMetadataItem.label,
                 value: (draftRecord[fieldMetadataItem.name] as string) ?? '',
-                onChange: (event: { target: { value: string } }) =>
+                onChange: (event: { target: { value: string } }) => {
                   onFieldValueChange(
                     fieldMetadataItem.name,
                     event.target.value,
-                  ),
+                  );
+                  jotaiStoreModuleForMock.jotaiStore.set(
+                    errorStateForMock.atomFamily({
+                      instanceId: getInstanceIdForMock({
+                        formInstanceId,
+                        fieldMetadataId: fieldMetadataItem.id,
+                      }),
+                    }),
+                    event.target.value === 'invalid',
+                  );
+                },
               }),
               (
                 validationRuleViolationsByFieldMetadataId[
@@ -291,6 +311,7 @@ const renderPage = () =>
 describe('SidePanelRecordCreationFormPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    Element.prototype.scrollIntoView = scrollIntoView;
     resetJotaiStore();
     mockValidationRules = [];
     settleRecordCreationDraft.mockResolvedValue({});
@@ -304,6 +325,7 @@ describe('SidePanelRecordCreationFormPage', () => {
         requestId: REQUEST_ID,
         objectMetadataId: OBJECT_METADATA_ID,
         initialDraftRecord: {},
+        canCreateAnother: true,
       },
     );
   });
@@ -322,16 +344,12 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
 
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(screen.queryByLabelText('Secret')).not.toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
 
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
@@ -341,19 +359,16 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Collapse hidden fields' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
     expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: { nickname: 'Apple' },
+      shouldKeepOpen: false,
     });
   });
 
@@ -363,9 +378,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     const { unmount } = renderPage();
 
     await user.type(screen.getByLabelText('Name'), 'Apple');
-    await user.click(
-      screen.getByRole('button', { name: 'Show hidden fields (1)' }),
-    );
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'Big Apple');
 
     unmount();
@@ -384,13 +397,15 @@ describe('SidePanelRecordCreationFormPage', () => {
 
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
-    expect(
-      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
-        'alert',
-      ),
-    ).toHaveTextContent('A company needs a nickname');
+    const nicknameAlert = within(
+      screen.getByRole('group', { name: 'Nickname field' }),
+    ).getByRole('alert');
+
+    expect(nicknameAlert).toHaveTextContent('A company needs a nickname');
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
     expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    expect(scrollIntoView.mock.contexts[0]).toBe(nicknameAlert);
   });
 
   it('keeps hidden fields collapsed and shows a validation error on the whole record below the fields', async () => {
@@ -424,14 +439,18 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
-    expect(
-      within(screen.getByRole('group', { name: 'Nickname field' })).getByRole(
-        'alert',
-      ),
-    ).toHaveTextContent('A company needs a nickname');
+
+    const nicknameAlert = within(
+      screen.getByRole('group', { name: 'Nickname field' }),
+    ).getByRole('alert');
+
+    expect(nicknameAlert).toHaveTextContent('A company needs a nickname');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalledTimes(1));
+    expect(scrollIntoView.mock.contexts[0]).toBe(nicknameAlert);
   });
 
   it('keeps a message from the server under its field while the user edits, until the next create', async () => {
@@ -490,29 +509,168 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(settleRecordCreationDraft).toHaveBeenCalledWith({
       requestId: REQUEST_ID,
       draftRecord: {},
+      shouldKeepOpen: false,
     });
     expect(screen.queryByLabelText('Nickname')).not.toBeInTheDocument();
   });
 
-  it('opens the form configuration for members allowed to edit layouts', async () => {
+  it('opens the form configuration from the options menu for members allowed to edit layouts', async () => {
     const user = userEvent.setup();
 
     renderPage();
 
-    await user.click(screen.getByRole('button', { name: 'Edit' }));
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: 'Edit form' }),
+    );
 
     expect(openRecordCreationFormSettingsInSidePanel).toHaveBeenCalledWith(
       COMPANY_OBJECT,
     );
   });
 
-  it('hides the edit button from members without the layouts permission', () => {
+  it('leaves the form configuration out of the options menu for members without the layouts permission', async () => {
+    const user = userEvent.setup();
+
     mockHasPermissionFlag.mockReturnValue(false);
 
     renderPage();
 
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+
     expect(
-      screen.queryByRole('button', { name: 'Edit' }),
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitem', { name: 'Edit form' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('leaves Create another out of the options menu when the request allows a single record', async () => {
+    const user = userEvent.setup();
+
+    jotaiStore.set(
+      recordCreationFormRequestComponentState.atomFamily({
+        instanceId: REQUEST_ID,
+      }),
+      {
+        requestId: REQUEST_ID,
+        objectMetadataId: OBJECT_METADATA_ID,
+        initialDraftRecord: {},
+        canCreateAnother: false,
+      },
+    );
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+
+    expect(
+      await screen.findByRole('menuitem', { name: 'Edit form' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitem', { name: /Create another/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the options menu when the request allows a single record and the member cannot edit layouts', () => {
+    mockHasPermissionFlag.mockReturnValue(false);
+    jotaiStore.set(
+      recordCreationFormRequestComponentState.atomFamily({
+        instanceId: REQUEST_ID,
+      }),
+      {
+        requestId: REQUEST_ID,
+        objectMetadataId: OBJECT_METADATA_ID,
+        initialDraftRecord: {},
+        canCreateAnother: false,
+      },
+    );
+
+    renderPage();
+
+    expect(
+      screen.queryByRole('button', { name: 'Options' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId('record-creation-form-create-button'),
+    ).toBeInTheDocument();
+  });
+
+  it('creates another record from the options menu and keeps an empty form open', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'Apple');
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    );
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { name: 'Apple' },
+      shouldKeepOpen: true,
+    });
+    expect(await screen.findByLabelText('Name')).toHaveValue('');
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'success' }),
+    );
+  });
+
+  it('collapses the hidden fields again after creating another record', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Create another/ }),
+    );
+
+    expect(
+      await screen.findByRole('button', { name: 'All fields (3)' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Hide fields' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not submit when a field input reports a validation error', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Name'), 'invalid');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+
+    await user.clear(screen.getByLabelText('Name'));
+    await user.type(screen.getByLabelText('Name'), 'Valid Name');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+    expect(settleRecordCreationDraft).toHaveBeenCalledWith({
+      requestId: REQUEST_ID,
+      draftRecord: { name: 'Valid Name' },
+      shouldKeepOpen: false,
+    });
+  });
+
+  it('stops blocking creation once a hidden field with an input error is collapsed and shown again', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
+    await user.type(screen.getByLabelText('Nickname'), 'invalid');
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
   });
 });

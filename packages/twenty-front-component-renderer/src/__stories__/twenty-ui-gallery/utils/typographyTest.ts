@@ -26,10 +26,10 @@ export const typographyTest: TwentyUiGalleryPlayFunction = async (context) => {
 
   await expect(
     canvas.getByRole('heading', { level: 1, name: 'Heading 1' }),
-  ).toHaveAttribute('data-size', 'lg');
+  ).toHaveAttribute('data-size', 'xxl');
   await expect(
     canvas.getByRole('heading', { level: 3, name: 'Heading 3' }),
-  ).toHaveAttribute('data-size', 'sm');
+  ).toHaveAttribute('data-size', 'xl');
   await expect(
     canvas.getByRole('heading', { level: 2, name: 'Workspace preferences' }),
   ).toHaveAccessibleDescription('Manage the settings for your workspace.');

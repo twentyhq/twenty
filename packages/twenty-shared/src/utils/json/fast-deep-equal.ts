@@ -1,5 +1,12 @@
 // Source: https://github.com/epoberezkin/fast-deep-equal/blob/master/src/index.jst
 
+const hasCustomMethod = (
+  value: object,
+  methodName: 'valueOf' | 'toString',
+): boolean =>
+  typeof value[methodName] === 'function' &&
+  value[methodName] !== Object.prototype[methodName];
+
 export const fastDeepEqual = (
   firstValue: unknown,
   secondValue: unknown,
@@ -74,11 +81,17 @@ export const fastDeepEqual = (
       );
     }
 
-    if (firstValue.valueOf !== Object.prototype.valueOf) {
+    if (
+      hasCustomMethod(firstValue, 'valueOf') &&
+      hasCustomMethod(secondValue, 'valueOf')
+    ) {
       return firstValue.valueOf() === secondValue.valueOf();
     }
 
-    if (firstValue.toString !== Object.prototype.toString) {
+    if (
+      hasCustomMethod(firstValue, 'toString') &&
+      hasCustomMethod(secondValue, 'toString')
+    ) {
       return firstValue.toString() === secondValue.toString();
     }
 

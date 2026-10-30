@@ -6,9 +6,11 @@ import { getDropdownDismissTarget } from './getDropdownDismissTarget';
 export const isDropdownDismissPrevented = ({
   onDismiss,
   event,
+  target = getDropdownDismissTarget(event),
 }: {
   onDismiss: ((dismissEvent: DropdownDismissEvent) => void) | undefined;
   event: Event;
+  target?: Element | null;
 }) => {
   if (!isDefined(onDismiss)) {
     return false;
@@ -17,7 +19,7 @@ export const isDropdownDismissPrevented = ({
   let isPrevented = false;
 
   onDismiss({
-    target: getDropdownDismissTarget(event),
+    target,
     type: event.type,
     preventDefault: () => {
       isPrevented = true;

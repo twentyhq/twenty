@@ -13,6 +13,7 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.WORKFLOW_EXECUTION]: msg`Workflow Execution`,
   [UsageOperationType.CODE_EXECUTION]: msg`Code Execution`,
   [UsageOperationType.WEB_SEARCH]: msg`Web Search`,
+  [UsageOperationType.AI_WORKFLOW_WEB_SEARCH]: msg`Agent Web Search`,
   [UsageOperationType.CALL_RECORDING]: msg`Call Recording`,
   [UsageOperationType.EMAIL_SEND]: msg`Email Send`,
   [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: msg`Campaign Email Send`,

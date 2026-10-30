@@ -1,6 +1,6 @@
 import { ChartAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectableListItem';
 import { ChartRatioAggregateOperationSelectableListItem } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioAggregateOperationSelectableListItem';
-import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
@@ -11,29 +11,21 @@ import { DASHBOARD_AGGREGATE_OPERATION_RATIO } from '@/page-layout/widgets/graph
 import { type AggregateChartOperation } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/types/AggregateChartOperation';
 import { getAggregateChartOperationLabel } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAggregateChartOperationLabel';
 import { getAvailableAggregateOperationsForAggregateChart } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/utils/getAvailableAggregateOperationsForAggregateChart';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui/icon';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+
+type ChartAggregateOperationSelectionDropdownContentProps = {
+  currentFieldMetadataId: string;
+};
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
   currentFieldMetadataId,
-  setIsSubMenuOpen,
-}: {
-  currentFieldMetadataId: string;
-  setIsSubMenuOpen: (isSubMenuOpen: boolean) => void;
-}) => {
+}: ChartAggregateOperationSelectionDropdownContentProps) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isOptionValueMenuOpen, setIsOptionValueMenuOpen] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
@@ -53,7 +45,7 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   );
 
   if (!isBarOrLineChart && !isAggregateChart && !isPieChart) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
@@ -64,11 +56,9 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     (field) => field.id === currentFieldMetadataId,
   );
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const availableAggregateOperations: AggregateChartOperation[] = selectedField
+  const availableAggregateOperations: AggregateChartOperation[] = isDefined(
+    selectedField,
+  )
     ? isAggregateChart
       ? getAvailableAggregateOperationsForAggregateChart({
           fieldMetadataType: selectedField.type,
@@ -105,65 +95,39 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
     return null;
   }
 
-  const handleSelectRatio = () => {
-    setIsOptionValueMenuOpen(true);
-  };
-
-  if (isOptionValueMenuOpen) {
-    return (
-      <ChartRatioOptionValueSelectionDropdownContent
-        currentFieldMetadataId={currentFieldMetadataId}
-        setIsOptionValueMenuOpen={setIsOptionValueMenuOpen}
-      />
-    );
-  }
-
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => setIsSubMenuOpen(false)}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {`${selectedField.label}`}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
+      <Dropdown.Back aria-label={t`${selectedField.label}, back to fields`}>
+        {selectedField.label}
+      </Dropdown.Back>
+      <Dropdown.Search
         placeholder={t`Search operations`}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        aria-label={t`Search operations`}
+        onValueChange={setSearchQuery}
         value={searchQuery}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={filteredAggregateOperationsWithLabels.map(
-            (item) => item.operation,
-          )}
-        >
-          {filteredAggregateOperationsWithLabels.map((item) =>
-            item.operation === DASHBOARD_AGGREGATE_OPERATION_RATIO ? (
-              <ChartRatioAggregateOperationSelectableListItem
-                key={item.operation}
-                label={item.label}
-                onSelect={handleSelectRatio}
-              />
-            ) : (
-              <ChartAggregateOperationSelectableListItem
-                key={item.operation}
-                operation={item.operation}
-                label={item.label}
-                currentFieldMetadataId={currentFieldMetadataId}
-              />
-            ),
-          )}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+      <Dropdown.Separator />
+      <ChartSettingsDropdownSection>
+        {filteredAggregateOperationsWithLabels.map((item) =>
+          item.operation === DASHBOARD_AGGREGATE_OPERATION_RATIO ? (
+            <ChartRatioAggregateOperationSelectableListItem
+              key={item.operation}
+              label={item.label}
+              currentFieldMetadataId={currentFieldMetadataId}
+            />
+          ) : (
+            <ChartAggregateOperationSelectableListItem
+              key={item.operation}
+              operation={item.operation}
+              label={item.label}
+              currentFieldMetadataId={currentFieldMetadataId}
+            />
+          ),
+        )}
+        {!isNonEmptyArray(filteredAggregateOperationsWithLabels) && (
+          <Dropdown.Empty>{t`No operations found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
     </>
   );
 };

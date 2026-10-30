@@ -2,7 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartFieldOrderBy';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { GraphOrderBy } from '~/generated-metadata/graphql';
+import { GraphOrderBy, RelationType } from '~/generated-metadata/graphql';
 
 describe('buildSortsForChartFieldOrderBy', () => {
   const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
@@ -27,6 +27,50 @@ describe('buildSortsForChartFieldOrderBy', () => {
         name: 'address',
         type: FieldMetadataType.ADDRESS,
         label: 'Address',
+      },
+      {
+        id: 'field-owner-head',
+        name: 'owner',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: 'Owner',
+        morphRelations: [
+          {
+            type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: {
+              id: 'field-owner-person',
+              name: 'ownerPerson',
+            },
+            targetFieldMetadata: { id: 'field-person-owned', name: 'owned' },
+            sourceObjectMetadata: {
+              id: 'obj-1',
+              nameSingular: 'opportunity',
+              namePlural: 'opportunities',
+            },
+            targetObjectMetadata: {
+              id: 'obj-person',
+              nameSingular: 'person',
+              namePlural: 'people',
+            },
+          },
+          {
+            type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: {
+              id: 'field-owner-company',
+              name: 'ownerCompany',
+            },
+            targetFieldMetadata: { id: 'field-company-owned', name: 'owned' },
+            sourceObjectMetadata: {
+              id: 'obj-1',
+              nameSingular: 'opportunity',
+              namePlural: 'opportunities',
+            },
+            targetObjectMetadata: {
+              id: 'obj-company',
+              nameSingular: 'company',
+              namePlural: 'companies',
+            },
+          },
+        ],
       },
     ],
   } as EnrichedObjectMetadataItem;
@@ -92,6 +136,24 @@ describe('buildSortsForChartFieldOrderBy', () => {
     });
 
     expect(result).toEqual({ fieldName: 'address', direction: 'ASC' });
+  });
+
+  it('should sort on the stored morph target when the morph is exposed as a single field', () => {
+    const normalizedFields: NormalizedChartConfigurationFields = {
+      groupByFieldMetadataId: 'field-owner-company',
+      groupBySubFieldName: 'name',
+      orderBy: GraphOrderBy.FIELD_ASC,
+    };
+
+    const result = buildSortsForChartFieldOrderBy({
+      normalizedFields,
+      objectMetadataItem: mockObjectMetadataItem,
+    });
+
+    expect(result).toEqual({
+      fieldName: 'ownerCompany.name',
+      direction: 'ASC',
+    });
   });
 
   it('should return null when groupBy field not found', () => {

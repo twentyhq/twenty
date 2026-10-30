@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
+import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { ServerRouteReachabilityService } from 'src/engine/core-modules/server-route-trigger/server-route-reachability.service';
 import { ServerRouteTriggerController } from 'src/engine/core-modules/server-route-trigger/server-route-trigger.controller';
 import { ServerRouteTriggerGaugeService } from 'src/engine/core-modules/server-route-trigger/server-route-trigger-gauge.service';
@@ -10,11 +13,17 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogicFunctionEntity]), MetricsModule],
+  imports: [
+    TypeOrmModule.forFeature([LogicFunctionEntity]),
+    EventLogEmitterModule,
+    MetricsModule,
+    JwtModule,
+  ],
   controllers: [ServerRouteTriggerController],
   providers: [
     provideWorkspaceScopedRepository(LogicFunctionEntity),
     ServerRouteTriggerService,
+    ServerRouteAuthorizationHeaderService,
     ServerRouteReachabilityService,
     ServerRouteTriggerGaugeService,
   ],

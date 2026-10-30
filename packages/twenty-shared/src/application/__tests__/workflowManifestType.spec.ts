@@ -1,6 +1,5 @@
 /** @jest-environment node */
 
-import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from '@/application/constants/ApplicationWorkflowUnavailableStepTypes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 import {
@@ -124,18 +123,157 @@ describe('workflow manifest iterator cycles', () => {
 });
 
 describe('workflow manifest step types', () => {
-  it.each(APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES)(
-    'rejects %s steps',
-    (type) => {
-      const invalid = structuredClone(workflow);
-      Object.assign(getStep(invalid, 2), { type });
-      const result = workflowManifestSchema.safeParse(invalid);
+  const ASSIGNEE = '{{trigger.properties.after.assigneeId}}';
+
+  it.each([
+    {
+      type: 'SEND_EMAIL',
+      input: {
+        connectedAccountId: ASSIGNEE,
+        recipients: { to: '{{trigger.properties.after.email}}' },
+        subject: 'Hello',
+      },
+    },
+    {
+      type: 'DRAFT_EMAIL',
+      input: {
+        connectedAccountId: ASSIGNEE,
+        recipients: { to: 'jane@example.com' },
+      },
+    },
+    {
+      type: 'CREATE_CALENDAR_EVENT',
+      input: {
+        connectedAccountId: '{{trigger.properties.after.connectedAccountId}}',
+        title: 'Kick-off',
+        startsAt: '2026-11-02T09:00:00.000Z',
+        endsAt: '2026-11-02T09:30:00.000Z',
+        isFullDay: false,
+        sendInvitations: true,
+        addConferencing: false,
+      },
+    },
+  ])('accepts $type steps', ({ type, input }) => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), { type, input });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  describe('connected account reference', () => {
+    const CALENDAR_EVENT = {
+      title: 'Kick-off',
+      startsAt: '2026-11-02T09:00:00.000Z',
+      endsAt: '2026-11-02T09:30:00.000Z',
+      isFullDay: false,
+      sendInvitations: true,
+      addConferencing: false,
+    };
+    const withStep = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: Record<string, unknown>;
+    }) => {
+      const definition = structuredClone(workflow);
+      Object.assign(getStep(definition, 2), { type, input });
+      return workflowManifestSchema.safeParse(definition);
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL', input: { recipients: { to: 'jane@example.com' } } },
+      {
+        type: 'DRAFT_EMAIL',
+        input: { recipients: { to: 'jane@example.com' } },
+      },
+      { type: 'CREATE_CALENDAR_EVENT', input: CALENDAR_EVENT },
+    ])(
+      'accepts a $type step naming its account by handle',
+      ({ type, input }) => {
+        const result = withStep({
+          type,
+          input: { ...input, connectedAccountHandle: ' sales@example.com ' },
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.version.steps[2]?.input).toMatchObject({
+          connectedAccountHandle: 'sales@example.com',
+        });
+      },
+    );
+
+    it.each([
+      {
+        case: 'both',
+        reference: {
+          connectedAccountId: ASSIGNEE,
+          connectedAccountHandle: 'sales@example.com',
+        },
+      },
+      { case: 'neither', reference: {} },
+      { case: 'an empty handle', reference: { connectedAccountHandle: ' ' } },
+    ])('rejects $case of the account id and handle', ({ reference }) => {
+      const result = withStep({
+        type: 'CREATE_CALENDAR_EVENT',
+        input: { ...CALENDAR_EVENT, ...reference },
+      });
+
       expect(result.success).toBe(false);
       expect(result.error?.issues[0]?.path).toEqual([
         'version',
         'steps',
         2,
-        'type',
+        'input',
+        'connectedAccountHandle',
+      ]);
+    });
+  });
+
+  it('rejects a step type applications cannot use', () => {
+    const invalid = structuredClone(workflow);
+    Object.assign(getStep(invalid, 2), { type: 'CODE' });
+    const result = workflowManifestSchema.safeParse(invalid);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain('Unsupported step type');
+  });
+
+  it.each(['SELECT', 'MULTI_SELECT'])(
+    'requires the field a %s form field takes its options from',
+    (type) => {
+      const withFormField = (settings: Record<string, unknown>) => {
+        const definition = structuredClone(workflow);
+        Object.assign(getStep(definition, 2), {
+          type: 'FORM',
+          input: [
+            { id: 'stage', name: 'stage', label: 'Stage', type, settings },
+          ],
+        });
+        return definition;
+      };
+
+      expect(
+        workflowManifestSchema.safeParse(
+          withFormField({
+            selectedFieldUniversalIdentifier:
+              '77777777-7777-4777-8777-777777777777',
+          }),
+        ).success,
+      ).toBe(true);
+
+      const result = workflowManifestSchema.safeParse(
+        withFormField({ selectedFieldId: 'a-workspace-specific-id' }),
+      );
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'input',
+        0,
+        'settings',
+        'selectedFieldUniversalIdentifier',
       ]);
     },
   );
@@ -195,11 +333,11 @@ describe('workflow manifest manual trigger', () => {
 
   it('names the supported trigger types when the type is unknown', () => {
     const result = workflowManifestSchema.safeParse(
-      withTrigger({ type: 'WEBHOOK' }),
+      withTrigger({ type: 'UNKNOWN' }),
     );
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]?.message).toBe(
-      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT',
+      'Unsupported trigger type. Application workflows support: MANUAL, CRON, DATABASE_EVENT, WEBHOOK',
     );
   });
 });
@@ -259,6 +397,55 @@ describe('workflow manifest cron trigger', () => {
   });
 });
 
+describe('workflow manifest webhook trigger', () => {
+  const withWebhook = (settings: Record<string, unknown>) => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      trigger: {
+        universalIdentifier: workflow.version.trigger.universalIdentifier,
+        type: 'WEBHOOK',
+        nextStepIds: workflow.version.trigger.nextStepIds,
+        settings,
+      },
+    },
+  });
+
+  it('accepts a GET webhook and a POST webhook with its expected body', () => {
+    for (const settings of [
+      { httpMethod: 'GET' },
+      {
+        httpMethod: 'POST',
+        expectedBody: { email: 'jane@example.com', score: 3 },
+      },
+    ]) {
+      expect(
+        workflowManifestSchema.safeParse(withWebhook(settings)).success,
+      ).toBe(true);
+    }
+  });
+
+  it('requires the expected body of a POST webhook', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'POST' }),
+    );
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'trigger',
+      'settings',
+      'expectedBody',
+    ]);
+  });
+
+  it('refuses an authentication setting, which webhook triggers do not enforce', () => {
+    const result = workflowManifestSchema.safeParse(
+      withWebhook({ httpMethod: 'GET', authentication: 'API_KEY' }),
+    );
+    expect(result.success).toBe(false);
+  });
+});
+
 describe('workflow manifest database event trigger', () => {
   const OBJECT_ID = '99999999-9999-4999-8999-999999999999';
   const FIELD_ID = '88888888-8888-4888-8888-888888888888';
@@ -293,6 +480,7 @@ describe('workflow manifest database event trigger', () => {
               value: 'open',
               stepFilterGroupId: 'group',
               fieldMetadataUniversalIdentifier: FIELD_ID,
+              isFullRecord: false,
             },
           ],
         },
@@ -402,5 +590,68 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest state stored by the workflow builder', () => {
+  const { universalIdentifier: _universalIdentifier, ...triggerWithoutId } =
+    workflow.version.trigger;
+
+  const withTrigger = (trigger: Record<string, unknown>) => ({
+    ...workflow,
+    version: { ...workflow.version, trigger },
+  });
+
+  it('accepts a trigger without a universal identifier, with its name, position and output schema', () => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({
+          ...triggerWithoutId,
+          name: 'Launch manually',
+          position: { x: 120, y: 26 },
+          outputSchema: {},
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('accepts a null position for a trigger or step the builder placed nowhere', () => {
+    const [firstStep, ...otherSteps] = workflow.version.steps;
+
+    expect(
+      workflowManifestSchema.safeParse({
+        ...workflow,
+        version: {
+          trigger: { ...workflow.version.trigger, position: null },
+          steps: [{ ...firstStep, position: null }, ...otherSteps],
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each([
+    { problem: 'an empty name', trigger: { name: '' } },
+    { problem: 'a position without coordinates', trigger: { position: {} } },
+  ])('rejects $problem', ({ trigger }) => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({ ...workflow.version.trigger, ...trigger }),
+      ).success,
+    ).toBe(false);
+  });
+});
+
+describe('workflow manifest isSystem', () => {
+  it('accepts a workflow flagged as system', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: true }).success,
+    ).toBe(true);
+  });
+
+  it('rejects an isSystem that is not a boolean', () => {
+    expect(
+      workflowManifestSchema.safeParse({ ...workflow, isSystem: 'true' })
+        .success,
+    ).toBe(false);
   });
 });

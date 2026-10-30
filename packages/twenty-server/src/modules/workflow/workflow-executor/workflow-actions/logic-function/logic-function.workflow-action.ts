@@ -82,10 +82,9 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
     const { authContext, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
       {
         application,
-        workspaceId,
         targetApplicationId: logicFunction.applicationId,
         targetLabel: `Logic function "${logicFunction.name}"`,
       },

@@ -1,5 +1,6 @@
 import { type CompanionCommand } from '../../shared/types/CompanionCommand';
 import { type CompanionState } from '../../shared/types/CompanionState';
+import { i18n } from '../../shared/i18n';
 
 export const previewCommand = (
   state: CompanionState,
@@ -55,7 +56,7 @@ export const previewCommand = (
       next.activeRecording = {
         id: '00000000-0000-4000-8000-000000000006',
         windowId: 'preview-call',
-        title: 'Unscheduled conversation',
+        title: i18n._('Unscheduled conversation'),
         startedAt: new Date().toISOString(),
         status: 'recording',
       };
@@ -89,8 +90,9 @@ export const previewCommand = (
       next.activeRecording = null;
       next.notice = {
         type: 'preview',
-        message:
+        message: i18n._(
           'Preview recording finished. Refresh to simulate completed processing.',
+        ),
       };
       break;
     case 'settings':
@@ -107,28 +109,33 @@ export const previewCommand = (
     case 'join':
       next.notice = {
         type: 'preview',
-        message:
+        message: i18n._(
           'Preview only. A live meeting link would open in your browser.',
+        ),
       };
       break;
     case 'open-recording':
       next.notice = {
         type: 'preview',
-        message:
+        message: i18n._(
           'Preview only. This opens the recording in your Twenty workspace.',
+        ),
       };
       break;
     case 'open-recordings':
       next.notice = {
         type: 'preview',
-        message:
+        message: i18n._(
           'Preview only. This opens all recordings in your Twenty workspace.',
+        ),
       };
       break;
     case 'open-calendar-settings':
       next.notice = {
         type: 'preview',
-        message: 'Preview only. This opens calendar settings in Twenty.',
+        message: i18n._(
+          'Preview only. This opens calendar settings in Twenty.',
+        ),
       };
       break;
     case 'refresh':

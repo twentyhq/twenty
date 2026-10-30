@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
+import { Text } from '@ui/primitives/typography/Text/Text';
 
 import { Heading } from '../Heading';
 
@@ -15,12 +16,8 @@ export default meta;
 
 type Story = StoryObj<typeof Heading>;
 
-export const Default: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-};
-
-export const Documentation: Story = {
-  ...Default,
 };
 
 export const SemanticLevel: Story = {
@@ -37,15 +34,15 @@ export const SemanticLevel: Story = {
   },
 };
 
-const HEADING_SIZES = ['xs', 'sm', 'md', 'lg'] as const;
+const HEADING_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
 const HEADING_COLORS = ['primary', 'secondary'] as const;
 
 export const Catalog: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <div>
+    <Text>
       {HEADING_COLORS.map((color) => (
-        <div key={color}>
+        <Text key={color}>
           {HEADING_SIZES.map((size) => (
             <Heading
               key={size}
@@ -56,9 +53,9 @@ export const Catalog: Story = {
               {size} {color} heading
             </Heading>
           ))}
-        </div>
+        </Text>
       ))}
-    </div>
+    </Text>
   ),
 };
 

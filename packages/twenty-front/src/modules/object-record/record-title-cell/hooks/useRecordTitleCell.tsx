@@ -10,6 +10,7 @@ import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type OpenTitleCellFunctionParams = {
   recordId: string;
@@ -37,7 +38,9 @@ export const useRecordTitleCell = () => {
 
       if (!isDefined(computedInstanceId)) {
         throw new Error(
-          'Instance ID is not defined in closeRecordTitleCell this should not happen.',
+          doNotTranslate(
+            'Instance ID is not defined in closeRecordTitleCell this should not happen.',
+          ),
         );
       }
       store.set(
@@ -66,7 +69,9 @@ export const useRecordTitleCell = () => {
 
       if (!isDefined(computedInstanceId)) {
         throw new Error(
-          'Instance ID is not defined in openRecordTitleCell this should not happen.',
+          doNotTranslate(
+            'Instance ID is not defined in openRecordTitleCell this should not happen.',
+          ),
         );
       }
 

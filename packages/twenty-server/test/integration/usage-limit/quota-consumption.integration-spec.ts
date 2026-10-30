@@ -1,3 +1,8 @@
+import {
+  readAllowanceConsumedMicro,
+  refreshCurrentBillingSubscription,
+  setupResourceCreditSubscription,
+} from 'test/integration/billing/utils/billing-credit-fixtures.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
@@ -13,12 +18,14 @@ import {
   ClickHouseLogLevel,
   createClient as createClickHouseClient,
 } from '@clickhouse/client';
+import { addMonths, startOfMonth } from 'date-fns';
 import { gql } from 'graphql-tag';
 import { createClient as createRedisClient } from 'redis';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
+import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -71,6 +78,7 @@ const QUOTA_UNITS = [UsageUnit.INVOCATION, UsageUnit.CREDIT] as const;
 const EXECUTED_RUN_COUNT = 2;
 const UNREACHABLE_LIMIT_VALUE = 1_000_000_000_000;
 const CREDIT_LIMIT_MICRO = 1_000;
+const USER_CREDITS_LIMIT_MICRO = 1_000;
 const CONCURRENT_CHARGE_COUNT = 8;
 const CLICKHOUSE_FLUSH_TIMEOUT_MS = 30_000;
 const EXECUTION_TIMEOUT_MS = 120_000;
@@ -93,6 +101,18 @@ const USAGE_QUOTA_SCOPE_CONSUMPTION = gql`
     }
   }
 `;
+
+const UPDATE_USER_CREDITS_FALLBACK = gql`
+  mutation UpdateUserCreditsFallback(
+    $userCreditsFallback: UserCreditsFallback!
+  ) {
+    updateUserCreditsFallback(userCreditsFallback: $userCreditsFallback) {
+      id
+    }
+  }
+`;
+
+const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 
 type QuotaUnit = (typeof QUOTA_UNITS)[number];
 
@@ -476,6 +496,8 @@ describe('Usage quota consumption', () => {
   it.each(QUOTA_UNITS)(
     'previews the same cold %s consumption as the quota list',
     async (unit) => {
+      await flushQuotaCounters();
+
       expect(await findQuotaCounterKeys()).toEqual([]);
 
       const quotaConsumedValue = await findQuotaConsumedValue(unit);
@@ -956,4 +978,262 @@ describe('Usage quota consumption', () => {
       unit: UsageUnit.CREDIT,
     });
   });
+
+  (isBillingEnabled ? describe : describe.skip)(
+    'on the user credits default',
+    () => {
+      const chargedUserWorkspaceIds: string[] = [];
+
+      const generateUserWorkspaceId = () => {
+        const userWorkspaceId = randomUUID();
+
+        chargedUserWorkspaceIds.push(userWorkspaceId);
+
+        return userWorkspaceId;
+      };
+
+      const chargeChatTokens = ({
+        userWorkspaceId,
+        creditsUsedMicro,
+      }: {
+        userWorkspaceId: string;
+        creditsUsedMicro: number;
+      }) =>
+        getQuotaService().charge({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          events: [
+            {
+              resourceType: UsageResourceType.AI,
+              operationType: UsageOperationType.AI_CHAT_TOKEN,
+              unit: UsageUnit.TOKEN,
+              quantity: 1,
+              creditsUsedMicro,
+              spenders: { userWorkspaceId },
+            },
+          ],
+        });
+
+      const readUserCreditsCounter = async (userWorkspaceId: string) => {
+        const [counterKey] = await redis.keys(
+          `*{${SEED_APPLE_WORKSPACE_ID}}:quota-consumed:*:userWorkspace:${userWorkspaceId}:${UsageUnit.USER_CREDIT}:week:*`,
+        );
+
+        jestExpectToBeDefined(counterKey);
+
+        return Number(await redis.get(counterKey));
+      };
+
+      const readWorkspaceAllowanceConsumed = () =>
+        readAllowanceConsumedMicro(SEED_APPLE_WORKSPACE_ID);
+
+      const updateUserCreditsFallback = async (
+        userCreditsFallback: UserCreditsFallback,
+      ) => {
+        const response = await makeMetadataApiRequest({
+          query: UPDATE_USER_CREDITS_FALLBACK,
+          variables: { userCreditsFallback },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+      };
+
+      const findUserCreditsRows = async (userWorkspaceId: string) => {
+        const result = await clickHouseClient.query({
+          query: `SELECT creditsUsedMicro, userCreditsUsedMicro
+                  FROM usageEvent
+                  WHERE workspaceId = {workspaceId:String}
+                    AND userWorkspaceId = {userWorkspaceId:String}
+                  ORDER BY creditsUsedMicro`,
+          query_params: {
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            userWorkspaceId,
+          },
+          format: 'JSONEachRow',
+        });
+
+        const rows = await result.json<{
+          creditsUsedMicro: string;
+          userCreditsUsedMicro: string;
+        }>();
+
+        return rows.map((row) => ({
+          creditsUsedMicro: Number(row.creditsUsedMicro),
+          userCreditsUsedMicro: Number(row.userCreditsUsedMicro),
+        }));
+      };
+
+      const waitForUserCreditsRows = (
+        userWorkspaceId: string,
+        expectedRows: {
+          creditsUsedMicro: number;
+          userCreditsUsedMicro: number;
+        }[],
+      ) =>
+        expectEventually(
+          async () => {
+            expect(await findUserCreditsRows(userWorkspaceId)).toEqual(
+              expectedRows,
+            );
+          },
+          { timeoutMs: CLICKHOUSE_FLUSH_TIMEOUT_MS, intervalMs: 250 },
+        );
+
+      beforeAll(async () => {
+        const twentyConfigService =
+          getAppProviderByClassName<TwentyConfigService>('TwentyConfigService');
+        const readConfig = twentyConfigService.get.bind(twentyConfigService);
+        const periodStart = startOfMonth(new Date());
+
+        jest
+          .spyOn(twentyConfigService, 'get')
+          .mockImplementation((key) =>
+            key === 'AI_USER_CREDITS_LIMIT'
+              ? USER_CREDITS_LIMIT_MICRO
+              : readConfig(key),
+          );
+
+        await setupResourceCreditSubscription({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          periodStart,
+          periodEnd: addMonths(periodStart, 1),
+          creditAmountMicro: UNREACHABLE_LIMIT_VALUE,
+        });
+        await refreshCurrentBillingSubscription(SEED_APPLE_WORKSPACE_ID);
+      });
+
+      afterAll(async () => {
+        jest.restoreAllMocks();
+
+        if (isNonEmptyArray(chargedUserWorkspaceIds)) {
+          await clickHouseClient.command({
+            query: `ALTER TABLE usageEvent DELETE WHERE workspaceId = {workspaceId:String} AND userWorkspaceId IN {userWorkspaceIds:Array(String)}`,
+            query_params: {
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              userWorkspaceIds: chargedUserWorkspaceIds,
+            },
+            clickhouse_settings: { mutations_sync: '2' },
+          });
+        }
+
+        await flushQuotaCounters();
+      }, EXECUTION_TIMEOUT_MS);
+
+      it(
+        'debits user credits first and leaves the workspace allowance untouched',
+        async () => {
+          const userWorkspaceId = generateUserWorkspaceId();
+          const allowanceConsumed = await readWorkspaceAllowanceConsumed();
+
+          expect(
+            await chargeChatTokens({ userWorkspaceId, creditsUsedMicro: 600 }),
+          ).toEqual({ exhaustedKind: null });
+          expect(await readUserCreditsCounter(userWorkspaceId)).toBe(600);
+          expect(await readWorkspaceAllowanceConsumed()).toBe(
+            allowanceConsumed,
+          );
+
+          await waitForUserCreditsRows(userWorkspaceId, [
+            { creditsUsedMicro: 600, userCreditsUsedMicro: 600 },
+          ]);
+        },
+        EXECUTION_TIMEOUT_MS,
+      );
+
+      it(
+        'splits a charge that crosses the user credits window exactly',
+        async () => {
+          const userWorkspaceId = generateUserWorkspaceId();
+
+          await chargeChatTokens({ userWorkspaceId, creditsUsedMicro: 600 });
+
+          const allowanceConsumed = await readWorkspaceAllowanceConsumed();
+
+          expect(
+            await chargeChatTokens({ userWorkspaceId, creditsUsedMicro: 700 }),
+          ).toEqual({ exhaustedKind: null });
+          expect(await readUserCreditsCounter(userWorkspaceId)).toBe(
+            USER_CREDITS_LIMIT_MICRO,
+          );
+          expect(await readWorkspaceAllowanceConsumed()).toBe(
+            allowanceConsumed + 300,
+          );
+
+          await waitForUserCreditsRows(userWorkspaceId, [
+            { creditsUsedMicro: 600, userCreditsUsedMicro: 600 },
+            { creditsUsedMicro: 700, userCreditsUsedMicro: 400 },
+          ]);
+        },
+        EXECUTION_TIMEOUT_MS,
+      );
+
+      it(
+        'stops at the user credits window in STOP mode and records the full charge as user credits',
+        async () => {
+          const userWorkspaceId = generateUserWorkspaceId();
+
+          await updateUserCreditsFallback(UserCreditsFallback.STOP);
+
+          try {
+            const allowanceConsumed = await readWorkspaceAllowanceConsumed();
+
+            expect(
+              await chargeChatTokens({
+                userWorkspaceId,
+                creditsUsedMicro: 1_300,
+              }),
+            ).toEqual({ exhaustedKind: 'userAllowance' });
+            expect(await readUserCreditsCounter(userWorkspaceId)).toBe(1_300);
+            expect(await readWorkspaceAllowanceConsumed()).toBe(
+              allowanceConsumed,
+            );
+          } finally {
+            await updateUserCreditsFallback(
+              UserCreditsFallback.WORKSPACE_CREDITS,
+            );
+          }
+
+          await waitForUserCreditsRows(userWorkspaceId, [
+            { creditsUsedMicro: 1_300, userCreditsUsedMicro: 1_300 },
+          ]);
+        },
+        EXECUTION_TIMEOUT_MS,
+      );
+
+      it(
+        'records the charge as user credits and leaves the workspace allowance untouched when the user credits window cannot warm',
+        async () => {
+          const userWorkspaceId = generateUserWorkspaceId();
+          const allowanceConsumed = await readWorkspaceAllowanceConsumed();
+          const clickHouseReadSpy = jest
+            .spyOn(
+              getAppProviderByClassName<UsageAnalyticsService>(
+                'UsageAnalyticsService',
+              ),
+              'getConsumptionRowsForAllScopes',
+            )
+            .mockRejectedValue(new Error('ClickHouse is unreachable'));
+
+          try {
+            expect(
+              await chargeChatTokens({
+                userWorkspaceId,
+                creditsUsedMicro: 600,
+              }),
+            ).toEqual({ exhaustedKind: null });
+          } finally {
+            clickHouseReadSpy.mockRestore();
+          }
+
+          expect(await readWorkspaceAllowanceConsumed()).toBe(
+            allowanceConsumed,
+          );
+
+          await waitForUserCreditsRows(userWorkspaceId, [
+            { creditsUsedMicro: 600, userCreditsUsedMicro: 600 },
+          ]);
+        },
+        EXECUTION_TIMEOUT_MS,
+      );
+    },
+  );
 });

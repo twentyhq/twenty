@@ -14,4 +14,7 @@ export const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   pageLayoutTab: 'pageLayoutTabs',
   navigationMenuItem: 'navigationMenuItems',
   pageLayoutWidget: 'pageLayoutWidgets',
+  workflow: 'workflows',
+  skill: 'skills',
+  agent: 'agents',
 };

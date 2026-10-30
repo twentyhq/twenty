@@ -15,13 +15,13 @@ describe('getCallRecordingPlaybackMedia', () => {
   it('returns video when only video is available', () => {
     expect(
       getCallRecordingPlaybackMedia({ video: [makeFile(VIDEO_URL)] }),
-    ).toEqual({ url: VIDEO_URL, kind: 'video' });
+    ).toEqual({ fileId: 'recording-file', url: VIDEO_URL, kind: 'video' });
   });
 
   it('returns audio when only audio is available', () => {
     expect(
       getCallRecordingPlaybackMedia({ audio: [makeFile(AUDIO_URL)] }),
-    ).toEqual({ url: AUDIO_URL, kind: 'audio' });
+    ).toEqual({ fileId: 'recording-file', url: AUDIO_URL, kind: 'audio' });
   });
 
   it('prefers video when both are available', () => {
@@ -30,7 +30,7 @@ describe('getCallRecordingPlaybackMedia', () => {
         video: [makeFile(VIDEO_URL)],
         audio: [makeFile(AUDIO_URL)],
       }),
-    ).toEqual({ url: VIDEO_URL, kind: 'video' });
+    ).toEqual({ fileId: 'recording-file', url: VIDEO_URL, kind: 'video' });
   });
 
   it.each([
@@ -53,7 +53,7 @@ describe('getCallRecordingPlaybackMedia', () => {
           video: [makeFile(url)],
           audio: [makeFile(AUDIO_URL)],
         }),
-      ).toEqual({ url: AUDIO_URL, kind: 'audio' });
+      ).toEqual({ fileId: 'recording-file', url: AUDIO_URL, kind: 'audio' });
     },
   );
 
@@ -62,12 +62,12 @@ describe('getCallRecordingPlaybackMedia', () => {
       getCallRecordingPlaybackMedia({
         video: [makeFile(), makeFile(' '), makeFile(VIDEO_URL)],
       }),
-    ).toEqual({ url: VIDEO_URL, kind: 'video' });
+    ).toEqual({ fileId: 'recording-file', url: VIDEO_URL, kind: 'video' });
     expect(
       getCallRecordingPlaybackMedia({
         audio: [makeFile(), makeFile(' '), makeFile(AUDIO_URL)],
       }),
-    ).toEqual({ url: AUDIO_URL, kind: 'audio' });
+    ).toEqual({ fileId: 'recording-file', url: AUDIO_URL, kind: 'audio' });
   });
 
   it('returns undefined when both files have blank urls', () => {

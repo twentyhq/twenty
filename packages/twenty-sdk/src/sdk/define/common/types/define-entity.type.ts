@@ -18,10 +18,13 @@ import {
   type AgentManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
+  type McpServerManifest,
+  type MessagingProviderManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 
 export type ValidationResult<T> = {
@@ -43,6 +46,8 @@ export type DefinableEntity =
   | UninstallLogicFunctionConfig
   | AgentManifest
   | ConnectionProviderManifest
+  | MessagingProviderManifest
+  | McpServerManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig
@@ -53,7 +58,8 @@ export type DefinableEntity =
   | StandalonePageLayoutWidgetManifest
   | PermissionFlagConfig
   | CommandMenuItemConfig
-  | SettingsMenuItemConfig;
+  | SettingsMenuItemConfig
+  | WorkflowManifest;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: LooseEnumValues<T>,

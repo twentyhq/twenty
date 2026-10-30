@@ -48,6 +48,7 @@ export const createValidationRuleEvaluator = ({
         return {
           status: 'errored',
           errorMessage: 'Expression did not return true or false',
+          errorCode: 'NON_BOOLEAN_RESULT',
         };
       }
 

@@ -3,11 +3,13 @@ import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { type AppLocale } from 'twenty-shared/translations';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -56,6 +58,19 @@ const mockStorageClear = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
+
+let mockLocationSearch = '';
+let mockLocationPathname = '/';
+let mockLocationHash = '';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    search: mockLocationSearch,
+    pathname: mockLocationPathname,
+    hash: mockLocationHash,
+  }),
+}));
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -224,6 +239,12 @@ const parentViewAtom =
     instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
   });
 
+const setOpenRecordInPreference = (openRecordIn: OpenRecordIn) =>
+  getDefaultStore().set(currentWorkspaceMemberState.atom, {
+    ...mockedWorkspaceMemberData,
+    openRecordIn,
+  });
+
 const createParentView = (parentViewObjectNameSingular: string) => ({
   parentViewComponentId: 'parent-view-component-id',
   parentViewObjectNameSingular,
@@ -244,7 +265,11 @@ describe('useFrontComponentExecutionContext', () => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
     mockIsMobile = false;
+    mockLocationSearch = '';
+    mockLocationPathname = '/';
+    mockLocationHash = '';
     getDefaultStore().set(parentViewAtom, undefined);
+    getDefaultStore().set(currentWorkspaceMemberState.atom, null);
   });
 
   describe('executionContext', () => {
@@ -264,6 +289,12 @@ describe('useFrontComponentExecutionContext', () => {
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
+        location: {
+          pathname: '/',
+          search: '',
+          hash: '',
+          origin: window.location.origin,
+        },
       });
     });
 
@@ -302,6 +333,62 @@ describe('useFrontComponentExecutionContext', () => {
         timelineActivityId: null,
         colorScheme: 'light',
         locale: i18n.locale as AppLocale,
+        location: {
+          pathname: '/',
+          search: '',
+          hash: '',
+          origin: window.location.origin,
+        },
+      });
+    });
+
+    it('should expose the URL pathname, query string, hash and the app origin', () => {
+      mockLocationSearch = '?project=abc&tab=2';
+      mockLocationPathname = '/page/page-record-id';
+      mockLocationHash = '#details';
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/page/page-record-id',
+        search: '?project=abc&tab=2',
+        hash: '#details',
+        origin: window.location.origin,
+      });
+    });
+
+    it('should update the location when the host route changes', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      mockLocationPathname = '/page/page-record-id';
+      mockLocationSearch = '?project=abc';
+      rerender();
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/page/page-record-id',
+        search: '?project=abc',
+        hash: '',
+        origin: window.location.origin,
+      });
+    });
+
+    it('should update the location when only the hash changes', () => {
+      const { result, rerender } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      mockLocationHash = '#details';
+      rerender();
+
+      expect(result.current.executionContext.location).toEqual({
+        pathname: '/',
+        search: '',
+        hash: '#details',
+        origin: window.location.origin,
       });
     });
 
@@ -792,6 +879,95 @@ describe('useFrontComponentExecutionContext', () => {
         undefined,
       );
       expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+    });
+    describe('with the user open record preference', () => {
+      const openLeadRecord = async () => {
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+            {
+              page: SidePanelPages.ViewRecord,
+              recordId: 'lead-1',
+              objectNameSingular: 'lead',
+            },
+          );
+        });
+      };
+
+      it('should navigate to the record page when the user prefers the record page', async () => {
+        setOpenRecordInPreference(OpenRecordIn.RECORD_PAGE);
+
+        await openLeadRecord();
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
+
+      it('should open the side panel when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+
+        await openLeadRecord();
+
+        expect(mockOpenRecordInSidePanel).toHaveBeenCalledTimes(1);
+        expect(mockOpenRecordInSidePanel).toHaveBeenCalledWith({
+          recordId: 'lead-1',
+          objectNameSingular: 'lead',
+          resetNavigationStack: undefined,
+        });
+        expect(mockNavigateApp).not.toHaveBeenCalled();
+      });
+
+      it('should navigate to the record page on mobile even when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+        mockIsMobile = true;
+
+        await openLeadRecord();
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'lead', objectRecordId: 'lead-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
+
+      it('should keep the object-level record page setting when the user prefers the side panel', async () => {
+        setOpenRecordInPreference(OpenRecordIn.SIDE_PANEL);
+
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+            {
+              page: SidePanelPages.ViewRecord,
+              recordId: 'workflow-1',
+              objectNameSingular: 'workflow',
+            },
+          );
+        });
+
+        expect(mockNavigateApp).toHaveBeenCalledTimes(1);
+        expect(mockNavigateApp).toHaveBeenCalledWith(
+          AppPath.RecordShowPage,
+          { objectNameSingular: 'workflow', objectRecordId: 'workflow-1' },
+          undefined,
+          undefined,
+        );
+        expect(mockOpenRecordInSidePanel).not.toHaveBeenCalled();
+      });
     });
   });
 

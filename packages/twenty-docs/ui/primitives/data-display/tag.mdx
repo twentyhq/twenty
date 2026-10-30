@@ -3,15 +3,23 @@ title: Tag
 description: Label a category or attribute with a theme color and optional icon.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
 
+## Overview
+
 Use `Tag` for categories, priorities, or other short attributes. Keep a text label so the meaning does not depend on color. Use [Status](/ui/primitives/data-display/status) when you need a state indicator and loading feedback.
 
-<StoryEmbed storyId="ui-data-display-tag--documentation" title="Tag example" />
+<StoryEmbed
+  storyId="ui-data-display-tag--display"
+  title="Tag example"
+  height={90}
+/>
 
-## Category label
+## Usage
 
 ```tsx
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -22,6 +30,12 @@ export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
 `color` is required and accepts a theme color or `transparent`. The default element is always a `span`, including when a native click handler is supplied. Add a decorative icon with `startIcon`; the label supplies its accessible meaning.
 
 ## Variants
+
+<StoryEmbed
+  storyId="ui-data-display-tag--catalog"
+  title="Tag variants"
+  height={140}
+/>
 
 ```tsx
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -45,6 +59,16 @@ export const CategoryTags = () => (
 ```
 
 `soft` is the default treatment. `solid` emphasizes the label, `outline` adds a border, and `ghost` removes the background. Use `borderStyle="dashed"` with `outline` and `weight="medium"` for a stronger label.
+
+## Colors
+
+<StoryEmbed
+  storyId="ui-data-display-tag--colors"
+  title="Tag theme colors"
+  height={240}
+/>
+
+Keep the label meaningful without relying on its color. The catalog compares the default soft treatment; the same palette is available to the other variants.
 
 ## Filter by a tag
 
@@ -71,26 +95,24 @@ Compose an interactive owner through `render`. Put its click handler, native att
 
 ## Long labels
 
-By default, `truncate={true}` truncates constrained string labels and exposes their full text in a tooltip on hover. Set `truncate={false}` to display the full label without a tooltip. The surrounding layout still owns the available width.
+By default, `truncate={true}` truncates constrained string labels and exposes their full text in a tooltip on hover. Set `truncate={false}` to keep the full label at its natural width without a tooltip, even when its parent is narrower. The parent layout owns wrapping, scrolling, and clipping.
 
 ```tsx
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 export const FullCategoryLabel = () => (
-  <Tag
-    color="green"
-    truncate={false}
-    style={{ minWidth: 'fit-content', padding: 0 }}
-  >
+  <Tag color="green" truncate={false}>
     Enterprise customer
   </Tag>
 );
 ```
 
-Use native styles for spacing and layout. This example keeps the full label width and removes padding. Node children remain caller-owned content, so compose their text, translations, and intentional links directly.
+Node children remain caller-owned content, so compose their text, translations, and intentional links directly.
 
 ## Props
 
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

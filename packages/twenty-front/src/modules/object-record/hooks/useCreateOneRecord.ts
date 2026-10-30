@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { v4 } from 'uuid';
+import { t } from '@lingui/core/macro';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -160,7 +160,7 @@ export const useCreateOneRecord = <
           setLoading(false);
         },
       })
-      .catch((error: Error) => {
+      .catch(async (error: Error) => {
         if (!isDefined(recordCreatedInCache)) {
           throw error;
         }
@@ -174,13 +174,8 @@ export const useCreateOneRecord = <
           objectPermissionsByObjectMetadataId,
         });
 
-        triggerDestroyRecordsOptimisticEffect({
-          cache: apolloCoreClient.cache,
-          objectMetadataItem,
-          recordsToDestroy: [recordCreatedInCache],
-          objectMetadataItems,
-          upsertRecordsInStore,
-          objectPermissionsByObjectMetadataId,
+        await refetchAggregateQueries({
+          objectMetadataNamePlural: objectMetadataItem.namePlural,
         });
 
         throw error;
@@ -210,7 +205,7 @@ export const useCreateOneRecord = <
     });
 
     if (!isDefined(createdRecord)) {
-      throw new CustomError('Failed to create record');
+      throw new CustomError(t`Failed to create record`);
     }
 
     return getRecordFromRecordNode({

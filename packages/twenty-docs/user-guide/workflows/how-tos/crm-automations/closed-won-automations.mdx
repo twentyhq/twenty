@@ -3,7 +3,7 @@ title: Closed Won Automations
 description: Automate post-win activities when opportunities close.
 ---
 
-When a deal closes, multiple things need to happen: update company status, notify team members, create onboarding tasks. Automate all of this with a single workflow.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## The Problem
 
@@ -36,7 +36,7 @@ Create a workflow that handles all post-win activities automatically.
 ### Step 3: Add Stage Filter
 
 1. Add **Filter** action
-2. Condition: `{{trigger.object.stage}}` equals "Closed Won"
+2. Condition: `{{trigger.properties.after.stage}}` equals "Closed Won"
 
 ### Step 4: Update Company Type
 
@@ -46,10 +46,12 @@ Create a workflow that handles all post-win activities automatically.
 | Field | Value |
 |-------|-------|
 | **Object** | Companies |
-| **Record** | `{{trigger.object.company.id}}` |
+| **Record** | `{{trigger.properties.after.companyId}}` |
 | **Type** | Customer |
-| **First Deal Date** | `{{trigger.object.closedAt}}` |
-| **Account Owner** | `{{trigger.object.owner.id}}` |
+| **First Deal Date** | `{{trigger.properties.after.closeDate}}` |
+| **Account Owner** | `{{trigger.properties.after.ownerId}}` |
+
+Name this step "Update Company". Its output is the updated company, so later steps can insert its fields from the variable picker, shown below as `{{Update Company.name}}`. Pick them from the picker rather than typing them: variables point to the step's ID, not its name.
 
 ### Step 5: Create Onboarding Task
 
@@ -59,13 +61,13 @@ Create a workflow that handles all post-win activities automatically.
 | Field | Value |
 |-------|-------|
 | **Object** | Tasks |
-| **Title** | `Onboarding: {{trigger.object.name}}` |
+| **Title** | `Onboarding: {{trigger.properties.after.name}}` |
 | **Assignee** | Customer Success team member |
 | **Due Date** | 3 days from now |
 | **Priority** | High |
-| **Related Company** | `{{trigger.object.company.id}}` |
-| **Related Opportunity** | `{{trigger.object.id}}` |
-| **Description** | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| **Related Company** | `{{trigger.properties.after.companyId}}` |
+| **Related Opportunity** | `{{trigger.properties.after.id}}` |
+| **Description** | `New customer onboarding for {{Update Company.name}}.` |
 
 ### Step 6: Notify Customer Success
 
@@ -75,7 +77,7 @@ Create a workflow that handles all post-win activities automatically.
 | Field | Value |
 |-------|-------|
 | **To** | customer-success@yourcompany.com |
-| **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **Subject** | `🎉 New Customer: {{Update Company.name}}` |
 | **Body** | See example below |
 
 **Email body example**:
@@ -84,11 +86,9 @@ Hi CS Team,
 
 We have a new customer!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Company: {{Update Company.name}}
+Deal: {{trigger.properties.after.name}}
+Close Date: {{trigger.properties.after.closeDate}}
 
 An onboarding task has been created automatically.
 
@@ -97,14 +97,23 @@ Let's give them a great start!
 
 ### Step 7: Confirm to Sales Rep
 
-1. Add another **Send Email** action
-2. Configure:
+1. Add a **Search Records** action named "Find Owner" to get the sales rep:
 
 | Field | Value |
 |-------|-------|
-| **To** | `{{trigger.object.owner.email}}` |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}` |
+| **Object** | Workspace Members |
+| **Filter** | ID equals `{{trigger.properties.after.ownerId}}` |
+
+2. Add another **Send Email** action
+3. Configure:
+
+| Field | Value |
+|-------|-------|
+| **To** | `{{Find Owner.first.userEmail}}` |
+| **Subject** | `✅ Deal Closed: {{trigger.properties.after.name}}` |
 | **Body** | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+
+Select the **To** value from the variable picker under the "Find Owner" step.
 
 ### Step 8: Test and Activate
 
@@ -168,3 +177,5 @@ Use **Code** action to format:
 
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 - [Send Emails from Workflows](/user-guide/workflows/capabilities/send-emails-from-workflows)
+
+<PageBanner illustration="card-page-campaign-practices" />

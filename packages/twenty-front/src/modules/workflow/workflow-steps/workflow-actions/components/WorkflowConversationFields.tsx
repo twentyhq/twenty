@@ -6,6 +6,7 @@ import {
   type WorkflowConversation,
   type WorkflowConversationScope,
 } from 'twenty-shared/workflow';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type WorkflowConversationFieldsProps = {
   dropdownId: string;
@@ -28,9 +29,9 @@ export const WorkflowConversationFields = ({
   const scope = conversation?.scope ?? defaultScope;
 
   const scopeOptions: { label: string; value: WorkflowConversationScope }[] = [
-    { label: t`One per run`, value: 'RUN' },
+    { label: t`One per run`, value: doNotTranslate('RUN') },
     { label: t`A new one each time the step runs`, value: 'STEP' },
-    { label: t`Shared by key, across runs`, value: 'KEY' },
+    { label: t`Shared by key, across runs`, value: doNotTranslate('KEY') },
   ];
 
   const handleScopeChange = (nextScope: WorkflowConversationScope) => {
@@ -62,7 +63,9 @@ export const WorkflowConversationFields = ({
           placeholder={t`Steps of this workflow sharing a key write to the same conversation`}
           readonly={readonly}
           defaultValue={conversation?.key}
-          onChange={(key) => onChange({ scope: 'KEY', key })}
+          onChange={(key) => {
+            onChange({ scope: doNotTranslate('KEY'), key });
+          }}
           VariablePicker={WorkflowVariablePicker}
         />
       )}

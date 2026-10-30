@@ -1,4 +1,5 @@
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
+import { findStoredUserApplicationVariableValues } from 'test/integration/metadata/suites/application/utils/find-stored-user-application-variable-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
@@ -75,14 +76,10 @@ describe('Secret user application variable values should succeed', () => {
       expectToFail: false,
     });
 
-    const storedValues: { value: string }[] = await global.testDataSource.query(
-      `SELECT "userValue"."value"
-         FROM "core"."userApplicationVariableValue" "userValue"
-         JOIN "core"."applicationVariable" "variable"
-           ON "variable"."id" = "userValue"."applicationVariableId"
-        WHERE "variable"."applicationId" = $1`,
-      [application.id],
-    );
+    const storedValues = await findStoredUserApplicationVariableValues({
+      applicationId: application.id,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    });
 
     expect(storedValues).toHaveLength(1);
     expect(storedValues[0].value).toMatch(/^enc:v2:/);
@@ -173,5 +170,12 @@ describe('Secret user application variable values should succeed', () => {
     expect(jonyValues?.variables).toEqual([
       { key: application.variableKey, value: '' },
     ]);
+
+    const storedJonyValues = await findStoredUserApplicationVariableValues({
+      applicationId: application.id,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    });
+
+    expect(storedJonyValues).toHaveLength(0);
   });
 });

@@ -1,6 +1,6 @@
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import { SettingsDataModelFieldOnClickActionForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm';
@@ -48,19 +48,19 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
           />
-          <Separator />
+          <SettingsCardSeparator />
           <SettingsDataModelFieldMaxValuesForm
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
             fieldType={FieldMetadataType.PHONES}
           />
-          <Separator />
+          <SettingsCardSeparator />
           <SettingsDataModelFieldOnClickActionForm
             disabled={disabled}
             existingFieldMetadataId={existingFieldMetadataId}
             fieldType={FieldMetadataType.PHONES}
           />
-          <Separator />
+          <SettingsCardSeparator />
           <SettingsDataModelFieldIsUniqueForm
             fieldType={FieldMetadataType.PHONES}
             existingFieldMetadataId={existingFieldMetadataId}

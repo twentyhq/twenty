@@ -3,14 +3,42 @@ title: Banner
 description: Feedback content with independent status, appearance, and palette.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import BannerReference from '/snippets/ui/generated/feedback/banner.mdx';
+
+## Overview
 
 `Banner` lays out caller-provided content, an optional `icon` node and an optional `action` node. `status` describes feedback meaning: `neutral`, `info`, `success`, `warning` or `error`. `variant` selects `solid` or `soft` appearance. An explicit `color` overrides the status palette without changing its meaning.
 
 Defaults are `status="info"` and `variant="solid"`. The default status palettes are gray, blue, green, orange and red, respectively.
 
-<StoryEmbed storyId="ui-feedback-banner--default" title="Banner example" />
+<StoryEmbed
+  storyId="ui-feedback-banner--display"
+  title="Banner example"
+  height={130}
+/>
+
+## Usage
+
+```tsx
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const SyncBanner = () => (
+  <Banner status="info" variant="solid">
+    Contact sync is temporarily paused. Your saved records remain available.
+  </Banner>
+);
+```
+
+## Actions and appearance
+
+<StoryEmbed
+  storyId="ui-feedback-banner--catalog"
+  title="Banner feedback palettes and variants"
+  height={560}
+/>
 
 ```tsx
 import { Banner } from 'twenty-ui/primitives/feedback';
@@ -52,6 +80,36 @@ export const SyncResult = () => (
 
 Status does not automatically assign `role`, `aria-live` or announcements. Choose them at the caller when updates should be announced. Supply accessible names for controls and mark decorative icon nodes with `aria-hidden`. The caller owns visibility and dismissal.
 
+## Dismissal
+
+Pass `onDismiss` to show a 24px ghost close control at the logical inline end. The control inherits the banner color and has `type="button"`. `closeLabel` defaults to `Close`; supply localized text in your application. Balanced inline spacing keeps centered content and actions clear of the control.
+
+The caller owns visibility. Activating the close control calls `onDismiss` and leaves the banner mounted until its caller updates state. Other actions remain in the `action` slot.
+
+```tsx
+import { useState } from 'react';
+import { Banner } from 'twenty-ui/primitives/feedback';
+
+export const DismissibleSyncBanner = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return isVisible ? (
+    <Banner
+      onDismiss={() => setIsVisible(false)}
+      closeLabel="Dismiss sync message"
+    >
+      Contacts are syncing in the background.
+    </Banner>
+  ) : null;
+};
+```
+
+<StoryEmbed
+  storyId="ui-feedback-banner--dismissible"
+  title="Dismissible banner"
+  height={160}
+/>
+
 ## Migration
 
 Replace `variant="primary"` with `variant="solid"` and `variant="secondary"` with `variant="soft"`. Replace `color="danger"` with `status="error"`, or `color="red"` when only the palette should change. Blue information banners can use `status="info"`.
@@ -59,3 +117,5 @@ Replace `variant="primary"` with `variant="solid"` and `variant="secondary"` wit
 ## Props
 
 <BannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

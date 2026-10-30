@@ -17,7 +17,7 @@ import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuI
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -162,39 +162,30 @@ export const InterfaceScale: Story = {
   },
 };
 
-const avatarUrl =
-  'https://s3-alpha-sig.figma.com/img/bbb5/4905/f0a52cc2b9aaeb0a82a360d478dae8bf?Expires=1687132800&Signature=iVBr0BADa3LHoFVGbwqO-wxC51n1o~ZyFD-w7nyTyFP4yB-Y6zFawL-igewaFf6PrlumCyMJThDLAAc-s-Cu35SBL8BjzLQ6HymzCXbrblUADMB208PnMAvc1EEUDq8TyryFjRO~GggLBk5yR0EXzZ3zenqnDEGEoQZR~TRqS~uDF-GwQB3eX~VdnuiU2iittWJkajIDmZtpN3yWtl4H630A3opQvBnVHZjXAL5YPkdh87-a-H~6FusWvvfJxfNC2ZzbrARzXofo8dUFtH7zUXGCC~eUk~hIuLbLuz024lFQOjiWq2VKyB7dQQuGFpM-OZQEV8tSfkViP8uzDLTaCg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4';
-
 const optionsMock = [
   {
     id: '1',
     name: 'Company A',
-    avatarUrl,
   },
   {
     id: '2',
     name: 'Company B',
-    avatarUrl,
   },
   {
     id: '3',
     name: 'Company C',
-    avatarUrl,
   },
   {
     id: '4',
     name: 'Person 2',
-    avatarUrl,
   },
   {
     id: '5',
     name: 'Company D',
-    avatarUrl,
   },
   {
     id: '6',
     name: 'Person 1',
-    avatarUrl,
   },
 ];
 
@@ -221,7 +212,7 @@ export const WithHeaders: Story = {
         >
           Header
         </DropdownMenuHeader>
-        <StyledDropdownMenuSubheader>Subheader 1</StyledDropdownMenuSubheader>
+        <DropdownMenuSectionLabel label="Subheader 1" />
         <DropdownMenuItemsContainer hasMaxHeight>
           <>
             {optionsMock.slice(0, 3).map((item) => (
@@ -230,7 +221,7 @@ export const WithHeaders: Story = {
           </>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
-        <StyledDropdownMenuSubheader>Subheader 2</StyledDropdownMenuSubheader>
+        <DropdownMenuSectionLabel label="Subheader 2" />
         <DropdownMenuItemsContainer>
           {optionsMock.slice(3).map((item) => (
             <ListItem key={item.id}>{item.name}</ListItem>

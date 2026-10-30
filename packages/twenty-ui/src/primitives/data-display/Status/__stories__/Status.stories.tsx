@@ -22,16 +22,12 @@ const meta: Meta<typeof Status> = {
 export default meta;
 type Story = StoryObj<typeof Status>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     color: 'red',
   },
   decorators: [ComponentDecorator],
-};
-
-export const Documentation: Story = {
-  args: Default.args,
-  decorators: Default.decorators,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
 };
 
 export const WithLongText: Story = {
@@ -47,7 +43,7 @@ export const WithLongText: Story = {
 };
 
 export const Loading: Story = {
-  ...Default,
+  ...Display,
   args: {
     children: 'Saving',
     color: 'blue',
@@ -172,9 +168,9 @@ export const RenderCallback: Story = {
 };
 
 export const DefaultSemantics: Story = {
-  ...Default,
+  ...Display,
   args: {
-    ...Default.args,
+    ...Display.args,
     title: 'Record state',
     onClick: fn(),
     ref: fn(),

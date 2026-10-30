@@ -22,6 +22,7 @@ import { AGENT_TRIGGER_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai
 import { type RunAgentTriggerJobData } from 'src/engine/metadata-modules/ai/ai-agent-trigger/types/run-agent-trigger-job-data.type';
 import { buildAgentTriggerMessages } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/build-agent-trigger-messages.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import {
   AiException,
   AiExceptionCode,
@@ -68,15 +69,15 @@ export class AgentTriggerRunnerService
     payload,
     ...ref
   }: RunAgentTriggerJobData): Promise<void> {
-    const triggeredRun = await this.findTriggeredRun({ workspaceId, ref });
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
 
-    if (!isDefined(triggeredRun)) {
+    if (!isDefined(activeTrigger)) {
       return;
     }
 
-    const { agent, trigger, executionContext } = triggeredRun;
+    const { agent, trigger } = activeTrigger;
 
-    await this.agentRunnerService.run({
+    await this.agentRunnerService.start({
       workspaceId,
       conversation: {
         threadId: buildAgentRunThreadId({
@@ -98,7 +99,6 @@ export class AgentTriggerRunnerService
         },
         toolLoadingStrategy: 'lazy',
       },
-      agent,
       prompt: {
         messages: buildAgentTriggerMessages({
           instructions: trigger.instructions,
@@ -107,7 +107,6 @@ export class AgentTriggerRunnerService
         senderUserWorkspaceId: null,
         senderApplicationId: agent.applicationId,
       },
-      executionContext,
     });
   }
 
@@ -139,25 +138,47 @@ export class AgentTriggerRunnerService
       : 'GONE';
   }
 
+  private async findActiveTrigger({
+    workspaceId,
+    ref: { agentId, triggerId },
+  }: {
+    workspaceId: string;
+    ref: AgentTriggerCallerRef;
+  }): Promise<Pick<TriggeredRun, 'agent' | 'trigger'> | null> {
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
+
+    if (!isDefined(agentRow)) {
+      return null;
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+    const trigger = agent.triggers.find(
+      (agentTrigger) => agentTrigger.id === triggerId,
+    );
+
+    return agent.isActive && isDefined(trigger) && trigger.isActive
+      ? { agent, trigger }
+      : null;
+  }
+
   // The trigger may have been turned off or removed, or the agent's role changed, since the run was queued
   private async findTriggeredRun({
     workspaceId,
-    ref: { agentId, triggerId, dispatchedRoleId },
+    ref,
   }: {
     workspaceId: string;
     ref: AgentTriggerCallerRef;
   }): Promise<TriggeredRun | null> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: agentId },
-    });
+    const { agentId, triggerId, dispatchedRoleId } = ref;
+    const activeTrigger = await this.findActiveTrigger({ workspaceId, ref });
 
-    const trigger = agent?.triggers.find(
-      (agentTrigger) => agentTrigger.id === triggerId,
-    );
-
-    if (!isDefined(agent) || !isDefined(trigger) || !trigger.isActive) {
+    if (!isDefined(activeTrigger)) {
       return null;
     }
+
+    const { agent, trigger } = activeTrigger;
 
     const agentContext =
       await this.agentActorContextService.buildApplicationAgentContext({

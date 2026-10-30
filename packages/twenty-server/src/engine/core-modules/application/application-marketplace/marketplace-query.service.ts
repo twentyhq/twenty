@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
@@ -35,10 +36,10 @@ export class MarketplaceQueryService {
 
   async findManyMarketplaceApps({
     universalIdentifiers,
-    isVetted,
+    isListed,
   }: {
     universalIdentifiers?: string[];
-    isVetted?: boolean;
+    isListed?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -55,11 +56,11 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    if (!isDefined(isVetted)) {
+    if (!isDefined(isListed)) {
       return apps;
     }
 
-    return apps.filter((app) => app.isVetted === isVetted);
+    return apps.filter((app) => app.isListed === isListed);
   }
 
   async findMarketplaceAppDetail(
@@ -74,10 +75,11 @@ export class MarketplaceQueryService {
   async findRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity> {
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        universalIdentifier,
-      );
+    const registration = isUUID(universalIdentifier)
+      ? await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+          universalIdentifier,
+        )
+      : null;
 
     if (!isDefined(registration)) {
       throw new ApplicationRegistrationException(
@@ -111,7 +113,6 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
-      isVetted: registration.isVetted,
       description:
         registration.description ??
         registration.manifest?.application?.description ??
@@ -167,6 +168,13 @@ export class MarketplaceQueryService {
             }),
           )
         : undefined,
+      objects: manifest?.objects?.map(
+        ({ universalIdentifier, labelSingular, labelPlural }) => ({
+          universalIdentifier,
+          labelSingular,
+          labelPlural,
+        }),
+      ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
       ),

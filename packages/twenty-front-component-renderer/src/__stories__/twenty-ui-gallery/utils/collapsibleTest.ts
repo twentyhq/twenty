@@ -74,7 +74,7 @@ export const collapsibleTest: TwentyUiGalleryPlayFunction = async ({
   expect(uncontrolled).toHaveAttribute('aria-expanded', 'true');
 
   const disabled = canvas.getByRole('button', { name: 'Disabled details' });
-  expect(disabled).toHaveAttribute('aria-disabled', 'true');
+  expect(disabled).toBeDisabled();
   await userEvent.click(disabled);
   expect(disabled).toHaveAttribute('aria-expanded', 'false');
   expect(
