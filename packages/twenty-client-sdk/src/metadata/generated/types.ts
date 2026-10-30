@@ -1399,6 +1399,9 @@ export default {
             "creditsUsed": [
                 6
             ],
+            "operationLabel": [
+                1
+            ],
             "operationType": [
                 1
             ],
@@ -4193,6 +4196,9 @@ export default {
         "CreditUsedItem": {
             "creditsUsed": [
                 6
+            ],
+            "icon": [
+                1
             ],
             "label": [
                 1

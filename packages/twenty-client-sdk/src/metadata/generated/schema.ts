@@ -529,6 +529,7 @@ export interface ApplicationMonitoringActivityBucket {
 export interface ApplicationMonitoringCreditBucket {
     bucketStart: Scalars['DateTime']
     creditsUsed: Scalars['Float']
+    operationLabel?: Scalars['String']
     operationType: Scalars['String']
     __typename: 'ApplicationMonitoringCreditBucket'
 }
@@ -1327,6 +1328,7 @@ export interface CreateEmailGroupChannelOutput {
 
 export interface CreditUsedItem {
     creditsUsed: Scalars['Float']
+    icon?: Scalars['String']
     label?: Scalars['String']
     operation?: UsageOperationType
     resource?: UsageResourceType
@@ -3678,7 +3680,7 @@ export interface UsageLimitOperationDefinition {
     __typename: 'UsageLimitOperationDefinition'
 }
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'AI_WORKFLOW_WEB_SEARCH' | 'ALL' | 'API_REQUEST' | 'APP_OPERATION' | 'CALL_RECORDING' | 'CODE_EXECUTION' | 'EMAIL_SEND' | 'MESSAGE_CAMPAIGN_SEND' | 'RECORD_WRITE' | 'STORAGE_FILE' | 'SUBSCRIPTION' | 'WEBHOOK_CALL' | 'WEB_SEARCH' | 'WORKFLOW_EXECUTION'
 
 export interface UsageQuotaDefinition {
     allowedOperations: UsageLimitOperationDefinition[]
@@ -4782,6 +4784,7 @@ export interface ApplicationMonitoringActivityBucketGenqlSelection{
 export interface ApplicationMonitoringCreditBucketGenqlSelection{
     bucketStart?: boolean | number
     creditsUsed?: boolean | number
+    operationLabel?: boolean | number
     operationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5714,6 +5717,7 @@ export interface CreateWebhookInput {description?: (Scalars['String'] | null),id
 
 export interface CreditUsedItemGenqlSelection{
     creditsUsed?: boolean | number
+    icon?: boolean | number
     label?: boolean | number
     operation?: boolean | number
     resource?: boolean | number
@@ -12750,6 +12754,7 @@ export const enumUsageOperationType = {
    AI_WORKFLOW_WEB_SEARCH: 'AI_WORKFLOW_WEB_SEARCH' as const,
    ALL: 'ALL' as const,
    API_REQUEST: 'API_REQUEST' as const,
+   APP_OPERATION: 'APP_OPERATION' as const,
    CALL_RECORDING: 'CALL_RECORDING' as const,
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
    EMAIL_SEND: 'EMAIL_SEND' as const,
