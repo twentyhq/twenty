@@ -35,10 +35,10 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     });
   }
   assertLocalStorage({ environment, container: existing });
-  const image = await resolveLocalImage(
-    readStringArgument(commandArguments, 0),
+  const image = await resolveLocalImage({
+    version: readStringArgument(commandArguments, 0),
     signal,
-  );
+  });
   output.progress({ message: `Pulling ${image}…` });
   await runDocker({ args: ['pull', image], signal });
   const nextImageId = (
@@ -86,8 +86,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     signal,
   });
   const data = await waitForLocalEnvironment({
-    environment,
-    port: existing.port,
+    environment: { ...environment, port: existing.port },
     signal,
   });
   return {

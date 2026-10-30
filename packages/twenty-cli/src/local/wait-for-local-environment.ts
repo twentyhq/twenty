@@ -6,14 +6,12 @@ import { CliError } from '@/output/cli-error';
 
 export const waitForLocalEnvironment = async ({
   environment,
-  port,
   signal,
 }: {
   environment: Pick<LocalEnvironment, 'name' | 'port'>;
-  port: number;
   signal: AbortSignal;
 }) => {
-  await waitForLocalHealth({ port, signal });
+  await waitForLocalHealth({ port: environment.port, signal });
   const status = await getLocalStatus({
     environment,
     container: await readLocalContainer({ environment, signal }),

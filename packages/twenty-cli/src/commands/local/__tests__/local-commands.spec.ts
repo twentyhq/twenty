@@ -218,6 +218,10 @@ describe('local commands', () => {
     const { exitCode, envelope } = await runJson(['start']);
     expect(exitCode).toBe(0);
     expect(envelope.data.url).toBe('http://localhost:12021');
+    expect(waitForLocalHealth).toHaveBeenCalledWith({
+      port: 12021,
+      signal: expect.any(AbortSignal),
+    });
     expect(mutations()).toEqual([['start', 'test-container']]);
   });
 

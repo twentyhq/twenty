@@ -9,11 +9,9 @@ import { checkLocalRuntime } from '@/local/check-local-runtime';
 import { createLocalContainer } from '@/local/create-local-container';
 import { readLocalOptions } from '@/local/read-local-options';
 import { readLocalContainer } from '@/local/read-local-container';
-import {
-  getLocalEngineRange,
-  getLocalImage,
-  resolveLocalImage,
-} from '@/local/resolve-local-image';
+import { getLocalEngineRange } from '@/local/get-local-engine-range';
+import { getLocalImage } from '@/local/get-local-image';
+import { resolveLocalImage } from '@/local/resolve-local-image';
 import { runDocker } from '@/local/run-docker';
 import { waitForLocalEnvironment } from '@/local/wait-for-local-environment';
 import { CliError } from '@/output/cli-error';
@@ -64,7 +62,8 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     }
   } else {
     const image =
-      requestedImage ?? (await resolveLocalImage(undefined, signal));
+      requestedImage ??
+      (await resolveLocalImage({ version: undefined, signal }));
     output.progress({ message: `Pulling ${image}…` });
     await runDocker({ args: ['pull', image], signal });
     output.progress({
@@ -76,7 +75,10 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
   output.progress({
     message: 'Waiting for the local environment to be ready…',
   });
-  const data = await waitForLocalEnvironment({ environment, port, signal });
+  const data = await waitForLocalEnvironment({
+    environment: { ...environment, port },
+    signal,
+  });
 
   return {
     data,

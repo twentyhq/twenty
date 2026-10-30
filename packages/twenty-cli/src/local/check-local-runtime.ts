@@ -1,9 +1,14 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
 
 export const checkLocalRuntime = async (signal: AbortSignal) => {
   let endpoint = process.env.DOCKER_HOST;
-  if (!endpoint || process.env.DOCKER_CONTEXT) {
+  if (
+    !isNonEmptyString(endpoint) ||
+    isNonEmptyString(process.env.DOCKER_CONTEXT)
+  ) {
     endpoint = (
       await runDocker({
         args: ['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
