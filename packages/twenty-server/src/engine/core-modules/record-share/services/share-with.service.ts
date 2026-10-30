@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
@@ -90,8 +89,7 @@ export class ShareWithService {
         authContext,
         apiKeyRoleMap,
         shareWith,
-        isOpenByDefault:
-          objectSharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT,
+        canRestrictGeneralAccess: objectSharing.canRestrictGeneralAccess,
       }),
       transactionScope,
     });

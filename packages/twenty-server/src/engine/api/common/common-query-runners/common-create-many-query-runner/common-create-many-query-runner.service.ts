@@ -47,7 +47,6 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
@@ -77,10 +76,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
-    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
+    const objectSharing = resolveObjectSharing(queryRunnerContext);
 
-    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
+    if (objectSharing.isShareRequired || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
@@ -90,7 +88,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
-        resolveShareWithToWrite({ sharingMode, shareWith: args.shareWith }),
+        resolveShareWithToWrite({
+          objectSharing,
+          shareWith: args.shareWith,
+        }),
       ) ||
         containsNestedRelationCreate(
           args.data,
@@ -158,7 +159,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
+        objectSharing.isShareRequired &&
+        isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
               { shouldBypassPermissionChecks: true },
@@ -609,7 +611,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
     const shareWithToWrite = resolveShareWithToWrite({
-      sharingMode: objectSharing.sharingMode,
+      objectSharing,
       shareWith,
     });
 

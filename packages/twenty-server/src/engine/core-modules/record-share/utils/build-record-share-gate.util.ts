@@ -2,7 +2,6 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
@@ -22,19 +21,17 @@ export const buildRecordShareGate = ({
     RowAccessPolicyTarget,
     'tableAlias' | 'flatObjectMetadata' | 'operationType'
   >): RowAccessPolicy => {
-  const { sharingMode } = resolveObjectSharing({
+  const { isShareRequired, canRestrictGeneralAccess } = resolveObjectSharing({
     flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
   });
 
   const isPrivate =
-    sharingMode === RecordSharingMode.PRIVATE &&
-    !subject.isOwningApplication(flatObjectMetadata);
+    isShareRequired && !subject.isOwningApplication(flatObjectMetadata);
 
   if (
     !isPrivate &&
-    (sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT ||
-      subject.canAccessAllRecords)
+    (!canRestrictGeneralAccess || subject.canAccessAllRecords)
   ) {
     return { kind: 'open' };
   }

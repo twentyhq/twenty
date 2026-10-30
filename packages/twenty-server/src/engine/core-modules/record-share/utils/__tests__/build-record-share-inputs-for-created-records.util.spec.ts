@@ -125,7 +125,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
           ],
-          isOpenByDefault: true,
+          canRestrictGeneralAccess: true,
         }),
       ).toEqual([
         {
@@ -150,7 +150,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
-          isOpenByDefault: true,
+          canRestrictGeneralAccess: true,
         }),
       ).toEqual([
         {

@@ -1,43 +1,38 @@
 /* @license Enterprise */
 
-import { assertUnreachable, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
-import { resolveDefaultGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-default-general-access-level.util';
+import { type ObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 
 // Null when the created records get no share row. shareWith also reaches the
 // records created through nested relations, so an object whose records are
 // only shared through roles writes nothing. Everyone at the default level is
 // the absence of a row, as for setRecordGeneralAccess
 export const resolveShareWithToWrite = ({
-  sharingMode,
+  objectSharing: { isShareable, isShareRequired, defaultGeneralAccessLevel },
   shareWith,
 }: {
-  sharingMode: RecordSharingMode;
+  objectSharing: Pick<
+    ObjectSharing,
+    'isShareable' | 'isShareRequired' | 'defaultGeneralAccessLevel'
+  >;
   shareWith?: ShareWithInput[] | null;
 }): ShareWithInput[] | null => {
-  if (
-    sharingMode === RecordSharingMode.ROLE_ONLY ||
-    sharingMode === RecordSharingMode.INHERITED
-  ) {
+  if (!isShareable) {
     return null;
   }
 
-  const defaultGeneralAccessLevel =
-    resolveDefaultGeneralAccessLevel(sharingMode);
   const shareWithToWrite = (shareWith ?? []).filter(
     (shareWithEntry) =>
       shareWithEntry.everyone !== true ||
       shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
   );
 
-  switch (sharingMode) {
-    case RecordSharingMode.OPEN_BY_DEFAULT:
-      return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
-    case RecordSharingMode.PRIVATE:
-      return shareWithToWrite;
-    default:
-      return assertUnreachable(sharingMode);
+  // A record that needs a share still gets its creator's
+  if (isShareRequired) {
+    return shareWithToWrite;
   }
+
+  return isNonEmptyArray(shareWithToWrite) ? shareWithToWrite : null;
 };

@@ -50,7 +50,7 @@ import {
   type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { isOperationGrantedBeyondRole } from 'src/engine/core-modules/record-share/utils/is-operation-granted-beyond-role.util';
 import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -2022,10 +2022,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       isMainAlias &&
       !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !resolveObjectSharing({
+      !isOperationGrantedBeyondRole({
         flatObjectMetadata,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
-      }).operationTypesGrantedBeyondRole.includes(operationType)
+        operationType,
+      })
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,

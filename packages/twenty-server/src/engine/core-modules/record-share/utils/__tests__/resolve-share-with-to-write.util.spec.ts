@@ -2,7 +2,6 @@
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
 
 const ROLE_GRANT = {
@@ -13,6 +12,21 @@ const EVERYONE_GRANT = {
   everyone: true,
   accessLevel: RecordShareAccessLevel.READ,
 };
+const PRIVATE_OBJECT = {
+  isShareable: true,
+  isShareRequired: true,
+  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+};
+const OPEN_OBJECT = {
+  isShareable: true,
+  isShareRequired: false,
+  defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+};
+const ROLE_ONLY_OBJECT = {
+  isShareable: false,
+  isShareRequired: false,
+  defaultGeneralAccessLevel: null,
+};
 const EVERYONE_AT_DEFAULT = {
   everyone: true,
   accessLevel: RecordShareAccessLevel.READ_WRITE,
@@ -22,19 +36,19 @@ describe('resolveShareWithToWrite', () => {
   it('should write every entry, and the creator rows, on a private object', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.PRIVATE,
+        objectSharing: PRIVATE_OBJECT,
         shareWith: [ROLE_GRANT, EVERYONE_GRANT],
       }),
     ).toEqual([ROLE_GRANT, EVERYONE_GRANT]);
-    expect(
-      resolveShareWithToWrite({ sharingMode: RecordSharingMode.PRIVATE }),
-    ).toEqual([]);
+    expect(resolveShareWithToWrite({ objectSharing: PRIVATE_OBJECT })).toEqual(
+      [],
+    );
   });
 
   it('should leave no everyone row when everyone keeps the default of a private object', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.PRIVATE,
+        objectSharing: PRIVATE_OBJECT,
         shareWith: [
           ROLE_GRANT,
           { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
@@ -46,7 +60,7 @@ describe('resolveShareWithToWrite', () => {
   it('should write named grants and a general access other than the default on a record open by default', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        objectSharing: OPEN_OBJECT,
         shareWith: [ROLE_GRANT, EVERYONE_GRANT],
       }),
     ).toEqual([ROLE_GRANT, EVERYONE_GRANT]);
@@ -55,19 +69,19 @@ describe('resolveShareWithToWrite', () => {
   it('should skip everyone at the default level of a record open by default', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        objectSharing: OPEN_OBJECT,
         shareWith: [ROLE_GRANT, EVERYONE_AT_DEFAULT],
       }),
     ).toEqual([ROLE_GRANT]);
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        objectSharing: OPEN_OBJECT,
         shareWith: [EVERYONE_AT_DEFAULT],
       }),
     ).toBeNull();
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        objectSharing: OPEN_OBJECT,
         shareWith: null,
       }),
     ).toBeNull();
@@ -76,7 +90,7 @@ describe('resolveShareWithToWrite', () => {
   it('should write nothing when records of the object are not shared', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.ROLE_ONLY,
+        objectSharing: ROLE_ONLY_OBJECT,
         shareWith: [ROLE_GRANT],
       }),
     ).toBeNull();

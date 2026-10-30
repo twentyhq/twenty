@@ -120,14 +120,14 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext,
   apiKeyRoleMap,
   shareWith,
-  isOpenByDefault = false,
+  canRestrictGeneralAccess = false,
 }: {
   recordIds: string[];
   objectMetadataId: string;
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
-  isOpenByDefault?: boolean;
+  canRestrictGeneralAccess?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
@@ -140,7 +140,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
     );
 
   const shouldWriteCreatorRows =
-    !isOpenByDefault ||
+    !canRestrictGeneralAccess ||
     shareWithPrincipals.some(
       (shareWithPrincipal) =>
         shareWithPrincipal.principalType ===

@@ -21,7 +21,6 @@ import {
   type RecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -30,12 +29,12 @@ import { RecordSharePrincipalService } from 'src/engine/core-modules/record-shar
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
-import { resolveDefaultGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-default-general-access-level.util';
 import { resolveRecordGeneralAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access-level.util';
 import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { resolveRecordSharingMode } from 'src/engine/core-modules/record-share/utils/resolve-record-sharing-mode.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -182,10 +181,10 @@ export class RecordSharingService {
     write: (change: RecordSharingChange) => Promise<void>,
   ): Promise<RecordSharingDTO> {
     const sharingObject = await this.getSharingObject(args);
-    const { flatObjectMetadata, sharingMode } = sharingObject;
+    const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (sharingMode === RecordSharingMode.ROLE_ONLY) {
+    if (!sharingObject.isShareable) {
       throw new NotFoundError('Record not found');
     }
 
@@ -252,12 +251,11 @@ export class RecordSharingService {
     // A writer may revoke their own access; the mutation must still succeed with a redacted state.
     if (!permissions.canRead) {
       return {
-        sharingMode,
+        sharingMode: resolveRecordSharingMode(sharingObject),
         canManageSharing: false,
         permissions,
         generalAccessLevel: null,
-        defaultGeneralAccessLevel:
-          resolveDefaultGeneralAccessLevel(sharingMode),
+        defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
         hasManagedGeneralAccess: false,
         roles: [],
         shares: [],
@@ -274,16 +272,15 @@ export class RecordSharingService {
   private async writeGeneralAccess({
     workspaceId,
     transactionScope,
-    sharingObject: { sharingMode },
+    sharingObject: { canRestrictGeneralAccess, defaultGeneralAccessLevel },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel };
   }): Promise<void> {
-    const isDefaultAccess =
-      args.accessLevel === resolveDefaultGeneralAccessLevel(sharingMode);
+    const isDefaultAccess = args.accessLevel === defaultGeneralAccessLevel;
 
-    if (sharingMode === RecordSharingMode.OPEN_BY_DEFAULT) {
+    if (canRestrictGeneralAccess) {
       await this.writeOwnersOfRecordOpenByDefault({
         workspaceId,
         transactionScope,
@@ -378,11 +375,11 @@ export class RecordSharingService {
     sharingObject: RecordSharingObject;
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
-    const { flatObjectMetadata, sharingMode } = sharingObject;
+    const { flatObjectMetadata } = sharingObject;
     const { shares, viewerAccessLevel, generalAccessLevel } =
       await this.getRecordShares({ ...args, sharingObject });
     const canManageSharing =
-      sharingMode !== RecordSharingMode.ROLE_ONLY &&
+      sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
       (await this.isUpdatePermittedByRole({
@@ -396,11 +393,11 @@ export class RecordSharingService {
     );
 
     return {
-      sharingMode,
+      sharingMode: resolveRecordSharingMode(sharingObject),
       canManageSharing,
       permissions,
       generalAccessLevel,
-      defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel(sharingMode),
+      defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
       hasManagedGeneralAccess: shares.some(
         (share) =>
           share.principalType === RecordSharePrincipalType.EVERYONE &&
@@ -503,8 +500,7 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const isOpenByDefault =
-      sharingObject.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT;
+    const { canRestrictGeneralAccess } = sharingObject;
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -537,10 +533,10 @@ export class RecordSharingService {
       transactionScope,
     });
     const generalAccessLevel = resolveRecordGeneralAccessLevel({
-      sharingMode: sharingObject.sharingMode,
+      defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
       recordShares: shares,
     });
-    const creatorWorkspaceMemberId = isOpenByDefault
+    const creatorWorkspaceMemberId = canRestrictGeneralAccess
       ? await this.findCreatorWorkspaceMemberId({
           workspaceId,
           flatObjectMetadata: sharingObject.flatObjectMetadata,
@@ -550,7 +546,7 @@ export class RecordSharingService {
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
       principalIds,
-      implicitAccessLevels: isOpenByDefault
+      implicitAccessLevels: canRestrictGeneralAccess
         ? [
             generalAccessLevel,
             creatorWorkspaceMemberId === authContext.workspaceMemberId ||

@@ -2,9 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -60,10 +61,21 @@ export class RecordShareOwnershipTransferService {
         'flatObjectMetadataMaps',
       ]);
 
-    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter(isRecordShareExceptionObject)
-      .map((flatObjectMetadata) => flatObjectMetadata.id);
+    return (
+      Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        // Rows written while sharing was enabled still need a custodian
+        .filter(
+          (flatObjectMetadata) =>
+            resolveObjectSharing({
+              flatObjectMetadata,
+              featureFlagsMap: {
+                [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+              },
+            }).canRestrictGeneralAccess,
+        )
+        .map((flatObjectMetadata) => flatObjectMetadata.id)
+    );
   }
 
   private async resolveCustodianWorkspaceMemberId({
