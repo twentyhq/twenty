@@ -44,6 +44,8 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
       ]);
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
+    let dryRunColumnCount = 0;
+    let dryRunTableCount = 0;
     const queryRunner = dataSource.createQueryRunner('master');
     let isQueryRunnerConnected = false;
 
@@ -97,9 +99,8 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
         );
 
         if (options.dryRun) {
-          this.logger.log(
-            `[DRY RUN] Would add ${missingColumnDefinitions.length} column(s) and ensure ${indexDefinitions.length} index(es) on ${tableName} for workspace ${workspaceId}`,
-          );
+          dryRunColumnCount += missingColumnDefinitions.length;
+          dryRunTableCount++;
 
           continue;
         }
@@ -132,6 +133,12 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
       if (isQueryRunnerConnected) {
         await queryRunner.release();
       }
+    }
+
+    if (options.dryRun) {
+      this.logger.log(
+        `[DRY RUN] Would add ${dryRunColumnCount} column(s) and ensure indexes on ${dryRunTableCount} table(s) for workspace ${workspaceId}`,
+      );
     }
   }
 
