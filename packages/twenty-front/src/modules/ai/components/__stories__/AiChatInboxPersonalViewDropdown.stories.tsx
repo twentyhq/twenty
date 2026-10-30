@@ -1,12 +1,14 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -24,14 +26,14 @@ import {
   GetAgentChatOpenThreadsSummaryDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-const RECORD_SELECTION_INSTANCE_ID = 'personal-view-story';
 const SELECTED_THREAD_ID = 'selected-chat';
+const OPEN_CHAT_PATH = '/inbox/6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
 const OPEN_OPTION_PATTERN = /^Open\b/;
 const NEEDS_INPUT_OPTION_PATTERN = /^Needs input\b/;
 const MENTIONS_OPTION_PATTERN = /^Mentions\b/;
@@ -50,12 +52,17 @@ const StyledHeader = styled.div`
 `;
 
 const PersonalViewStory = () => {
+  const { pathname } = useLocation();
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
 
   return (
-    <StyledHeader>
+    <StyledHeader
+      role="region"
+      aria-label="Inbox header"
+      data-pathname={pathname}
+    >
       <AiChatInboxViewHeading selectedThreadCount={selectedRecordIds.length} />
       <AiChatInboxPersonalViewDropdown />
     </StyledHeader>
@@ -93,14 +100,20 @@ const meta = {
         ]}
       >
         <RecordSelectionComponentInstanceContext.Provider
-          value={{ instanceId: RECORD_SELECTION_INSTANCE_ID }}
+          value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
         >
           <Story />
         </RecordSelectionComponentInstanceContext.Provider>
       </MockedProvider>
     ),
     ComponentDecorator,
-    MemoryRouterDecorator,
+    (Story) => (
+      <MemoryRouter initialEntries={[OPEN_CHAT_PATH]}>
+        <MemoryRouterAppNavigatorProvider>
+          <Story />
+        </MemoryRouterAppNavigatorProvider>
+      </MemoryRouter>
+    ),
   ],
   render: PersonalViewStory,
   parameters: { container: { width: 560, height: 280 } },
@@ -122,14 +135,14 @@ const meta = {
     );
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-        instanceId: RECORD_SELECTION_INSTANCE_ID,
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         familyKey: NO_RECORD_GROUP_FAMILY_KEY,
       }),
       [SELECTED_THREAD_ID],
     );
     jotaiStore.set(
       isRecordSelectedComponentFamilyState.atomFamily({
-        instanceId: RECORD_SELECTION_INSTANCE_ID,
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         familyKey: SELECTED_THREAD_ID,
       }),
       true,
@@ -193,6 +206,9 @@ export const SwitchViews: Story = {
     );
     await expect(canvas.getByText('Needs input')).toBeVisible();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole('region', { name: 'Inbox header' }),
+    ).toHaveAttribute('data-pathname', '/inbox');
     await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
     );

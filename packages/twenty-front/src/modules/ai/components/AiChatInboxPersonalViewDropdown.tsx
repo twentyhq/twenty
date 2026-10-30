@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
 
 import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
 import { AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES } from '@/ai/constants/AgentChatOpenThreadFilterStatuses';
@@ -11,9 +12,11 @@ import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilt
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const AiChatInboxPersonalViewDropdown = () => {
   const { t } = useLingui();
+  const navigate = useNavigateApp();
   const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
     useAtomState(agentChatThreadFilterStatusState);
   const {
@@ -32,13 +35,14 @@ export const AiChatInboxPersonalViewDropdown = () => {
     [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: needsInputThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: mentionThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ME]: assignedToMeThreadCount,
-    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: assignedThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE]: assignedThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED]: unassignedThreadCount,
   };
 
   const handleSelect = (filterStatus: AgentChatThreadFilterStatus) => {
     resetRecordSelection();
     setAgentChatThreadFilterStatus(filterStatus);
+    navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
   return (

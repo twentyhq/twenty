@@ -144,7 +144,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
     AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
     AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ME,
-    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
+    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE,
     AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED,
   ])('keeps Open current for the %s filter', (filterStatus) => {
     jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);

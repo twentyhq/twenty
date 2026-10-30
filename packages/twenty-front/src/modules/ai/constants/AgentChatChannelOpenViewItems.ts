@@ -30,7 +30,7 @@ export const AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS = [
     countKey: 'assignedToMeCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
+    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE,
     assignment: AgentChatChannelAssignmentFilter.ASSIGNED,
     filter: AgentChatChannelThreadFilter.ANY,
     countKey: 'assignedCount',

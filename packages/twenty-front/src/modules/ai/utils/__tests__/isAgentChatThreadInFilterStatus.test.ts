@@ -49,14 +49,14 @@ describe('isAgentChatThreadInFilterStatus', () => {
       isAgentChatThreadInFilterStatus({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: { ...OPEN_STATUS, isAssignedToMe: true },
-        filterStatus: 'assignedToMe',
+        filterStatus: 'assigned',
       }),
     ).toBe(true);
     expect(
       isAgentChatThreadInFilterStatus({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assignedToMe',
+        filterStatus: 'assigned',
       }),
     ).toBe(false);
   });
@@ -75,14 +75,14 @@ describe('isAgentChatThreadInFilterStatus', () => {
       isAgentChatThreadInFilterStatus({
         thread: assignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assigned',
+        filterStatus: 'assignedToAnyone',
       }),
     ).toBe(true);
     expect(
       isAgentChatThreadInFilterStatus({
         thread: unassignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assigned',
+        filterStatus: 'assignedToAnyone',
       }),
     ).toBe(false);
     expect(
@@ -126,14 +126,14 @@ describe('isAgentChatThreadInFilterStatus', () => {
       isAgentChatThreadInFilterStatus({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: doneStatus,
-        filterStatus: 'assignedToMe',
+        filterStatus: 'assigned',
       }),
     ).toBe(false);
     expect(
       isAgentChatThreadInFilterStatus({
         thread: { pendingQuestionMessageId: null, assigneeId: 'member-2' },
         inboxStatus: doneStatus,
-        filterStatus: 'assigned',
+        filterStatus: 'assignedToAnyone',
       }),
     ).toBe(false);
     expect(

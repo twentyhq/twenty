@@ -4,13 +4,11 @@ import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDrop
 import { AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
+import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
-import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
@@ -25,20 +23,18 @@ export const AiChatInboxChannelViewDropdown = ({
   channelView,
 }: AiChatInboxChannelViewDropdownProps) => {
   const { t } = useLingui();
-  const setAgentChatChannelView = useSetAtomState(agentChatChannelViewState);
+  const { openAgentChatChannel } = useOpenAgentChatChannel();
   const channelSummary = useAtomStateValue(agentChatChannelSummariesState)[
     channelView.channelId
   ];
-  const { resetRecordSelection } = useResetRecordSelection();
   const selectedOpenViewItem = findAgentChatChannelOpenViewItem(channelView);
 
   const handleSelect = ({
     assignment,
     filter,
   }: Pick<AgentChatChannelView, 'assignment' | 'filter'>) => {
-    resetRecordSelection();
-    setAgentChatChannelView({
-      ...channelView,
+    openAgentChatChannel({
+      channelId: channelView.channelId,
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment,
       filter,

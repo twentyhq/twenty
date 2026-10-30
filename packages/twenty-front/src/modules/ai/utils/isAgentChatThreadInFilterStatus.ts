@@ -4,8 +4,6 @@ import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilt
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-// Needs input, Mentions and the assignment views narrow the open chats, so a chat leaves
-// them once it is done or snoozed
 export const isAgentChatThreadInFilterStatus = ({
   thread,
   inboxStatus,
@@ -31,9 +29,9 @@ export const isAgentChatThreadInFilterStatus = ({
       );
     case 'mentions':
       return inboxStatus.scope === 'INBOX' && inboxStatus.isMentioned;
-    case 'assignedToMe':
-      return inboxStatus.scope === 'INBOX' && inboxStatus.isAssignedToMe;
     case 'assigned':
+      return inboxStatus.scope === 'INBOX' && inboxStatus.isAssignedToMe;
+    case 'assignedToAnyone':
       return inboxStatus.scope === 'INBOX' && isDefined(thread.assigneeId);
     case 'unassigned':
       return inboxStatus.scope === 'INBOX' && !isDefined(thread.assigneeId);

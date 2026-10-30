@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -7,6 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -24,10 +26,10 @@ import {
   AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 
-const RECORD_SELECTION_INSTANCE_ID = 'channel-view-story';
 const SELECTED_THREAD_ID = 'selected-chat';
+const OPEN_CHAT_PATH = '/inbox/6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
 const OPEN_VIEW: AgentChatChannelView = {
   channelId: 'sales',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
@@ -52,6 +54,7 @@ const StyledHeader = styled.div`
 `;
 
 const ChannelViewStory = () => {
+  const { pathname } = useLocation();
   const channelView = useAtomStateValue(agentChatChannelViewState);
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -60,7 +63,11 @@ const ChannelViewStory = () => {
   assertIsDefinedOrThrow(channelView);
 
   return (
-    <StyledHeader>
+    <StyledHeader
+      role="region"
+      aria-label="Inbox header"
+      data-pathname={pathname}
+    >
       <AiChatInboxViewHeading selectedThreadCount={selectedRecordIds.length} />
       <AiChatInboxChannelViewDropdown channelView={channelView} />
     </StyledHeader>
@@ -73,13 +80,19 @@ const meta = {
   decorators: [
     (Story) => (
       <RecordSelectionComponentInstanceContext.Provider
-        value={{ instanceId: RECORD_SELECTION_INSTANCE_ID }}
+        value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
       >
         <Story />
       </RecordSelectionComponentInstanceContext.Provider>
     ),
     ComponentDecorator,
-    MemoryRouterDecorator,
+    (Story) => (
+      <MemoryRouter initialEntries={[OPEN_CHAT_PATH]}>
+        <MemoryRouterAppNavigatorProvider>
+          <Story />
+        </MemoryRouterAppNavigatorProvider>
+      </MemoryRouter>
+    ),
   ],
   render: ChannelViewStory,
   args: { channelView: OPEN_VIEW },
@@ -114,14 +127,14 @@ const meta = {
     jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-        instanceId: RECORD_SELECTION_INSTANCE_ID,
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         familyKey: NO_RECORD_GROUP_FAMILY_KEY,
       }),
       [SELECTED_THREAD_ID],
     );
     jotaiStore.set(
       isRecordSelectedComponentFamilyState.atomFamily({
-        instanceId: RECORD_SELECTION_INSTANCE_ID,
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
         familyKey: SELECTED_THREAD_ID,
       }),
       true,
@@ -189,6 +202,9 @@ export const Open: Story = {
     );
     await expect(canvas.getByText('Needs input')).toBeVisible();
     await expect(canvas.queryByText('1 selected')).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole('region', { name: 'Inbox header' }),
+    ).toHaveAttribute('data-pathname', '/inbox');
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
       filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
