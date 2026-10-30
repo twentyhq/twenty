@@ -76,4 +76,6 @@ export const MESSAGE_HTML_SANITIZE_OPTIONS = {
   allowedSchemes: ['http', 'https', 'mailto', 'tel'],
   disallowedTagsMode: 'discard',
   nonTextTags: TAGS_CARRYING_NO_BODY_TEXT,
+  // html-to-text recurses once per level and overflows the stack a few thousand levels down
+  nestingLimit: 256,
 } satisfies sanitizeHtml.IOptions;
