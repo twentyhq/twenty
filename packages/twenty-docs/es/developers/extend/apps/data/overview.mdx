@@ -57,8 +57,9 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 | **Relación**                           | Un vínculo bidireccional entre dos objetos: ambos lados se declaran como campos                                                          | `defineField()` con `FieldType.RELATION` |
 | **Índice**                             | Un índice de base de datos para acelerar una consulta recurrente sobre uno de tus objetos                                                | `defineIndex()`                          |
 | **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros                     | `defineTimelineActivityType()`           |
+| **Ruta de registros relacionados**     | Una cadena de hasta tres relaciones a través de las cuales el acceso a un registro se extiende a sus registros relacionados              | `defineRelatedRecordPath()`              |
 
-La CLI detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/` y `src/timeline-activity-types/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
+El CLI detecta estas mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` y `src/related-record-paths/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
 
 ## Índices (opcional)
 
@@ -103,6 +104,34 @@ defineIndex({
 * Cada objeto está limitado a 10 índices personalizados (los índices propios del framework no cuentan).
 
 Ordena el arreglo `fields` de la forma en que Postgres debería usarlo: la columna más a la izquierda primero, como en una guía telefónica. Los índices no son gratuitos: cada escritura en la tabla los actualiza. Añade uno solo cuando tengas una consulta que lo necesite.
+
+## Rutas de registros relacionados (opcional)
+
+<Warning>
+  Las rutas de registros relacionados están en vista previa: se sincronizan con tu aplicación, pero los permisos de registros aún no las usan. Una vez aplicadas, requieren el **plan Organization o superior**, como la [seguridad a nivel de fila](/es/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
+Una ruta de registros relacionados comienza en un objeto y sigue hasta tres campos de relación, cada uno en el objeto al que llegó el anterior. Los permisos de registros usan estas rutas para ampliar el acceso de un registro a sus registros relacionados.
+
+* Una ruta **inherente** (`isInherent: true`) se aplica siempre que se pueda leer el registro inicial, independientemente de cómo se haya concedido ese acceso. Úsala para los registros que pertenecen a su elemento principal, como los archivos adjuntos de una tarjeta de publicación.
+* Una ruta **regular** se aplica solo cuando el acceso al registro inicial proviene directamente de un rol, por lo que los espacios de trabajo eligen en cuáles basarse.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Agrega `secondFieldMetadataUniversalIdentifier` y `thirdFieldMetadataUniversalIdentifier` para rutas más largas. Cada salto debe ser una relación activa en el objeto al que se ha llegado hasta el momento, una ruta no puede visitar el mismo objeto dos veces y dos rutas no pueden usar los mismos saltos.
 
 <Note>
 ¿Buscas **Application Config** o **Roles & Permissions**? Esos describen la propia aplicación en lugar de los datos que agrega; se encuentran en [Config](/es/developers/extend/apps/config/overview). ¿Buscas **Connections** (Linear, GitHub, Slack OAuth)? Estas existen para ser llamadas *desde* las funciones lógicas y se encuentran en [Logic](/es/developers/extend/apps/logic/connections).
