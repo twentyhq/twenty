@@ -41,6 +41,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -131,7 +132,7 @@ export class ToolCallAnswerService {
     });
 
     if (!isToolCallPending) {
-      throw this.notPending();
+      throw buildToolCallNotPendingException();
     }
 
     const validation = pausingToolCall.validate(args.response);
@@ -178,7 +179,7 @@ export class ToolCallAnswerService {
         });
 
       if (!awaitingToolParts.some((part) => part.id === toolPart.id)) {
-        throw this.notPending();
+        throw buildToolCallNotPendingException();
       }
 
       if (isDefined(wakeUp)) {
@@ -211,7 +212,7 @@ export class ToolCallAnswerService {
             wakeUpId: wakeUp.id,
           });
 
-          throw this.notPending();
+          throw buildToolCallNotPendingException();
         }
       }
 
@@ -220,15 +221,13 @@ export class ToolCallAnswerService {
       );
 
       if (isDefined(runningToolResult)) {
-        if (
-          !(await this.toolCallAnswerRecorderService.claimToolCallAnswer({
-            partId: toolPart.id,
-            toolOutput: runningToolResult,
-            workspaceId,
-          }))
-        ) {
-          throw this.notPending();
-        }
+        await this.toolCallAnswerRecorderService.claimToolCallAnswerOrThrow({
+          threadId,
+          partId: toolPart.id,
+          toolOutput: runningToolResult,
+          workspaceId,
+          workspaceMemberId: args.workspaceMemberId,
+        });
 
         isClaimedAsRunning = true;
       }
@@ -251,6 +250,9 @@ export class ToolCallAnswerService {
         toolOutput: completion.toolResult,
         isLastAnswer,
         workspaceId,
+        resolveMentionForWorkspaceMemberId: isClaimedAsRunning
+          ? null
+          : args.workspaceMemberId,
       });
 
       answerText = completion.answerText;
@@ -570,13 +572,6 @@ export class ToolCallAnswerService {
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
-  }
-
-  private notPending(): AiException {
-    return new AiException(
-      'This tool call is no longer waiting for an answer',
-      AiExceptionCode.TOOL_CALL_NOT_PENDING,
-    );
   }
 
   private async publishToolCallResolved({

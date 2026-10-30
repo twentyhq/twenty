@@ -50,9 +50,19 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+<Note>
+  `SystemPermissionFlag.USER_APPS` и `SystemPermissionFlag.WORKSPACE_APPS`
+  доступны в `twenty-sdk` начиная с версии 2.54; в более ранних версиях они называются
+  `CONNECTED_ACCOUNTS` и `APPLICATIONS`. Старые имена являются устаревшими псевдонимами
+  для тех же флагов, и роль содержит каждый флаг только один раз. Перечисление
+  `SystemPermissionFlag`, например с помощью `Object.keys`, по-прежнему включает старые
+  имена. API также сообщает об этих флагах под их старыми ключами, например в
+  `currentUserWorkspace.permissionFlags`.
+</Note>
 
 ## Безопасность на уровне строк
 

@@ -104,6 +104,39 @@ export default defineAgent({
 * `additionalProperties: false` (необязательно) запрещает любые свойства, не объявленные в `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Предоставьте внешний MCP-сервер ИИ рабочего пространства (бета-версия)">
+
+<Warning>
+  MCP-серверы находятся на стадии бета-тестирования и ещё не запущены: вы можете объявить их, но рабочие пространства не смогут использовать их инструменты, пока эта функция не будет выпущена.
+</Warning>
+
+Используйте `defineMcpServer()` для развертывания удалённого MCP-сервера (Streamable HTTP) вместе с вашим приложением, чтобы ИИ рабочего пространства мог использовать его инструменты без синхронизации этих данных с Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Основные моменты:
+* `name` имеет формат snake_case (строчные буквы, цифры и символы подчёркивания, начинается с буквы, не более 32 символов) и уникален в рабочем пространстве. Он добавляется в начало имён инструментов сервера.
+* `url` должен быть URL-адресом HTTP или HTTPS.
+* `connectionProvider` (необязательно) ссылается на [поставщика подключения](/ru/developers/extend/apps/logic/connections), объявленного тем же приложением. Запросы отправляют токен доступа этого подключения в качестве токена Bearer. Не указывайте его для общедоступного сервера.
+* URL-адрес нельзя изменить в более поздней версии, пока подключён поставщик подключения, поэтому токены никогда не отправляются на другой хост.
+* Рабочие пространства могут деактивировать сервер; более поздняя версия приложения сохранит этот выбор.
+* Требуется `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Запуск агента из логической функции">
 
 `runAgent()` позволяет логической функции запустить одного из агентов вашего приложения (с его навыками и инструментами). Идентифицируйте агента по `universalIdentifier`, который вы передали в `defineAgent()`, и передайте в качестве `input` то, над чем он должен работать:

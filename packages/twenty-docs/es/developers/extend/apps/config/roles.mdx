@@ -50,9 +50,19 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+<Note>
+  `SystemPermissionFlag.USER_APPS` y `SystemPermissionFlag.WORKSPACE_APPS`
+  están disponibles a partir de `twenty-sdk` 2.54; las versiones anteriores los denominan
+  `CONNECTED_ACCOUNTS` y `APPLICATIONS`. Los nombres antiguos son alias obsoletos
+  para los mismos indicadores, y un rol conserva cada indicador una sola vez. La enumeración de
+  `SystemPermissionFlag`, por ejemplo con `Object.keys`, sigue mostrando los nombres
+  antiguos. La API también informa de estos indicadores con sus claves antiguas, por ejemplo en
+  `currentUserWorkspace.permissionFlags`.
+</Note>
 
 ## Seguridad a nivel de fila
 

@@ -104,6 +104,39 @@ export default defineAgent({
 * `additionalProperties: false` (اختياري) يمنع أي خاصية غير معرّفة في `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="إتاحة خادم MCP خارجي لذكاء اصطناعي مساحة العمل (بيتا)">
+
+<Warning>
+  خوادم MCP في مرحلة بيتا وليست متاحة بعد: يمكنك تعريفها، لكن لا يمكن لمساحات العمل استخدام أدواتها حتى يتم إصدار الميزة.
+</Warning>
+
+استخدم `defineMcpServer()` لإصدار خادم MCP بعيد (HTTP قابل للبث) مع تطبيقك، بحيث يتمكن ذكاء اصطناعي مساحة العمل من استخدام أدواته دون مزامنة تلك البيانات مع Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+النقاط الرئيسية:
+* `name` بصيغة snake_case (أحرف صغيرة وأرقام وشرطات سفلية، يبدأ بحرف، وبحد أقصى 32 حرفًا) وفريد في مساحة العمل. يُضاف كبادئة إلى أسماء أدوات الخادم.
+* يجب أن يكون `url` عنوان URL من نوع HTTP أو HTTPS.
+* يشير `connectionProvider` (اختياري) إلى [موفر اتصال](/ar/developers/extend/apps/logic/connections) معلن بواسطة التطبيق نفسه. ترسل الاستدعاءات رمز الوصول الخاص بذلك الاتصال كرمز Bearer. احذفه لخادم عام.
+* لا يمكن أن يتغير عنوان URL في إصدار لاحق أثناء ربط موفر اتصال، لذلك لا تُرسل الرموز أبدًا إلى مضيف آخر.
+* يمكن لمساحات العمل إلغاء تنشيط الخادم؛ ويحافظ إصدار لاحق من التطبيق على هذا الخيار.
+* يتطلب `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="تشغيل وكيل من دالة منطقية">
 
 تتيح `runAgent()` لدالة منطقية تشغيل أحد وكلاء تطبيقك (مع مهاراته وأدواته). عرِّف الوكيل باستخدام `universalIdentifier` الذي مررته إلى `defineAgent()`، ومرِّر ما تريد أن يعمل عليه باعتباره `input`:

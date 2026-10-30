@@ -937,6 +937,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    webhookId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'webhookUniversalIdentifier',
+    },
     agentId: {
       toCompare: true,
       toStringify: false,
