@@ -106,8 +106,7 @@ export class CodeInterpreterTool implements Tool {
     const streamedFiles: CodeExecutionFile[] = [];
     let pendingRunningUpdate: NodeJS.Timeout | undefined;
 
-    // Each update carries the full output and is stored as a stream chunk,
-    // so coalesce bursts of lines into one update per interval.
+    // Each update carries the full output and is stored as a Redis stream chunk.
     const scheduleRunningUpdate = () => {
       if (isDefined(pendingRunningUpdate)) {
         return;
@@ -209,9 +208,6 @@ export class CodeInterpreterTool implements Tool {
         },
       );
 
-      const stdout = truncateCodeInterpreterOutput(result.stdout);
-      const stderr = truncateCodeInterpreterOutput(result.stderr);
-
       this.logger.debug(
         `Execution result: exitCode=${result.exitCode}, stdout length=${result.stdout.length}, stderr length=${result.stderr.length}`,
       );
@@ -231,8 +227,8 @@ export class CodeInterpreterTool implements Tool {
           executionId,
           finalState,
           code,
-          stdout || accumulatedStdout,
-          stderr || accumulatedStderr,
+          result.stdout || accumulatedStdout,
+          result.stderr || accumulatedStderr,
           allOutputFileUrls,
           {
             exitCode: result.exitCode,
@@ -248,8 +244,8 @@ export class CodeInterpreterTool implements Tool {
           result.exitCode === 0
             ? 'Code executed successfully'
             : 'Code execution failed',
-        stdout,
-        stderr,
+        stdout: result.stdout,
+        stderr: result.stderr,
         exitCode: result.exitCode,
         files: allOutputFileUrls,
         error: result.error,
