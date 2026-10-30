@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -42,9 +43,15 @@ export class FrontComponentSharedDependenciesService {
         workspaceId,
       });
 
-    const builtPath = isDefined(checksum)
-      ? getFrontComponentSharedDependenciesPath(checksum)
-      : application.frontComponentSharedDependenciesBuiltPath;
+    let builtPath = application.frontComponentSharedDependenciesBuiltPath;
+
+    if (
+      isDefined(checksum) &&
+      (checksum !== application.frontComponentSharedDependenciesChecksum ||
+        !isDefined(builtPath))
+    ) {
+      builtPath = getFrontComponentSharedDependenciesPath(checksum);
+    }
 
     if (!isDefined(builtPath)) {
       throw new ApplicationException(
@@ -90,5 +97,39 @@ export class FrontComponentSharedDependenciesService {
       frontComponentSharedDependenciesChecksum:
         checksum ?? application.frontComponentSharedDependenciesChecksum,
     };
+  }
+
+  async saveBuiltSharedDependencies({
+    applicationId,
+    workspaceId,
+    source,
+    checksum,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    source: string;
+    checksum: string;
+  }) {
+    if (createHash('sha256').update(source).digest('hex') !== checksum) {
+      throw new ApplicationException(
+        'Shared dependencies checksum mismatch',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        id: applicationId,
+        workspaceId,
+      });
+
+    return this.fileStorageService.writeFile({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder: FileFolder.BuiltFrontComponent,
+      resourcePath: getFrontComponentSharedDependenciesPath(checksum),
+      sourceFile: source,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
   }
 }

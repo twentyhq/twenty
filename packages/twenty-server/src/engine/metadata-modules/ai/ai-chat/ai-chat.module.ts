@@ -25,7 +25,6 @@ import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
-import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
@@ -72,7 +71,6 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     MetricsModule,
     ToolProviderModule,
     DashboardToolsModule,
-    AiFrontComponentModule,
   ],
   providers: [
     AgentChatActorService,

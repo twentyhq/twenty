@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { AiWorkspaceFrontComponentRuntimeEffect } from '@/front-components/components/AiWorkspaceFrontComponentRuntimeEffect';
-import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/AiWorkspaceFrontComponentRuntime';
+import { useAiWorkspaceFrontComponentRuntime } from '@/front-components/hooks/useAiWorkspaceFrontComponentRuntime';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { useThemeColorScheme } from 'twenty-ui/theme';
@@ -17,17 +15,13 @@ export const AiWorkspaceFrontComponent = ({
   applicationId,
 }: AiWorkspaceFrontComponentProps) => {
   const colorScheme = useThemeColorScheme();
-  const [runtime, setRuntime] = useState<AiWorkspaceFrontComponentRuntime>();
-  const [error, setError] = useState<Error>();
+  const { runtime, error, setError } = useAiWorkspaceFrontComponentRuntime({
+    frontComponentId,
+    applicationId,
+  });
 
   return (
     <>
-      <AiWorkspaceFrontComponentRuntimeEffect
-        frontComponentId={frontComponentId}
-        applicationId={applicationId}
-        onRuntimeLoaded={setRuntime}
-        onError={setError}
-      />
       <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
       {isDefined(error) && <span role="alert">{error.message}</span>}
       {isDefined(runtime) && (

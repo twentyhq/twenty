@@ -3,7 +3,7 @@ import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { fetchComponentSource } from 'twenty-front-component-renderer';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 export const loadAiWorkspaceFrontComponentRuntime = async ({
   frontComponentId,
@@ -21,7 +21,10 @@ export const loadAiWorkspaceFrontComponentRuntime = async ({
   );
 
   if (!response.ok) {
-    throw new Error(t`Could not load this component or its data.`);
+    throw new CustomError(
+      t`Could not load this component or its data.`,
+      'AI_FRONT_COMPONENT_RUNTIME_LOAD_FAILED',
+    );
   }
 
   const runtime: AiWorkspaceFrontComponentRuntime = await response.json();
