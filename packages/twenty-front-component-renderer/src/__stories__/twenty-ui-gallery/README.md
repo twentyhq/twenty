@@ -388,26 +388,28 @@ A trusted primary press on a slider control, the innermost pressed element that 
 Outside presses use a separate transport that forwards only the event type,
 button state, click count and pointer type to worker document listeners. It does
 not expose external DOM nodes, control values or pointer coordinates. The worker
-reports when its document, `<html>` or `<body>` has listeners for these press
-types, such as the dismiss listeners of an open Base UI popup, and the host
-listens for outside presses only while it does. A press on an owned element
-crosses through that element's handlers when one exists on its path; while the
-worker listens, the renderer root forwards the remaining owned presses with
-their full event data at their target, so a listener-less backdrop or label
-still dismisses a popup. A captured gesture's release, and the `mouseup` and
-`click` that follow it, stay off the outside-press path. Clicks without a press,
-such as keyboard activation of a host control, are not forwarded: the worker
-reports `document.body` as active whenever host focus is elsewhere, so Base UI
-would move focus back into the component. Presses on host scrollbars are not
-forwarded either, as Base UI ignores them natively. Dispatches of outside
-presses and of the remaining owned presses set `window.event`, so React flushes
-the resulting close before the next forwarded press as it does in a browser.
-Touch swipes outside the component do not dismiss popups, because the worker has
-no `TouchEvent` touch lists for Base UI's touch tracking; taps still close them
-through their compatibility `mousedown`. Dropdown and Popover stories verify the
-dismissal behavior described above; other components still need their own
-acceptance checks. General host keyboard forwarding and full focus restoration
-remain separate work.
+reports when its `document` has listeners for these press types, such as the
+dismiss listeners of an open Base UI popup, and the host listens for outside
+presses only while it does. Listeners on `<html>` and `<body>` do not count,
+because React leaves permanent delegated listeners on portal containers such as
+`document.body`. A press on an owned element crosses through that element's
+handlers when one exists on its path; while the worker listens, the renderer
+root forwards the remaining owned presses with their full event data at their
+target, so a listener-less backdrop or label still dismisses a popup. A captured
+gesture's release, and the `mouseup` and `click` that follow it, stay off the
+outside-press path. Clicks without a press, such as keyboard activation of a
+host control, are not forwarded: the worker reports `document.body` as active
+whenever host focus is elsewhere, so Base UI would move focus back into the
+component. Presses on host scrollbars are not forwarded either, as Base UI
+ignores them natively. Dispatches of outside presses and of the remaining owned
+presses set `window.event`, so React flushes the resulting close before the next
+forwarded press as it does in a browser. Touch swipes outside the component do
+not dismiss popups, because the worker has no `TouchEvent` touch lists for Base
+UI's touch tracking; taps still close them through their compatibility
+`mousedown`. Dropdown and Popover stories verify the dismissal behavior
+described above; other components still need their own acceptance checks.
+General host keyboard forwarding and full focus restoration remain separate
+work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures

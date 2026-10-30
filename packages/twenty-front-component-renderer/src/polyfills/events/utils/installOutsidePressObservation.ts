@@ -28,11 +28,6 @@ export const installOutsidePressObservation = ({
     );
   }
 
-  const targetNameByOutsidePressTarget = new Map<object, string>([
-    [documentTarget, 'document'],
-    [documentTarget.documentElement, 'html'],
-    [documentTarget.body, 'body'],
-  ]);
   const registrationKeysByListener = new WeakMap<object, Set<string>>();
   let registrationCount = 0;
   let isObservationReported = false;
@@ -81,15 +76,13 @@ export const installOutsidePressObservation = ({
     eventType,
     options,
   }: Omit<ListenerRegistration, 'listener'>): string | undefined => {
-    const targetName = targetNameByOutsidePressTarget.get(target);
-
-    if (!isDefined(targetName) || !isOutsidePressEventType(eventType)) {
+    if (target !== documentTarget || !isOutsidePressEventType(eventType)) {
       return undefined;
     }
 
     const isCapture = resolveAddEventListenerOptions(options).capture === true;
 
-    return `${targetName}:${eventType}:${isCapture}`;
+    return `${eventType}:${isCapture}`;
   };
 
   const trackAddedListener = ({

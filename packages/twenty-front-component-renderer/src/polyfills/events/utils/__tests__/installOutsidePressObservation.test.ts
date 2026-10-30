@@ -22,42 +22,32 @@ const createObservationFixture = () => {
 const flushObservationReports = () => Promise.resolve();
 
 describe('installOutsidePressObservation', () => {
-  it('observes outside presses while the document, html or body has a press listener', async () => {
+  it('observes outside presses while the document has a press listener', async () => {
     const { documentTarget, observation, transport } =
       createObservationFixture();
-    const handleDocumentPress = jest.fn();
-    const handleRootPress = jest.fn();
-    const handleBodyPress = jest.fn();
+    const handlePointerDown = jest.fn();
+    const handleMouseUp = jest.fn();
     observation.connectTransport(transport);
 
-    documentTarget.addEventListener('pointerdown', handleDocumentPress, true);
-    documentTarget.documentElement.addEventListener('mouseup', handleRootPress);
-    documentTarget.body.addEventListener('click', handleBodyPress);
+    documentTarget.addEventListener('pointerdown', handlePointerDown, true);
+    documentTarget.addEventListener('mouseup', handleMouseUp);
     await flushObservationReports();
 
     expect(transport.observeOutsidePresses).toHaveBeenCalledTimes(1);
 
-    documentTarget.removeEventListener(
-      'pointerdown',
-      handleDocumentPress,
-      true,
-    );
-    documentTarget.documentElement.removeEventListener(
-      'mouseup',
-      handleRootPress,
-    );
+    documentTarget.removeEventListener('pointerdown', handlePointerDown, true);
     await flushObservationReports();
 
     expect(transport.unobserveOutsidePresses).not.toHaveBeenCalled();
 
-    documentTarget.body.removeEventListener('click', handleBodyPress);
+    documentTarget.removeEventListener('mouseup', handleMouseUp);
     await flushObservationReports();
 
     expect(transport.observeOutsidePresses).toHaveBeenCalledTimes(1);
     expect(transport.unobserveOutsidePresses).toHaveBeenCalledTimes(1);
   });
 
-  it('ignores other event types and listeners on other elements', async () => {
+  it('ignores other event types and listeners on other targets', async () => {
     const { documentTarget, observation, transport } =
       createObservationFixture();
     const popup = documentTarget.createElement('div');
@@ -65,7 +55,8 @@ describe('installOutsidePressObservation', () => {
     observation.connectTransport(transport);
 
     documentTarget.addEventListener('keydown', jest.fn());
-    documentTarget.body.addEventListener('pointermove', jest.fn());
+    documentTarget.documentElement.addEventListener('mouseup', jest.fn());
+    documentTarget.body.addEventListener('pointerdown', jest.fn());
     popup.addEventListener('pointerdown', jest.fn());
     await flushObservationReports();
 
