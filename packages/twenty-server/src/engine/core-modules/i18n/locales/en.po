@@ -4894,6 +4894,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Enrich"
 
+#. js-lingui-id: +RIetY
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter an HTTPS origin without a path or wildcard"
+msgstr "Enter an HTTPS origin without a path or wildcard"
+
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "Enter your two-factor authentication code to continue."
@@ -13813,6 +13818,11 @@ msgstr "There is no previous onboarding step to go back to."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "These fields cannot be updated before the workspace is activated: {fieldsList}."
+
+#. js-lingui-id: 029tdK
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "These origins are too long to allow together. Remove one and try again."
+msgstr "These origins are too long to allow together. Remove one and try again."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
