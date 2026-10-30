@@ -95,23 +95,22 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
-  const { pickableMorphItems, searchableObjectMetadataItems } = isDefined(
-    junctionConfig,
-  )
-    ? getJunctionRelationPickerData({
-        junctionRecords: relationRecords,
-        targetFields: junctionConfig.targetFields,
-        objectMetadataItems,
-      })
-    : {
-        pickableMorphItems: relationRecords.map(({ id: recordId }) => ({
-          recordId,
-          objectMetadataId: relationObjectMetadataItem.id,
-          isSelected: true,
-          isMatchingSearchFilter: true,
-        })),
-        searchableObjectMetadataItems: [relationObjectMetadataItem],
-      };
+  const { pickableMorphItems, searchableObjectMetadataItems } =
+    isJunctionRelation
+      ? getJunctionRelationPickerData({
+          junctionRecords: relationRecords,
+          junctionConfig,
+          objectMetadataItems,
+        })
+      : {
+          pickableMorphItems: relationRecords.map(({ id: recordId }) => ({
+            recordId,
+            objectMetadataId: relationObjectMetadataItem.id,
+            isSelected: true,
+            isMatchingSearchFilter: true,
+          })),
+          searchableObjectMetadataItems: [relationObjectMetadataItem],
+        };
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -150,7 +149,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const {
     createJunctionRecordWithNestedTarget,
-    loading: isCreatingJunctionRecord,
+    isCreatePending: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
     sourceFieldName: fieldName,

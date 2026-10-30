@@ -22,6 +22,13 @@ const buildLogicFunction = ({
   applicationId,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
+  __typename: 'LogicFunction',
+  description: null,
+  cronTriggerSettings: undefined,
+  databaseEventTriggerSettings: undefined,
+  httpRouteTriggerSettings: undefined,
+  toolTriggerSettings: undefined,
+  universalIdentifier: null,
 });
 
 const getIds = (logicFunctions: LogicFunction[]) =>

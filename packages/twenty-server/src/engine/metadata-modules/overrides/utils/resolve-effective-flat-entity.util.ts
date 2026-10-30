@@ -8,7 +8,7 @@ import {
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const resolveEffectiveFlatEntity = <
-  TFlatEntity extends OverridableFlatEntity & Record<string, unknown>,
+  TFlatEntity extends OverridableFlatEntity,
 >({
   metadataName,
   flatEntity,

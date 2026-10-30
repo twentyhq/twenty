@@ -1,0 +1,256 @@
+---
+title: Notificare temporară
+description: Afișați mesaje de stare cu detalii, acțiuni și progres opționale.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ToastReference from '/snippets/ui/generated/components/feedback/toast.mdx';
+import ToastProviderReference from '/snippets/ui/generated/components/feedback/toast-provider.mdx';
+import ToasterReference from '/snippets/ui/generated/components/feedback/toaster.mdx';
+
+## Prezentare generală
+
+`Toast` redă o notificare. Aplicația dvs. controlează când apare, poziția sa și când este eliminată.
+
+<StoryEmbed storyId="ui-feedback-toast--display" title="Exemplu de Toast" height={120} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SavedNotification = () => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <>
+      <Button onClick={() => setIsOpen(true)}>Show notification</Button>
+      {isOpen && (
+        <Toast status="success" progress={100} onClose={() => setIsOpen(false)}>
+          Changes saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+## Opțiuni vizuale
+
+Comparați feedbackul neutru, de succes, de eroare, informativ și de avertizare cu același mesaj și același progres.
+
+<StoryEmbed storyId="ui-feedback-toast--catalog" title="Stări ale feedbackului toast" height={530} />
+
+Pentru notificările aplicației, încadrați aplicația în `ToastProvider`, montați un `Toaster` în interiorul acestuia și utilizați `useToast()` din componentele descendente. Fiecare furnizor deține un stoc independent de notificări, contoare inverse și un ciclu de viață pentru închidere. Mai multe componente Toaster pot oglindi același furnizor.
+
+## Notificările aplicației
+
+```tsx
+import { useState } from 'react';
+
+import {
+  ToastProvider,
+  Toaster,
+  useToast,
+} from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+const SaveNotificationButton = () => {
+  const { enqueueToast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        enqueueToast({
+          children: 'Record saved',
+          status: 'success',
+        })
+      }
+    >
+      Add saved notification
+    </Button>
+  );
+};
+
+export const Notifications = () => {
+  const [limit, setLimit] = useState(3);
+
+  return (
+    <ToastProvider limit={limit}>
+      <SaveNotificationButton />
+      <Button onClick={() => setLimit(1)}>Keep one notification</Button>
+      <Button onClick={() => setLimit(3)}>Keep three notifications</Button>
+      <Toaster />
+    </ToastProvider>
+  );
+};
+```
+
+`enqueueToast` acceptă proprietăți Toast și un `dedupeKey` opțional și returnează ID-ul notificării. O cheie vizibilă corespunzătoare returnează ID-ul existent fără a adăuga altă notificare. `updateToast({ id, ...changes })` actualizează acea notificare activă. `closeToast(id)` închide o notificare; `closeToast()` închide toate notificările vizibile din furnizor.
+
+Furnizorul afișează implicit trei notificări vizibile. `limit` trebuie să fie un număr întreg pozitiv și se poate modifica în timp ce furnizorul este montat. Reducerea acestuia sau adăugarea peste acesta închide mai întâi cele mai vechi notificări vizibile. Mărirea acesteia lasă notificările existente neschimbate și nu restabilește notificările închise. Modificările de configurare păstrează stocarea, ID-urile rămase, ordinea și timpul rămas din numărătoarea inversă.
+
+## Ciclul de viață al Provider
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--documentation" title="Ciclul de viață al notificărilor partajate" height={430} />
+
+Mai multe componente Toaster dintr-un Provider redau aceleași notificări. Actualizările și închiderea se aplică fiecărei oglinzi, iar fiecare notificare are o singură numărătoare inversă partajată. Trecerea cu cursorul sau focalizarea în interiorul oricărei oglinzi o întrerupe; aceasta reia după ce toate oglinzile le eliberează pe ambele. Montarea unui alt Toaster nu repornește numărătoarea inversă și nu creează un alt ciclu de viață al callback-ului. Utilizați provideri separați pentru cozi independente.
+
+Pentru notificările Provider, expirarea, butonul de închidere, `closeToast` și eliminarea din cauza limitei apelează cel mai recent `onClose` o singură dată. Notificarea este deja închisă când rulează callback-ul, astfel că actualizările și solicitările repetate de închidere pentru acel ID nu au niciun efect. `onCancel` rămâne un callback separat pentru acțiune și nu închide automat.
+
+Notificările închise sunt inactive în timpul animațiilor de ieșire. Intrările lor sunt eliminate după ce toate oglinzile redate își finalizează operațiunea de ieșire sau sunt demontate. Demontarea ultimului Toaster elimină intrările închise și îngheață timpul rămas pentru notificările vizibile. Remontarea unui Toaster reia acel timp. Demontarea Provider elimină notificările sale și anulează numărătoarea inversă și operațiunea de ieșire fără a apela `onClose`. Operațiunile `enqueueToast`, `updateToast` și `closeToast` capturate din acel Provider nu au niciun efect după ce acesta este demontat.
+
+`getToastProps` adaptează conținutul și prezentarea fiecărei notificări. Setați `duration` și `progress` în `enqueueToast` sau `updateToast`, astfel încât fiecare oglindă să partajeze aceeași configurație de temporizare. Suprascrierile existente ale temporizării prin `getToastProps` rămân acceptate când toate oglinzile returnează aceeași durată și același progres pentru o notificare. Provider păstrează ID-ul, handlerul de închidere și numărătoarea inversă partajată.
+
+`container` selectează destinația portalului unui Toaster. Când este omis, acesta utilizează containerul temei înconjurătoare sau `document.body`. Un element explicit se redă acolo; `null` amână redarea. Notificările vizibile rămân în coadă, cu numărătorile inverse întrerupte cât timp nu este redat niciun Toaster. Portalurile păstrează tema și direcția înconjurătoare. Setați `aria-label` pentru fiecare Toaster, pentru a localiza numele implicit al regiunii, "Notificări", și pentru a oferi nume adecvate regiunilor oglindite.
+
+<StoryEmbed storyId="ui-feedback-toaster-lifecycle--portal-documentation" title="Portal de notificări cu domeniu de aplicare" height={430} />
+
+## Actualizați o notificare în timp real
+
+Utilizează ID-ul returnat de `enqueueToast` pentru a actualiza pe loc conținutul, starea feedbackului, acțiunile sau callbackurile. Actualizările păstrează ID-ul și poziția notificării. ID-urile necunoscute sau respinse nu au niciun efect, inclusiv în timp ce rulează animația de respingere. Fiecare apel `useToast()` vizează cel mai apropiat furnizor al său.
+
+<StoryEmbed storyId="ui-feedback-toaster--updates-documentation" title="Actualizează o notificare activă" height={380} />
+
+```tsx
+import { useToast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveButtonProps = {
+  saveRecord: () => Promise<void>;
+  onViewRecord: () => void;
+};
+
+export const SaveButton = ({ saveRecord, onViewRecord }: SaveButtonProps) => {
+  const { enqueueToast, updateToast } = useToast();
+
+  const save = async () => {
+    const id = enqueueToast({
+      children: 'Saving record',
+      status: 'info',
+      progress: 0,
+    });
+
+    try {
+      await saveRecord();
+      updateToast({
+        id,
+        children: 'Record saved',
+        status: 'success',
+        progress: undefined,
+        action: <Button onClick={onViewRecord}>View record</Button>,
+      });
+    } catch {
+      updateToast({
+        id,
+        children: 'Record could not be saved',
+        status: 'error',
+        progress: undefined,
+      });
+    }
+  };
+
+  return <Button onClick={save}>Save record</Button>;
+};
+```
+
+`ToastUpdate` necesită `id` și acceptă opțiuni Toast parțiale. Câmpurile omise își păstrează valorile curente. Valoarea explicită `undefined` golește un câmp opțional sau îi restabilește valoarea implicită a componentei, precum `progress: undefined` sau `status: undefined`. Transmite `null` pentru a elimina un slot de conținut, inclusiv `description`, `icon` sau `action`. Setarea `cancelLabel: null` ascunde controlul de anulare, păstrând în același timp funcția sa de apel invers. Modificările funcțiilor de apel invers se aplică notificării existente. `dedupeKey` aparține operației de adăugare în coadă și nu poate fi actualizată.
+
+## Temporizarea închiderii
+
+Numărătoarea inversă este setată implicit la 6.000 de milisecunde. Se întrerupe cât timp indicatorul se află deasupra notificării toast sau focalizarea tastaturii este în interiorul acesteia și se reia doar după ce ambele încetează. Cu mai multe componente Toaster, starea de întrerupere este partajată între oglinzile acestora. Numărătoarea inversă vizuală urmărește timpul rămas până la închidere. Închiderea automată funcționează și atunci când mișcarea redusă dezactivează animația.
+
+<StoryEmbed storyId="ui-feedback-toaster-timing--documentation" title="Controale de temporizare pentru toast" height={480} />
+
+| Operație                                                      | Comportamentul numărătorii inverse                                                                                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Actualizați conținutul, starea, acțiunile sau callbackurile   | Păstrați timpul rămas. Actualizările repetate nu îl prelungesc.                                                                                  |
+| Furnizați `duration` către `updateToast`                      | Începeți o durată nouă, inclusiv atunci când valoarea nu se modifică. `duration: undefined` restaurează valoarea implicită și o repornește.      |
+| Modificați proprietatea `duration` a unui `Toast` independent | Începeți o durată nouă. Redarea din nou a aceleiași valori păstrează timpul rămas.                                                               |
+| Setați `duration: 0`                                          | Mențineți toastul deschis până când este închis.                                                                                                 |
+| Furnizați `progress`                                          | Opriți numărătoarea inversă cât timp este prezent progresul.                                                                                     |
+| Eliminați `progress`                                          | Începeți o durată nouă sau mențineți-l deschis când durata sa este zero.                                                                         |
+| Actualizați în timpul survolării sau focalizării              | Aplicați aceleași reguli, menținând numărătoarea inversă rezultată întreruptă până când atât indicatorul, cât și focalizarea părăsesc elementul. |
+
+De exemplu, `updateToast({ id, children: 'Still saving' })` păstrează timpul rămas, în timp ce `updateToast({ id, duration: 6000 })` îi oferă cititorului încă șase secunde. Aceste reguli se aplică notificării existente fără a-i modifica ID-ul sau poziția.
+
+## Notificare care poate fi închisă
+
+```tsx
+import { useState } from 'react';
+import { Toast } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveNotification = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Show saved notification</Button>
+      {visible && (
+        <Toast
+          status="success"
+          description="Your changes are available to your team."
+          duration={6000}
+          onClose={() => setVisible(false)}
+        >
+          Record saved
+        </Toast>
+      )}
+    </>
+  );
+};
+```
+
+`onClose` este apelat o dată de butonul de închidere sau când numărătoarea inversă se finalizează. Eliminați toast-ul în acel callback. Utilizați `duration={0}` pentru o notificare care rămâne deschisă până la închidere.
+
+## Progres și anulare
+
+```tsx
+import { Toast } from 'twenty-ui/components/feedback';
+
+type ImportProgressProps = { progress: number; onCancel: () => void };
+
+export const ImportProgress = ({ progress, onCancel }: ImportProgressProps) => (
+  <Toast
+    status="info"
+    progress={progress}
+    description="You can continue working while the import runs."
+    onCancel={onCancel}
+    cancelLabel="Cancel import"
+  >
+    Importing records: {progress}%
+  </Toast>
+);
+```
+
+Transmiterea lui `progress` oferă un procent și dezactivează numărătoarea inversă. Eliminați-l după ce operațiunea se finalizează pentru a începe o durată nouă. Anularea apelează `onCancel`; componenta părinte gestionează anularea și eliminarea. `cancelLabel` acceptă un nod React pentru conținutul butonului. Elementele copil, `description`, `icon` și `action` acceptă, de asemenea, noduri React deținute de apelant. Utilizează controale Twenty pentru acțiuni interactive și furnizează-le numele accesibile.
+
+## Aspect și anunțuri
+
+`status` acceptă `neutral`, `info`, `success`, `warning` sau `error` și are implicit valoarea `neutral`. Aceasta exprimă semnificația feedbackului și selectează pictograma și paleta temei. Toast are un singur aspect acceptat, astfel că nu expune nicio opțiune de `variant` pentru aspect sau de `color` pentru paletă. Utilizează `icon` pentru a înlocui pictograma, `icon={null}` pentru a o omite și `iconLabel` atunci când pictograma implicită are nevoie de propriul nume accesibil.
+
+Rolul implicit este `status`, cu anunțuri politicoase. Utilizați `role="alert"` pentru feedback urgent. Setați `cancelLabel` și `closeLabel` pentru a localiza controalele și acordați suficient timp pentru a citi conținutul sau a interacționa cu acțiunile sale.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentelor. Atributele native, stilurile, numele claselor, gestionarii de evenimente și referințele vizează rădăcina. Utilizează `render` pentru a compune un alt element sau o altă componentă, păstrând aceste proprietăți și referința. Portalurile Toaster moștenesc tema și direcția textului din jur.
+
+<ToastReference />
+
+### ToastProvider
+
+<ToastProviderReference />
+
+### Toaster
+
+Atributele div native, stilurile, numele de clase și referințele vizează regiunea de notificări.
+
+<ToasterReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

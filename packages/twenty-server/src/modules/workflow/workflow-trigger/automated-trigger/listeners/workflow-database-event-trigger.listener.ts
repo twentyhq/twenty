@@ -26,16 +26,17 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
@@ -357,10 +358,8 @@ export class WorkflowDatabaseEventTriggerListener {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
 
-    const eventListeners = await this.getDatabaseEventListeners(
-      workspaceId,
-      databaseEventName,
-    );
+    const { eventListeners, flatApplicationMaps } =
+      await this.getDatabaseEventListeners(workspaceId, databaseEventName);
 
     if (eventListeners.length === 0) {
       return;
@@ -428,9 +427,16 @@ export class WorkflowDatabaseEventTriggerListener {
               workflowId:
                 eventListener.legacyWorkflowId ?? eventListener.workflowId,
               ...buildCoreDispatchIds(eventListener),
-              payload: omitInheritedReadabilityChildRecords(eventPayload),
+              payload: eventPayload,
             },
-            { retryLimit: 3 },
+            {
+              retryLimit: 3,
+              ...buildApplicationQueueJobScope({
+                workspaceId,
+                applicationId,
+                flatApplicationMaps,
+              }),
+            },
           );
         }
       }
@@ -440,14 +446,17 @@ export class WorkflowDatabaseEventTriggerListener {
   private async getDatabaseEventListeners(
     workspaceId: string,
     databaseEventName: string,
-  ): Promise<DatabaseEventTriggerListener[]> {
+  ): Promise<{
+    eventListeners: DatabaseEventTriggerListener[];
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }> {
     const { workflowAutomatedTriggerMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'workflowAutomatedTriggerMaps',
         'flatApplicationMaps',
       ]);
 
-    return Object.values(
+    const eventListeners = Object.values(
       workflowAutomatedTriggerMaps.byWorkflowId,
     ).flatMap<DatabaseEventTriggerListener>((trigger) => {
       if (
@@ -460,6 +469,8 @@ export class WorkflowDatabaseEventTriggerListener {
 
       return [trigger];
     });
+
+    return { eventListeners, flatApplicationMaps };
   }
 
   private async buildEnrichedPayload<TEvent extends ObjectRecordEvent>({

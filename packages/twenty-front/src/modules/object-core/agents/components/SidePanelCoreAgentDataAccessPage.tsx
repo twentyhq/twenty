@@ -32,7 +32,6 @@ export const SidePanelCoreAgentDataAccessPage = () => {
   });
   const isAgentReadOnly = useIsCoreAgentReadOnly({
     applicationId: agent?.applicationId,
-    isCustom: agent?.isCustom ?? false,
   });
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();

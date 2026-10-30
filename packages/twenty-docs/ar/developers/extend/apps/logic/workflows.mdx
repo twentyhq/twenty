@@ -1,0 +1,133 @@
+---
+title: مسارات العمل
+description: ضمّن سير عمل جاهزة في تطبيقك.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## عرّف سير عمل
+
+يمكن للتطبيقات تضمين سير عمل. يصف كل استدعاء `defineWorkflow()` سير عمل واحدًا: مشغّلًا والخطوات التي ينفذها. عند التثبيت، ينشئ Twenty سير العمل هذا كسير عمل نشط في مساحة العمل، جاهزًا للتشغيل.
+
+يعمل سير العمل هذا عند إنشاء شركة. تستدعي إحدى دوال المنطق في التطبيق، ثم تكتب النتيجة في الشركة:
+
+```ts src/workflows/score-new-companies.ts
+import {
+  defineWorkflow,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const COMPANY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
+const SCORE_COMPANY_FUNCTION = '0f6c0b3e-8a4f-4f0e-9d0a-3c1e5b7a2d41';
+
+const SCORE_NEW_COMPANIES = {
+  workflow: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e81',
+  trigger: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e82',
+  score: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e83',
+  save: 'c2a4e6f8-1b3d-4f5a-8c7e-9d0b2a4c6e84',
+};
+
+export default defineWorkflow({
+  universalIdentifier: SCORE_NEW_COMPANIES.workflow,
+  name: 'Score new companies',
+  version: {
+    trigger: {
+      universalIdentifier: SCORE_NEW_COMPANIES.trigger,
+      type: 'DATABASE_EVENT',
+      settings: {
+        objectUniversalIdentifier: COMPANY,
+        action: 'created',
+      },
+      nextStepIds: [SCORE_NEW_COMPANIES.score],
+    },
+    steps: [
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.score,
+        name: 'Score the company',
+        type: 'LOGIC_FUNCTION',
+        logicFunctionUniversalIdentifier: SCORE_COMPANY_FUNCTION,
+        input: { companyName: '{{trigger.properties.after.name}}' },
+        nextStepIds: [SCORE_NEW_COMPANIES.save],
+      },
+      {
+        universalIdentifier: SCORE_NEW_COMPANIES.save,
+        name: 'Save the score',
+        type: 'UPDATE_RECORD',
+        input: {
+          objectUniversalIdentifier: COMPANY,
+          objectRecordId: '{{trigger.recordId}}',
+          objectRecord: { leadScore: `{{${SCORE_NEW_COMPANIES.score}.score}}` },
+          fieldsToUpdate: ['leadScore'],
+        },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+```
+
+النقاط الرئيسية:
+
+* يحتاج سير العمل والمشغّل وكل خطوة إلى `universalIdentifier` خاص بها. حافظ على استقرارها عبر الإصدارات: فهي الطريقة التي يطابق بها Twenty سير العمل المثبّت عند التثبيت التالي.
+* يربط `nextStepIds` الرسم البياني. يشير المشغّل إلى الخطوات الأولى، وتشير كل خطوة إلى الخطوات التي تُنفَّذ بعدها.
+* تقرأ الخطوة مخرجات سابقة باستخدام `{{trigger.\<path>}}` أو `{{\<step universalIdentifier>.\<path>}}`.
+* يتحقق البناء من التعريف بالكامل: إذ تؤدي أنواع المشغّلات أو الخطوات غير المدعومة، وروابط الخطوات المعطّلة، والمراجع إلى خطوات غير معروفة إلى فشله.
+* `isSystem` (اختياري، القيمة الافتراضية هي `false`) يُخفي سير العمل من القوائم التي تستبعد مهام سير العمل الخاصة بالنظام. إنه يغيّر فقط ما يتم عرضه.
+
+## الإشارة إلى كيانات أخرى
+
+تشير الخطوات والمشغّلات إلى البيانات الوصفية بواسطة المعرّف العام، وليس بالاسم أو المعرّف أبدًا:
+
+* **الكائنات والحقول**: الخاصة بتطبيقك، أو القياسية عبر `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. يفترض المثال أعلاه أن التطبيق يعرّف أيضًا حقل رقم `leadScore` في الشركة باستخدام [`defineField()`](/ar/developers/extend/apps/data/extending-objects): إذ تفشل عملية التثبيت إذا كتبت خطوة سجل في حقل مفقود من مساحة العمل.
+* **دوال المنطق**: الخاصة بتطبيقك، والمعروضة باعتبارها [إجراء سير عمل](/ar/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) باستخدام `workflowActionTriggerSettings`. يمكن لتطبيق Custom المخصص لمساحة العمل أيضًا الإشارة إلى إجراءات سير العمل الخاصة بالتطبيقات الأخرى المثبتة في مساحة العمل، تمامًا كما يمكن لسير العمل المنشأة في التطبيق ذلك.
+* **الوكلاء**: الخاصة بتطبيقك، من [`defineAgent()`](/ar/developers/extend/apps/logic/skills-and-agents).
+
+يؤدي مرجع يتعذر على Twenty حله إلى فشل التثبيت.
+
+## المشغلات
+
+| النوع            | يتم التشغيل عند                       | الإعدادات                                                                                                                                                                 |
+| ---------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MANUAL`         | يقوم مستخدم بتشغيله                   | `availability` (اختياري): `GLOBAL`، أو `SINGLE_RECORD` / `BULK_RECORDS` مع `objectUniversalIdentifier`. يضيف إدخالًا إلى قائمة الأوامر، مع `icon` و`isPinned` اختياريين.  |
+| `CRON`           | بجدول زمني                            | `type`: `DAYS` أو `HOURS` أو `MINUTES` مع `schedule`، أو `CUSTOM` مع `pattern` لـ cron.                                                                                   |
+| `DATABASE_EVENT` | يتغير سجل                             | `objectUniversalIdentifier`، و`action` (`created`، `updated`، `deleted`، `upserted`)، و`fieldUniversalIdentifiers` اختيارية للمراقبة (للتحديثات وupserts فقط)، و`filter`. |
+| `WEBHOOK`        | يصل طلب HTTP إلى عنوان URL لسير العمل | `httpMethod` (`GET` أو `POST`)، و`expectedBody` لـ `POST`.                                                                                                                |
+
+لا يحصل سير العمل اليدوي من دون `availability` على إدخال في قائمة الأوامر.
+
+يستمع سير عمل webhook على `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`، حيث إن `workflowId` هو معرّف سير العمل المثبّت. يتوفر نص الطلب باعتباره `{{trigger.\<path>}}`.
+
+## الخطوات
+
+تدعم سير العمل في التطبيق أنواع الخطوات التالية: `LOGIC_FUNCTION`، `AI_AGENT`، `HTTP_REQUEST`، `CLASSIFY`، `CREATE_RECORD`، `UPDATE_RECORD`، `UPSERT_RECORD`، `DELETE_RECORD`، `FIND_RECORDS`، `PICK_RECORD`، `FILTER`، `IF_ELSE`، `ITERATOR`، `FORM`، `DELAY`، `WAIT_FOR_EVENT`، `SEND_EMAIL`، `DRAFT_EMAIL`، `CREATE_CALENDAR_EVENT`، و`EMPTY`.
+
+تتطابق مدخلاتها مع خطوات [منشئ سير العمل](/ar/user-guide/workflows/capabilities/workflow-actions)، مع استخدام المعرّفات العامة بدلًا من الأسماء:
+
+* تأخذ خطوات السجل `objectUniversalIdentifier` بدلًا من اسم كائن.
+* تشير عوامل التصفية والفرز إلى الحقول باستخدام `fieldMetadataUniversalIdentifier`.
+* تأخذ معاملات عامل التصفية قيم `ViewFilterOperand`، المُصدَّرة بواسطة `twenty-sdk/define`. تأخذ عوامل مجموعات التصفية قيماً نصية مثل `'AND'` أو `'OR'`.
+* تسمي حقول النموذج من النوع `RECORD` كائنها باستخدام `settings.objectUniversalIdentifier`. توفّر الحقول من النوعين `SELECT` و`MULTI_SELECT` خيارات حقل موجود من النوع نفسه، تمت تسميته باستخدام `settings.selectedFieldUniversalIdentifier`.
+* لتشغيل التعليمات البرمجية الخاصة بك، استخدم خطوة `LOGIC_FUNCTION`. خطوة التعليمات البرمجية في المنشئ غير متاحة.
+* لا تعمل خطوات البريد الإلكتروني والتقويم إلا إذا كان دور تطبيقك يتضمن علامة الإذن المطابقة: `SystemPermissionFlag.SEND_EMAIL_TOOL` لـ `SEND_EMAIL` و`DRAFT_EMAIL`، و`SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` لـ `CREATE_CALENDAR_EVENT`. تمنحها مساحة العمل عند تثبيت التطبيق، ويمكن للخطوة بعد ذلك استخدام أي حساب متصل في مساحة العمل، مثل سير عمل تم إنشاؤه في التطبيق.
+* معرّفات الحسابات المتصلة محلية لكل مساحة عمل، لذا لا تضمّن أحدها بصورة ثابتة. سمِّ الحساب بإحدى الطريقتين التاليتين:
+
+  * `connectedAccountHandle`: عنوان البريد الإلكتروني للحساب، مثل `'sales@example.com'`. عند مزامنة التطبيق، يُحوَّل المعرّف إلى حساب بهذا العنوان يكون مشتركًا مع مساحة العمل (نطاق `WORKSPACE`) ويمكنه تشغيل الخطوة. لا يمكن تسمية الحساب الخاص لعضو باستخدام المعرّف: يحتفظ pull به كـ `connectedAccountId`. إذا كانت عدة حسابات تشترك في العنوان، مثل صندوق بريد واحد متصل بواسطة عضوين أو عبر موفرين، فالأقدم هو الذي يُختار. إذا لم يتطابق أيٌّ منها، تفشل المزامنة وتذكر المعرّف. هذا ليس `fromHandle`، الذي يختار اسمًا مستعارًا للإرسال منه.
+  * `connectedAccountId`: متغير، مثل `{{trigger.properties.after.connectedAccountId}}`. تتطلب خطوات البريد الإلكتروني أيضًا معرّف عضو مساحة العمل، مثل `{{trigger.properties.after.assigneeId}}`، والذي يُحل إلى أول حساب لذلك العضو قادر على الإرسال.
+
+  عيّن واحدًا فقط من الاثنين.
+
+## بعد التثبيت
+
+* يصبح سير العمل نشطًا بمجرد تثبيت التطبيق، وتظهر عمليات تشغيله مع عمليات تشغيل سير العمل الأخرى في مساحة العمل.
+* يؤدي تثبيت إصدار جديد من التطبيق إلى تحديث سير العمل في مكانه.
+* لا يمكن للمستخدمين تعديل سير عمل مثبّت. لتخصيص أحدها، ينسخونه: وتكون النسخة ملكًا لهم لتعديلها.
+
+## سير عمل تطبيق Custom الخاص بمساحة العمل
+
+يمتلك تطبيق Custom الخاص بمساحة العمل مهام سير العمل المُنشأة في منشئ مهام سير العمل، وتكون الشيفرة مرجعًا موثوقًا لها بقدر ما يكون المنشئ كذلك:
+
+* `twenty app pull` يكتب كل واحد منها من نسخته النشطة، وهي النسخة التي نشرها المنشئ آخر مرة. يتم الإبلاغ عن مهمة سير عمل تستخدم نسختها النشطة إعدادات لا يمكن لملف `defineWorkflow()` التعبير عنها، مثل خطوة Code أو مشغّل أعاد المنشئ تسميته، وتُترك في مكانها.
+* `twenty app apply` ينشر مثل المنشئ. يُترك سير العمل الذي يتطابق تعريفه مع نسخته النشطة دون تغيير. وإلا، تُؤرشف النسخة النشطة ويصبح التعريف نسخة نشطة جديدة، بحيث تحتفظ عمليات التشغيل السابقة بالنسخة التي شُغِّلت بها.
+* يواصل المستخدمون تحرير مسارات العمل هذه في أداة الإنشاء، ويجلب السحب التالي تغييراتهم مرة أخرى.
+
+<PageBanner illustration="card-page-workflows" />

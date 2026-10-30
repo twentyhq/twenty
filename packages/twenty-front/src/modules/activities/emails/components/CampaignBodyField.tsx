@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,14 +10,8 @@ import { activeEmailCampaignIdState } from '@/activities/emails/states/activeEma
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const StyledContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-`;
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
@@ -41,7 +34,7 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
   );
 
   return (
-    <StyledContainer onBlur={() => flush()}>
+    <StyledWidgetScrollContainer onBlur={() => flush()}>
       <FormAdvancedTextFieldInput
         key={draftResyncKey}
         defaultValue={body}
@@ -51,6 +44,6 @@ export const CampaignBodyField = ({ campaign }: CampaignBodyFieldProps) => {
         onEditorReady={handleEditorReady}
         onImageUpload={uploadEmailImage}
       />
-    </StyledContainer>
+    </StyledWidgetScrollContainer>
   );
 };

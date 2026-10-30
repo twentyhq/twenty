@@ -18,6 +18,7 @@ import { importTeamsTranscriptOrScheduleRetry } from 'src/features/transcripts/l
 import { parseTeamsTranscriptResource } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-resource';
 import { parseTeamsTranscriptSubscriptionNotifications } from 'src/features/transcripts/logic-functions/utils/parse-teams-transcript-subscription-notifications';
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
@@ -39,7 +40,9 @@ const renewStoredTeamsTranscriptSubscription = async ({
   subscriptionKvKey: string;
   subscription: TeamsTranscriptSubscription;
 }): Promise<string> => {
-  const { accessToken } = await getConnection(connectedAccountId);
+  const accessToken = getConnectionAccessTokenOrThrow(
+    await getConnection(connectedAccountId),
+  );
   const expirationDateTime = await renewTeamsTranscriptSubscription({
     accessToken,
     subscriptionId: subscription.subscriptionId,

@@ -1,18 +1,22 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
-import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   type WorkflowManifestFieldReference,
   type WorkflowManifestReferences,
 } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import {
+  computeWorkflowTriggerManifestDefaults,
+  DEFAULT_WORKFLOW_TRIGGER_POSITION,
+} from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
+import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   type WorkflowCronTrigger,
@@ -23,7 +27,6 @@ import {
   type WorkflowWebhookTrigger,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import { assertNever } from 'src/utils/assert';
 
@@ -48,14 +51,29 @@ type WebhookTriggerManifest = Extract<
   { type: 'WEBHOOK' }
 >;
 
-const DATABASE_EVENT_TRIGGER_NAME_BY_ACTION: Record<
-  DatabaseEventTriggerManifest['settings']['action'],
-  string
-> = {
-  created: 'Record is created',
-  updated: 'Record is updated',
-  deleted: 'Record is deleted',
-  upserted: 'Record is created or updated',
+type TriggerBase = Pick<
+  WorkflowTrigger,
+  'name' | 'nextStepIds' | 'position'
+> & { universalIdentifier?: string };
+
+const fromTriggerManifestBase = (
+  trigger: WorkflowTriggerManifest,
+): { base: TriggerBase; outputSchema: OutputSchema } => {
+  const defaults = computeWorkflowTriggerManifestDefaults(trigger);
+  const { universalIdentifier, name, nextStepIds, position } = trigger;
+
+  return {
+    base: {
+      ...(isDefined(universalIdentifier) ? { universalIdentifier } : {}),
+      name: name ?? defaults.name,
+      nextStepIds,
+      ...(position === null
+        ? {}
+        : { position: position ?? DEFAULT_WORKFLOW_TRIGGER_POSITION }),
+    },
+    outputSchema: (trigger.outputSchema ??
+      defaults.outputSchema) as OutputSchema,
+  };
 };
 
 const fromManualTriggerManifestOrThrow = ({
@@ -65,18 +83,17 @@ const fromManualTriggerManifestOrThrow = ({
   trigger: ManualTriggerManifest;
   resolvers: WorkflowManifestReferenceResolvers;
 }): WorkflowManualTrigger => {
-  const { settings, ...identity } = trigger;
+  const { settings } = trigger;
+  const { base, outputSchema } = fromTriggerManifestBase(trigger);
   const availability = settings?.availability;
   const icon = settings?.icon;
   const isPinned = settings?.isPinned;
 
   return {
-    ...identity,
-    name: 'Manual trigger',
+    ...base,
     type: WorkflowTriggerType.MANUAL,
-    position: { x: 0, y: 0 },
     settings: {
-      outputSchema: {},
+      outputSchema,
       ...(isDefined(icon) ? { icon } : {}),
       ...(isDefined(isPinned) ? { isPinned } : {}),
       ...(isDefined(availability)
@@ -99,13 +116,11 @@ const fromManualTriggerManifestOrThrow = ({
 const fromCronTriggerManifestOrThrow = (
   trigger: CronTriggerManifest,
 ): WorkflowCronTrigger => {
-  const { settings, ...identity } = trigger;
+  const { base, outputSchema } = fromTriggerManifestBase(trigger);
   const cronTrigger = {
-    ...identity,
-    name: 'On a schedule',
+    ...base,
     type: WorkflowTriggerType.CRON,
-    position: { x: 0, y: 0 },
-    settings: { ...settings, outputSchema: {} },
+    settings: { ...trigger.settings, outputSchema },
   } satisfies WorkflowCronTrigger;
 
   try {
@@ -126,18 +141,9 @@ const fromCronTriggerManifestOrThrow = (
 const toWatchedFieldNameOrThrow = (
   field: WorkflowManifestFieldReference,
 ): string => {
-  if (
-    field.type !== FieldMetadataType.RELATION &&
-    field.type !== FieldMetadataType.MORPH_RELATION
-  ) {
-    return field.name;
-  }
+  const watchedFieldName = computeWorkflowWatchedFieldName(field);
 
-  if (
-    !isDefined(field.universalSettings) ||
-    !('relationType' in field.universalSettings) ||
-    field.universalSettings.relationType !== RelationType.MANY_TO_ONE
-  ) {
+  if (!isDefined(watchedFieldName)) {
     throw new ApplicationException(
       `Workflow trigger: ${field.name} cannot be watched, only relations to a single record change on update`,
       ApplicationExceptionCode.INVALID_INPUT,
@@ -147,7 +153,7 @@ const toWatchedFieldNameOrThrow = (
     );
   }
 
-  return computeMorphOrRelationFieldJoinColumnName({ name: field.name });
+  return watchedFieldName;
 };
 
 const fromDatabaseEventTriggerManifestOrThrow = ({
@@ -157,7 +163,8 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
   trigger: DatabaseEventTriggerManifest;
   resolvers: WorkflowManifestReferenceResolvers;
 }): WorkflowDatabaseEventTrigger => {
-  const { settings, ...identity } = trigger;
+  const { settings } = trigger;
+  const { base, outputSchema } = fromTriggerManifestBase(trigger);
 
   const databaseEventSettings: WorkflowDatabaseEventTrigger['settings'] &
     Partial<UpdateEventTriggerSettings> = {
@@ -165,7 +172,7 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
       resolvers.objectName(settings.objectUniversalIdentifier),
       settings.action,
     ),
-    outputSchema: {},
+    outputSchema,
     ...(isNonEmptyArray(settings.fieldUniversalIdentifiers)
       ? {
           fields: settings.fieldUniversalIdentifiers.map(
@@ -195,19 +202,21 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
   };
 
   return {
-    ...identity,
-    name: DATABASE_EVENT_TRIGGER_NAME_BY_ACTION[settings.action],
+    ...base,
     type: WorkflowTriggerType.DATABASE_EVENT,
-    position: { x: 0, y: 0 },
     settings: databaseEventSettings,
   } satisfies WorkflowDatabaseEventTrigger;
 };
 
-const fromWebhookTriggerManifestSettings = (
-  settings: WebhookTriggerManifest['settings'],
-): WorkflowWebhookTrigger['settings'] => {
+const fromWebhookTriggerManifestSettings = ({
+  settings,
+  outputSchema,
+}: {
+  settings: WebhookTriggerManifest['settings'];
+  outputSchema: OutputSchema;
+}): WorkflowWebhookTrigger['settings'] => {
   if (settings.httpMethod === 'GET') {
-    return { httpMethod: 'GET', authentication: null, outputSchema: {} };
+    return { httpMethod: 'GET', authentication: null, outputSchema };
   }
 
   return {
@@ -215,21 +224,20 @@ const fromWebhookTriggerManifestSettings = (
     authentication: null,
     expectedBody: settings.expectedBody,
     expectedOutputSchema: settings.expectedBody,
-    outputSchema: getOutputSchemaFromValue(settings.expectedBody),
+    outputSchema,
   };
 };
 
 const fromWebhookTriggerManifest = (
   trigger: WebhookTriggerManifest,
 ): WorkflowWebhookTrigger => {
-  const { settings, ...identity } = trigger;
+  const { settings } = trigger;
+  const { base, outputSchema } = fromTriggerManifestBase(trigger);
 
   return {
-    ...identity,
-    name: 'Webhook',
+    ...base,
     type: WorkflowTriggerType.WEBHOOK,
-    position: { x: 0, y: 0 },
-    settings: fromWebhookTriggerManifestSettings(settings),
+    settings: fromWebhookTriggerManifestSettings({ settings, outputSchema }),
   } satisfies WorkflowWebhookTrigger;
 };
 

@@ -14,12 +14,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'weekly',
-    description: msg`Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
+    description: msg`Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
     id: 'apps',
     indexed: true,
     path: '/apps',
     priority: 0.8,
-    title: msg`Twenty Apps — Vetted Apps for the Open Source CRM`,
+    title: msg`Twenty Apps — Reviewed Apps for the Open Source CRM`,
   },
   {
     changeFrequency: 'monthly',

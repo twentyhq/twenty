@@ -101,6 +101,7 @@ export class DropConnectedAccountStandardObjectCommand extends ProvisionedWorksp
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             ...(connectedAccountObjectMetadata

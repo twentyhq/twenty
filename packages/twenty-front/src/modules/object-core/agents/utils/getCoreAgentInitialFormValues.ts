@@ -11,7 +11,6 @@ export const getCoreAgentInitialFormValues = (
     icon: agent.icon || 'IconLego',
     modelId: agent.modelId,
     prompt: agent.prompt,
-    isCustom: agent.isCustom,
     modelConfiguration: agent.modelConfiguration || {},
   };
 };

@@ -9,7 +9,7 @@
     "tsup": "npx tsup"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
@@ -50,7 +50,7 @@
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
-    "@scalar/api-reference-react": "^0.9.42",
+    "@scalar/api-reference-react": "^0.9.83",
     "@sentry/react": "^10.51.0",
     "@sniptt/guards": "^0.2.0",
     "@stripe/react-stripe-js": "^6.6.0",
@@ -97,7 +97,7 @@
     "framer-motion": "^11.18.0",
     "fuse.js": "^7.1.0",
     "graphiql": "^5.2.3",
-    "graphql": "16.8.1",
+    "graphql": "16.14.2",
     "graphql-sse": "^2.5.4",
     "graphql-tag": "^2.12.6",
     "idb-keyval": "^6.2.5",
@@ -148,17 +148,18 @@
     "xlsx-ugnis": "^0.19.3",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.27",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@argos-ci/storybook": "6.2.3",
     "@babel/core": "^7.14.5",
     "@babel/preset-typescript": "^7.24.6",
     "@eloqnt/cli": "^0.6.29",
-    "@graphql-codegen/cli": "^6.3.1",
-    "@graphql-codegen/typed-document-node": "^6.1.8",
-    "@graphql-codegen/typescript": "^5.0.10",
-    "@graphql-codegen/typescript-operations": "^5.1.0",
+    "@graphql-codegen/add": "^7.1.1",
+    "@graphql-codegen/cli": "^7.4.6",
+    "@graphql-codegen/typed-document-node": "^7.2.0",
+    "@graphql-codegen/typescript": "^6.1.2",
+    "@graphql-codegen/typescript-operations": "^6.2.0",
     "@lingui/cli": "^5.9.5",
     "@lingui/swc-plugin": "^5.11.0",
     "@lingui/vite-plugin": "^5.9.5",

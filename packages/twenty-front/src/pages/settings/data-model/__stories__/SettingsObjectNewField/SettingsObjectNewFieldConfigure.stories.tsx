@@ -42,7 +42,31 @@ const meta: Meta<PageDecoratorArgs> = {
             data: {
               createOneField: {
                 ...fieldMetadataItem,
-                ...variables.input.field,
+                description: variables.input.field.description ?? null,
+                icon: variables.input.field.icon ?? null,
+                isUnique: variables.input.field.isUnique ?? null,
+                settings: variables.input.field.settings ?? null,
+                defaultValue: variables.input.field.defaultValue ?? null,
+                options: variables.input.field.options ?? null,
+                isActive:
+                  variables.input.field.isActive ??
+                  fieldMetadataItem.isActive ??
+                  null,
+                isSearchable:
+                  variables.input.field.isSearchable ??
+                  fieldMetadataItem.isSearchable ??
+                  null,
+                isNullable:
+                  variables.input.field.isNullable ??
+                  fieldMetadataItem.isNullable ??
+                  null,
+                isLabelSyncedWithName:
+                  variables.input.field.isLabelSyncedWithName ??
+                  fieldMetadataItem.isLabelSyncedWithName ??
+                  null,
+                name: variables.input.field.name,
+                label: variables.input.field.label,
+                type: variables.input.field.type,
                 __typename: 'Field',
                 id: '20202020-0000-4000-8000-000000000001',
                 applicationId: fieldMetadataItem.applicationId ?? '',

@@ -12,6 +12,8 @@ import {
 } from './frontComponentManifestType';
 import { type IndexManifest } from './indexManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
+import { type McpServerManifest } from './mcpServerManifestType';
+import { type MessagingProviderManifest } from './messagingProviderManifestType';
 import { type NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 import { type ObjectManifest } from './objectManifestType';
 import {
@@ -46,6 +48,8 @@ export type Manifest = {
   skills: SkillManifest[];
   agents: AgentManifest[];
   connectionProviders?: ConnectionProviderManifest[];
+  messagingProviders?: MessagingProviderManifest[];
+  mcpServers?: McpServerManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   viewFields: StandaloneViewFieldManifest[];

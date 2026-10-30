@@ -83,7 +83,7 @@ export const RelationOneToManyFieldInput = () => {
 
   const {
     createJunctionRecordWithNestedTarget,
-    loading: isCreatingJunctionRecord,
+    isCreatePending: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
     sourceFieldName: relationFieldDefinition.metadata.fieldName,

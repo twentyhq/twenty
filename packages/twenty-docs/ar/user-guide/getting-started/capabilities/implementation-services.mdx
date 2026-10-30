@@ -3,15 +3,23 @@ title: خدمات التنفيذ
 description: سواء كنت بحاجة إلى مساعدة في البدء أو إنشاء تخصيصات متقدمة، لدينا الحل.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## شركاء التنفيذ
 
 تعاون مع شركاء Twenty المعتمدين للحصول على تخصيصات وعمليات تكامل متقدمة، ودعم مخصص لعملية التنفيذ.
 
-<CardGroup cols={2}>
-  <Card title="تصفح الشركاء المعتمدين" icon="search" href="https://twenty.com/partners/list?ref=docs-implementation-services">
-    اعثر على شريك وتواصل معه مباشرة — وقُم بالتصفية حسب المنطقة واللغة والخبرة.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>تصفح الشركاء المعتمدين</CardTitle>
+    ابحث عن شريك والاتصال مباشرة - تصفية حسب المنطقة واللغة والخبرة.
   </Card>
-  <Card title="احصل على مطابقة من Twenty" icon="mail" href="mailto:contact@twenty.com">
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>احصل على مطابقة من Twenty</CardTitle>
     أخبرنا بما تحتاجه وسنربطك بالشريك المناسب.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

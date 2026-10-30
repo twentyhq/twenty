@@ -1,0 +1,84 @@
+---
+title: LightIconButton
+description: اعرض إجراءات أيقونات خفيفة بتركيز قياسي أو خافت.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
+
+## نظرة عامة
+
+يؤلف `LightIconButton` بين [IconButton](/ar/ui/components/input/icon-button) وسطح شفاف وحجم صغير. وفّر اسمًا متاحًا ومحتوى أيقونة زخرفيًا.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--display" title="زر أيقونة خفيف" height={100} />
+
+## استخدام
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
+  </LightIconButton>
+);
+```
+
+يستخدم التركيز القياسي نصًا محايدًا ثانويًا؛ ويستخدم التركيز الخافت نصًا من الدرجة الثالثة. يكون لمظهر العنصر الفرعي المحدد صراحةً الأولوية على قيم ButtonGroup، تليه الإعدادات الافتراضية للمكوّن. تحتفظ الألوان الدلالية بمعالجة التباين الخاصة بها. عناصر التحكم الصغيرة بحجم 24px مع أيقونة بحجم 14px؛ وعناصر التحكم المتوسطة بحجم 32px مع أيقونة بحجم 16px. تستخدم عناصر التحكم المدمجة `size="xs"` ويبلغ حجمها 20px.
+
+## خيارات مرئية
+
+قارن التأكيد عند الأحجام الصغيرة والمتوسطة، بما في ذلك حالات التحديد والتحميل والتعطيل.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--catalog" title="تأكيد زر الأيقونة الفاتحة وأحجامه وحالاته" height={410} />
+
+## الحالة والتفاعل
+
+يتولى Button التنشيط بلوحة المفاتيح، وسلوك التعطيل والتحميل، والمراجع، والسمات الأصلية، وتأليف العرض. القيمة الأصلية الافتراضية هي `type="button"`. استخدم `aria-pressed` للتبديلات و`aria-expanded` للإفصاحات. يتولى التطبيق هذه الحالات ويمكنه تعيين `color="accent"` لإبراز إجراء محدد. يستخدم تركيز لوحة المفاتيح حلقة التركيز المشتركة.
+
+نص Tooltip اختياري ولا يحل محل اسم يمكن الوصول إليه من `aria-label` أو `aria-labelledby`. عيّن `href` لرابط. للتوجيه الذي يملكه التطبيق، وفّر `render` و`nativeButton={false}` و`role="link"`.
+
+## تحديث عناصر التحكم الحالية
+
+استورد `LightIconButton` من `twenty-ui/components`. استبدل `Icon={IconPlus}` بأبناء `<IconPlus />`، و`small`/`medium` بـ`sm`/`md`، و`accent="tertiary"` بـ`emphasis="subtle"`، و`testId` بـ`data-testid`. استبدل علامتي `active` و`focus` الاصطناعيتين بالحالة الدلالية وتركيز لوحة المفاتيح الفعلي.
+
+استبدل `LightIconButtonGroup` بـ[ButtonGroup](/ar/ui/primitives/input/button-group) باستخدام `attached={false}` وأبناء صريحين. عيّن `disabled` على الإجراءات غير المتاحة، بما في ذلك الإجراءات التي لا تحتوي على معالج نقر. يمكن أن تبقى الأغلفة ومشغلات التلميحات حول كل عنصر تابع.
+
+## إجراءات الصف
+
+استخدم [ListItem](/ar/ui/primitives/navigation/list-item) غير تفاعلي مع فتحة `actions` لعناصر التحكم المستقلة. مرّر `LightIconButton` واحدًا مباشرةً، أو استخدم `ButtonGroup` لأزرار متعددة. يحتفظ كل زر باسمه المتاح، ومعالج النقر، وحالة التعطيل الخاصة به. لفّ مشغلات القائمة المنسدلة مباشرةً حول الزر.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordActions = () => (
+  <ListItem
+    actions={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  >
+    Record
+  </ListItem>
+);
+```
+
+يمكن أن يبقى الزر الذي لا يحتوي على معالج `onClick` مفعّلًا عندما تتولى قائمة منسدلة محيطة تفاعله. عيّن `disabled` صراحةً للأزرار غير المتاحة. أبقِ عناصر التحكم المستقلة بجانب [ListItemButton](/ar/ui/components/navigation/list-item-button) قابل للتنفيذ بحيث يحتفظ كل منها بتركيزه وتفعيله الخاصين.
+
+## الإزاحة
+
+<LightIconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

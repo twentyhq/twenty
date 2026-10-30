@@ -2,6 +2,8 @@
 title: Guida per l'aggiornamento
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Linee guida generali
 
 **Esegui sempre un backup del database prima di iniziare la procedura di aggiornamento** eseguendo:
@@ -23,6 +25,16 @@ Se utilizzi Docker Compose, segui questi passaggi:
 3. Avvia Twenty: `docker compose up -d`
 
 All'avvio, il server esegue automaticamente tutte le migrazioni di aggiornamento necessarie. Non è necessario alcun comando manuale.
+
+### Prefisso della cache Redis
+
+`REDIS_CACHE_PREFIX` è facoltativo e per impostazione predefinita è una stringa vuota. Lasciarlo vuoto preserva esattamente i nomi delle chiavi della cache esistenti, senza due punti aggiuntivi né migrazione delle chiavi.
+
+Per le distribuzioni Redis Enterprise o Azure Managed Redis che segnalano errori `CROSSSLOT` durante le operazioni di cache, imposta `REDIS_CACHE_PREFIX={twenty-cache}` su ogni comando del server, del worker e di aggiornamento. Le parentesi graffe fanno sì che tutte le chiavi di archiviazione della cache condividano uno slot hash Redis. Questo non distribuisce i dati della cache tra gli shard. `REDIS_QUEUE_PREFIX` si applica solo alle code e rimane separato.
+
+Ad esempio, `engine:workspace:flatObjectMetadataMaps:123:hash` diventa `{twenty-cache}:engine:workspace:flatObjectMetadataMaps:123:hash` solo quando quel prefisso è configurato. `cache:flush` utilizza automaticamente il prefisso configurato.
+
+La modifica del prefisso passa a uno spazio dei nomi della cache separato. Arresta tutti i server e i worker di Twenty prima di modificarlo, quindi riavviali con lo stesso valore. Le voci esistenti con il prefisso precedente rimangono inalterate. Se riutilizzi un prefisso usato in precedenza, esegui `yarn command:prod cache:flush` con tale valore prima del riavvio per rimuovere le voci obsolete. Le distribuzioni rolling con valori di prefisso diversi non sono supportate.
 
 ## Aggiornamento alla v2.34+ — PostgreSQL 15 minimo
 
@@ -69,7 +81,7 @@ Instance
     At:               2026-04-16T11:43:58.823Z
 
 Workspace
-  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+  App*** (20202020-***)
       Inferred version: 1.23.0
       Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
       Status:           Up to date
@@ -83,10 +95,11 @@ Summary
 
 ### Opzioni
 
-| Opzione                   | Descrizione                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filtra per uno specifico spazio di lavoro. Può essere passato più volte.                     |
-| `-f, --failed-only`       | Nasconde gli spazi di lavoro aggiornati; mostra solo quelli arretrati e quelli non riusciti. |
+| Opzione                   | Descrizione                                                                                                                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Filtra per uno specifico spazio di lavoro. Può essere passato più volte.                                                                                                                                                                 |
+| `-f, --failed-only`       | Nasconde gli spazi di lavoro aggiornati; mostra solo quelli arretrati e quelli non riusciti.                                                                                                                                             |
+| `--show-full-identifiers` | Visualizza i nomi completi e gli ID degli spazi di lavoro. Per impostazione predefinita, vengono visualizzati solo i primi tre caratteri di ciascun nome dello spazio di lavoro e la prima sezione di ciascun ID dello spazio di lavoro. |
 
 ## Risoluzione dei problemi
 
@@ -103,3 +116,5 @@ Mostra solo gli spazi di lavoro arretrati o non riusciti, insieme al messaggio d
 ## Prima della v1.23
 
 Se la tua istanza è precedente alla v1.23, devi eseguire l'aggiornamento in modo incrementale attraverso ogni versione maggiore contrassegnata (da v1.6 a v1.7, poi da v1.7 a v1.8 e così via) fino a raggiungere la v1.23. Da lì, puoi passare direttamente all'ultima versione.
+
+<PageBanner illustration="card-page-sync-recovery" />

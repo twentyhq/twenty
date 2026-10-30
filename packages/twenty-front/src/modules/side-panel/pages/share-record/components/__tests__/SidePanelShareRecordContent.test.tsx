@@ -5,7 +5,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import {
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -42,15 +41,26 @@ const sharing: RecordSharingFieldsFragment = {
     canUpdate: true,
     canDelete: true,
     canSoftDelete: true,
+    __typename: 'RecordPermissionsDTO',
   },
   generalAccessLevel: RecordShareAccessLevel.NONE,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
-  roles: [{ id: 'sales-role', label: 'Sales', canRead: true, canUpdate: true }],
+  roles: [
+    {
+      id: 'sales-role',
+      label: 'Sales',
+      canRead: true,
+      canUpdate: true,
+      __typename: 'RecordSharingRoleDTO',
+    },
+  ],
   shares: [],
+  __typename: 'RecordSharingDTO',
 };
 
 const buildShare = (share: Partial<Share>): Share => ({
+  __typename: 'RecordSharingGrantDTO' as const,
   id: 'grant',
   principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
   principalId: 'alice-member',
@@ -70,12 +80,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 const renderSharing = ({
   sharingOverrides = {},
-  sharingReach = ObjectSharingReach.WORKSPACE,
   isLoading = false,
   error,
 }: {
   sharingOverrides?: Partial<RecordSharingFieldsFragment>;
-  sharingReach?: ObjectSharingReach;
   isLoading?: boolean;
   error?: Error;
 } = {}) =>
@@ -83,7 +91,6 @@ const renderSharing = ({
     <SidePanelShareRecordContent
       recordUrl="https://example.com/record"
       objectLabelPlural="Companies"
-      sharingReach={sharingReach}
       sharingState={{
         sharing: { ...sharing, ...sharingOverrides },
         setGeneralAccess,
@@ -172,6 +179,7 @@ describe('Share record side panel', () => {
             rowCause: RecordShareRowCause.OWNER,
           }),
           buildShare({
+            __typename: 'RecordSharingGrantDTO' as const,
             id: 'app',
             principalType: RecordSharePrincipalType.ROLE,
             principalId: 'sales-role',
@@ -185,30 +193,16 @@ describe('Share record side panel', () => {
     expect(screen.queryByRole('button', { name: /Remove/ })).toBeNull();
   });
 
-  it('explains inherited access instead of promising a manual revocation removes it', async () => {
-    renderSharing({
-      sharingOverrides: { sharingMode: RecordSharingMode.INHERITED },
-    });
+  it('tells managers what adding people grants', async () => {
+    renderSharing();
     await waitFor(() =>
       expect(
-        screen.getByText(/Access is also inherited from related records/),
+        screen.getByText(
+          "People you add get this record even if their role can't access Companies. Field permissions still apply.",
+        ),
       ).toBeVisible(),
     );
   });
-
-  it.each([
-    [
-      ObjectSharingReach.WORKSPACE,
-      "People you add get this record even if their role can't access Companies. Field permissions still apply.",
-    ],
-    [ObjectSharingReach.ROLE_ACCESS, 'Role and field permissions still apply.'],
-  ])(
-    'tells managers what adding people grants when sharing reach is %s',
-    async (sharingReach, notice) => {
-      renderSharing({ sharingReach });
-      await waitFor(() => expect(screen.getByText(notice)).toBeVisible());
-    },
-  );
 
   it('tells viewers of a record open by default who can change its access', async () => {
     renderSharing({
@@ -247,33 +241,27 @@ describe('Share record side panel', () => {
     expect(screen.queryByText(/Only the creator of this record/)).toBeNull();
   });
 
-  it.each([
-    [
-      ObjectSharingReach.WORKSPACE,
-      "Gets this record only: their role can't access Companies",
-    ],
-    [
-      ObjectSharingReach.ROLE_ACCESS,
-      "Won't see it: their role can't access Companies",
-    ],
-  ])(
-    'explains what a grant does for a role without access when sharing reach is %s',
-    async (sharingReach, note) => {
-      renderSharing({
-        sharingReach,
-        sharingOverrides: {
-          roles: [
-            {
-              id: 'member-role',
-              label: 'Member',
-              canRead: false,
-              canUpdate: false,
-            },
-          ],
-          shares: [buildShare({ principalRoleId: 'member-role' })],
-        },
-      });
-      await waitFor(() => expect(screen.getByText(note)).toBeVisible());
-    },
-  );
+  it('explains what a grant does for a role without access', async () => {
+    renderSharing({
+      sharingOverrides: {
+        roles: [
+          {
+            id: 'member-role',
+            label: 'Member',
+            canRead: false,
+            canUpdate: false,
+            __typename: 'RecordSharingRoleDTO',
+          },
+        ],
+        shares: [buildShare({ principalRoleId: 'member-role' })],
+      },
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          "Gets this record only: their role can't access Companies",
+        ),
+      ).toBeVisible(),
+    );
+  });
 });

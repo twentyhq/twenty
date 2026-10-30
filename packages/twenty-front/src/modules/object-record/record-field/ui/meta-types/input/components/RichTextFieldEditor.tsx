@@ -36,14 +36,12 @@ import { type Editor } from '@tiptap/core';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
   max-width: 100%;
   min-width: 0;
-  padding-left: ${themeCssVariables.spacing[8]};
   position: relative;
   width: 100%;
 `;

@@ -3,6 +3,8 @@ title: Campos de Relación
 description: Conecte registros entre distintos objetos mediante campos de relación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Tipos de relaciones
 
 ### Uno a muchos
@@ -41,9 +43,9 @@ Muchos registros en el Objeto A pueden vincularse a muchos registros en el Objet
 
 Las relaciones de muchos a muchos usan un patrón de **objeto de unión**: un objeto intermedio que conecta ambos lados. Con la función de relaciones de unión, Twenty muestra directamente los registros finales vinculados, ocultando el objeto intermedio de la UI.
 
-<Warning>
-**Característica Beta**: Las relaciones de unión deben estar habilitadas en **Ajustes → Comunidad → Características** antes de usar.
-</Warning>
+<Note>
+El interruptor **Esta es una relación con un objeto de unión** aparece en un campo de relación de uno a varios con un único objeto de destino, cuando ese destino parece un objeto de unión (sus propias relaciones, ignorando las del sistema, son todas de muchos a uno) y tiene otra relación a través de la cual apuntar.
+</Note>
 
 Consulta [Cómo crear relaciones de muchos a muchos](/es/user-guide/data-model/how-tos/create-many-to-many-relations) para obtener una guía completa paso a paso.
 
@@ -92,3 +94,5 @@ Twenty incluye relaciones predefinidas entre objetos estándar:
 
 * **Eliminar relaciones** elimina el vínculo pero no los registros relacionados
 * **Las relaciones circulares** deben evitarse para mantener la integridad de los datos
+
+<PageBanner illustration="card-page-relations" />

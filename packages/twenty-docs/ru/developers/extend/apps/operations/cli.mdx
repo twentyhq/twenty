@@ -1,130 +1,174 @@
 ---
 title: CLI
-description: Команды `yarn twenty` для выполнения функций, потоковой передачи логов, управления установками приложений и переключения удалённых серверов.
+description: Войдите в рабочее пространство, изучайте его данные и создавайте приложения из терминала с помощью Twenty CLI.
 ---
 
-CLI `yarn twenty` — ваш инструмент для всего, что связано с приложением. Полный список команд:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| Команда                                         | Что делает                                                                               | Описано в                                                                                          |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `dev`                                           | Отслеживает исходные файлы и синхронизирует изменения в реальном времени                 | [Краткое руководство](/ru/developers/extend/apps/getting-started/quick-start)                         |
-| `план`                                          | Предпросмотр изменений метаданных без их применения                                      | [Syncing & recovery](/ru/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
-| `применить`                                     | Применить изменения метаданных после показа плана                                        | [Syncing & recovery](/ru/developers/extend/apps/operations/sync-and-recovery)                         |
-| `dev:build`                                     | Скомпилировать приложение и сгенерировать API‑клиент (`--tarball` для упаковки в `.tgz`) | [Публикация](/ru/developers/extend/apps/operations/publishing)                                        |
-| `dev:typecheck`                                 | Запустить проверку типов TypeScript                                                      | [Тестирование](/ru/developers/extend/apps/operations/testing)                                         |
-| `dev:add`                                       | Создать каркас новой сущности                                                            | [Создание каркаса](/ru/developers/extend/apps/getting-started/scaffolding)                            |
-| `dev:generate-client`                           | Повторно сгенерировать типизированный API‑клиент                                         | эта страница                                                                                       |
-| `dev:function:exec` / `dev:function:logs`       | Выполнять функции и транслировать их логи                                                | эта страница                                                                                       |
-| `dev:translations-extract`                      | Извлечь переводимые строки в каталоги `locales/`                                         | [Переводы](/ru/developers/extend/apps/operations/translations)                                          |
-| `dev:catalog-sync`                              | Запустить синхронизацию каталога маркетплейса                                            | [Публикация](/ru/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)        |
-| `app:publish` / `app:install` / `app:uninstall` | Жизненный цикл релиза                                                                    | [Публикация](/ru/developers/extend/apps/operations/publishing) и эта страница                         |
-| `docker:*`                                      | Управлять локальным контейнером сервера Twenty                                           | [Локальный сервер](/ru/developers/extend/apps/getting-started/local-server)                           |
-| `remote:*`                                      | Управлять подключениями к серверам                                                       | эта страница                                                                                       |
+## Запуск CLI
 
-Каждая команда принимает параметр `-r, --remote \<name>`, чтобы указать конкретное удалённое подключение вместо подключения по умолчанию.
+CLI `twenty` подключается к рабочим пространствам Twenty из вашего терминала. Используйте его для проверки метаданных, чтения записей, отправки API-запросов, а также создания, синхронизации и отладки приложений. Требуется **Node.js 24.5+ или 26.5+**.
 
-## Выполнение функций (`yarn twenty dev:function:exec`)
-
-Запустите логическую функцию вручную, не вызывая её через HTTP, cron или событие базы данных:
+Запускайте любую команду через `npx` без установки чего-либо:
 
 ```bash filename="Terminal"
-# Execute by function name
-yarn twenty dev:function:exec -n create-new-post-card
-
-# Execute by universalIdentifier
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
-
-# Pass a JSON payload
-yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
-
-# Execute the install and uninstall hooks
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
-yarn twenty dev:function:exec --uninstall
+npx twenty@latest --version
 ```
 
-## Просмотр логов функций (`yarn twenty dev:function:logs`)
-
-Потоковая передача журналов выполнения логических функций вашего приложения:
+Или один раз установите его глобально и вызывайте `twenty` напрямую:
 
 ```bash filename="Terminal"
-# Stream all function logs
-yarn twenty dev:function:logs
-
-# Filter by function name
-yarn twenty dev:function:logs -n create-new-post-card
-
-# Filter by universalIdentifier
-yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+npm install -g twenty
+twenty --version
 ```
 
-<Note>
-Это отличается от `yarn twenty docker:logs`, который показывает логи контейнера Docker. `yarn twenty dev:function:logs` показывает журналы выполнения функций вашего приложения с сервера Twenty.
-</Note>
+В примерах ниже используется `twenty`. Добавьте перед ними `npx twenty@latest`, если вы не устанавливали его глобально. Выполните `twenty commands`, чтобы получить полный список команд, и `twenty \<command> --help`, чтобы получить параметры отдельной команды.
 
-## Генерация типизированного клиента (`yarn twenty dev:generate-client`)
+| Команда       | Что делает                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| `авторизация` | Войти, проверить и удалить учётные данные                                                  |
+| `remote`      | Просмотр, выбор, переименование и удаление сохранённых подключений к рабочему пространству |
+| `метаданные`  | Просматривайте объекты и поля                                                              |
+| `data`        | Просматривайте и читайте записи                                                            |
+| `api`         | Отправляйте необработанные REST- или GraphQL-запросы                                       |
+| `открыть`     | Откройте рабочее пространство в браузере                                                   |
+| `приложение`  | Создавайте, собирайте, синхронизируйте, отлаживайте и удаляйте приложения                  |
+| `doctor`      | Диагностируйте CLI, SDK приложения и подключение к рабочему пространству                   |
 
-Повторно сгенерируйте типизированный API‑клиент (`twenty-client-sdk`) из схемы активного удалённого экземпляра, не выполняя сборку или синхронизацию приложения. Используйте это, чтобы получить типизированного клиента в любом проекте — например, в backend‑сервисе в отдельном репозитории — который взаимодействует с вашим экземпляром Twenty:
+Каждая команда, взаимодействующая с рабочим пространством, принимает `--remote \<name>` для выбора сохранённого подключения вместо подключения по умолчанию и `--json` для структурированного вывода.
+
+## Подключение к рабочему пространству
+
+Войдите через браузер. `--use` делает это подключение подключением по умолчанию:
 
 ```bash filename="Terminal"
-# In your project (no Twenty app definition required)
-yarn add twenty-sdk twenty-client-sdk
-
-# Connect to the Twenty instance to generate the client from
-yarn twenty remote:add
-
-# Generate the typed client into node_modules/twenty-client-sdk
-yarn twenty dev:generate-client
+twenty auth login --url https://acme.twenty.com --use
+twenty auth status
 ```
 
-Затем импортируйте клиента в свой код:
+Используйте адрес рабочего пространства или адрес сервера для локальной установки: `http://localhost:2020` для [локального сервера Docker](/ru/developers/extend/apps/getting-started/local-server), `http://localhost:3000` для исходной копии. Точную команду можно скопировать в разделе **Settings > Developers > CLI**. Для входа через браузер требуется Twenty 2.42 или более поздняя версия.
 
-```typescript
-import { CoreApiClient } from 'twenty-client-sdk/core';
-```
-
-Повторно запустите команду при каждом изменении вашей модели данных, чтобы обновить сгенерированные типы.
-
-<Note>
-Клиент генерируется внутри `node_modules`, поэтому он не добавляется в ваш репозиторий вместе с кодом. Запускайте `yarn twenty dev:generate-client` после каждой установки (например, в скрипте `postinstall` или в CI).
-</Note>
-
-## Удаление приложения (`yarn twenty app:uninstall`)
-
-Удалите свое приложение из активного рабочего пространства:
+Сохраните несколько подключений, присвоив им имена:
 
 ```bash filename="Terminal"
-yarn twenty app:uninstall
-
-# Skip the confirmation prompt
-yarn twenty app:uninstall --yes
+twenty auth login --url http://localhost:2020 --name local
+twenty remote list
+twenty remote use local
 ```
 
-## Управление удалёнными серверами
-
-**Remote** — это сервер Twenty, к которому подключается ваше приложение. Во время настройки скаффолдер автоматически создаст его для вас. Вы можете в любой момент добавлять новые удалённые серверы или переключаться между ними.
+В CI или скриптах передайте API-ключ через канал вместо входа через браузер:
 
 ```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote:add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote:add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote:list
-
-# Set the active remote
-yarn twenty remote:use <name>
-
-# Check that the active remote's authentication is still valid
-yarn twenty remote:status
-
-# Remove a remote
-yarn twenty remote:remove <name>
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name ci
 ```
 
-Ваши учётные данные хранятся в `~/.twenty/config.json`.
+Также можно задать `TWENTY_API_URL` и `TWENTY_API_KEY` для одного запуска, ничего не сохраняя. Сохранённые подключения хранятся в `~/.twenty/config.json`.
+
+## Изучение данных
+
+```bash filename="Terminal"
+# Objects and fields
+twenty metadata object list
+twenty metadata field list companies
+
+# Records
+twenty data list companies --limit 5
+twenty data list companies --filter 'employees[gte]:5000' --order-by 'employees[DescNullsLast]'
+twenty data get people <id>
+
+# Raw API requests
+twenty api rest '/rest/companies?limit=5'
+twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
+
+# Open the workspace, or a page inside it
+twenty open
+twenty open settings/developers
+```
+
+Имена объектов должны точно соответствовать именам API и могут быть в единственном или множественном числе (`company` или `companies`). Необработанные записи через API выполняются без подтверждения, при этом по-прежнему действуют ваши разрешения в рабочем пространстве.
+
+## Сборка приложения
+
+```bash filename="Terminal"
+npx twenty@latest app init my-app
+cd my-app
+yarn install
+npx twenty@latest app apply --create
+npx twenty@latest app dev
+```
+
+* `app init` создаёт новый проект из шаблона. Она не устанавливает зависимости и не подключается к рабочему пространству.
+* `app apply --create` собирает приложение, регистрирует его в рабочем пространстве, устанавливает и синхронизирует его метаданные.
+* `app dev` отслеживает исходный код и синхронизирует каждую успешную сборку.
+
+Другие команды приложения:
+
+| Команда                       | Что делает                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------ |
+| `app add`                     | Создайте заготовку объекта, поля, логической функции или другой сущности       |
+| `app build` / `app typecheck` | Соберите приложение или проверьте типы локально                                |
+| `app plan`                    | Предварительно просмотрите изменения метаданных, которые внесёт применение     |
+| `app apply`                   | Соберите, загрузите и синхронизируйте приложение                               |
+| `app generate-client`         | Повторно сгенерируйте типизированный API-клиент без синхронизации              |
+| `app pull`                    | Запишите метаданные установленного приложения обратно в локальный исходный код |
+| `app translations extract`    | Извлечь переводимые строки в каталоги `locales/`                               |
+| `app publish`                 | Опубликуйте приложение в npm или в частном реестре Twenty                      |
+| `app install`                 | Установите в рабочее пространство уже зарегистрированный пакет приложения      |
+| `app uninstall`               | Удалите из рабочего пространства приложение и всё, чем оно владеет             |
+
+Определения, отсутствующие в исходном коде, по умолчанию удаляются из рабочего пространства. Передайте `--no-prune`, чтобы сохранить их. Пользовательское приложение рабочей области сохраняет их, если не передать `--prune`. Удаление объектов или полей также удаляет их данные, поэтому требуется подтверждение. Подробнее см. в разделе [Синхронизация и восстановление](/ru/developers/extend/apps/operations/sync-and-recovery).
+
+## Выполнение функций
+
+Запустите развёрнутую логическую функцию, не вызывая её через маршрут, cron или событие базы данных. Сначала синхронизируйте локальные изменения с помощью `app apply` или `app dev`.
+
+```bash filename="Terminal"
+twenty app exec --name create-new-post-card
+twenty app exec --name create-new-post-card --payload '{"name": "Hello"}'
+
+# Install and uninstall hooks
+twenty app exec --post-install
+twenty app exec --pre-install
+twenty app exec --uninstall-hook
+```
+
+Для выполнения функций требуется вход через браузер. API-ключи не могут их выполнять.
+
+## Просмотр журналов функций
+
+Передавайте поток вывода логических функций приложения по мере завершения выполнений:
+
+```bash filename="Terminal"
+twenty app logs
+twenty app logs --name create-new-post-card
+```
+
+Отображаются только новые выполнения, а не прошлые.
+
+## Удаление приложения
+
+```bash filename="Terminal"
+twenty app uninstall
+twenty app uninstall --yes
+```
+
+Будет выполнен хук удаления приложения и удалено всё, чем оно владеет, включая его объекты, поля и их данные. Приложение останется зарегистрированным, поэтому `twenty app apply` сможет установить его снова.
+
+## Диагностика проблем
+
+```bash filename="Terminal"
+twenty doctor
+twenty doctor --offline
+```
+
+`doctor` проверяет версию Node, какой бинарный файл `twenty` находится в `PATH`, сохранённые подключения и SDK приложения, а затем сообщает, что нужно исправить.
+
+## Скрипты и тесты
+
+Вывод сборки относится к CLI. Не считывайте `.twenty/output/manifest.json` и не импортируйте внутренний код сборки; считывайте `data.manifest` из `twenty app build --json`.
+
+## Полный справочник
+
+[Справочник команд](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) содержит описание всех флагов, разрешений, форматов вывода и кодов завершения.
+
+<PageBanner illustration="card-page-cli" />

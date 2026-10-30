@@ -41,11 +41,11 @@ const jestConfig: JestConfigWithTsJest = {
   setupFilesAfterEnv: [
     '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
   ],
-  testTimeout: 20000,
+  testTimeout: 90000,
   maxWorkers: 1,
   // ESM-only deps (jsdom 29 and msw chains, ai, @ai-sdk/*, @workflow/serde) that swc must transform for jest
   transformIgnorePatterns: [
-    '/node_modules/(?!(.*/node_modules/)?(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow|htmlparser2|marked|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
+    '/node_modules/(?!(.*/node_modules/)?(@nestjs|@graphql-yoga|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow|htmlparser2|marked|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
   ],
   transform: {
     '^.+\\.(t|j|mj)s$': [

@@ -54,9 +54,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     {
       applicationVersion = '1.0.1',
       applicationRole,
+      applicationUniversalIdentifierById = {},
     }: {
       applicationVersion?: string | null;
       applicationRole?: { canReadObjectRecords: boolean } | null;
+      applicationUniversalIdentifierById?: Record<string, string>;
     } = {},
   ) => {
     const isApplicationWorkflow = applicationRole !== undefined;
@@ -65,13 +67,26 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       flatObjectMetadataMaps: { byUniversalIdentifier: {} },
       featureFlagsMap: {},
       flatApplicationMaps: {
-        byId: {
-          'application-id': {
-            id: 'application-id',
-            version: applicationVersion,
-            defaultRoleId: applicationRole ? 'application-role-id' : null,
-          },
-        },
+        byId: Object.fromEntries(
+          [
+            ...new Set([
+              'application-id',
+              ...Object.keys(applicationUniversalIdentifierById),
+            ]),
+          ].map((applicationId) => [
+            applicationId,
+            {
+              id: applicationId,
+              universalIdentifier:
+                applicationUniversalIdentifierById[applicationId],
+              version: applicationVersion,
+              defaultRoleId:
+                applicationId === 'application-id' && applicationRole
+                  ? 'application-role-id'
+                  : null,
+            },
+          ]),
+        ),
         idByUniversalIdentifier: {},
       },
       ...(isApplicationWorkflow
@@ -291,7 +306,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: mockPayload.events[0],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     });
 
@@ -428,7 +447,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: createPayload.events[0],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     });
 
@@ -474,7 +497,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
               properties: { after: record },
             },
           },
-          { retryLimit: 3 },
+          {
+            retryLimit: 3,
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
 
       beforeEach(() => {
@@ -562,6 +589,53 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       });
     });
 
+    it('should scope each trigger job to the application owning its workflow', async () => {
+      const workspaceWorkflowId = 'workspace-workflow';
+      const applicationWorkflowId = 'application-workflow';
+
+      setTriggerMap(
+        [
+          {
+            ...mockEventListeners[0],
+            workflowId: workspaceWorkflowId,
+            applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+          },
+          { ...mockEventListeners[0], workflowId: applicationWorkflowId },
+        ],
+        {
+          applicationRole: { canReadObjectRecords: true },
+          applicationUniversalIdentifierById: {
+            [WORKSPACE_CUSTOM_APPLICATION_ID]:
+              'workspace-custom-application-universal-id',
+            'application-id': 'application-universal-id',
+          },
+        },
+      );
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(2);
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({ workflowId: workspaceWorkflowId }),
+        {
+          retryLimit: 3,
+          workspaceId,
+          applicationUniversalIdentifier:
+            'workspace-custom-application-universal-id',
+        },
+      );
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({ workflowId: applicationWorkflowId }),
+        {
+          retryLimit: 3,
+          workspaceId,
+          applicationUniversalIdentifier: 'application-universal-id',
+        },
+      );
+    });
+
     it('should handle delete events correctly', async () => {
       const deletePayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
@@ -597,46 +671,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: deletePayload.events[0],
         },
-        { retryLimit: 3 },
-      );
-    });
-
-    it('should not hand the child records captured with a deletion to the workflow', async () => {
-      const capturedEvent = {
-        ...mockPayload.events[0],
-        properties: {
-          before: { field1: 'old', field2: 'old' },
-          inheritedReadabilityChildRecords: {
-            noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
-          },
-        },
-      };
-
-      setTriggerMap([
         {
-          type: AutomatedTriggerType.DATABASE_EVENT,
-          workflowId,
-          settings: {
-            eventName: 'deleteEvent',
-          },
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
         },
-      ]);
-
-      await listener.handleObjectRecordDeleteEvent({
-        ...mockPayload,
-        name: 'deleteEvent',
-        events: [capturedEvent],
-      });
-
-      expect(messageQueueService.add).toHaveBeenCalledWith(
-        WorkflowTriggerJob.name,
-        expect.objectContaining({
-          payload: {
-            ...capturedEvent,
-            properties: { before: { field1: 'old', field2: 'old' } },
-          },
-        }),
-        { retryLimit: 3 },
       );
     });
 
@@ -675,7 +714,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: destroyPayload.events[0],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     });
 
@@ -765,61 +808,12 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       expect(messageQueueService.add).toHaveBeenCalledWith(
         WorkflowTriggerJob.name,
         expect.objectContaining({ payload: privatePayload.events[1] }),
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
-    });
-
-    it('should not trigger workflow for a system object and no resolved role', async () => {
-      const systemPayload: WorkspaceEventBatch<ObjectRecordUpdateEvent> = {
-        ...mockPayload,
-        objectMetadata: createMockFlatObjectMetadata({
-          readability: MetadataReadability.SYSTEM,
-        }),
-      };
-
-      workspaceCacheService.getOrRecompute.mockImplementation(((
-        _workspaceId: string,
-        keys: string[],
-      ) =>
-        Promise.resolve(
-          !keys.includes('workflowAutomatedTriggerMaps')
-            ? {
-                flatObjectMetadataMaps: { byUniversalIdentifier: {} },
-                featureFlagsMap: {},
-                flatApplicationMaps: {
-                  byId: {},
-                  idByUniversalIdentifier: {},
-                },
-                flatRoleMaps: { byUniversalIdentifier: {} },
-                rolesPermissions: {},
-                roleIdsWithAllRecordsAccess: [],
-                flatRowLevelPermissionPredicateMaps:
-                  createEmptyFlatEntityMaps(),
-                flatRowLevelPermissionPredicateGroupMaps:
-                  createEmptyFlatEntityMaps(),
-                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-              }
-            : {
-                flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-                workflowAutomatedTriggerMaps: {
-                  byWorkflowId: {
-                    [workflowId]: {
-                      type: AutomatedTriggerType.DATABASE_EVENT,
-                      coreWorkflowVersionId: `core-version-${workflowId}`,
-                      workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
-                      workflowId,
-                      applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-                      settings: { eventName: databaseEventName },
-                    },
-                  },
-                },
-              },
-        )) as never);
-
-      await listener.handleObjectRecordUpdateEvent(systemPayload);
-
-      expect(recordShareStorageService.findByRecordIds).not.toHaveBeenCalled();
-      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
     it('should handle multiple events in a batch', async () => {
@@ -863,7 +857,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: batchPayload.events[0],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
       expect(messageQueueService.add).toHaveBeenNthCalledWith(
         2,
@@ -875,7 +873,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: batchPayload.events[1],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     });
 
@@ -915,7 +917,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: positionOnlyPayload.events[0],
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     });
 

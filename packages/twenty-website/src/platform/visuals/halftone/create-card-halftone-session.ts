@@ -56,19 +56,10 @@ const CARD_HALFTONE_FRAGMENT_SHADER = /* glsl */ `
 
   varying vec2 vUv;
 
-  float distanceToSegment(in vec2 point, in vec2 a, in vec2 b) {
-    vec2 pa = point - a;
-    vec2 ba = b - a;
-    float denom = max(dot(ba, ba), 0.000001);
-    float t = clamp(dot(pa, ba) / denom, 0.0, 1.0);
-    return length(pa - ba * t);
-  }
-
-  float dashSdf(in vec2 cellUv, in float radius, in float thickness) {
-    vec2 a = vec2(0.5) + vec2(-radius, 0.0);
-    vec2 b = vec2(0.5) + vec2(radius, 0.0);
-    float halfThickness = thickness * radius;
-    return distanceToSegment(cellUv, a, b) - halfThickness;
+  float dashDistance(vec2 cellPosition, float halfLength, float widthRatio) {
+    vec2 offset = cellPosition - 0.5;
+    offset.x -= clamp(offset.x, -halfLength, halfLength);
+    return length(offset) - widthRatio * halfLength;
   }
 
   vec2 mapToImageUv(in vec2 fragmentUv) {
@@ -133,14 +124,14 @@ const CARD_HALFTONE_FRAGMENT_SHADER = /* glsl */ `
 
     float averageLuminance = (imageColor.r + imageColor.g + imageColor.b) / 3.0;
     float bandRadius = clamp(
-      averageLuminance + halftonePower * length(vec2(0.5)) / 3.0 + lightLift,
+      averageLuminance + halftonePower * 0.2357 + lightLift,
       0.0,
       1.0
     ) * 0.93;
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
-      float signedDistance = dashSdf(cellUv, bandRadius, halftoneWidth);
+      float signedDistance = dashDistance(cellUv, bandRadius, halftoneWidth);
       alpha = (1.0 - smoothstep(0.0, 0.02, signedDistance)) * inImageBounds;
     }
 

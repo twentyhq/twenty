@@ -15,7 +15,6 @@ import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-recor
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
-  type ObjectSharingReach,
   RecordSharePrincipalType,
   RecordShareRowCause,
   type RecordSharingFieldsFragment,
@@ -35,7 +34,6 @@ type SidePanelShareRecordRecipientProps = {
   member: PartialWorkspaceMember | undefined;
   roles: RecordSharingFieldsFragment['roles'];
   objectLabelPlural: string;
-  sharingReach: ObjectSharingReach;
   isSaving: boolean;
   setShare: ReturnType<typeof useRecordSharing>['setShare'];
   removeShare: ReturnType<typeof useRecordSharing>['removeShare'];
@@ -47,7 +45,6 @@ export const SidePanelShareRecordRecipient = ({
   member,
   roles,
   objectLabelPlural,
-  sharingReach,
   isSaving,
   setShare,
   removeShare,
@@ -71,9 +68,7 @@ export const SidePanelShareRecordRecipient = ({
     </ListItemIconContainer>
   ) : undefined;
   const roleAccessNote = getRecordShareRoleAccessNote({
-    accessLevel: share.accessLevel,
     principalRole: roles.find(({ id }) => id === principalRoleId),
-    sharingReach,
     objectLabelPlural,
   });
   const isEditable = share.rowCause === RecordShareRowCause.MANUAL;

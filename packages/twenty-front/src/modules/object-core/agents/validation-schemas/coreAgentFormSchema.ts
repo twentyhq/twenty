@@ -9,7 +9,6 @@ export const coreAgentFormSchema = z.object({
   icon: z.string().optional(),
   modelId: z.string().min(1, { error: () => t`Model is required` }),
   prompt: zodNonEmptyString,
-  isCustom: z.boolean().default(true),
   modelConfiguration: z
     .object({
       webSearch: z

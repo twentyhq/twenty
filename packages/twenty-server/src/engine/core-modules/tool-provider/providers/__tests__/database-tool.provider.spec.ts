@@ -93,6 +93,7 @@ describe('DatabaseToolProvider', () => {
           [roleId]: composedObjectPermissionsByObjectId,
           [userRoleId]: composedObjectPermissionsByObjectId,
         },
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         flatObjectPermissionMaps: {
           byUniversalIdentifier: Object.fromEntries(
             explicitPermissionRows.map((row, index) => [
@@ -280,6 +281,34 @@ describe('DatabaseToolProvider', () => {
     expect(labelByName.get('upsert_many_companies')).toBe('Upsert companies');
     expect(labelByName.get('delete_one_company')).toBe('Delete company');
     expect(labelByName.get('delete_many_companies')).toBe('Delete companies');
+    expect(labelByName.get('merge_many_companies')).toBe('Merge companies');
+  });
+
+  it('advertises merge only on the objects the Merge action is available on', async () => {
+    const descriptorNames = await generateDescriptorNames([
+      createFlatObject({ nameSingular: 'company', namePlural: 'companies' }),
+      createFlatObject({
+        nameSingular: 'noteTarget',
+        namePlural: 'noteTargets',
+        isSystem: true,
+      }),
+      createFlatObject({ nameSingular: 'dashboard', namePlural: 'dashboards' }),
+    ]);
+
+    expect(descriptorNames).toContain('merge_many_companies');
+    expect(descriptorNames).toContain('update_many_note_targets');
+    expect(descriptorNames).not.toContain('merge_many_note_targets');
+    expect(descriptorNames).not.toContain('merge_many_dashboards');
+  });
+
+  it('does not advertise merge without the destroy permission', async () => {
+    const descriptorNames = await generateDescriptorNames(
+      [createFlatObject({ nameSingular: 'company', namePlural: 'companies' })],
+      { composedObjectPermissions: { canDestroyObjectRecords: false } },
+    );
+
+    expect(descriptorNames).toContain('delete_one_company');
+    expect(descriptorNames).not.toContain('merge_many_companies');
   });
 
   it('uses the object labelSingular/labelPlural from metadata, not the programmatic name', async () => {

@@ -171,8 +171,13 @@ export class CallDatabaseEventTriggerJobsJob {
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         logicFunctionPayloads.map((logicFunctionPayload, index) => ({
-          data: logicFunctionPayload,
+          data: {
+            ...logicFunctionPayload,
+            applicationUniversalIdentifier: application.universalIdentifier,
+          },
           jobId: logicFunctionTriggerJobIds[index],
+          workspaceId: workspaceEventBatch.workspaceId,
+          applicationUniversalIdentifier: application.universalIdentifier,
         })),
         {
           retryLimit: 3,

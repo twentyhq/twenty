@@ -7,6 +7,7 @@ import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/cr
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
+import { type HostOutsidePressController } from '@/host/events/types/HostOutsidePressController';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
@@ -43,6 +44,7 @@ type FrontComponentWorkerEffectProps = {
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
   hostScrollController: HostScrollController;
+  outsidePressController: HostOutsidePressController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
@@ -50,6 +52,7 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   hostScrollController,
+  outsidePressController,
   componentUrl,
   applicationAccessToken,
   apiUrl,
@@ -98,6 +101,7 @@ export const FrontComponentWorkerEffect = ({
       hostFetch,
       imageLoadingHost,
       geometryTracker,
+      outsidePressController,
       mediaSessionHost,
     });
 
@@ -178,6 +182,10 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+
+        if (!isCancelled) {
+          setReceiver(newReceiver);
+        }
       } catch (error) {
         if (!isCancelled) {
           setError(error instanceof Error ? error : new Error(String(error)));
@@ -187,7 +195,6 @@ export const FrontComponentWorkerEffect = ({
 
     resolveComponentSourceAndRender();
 
-    setReceiver(newReceiver);
     isInitializedRef.current = true;
 
     return () => {
@@ -215,6 +222,7 @@ export const FrontComponentWorkerEffect = ({
     geometryTracker,
     hostFocusController,
     hostScrollController,
+    outsidePressController,
     mediaSessionHost,
     setError,
     setReceiver,

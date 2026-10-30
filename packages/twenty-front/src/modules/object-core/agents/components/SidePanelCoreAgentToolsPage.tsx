@@ -30,7 +30,6 @@ export const SidePanelCoreAgentToolsPage = () => {
   });
   const isAgentReadOnly = useIsCoreAgentReadOnly({
     applicationId: agent?.applicationId,
-    isCustom: agent?.isCustom ?? false,
   });
   const toolPermissions = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },

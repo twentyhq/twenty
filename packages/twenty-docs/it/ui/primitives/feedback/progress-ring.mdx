@@ -1,0 +1,60 @@
+---
+title: Anello di avanzamento
+description: Mostra un avanzamento misurato o indeterminato in un indicatore circolare compatto.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressRingReference from '/snippets/ui/generated/feedback/progress-ring.mdx';
+
+## Panoramica
+
+`ProgressRing` fornisce un aspetto circolare per [Progress](/it/ui/primitives/feedback/progress). Condivide il contratto del componente radice relativo a intervallo personalizzato, null, formattazione, etichettatura, prop nativa, ref e render. I figli facoltativi visualizzano un valore preformattato accanto all'anello.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--display" title="Esempio di anello di avanzamento" height={90} />
+
+## Utilizzo
+
+Fornisci il valore controllato non elaborato e un nome accessibile. Usa `aria-valuetext` quando un valore formattato spiega l'avanzamento più chiaramente di una percentuale.
+
+```tsx
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+
+export const ImportProgress = () => (
+  <ProgressRing
+    value={600}
+    max={1000}
+    aria-label="Importing records"
+    aria-valuetext="600 of 1,000 records"
+  >
+    600 / 1,000
+  </ProgressRing>
+);
+```
+
+Usa `aria-labelledby` per associare l'anello a un'etichetta visibile esistente oppure componi `Progress.Label` come figlio. I figli preformattati non forniscono automaticamente il nome accessibile dell'anello.
+
+## Avanzamento e intervalli controllati
+
+L'applicazione calcola `value` e formatta il contenuto visualizzato. L'anello non recupera dati, non fa avanzare l'avanzamento né calcola quote. Il valore predefinito di `min` è `0` e quello di `max` è `100`. I valori finiti vengono limitati all'intervallo per i valori semantici e la geometria dell'arco. L'arco si riempie in base alla percentuale normalizzata, anche quando il minimo non è zero.
+
+<StoryEmbed storyId="ui-feedback-progressring-progressring--custom-range" title="Avanzamento circolare in un intervallo personalizzato" height={90} />
+
+Passa `value={null}` per l'avanzamento indeterminato. L'anello omette `aria-valuenow` e visualizza un arco indeterminato. Anche i valori non finiti rimangono indeterminati; non diventano zero né completamento. Il contenuto visualizzato rimane controllato dall'applicazione.
+
+Usa `locale`, `format` e `getAriaValueText` come descritto in [Progress](/it/ui/primitives/feedback/progress). Componi `Progress.Value` per visualizzare il valore formattato del componente radice.
+
+Usa [ProgressBar](/it/ui/primitives/feedback/progress-bar) per l'avanzamento orizzontale oppure [MetricRow](/it/ui/components/data-display/metric-row) per un'etichetta e un valore allineato.
+
+## Aspetto e composizione
+
+`size="md"` visualizza un anello di 16px; `size="sm"` visualizza un anello di 14px. Entrambi usano un tratto di 2px e si riempiono in senso orario dall'alto. `barColor` accetta colori CSS, incluse le variabili del tema. L'SVG è decorativo e nascosto alle API di accessibilità.
+
+Le modifiche del valore vengono animate per 300ms. Le preferenze per la riduzione del movimento disabilitano la transizione e la rotazione indeterminata. Gli attributi nativi, `className`, `style` e `ref` si applicano all'elemento di avanzamento esterno. `className` e `style` possono ricevere lo stato di avanzamento. `render` può sostituire il componente radice mantenendone la semantica.
+
+## Props
+
+<ProgressRingReference />
+
+<PageBanner illustration="card-page-usage-limits" />

@@ -1,0 +1,84 @@
+---
+title: Limite de utilizare
+description: Limitează cât pot cheltui spațiul tău de lucru, membrii, cheile API și aplicațiile.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Setați plafoane pentru AI, fluxuri de lucru, funcții logice și e-mail în **Setări → Facturare → Limite**. [Creditele](/ro/user-guide/billing/capabilities/credits) definesc cât poate cheltui în total spațiul dvs. de lucru; o limită definește cât din acestea poate cheltui un anumit domeniu și cât de des se resetează.
+
+Vizualizarea și modificarea limitelor necesită permisiunea pentru setările **Spațiu de lucru**.
+
+## Ce puteți limita
+
+| Utilizare            | Operațiuni                                            | Măsurat în             | Domenii de aplicare                           |
+| -------------------- | ----------------------------------------------------- | ---------------------- | --------------------------------------------- |
+| **AI**               | Conversații, agenți, căutare pe web                   | Credite sau operațiuni | Spațiu de lucru, membru, cheie API, aplicație |
+| **Fluxuri de lucru** | Executare flux de lucru                               | Credite sau rulări     | Spațiu de lucru, aplicație                    |
+| **Funcții logice**   | Executare cod                                         | Credite sau rulări     | Spațiu de lucru, aplicație, funcție logică    |
+| **Email**            | Trimitere e-mail                                      | Credite sau e-mailuri  | Spațiu de lucru, membru                       |
+| **Toată utilizarea** | Tot ce este menționat mai sus, plus taxele aplicației | Credite                | Aplicație                                     |
+
+<Note>
+**Toate operațiunile** stabilesc un plafon pentru tot ce cheltuie utilizarea, indiferent de operațiunea din care provine. Este disponibil oriunde utilizarea poate fi măsurată în credite.
+</Note>
+
+**Întreaga utilizare** pune un plafon unic pentru tot ceea ce cheltuiește o aplicație: funcțiile sale de logică, fluxurile de lucru, agenții, apelurile AI și creditele pe care le percepe direct. Este modalitatea de a plafona costul total al unei aplicații pentru dvs. Nu este oferit pentru întregul spațiu de lucru, al cărui total este deja plafonat de creditele sale.
+
+## Contoare și perioade
+
+O limită contorizează fie **credite**, aceeași unitate ca soldul dvs., fie **operațiuni**, un număr brut de mesaje, căutări, execuții sau e-mailuri. Limitați creditele pentru a controla costurile, iar operațiunile pentru a controla volumul.
+
+| Perioadă                        | Resetare                                                                   |
+| ------------------------------- | -------------------------------------------------------------------------- |
+| **Zi**, **Săptămână**, **Lună** | La începutul următoarei perioade calendaristice                            |
+| **Perioadă de facturare**       | Odată cu abonamentul dvs., în același timp în care se reînnoiesc creditele |
+
+**Perioada de facturare** este disponibilă doar când spațiul de lucru are un abonament de urmat.
+
+## Cerințe privind planul
+
+| Ce limitați                                                              | Plan                                |
+| ------------------------------------------------------------------------ | ----------------------------------- |
+| Întregul **spațiu de lucru**                                             | Orice plan                          |
+| Un **membru**, o **cheie API**, o **aplicație** sau o **funcție logică** | Organizație (Cloud sau Autogăzduit) |
+
+Fără [planul Organizație](/ro/user-guide/billing/capabilities/pricing-plans), acele domenii de aplicare nu pot fi selectate, iar o limită deja stocată pentru unul dintre ele apare ca **Dezactivată** și nu este aplicată. Se aplică din nou de îndată ce spațiul de lucru are un plan care o acoperă, fără a fi nevoie să recreați nimic.
+
+## Creați o limită
+
+1. Accesați **Setări → Facturare → Limite**
+2. Faceți clic pe **Limită nouă**
+3. La **Domeniu de aplicare**, alegeți utilizarea și cui i se aplică
+4. La **Limită**, introduceți valoarea, alegeți credite sau operațiuni și selectați perioada
+5. Faceți clic pe **Salvează**
+
+Limita se aplică imediat și contorizează utilizarea deja înregistrată în perioada curentă.
+
+### Editați sau ștergeți o limită
+
+Faceți clic pe un rând de limită pentru a-i modifica valoarea, perioada sau domeniul de aplicare. **Ștergeți limita** se află în zona de pericol a paginii de editare. Ștergerea unei limite nu vă mărește niciodată cheltuielile: alocarea de credite și celelalte limite se aplică în continuare.
+
+## Când este atinsă o limită
+
+Lucrarea este refuzată în loc să fie pusă în coadă, și numai în acel domeniu de aplicare. Restul spațiului de lucru continuă să funcționeze.
+
+Cheltuielile se reiau automat când perioada se resetează. Pentru a debloca mai devreme, măriți limita sau ștergeți-o.
+
+<Note>
+O limită este verificată înainte de începerea unei operațiuni și debitată după finalizarea acesteia, astfel încât o operațiune deja în curs poate duce un contor puțin peste plafonul său. Lucrările grupate, cum ar fi trimiterea unei campanii, pot depăși plafonul cu un lot.
+</Note>
+
+## Monitorizare
+
+Tabelul **Limite** afișează utilizarea fiecărei limite în perioada curentă. Consumul total, inclusiv defalcarea pe flux de lucru și acțiune AI, rămâne în **Setări → Facturare**.
+
+## Conexe
+
+* [Credite](/ro/user-guide/billing/capabilities/credits)
+* [Planuri tarifare](/ro/user-guide/billing/capabilities/pricing-plans)
+* [Întrebări frecvente despre facturare](/ro/user-guide/billing/how-tos/billing-faq)
+
+<PageBanner illustration="card-page-usage-limits" />

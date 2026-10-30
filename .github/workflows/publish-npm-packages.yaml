@@ -46,7 +46,7 @@ jobs:
             .source_sha == $sha and (.dry_run | type == "boolean")
             and (.version | type == "string" and test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)*$"))
             and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
-            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
+            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty"
               or .packages == "twenty-ui" or .packages == "twenty")
             and ((.stage_only // false) | type == "boolean")
             and (.staging_version == null)
@@ -132,11 +132,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
           package-manager-cache: false
 
       - name: Build and inspect packages
         run: |
+          npm install -g corepack
           corepack enable
           yarn install --immutable
           projects=$(jq -rn --arg packages "$PACKAGES" \
@@ -179,9 +180,21 @@ jobs:
             if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
               echo "$package@$VERSION already published; skipping"
             else
-              yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public
+              for attempt in 1 2 3; do
+                publish_log=$(mktemp)
+                if yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public 2>&1 | tee "$publish_log"; then
+                  break
+                fi
+                # Yarn's Sigstore client times out on slow Rekor writes and its retry then hits a 409.
+                # Signing happens before the upload, so a failed attempt has published nothing.
+                if [[ "$attempt" == 3 ]] || ! grep -q "error creating tlog entry - (409)" "$publish_log"; then
+                  exit 1
+                fi
+                echo "::warning::$package provenance entry conflicted in Rekor; retrying publish"
+                sleep 15
+              done
             fi
-            if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then
+            if [[ "$package" != twenty ]]; then
               published_libraries="$published_libraries $package"
             fi
           done

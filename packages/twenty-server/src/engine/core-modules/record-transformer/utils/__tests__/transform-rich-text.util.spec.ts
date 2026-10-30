@@ -21,6 +21,90 @@ const BLOCKNOTE_VALUE = JSON.stringify([
   },
 ]);
 
+const NESTED_TASKS_VALUE = JSON.stringify({
+  type: 'doc',
+  attrs: { schemaVersion: 1 },
+  content: [
+    {
+      type: 'taskList',
+      content: [
+        {
+          type: 'taskItem',
+          attrs: { checked: true },
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Done top' }],
+            },
+            {
+              type: 'taskList',
+              content: [
+                {
+                  type: 'taskItem',
+                  attrs: { checked: false },
+                  content: [
+                    {
+                      type: 'paragraph',
+                      content: [{ type: 'text', text: 'Open child' }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'taskItem',
+          attrs: { checked: false },
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Plan launch' }],
+            },
+            {
+              type: 'bulletList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [
+                    {
+                      type: 'paragraph',
+                      content: [{ type: 'text', text: 'Draft email' }],
+                    },
+                  ],
+                },
+                {
+                  type: 'listItem',
+                  content: [
+                    {
+                      type: 'paragraph',
+                      content: [{ type: 'text', text: 'Book room' }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'taskItem',
+          attrs: { checked: false },
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Call Ada' }],
+            },
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: 'Ask about the renewal' }],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
 const nodeTypesOf = (tiptap: string | null | undefined) =>
   JSON.parse(tiptap ?? '{}').content.map((node: { type: string }) => node.type);
 
@@ -66,6 +150,16 @@ describe('transformRichTextValue', () => {
 
     expect(result.markdown).toBe('# Title\n\n- item');
     expect(nodeTypesOf(result.tiptap)).toEqual(['heading', 'bulletList']);
+  });
+
+  it('should rebuild the same TipTap from the derived markdown of nested task items', () => {
+    const { markdown } = transformRichTextValue({ tiptap: NESTED_TASKS_VALUE });
+
+    const result = transformRichTextValue({ markdown });
+
+    expect(JSON.parse(result.tiptap ?? '{}')).toEqual(
+      JSON.parse(NESTED_TASKS_VALUE),
+    );
   });
 
   it('should convert BlockNote sent by older clients to TipTap and keep it as sent', () => {

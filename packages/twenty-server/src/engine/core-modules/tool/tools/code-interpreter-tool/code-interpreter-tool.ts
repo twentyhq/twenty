@@ -22,13 +22,18 @@ import {
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_LENGTH,
+  CODE_INTERPRETER_UPDATE_INTERVAL_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
+import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
-import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
+import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.constant';
 import {
   type CodeInterpreterFileInput,
   type CodeInterpreterInput,
@@ -99,6 +104,28 @@ export class CodeInterpreterTool implements Tool {
     let accumulatedStdout = '';
     let accumulatedStderr = '';
     const streamedFiles: CodeExecutionFile[] = [];
+    let pendingRunningUpdate: NodeJS.Timeout | undefined;
+
+    // Each update carries the full output and is stored as a Redis stream chunk.
+    const scheduleRunningUpdate = () => {
+      if (isDefined(pendingRunningUpdate)) {
+        return;
+      }
+
+      pendingRunningUpdate = setTimeout(() => {
+        pendingRunningUpdate = undefined;
+        onCodeExecutionUpdate?.(
+          this.buildExecutionState(
+            executionId,
+            'running',
+            code,
+            accumulatedStdout,
+            accumulatedStderr,
+            streamedFiles,
+          ),
+        );
+      }, CODE_INTERPRETER_UPDATE_INTERVAL_MS);
+    };
 
     onCodeExecutionUpdate?.(
       this.buildExecutionState(executionId, 'pending', code, '', '', []),
@@ -147,30 +174,24 @@ export class CodeInterpreterTool implements Tool {
         },
         {
           onStdout: (line) => {
-            accumulatedStdout += line + '\n';
-            onCodeExecutionUpdate?.(
-              this.buildExecutionState(
-                executionId,
-                'running',
-                code,
-                accumulatedStdout,
-                accumulatedStderr,
-                streamedFiles,
-              ),
-            );
+            if (
+              accumulatedStdout.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH
+            ) {
+              accumulatedStdout = truncateCodeInterpreterOutput(
+                accumulatedStdout + line + '\n',
+              );
+              scheduleRunningUpdate();
+            }
           },
           onStderr: (line) => {
-            accumulatedStderr += line + '\n';
-            onCodeExecutionUpdate?.(
-              this.buildExecutionState(
-                executionId,
-                'running',
-                code,
-                accumulatedStdout,
-                accumulatedStderr,
-                streamedFiles,
-              ),
-            );
+            if (
+              accumulatedStderr.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH
+            ) {
+              accumulatedStderr = truncateCodeInterpreterOutput(
+                accumulatedStderr + line + '\n',
+              );
+              scheduleRunningUpdate();
+            }
           },
           onResult: async (outputFile: OutputFile) => {
             const uploadedFile = await this.uploadSingleFile(
@@ -181,16 +202,7 @@ export class CodeInterpreterTool implements Tool {
 
             if (uploadedFile) {
               streamedFiles.push(uploadedFile);
-              onCodeExecutionUpdate?.(
-                this.buildExecutionState(
-                  executionId,
-                  'running',
-                  code,
-                  accumulatedStdout,
-                  accumulatedStderr,
-                  streamedFiles,
-                ),
-              );
+              scheduleRunningUpdate();
             }
           },
         },
@@ -266,6 +278,8 @@ export class CodeInterpreterTool implements Tool {
         message: 'Code interpreter execution failed',
         error: errorMessage,
       };
+    } finally {
+      clearTimeout(pendingRunningUpdate);
     }
   }
 

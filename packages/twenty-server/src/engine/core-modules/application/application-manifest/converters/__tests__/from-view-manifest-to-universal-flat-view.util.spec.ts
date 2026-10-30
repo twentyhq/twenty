@@ -42,7 +42,6 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCompact).toBe(false);
     expect(result.shouldHideEmptyGroups).toBe(false);
     expect(result.groupLoadLimit).toBe(DEFAULT_VIEW_GROUP_LOAD_LIMIT);
-    expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
     expect(result.key).toBeNull();

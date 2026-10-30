@@ -20,7 +20,6 @@ export const useCoreAgentEditionCommands = () => {
   const currentCoreAgent = useCurrentCoreAgent();
   const isCurrentCoreAgentReadOnly = useIsCoreAgentReadOnly({
     applicationId: currentCoreAgent?.applicationId,
-    isCustom: currentCoreAgent?.isCustom ?? false,
   });
   const { isDirty } = useCoreAgentDirtyState(currentCoreAgent);
 

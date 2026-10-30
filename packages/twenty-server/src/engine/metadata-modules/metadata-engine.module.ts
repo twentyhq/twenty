@@ -26,6 +26,7 @@ import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { SettingsMenuItemModule } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.module';
 import { TimelineActivityTypeModule } from 'src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.module';
+import { RelatedRecordPathModule } from 'src/engine/metadata-modules/related-record-path/related-record-path.module';
 import { ValidationRuleModule } from 'src/engine/metadata-modules/validation-rule/validation-rule.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
@@ -37,6 +38,7 @@ import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/ro
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { McpServerModule } from 'src/engine/metadata-modules/mcp-server/mcp-server.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 
@@ -55,6 +57,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     NavigationMenuItemModule,
     SettingsMenuItemModule,
     TimelineActivityTypeModule,
+    RelatedRecordPathModule,
     ValidationRuleModule,
     AiAgentModule,
     AiAgentRunsModule,
@@ -74,6 +77,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     RouteTriggerModule,
     ServerRouteTriggerModule,
     WebhookModule,
+    McpServerModule,
     ConnectedAccountMetadataModule,
     MessageChannelMetadataModule,
     CalendarChannelMetadataModule,

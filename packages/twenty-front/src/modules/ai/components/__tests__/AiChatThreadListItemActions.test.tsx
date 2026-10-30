@@ -18,6 +18,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
   FeatureFlagKey,
   PermissionFlagType,
@@ -43,7 +44,7 @@ const SALES_CHANNEL = {
   icon: 'IconCoins',
   color: 'green',
   position: 1,
-  isCustom: true,
+  applicationId: 'workspace-custom-application-id',
   isAccessible: true,
   roleIds: [],
 };
@@ -149,6 +150,7 @@ const renderThread = async ({
               channelId: SALES_CHANNEL.id,
               channelStatus,
               assignment: AgentChatChannelAssignmentFilter.ANY,
+              filter: AgentChatChannelThreadFilter.ANY,
             }
           : null,
       );
@@ -168,6 +170,8 @@ const renderThread = async ({
           archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
           snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
           lastReadAt: THREAD_ACTIVITY_AT,
+          lastMentionedAt: null,
+          mentionsResolvedAt: null,
           updatedAt: INBOX_EVENT_AT,
         },
       });

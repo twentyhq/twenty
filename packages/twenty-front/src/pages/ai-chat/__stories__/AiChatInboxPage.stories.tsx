@@ -293,9 +293,15 @@ const meta = {
         THREADS.map(({ id }) => [
           id,
           {
+            __typename: 'AgentChatThreadParticipant' as const,
             id: `participant-${id}`,
             threadId: id,
             isSubscribed: true,
+            lastReadAt: null,
+            archivedAt: null,
+            snoozedUntil: null,
+            lastMentionedAt: null,
+            mentionsResolvedAt: null,
             updatedAt: THREAD_ACTIVITY_AT,
           },
         ]),
