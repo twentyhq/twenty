@@ -6,10 +6,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
-import { buildStandardFlatRelatedRecordPathMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/related-record-path/build-standard-flat-related-record-path-maps.util';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -43,46 +43,41 @@ export class AddStandardRelatedRecordPathsCommand extends ProvisionedWorkspaceCo
         { workspaceId },
       );
 
-    const existingOneHopFieldUniversalIdentifiers = new Set(
+    const getHopsKey = (
+      hops: Parameters<
+        typeof getRelatedRecordPathFieldMetadataUniversalIdentifiers
+      >[0],
+    ) => getRelatedRecordPathFieldMetadataUniversalIdentifiers(hops).join(':');
+
+    const existingHopsKeys = new Set(
       Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier)
         .filter(isDefined)
-        .filter(
-          (flatRelatedRecordPath) =>
-            !isDefined(
-              flatRelatedRecordPath.secondFieldMetadataUniversalIdentifier,
-            ),
-        )
-        .map(
-          (flatRelatedRecordPath) =>
-            flatRelatedRecordPath.firstFieldMetadataUniversalIdentifier,
-        ),
+        .map(getHopsKey),
     );
 
     // Older workspaces may lack some standard objects or have deactivated their relations.
     const flatRelatedRecordPathsToCreate = Object.values(
-      buildStandardFlatRelatedRecordPathMaps({
+      computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
-        standardObjectMetadataRelatedEntityIds:
-          getStandardObjectMetadataRelatedEntityIds(),
-      }).byUniversalIdentifier,
+      }).allFlatEntityMaps.flatRelatedRecordPathMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(({ firstFieldMetadataUniversalIdentifier }) => {
-        const firstFlatFieldMetadata =
-          flatFieldMetadataMaps.byUniversalIdentifier[
-            firstFieldMetadataUniversalIdentifier
-          ];
+      .filter(
+        (flatRelatedRecordPath) =>
+          !existingHopsKeys.has(getHopsKey(flatRelatedRecordPath)) &&
+          getRelatedRecordPathFieldMetadataUniversalIdentifiers(
+            flatRelatedRecordPath,
+          ).every((fieldMetadataUniversalIdentifier) => {
+            const flatFieldMetadata =
+              flatFieldMetadataMaps.byUniversalIdentifier[
+                fieldMetadataUniversalIdentifier
+              ];
 
-        return (
-          !existingOneHopFieldUniversalIdentifiers.has(
-            firstFieldMetadataUniversalIdentifier,
-          ) &&
-          isDefined(firstFlatFieldMetadata) &&
-          firstFlatFieldMetadata.isActive
-        );
-      });
+            return isDefined(flatFieldMetadata) && flatFieldMetadata.isActive;
+          }),
+      );
 
     if (flatRelatedRecordPathsToCreate.length === 0) {
       return;

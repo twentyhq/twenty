@@ -6,39 +6,67 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 export type StandardRelatedRecordPath = {
   [O in AllStandardObjectName]: {
     objectName: O;
-    firstFieldName: AllStandardObjectFieldName<O>;
+    fieldNames:
+      | [AllStandardObjectFieldName<O>]
+      | [AllStandardObjectFieldName<O>, string]
+      | [AllStandardObjectFieldName<O>, string, string];
   };
 }[AllStandardObjectName];
 
-export const STANDARD_RELATED_RECORD_PATHS = [
-  { objectName: 'agentChatThread', firstFieldName: 'recordTargets' },
-  { objectName: 'agentChatThread', firstFieldName: 'attachments' },
-  { objectName: 'company', firstFieldName: 'attachments' },
-  { objectName: 'dashboard', firstFieldName: 'attachments' },
-  { objectName: 'note', firstFieldName: 'attachments' },
-  { objectName: 'opportunity', firstFieldName: 'attachments' },
-  { objectName: 'person', firstFieldName: 'attachments' },
-  { objectName: 'task', firstFieldName: 'attachments' },
-  { objectName: 'workflow', firstFieldName: 'attachments' },
-  { objectName: 'calendarEvent', firstFieldName: 'calendarEventTargets' },
-  { objectName: 'messageThread', firstFieldName: 'messageThreadTargets' },
-  { objectName: 'noteTarget', firstFieldName: 'note' },
-  { objectName: 'company', firstFieldName: 'noteTargets' },
-  { objectName: 'opportunity', firstFieldName: 'noteTargets' },
-  { objectName: 'person', firstFieldName: 'noteTargets' },
-  { objectName: 'taskTarget', firstFieldName: 'task' },
-  { objectName: 'company', firstFieldName: 'taskTargets' },
-  { objectName: 'opportunity', firstFieldName: 'taskTargets' },
-  { objectName: 'person', firstFieldName: 'taskTargets' },
-  { objectName: 'company', firstFieldName: 'timelineActivities' },
-  { objectName: 'dashboard', firstFieldName: 'timelineActivities' },
-  { objectName: 'messageCampaign', firstFieldName: 'timelineActivities' },
-  { objectName: 'messageList', firstFieldName: 'timelineActivities' },
-  { objectName: 'note', firstFieldName: 'timelineActivities' },
-  { objectName: 'opportunity', firstFieldName: 'timelineActivities' },
-  { objectName: 'person', firstFieldName: 'timelineActivities' },
-  { objectName: 'task', firstFieldName: 'timelineActivities' },
-  { objectName: 'workflow', firstFieldName: 'timelineActivities' },
-  { objectName: 'workflowRun', firstFieldName: 'timelineActivities' },
-  { objectName: 'workflowVersion', firstFieldName: 'timelineActivities' },
-] as const satisfies StandardRelatedRecordPath[];
+// A path grants every object it passes through, so only the longest chains are declared.
+export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
+  { objectName: 'company', fieldNames: ['noteTargets', 'note', 'attachments'] },
+  {
+    objectName: 'company',
+    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+  },
+  { objectName: 'company', fieldNames: ['taskTargets', 'task', 'attachments'] },
+  {
+    objectName: 'company',
+    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
+  },
+  {
+    objectName: 'opportunity',
+    fieldNames: ['noteTargets', 'note', 'attachments'],
+  },
+  {
+    objectName: 'opportunity',
+    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+  },
+  {
+    objectName: 'opportunity',
+    fieldNames: ['taskTargets', 'task', 'attachments'],
+  },
+  {
+    objectName: 'opportunity',
+    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
+  },
+  { objectName: 'person', fieldNames: ['noteTargets', 'note', 'attachments'] },
+  {
+    objectName: 'person',
+    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+  },
+  { objectName: 'person', fieldNames: ['taskTargets', 'task', 'attachments'] },
+  {
+    objectName: 'person',
+    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
+  },
+  { objectName: 'agentChatThread', fieldNames: ['attachments'] },
+  { objectName: 'company', fieldNames: ['attachments'] },
+  { objectName: 'dashboard', fieldNames: ['attachments'] },
+  { objectName: 'opportunity', fieldNames: ['attachments'] },
+  { objectName: 'person', fieldNames: ['attachments'] },
+  { objectName: 'workflow', fieldNames: ['attachments'] },
+  { objectName: 'company', fieldNames: ['timelineActivities'] },
+  { objectName: 'dashboard', fieldNames: ['timelineActivities'] },
+  { objectName: 'messageCampaign', fieldNames: ['timelineActivities'] },
+  { objectName: 'messageList', fieldNames: ['timelineActivities'] },
+  { objectName: 'opportunity', fieldNames: ['timelineActivities'] },
+  { objectName: 'person', fieldNames: ['timelineActivities'] },
+  { objectName: 'workflow', fieldNames: ['timelineActivities'] },
+  { objectName: 'workflowRun', fieldNames: ['timelineActivities'] },
+  { objectName: 'workflowVersion', fieldNames: ['timelineActivities'] },
+  { objectName: 'agentChatThread', fieldNames: ['recordTargets'] },
+  { objectName: 'calendarEvent', fieldNames: ['calendarEventTargets'] },
+  { objectName: 'messageThread', fieldNames: ['messageThreadTargets'] },
+];

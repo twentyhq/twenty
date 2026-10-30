@@ -1,7 +1,9 @@
 /* @license Enterprise */
 
+import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
+import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
@@ -30,8 +32,20 @@ describe('Standard related record paths', () => {
     flatRelatedRecordPathMaps.byUniversalIdentifier,
   ).filter(isDefined);
 
-  it('follows each readability parent relation from the parent side', () => {
-    const expectedPaths = Object.values(
+  it('starts every path on an object that holds its own readability', () => {
+    for (const {
+      objectMetadataUniversalIdentifier,
+    } of flatRelatedRecordPaths) {
+      expect(
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          objectMetadataUniversalIdentifier
+        ]?.readability,
+      ).not.toBe(MetadataReadability.INHERITED);
+    }
+  });
+
+  it('follows exactly the readability parent relations from the parent side', () => {
+    const expectedHopFieldUniversalIdentifiers = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
@@ -56,30 +70,20 @@ describe('Standard related record paths', () => {
             )
           : [declaredFlatFieldMetadata],
       )
-      .map((flatFieldMetadata) => ({
-        objectMetadataUniversalIdentifier:
-          flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
-        firstFieldMetadataUniversalIdentifier:
+      .map(
+        (flatFieldMetadata) =>
           flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-      }));
+      );
 
-    const actualPaths = flatRelatedRecordPaths.map(
-      ({
-        objectMetadataUniversalIdentifier,
-        firstFieldMetadataUniversalIdentifier,
-        secondFieldMetadataUniversalIdentifier,
-      }) => {
-        expect(secondFieldMetadataUniversalIdentifier).toBeNull();
-
-        return {
-          objectMetadataUniversalIdentifier,
-          firstFieldMetadataUniversalIdentifier,
-        };
-      },
+    const hopFieldUniversalIdentifiers = new Set(
+      flatRelatedRecordPaths.flatMap(
+        getRelatedRecordPathFieldMetadataUniversalIdentifiers,
+      ),
     );
 
-    expect(actualPaths).toHaveLength(expectedPaths.length);
-    expect(actualPaths).toEqual(expect.arrayContaining(expectedPaths));
+    expect([...hopFieldUniversalIdentifiers].sort()).toEqual(
+      [...new Set(expectedHopFieldUniversalIdentifiers)].sort(),
+    );
   });
 
   it('keeps the same universal identifiers across computations', () => {
