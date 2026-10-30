@@ -4,6 +4,7 @@ import {
   findCoreWorkflowVersion,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { getAppInjectablesByClassName } from 'test/integration/utils/get-app-injectables-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -130,8 +131,46 @@ const findCompletedStepActionKeys = async (): Promise<string[]> => {
 };
 
 describe('gettingStarted (e2e)', () => {
-  beforeAll(deleteGettingStartedUserVars);
-  afterAll(deleteGettingStartedUserVars);
+  let billingEnabledGuardSpies: jest.SpyInstance[] = [];
+
+  const setIsBillingEnabled = (isBillingEnabled: boolean) =>
+    billingEnabledGuardSpies.forEach((spy) =>
+      spy.mockReturnValue(isBillingEnabled),
+    );
+
+  beforeAll(async () => {
+    billingEnabledGuardSpies = getAppInjectablesByClassName<{
+      canActivate: () => boolean;
+    }>('BillingEnabledGuard').map((billingEnabledGuard) =>
+      jest.spyOn(billingEnabledGuard, 'canActivate'),
+    );
+    setIsBillingEnabled(true);
+    await deleteGettingStartedUserVars();
+  });
+
+  afterAll(async () => {
+    billingEnabledGuardSpies.forEach((spy) => spy.mockRestore());
+    await deleteGettingStartedUserVars();
+  });
+
+  it('refuses every getting started request when billing is disabled', async () => {
+    setIsBillingEnabled(false);
+
+    try {
+      const responses = await Promise.all([
+        makeMetadataApiRequest({ query: GETTING_STARTED_PROGRESS_QUERY }),
+        makeMetadataApiRequest({
+          query: GETTING_STARTED_WORKFLOW_PREVIEWS_QUERY,
+        }),
+      ]);
+
+      responses.forEach((response) =>
+        expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN'),
+      );
+    } finally {
+      setIsBillingEnabled(true);
+    }
+  });
 
   describe('gettingStartedProgress', () => {
     it('lists the steps in order, without the app step on an empty catalog, and completes the connected mailbox step', async () => {

@@ -19,6 +19,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { BillingEnabledGuard } from 'src/engine/guards/billing-enabled.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
@@ -35,6 +36,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
     oauthClient: false,
     application: false,
   }),
+  BillingEnabledGuard,
   FeatureFlagGuard(FeatureFlagKey.IS_GETTING_STARTED_ENABLED),
   NoPermissionGuard,
 )

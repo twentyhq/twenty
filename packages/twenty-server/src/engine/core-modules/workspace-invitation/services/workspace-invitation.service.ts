@@ -420,7 +420,7 @@ export class WorkspaceInvitationService {
       hasSentInvitations,
     });
 
-    if (hasSentInvitations) {
+    if (hasSentInvitations && this.twentyConfigService.isBillingEnabled()) {
       await this.gettingStartedService.completeStep({
         userId: sender.userId,
         workspaceId: workspace.id,
