@@ -5,7 +5,7 @@ import {
   type UsageApplicationBreakdownItem,
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { findDeclaredBillingChargeLabel } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge-label.util';
+import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
 
 type ConsolidateUsageByApplicationParams = {
   items: UsageApplicationBreakdownItem[];
@@ -23,10 +23,10 @@ export const consolidateUsageByApplication = ({
   for (const item of items) {
     const application = flatApplicationMaps.byId[item.applicationId];
     // Billing is undefined until the upgrade that adds the column has run.
-    const declaredChargeLabel = findDeclaredBillingChargeLabel({
+    const declaredChargeLabel = findDeclaredBillingCharge({
       billing: application?.billing,
       chargeName: item.operation,
-    });
+    })?.label;
     const applicationName = application?.name ?? item.applicationId;
 
     const key = isDefined(declaredChargeLabel)

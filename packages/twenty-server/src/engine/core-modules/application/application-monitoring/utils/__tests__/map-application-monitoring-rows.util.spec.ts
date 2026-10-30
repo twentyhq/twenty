@@ -202,7 +202,7 @@ describe('mapApplicationMonitoringRows', () => {
             },
           ],
           billing: {
-            operations: { sendSms: { label: 'SMS sent' } },
+            operations: { sendSms: { label: 'SMS sent', icon: 'IconMessage' } },
             recurring: {
               platformFee: {
                 period: 'MONTH',
@@ -219,6 +219,7 @@ describe('mapApplicationMonitoringRows', () => {
         {
           operationType: UsageOperationType.APP_OPERATION,
           operationLabel: 'SMS sent',
+          operationIcon: 'IconMessage',
           creditsUsed: 0.12,
         },
         {
@@ -229,6 +230,7 @@ describe('mapApplicationMonitoringRows', () => {
         {
           operationType: UsageOperationType.SUBSCRIPTION,
           operationLabel: 'Platform fee',
+          operationIcon: null,
           creditsUsed: 1,
         },
       ],

@@ -89,6 +89,15 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         `Billable operation "${operationName}" must have a non empty label`,
       );
     }
+
+    if (
+      isDefined(billableOperation.icon) &&
+      !isNonEmptyString(billableOperation.icon)
+    ) {
+      errors.push(
+        `Billable operation "${operationName}" must have a non empty icon when set`,
+      );
+    }
   }
 
   for (const [chargeName, recurringCharge] of Object.entries(

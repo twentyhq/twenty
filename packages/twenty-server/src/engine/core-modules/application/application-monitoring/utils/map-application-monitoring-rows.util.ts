@@ -8,7 +8,7 @@ import {
   type ApplicationMonitoringRows,
 } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
-import { findDeclaredBillingChargeLabel } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge-label.util';
+import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const toNumber = (value: number | string | undefined): number =>
@@ -25,16 +25,17 @@ const groupCreditUsageByOperationLabel = ({
       bucketStart: Date;
       operationType: string;
       operationLabel: string | null;
+      operationIcon: string | null;
       creditsUsedMicro: number;
     }
   >();
 
   for (const row of rows) {
-    const operationLabel =
-      findDeclaredBillingChargeLabel({
-        billing,
-        chargeName: row.operation,
-      }) ?? null;
+    const declaredCharge = findDeclaredBillingCharge({
+      billing,
+      chargeName: row.operation,
+    });
+    const operationLabel = declaredCharge?.label ?? null;
     const key = `${row.bucketStart.toISOString()}|${row.operationType}|${operationLabel ?? ''}`;
     const bucket = bucketsByKey.get(key);
 
@@ -45,6 +46,7 @@ const groupCreditUsageByOperationLabel = ({
         bucketStart: row.bucketStart,
         operationType: row.operationType,
         operationLabel,
+        operationIcon: declaredCharge?.icon ?? null,
         creditsUsedMicro: row.creditsUsedMicro,
       });
     }
@@ -102,6 +104,7 @@ export const mapApplicationMonitoringRows = ({
         bucketStart: bucket.bucketStart,
         operationType: bucket.operationType,
         operationLabel: bucket.operationLabel,
+        operationIcon: bucket.operationIcon,
         creditsUsed: toDisplayCredits(bucket.creditsUsedMicro),
       })) ?? null,
     issues: rows.issues.map((row) => ({

@@ -1,7 +1,7 @@
 import { type ApplicationBilling } from 'twenty-shared/application';
 
 // Own-property only: a charge named `constructor` must not resolve to an inherited value
-export const findDeclaredBillingChargeLabel = ({
+export const findDeclaredBillingCharge = ({
   billing,
   chargeName,
 }: {
@@ -10,13 +10,15 @@ export const findDeclaredBillingChargeLabel = ({
     | null
     | undefined;
   chargeName: string;
-}): string | undefined => {
-  const declaredCharges = {
+}): { label: string; icon?: string } | undefined => {
+  const declaredCharges: Partial<
+    Record<string, { label: string; icon?: string }>
+  > = {
     ...(billing?.recurring ?? {}),
     ...(billing?.operations ?? {}),
   };
 
   return Object.prototype.hasOwnProperty.call(declaredCharges, chargeName)
-    ? declaredCharges[chargeName]?.label
+    ? declaredCharges[chargeName]
     : undefined;
 };

@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
+import { useIcons } from 'twenty-ui/icon';
 
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
 import { APPLICATION_MONITORING_CREDIT_SERIES_COLORS } from '@/settings/application-monitoring/constants/ApplicationMonitoringCreditSeriesColors';
@@ -29,6 +30,7 @@ export const ApplicationMonitoringCreditsSection = ({
   isAdminView,
 }: ApplicationMonitoringCreditsSectionProps) => {
   const { t, i18n } = useLingui();
+  const { getIcon } = useIcons();
   const { creditsUsed, creditUsage } = monitoring;
 
   if (!isDefined(creditsUsed) || !isDefined(creditUsage)) {
@@ -65,7 +67,7 @@ export const ApplicationMonitoringCreditsSection = ({
         <ApplicationMonitoringLineChart
           data={creditChartData.data}
           series={creditChartData.series.map(
-            ({ key, operationType, operationLabel }, index) => {
+            ({ key, operationType, operationLabel, operationIcon }, index) => {
               const operationTypeLabel =
                 getUsageOperationTypeLabel(operationType);
 
@@ -80,6 +82,9 @@ export const ApplicationMonitoringCreditsSection = ({
                   APPLICATION_MONITORING_CREDIT_SERIES_COLORS[
                     index % APPLICATION_MONITORING_CREDIT_SERIES_COLORS.length
                   ],
+                Icon: isDefined(operationIcon)
+                  ? getIcon(operationIcon)
+                  : undefined,
               };
             },
           )}

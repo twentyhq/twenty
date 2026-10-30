@@ -1373,6 +1373,9 @@ export default {
             "creditsUsed": [
                 6
             ],
+            "operationIcon": [
+                1
+            ],
             "operationLabel": [
                 1
             ],

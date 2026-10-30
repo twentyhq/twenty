@@ -1,4 +1,4 @@
-import { findDeclaredBillingChargeLabel } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge-label.util';
+import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
 
 const BILLING = {
   recurring: {
@@ -8,37 +8,39 @@ const BILLING = {
       label: 'Platform fee',
     },
   },
-  operations: { enrichPerson: { label: 'Person enrichment' } },
+  operations: {
+    enrichPerson: { label: 'Person enrichment', icon: 'IconUserSearch' },
+  },
 };
 
-describe('findDeclaredBillingChargeLabel', () => {
-  it('should resolve a declared operation label', () => {
+describe('findDeclaredBillingCharge', () => {
+  it('should resolve a declared operation with its icon', () => {
     expect(
-      findDeclaredBillingChargeLabel({
+      findDeclaredBillingCharge({
         billing: BILLING,
         chargeName: 'enrichPerson',
       }),
-    ).toBe('Person enrichment');
+    ).toEqual({ label: 'Person enrichment', icon: 'IconUserSearch' });
   });
 
-  it('should resolve a declared recurring charge label', () => {
+  it('should resolve a declared recurring charge', () => {
     expect(
-      findDeclaredBillingChargeLabel({
+      findDeclaredBillingCharge({
         billing: BILLING,
         chargeName: 'platformFee',
-      }),
+      })?.label,
     ).toBe('Platform fee');
   });
 
   it('should return undefined for an undeclared or inherited name', () => {
     expect(
-      findDeclaredBillingChargeLabel({
+      findDeclaredBillingCharge({
         billing: BILLING,
         chargeName: 'run-42',
       }),
     ).toBeUndefined();
     expect(
-      findDeclaredBillingChargeLabel({
+      findDeclaredBillingCharge({
         billing: BILLING,
         chargeName: 'constructor',
       }),
@@ -47,7 +49,7 @@ describe('findDeclaredBillingChargeLabel', () => {
 
   it('should return undefined without billing', () => {
     expect(
-      findDeclaredBillingChargeLabel({ billing: null, chargeName: 'any' }),
+      findDeclaredBillingCharge({ billing: null, chargeName: 'any' }),
     ).toBeUndefined();
   });
 });

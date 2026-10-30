@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ResponsiveLine } from '@nivo/line';
 import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type ThemeColor, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { ApplicationMonitoringChartTooltip } from '@/settings/application-monitoring/components/ApplicationMonitoringChartTooltip';
@@ -51,7 +52,12 @@ const StyledChart = styled.div`
 
 type ApplicationMonitoringLineChartProps<TSeriesKey extends string> = {
   data: ApplicationMonitoringChartDatum<TSeriesKey>[];
-  series: { key: TSeriesKey; label: string; color: ThemeColor }[];
+  series: {
+    key: TSeriesKey;
+    label: string;
+    color: ThemeColor;
+    Icon?: IconComponent;
+  }[];
   axisLabel: string;
   getTotalFormatOptions?: (total: number) => Intl.NumberFormatOptions;
 };
@@ -100,9 +106,13 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
   return (
     <StyledGraphContainer>
       <StyledLegend>
-        {series.map(({ key, label, color }) => (
+        {series.map(({ key, label, color, Icon }) => (
           <StyledLegendItem key={key}>
-            <StyledLegendDot color={theme.color[color]} />
+            {isDefined(Icon) ? (
+              <Icon size={theme.icon.size.sm} color={theme.color[color]} />
+            ) : (
+              <StyledLegendDot color={theme.color[color]} />
+            )}
             {`${label} (${formatSeriesTotal(key)})`}
           </StyledLegendItem>
         ))}
