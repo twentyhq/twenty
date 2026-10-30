@@ -1,16 +1,14 @@
-import { Inject, Injectable } from '@nestjs/common';
-
-import { randomUUID } from 'node:crypto';
+import { Injectable } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import {
-  type AgentHistoryStorageContext,
-  AgentHistoryWorkspaceStorageService,
-} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
@@ -19,13 +17,17 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+type DirectMessagePair = ReturnType<
+  typeof normalizeAgentChatDirectMessagePairOrThrow
+>;
+
 @Injectable()
 export class AgentChatDirectMessageIdentityService {
-  @Inject(AgentHistoryWorkspaceStorageService)
-  private readonly storageService: AgentHistoryWorkspaceStorageService;
-
-  @Inject(WorkspaceCacheService)
-  private readonly workspaceCacheService: WorkspaceCacheService;
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {}
 
   async getOrCreate({
     workspaceId,
@@ -35,105 +37,85 @@ export class AgentChatDirectMessageIdentityService {
     firstWorkspaceMemberId: string;
     secondWorkspaceMemberId: string;
   }): Promise<string> {
-    if (!isValidUuid(workspaceId)) {
-      throw new AiException(
-        'Direct messages require a valid workspace ID',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
-
     const pair = normalizeAgentChatDirectMessagePairOrThrow(members);
 
     await this.assertStorageAvailableOrThrow(workspaceId);
 
-    return this.storageService.run(workspaceId, async (context) => {
-      const existingThreadId = await this.findThreadId({ ...context, pair });
+    const existingThreadId = await this.findThreadId({ workspaceId, pair });
 
-      if (isDefined(existingThreadId)) {
-        return existingThreadId;
-      }
+    if (isDefined(existingThreadId)) {
+      return existingThreadId;
+    }
 
-      await this.assertMembersAvailableOrThrow({
-        ...context,
-        workspaceId,
-        pair,
-      });
+    const createdThreadId = await this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        await this.assertMembersAvailableOrThrow({
+          manager,
+          workspaceId,
+          pair,
+        });
 
-      const [createdThread] = await context.manager.query<{ id: string }[]>(
-        `INSERT INTO ${context.table('agentChatThread')}
-          (id, "conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId", "isAssistantParticipant")
-         VALUES ($1, 'DIRECT_MESSAGE', $2, $3, false)
-         ON CONFLICT ("directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId") DO NOTHING
-         RETURNING id`,
-        [
-          randomUUID(),
-          pair.directMessageFirstWorkspaceMemberId,
-          pair.directMessageSecondWorkspaceMemberId,
-        ],
-      );
+        const [createdThread] = await manager.query<{ id: string }[]>(
+          `INSERT INTO ${table('agentChatThread')}
+            ("conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId", "isAssistantParticipant")
+           VALUES ('DIRECT_MESSAGE', $1, $2, false)
+           ON CONFLICT ("directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId")
+             WHERE "directMessageFirstWorkspaceMemberId" IS NOT NULL
+             DO NOTHING
+           RETURNING id`,
+          [
+            pair.directMessageFirstWorkspaceMemberId,
+            pair.directMessageSecondWorkspaceMemberId,
+          ],
+        );
 
-      if (isDefined(createdThread)) {
-        return createdThread.id;
-      }
+        return createdThread?.id;
+      },
+    );
 
-      return (
-        (await this.findThreadId({ ...context, pair })) ??
-        throwAgentChatThreadNotFound()
-      );
-    });
+    return (
+      createdThreadId ??
+      (await this.findThreadId({ workspaceId, pair })) ??
+      throwAgentChatThreadNotFound()
+    );
   }
 
+  // TODO(@bosiraphael): remove once 2.54 leaves the cross-upgrade window
   private async assertStorageAvailableOrThrow(
     workspaceId: string,
   ): Promise<void> {
-    const { flatFieldMetadataMaps, flatIndexMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatIndexMaps',
-      ]);
-    const { fields, indexes } = STANDARD_OBJECTS.agentChatThread;
-    const hasPairFields = [
-      fields.conversationType,
-      fields.directMessageFirstWorkspaceMemberId,
-      fields.directMessageSecondWorkspaceMemberId,
-    ].every(({ universalIdentifier }) =>
-      isDefined(
-        flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
-      ),
-    );
-    const hasPairIndex = isDefined(
-      flatIndexMaps.byUniversalIdentifier[
-        indexes.directMessagePairUniqueIndex.universalIdentifier
-      ],
+    const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatIndexMaps'],
     );
 
-    if (hasPairFields && hasPairIndex) {
-      return;
+    if (
+      !isDefined(
+        flatIndexMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
+            .universalIdentifier
+        ],
+      )
+    ) {
+      throw new AiException(
+        'Direct messages are unavailable until this workspace finishes upgrading',
+        AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      );
     }
-
-    throw new AiException(
-      'Direct messages are unavailable until this workspace finishes upgrading',
-      AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
-    );
   }
 
   private async findThreadId({
-    manager,
-    table,
+    workspaceId,
     pair,
-  }: AgentHistoryStorageContext & {
-    pair: ReturnType<typeof normalizeAgentChatDirectMessagePairOrThrow>;
+  }: {
+    workspaceId: string;
+    pair: DirectMessagePair;
   }): Promise<string | undefined> {
-    const [thread] = await manager.query<{ id: string }[]>(
-      `SELECT id FROM ${table('agentChatThread')}
-       WHERE "conversationType" = 'DIRECT_MESSAGE'
-         AND "directMessageFirstWorkspaceMemberId" = $1
-         AND "directMessageSecondWorkspaceMemberId" = $2`,
-      [
-        pair.directMessageFirstWorkspaceMemberId,
-        pair.directMessageSecondWorkspaceMemberId,
-      ],
-    );
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: pair,
+      select: ['id'],
+    });
 
     return thread?.id;
   }
@@ -144,7 +126,7 @@ export class AgentChatDirectMessageIdentityService {
     pair,
   }: Pick<AgentHistoryStorageContext, 'manager'> & {
     workspaceId: string;
-    pair: ReturnType<typeof normalizeAgentChatDirectMessagePairOrThrow>;
+    pair: DirectMessagePair;
   }): Promise<void> {
     const workspaceMemberIds = [
       pair.directMessageFirstWorkspaceMemberId,

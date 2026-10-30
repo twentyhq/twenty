@@ -22,26 +22,25 @@ export const normalizeAgentChatDirectMessagePairOrThrow = ({
     );
   }
 
-  const normalizedFirstWorkspaceMemberId = firstWorkspaceMemberId.toLowerCase();
-  const normalizedSecondWorkspaceMemberId =
-    secondWorkspaceMemberId.toLowerCase();
+  const [
+    directMessageFirstWorkspaceMemberId,
+    directMessageSecondWorkspaceMemberId,
+  ] = [
+    firstWorkspaceMemberId.toLowerCase(),
+    secondWorkspaceMemberId.toLowerCase(),
+  ].sort();
 
-  if (normalizedFirstWorkspaceMemberId === normalizedSecondWorkspaceMemberId) {
+  if (
+    directMessageFirstWorkspaceMemberId === directMessageSecondWorkspaceMemberId
+  ) {
     throw new AiException(
       'Direct messages require two different workspace members',
       AiExceptionCode.INVALID_AGENT_INPUT,
     );
   }
 
-  const isPairOrdered =
-    normalizedFirstWorkspaceMemberId < normalizedSecondWorkspaceMemberId;
-
   return {
-    directMessageFirstWorkspaceMemberId: isPairOrdered
-      ? normalizedFirstWorkspaceMemberId
-      : normalizedSecondWorkspaceMemberId,
-    directMessageSecondWorkspaceMemberId: isPairOrdered
-      ? normalizedSecondWorkspaceMemberId
-      : normalizedFirstWorkspaceMemberId,
+    directMessageFirstWorkspaceMemberId,
+    directMessageSecondWorkspaceMemberId,
   };
 };
