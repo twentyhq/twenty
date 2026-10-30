@@ -1,3 +1,4 @@
+import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
 import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
@@ -223,30 +224,10 @@ export class AiFrontComponentService {
       authContext: context.authContext,
       rolePermissionConfig: context.rolePermissionConfig,
     });
-    if (JSON.stringify(input.sampleRecords).length > 100000) {
-      throw new ApplicationException(
-        doNotTranslate('Sample records exceed 100 KB.'),
-        ApplicationExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: msg`Sample records exceed 100 KB.` },
-      );
-    }
-    if (
-      input.sampleRecords.some((record) =>
-        Object.keys(record).some(
-          (key) => key !== 'id' && !input.query.select.includes(key),
-        ),
-      )
-    ) {
-      throw new ApplicationException(
-        doNotTranslate(
-          'Sample records must only contain selected fields and id.',
-        ),
-        ApplicationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage: msg`Sample records must only contain selected fields and id.`,
-        },
-      );
-    }
+    validateFrontComponentSampleRecordsOrThrow({
+      sampleRecords: input.sampleRecords,
+      selectedFields: input.query.select,
+    });
     const previous = isDefined(input.previousDraftId)
       ? await this.getDraft({
           workspaceId: context.workspaceId,
