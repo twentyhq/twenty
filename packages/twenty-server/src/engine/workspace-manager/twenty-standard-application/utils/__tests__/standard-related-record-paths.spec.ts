@@ -3,6 +3,7 @@
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getRelatedRecordPathFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/related-record-path/utils/get-related-record-path-field-metadata-universal-identifiers.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -32,6 +33,22 @@ describe('Standard related record paths', () => {
     flatRelatedRecordPathMaps.byUniversalIdentifier,
   ).filter(isDefined);
 
+  const expandToMorphTargets = (
+    declaredFlatFieldMetadata: FlatFieldMetadata,
+  ): FlatFieldMetadata[] => {
+    if (!isDefined(declaredFlatFieldMetadata.morphId)) {
+      return [declaredFlatFieldMetadata];
+    }
+
+    return flatFieldMetadatas.filter(
+      (flatFieldMetadata) =>
+        flatFieldMetadata.objectMetadataUniversalIdentifier ===
+          declaredFlatFieldMetadata.objectMetadataUniversalIdentifier &&
+        flatFieldMetadata.morphId === declaredFlatFieldMetadata.morphId &&
+        !isMorphRelationHead(flatFieldMetadata),
+    );
+  };
+
   it('starts every path on an object that holds its own readability', () => {
     for (const {
       objectMetadataUniversalIdentifier,
@@ -58,18 +75,7 @@ describe('Standard related record paths', () => {
           flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
       )
       .filter(isDefined)
-      .flatMap((declaredFlatFieldMetadata) =>
-        isDefined(declaredFlatFieldMetadata.morphId)
-          ? flatFieldMetadatas.filter(
-              (flatFieldMetadata) =>
-                flatFieldMetadata.objectMetadataUniversalIdentifier ===
-                  declaredFlatFieldMetadata.objectMetadataUniversalIdentifier &&
-                flatFieldMetadata.morphId ===
-                  declaredFlatFieldMetadata.morphId &&
-                !isMorphRelationHead(flatFieldMetadata),
-            )
-          : [declaredFlatFieldMetadata],
-      )
+      .flatMap(expandToMorphTargets)
       .map(
         (flatFieldMetadata) =>
           flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
