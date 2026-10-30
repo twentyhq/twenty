@@ -15,6 +15,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   flatRoleTargetMaps,
   flatRoleMaps,
   flatAgentMaps,
+  flatWebhookMaps,
   flatApplication,
 }: {
   createRoleTargetInput: CreateRoleTargetInput;
@@ -22,7 +23,7 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatRoleTargetMaps' | 'flatRoleMaps' | 'flatAgentMaps'
+  'flatRoleTargetMaps' | 'flatRoleMaps' | 'flatAgentMaps' | 'flatWebhookMaps'
 >): {
   flatRoleTargetToCreate: FlatRoleTarget;
   flatRoleTargetsToDelete: FlatRoleTarget[];
@@ -47,6 +48,14 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
         }).universalIdentifier
       : null;
 
+  const webhookUniversalIdentifier =
+    targetMetadataForeignKey === 'webhookId'
+      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityMaps: flatWebhookMaps,
+          flatEntityId: targetId,
+        }).universalIdentifier
+      : null;
+
   const flatRoleTargetToCreate: FlatRoleTarget = {
     id: v4(),
     roleId,
@@ -55,6 +64,8 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     agentId: null,
     agentUniversalIdentifier,
     apiKeyId: null,
+    webhookId: null,
+    webhookUniversalIdentifier,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
     universalIdentifier: universalIdentifier ?? v4(),

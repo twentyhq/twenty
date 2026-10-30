@@ -1971,6 +1971,7 @@ export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   operations: Array<Scalars['String']['input']>;
+  roleId: Scalars['UUID']['input'];
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl: Scalars['String']['input'];
 };
@@ -7818,6 +7819,7 @@ export type UpdateWebhookInput = {
 export type UpdateWebhookInputUpdates = {
   description?: InputMaybe<Scalars['String']['input']>;
   operations?: InputMaybe<Array<Scalars['String']['input']>>;
+  roleId?: InputMaybe<Scalars['UUID']['input']>;
   secret?: InputMaybe<Scalars['String']['input']>;
   targetUrl?: InputMaybe<Scalars['String']['input']>;
 };
@@ -8494,6 +8496,7 @@ export type Webhook = {
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   operations: Array<Scalars['String']['output']>;
+  role?: Maybe<Role>;
   secret: Scalars['String']['output'];
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
