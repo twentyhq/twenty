@@ -1,7 +1,9 @@
+import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CORE_AGENT_ADDITIONAL_RECORD_TRIGGER_EVENTS } from '@/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents';
 import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
@@ -25,15 +27,27 @@ export const getCoreAgentTriggerTypeLabelAndIcon = (
     (triggerType) => triggerType.event === event,
   );
 
-  if (!isDefined(databaseTriggerType)) {
-    return { label: t`Record changes`, icon: 'IconAddressBook' };
+  if (isDefined(databaseTriggerType)) {
+    return {
+      label: getWorkflowStepDisplayName({
+        name: databaseTriggerType.defaultLabel,
+        type: databaseTriggerType.type,
+      }),
+      icon: databaseTriggerType.icon,
+    };
   }
 
-  return {
-    label: getWorkflowStepDisplayName({
-      name: databaseTriggerType.defaultLabel,
-      type: databaseTriggerType.type,
-    }),
-    icon: databaseTriggerType.icon,
-  };
+  const additionalRecordTriggerEvent =
+    CORE_AGENT_ADDITIONAL_RECORD_TRIGGER_EVENTS.find(
+      (recordTriggerEvent) => recordTriggerEvent.event === event,
+    );
+
+  if (isDefined(additionalRecordTriggerEvent)) {
+    return {
+      label: i18n._(additionalRecordTriggerEvent.label),
+      icon: additionalRecordTriggerEvent.icon,
+    };
+  }
+
+  return { label: t`Record changes`, icon: 'IconAddressBook' };
 };

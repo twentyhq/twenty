@@ -4,6 +4,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/icon';
 
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
+import { CORE_AGENT_ADDITIONAL_RECORD_TRIGGER_EVENTS } from '@/object-core/agents/constants/CoreAgentAdditionalRecordTriggerEvents';
 import { CoreAgentTriggerTypeItem } from '@/object-core/agents/components/CoreAgentTriggerTypeItem';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useOpenCoreAgentSidePanelPage } from '@/object-core/agents/hooks/useOpenCoreAgentSidePanelPage';
@@ -53,19 +54,23 @@ export const CoreAgentTriggerTypeList = ({
   };
 
   const cronTrigger = buildDefaultCoreAgentTrigger({ type: 'CRON' });
+  const recordTriggerEvents = [
+    ...DATABASE_TRIGGER_TYPES.map(({ event }) => event),
+    ...CORE_AGENT_ADDITIONAL_RECORD_TRIGGER_EVENTS.map(({ event }) => event),
+  ];
 
   return (
     <SidePanelStepListContainer>
       <CommandMenuItemSectionGroup heading={t`Data`}>
-        {DATABASE_TRIGGER_TYPES.map((triggerType) => {
+        {recordTriggerEvents.map((event) => {
           const trigger = buildDefaultCoreAgentTrigger({
             type: 'DATABASE_EVENT',
-            eventName: `${defaultObjectNameSingular}.${triggerType.event}`,
+            eventName: `${defaultObjectNameSingular}.${event}`,
           });
 
           return (
             <CoreAgentTriggerTypeItem
-              key={triggerType.defaultLabel}
+              key={event}
               trigger={trigger}
               onClick={() => addTrigger(trigger)}
             />

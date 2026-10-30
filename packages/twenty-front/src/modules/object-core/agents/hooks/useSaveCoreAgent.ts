@@ -31,7 +31,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const [isSaving, setIsSaving] = useState(false);
 
-  const { draft, resetDraft } = useCoreAgentDraft(agent);
+  const { draft, resetDraft, resetDraftIfUnchanged } = useCoreAgentDraft(agent);
   const { roleId, isNewRole } = useCoreAgentRole(agent);
   const { isDraftDirty, isRoleDirty } = useCoreAgentDirtyState(agent);
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
@@ -39,6 +39,10 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     isCreateMode: isNewRole,
   });
 
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
   const settingsDraftRoleBase = useAtomFamilyStateValue(
     settingsDraftRoleBaseFamilyState,
     roleId,
@@ -79,7 +83,9 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     }
   };
 
-  const replaceDraftRoleWithSavedRole = async () => {
+  const replaceDraftRoleWithSavedRole = async (
+    savedDraftRole: typeof settingsDraftRole,
+  ) => {
     const { data } = await apolloClient.query({
       query: GetRolesDocument,
       fetchPolicy: 'network-only',
@@ -92,7 +98,11 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
 
     setSettingsPersistedRole(savedRole);
     setSettingsDraftRoleBase(savedRole);
-    setSettingsDraftRole(savedRole);
+    setSettingsDraftRole((currentDraftRole) =>
+      isDeeplyEqual(currentDraftRole, savedDraftRole)
+        ? savedRole
+        : currentDraftRole,
+    );
   };
 
   const saveCoreAgent = async () => {
@@ -109,7 +119,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     try {
       if (isRoleDirty) {
         await saveDraftRoleToDB();
-        await replaceDraftRoleWithSavedRole();
+        await replaceDraftRoleWithSavedRole(settingsDraftRole);
       }
 
       if (isDraftDirty) {
@@ -130,7 +140,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
             },
           },
         });
-        resetDraft();
+        resetDraftIfUnchanged(draft);
       }
 
       if (isRoleDirty && isNewRole) {

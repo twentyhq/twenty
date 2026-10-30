@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { AGENT_TRIGGER_LIMITS } from 'twenty-shared/application';
 import { SidePanelPages } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { IconBolt, IconPlus, useIcons } from 'twenty-ui/icon';
@@ -86,6 +87,10 @@ export const CoreAgentTriggersSection = ({
           <Button
             variant="outline"
             startIcon={<IconPlus />}
+            disabled={
+              draft.triggers.length >=
+              AGENT_TRIGGER_LIMITS.MAX_TRIGGERS_PER_AGENT
+            }
             onClick={() =>
               openCoreAgentSidePanelPage({
                 agentId: agent.id,
