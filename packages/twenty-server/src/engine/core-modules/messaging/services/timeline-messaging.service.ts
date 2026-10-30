@@ -490,9 +490,8 @@ export class TimelineMessagingService {
           id: true,
           userWorkspaceId: true,
           provider: true,
-          connectionProvider: { name: true },
+          applicationId: true,
         },
-        relations: { connectionProvider: true },
       });
 
       const ownedAccountIds = new Set(
@@ -516,8 +515,7 @@ export class TimelineMessagingService {
             {
               type: channel.type,
               provider: connectedAccount?.provider ?? '',
-              connectionProviderName:
-                connectedAccount?.connectionProvider?.name ?? null,
+              applicationId: connectedAccount?.applicationId ?? null,
             },
           ];
         }),

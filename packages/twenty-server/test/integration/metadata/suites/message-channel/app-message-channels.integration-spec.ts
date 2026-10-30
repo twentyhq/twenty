@@ -66,7 +66,7 @@ const GET_TIMELINE_THREADS_QUERY = gql`
         channel {
           type
           provider
-          connectionProviderName
+          applicationId
         }
       }
     }
@@ -862,7 +862,7 @@ describe('app message channels API (e2e)', () => {
           channel: {
             type: MessageChannelType.APP,
             provider: ConnectedAccountProvider.APP,
-            connectionProviderName: 'linkedin',
+            applicationId: owningApplicationDbId,
           },
         },
       ]);
