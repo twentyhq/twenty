@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
-import { getLocalImage, resolveLocalImage } from '@/local/resolve-local-image';
+import { getLocalImage } from '@/local/get-local-image';
+import { resolveLocalImage } from '@/local/resolve-local-image';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 
 vi.mock('@/app/manifest/get-engine-version-range', () => ({
@@ -20,14 +21,14 @@ afterEach(() => {
 describe('local image selection', () => {
   it('uses an explicit version without consulting the registry or app range', async () => {
     vi.mocked(getEngineVersionRange).mockReturnValue('^1.0.0');
-    expect(await resolveLocalImage('2.53.1', signal)).toBe(
+    expect(await resolveLocalImage({ version: '2.53.1', signal })).toBe(
       'twentycrm/twenty-app-dev:v2.53.1',
     );
     expect(fetchWithProxy).not.toHaveBeenCalled();
   });
 
   it('uses latest outside an app', async () => {
-    expect(await resolveLocalImage(undefined, signal)).toBe(
+    expect(await resolveLocalImage({ version: undefined, signal })).toBe(
       'twentycrm/twenty-app-dev:latest',
     );
     expect(fetchWithProxy).not.toHaveBeenCalled();
@@ -52,7 +53,7 @@ describe('local image selection', () => {
           next: null,
         }),
       );
-    expect(await resolveLocalImage(undefined, signal)).toBe(
+    expect(await resolveLocalImage({ version: undefined, signal })).toBe(
       'twentycrm/twenty-app-dev:v2.53.1',
     );
   });
@@ -68,7 +69,9 @@ describe('local image selection', () => {
           Response.json({ results: [{ name: 'v1.0.0' }], next: null }),
         );
       }
-      await expect(resolveLocalImage(undefined, signal)).rejects.toMatchObject({
+      await expect(
+        resolveLocalImage({ version: undefined, signal }),
+      ).rejects.toMatchObject({
         code: 'LOCAL_ENVIRONMENT_FAILED',
       });
     },
@@ -76,7 +79,9 @@ describe('local image selection', () => {
 
   it('rejects an invalid app range before sending a request', async () => {
     vi.mocked(getEngineVersionRange).mockReturnValue('invalid');
-    await expect(resolveLocalImage(undefined, signal)).rejects.toMatchObject({
+    await expect(
+      resolveLocalImage({ version: undefined, signal }),
+    ).rejects.toMatchObject({
       code: 'INVALID_INPUT',
     });
     expect(fetchWithProxy).not.toHaveBeenCalled();

@@ -4,37 +4,20 @@ import valid from 'semver/functions/valid';
 import validRange from 'semver/ranges/valid';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
-import { listAncestorDirectories } from '@/app/project/list-ancestor-directories';
+import { getLocalEngineRange } from '@/local/get-local-engine-range';
+import { getLocalImage } from '@/local/get-local-image';
 import { LOCAL_IMAGE_REPOSITORY } from '@/local/get-local-environment';
 import { CliError } from '@/output/cli-error';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 
-export const getLocalEngineRange = () =>
-  listAncestorDirectories(process.cwd())
-    .map(getEngineVersionRange)
-    .find(isDefined);
-
-export const getLocalImage = (version: string) => {
-  const normalized = valid(version);
-  const tag = normalized ? `v${normalized}` : version;
-
-  if (!/^[a-zA-Z0-9_][a-zA-Z0-9_.-]{0,127}$/.test(tag)) {
-    throw new CliError({
-      code: 'INVALID_INPUT',
-      message:
-        'Use a server version such as 2.53.1 or a valid image tag such as latest.',
-    });
-  }
-
-  return `${LOCAL_IMAGE_REPOSITORY}:${tag}`;
-};
-
-export const resolveLocalImage = async (
-  version: string | undefined,
-  signal: AbortSignal,
-) => {
+export const resolveLocalImage = async ({
+  version,
+  signal,
+}: {
+  version: string | undefined;
+  signal: AbortSignal;
+}) => {
   if (isDefined(version)) {
     return getLocalImage(version);
   }
@@ -79,9 +62,9 @@ export const resolveLocalImage = async (
           versions.push(entry.name);
         }
       }
-      if (!body.next) {
+      if (!isDefined(body.next)) {
         const match = maxSatisfying(versions, range);
-        if (match) {
+        if (isDefined(match)) {
           return getLocalImage(match);
         }
         throw new Error('No published image matches engines.twenty');
