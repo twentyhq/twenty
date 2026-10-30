@@ -13,7 +13,7 @@ export const cancelScheduledRecallBotsHandler =
   async (): Promise<CancelScheduledRecallBotsResult> => {
     try {
       const result = await cancelScheduledRecallBots({
-        client: new CoreApiClient({ runAs: 'application' }),
+        client: new CoreApiClient(),
       });
 
       if (result.hasMore) {

@@ -42,11 +42,7 @@ const applyCalendarBotScheduling =
       return { outcome: 'sweep-enqueued' };
     }
 
-    // The job carries the token of whoever toggled first, who may not see every request.
-    const client = new CoreApiClient({
-      runAs: 'application',
-      fetch: fetchWithRateLimitRetry,
-    });
+    const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
     // Include unfinished cancellations so a retry after an enqueue failure does not lose them.
     const callRecordings = await findCallRecordingsByFilter(client, {
       or: [

@@ -1,5 +1,4 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 import {
   APPLY_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -7,6 +6,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { SYNC_CALENDAR_BOT_SCHEDULING_ROUTE_PATH } from 'src/constants/sync-calendar-bot-scheduling-route-path';
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
+import { enqueueJobsAsApplication } from 'src/logic-functions/data/enqueue-jobs-as-application.util';
 import { buildCalendarBotSchedulingApplyJob } from 'src/logic-functions/domain/build-calendar-bot-scheduling-apply-job.util';
 
 type SyncCalendarBotSchedulingResult = { outcome: 'apply-enqueued' };
@@ -18,7 +18,7 @@ export const syncCalendarBotSchedulingHandler =
     });
 
     // The queue drops an id it still holds, so every toggle in a window shares one run.
-    await enqueueJobs({
+    await enqueueJobsAsApplication({
       logicFunctionUniversalIdentifier:
         APPLY_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       jobs: [{ jobId, payload: { applyJobId: jobId } }],

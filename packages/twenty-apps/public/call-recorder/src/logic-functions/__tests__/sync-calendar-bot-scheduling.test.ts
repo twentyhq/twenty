@@ -4,15 +4,27 @@ import { APPLY_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } fro
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
+const metadataClientOptionsMock = vi.hoisted(() => vi.fn());
 
-vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  enqueueJobs: enqueueJobsMock,
+vi.mock('twenty-client-sdk/metadata', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-client-sdk/metadata')>()),
+  MetadataApiClient: class {
+    constructor(options: unknown) {
+      metadataClientOptionsMock(options);
+    }
+
+    async mutation(mutation: { enqueueJobs: { __args: { input: unknown } } }) {
+      return {
+        enqueueJobs: await enqueueJobsMock(mutation.enqueueJobs.__args.input),
+      };
+    }
+  },
 }));
 
 describe('syncCalendarBotSchedulingHandler', () => {
   beforeEach(() => {
     enqueueJobsMock.mockReset();
+    metadataClientOptionsMock.mockReset();
     enqueueJobsMock.mockResolvedValue({ enqueued: true });
   });
 
@@ -32,6 +44,14 @@ describe('syncCalendarBotSchedulingHandler', () => {
         ],
         delayMs: expect.any(Number),
       }),
+    );
+  });
+
+  it('enqueues as the application so the apply chain sees the whole workspace', async () => {
+    await syncCalendarBotSchedulingHandler();
+
+    expect(metadataClientOptionsMock).toHaveBeenCalledWith(
+      expect.objectContaining({ runAs: 'application' }),
     );
   });
 
