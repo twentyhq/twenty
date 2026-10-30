@@ -822,7 +822,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'workspaceMemberFieldUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      relationFieldMetadataUniversalIdentifier:
+        'no manifest slot yet for a predicate reached through a relation',
+    },
   },
   {
     metadataName: 'permissionFlag',

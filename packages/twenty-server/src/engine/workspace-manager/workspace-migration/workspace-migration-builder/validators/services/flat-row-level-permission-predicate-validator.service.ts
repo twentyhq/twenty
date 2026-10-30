@@ -16,6 +16,7 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
+  isMorphRelationHead,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   jsonRelationFilterValueSchema,
@@ -27,7 +28,10 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import {
+  FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -86,6 +90,17 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         userFriendlyMessage: msg`Field metadata not found`,
       });
     } else {
+      validationResult.errors.push(
+        ...this.getRelationHopErrors({
+          fieldMetadata,
+          objectMetadataUniversalIdentifier:
+            flatPredicateToValidate.objectMetadataUniversalIdentifier,
+          relationFieldMetadataUniversalIdentifier:
+            flatPredicateToValidate.relationFieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+      );
+
       const unsupportedOperandError = this.getUnsupportedOperandError({
         fieldType: fieldMetadata.type,
         operand: flatPredicateToValidate.operand,
@@ -299,6 +314,19 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         })
       : undefined;
 
+    if (isDefined(fieldMetadata)) {
+      validationResult.errors.push(
+        ...this.getRelationHopErrors({
+          fieldMetadata,
+          objectMetadataUniversalIdentifier:
+            updatedPredicate.objectMetadataUniversalIdentifier,
+          relationFieldMetadataUniversalIdentifier:
+            updatedPredicate.relationFieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        }),
+      );
+    }
+
     if (!isDefined(fieldMetadata)) {
       validationResult.errors.push({
         code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
@@ -446,6 +474,100 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       message: t`Value "${stringifiedValue}" resolves to no record for operand "${operand}", the current record is not available to a row level permission predicate`,
       userFriendlyMessage: msg`Predicate value is not valid for this operand`,
     };
+  }
+
+  private getRelationHopErrors({
+    fieldMetadata,
+    objectMetadataUniversalIdentifier,
+    relationFieldMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
+  }: {
+    fieldMetadata: UniversalFlatFieldMetadata;
+    objectMetadataUniversalIdentifier: string;
+    relationFieldMetadataUniversalIdentifier: string | null;
+    flatFieldMetadataMaps:
+      | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
+      | undefined;
+  }): FlatEntityValidationError[] {
+    if (
+      !isDefined(relationFieldMetadataUniversalIdentifier) ||
+      !isDefined(flatFieldMetadataMaps)
+    ) {
+      return [];
+    }
+
+    const relationFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: relationFieldMetadataUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(relationFieldMetadata)) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.FIELD_METADATA_NOT_FOUND,
+          message: t`Relation field metadata not found`,
+          userFriendlyMessage: msg`Relation field metadata not found`,
+        },
+      ];
+    }
+
+    const relationFieldName = relationFieldMetadata.name;
+
+    if (
+      relationFieldMetadata.objectMetadataUniversalIdentifier !==
+      objectMetadataUniversalIdentifier
+    ) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Relation field "${relationFieldName}" does not belong to the object the predicate restricts`,
+          userFriendlyMessage: msg`This relation field does not belong to the restricted object`,
+        },
+      ];
+    }
+
+    if (
+      !isMorphOrRelationUniversalFlatFieldMetadata(relationFieldMetadata) ||
+      isMorphRelationHead(relationFieldMetadata) ||
+      !isDefined(
+        relationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
+      )
+    ) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Field "${relationFieldName}" is not a relation`,
+          userFriendlyMessage: msg`The predicate can only go through a relation field`,
+        },
+      ];
+    }
+
+    if (!relationFieldMetadata.isActive) {
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Relation field "${relationFieldName}" is not active`,
+          userFriendlyMessage: msg`The predicate can only go through an active relation field`,
+        },
+      ];
+    }
+
+    if (
+      fieldMetadata.objectMetadataUniversalIdentifier !==
+      relationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
+    ) {
+      const fieldName = fieldMetadata.name;
+
+      return [
+        {
+          code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+          message: t`Field "${fieldName}" does not belong to the object reached by relation "${relationFieldName}"`,
+          userFriendlyMessage: msg`This field does not belong to the object reached by the relation`,
+        },
+      ];
+    }
+
+    return [];
   }
 
   private findWorkspaceMemberFieldMetadata({

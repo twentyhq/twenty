@@ -31,6 +31,11 @@ export class RowLevelPermissionPredicateInput {
   @Field(() => UUIDScalarType)
   fieldMetadataId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationFieldMetadataId?: string | null;
+
   @Field(() => RowLevelPermissionPredicateOperand)
   operand: RowLevelPermissionPredicateOperand;
 

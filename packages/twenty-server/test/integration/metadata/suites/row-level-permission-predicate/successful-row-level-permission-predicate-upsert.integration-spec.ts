@@ -14,6 +14,8 @@ import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadat
 describe('Row Level Permission Predicate upsert should succeed', () => {
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
+  let personObjectMetadataId: string;
+  let personCompanyFieldMetadataId: string;
   let createdRoleId: string;
 
   beforeAll(async () => {
@@ -49,6 +51,21 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
 
     jestExpectToBeDefined(nameField);
     companyNameFieldMetadataId = nameField.id;
+
+    const personObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObjectMetadata);
+    jestExpectToBeDefined(personObjectMetadata.fieldsList);
+    personObjectMetadataId = personObjectMetadata.id;
+
+    const personCompanyField = personObjectMetadata.fieldsList.find(
+      (field: { name: string }) => field.name === 'company',
+    );
+
+    jestExpectToBeDefined(personCompanyField);
+    personCompanyFieldMetadataId = personCompanyField.id;
 
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -113,6 +130,37 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
         operand: RowLevelPermissionPredicateOperand.CONTAINS,
         roleId: createdRoleId,
         rowLevelPermissionPredicateGroupId: null,
+      },
+    );
+  });
+
+  it('should upsert a predicate reaching a field through a relation', async () => {
+    const input: UpsertRowLevelPermissionPredicatesInput = {
+      roleId: createdRoleId,
+      objectMetadataId: personObjectMetadataId,
+      predicates: [
+        {
+          relationFieldMetadataId: personCompanyFieldMetadataId,
+          fieldMetadataId: companyNameFieldMetadataId,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value: 'Acme',
+        },
+      ],
+      predicateGroups: [],
+    };
+
+    const { data } = await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input,
+    });
+
+    expect(data.upsertRowLevelPermissionPredicates.predicates).toHaveLength(1);
+    expect(data.upsertRowLevelPermissionPredicates.predicates[0]).toMatchObject(
+      {
+        objectMetadataId: personObjectMetadataId,
+        relationFieldMetadataId: personCompanyFieldMetadataId,
+        fieldMetadataId: companyNameFieldMetadataId,
+        value: 'Acme',
       },
     );
   });

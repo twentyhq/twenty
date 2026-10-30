@@ -22,6 +22,7 @@ type TestSetup = {
   adminRoleId: string;
   companyObjectMetadataId: string;
   companyNameFieldMetadataId: string;
+  personCompanyFieldMetadataId: string;
 };
 
 type TestContext = {
@@ -173,6 +174,60 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       },
     },
     {
+      title: 'when the relation hop is not a relation field',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              relationFieldMetadataId: testSetup.companyNameFieldMetadataId,
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
+      title: 'when the relation hop does not belong to the restricted object',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              relationFieldMetadataId: testSetup.personCompanyFieldMetadataId,
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
+      title: 'when the relation hop does not exist',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              relationFieldMetadataId: v4(),
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
       title: 'when adding a predicate to a non-editable role',
       context: {
         input: (testSetup) => ({
@@ -213,6 +268,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let adminRoleId: string;
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
+  let personCompanyFieldMetadataId: string;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -247,6 +303,20 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     jestExpectToBeDefined(nameField);
     companyNameFieldMetadataId = nameField.id;
+
+    const personObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObjectMetadata);
+    jestExpectToBeDefined(personObjectMetadata.fieldsList);
+
+    const personCompanyField = personObjectMetadata.fieldsList.find(
+      (field: { name: string }) => field.name === 'company',
+    );
+
+    jestExpectToBeDefined(personCompanyField);
+    personCompanyFieldMetadataId = personCompanyField.id;
 
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -308,6 +378,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
         adminRoleId,
         companyObjectMetadataId,
         companyNameFieldMetadataId,
+        personCompanyFieldMetadataId,
       }),
     });
 

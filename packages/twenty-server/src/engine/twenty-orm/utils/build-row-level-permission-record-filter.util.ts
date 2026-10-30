@@ -132,6 +132,11 @@ const buildRecordFilterForRole = ({
       );
     }
 
+    // Relation hops are stored ahead of their enforcement, so they match nothing rather than compare the wrong object
+    if (isDefined(predicate.relationFieldMetadataId)) {
+      unsatisfiableRecordFilterIds.add(predicate.id);
+    }
+
     const workspaceMemberFieldMetadataId =
       predicate.workspaceMemberFieldMetadataId;
     let predicateValue: RowLevelPermissionPredicateValue = predicate.value;

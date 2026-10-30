@@ -119,9 +119,19 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       );
     }
 
-    if (fieldMetadata.objectMetadataId !== objectMetadataId) {
+    const relationFieldMetadata = isDefined(predicate.relationFieldMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: predicate.relationFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
+
+    const expectedFieldObjectMetadataId =
+      relationFieldMetadata?.relationTargetObjectMetadataId ?? objectMetadataId;
+
+    if (fieldMetadata.objectMetadataId !== expectedFieldObjectMetadataId) {
       throw new RowLevelPermissionPredicateException(
-        'Field belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict.',
+        'Field belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict, or of the object reached by their relation field.',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }
