@@ -2,17 +2,11 @@ import { renderHook } from '@testing-library/react';
 
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { useUpdateFrontComponentApolloCache } from '@/front-components/hooks/useUpdateFrontComponentApolloCache';
-import {
-  FindOneFrontComponentDocument,
-  type FrontComponent,
-} from '~/generated-metadata/graphql';
+import { type FrontComponent } from '~/generated-metadata/graphql';
 
-const mockReadQuery = jest.fn();
-const mockQuery = jest.fn();
 const mockUpdateQuery = jest.fn();
 const mockApolloClient = {
-  cache: { updateQuery: mockUpdateQuery, readQuery: mockReadQuery },
-  query: mockQuery,
+  cache: { updateQuery: mockUpdateQuery },
 };
 
 jest.mock('@apollo/client/react', () => ({
@@ -35,9 +29,6 @@ const buildFrontComponentRecord = (
 describe('useUpdateFrontComponentApolloCache', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockReadQuery.mockReturnValue({
-      frontComponent: { sourceComponentPath: 'src/original.tsx' },
-    });
   });
 
   it('should call cache.updateQuery when operation is update and record ID matches', () => {
@@ -184,37 +175,4 @@ describe('useUpdateFrontComponentApolloCache', () => {
 
     expect(updatedData).toEqual(existingData);
   });
-  it.each([
-    ['src/moved.tsx', true],
-    ['src/original.tsx', false],
-  ])(
-    'refreshes server-derived metadata only when source path changes to %s',
-    (sourceComponentPath, shouldRefetch) => {
-      const { result } = renderHook(() =>
-        useUpdateFrontComponentApolloCache({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
-
-      result.current.updateFrontComponentApolloCache({
-        metadataName: 'frontComponent',
-        operation: {
-          type: 'update',
-          updatedRecord: buildFrontComponentRecord({ sourceComponentPath }),
-        },
-      });
-
-      if (shouldRefetch) {
-        expect(mockQuery).toHaveBeenCalledWith({
-          query: FindOneFrontComponentDocument,
-          variables: { id: FRONT_COMPONENT_ID },
-          fetchPolicy: 'network-only',
-        });
-        expect(mockUpdateQuery).not.toHaveBeenCalled();
-      } else {
-        expect(mockQuery).not.toHaveBeenCalled();
-        expect(mockUpdateQuery).toHaveBeenCalledTimes(1);
-      }
-    },
-  );
 });

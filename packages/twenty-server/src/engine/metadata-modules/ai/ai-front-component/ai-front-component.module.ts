@@ -1,10 +1,7 @@
 import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
-import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
@@ -12,29 +9,22 @@ import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
-import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { AiFrontComponentController } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
-import { AiFrontComponentResolver } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.resolver';
 
 @Module({
   imports: [
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
     FrontComponentSharedDependenciesModule,
     ApplicationPackageModule,
     CacheLockModule,
     PermissionsModule,
-    ApplicationLookupModule,
-    ApplicationRegistrationLookupModule,
     FeatureFlagModule,
     RecordCrudModule,
-    FrontComponentModule,
   ],
   controllers: [AiFrontComponentController],
   providers: [
     AiFrontComponentService,
-    AiFrontComponentResolver,
     FrontComponentCompilerService,
     WorkspaceFrontComponentDependenciesService,
   ],

@@ -2440,7 +2440,6 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
-  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
@@ -2684,7 +2683,6 @@ export type FrontComponent = {
   description?: Maybe<Scalars['String']['output']>;
   frontComponentSharedDependenciesChecksum?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
-  isAiComponent: Scalars['Boolean']['output'];
   isHeadless: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   sourceComponentPath: Scalars['String']['output'];

@@ -1,7 +1,6 @@
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
-import { AiWorkspaceFrontComponent } from '@/front-components/components/AiWorkspaceFrontComponent';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
@@ -77,46 +76,28 @@ export const FrontComponentRenderer = ({
 
   const frontComponent = data?.frontComponent;
 
-  if (isDefined(error)) {
-    return (
-      <>
-        <FrontComponentLoadErrorToastEffect errorMessage={error.message} />
-        {unavailableFallback}
-      </>
-    );
-  }
-
-  if (loading) {
-    return loadingFallback;
-  }
-
-  if (!isDefined(frontComponent)) {
-    return unavailableFallback;
-  }
-
-  if (frontComponent.isAiComponent) {
-    return (
-      <AiWorkspaceFrontComponent
-        key={`${frontComponent.id}:${frontComponent.builtComponentChecksum}`}
-        frontComponentId={frontComponent.id}
-        applicationId={frontComponent.applicationId}
-      />
-    );
-  }
-
   return (
-    <FrontComponentRendererContent
-      key={frontComponent.id}
-      frontComponent={frontComponent}
-      commandMenuItemId={commandMenuItemId}
-      selectedRecordIds={selectedRecordIds}
-      selectedRecordsFilter={selectedRecordsFilter}
-      objectNameSingular={objectNameSingular}
-      timelineActivityId={timelineActivityId}
-      toolCall={toolCall}
-      loadingFallback={loadingFallback}
-      unavailableFallback={unavailableFallback}
-    />
+    <>
+      <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
+      {loading && loadingFallback}
+      {!loading &&
+        (!isDefined(frontComponent) || isDefined(error)) &&
+        unavailableFallback}
+      {!loading && isDefined(frontComponent) && !isDefined(error) && (
+        <FrontComponentRendererContent
+          key={frontComponent.id}
+          frontComponent={frontComponent}
+          commandMenuItemId={commandMenuItemId}
+          selectedRecordIds={selectedRecordIds}
+          selectedRecordsFilter={selectedRecordsFilter}
+          objectNameSingular={objectNameSingular}
+          timelineActivityId={timelineActivityId}
+          toolCall={toolCall}
+          loadingFallback={loadingFallback}
+          unavailableFallback={unavailableFallback}
+        />
+      )}
+    </>
   );
 };
 
