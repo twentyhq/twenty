@@ -18,7 +18,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Command({
   name: 'upgrade:2-55:add-access-group-storage-columns',
   description:
-    'Add the access group ids column to every role-governed object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
+    'Add the access group ids column to every object table except recordShare and accessGroup and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
 export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
