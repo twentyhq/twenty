@@ -21,6 +21,7 @@ import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-l
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
+import { countUnipileChats } from 'src/unipile/utils/count-unipile-chats.util';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 import { listUnipileChatMessages } from 'src/unipile/utils/list-unipile-chat-messages.util';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
@@ -54,6 +55,23 @@ const importPage = async ({
     cursor: payload.cursor,
     limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
   });
+
+  const totalConversationCount =
+    state.totalConversationCount ??
+    page.totalCount ??
+    (await countUnipileChats(unipileAccountId));
+
+  // Saved before the first chat is imported, so the button shows a percentage from the start
+  if (state.totalConversationCount === undefined) {
+    await saveLinkedinHistoryImportState({
+      connectedAccountId,
+      state: {
+        ...state,
+        totalConversationCount,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+  }
 
   let importedConversationCount = 0;
 
@@ -93,7 +111,7 @@ const importPage = async ({
       state.importedConversationCount + importedConversationCount,
     processedConversationCount:
       state.processedConversationCount + page.items.length,
-    totalConversationCount: state.totalConversationCount ?? page.totalCount,
+    totalConversationCount,
     updatedAt: new Date().toISOString(),
     ...(isLastPage
       ? { status: 'COMPLETED', finishedAt: new Date().toISOString() }

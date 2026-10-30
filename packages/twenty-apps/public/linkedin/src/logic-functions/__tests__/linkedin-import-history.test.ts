@@ -137,6 +137,20 @@ describe('linkedinImportHistoryHandler', () => {
     );
   });
 
+  it('counts the chats first when LinkedIn returns no total', async () => {
+    mocks.listUnipileChats.mockResolvedValue({
+      items: [buildChat('recent', '2026-10-29T00:00:00.000Z')],
+      nextCursor: undefined,
+    });
+
+    await linkedinImportHistoryHandler(PAYLOAD);
+
+    expect(mocks.listUnipileChats).toHaveBeenCalledTimes(2);
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({ totalConversationCount: 1 }),
+    );
+  });
+
   it('fetches the attendees of a chat the list did not embed them in', async () => {
     const { user: _user, ...chatWithoutAttendees } = buildChat(
       'bare',

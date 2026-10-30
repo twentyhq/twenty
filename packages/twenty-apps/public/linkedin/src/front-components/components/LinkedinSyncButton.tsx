@@ -72,7 +72,7 @@ export const LinkedinSyncButton = ({
         color="accent"
         size="md"
         onClick={onSync}
-        loading={isRunning || isStarting}
+        loading={isRunning}
         loadingPosition="end"
       >
         {label}
