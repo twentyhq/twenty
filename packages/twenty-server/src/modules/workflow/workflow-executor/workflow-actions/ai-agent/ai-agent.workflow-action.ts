@@ -165,14 +165,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
-        isApplicationBound:
-          isDefined(executionContext.application) &&
-          !isWorkspaceCustomApplication({
-            application: executionContext.application,
-            workspaceCustomApplicationId:
-              executionContext.authContext.workspace
-                .workspaceCustomApplicationId,
-          }),
+        isApplicationBound: !isWorkspaceCustomApplication({
+          application: executionContext.application,
+          workspaceCustomApplicationId:
+            executionContext.authContext.workspace.workspaceCustomApplicationId,
+        }),
       }),
       prompt: isDefined(resolvedPrompt)
         ? {
