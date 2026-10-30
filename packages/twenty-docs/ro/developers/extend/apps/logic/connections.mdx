@@ -508,7 +508,7 @@ Fiecare conexiune are unul dintre două domenii de aplicare:
 `scope` al furnizorului stabilește pe care îl primesc noile sale conexiuni:
 
 * `scope: 'WORKSPACE'` (implicit) — aplicația funcționează cu conexiuni partajate cu spațiul de lucru. **Adăugare conexiune** în setările spațiului de lucru ale aplicației creează o conexiune partajată în spațiul de lucru.
-* `scope: 'USER'` — fiecare membru își conectează propriul cont, creând conexiuni personale. Membrii le adaugă, le reconectează și le elimină din pagina aplicației, la **Setări > Utilizator > Preferințe aplicații**, ceea ce necesită permisiunea `CONNECTED_ACCOUNTS` (Aplicații utilizator). Setările spațiului de lucru ale aplicației nu au un buton **Adăugare conexiune** pentru un furnizor `USER`.
+* `scope: 'USER'` — fiecare membru își conectează propriul cont, creând conexiuni personale. Membrii le adaugă, le reconectează și le elimină din pagina aplicației, în **Setări > Utilizator > Preferințe aplicații**, ceea ce necesită permisiunea Aplicații utilizator. Setările spațiului de lucru ale aplicației nu au un buton **Adăugare conexiune** pentru un furnizor `USER`.
 
 <Note>
   **Preferințe aplicații** nu este încă activată în fiecare spațiu de lucru: acolo unde nu este activată,
@@ -520,7 +520,7 @@ Un furnizor are exact un domeniu de aplicare. Dacă aplicația ta are nevoie at�
 
 O conexiune are întotdeauna scopul furnizorului său, iar scopul unui furnizor face parte din identitatea sa: o versiune ulterioară nu poate modifica `scope` al unui furnizor existent, iar actualizarea este refuzată dacă încearcă acest lucru. Pentru a muta un serviciu dintr-un scop în altul, declarați un furnizor nou cu un `universalIdentifier` nou și eliminați-l pe cel vechi. Actualizarea elimină apoi furnizorul vechi și fiecare conexiune realizată cu acesta prin fluxul obișnuit de deconectare (`onDisconnectLogicFunction`, revocarea tokenului, curățarea canalului), iar membrii se conectează din nou prin noul furnizor.
 
-Adăugarea sau reconectarea unei conexiuni **Doar pentru mine** necesită permisiunea `CONNECTED_ACCOUNTS`, iar adăugarea sau reconectarea uneia **partajate în spațiul de lucru** necesită permisiunea `APPLICATIONS`.
+Adăugarea sau reconectarea unei conexiuni **Doar pentru mine** necesită permisiunea Aplicații utilizator, iar adăugarea sau reconectarea uneia **Partajată în spațiul de lucru** necesită permisiunea Aplicații spațiu de lucru.
 
 Folosește conexiunea potrivită pentru fiecare handler:
 
