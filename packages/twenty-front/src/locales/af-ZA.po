@@ -30356,7 +30356,6 @@ msgstr "Kyk lede-demo"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Ons ondervind tans probleme met hierdie toepassing; die werking daarvan kan aangetas wees terwyl ons aan ’n oplossing werk."
 

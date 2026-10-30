@@ -30356,7 +30356,6 @@ msgstr "Mira la demo de membres"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Actualment tenim problemes amb aquesta aplicació; és possible que el seu comportament es vegi afectat mentre treballem en una solució."
 

@@ -30356,7 +30356,6 @@ msgstr "A'zolar demosini tomosha qilish"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Hozirda biz ushbu ilova bilan bogʻliq muammolarga duch kelmoqdamiz, tuzatish ustida ishlayotganimizda uning ishlashi yomonlashishi mumkin."
 
