@@ -82,7 +82,9 @@ describe('2-55 workspace command - add direct message pair identity (integration
     };
   };
 
-  const removePairIdentity = async () => {
+  const removePairIndexAndFields = async (
+    fieldUniversalIdentifiers: string[],
+  ) => {
     const { flatFieldMetadataMaps, flatIndexMaps } =
       await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
         'flatFieldMetadataMaps',
@@ -106,7 +108,7 @@ describe('2-55 workspace command - add direct message pair identity (integration
         allFlatEntityOperationByMetadataName: {
           fieldMetadata: {
             flatEntityToCreate: [],
-            flatEntityToDelete: PAIR_FIELD_UNIVERSAL_IDENTIFIERS.map(
+            flatEntityToDelete: fieldUniversalIdentifiers.map(
               (universalIdentifier) =>
                 findFlatEntityByUniversalIdentifierOrThrow<FlatFieldMetadata>({
                   flatEntityMaps: flatFieldMetadataMaps,
@@ -143,7 +145,7 @@ describe('2-55 workspace command - add direct message pair identity (integration
         'AgentChatDirectMessageIdentityService',
       );
 
-    await removePairIdentity();
+    await removePairIndexAndFields(PAIR_FIELD_UNIVERSAL_IDENTIFIERS);
   });
 
   afterAll(async () => {
@@ -176,23 +178,40 @@ describe('2-55 workspace command - add direct message pair identity (integration
     });
   });
 
-  it('adds the pair columns and a partial unique index, then lifts the fence', async () => {
+  it('adds the pair columns and a full unique index, then lifts the fence', async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findPairIdentity()).toEqual({
       hasFields: true,
       hasIndexMetadata: true,
       columnCount: PAIR_COLUMN_NAMES.length,
-      pairIndexes: [
-        expect.stringContaining(
-          'WHERE ("directMessageFirstWorkspaceMemberId" IS NOT NULL)',
-        ),
-      ],
+      pairIndexes: [expect.not.stringContaining('WHERE')],
     });
 
     const threadId = await identityService.getOrCreate(PAIR);
 
     try {
+      await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+    }
+  });
+
+  it('keeps stored pairs when it restores a missing index', async () => {
+    const threadId = await identityService.getOrCreate(PAIR);
+
+    try {
+      await removePairIndexAndFields([]);
+
+      await expect(identityService.getOrCreate(PAIR)).rejects.toMatchObject({
+        code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      });
+
+      await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
       await global.testDataSource.query(
