@@ -8,7 +8,11 @@ import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
-  margin: ${themeCssVariables.spacing['0.5']};
+  --tw-button-radius: calc(${themeCssVariables.border.radius.sm} - 1px);
+
+  border: 1px solid ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  margin: ${themeCssVariables.spacing[1]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     position: relative;
@@ -32,7 +36,7 @@ export const RecordTableCellButtons = ({
   return (
     <AnimatedContainer>
       <StyledButtonContainer>
-        <ButtonGroup aria-label={t`Cell controls`} framed attached={false}>
+        <ButtonGroup aria-label={t`Cell controls`} attached={false}>
           {buttons.map(({ Icon, onClick, ariaLabel }, index) => (
             <LightIconButton
               key={index}

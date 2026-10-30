@@ -1,6 +1,7 @@
 import { RecordTableCellButtons } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButtons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 
 const meta: Meta<typeof RecordTableCellButtons> = {
@@ -24,14 +25,14 @@ export const Default: Story = {
       name: 'Unavailable action',
     });
     const group = canvas.getByRole('group', { name: 'Cell controls' });
-    const frameStyle = getComputedStyle(group);
-    const frameInset =
-      parseFloat(frameStyle.borderLeftWidth) +
-      parseFloat(frameStyle.paddingLeft);
+    const frame = group.parentElement;
+    if (!isDefined(frame)) {
+      throw new Error('Missing table action frame');
+    }
     await expect(getComputedStyle(edit).width).toBe('24px');
     await expect(getComputedStyle(group).gap).toBe('2px');
     await expect(parseFloat(getComputedStyle(edit).borderTopLeftRadius)).toBe(
-      parseFloat(frameStyle.borderTopLeftRadius) - frameInset,
+      parseFloat(getComputedStyle(frame).borderTopLeftRadius) - 1,
     );
     await expect(unavailable).toBeDisabled();
     edit.focus();
