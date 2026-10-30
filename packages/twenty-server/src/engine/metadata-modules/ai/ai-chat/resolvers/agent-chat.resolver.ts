@@ -319,14 +319,14 @@ export class AgentChatResolver {
     recipientWorkspaceMemberIds: string[];
   }): Promise<SendChatMessageResultDTO> {
     const { thread } = await this.threadService.applyAssistantParticipation({
-        threadId,
-        workspaceMemberId,
-        workspaceId: workspace.id,
-        isAssistantMentioned: isAssistantMentioned ?? false,
-        initialIsAssistantParticipant,
-        recipientWorkspaceMemberIds,
-        mentionedWorkspaceMemberIds,
-      });
+      threadId,
+      workspaceMemberId,
+      workspaceId: workspace.id,
+      isAssistantMentioned: isAssistantMentioned ?? false,
+      initialIsAssistantParticipant,
+      recipientWorkspaceMemberIds,
+      mentionedWorkspaceMemberIds,
+    });
     const isAssistantReplying = shouldAssistantReply || !isAiChatInboxEnabled;
 
     // Members can keep talking when the assistant cannot run
