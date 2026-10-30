@@ -36,7 +36,10 @@ const OPEN_VIEW: AgentChatChannelView = {
 };
 const OPEN_OPTION_PATTERN = /^Open\b/;
 const NEEDS_INPUT_OPTION_PATTERN = /^Needs input\b/;
-const ASSIGNED_OPTION_PATTERN = /^Assigned\b/;
+const MENTIONS_OPTION_PATTERN = /^Mentions\b/;
+const ASSIGNED_TO_ME_OPTION_PATTERN = /^Assigned to me\b/;
+const ASSIGNED_OPTION_PATTERN = /^Assigned(?! to me)\b/;
+const UNASSIGNED_OPTION_PATTERN = /^Unassigned\b/;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -98,7 +101,10 @@ const meta = {
       [OPEN_VIEW.channelId]: {
         openCount: 6,
         needsInputCount: 2,
+        mentionedCount: 3,
         assignedToMeCount: 1,
+        assignedCount: 5,
+        unassignedCount: 4,
         hasUnreadOpen: false,
         hasUnreadAssignedToMe: false,
         snoozedCount: 0,
@@ -154,17 +160,29 @@ export const Open: Story = {
     ).toBeVisible();
     await expect(
       within(
-        body.getByRole('menuitemradio', { name: ASSIGNED_OPTION_PATTERN }),
+        body.getByRole('menuitemradio', { name: MENTIONS_OPTION_PATTERN }),
+      ).getByText('3'),
+    ).toBeVisible();
+    await expect(
+      within(
+        body.getByRole('menuitemradio', {
+          name: ASSIGNED_TO_ME_OPTION_PATTERN,
+        }),
       ).getByText('1'),
     ).toBeVisible();
     await expect(
-      body.getByRole('menuitemradio', { name: 'Mentions' }),
+      within(
+        body.getByRole('menuitemradio', { name: ASSIGNED_OPTION_PATTERN }),
+      ).getByText('5'),
     ).toBeVisible();
     await expect(
-      body.queryByRole('menuitemradio', { name: 'Snoozed' }),
-    ).not.toBeInTheDocument();
+      within(
+        body.getByRole('menuitemradio', { name: UNASSIGNED_OPTION_PATTERN }),
+      ).getByText('4'),
+    ).toBeVisible();
+    await expect(body.queryByText('View')).not.toBeInTheDocument();
     await expect(
-      body.queryByRole('menuitemradio', { name: 'Unassigned' }),
+      body.queryByRole('menuitemradio', { name: 'Snoozed' }),
     ).not.toBeInTheDocument();
     await userEvent.click(
       body.getByRole('menuitemradio', { name: NEEDS_INPUT_OPTION_PATTERN }),
@@ -178,9 +196,21 @@ export const Open: Story = {
 
     await userEvent.click(trigger);
     await userEvent.click(
-      await body.findByRole('menuitemradio', { name: 'Mentions' }),
+      await body.findByRole('menuitemradio', { name: MENTIONS_OPTION_PATTERN }),
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', {
+        name: ASSIGNED_TO_ME_OPTION_PATTERN,
+      }),
+    );
+    await expect(canvas.getByText('Assigned to me')).toBeVisible();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
+    });
 
     await userEvent.click(trigger);
     await userEvent.click(
@@ -191,7 +221,19 @@ export const Open: Story = {
     await expect(canvas.getByText('Assigned')).toBeVisible();
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
-      assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
+      assignment: AgentChatChannelAssignmentFilter.ASSIGNED,
+    });
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', {
+        name: UNASSIGNED_OPTION_PATTERN,
+      }),
+    );
+    await expect(canvas.getByText('Unassigned')).toBeVisible();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      assignment: AgentChatChannelAssignmentFilter.UNASSIGNED,
     });
 
     await userEvent.click(trigger);

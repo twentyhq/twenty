@@ -50,7 +50,7 @@ export interface AgentChatChannel {
     __typename: 'AgentChatChannel'
 }
 
-export type AgentChatChannelAssignmentFilter = 'ANY' | 'ASSIGNED_TO_ME' | 'UNASSIGNED'
+export type AgentChatChannelAssignmentFilter = 'ANY' | 'ASSIGNED' | 'ASSIGNED_TO_ME' | 'UNASSIGNED'
 
 export interface AgentChatChannelRole {
     canAccessAllAgentChatChannels: Scalars['Boolean']
@@ -61,14 +61,17 @@ export interface AgentChatChannelRole {
 }
 
 export interface AgentChatChannelSummary {
+    assignedCount: Scalars['Int']
     assignedToMeCount: Scalars['Int']
     channelId: Scalars['UUID']
     doneCount: Scalars['Int']
     hasUnreadAssignedToMe: Scalars['Boolean']
     hasUnreadOpen: Scalars['Boolean']
+    mentionedCount: Scalars['Int']
     needsInputCount: Scalars['Int']
     openCount: Scalars['Int']
     snoozedCount: Scalars['Int']
+    unassignedCount: Scalars['Int']
     __typename: 'AgentChatChannelSummary'
 }
 
@@ -92,11 +95,15 @@ export interface AgentChatEvent {
 export type AgentChatInboxAction = 'ARCHIVE' | 'MOVE_TO_INBOX' | 'READ' | 'SNOOZE' | 'SUBSCRIBE' | 'UNREAD' | 'UNSUBSCRIBE'
 
 export interface AgentChatOpenThreadsSummary {
+    assignedThreadCount: Scalars['Int']
+    assignedToMeThreadCount: Scalars['Int']
     hasUnreadAssignedThread: Scalars['Boolean']
     hasUnreadMentionThread: Scalars['Boolean']
     hasUnreadOpenThread: Scalars['Boolean']
+    mentionThreadCount: Scalars['Int']
     needsInputThreadCount: Scalars['Int']
     openThreadCount: Scalars['Int']
+    unassignedThreadCount: Scalars['Int']
     unreadOpenThreadCount: Scalars['Int']
     __typename: 'AgentChatOpenThreadsSummary'
 }
@@ -4267,14 +4274,17 @@ export interface AgentChatChannelRoleGenqlSelection{
 }
 
 export interface AgentChatChannelSummaryGenqlSelection{
+    assignedCount?: boolean | number
     assignedToMeCount?: boolean | number
     channelId?: boolean | number
     doneCount?: boolean | number
     hasUnreadAssignedToMe?: boolean | number
     hasUnreadOpen?: boolean | number
+    mentionedCount?: boolean | number
     needsInputCount?: boolean | number
     openCount?: boolean | number
     snoozedCount?: boolean | number
+    unassignedCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4295,11 +4305,15 @@ export interface AgentChatEventGenqlSelection{
 }
 
 export interface AgentChatOpenThreadsSummaryGenqlSelection{
+    assignedThreadCount?: boolean | number
+    assignedToMeThreadCount?: boolean | number
     hasUnreadAssignedThread?: boolean | number
     hasUnreadMentionThread?: boolean | number
     hasUnreadOpenThread?: boolean | number
+    mentionThreadCount?: boolean | number
     needsInputThreadCount?: boolean | number
     openThreadCount?: boolean | number
+    unassignedThreadCount?: boolean | number
     unreadOpenThreadCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -11894,6 +11908,7 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
 
 export const enumAgentChatChannelAssignmentFilter = {
    ANY: 'ANY' as const,
+   ASSIGNED: 'ASSIGNED' as const,
    ASSIGNED_TO_ME: 'ASSIGNED_TO_ME' as const,
    UNASSIGNED: 'UNASSIGNED' as const
 }

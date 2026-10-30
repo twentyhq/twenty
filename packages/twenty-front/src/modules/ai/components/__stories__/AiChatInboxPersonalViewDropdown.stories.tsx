@@ -34,6 +34,10 @@ const RECORD_SELECTION_INSTANCE_ID = 'personal-view-story';
 const SELECTED_THREAD_ID = 'selected-chat';
 const OPEN_OPTION_PATTERN = /^Open\b/;
 const NEEDS_INPUT_OPTION_PATTERN = /^Needs input\b/;
+const MENTIONS_OPTION_PATTERN = /^Mentions\b/;
+const ASSIGNED_TO_ME_OPTION_PATTERN = /^Assigned to me\b/;
+const ASSIGNED_OPTION_PATTERN = /^Assigned(?! to me)\b/;
+const UNASSIGNED_OPTION_PATTERN = /^Unassigned\b/;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -75,6 +79,10 @@ const meta = {
                   openThreadCount: 8,
                   unreadOpenThreadCount: 1,
                   needsInputThreadCount: 4,
+                  mentionThreadCount: 2,
+                  assignedToMeThreadCount: 1,
+                  assignedThreadCount: 3,
+                  unassignedThreadCount: 5,
                   hasUnreadOpenThread: true,
                   hasUnreadMentionThread: true,
                   hasUnreadAssignedThread: false,
@@ -154,11 +162,28 @@ export const SwitchViews: Story = {
       ).findByText('4'),
     ).toBeVisible();
     await expect(
-      body.getByRole('menuitemradio', { name: 'Mentions' }),
+      await within(
+        body.getByRole('menuitemradio', { name: MENTIONS_OPTION_PATTERN }),
+      ).findByText('2'),
     ).toBeVisible();
     await expect(
-      body.getByRole('menuitemradio', { name: 'Assigned' }),
+      await within(
+        body.getByRole('menuitemradio', {
+          name: ASSIGNED_TO_ME_OPTION_PATTERN,
+        }),
+      ).findByText('1'),
     ).toBeVisible();
+    await expect(
+      await within(
+        body.getByRole('menuitemradio', { name: ASSIGNED_OPTION_PATTERN }),
+      ).findByText('3'),
+    ).toBeVisible();
+    await expect(
+      await within(
+        body.getByRole('menuitemradio', { name: UNASSIGNED_OPTION_PATTERN }),
+      ).findByText('5'),
+    ).toBeVisible();
+    await expect(body.queryByText('View')).not.toBeInTheDocument();
     await expect(
       body.queryByRole('menuitemradio', { name: 'Snoozed' }),
     ).not.toBeInTheDocument();
@@ -171,6 +196,22 @@ export const SwitchViews: Story = {
     await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
     );
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', {
+        name: ASSIGNED_TO_ME_OPTION_PATTERN,
+      }),
+    );
+    await expect(canvas.getByText('Assigned to me')).toBeVisible();
+
+    await userEvent.click(trigger);
+    await userEvent.click(
+      await body.findByRole('menuitemradio', {
+        name: UNASSIGNED_OPTION_PATTERN,
+      }),
+    );
+    await expect(canvas.getByText('Unassigned')).toBeVisible();
 
     await userEvent.click(trigger);
     await userEvent.click(
@@ -195,7 +236,7 @@ export const FromSnoozed: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Filter chats' }));
     await userEvent.click(
       await body.findByRole('menuitemradio', {
-        name: 'Mentions',
+        name: MENTIONS_OPTION_PATTERN,
       }),
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();

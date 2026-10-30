@@ -257,6 +257,9 @@ export default {
             ]
         },
         "AgentChatChannelSummary": {
+            "assignedCount": [
+                10
+            ],
             "assignedToMeCount": [
                 10
             ],
@@ -272,6 +275,9 @@ export default {
             "hasUnreadOpen": [
                 4
             ],
+            "mentionedCount": [
+                10
+            ],
             "needsInputCount": [
                 10
             ],
@@ -279,6 +285,9 @@ export default {
                 10
             ],
             "snoozedCount": [
+                10
+            ],
+            "unassignedCount": [
                 10
             ],
             "__typename": [
@@ -315,6 +324,12 @@ export default {
         },
         "AgentChatInboxAction": {},
         "AgentChatOpenThreadsSummary": {
+            "assignedThreadCount": [
+                10
+            ],
+            "assignedToMeThreadCount": [
+                10
+            ],
             "hasUnreadAssignedThread": [
                 4
             ],
@@ -324,10 +339,16 @@ export default {
             "hasUnreadOpenThread": [
                 4
             ],
+            "mentionThreadCount": [
+                10
+            ],
             "needsInputThreadCount": [
                 10
             ],
             "openThreadCount": [
+                10
+            ],
+            "unassignedThreadCount": [
                 10
             ],
             "unreadOpenThreadCount": [
@@ -396,7 +417,7 @@ export default {
                 210
             ],
             "mentionsResolvedAt": [
-                209
+                210
             ],
             "snoozedUntil": [
                 210
@@ -14227,7 +14248,7 @@ export default {
                 4
             ],
             "translations": [
-                362
+                363
             ],
             "type": [
                 650

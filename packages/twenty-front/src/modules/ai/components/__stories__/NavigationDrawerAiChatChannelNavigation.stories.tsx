@@ -100,6 +100,9 @@ const meta = {
     summary: {
       openCount: 6,
       needsInputCount: 2,
+      mentionedCount: 0,
+      assignedCount: 0,
+      unassignedCount: 0,
       hasUnreadOpen: false,
       assignedToMeCount: 1,
       hasUnreadAssignedToMe: false,
@@ -285,6 +288,9 @@ export const Empty: Story = {
     summary: {
       openCount: 0,
       needsInputCount: 0,
+      mentionedCount: 0,
+      assignedCount: 0,
+      unassignedCount: 0,
       hasUnreadOpen: false,
       assignedToMeCount: 0,
       hasUnreadAssignedToMe: false,

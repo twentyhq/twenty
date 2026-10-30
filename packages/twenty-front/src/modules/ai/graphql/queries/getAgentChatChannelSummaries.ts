@@ -6,8 +6,11 @@ export const GET_AGENT_CHAT_CHANNEL_SUMMARIES = gql`
       channelId
       openCount
       needsInputCount
+      mentionedCount
       hasUnreadOpen
       assignedToMeCount
+      assignedCount
+      unassignedCount
       hasUnreadAssignedToMe
       snoozedCount
       doneCount

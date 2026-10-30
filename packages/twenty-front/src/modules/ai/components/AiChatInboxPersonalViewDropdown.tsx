@@ -16,14 +16,24 @@ export const AiChatInboxPersonalViewDropdown = () => {
   const { t } = useLingui();
   const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
     useAtomState(agentChatThreadFilterStatusState);
-  const { openThreadCount, needsInputThreadCount } =
-    useAgentChatOpenThreadsSummary();
+  const {
+    openThreadCount,
+    needsInputThreadCount,
+    mentionThreadCount,
+    assignedToMeThreadCount,
+    assignedThreadCount,
+    unassignedThreadCount,
+  } = useAgentChatOpenThreadsSummary();
   const { resetRecordSelection } = useResetRecordSelection();
   const countByFilterStatus: Partial<
     Record<AgentChatThreadFilterStatus, number>
   > = {
     [AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE]: openThreadCount,
     [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT]: needsInputThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS]: mentionThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ME]: assignedToMeThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED]: assignedThreadCount,
+    [AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED]: unassignedThreadCount,
   };
 
   const handleSelect = (filterStatus: AgentChatThreadFilterStatus) => {

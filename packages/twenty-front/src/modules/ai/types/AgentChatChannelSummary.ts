@@ -4,8 +4,11 @@ export type AgentChatChannelSummary = Pick<
   AgentChatChannelSummaryRow,
   | 'openCount'
   | 'needsInputCount'
+  | 'mentionedCount'
   | 'hasUnreadOpen'
   | 'assignedToMeCount'
+  | 'assignedCount'
+  | 'unassignedCount'
   | 'hasUnreadAssignedToMe'
   | 'snoozedCount'
   | 'doneCount'

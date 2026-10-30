@@ -38,7 +38,7 @@ export const AiChatInboxFilterDropdown = ({
         }
       />
       <DropdownContent align="end" aria-label={t`Filter chats`}>
-        <Dropdown.Section label={t`View`}>
+        <Dropdown.Section>
           {options.map(({ key, label, Icon, count, isSelected, onSelect }) => (
             <Dropdown.OptionItem
               key={key}

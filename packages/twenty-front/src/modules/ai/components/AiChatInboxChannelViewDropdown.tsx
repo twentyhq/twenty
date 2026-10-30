@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
 import { AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
@@ -58,9 +57,7 @@ export const AiChatInboxChannelViewDropdown = ({
           AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[openViewItem.filterStatus],
         ),
         Icon: AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[openViewItem.filterStatus],
-        count: isDefined(openViewItem.countKey)
-          ? channelSummary?.[openViewItem.countKey]
-          : undefined,
+        count: channelSummary?.[openViewItem.countKey],
         isSelected: openViewItem === selectedOpenViewItem,
         onSelect: () => handleSelect(openViewItem),
       }))}

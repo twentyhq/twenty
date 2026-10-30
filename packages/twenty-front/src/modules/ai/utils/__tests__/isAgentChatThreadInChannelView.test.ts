@@ -126,6 +126,30 @@ describe('isAgentChatThreadInChannelView', () => {
     ).toBe(false);
   });
 
+  it('narrows to chats assigned to anyone', () => {
+    const channelView = {
+      ...OPEN_CHANNEL_VIEW,
+      assignment: AgentChatChannelAssignmentFilter.ASSIGNED,
+    };
+
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread({ assigneeId: 'member-2' }),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
+      }),
+    ).toBe(true);
+    expect(
+      isAgentChatThreadInChannelView({
+        thread: buildThread(),
+        channelView,
+        currentWorkspaceMemberId: 'member-1',
+        isMentioned: false,
+      }),
+    ).toBe(false);
+  });
+
   it('narrows to chats waiting on an answer', () => {
     const channelView = {
       ...OPEN_CHANNEL_VIEW,

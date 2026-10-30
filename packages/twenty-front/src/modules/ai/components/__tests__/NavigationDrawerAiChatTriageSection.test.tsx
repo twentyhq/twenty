@@ -50,6 +50,10 @@ const READ_SUMMARY: OpenThreadsSummary = {
   openThreadCount: 2,
   unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
+  mentionThreadCount: 0,
+  assignedToMeThreadCount: 0,
+  assignedThreadCount: 0,
+  unassignedThreadCount: 2,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
@@ -138,8 +142,10 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   it.each([
     AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
-    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
     AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ME,
+    AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
+    AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED,
   ])('keeps Open current for the %s filter', (filterStatus) => {
     jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);
 

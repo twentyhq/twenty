@@ -42,6 +42,8 @@ export const isAgentChatThreadInChannelView = ({
   switch (channelView.assignment) {
     case AgentChatChannelAssignmentFilter.ANY:
       return true;
+    case AgentChatChannelAssignmentFilter.ASSIGNED:
+      return isDefined(thread.assigneeId);
     case AgentChatChannelAssignmentFilter.UNASSIGNED:
       return !isDefined(thread.assigneeId);
     case AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME:

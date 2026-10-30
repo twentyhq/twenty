@@ -65,6 +65,7 @@ export type AgentChatChannel = {
 
 export enum AgentChatChannelAssignmentFilter {
   ANY = 'ANY',
+  ASSIGNED = 'ASSIGNED',
   ASSIGNED_TO_ME = 'ASSIGNED_TO_ME',
   UNASSIGNED = 'UNASSIGNED'
 }
@@ -79,14 +80,17 @@ export type AgentChatChannelRole = {
 
 export type AgentChatChannelSummary = {
   __typename?: 'AgentChatChannelSummary';
+  assignedCount: Scalars['Int']['output'];
   assignedToMeCount: Scalars['Int']['output'];
   channelId: Scalars['UUID']['output'];
   doneCount: Scalars['Int']['output'];
   hasUnreadAssignedToMe: Scalars['Boolean']['output'];
   hasUnreadOpen: Scalars['Boolean']['output'];
+  mentionedCount: Scalars['Int']['output'];
   needsInputCount: Scalars['Int']['output'];
   openCount: Scalars['Int']['output'];
   snoozedCount: Scalars['Int']['output'];
+  unassignedCount: Scalars['Int']['output'];
 };
 
 export enum AgentChatChannelThreadFilter {
@@ -126,11 +130,15 @@ export enum AgentChatInboxAction {
 
 export type AgentChatOpenThreadsSummary = {
   __typename?: 'AgentChatOpenThreadsSummary';
+  assignedThreadCount: Scalars['Int']['output'];
+  assignedToMeThreadCount: Scalars['Int']['output'];
   hasUnreadAssignedThread: Scalars['Boolean']['output'];
   hasUnreadMentionThread: Scalars['Boolean']['output'];
   hasUnreadOpenThread: Scalars['Boolean']['output'];
+  mentionThreadCount: Scalars['Int']['output'];
   needsInputThreadCount: Scalars['Int']['output'];
   openThreadCount: Scalars['Int']['output'];
+  unassignedThreadCount: Scalars['Int']['output'];
   unreadOpenThreadCount: Scalars['Int']['output'];
 };
 
