@@ -3,7 +3,7 @@ import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetc
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
-import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
+import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
@@ -140,12 +140,10 @@ export const SettingsApplicationDetails = () => {
       onCompleted: handleUninstallCompleted,
     });
 
-  const displayedApplicationVariables = getDisplayedApplicationVariables(
-    (application?.applicationVariables ?? []).filter(
-      (applicationVariable) =>
-        applicationVariable.scope === ApplicationVariableScope.WORKSPACE,
-    ),
-  );
+  const displayedApplicationVariables =
+    getDisplayedWorkspaceApplicationVariables(
+      application?.applicationVariables ?? [],
+    );
 
   const [updateOneApplicationVariable] = useMutation(
     UpdateOneApplicationVariableDocument,
