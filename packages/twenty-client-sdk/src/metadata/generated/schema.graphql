@@ -259,6 +259,12 @@ enum AggregateOperations {
   SUM
 }
 
+enum AiChatAssistantMode {
+  AUTOMATIC
+  MENTION_ONLY
+  NEVER
+}
+
 type AiChatUsage {
   consumedValue: BigInt
   kind: String!
@@ -5512,6 +5518,8 @@ input UpdateWorkspaceIframeMediaPermissionsInput {
 input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode
+  aiChatInboxAssistantMode: AiChatAssistantMode
   aiChatModelTier: AiModelTier
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
@@ -6281,6 +6289,8 @@ type Workspace {
   activationStatus: WorkspaceActivationStatus!
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode!
+  aiChatInboxAssistantMode: AiChatAssistantMode!
   aiChatModelTier: AiModelTier!
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
