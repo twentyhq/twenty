@@ -165,8 +165,11 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.create,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.update,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
   ];
 };

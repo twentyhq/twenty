@@ -115,6 +115,9 @@ export const STANDARD_OBJECT_FIELDS = {
     lastMentionedAt: {
       universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
     },
+    mentionsResolvedAt: {
+      universalIdentifier: '12c0b0c8-86b2-48e5-8e2f-56a9eb9162c4',
+    },
   },
   agentChatThreadTarget: {
     target: { universalIdentifier: '2c4cc537-39a2-4df9-81a1-dda26eb19658' },

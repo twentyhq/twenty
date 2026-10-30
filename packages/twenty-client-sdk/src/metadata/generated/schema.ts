@@ -120,6 +120,7 @@ export interface AgentChatThreadParticipant {
     isSubscribed: Scalars['Boolean']
     lastMentionedAt?: Scalars['DateTime']
     lastReadAt?: Scalars['DateTime']
+    mentionsResolvedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
     threadId: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -252,7 +253,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -4323,6 +4324,7 @@ export interface AgentChatThreadParticipantGenqlSelection{
     isSubscribed?: boolean | number
     lastMentionedAt?: boolean | number
     lastReadAt?: boolean | number
+    mentionsResolvedAt?: boolean | number
     snoozedUntil?: boolean | number
     threadId?: boolean | number
     updatedAt?: boolean | number
@@ -8377,7 +8379,7 @@ export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID']
 
 export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewSortInput {
 /** The id of the view sort to update */
@@ -11960,6 +11962,7 @@ export const enumAllMetadataName = {
    pageLayoutTab: 'pageLayoutTab' as const,
    pageLayoutWidget: 'pageLayoutWidget' as const,
    permissionFlag: 'permissionFlag' as const,
+   relatedRecordPath: 'relatedRecordPath' as const,
    role: 'role' as const,
    rolePermissionFlag: 'rolePermissionFlag' as const,
    roleTarget: 'roleTarget' as const,

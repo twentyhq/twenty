@@ -296,6 +296,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  relatedRecordPath: {
+    entityKind: 'related record path',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
   validationRule: {
     entityKind: 'validation rule',
     getCandidates: () => NO_MANIFEST_CANDIDATES,

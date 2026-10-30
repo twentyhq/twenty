@@ -58,6 +58,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   connectionProvider: {},
   messagingProvider: {},
   timelineActivityType: {},
+  relatedRecordPath: {},
   validationRule: {},
   searchFieldMetadata: {},
   settingsMenuItem: {},

@@ -5,6 +5,7 @@ import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type LogicFunctionTranspileParams } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -28,11 +29,8 @@ export type YarnInstallLambdaResult = {
   success: boolean;
 };
 
-export type BuilderLambdaPayload = {
+export type BuilderLambdaPayload = LogicFunctionTranspileParams & {
   action: 'transpile';
-  sourceCode: string;
-  sourceFileName: string;
-  builtFileName: string;
 };
 
 export type BuilderLambdaResult = {
