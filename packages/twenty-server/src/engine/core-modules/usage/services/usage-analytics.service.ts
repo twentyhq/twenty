@@ -18,6 +18,7 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { type CreditsUsed } from 'src/engine/core-modules/usage/types/credits-used.type';
+import { type CreditsUsedTimeSeriesRow } from 'src/engine/core-modules/usage/types/credits-used-time-series-row.type';
 import { buildInstallationFilterParams } from 'src/engine/core-modules/usage/utils/build-installation-filter-params.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
@@ -171,14 +172,7 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
     bucketSizeInSeconds: number;
-  }): Promise<
-    {
-      bucketStart: Date;
-      operationType: string;
-      operation: string;
-      creditsUsedMicro: number;
-    }[]
-  > {
+  }): Promise<CreditsUsedTimeSeriesRow[]> {
     if (!isNonEmptyArray(installations)) {
       return [];
     }

@@ -23,10 +23,10 @@ export const consolidateUsageByApplication = ({
   for (const item of items) {
     const application = flatApplicationMaps.byId[item.applicationId];
     // Billing is undefined until the upgrade that adds the column has run.
-    const declaredChargeLabel = findDeclaredBillingChargeLabel(
-      application?.billing,
-      item.operation,
-    );
+    const declaredChargeLabel = findDeclaredBillingChargeLabel({
+      billing: application?.billing,
+      chargeName: item.operation,
+    });
     const applicationName = application?.name ?? item.applicationId;
 
     const key = isDefined(declaredChargeLabel)

@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ApplicationBilling } from 'twenty-shared/application';
 import { In, Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -13,7 +12,7 @@ import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/applicati
 import {
   type ApplicationMonitoringActiveWorkspaceCountRow,
   type ApplicationMonitoringActivityRow,
-  type ApplicationMonitoringCreditUsageRow,
+  type ApplicationMonitoringCreditUsage,
   type ApplicationMonitoringFunctionRow,
   type ApplicationMonitoringIssueRow,
   type ApplicationMonitoringLifecycleRow,
@@ -32,7 +31,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
-import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge-label.util';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type ApplicationMonitoringQueryParams = {
@@ -221,10 +220,7 @@ export class ApplicationMonitoringService {
       'applicationRegistrationId' | 'workspaceId'
     >;
     period: ApplicationMonitoringPeriod;
-  }): Promise<{
-    rows: ApplicationMonitoringCreditUsageRow[];
-    billing: ApplicationBilling | null;
-  } | null> {
+  }): Promise<ApplicationMonitoringCreditUsage | null> {
     try {
       const [installations, billing] = await Promise.all([
         this.applicationRegistrationService.findInstallations({
@@ -242,7 +238,7 @@ export class ApplicationMonitoringService {
         await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
           {
             installations,
-            declaredOperations: listDeclaredBillingChargeNames(billing),
+            declaredOperations: listDeclaredBillingChargeNames({ billing }),
             ...period,
           },
         );

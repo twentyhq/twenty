@@ -1,11 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ApplicationBilling } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import {
-  type ApplicationMonitoringCreditUsageRow,
+  type ApplicationMonitoringCreditUsage,
   type ApplicationMonitoringRows,
 } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
@@ -19,10 +18,7 @@ const toNumber = (value: number | string | undefined): number =>
 const groupCreditUsageByOperationLabel = ({
   rows,
   billing,
-}: {
-  rows: ApplicationMonitoringCreditUsageRow[];
-  billing: ApplicationBilling | null;
-}) => {
+}: ApplicationMonitoringCreditUsage) => {
   const bucketsByKey = new Map<
     string,
     {
@@ -35,7 +31,10 @@ const groupCreditUsageByOperationLabel = ({
 
   for (const row of rows) {
     const operationLabel =
-      findDeclaredBillingChargeLabel(billing, row.operation) ?? null;
+      findDeclaredBillingChargeLabel({
+        billing,
+        chargeName: row.operation,
+      }) ?? null;
     const key = `${row.bucketStart.toISOString()}|${row.operationType}|${operationLabel ?? ''}`;
     const bucket = bucketsByKey.get(key);
 
@@ -63,10 +62,7 @@ export const mapApplicationMonitoringRows = ({
   period: ApplicationMonitoringPeriod;
   lookbackInHours: number;
   rows: ApplicationMonitoringRows;
-  creditUsage: {
-    rows: ApplicationMonitoringCreditUsageRow[];
-    billing: ApplicationBilling | null;
-  } | null;
+  creditUsage: ApplicationMonitoringCreditUsage | null;
 }): ApplicationMonitoringDTO => {
   const [totals] = rows.totals;
   const creditUsageBuckets = isDefined(creditUsage)

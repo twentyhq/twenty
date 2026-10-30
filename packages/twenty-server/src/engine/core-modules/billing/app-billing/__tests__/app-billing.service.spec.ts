@@ -33,7 +33,13 @@ const buildService = (billingOperations: Record<string, unknown> = {}) => {
   return { service, charge };
 };
 
-const emitCharge = (service: AppBillingService, charge: Partial<ChargeDto>) =>
+const emitCharge = ({
+  service,
+  charge,
+}: {
+  service: AppBillingService;
+  charge: Partial<ChargeDto>;
+}) =>
   service.emitChargeEvent({
     workspaceId: WORKSPACE_ID,
     applicationId: APPLICATION_ID,
@@ -48,7 +54,7 @@ describe('AppBillingService.emitChargeEvent', () => {
   it('should record a charge naming no category under APP_OPERATION', async () => {
     const { service, charge } = buildService();
 
-    await emitCharge(service, {});
+    await emitCharge({ service, charge: {} });
 
     expect(getRecordedEvent(charge)).toMatchObject({
       operationType: UsageOperationType.APP_OPERATION,
@@ -62,7 +68,7 @@ describe('AppBillingService.emitChargeEvent', () => {
       enrichPerson: { label: 'Person enrichment' },
     });
 
-    await emitCharge(service, { operation: 'enrichPerson' });
+    await emitCharge({ service, charge: { operation: 'enrichPerson' } });
 
     expect(getRecordedEvent(charge)).toMatchObject({
       operationType: UsageOperationType.APP_OPERATION,
@@ -76,7 +82,7 @@ describe('AppBillingService.emitChargeEvent', () => {
       recordMeeting: { operationType: 'CALL_RECORDING', label: 'Recording' },
     });
 
-    await emitCharge(service, { operation: 'recordMeeting' });
+    await emitCharge({ service, charge: { operation: 'recordMeeting' } });
 
     expect(getRecordedEvent(charge)).toMatchObject({
       operationType: UsageOperationType.CALL_RECORDING,
@@ -89,9 +95,9 @@ describe('AppBillingService.emitChargeEvent', () => {
       sneaky: { operationType: 'SUBSCRIPTION', label: 'Sneaky' },
     });
 
-    await expect(emitCharge(service, { operation: 'sneaky' })).rejects.toThrow(
-      'declares an unknown operationType',
-    );
+    await expect(
+      emitCharge({ service, charge: { operation: 'sneaky' } }),
+    ).rejects.toThrow('declares an unknown operationType');
     expect(charge).not.toHaveBeenCalled();
   });
 });
