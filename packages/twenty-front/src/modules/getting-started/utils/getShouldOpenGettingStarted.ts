@@ -9,7 +9,7 @@ export const getShouldOpenGettingStarted = ({
 }: {
   progress: Pick<
     GettingStartedProgressQuery['gettingStartedProgress'],
-    'steps' | 'completedSteps' | 'isHidden' | 'snoozedUntil'
+    'steps' | 'completedStepActionKeys' | 'isHidden' | 'snoozedUntil'
   >;
   now: Date;
 }): boolean => {
@@ -19,7 +19,7 @@ export const getShouldOpenGettingStarted = ({
 
   const remainingSteps = getGettingStartedRemainingSteps({
     steps: progress.steps,
-    completedSteps: progress.completedSteps,
+    completedStepActionKeys: progress.completedStepActionKeys,
   });
 
   if (remainingSteps.length === 0) {

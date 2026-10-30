@@ -1,15 +1,15 @@
 import { GETTING_STARTED_AUTO_ADVANCE_DELAY_MS } from '@/getting-started/constants/GettingStartedAutoAdvanceDelayMs';
 import { useEffect, useEffectEvent } from 'react';
 
-import { type GettingStartedStep } from '~/generated-metadata/graphql';
+import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 
 type GettingStartedAutoAdvanceEffectProps = {
-  completedStep: GettingStartedStep;
+  completedStepActionKey: GettingStartedStepActionKey;
   onAdvance: () => void;
 };
 
 export const GettingStartedAutoAdvanceEffect = ({
-  completedStep,
+  completedStepActionKey,
   onAdvance,
 }: GettingStartedAutoAdvanceEffectProps) => {
   const advance = useEffectEvent(onAdvance);
@@ -21,7 +21,7 @@ export const GettingStartedAutoAdvanceEffect = ({
     );
 
     return () => clearTimeout(timeoutId);
-  }, [completedStep]);
+  }, [completedStepActionKey]);
 
   return null;
 };

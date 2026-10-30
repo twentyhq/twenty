@@ -25,7 +25,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import {
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -132,17 +132,22 @@ export const GettingStartedPageContent = () => {
   });
 
   const stepDefinitions = progress?.steps ?? [];
-  const steps = stepDefinitions.map(({ step }) => step);
-  const completedSteps = progress?.completedSteps ?? [];
-  const remainingSteps = steps.filter((step) => !completedSteps.includes(step));
+  const stepActionKeys = stepDefinitions.map(({ actionKey }) => actionKey);
+  const completedStepActionKeys = progress?.completedStepActionKeys ?? [];
+  const remainingSteps = stepActionKeys.filter(
+    (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
+  );
   const isComplete = remainingSteps.length === 0;
-  const { selectedStep, nextStep, stepAfterSkip } =
+  const { selectedStepActionKey, nextStep, stepAfterSkip } =
     getGettingStartedStepSelection({
-      steps,
-      completedSteps,
-      selectedStep: justCompletedStep ?? progress?.selectedStep,
+      stepActionKeys,
+      completedStepActionKeys,
+      selectedStepActionKey:
+        justCompletedStep ?? progress?.selectedStepActionKey,
     });
-  const isSelectedStepCompleted = completedSteps.includes(selectedStep);
+  const isSelectedStepCompleted = completedStepActionKeys.includes(
+    selectedStepActionKey,
+  );
 
   const remainingStepCount = remainingSteps.length;
   const remainingStepsLabel = isDefined(formattedTrialEnd)
@@ -156,16 +161,16 @@ export const GettingStartedPageContent = () => {
       });
   const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
 
-  const selectStep = (step: GettingStartedStep) => {
+  const selectStep = (stepActionKey: GettingStartedStepActionKey) => {
     clearJustCompletedStep();
-    void updateGettingStarted({ selectedStep: step });
+    void updateGettingStarted({ selectedStepActionKey: stepActionKey });
   };
 
   return (
     <StyledScroll>
       {isDefined(justCompletedStep) && (
         <GettingStartedAutoAdvanceEffect
-          completedStep={justCompletedStep}
+          completedStepActionKey={justCompletedStep}
           onAdvance={() => selectStep(nextStep)}
         />
       )}
@@ -230,11 +235,11 @@ export const GettingStartedPageContent = () => {
               )}
               <GettingStartedRollingText text={goalLabel} />
             </StyledGoal>
-            {isNonEmptyArray(steps) && (
+            {isNonEmptyArray(stepActionKeys) && (
               <GettingStartedStepStack
                 steps={stepDefinitions}
-                selectedStep={selectedStep}
-                completedSteps={completedSteps}
+                selectedStepActionKey={selectedStepActionKey}
+                completedStepActionKeys={completedStepActionKeys}
                 justCompletedStep={justCompletedStep}
                 isSaving={isSaving}
                 onSelectStep={selectStep}

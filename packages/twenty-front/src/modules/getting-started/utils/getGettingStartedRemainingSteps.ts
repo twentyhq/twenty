@@ -1,13 +1,13 @@
 import {
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
   type GettingStartedStepDefinition,
 } from '~/generated-metadata/graphql';
 
 export const getGettingStartedRemainingSteps = ({
   steps,
-  completedSteps,
+  completedStepActionKeys,
 }: {
   steps: GettingStartedStepDefinition[];
-  completedSteps: GettingStartedStep[];
+  completedStepActionKeys: GettingStartedStepActionKey[];
 }): GettingStartedStepDefinition[] =>
-  steps.filter(({ step }) => !completedSteps.includes(step));
+  steps.filter(({ actionKey }) => !completedStepActionKeys.includes(actionKey));

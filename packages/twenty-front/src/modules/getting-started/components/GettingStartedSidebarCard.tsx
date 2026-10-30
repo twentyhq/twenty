@@ -135,7 +135,7 @@ export const GettingStartedSidebarCard = () => {
 
   const remainingSteps = getGettingStartedRemainingSteps({
     steps: progress.steps,
-    completedSteps: progress.completedSteps,
+    completedStepActionKeys: progress.completedStepActionKeys,
   });
 
   if (remainingSteps.length === 0) {
@@ -158,7 +158,7 @@ export const GettingStartedSidebarCard = () => {
               />
               {t`Getting started`}
               <StyledStepCount data-countdown={isCountdownVisible || undefined}>
-                {`${progress.completedSteps.length}/${progress.steps.length}`}
+                {`${progress.completedStepActionKeys.length}/${progress.steps.length}`}
               </StyledStepCount>
               {!isGettingStartedPageOpen && (
                 <IconChevronRight
@@ -194,7 +194,7 @@ export const GettingStartedSidebarCard = () => {
             ) : (
               <ProgressBar
                 aria-label={t`Getting started progress`}
-                value={progress.completedSteps.length}
+                value={progress.completedStepActionKeys.length}
                 max={progress.steps.length}
                 size="sm"
                 backgroundColor={

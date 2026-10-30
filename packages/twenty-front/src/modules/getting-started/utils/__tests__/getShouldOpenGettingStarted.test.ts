@@ -1,14 +1,14 @@
 import { getShouldOpenGettingStarted } from '@/getting-started/utils/getShouldOpenGettingStarted';
 import {
   mockGettingStartedStepDefinitions,
-  mockGettingStartedSteps,
+  mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
 
 const NOW = new Date('2026-10-29T12:00:00.000Z');
 
 const OPEN_PROGRESS = {
   steps: mockGettingStartedStepDefinitions,
-  completedSteps: [],
+  completedStepActionKeys: [],
   isHidden: false,
   snoozedUntil: null,
 };
@@ -27,7 +27,10 @@ describe('getShouldOpenGettingStarted', () => {
     },
     {
       description: 'stays closed once every step is done',
-      progress: { ...OPEN_PROGRESS, completedSteps: mockGettingStartedSteps },
+      progress: {
+        ...OPEN_PROGRESS,
+        completedStepActionKeys: mockGettingStartedStepActionKeys,
+      },
       expected: false,
     },
     {

@@ -19,10 +19,14 @@ export const GettingStartedStepAction = ({
     case GettingStartedStepKind.PROMPT:
       return <GettingStartedPromptAction stepDefinition={stepDefinition} />;
     case GettingStartedStepKind.WORKFLOW:
-      return <GettingStartedWorkflowAction step={stepDefinition.step} />;
+      return (
+        <GettingStartedWorkflowAction
+          stepActionKey={stepDefinition.actionKey}
+        />
+      );
     case GettingStartedStepKind.CUSTOM: {
       const CustomStepAction =
-        GETTING_STARTED_CUSTOM_STEP_ACTIONS[stepDefinition.step];
+        GETTING_STARTED_CUSTOM_STEP_ACTIONS[stepDefinition.actionKey];
 
       return isDefined(CustomStepAction) ? <CustomStepAction /> : null;
     }

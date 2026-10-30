@@ -21,7 +21,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
   PrepareGettingStartedWorkflowDocument,
 } from '~/generated-metadata/graphql';
@@ -84,11 +84,11 @@ const StyledEdgeLine = styled.div`
 `;
 
 type GettingStartedWorkflowActionProps = {
-  step: GettingStartedStep;
+  stepActionKey: GettingStartedStepActionKey;
 };
 
 export const GettingStartedWorkflowAction = ({
-  step,
+  stepActionKey,
 }: GettingStartedWorkflowActionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -103,11 +103,12 @@ export const GettingStartedWorkflowAction = ({
   const { data: workflowPreviewsData } = useQuery(
     GettingStartedWorkflowPreviewsDocument,
   );
-  const isWorkflowOn = progress?.completedSteps.includes(step) ?? false;
+  const isWorkflowOn =
+    progress?.completedStepActionKeys.includes(stepActionKey) ?? false;
 
   const workflowPreview =
     workflowPreviewsData?.gettingStartedWorkflowPreviews.find(
-      (preview) => preview.step === step,
+      (preview) => preview.stepActionKey === stepActionKey,
     );
 
   const previewNodes = isDefined(workflowPreview)
@@ -133,14 +134,14 @@ export const GettingStartedWorkflowAction = ({
   const openWorkflow = async () => {
     try {
       const { data } = await prepareGettingStartedWorkflow({
-        variables: { step },
+        variables: { stepActionKey },
       });
 
       if (!isDefined(data)) {
         return;
       }
 
-      void updateGettingStarted({ completedStep: step });
+      void updateGettingStarted({ completedStepActionKey: stepActionKey });
       navigateApp(AppPath.WorkflowCoreShowPage, {
         coreWorkflowId: data.prepareGettingStartedWorkflow.workflowId,
       });

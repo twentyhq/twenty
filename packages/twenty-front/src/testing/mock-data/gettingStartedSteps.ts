@@ -1,6 +1,6 @@
 import {
   type GettingStartedProgressQuery,
-  GettingStartedStep,
+  GettingStartedStepActionKey,
   GettingStartedStepKind,
 } from '~/generated-metadata/graphql';
 
@@ -8,7 +8,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
   [
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.CONNECT_MAILBOX,
+      actionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
       kind: GettingStartedStepKind.CUSTOM,
       title: 'Connect your mailbox',
       doneTitle: 'Mailbox connected',
@@ -21,7 +21,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.IMPORT_DATA,
+      actionKey: GettingStartedStepActionKey.IMPORT_DATA,
       kind: GettingStartedStepKind.CUSTOM,
       title: 'Import your data',
       doneTitle: 'Spreadsheet uploaded',
@@ -34,7 +34,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.INSTALL_APP,
+      actionKey: GettingStartedStepActionKey.INSTALL_APP,
       kind: GettingStartedStepKind.CUSTOM,
       title: 'Install an app',
       doneTitle: 'App installed',
@@ -46,7 +46,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.INVITE_TEAM,
+      actionKey: GettingStartedStepActionKey.INVITE_TEAM,
       kind: GettingStartedStepKind.CUSTOM,
       title: 'Invite your team',
       doneTitle: 'Invitations sent',
@@ -58,7 +58,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.HANDOVER_DEALS,
+      actionKey: GettingStartedStepActionKey.HANDOVER_DEALS,
       kind: GettingStartedStepKind.WORKFLOW,
       title: 'Hand over won deals',
       doneTitle: 'Workflow enabled',
@@ -70,7 +70,7 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
     {
       __typename: 'GettingStartedStepDefinition',
-      step: GettingStartedStep.FOLLOW_UP_DEALS,
+      actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
       kind: GettingStartedStepKind.PROMPT,
       title: 'Follow up on closing deals',
       doneTitle: 'Follow-up request sent',
@@ -83,5 +83,5 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
     },
   ];
 
-export const mockGettingStartedSteps: GettingStartedStep[] =
-  mockGettingStartedStepDefinitions.map(({ step }) => step);
+export const mockGettingStartedStepActionKeys: GettingStartedStepActionKey[] =
+  mockGettingStartedStepDefinitions.map(({ actionKey }) => actionKey);

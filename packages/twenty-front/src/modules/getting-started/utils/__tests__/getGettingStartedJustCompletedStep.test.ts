@@ -1,11 +1,11 @@
 import { getGettingStartedJustCompletedStep } from '@/getting-started/utils/getGettingStartedJustCompletedStep';
-import { GettingStartedStep } from '~/generated-metadata/graphql';
+import { GettingStartedStepActionKey } from '~/generated-metadata/graphql';
 import { mockGettingStartedStepDefinitions } from '~/testing/mock-data/gettingStartedSteps';
 
 const PREVIOUS_PROGRESS = {
   steps: mockGettingStartedStepDefinitions,
-  completedSteps: [GettingStartedStep.CONNECT_MAILBOX],
-  selectedStep: GettingStartedStep.INVITE_TEAM,
+  completedStepActionKeys: [GettingStartedStepActionKey.CONNECT_MAILBOX],
+  selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
 };
 
 describe('getGettingStartedJustCompletedStep', () => {
@@ -14,34 +14,36 @@ describe('getGettingStartedJustCompletedStep', () => {
       getGettingStartedJustCompletedStep({
         previousProgress: PREVIOUS_PROGRESS,
         progress: {
-          completedSteps: [
-            GettingStartedStep.CONNECT_MAILBOX,
-            GettingStartedStep.INVITE_TEAM,
+          completedStepActionKeys: [
+            GettingStartedStepActionKey.CONNECT_MAILBOX,
+            GettingStartedStepActionKey.INVITE_TEAM,
           ],
         },
       }),
-    ).toBe(GettingStartedStep.INVITE_TEAM);
+    ).toBe(GettingStartedStepActionKey.INVITE_TEAM);
   });
 
   it('falls back to the first remaining step when none is selected', () => {
     expect(
       getGettingStartedJustCompletedStep({
-        previousProgress: { ...PREVIOUS_PROGRESS, selectedStep: null },
+        previousProgress: { ...PREVIOUS_PROGRESS, selectedStepActionKey: null },
         progress: {
-          completedSteps: [
-            GettingStartedStep.CONNECT_MAILBOX,
-            GettingStartedStep.IMPORT_DATA,
+          completedStepActionKeys: [
+            GettingStartedStepActionKey.CONNECT_MAILBOX,
+            GettingStartedStepActionKey.IMPORT_DATA,
           ],
         },
       }),
-    ).toBe(GettingStartedStep.IMPORT_DATA);
+    ).toBe(GettingStartedStepActionKey.IMPORT_DATA);
   });
 
   it('returns null on the first progress, so a page load never animates', () => {
     expect(
       getGettingStartedJustCompletedStep({
         previousProgress: undefined,
-        progress: { completedSteps: [GettingStartedStep.INVITE_TEAM] },
+        progress: {
+          completedStepActionKeys: [GettingStartedStepActionKey.INVITE_TEAM],
+        },
       }),
     ).toBeNull();
   });
@@ -51,9 +53,9 @@ describe('getGettingStartedJustCompletedStep', () => {
       getGettingStartedJustCompletedStep({
         previousProgress: PREVIOUS_PROGRESS,
         progress: {
-          completedSteps: [
-            GettingStartedStep.CONNECT_MAILBOX,
-            GettingStartedStep.INSTALL_APP,
+          completedStepActionKeys: [
+            GettingStartedStepActionKey.CONNECT_MAILBOX,
+            GettingStartedStepActionKey.INSTALL_APP,
           ],
         },
       }),
@@ -65,12 +67,12 @@ describe('getGettingStartedJustCompletedStep', () => {
       getGettingStartedJustCompletedStep({
         previousProgress: {
           ...PREVIOUS_PROGRESS,
-          selectedStep: GettingStartedStep.CONNECT_MAILBOX,
+          selectedStepActionKey: GettingStartedStepActionKey.CONNECT_MAILBOX,
         },
         progress: {
-          completedSteps: [
-            GettingStartedStep.CONNECT_MAILBOX,
-            GettingStartedStep.INVITE_TEAM,
+          completedStepActionKeys: [
+            GettingStartedStepActionKey.CONNECT_MAILBOX,
+            GettingStartedStepActionKey.INVITE_TEAM,
           ],
         },
       }),

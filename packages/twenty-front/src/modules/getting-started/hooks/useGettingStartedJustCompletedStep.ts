@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type GettingStartedProgressQuery,
-  type GettingStartedStep,
+  type GettingStartedStepActionKey,
 } from '~/generated-metadata/graphql';
 
 export const useGettingStartedJustCompletedStep = ({
@@ -14,7 +14,7 @@ export const useGettingStartedJustCompletedStep = ({
 }) => {
   const [seenProgress, setSeenProgress] = useState(progress);
   const [justCompletedStep, setJustCompletedStep] =
-    useState<GettingStartedStep | null>(null);
+    useState<GettingStartedStepActionKey | null>(null);
 
   if (isDefined(progress) && progress !== seenProgress) {
     const newlyCompletedStep = getGettingStartedJustCompletedStep({

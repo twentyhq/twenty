@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const GETTING_STARTED_PROGRESS_FRAGMENT = gql`
   fragment GettingStartedProgressFields on GettingStartedProgress {
     steps {
-      step
+      actionKey
       kind
       title
       doneTitle
@@ -13,8 +13,8 @@ export const GETTING_STARTED_PROGRESS_FRAGMENT = gql`
       promptLabel
       prompt
     }
-    completedSteps
-    selectedStep
+    completedStepActionKeys
+    selectedStepActionKey
     snoozedUntil
     isHidden
   }
