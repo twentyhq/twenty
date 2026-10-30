@@ -548,11 +548,17 @@ describe('cleanupOrphanedRecallBots', () => {
     const NOW = new Date('2026-01-01T12:00:00.000Z');
 
     class FakeCoreApiClientWithCalendarEvents extends FakeCoreApiClient {
-      constructor(
-        callRecordings: CallRecordingNode[],
-        private meetingStartsAt: string,
-      ) {
+      private meetingStartsAt: string;
+
+      constructor({
+        callRecordings,
+        meetingStartsAt,
+      }: {
+        callRecordings: CallRecordingNode[];
+        meetingStartsAt: string;
+      }) {
         super(callRecordings);
+        this.meetingStartsAt = meetingStartsAt;
       }
 
       override async query(query: any): Promise<any> {
@@ -594,8 +600,8 @@ describe('cleanupOrphanedRecallBots', () => {
       });
 
       return cleanupOrphanedRecallBots({
-        client: new FakeCoreApiClientWithCalendarEvents(
-          [
+        client: new FakeCoreApiClientWithCalendarEvents({
+          callRecordings: [
             {
               id: callRecordingId,
               recordingRequestStatus: 'CANCELED',
@@ -605,17 +611,19 @@ describe('cleanupOrphanedRecallBots', () => {
             },
           ],
           meetingStartsAt,
-        ) as unknown as CoreApiClient,
+        }) as unknown as CoreApiClient,
         joinAtAfter: JOIN_AT_AFTER,
         joinAtBefore: JOIN_AT_BEFORE,
         now: NOW,
       });
     };
 
-    const stubAppPreferencesFlag = (value: boolean) => {
+    const stubAppPreferencesFlag = (isEnabled: boolean) => {
       metadataQueryMock.mockResolvedValue({
         currentWorkspace: {
-          featureFlags: [{ key: 'IS_APP_PREFERENCES_ENABLED', value }],
+          featureFlags: [
+            { key: 'IS_APP_PREFERENCES_ENABLED', value: isEnabled },
+          ],
         },
       });
     };
