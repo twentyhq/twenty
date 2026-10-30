@@ -5,7 +5,7 @@ import { type HostOutsidePressController } from '@/host/events/types/HostOutside
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 
 type FrontComponentOutsidePressEffectProps = {
-  thread: FrontComponentThread;
+  thread: Pick<FrontComponentThread, 'imports'>;
   outsidePressController: HostOutsidePressController;
 };
 

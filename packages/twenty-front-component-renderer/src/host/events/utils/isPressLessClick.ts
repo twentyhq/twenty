@@ -1,2 +1,3 @@
-export const isPressLessClick = (event: MouseEvent): boolean =>
-  event.type === 'click' && event.detail === 0;
+export const isPressLessClick = (
+  event: Pick<MouseEvent, 'type' | 'detail'>,
+): boolean => event.type === 'click' && event.detail === 0;
