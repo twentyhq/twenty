@@ -28,7 +28,6 @@ type DirectMessageIdentity = {
 describe('Canonical direct message identity', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
   let service: AgentChatDirectMessageIdentityService;
-  const otherWorkspaceThreadIds = new Set<string>();
 
   beforeEach(async () => {
     context = await createChatParticipationTestContext();
@@ -38,38 +37,25 @@ describe('Canonical direct message identity', () => {
   });
 
   afterEach(async () => {
-    await global.testDataSource.query(
-      `DELETE FROM "${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}"."agentChatThread" WHERE id = ANY($1::uuid[])`,
-      [[...otherWorkspaceThreadIds]],
-    );
-    otherWorkspaceThreadIds.clear();
     await context.cleanup();
-    jest.restoreAllMocks();
   });
 
   const getOrCreate = async ({
-    workspaceId = context.workspaceId,
     firstWorkspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     secondWorkspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   }: Partial<
-    Parameters<AgentChatDirectMessageIdentityService['getOrCreate']>[0]
-  > = {}) => {
-    const threadId = await service.getOrCreate({
-      workspaceId,
-      firstWorkspaceMemberId,
-      secondWorkspaceMemberId,
-    });
-
-    if (workspaceId === context.workspaceId) {
-      context.registerThread(threadId);
-
-      return threadId;
-    }
-
-    otherWorkspaceThreadIds.add(threadId);
-
-    return threadId;
-  };
+    Omit<
+      Parameters<AgentChatDirectMessageIdentityService['getOrCreate']>[0],
+      'workspaceId'
+    >
+  > = {}) =>
+    context.registerThread(
+      await service.getOrCreate({
+        workspaceId: context.workspaceId,
+        firstWorkspaceMemberId,
+        secondWorkspaceMemberId,
+      }),
+    );
 
   const readIdentity = async (threadId: string) => {
     const [identity]: DirectMessageIdentity[] =
@@ -119,11 +105,22 @@ describe('Canonical direct message identity', () => {
     const janeAndTim = await getOrCreate({
       secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     });
-    const otherWorkspacePair = await getOrCreate({
+    const otherWorkspacePair = await service.getOrCreate({
       workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+      firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    expect(new Set([janeAndJony, janeAndTim, otherWorkspacePair]).size).toBe(3);
+    try {
+      expect(new Set([janeAndJony, janeAndTim, otherWorkspacePair]).size).toBe(
+        3,
+      );
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM "${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+        [otherWorkspacePair],
+      );
+    }
   });
 
   it('allocates a normalized dormant identity without inbox or assistant side effects', async () => {
@@ -242,8 +239,9 @@ describe('Canonical direct message identity', () => {
       getOrCreate({ secondWorkspaceMemberId: randomUUID() }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     await expect(
-      getOrCreate({
+      service.getOrCreate({
         workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
         secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
