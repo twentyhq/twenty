@@ -1,10 +1,3 @@
-import { useMemo } from 'react';
-import { styled } from '@linaria/react';
-
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { RecordIdentifierBarCreatedAt } from '@/object-record/record-show/components/RecordIdentifierBarCreatedAt';
 import { RecordIdentifierBarTitle } from '@/object-record/record-show/components/RecordIdentifierBarTitle';
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
@@ -19,18 +12,20 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
+import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabPresentation } from '@/page-layout/utils/getTabPresentation';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
-import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordIdentifierBar = styled.div`
   align-items: center;
@@ -144,53 +139,32 @@ export const PageLayoutSingleTabRenderer = ({
     }),
   );
 
-  const recordFilterValueDependencies = useMemo(
-    () => ({
-      currentRecord:
-        layoutType === PageLayoutType.RECORD_PAGE &&
-        isDefined(targetRecordIdentifier)
-          ? {
-              id: targetRecordIdentifier.id,
-              objectMetadataNameSingular:
-                targetRecordIdentifier.targetObjectNameSingular,
-            }
-          : undefined,
-    }),
-    [layoutType, targetRecordIdentifier],
-  );
-
   return (
-    <RecordFilterValueDependenciesContext.Provider
-      value={recordFilterValueDependencies}
+    <PageLayoutComponentInstanceContext.Provider
+      value={{
+        instanceId: pageLayoutComponentInstanceId,
+      }}
     >
-      <PageLayoutComponentInstanceContext.Provider
+      <TabListComponentInstanceContext.Provider
         value={{
-          instanceId: pageLayoutComponentInstanceId,
+          instanceId: tabListInstanceId,
         }}
       >
-        <TabListComponentInstanceContext.Provider
-          value={{
-            instanceId: tabListInstanceId,
-          }}
+        <PageLayoutSidePanelTargetProvider
+          pageLayoutId={pageLayoutComponentInstanceId}
+          targetRecordIdentifier={targetRecordIdentifier}
         >
-          <PageLayoutSidePanelTargetProvider
-            pageLayoutId={pageLayoutComponentInstanceId}
-            targetRecordIdentifier={targetRecordIdentifier}
+          <PageLayoutEditModeProvider
+            layoutType={layoutType}
+            pageLayoutId={pageLayoutId}
           >
-            <PageLayoutEditModeProvider
-              layoutType={layoutType}
-              pageLayoutId={pageLayoutId}
-            >
-              <PageLayoutInitializationQueryEffect
-                pageLayoutId={pageLayoutId}
-              />
-              <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-              <RecordTableWidgetViewDraftsInitializationEffect />
-              <PageLayoutSingleTabRendererContent />
-            </PageLayoutEditModeProvider>
-          </PageLayoutSidePanelTargetProvider>
-        </TabListComponentInstanceContext.Provider>
-      </PageLayoutComponentInstanceContext.Provider>
-    </RecordFilterValueDependenciesContext.Provider>
+            <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+            <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+            <RecordTableWidgetViewDraftsInitializationEffect />
+            <PageLayoutSingleTabRendererContent />
+          </PageLayoutEditModeProvider>
+        </PageLayoutSidePanelTargetProvider>
+      </TabListComponentInstanceContext.Provider>
+    </PageLayoutComponentInstanceContext.Provider>
   );
 };

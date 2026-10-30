@@ -2,6 +2,7 @@ import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/R
 import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelPinnedCommandMenuItems';
 import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
+import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
@@ -13,6 +14,7 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
+import { useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -61,6 +63,20 @@ export const PageLayoutRecordPageRenderer = ({
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
 
+  const recordFilterValueDependencies = useMemo(
+    () => ({
+      currentRecord: {
+        id: targetRecordIdentifier.id,
+        objectMetadataNameSingular:
+          targetRecordIdentifier.targetObjectNameSingular,
+      },
+    }),
+    [
+      targetRecordIdentifier.id,
+      targetRecordIdentifier.targetObjectNameSingular,
+    ],
+  );
+
   return (
     <PageLayoutIdContext.Provider value={pageLayoutId}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
@@ -93,9 +109,13 @@ export const PageLayoutRecordPageRenderer = ({
               isRecordIdentifierBarHidden,
             }}
           >
-            {isDefined(pageLayoutId) && (
-              <PageLayoutRenderer pageLayoutId={pageLayoutId} />
-            )}
+            <RecordFilterValueDependenciesContext.Provider
+              value={recordFilterValueDependencies}
+            >
+              {isDefined(pageLayoutId) && (
+                <PageLayoutRenderer pageLayoutId={pageLayoutId} />
+              )}
+            </RecordFilterValueDependenciesContext.Provider>
           </LayoutRenderingProvider>
         </StyledContentContainer>
 
