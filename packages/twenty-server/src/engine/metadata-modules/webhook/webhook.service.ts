@@ -80,21 +80,25 @@ export class WebhookService {
     webhookId: string;
     workspaceId: string;
   }): Promise<RoleDTO | null> {
-    const { webhookRoleMap, flatRoleMaps } =
+    const { flatRoleTargetMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'webhookRoleMap',
+        'flatRoleTargetMaps',
         'flatRoleMaps',
       ]);
 
-    const roleId = webhookRoleMap[webhookId];
+    const flatRoleTarget = findFlatRoleTargetFromForeignKey({
+      flatRoleTargetMaps,
+      targetMetadataForeignKey: 'webhookId',
+      targetId: webhookId,
+    });
 
-    if (!isDefined(roleId)) {
+    if (!isDefined(flatRoleTarget)) {
       return null;
     }
 
     return fromFlatRoleToRoleDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: roleId,
+        flatEntityId: flatRoleTarget.roleId,
         flatEntityMaps: flatRoleMaps,
       }),
     );

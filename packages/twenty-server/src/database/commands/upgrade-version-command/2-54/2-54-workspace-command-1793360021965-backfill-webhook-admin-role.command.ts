@@ -32,25 +32,25 @@ export class BackfillWebhookAdminRoleCommand extends ProvisionedWorkspaceCommand
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const {
-      flatWebhookMaps,
-      flatRoleMaps,
-      flatRoleTargetMaps,
-      flatAgentMaps,
-      webhookRoleMap,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatWebhookMaps',
-      'flatRoleMaps',
-      'flatRoleTargetMaps',
-      'flatAgentMaps',
-      'webhookRoleMap',
-    ]);
+    const { flatWebhookMaps, flatRoleMaps, flatRoleTargetMaps, flatAgentMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWebhookMaps',
+        'flatRoleMaps',
+        'flatRoleTargetMaps',
+        'flatAgentMaps',
+      ]);
+
+    const webhookIdsWithRole = new Set(
+      Object.values(flatRoleTargetMaps.byUniversalIdentifier)
+        .map((flatRoleTarget) => flatRoleTarget?.webhookId)
+        .filter(isDefined),
+    );
 
     const webhookIdsWithoutRole = Object.values(
       flatWebhookMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((flatWebhook) => !isDefined(webhookRoleMap[flatWebhook.id]))
+      .filter((flatWebhook) => !webhookIdsWithRole.has(flatWebhook.id))
       .map((flatWebhook) => flatWebhook.id);
 
     if (!isNonEmptyArray(webhookIdsWithoutRole)) {

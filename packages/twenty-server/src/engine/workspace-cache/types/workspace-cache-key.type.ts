@@ -50,7 +50,6 @@ export type WorkspaceDerivedCacheDataMap = {
   roleIdsWithAllRecordsAccess: string[];
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
-  webhookRoleMap: Record<string, string>;
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
 };
