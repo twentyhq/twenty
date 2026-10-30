@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { AiWorkspaceFrontComponentRuntimeEffect } from '@/front-components/components/AiWorkspaceFrontComponentRuntimeEffect';
 import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/AiWorkspaceFrontComponentRuntime';
-import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { useThemeColorScheme } from 'twenty-ui/theme';
@@ -10,10 +9,12 @@ import { FrontComponentLoadErrorToastEffect } from '@/front-components/component
 
 type AiWorkspaceFrontComponentProps = {
   frontComponentId: string;
+  applicationId: string;
 };
 
 export const AiWorkspaceFrontComponent = ({
   frontComponentId,
+  applicationId,
 }: AiWorkspaceFrontComponentProps) => {
   const colorScheme = useThemeColorScheme();
   const [runtime, setRuntime] = useState<AiWorkspaceFrontComponentRuntime>();
@@ -23,6 +24,7 @@ export const AiWorkspaceFrontComponent = ({
     <>
       <AiWorkspaceFrontComponentRuntimeEffect
         frontComponentId={frontComponentId}
+        applicationId={applicationId}
         onRuntimeLoaded={setRuntime}
         onError={setError}
       />
@@ -33,15 +35,6 @@ export const AiWorkspaceFrontComponent = ({
           componentId={frontComponentId}
           componentSource={runtime.componentSource}
           sharedDependenciesSource={runtime.sharedDependenciesSource}
-          sharedDependenciesUrl={
-            isDefined(runtime.sharedDependenciesChecksum)
-              ? getFingerprintedRestUrl({
-                  resource: 'front-component-shared-dependencies/bundles',
-                  id: runtime.applicationId,
-                  checksum: runtime.sharedDependenciesChecksum,
-                })
-              : undefined
-          }
           data={runtime.data}
           colorScheme={colorScheme}
           onError={setError}

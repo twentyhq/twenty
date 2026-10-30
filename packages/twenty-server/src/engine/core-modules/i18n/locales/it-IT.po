@@ -2803,6 +2803,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "Chat"
 
+#. js-lingui-id: Xm27Tc
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chats are not available yet. Try again in a few minutes."
+msgstr "Le chat non sono ancora disponibili. Riprova tra qualche minuto."
+
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3035,15 +3040,15 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Completato"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "La compilazione del componente ha superato il limite di tempo di 10 secondi."
+#. js-lingui-id: 3/Bvdi
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeded the {timeoutSeconds} second time limit."
+msgstr "La compilazione del componente ha superato il limite di tempo di {timeoutSeconds} secondi."
 
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "La compilazione del componente supera il limite di output di 5 MB."
+#. js-lingui-id: PfwSQo
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+msgstr "La compilazione del componente supera il limite di output di {maximumOutputMegabytes} MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3388,6 +3393,12 @@ msgstr "Dimensione della conversazione"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Dimensione della conversazione"
+
+#. js-lingui-id: mjQZyl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversation type"
+msgstr "Tipo di conversazione"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4360,6 +4371,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
 msgstr "Sviluppatori"
 
+#. js-lingui-id: Kggq11
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Direct message"
+msgstr "Messaggio diretto"
+
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "Direct upload is not supported for this file type."
@@ -4546,6 +4563,12 @@ msgstr "Opzione duplicata {field}"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Each agent trigger must be an object"
 msgstr "Ogni trigger dell'agente deve essere un oggetto"
+
+#. js-lingui-id: CRI2qP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Each related record path field must belong to the object reached by the previous relation"
+msgstr "Ogni campo del percorso del record correlato deve appartenere all'oggetto raggiunto dalla relazione precedente"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5144,7 +5167,7 @@ msgid "Failed to add people to the list."
 msgstr "Impossibile aggiungere le persone all'elenco."
 
 #. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
 msgstr "Impossibile compilare il componente front-end."
 
@@ -6792,12 +6815,12 @@ msgid "Invalid front component input."
 msgstr "Input del componente front-end non valido."
 
 #. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
 msgstr "Impostazioni del componente front-end non valide."
 
 #. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
 msgstr "Origine del componente front-end non valida."
 
@@ -7042,6 +7065,11 @@ msgstr "Destinatari non validi"
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Refresh token non valido."
+
+#. js-lingui-id: gKBOwI
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Invalid related record path input."
+msgstr "Input del percorso del record correlato non valido."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -8181,6 +8209,18 @@ msgstr "Membri"
 msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Membri"
+
+#. js-lingui-id: fqpInK
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Mentions resolved at"
+msgstr "Menzioni risolte alle"
+
+#. js-lingui-id: gzZpjR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Mentions up to this time are resolved for the member"
+msgstr "Le menzioni fino a questo momento sono risolte per il membro"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -9613,7 +9653,7 @@ msgstr "L'operando \"{rawOperand}\" di un filtro del grafico del widget \"{widge
 #. js-lingui-id: XBLJbc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand {operand} is not supported for field type {filterType}"
-msgstr ""
+msgstr "L'operando {operand} non è supportato per il tipo di campo {filterType}"
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10917,6 +10957,12 @@ msgstr "Refresh token non trovato."
 msgid "Registered by another workspace."
 msgstr "Registrato da un altro spazio di lavoro."
 
+#. js-lingui-id: jLE5Bj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Regular chat"
+msgstr "Chat normale"
+
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10939,6 +10985,53 @@ msgstr "Record correlato"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
 msgstr "Record correlato non trovato."
+
+#. js-lingui-id: WrvTKN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot skip its second relation"
+msgstr "Il percorso del record correlato non può saltare la sua seconda relazione"
+
+#. js-lingui-id: 4sEoVQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot visit the same object twice"
+msgstr "Il percorso del record correlato non può visitare lo stesso oggetto due volte"
+
+#. js-lingui-id: fXYaod
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path field not found"
+msgstr "Campo del percorso del record correlato non trovato"
+
+#. js-lingui-id: ZyTgMJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be active"
+msgstr "I campi del percorso del record correlato devono essere attivi"
+
+#. js-lingui-id: mpKEGh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be relations"
+msgstr "I campi del percorso del record correlato devono essere relazioni"
+
+#. js-lingui-id: pHqQra
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path not found"
+msgstr "Percorso del record correlato non trovato"
+
+#. js-lingui-id: JUo4rP
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record path not found."
+msgstr "Percorso del record correlato non trovato."
+
+#. js-lingui-id: YYg7qq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path object not found"
+msgstr "Oggetto del percorso del record correlato non trovato"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11884,10 +11977,20 @@ msgstr "Funzione di logica del server non trovata."
 msgid "Server logic function requires authentication."
 msgstr "La funzione di logica del server richiede l'autenticazione."
 
+#. js-lingui-id: VOUkzJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "Server routes can only be defined by an application."
+msgstr "Le route del server possono essere definite solo da un'applicazione."
+
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Server-level impersonation is not enabled for this user or workspace."
 msgstr "L'impersonazione a livello di server non è abilitata per questo utente o spazio di lavoro."
+
+#. js-lingui-id: y4fTj2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "serverRouteTriggerSettings can only be set by an installed application"
+msgstr "serverRouteTriggerSettings può essere impostato solo da un'applicazione installata"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11959,6 +12062,11 @@ msgstr "Il titolo della voce del menu delle impostazioni \"{updatedTitle}\" è r
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Il titolo della voce del menu delle impostazioni è obbligatorio"
+
+#. js-lingui-id: AaiDcy
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "Several applications declare this server route. Use the application registration URL instead."
+msgstr "Diverse applicazioni dichiarano questa route del server. Utilizza invece l'URL di registrazione dell'applicazione."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -14173,7 +14281,7 @@ msgstr "Questo permesso dell'oggetto è già impostato per il ruolo"
 #. js-lingui-id: JHfGIK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this field"
-msgstr ""
+msgstr "Questo operando non è supportato per questo campo"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14250,6 +14358,12 @@ msgstr "Questo record non può essere eliminato perché è ancora referenziato d
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Questo record non esiste o è stato eliminato."
+
+#. js-lingui-id: AzRcHW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "This related record path already exists"
+msgstr "Questo percorso del record correlato esiste già"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16302,6 +16416,12 @@ msgstr "Se l'assistente partecipa a questa conversazione"
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
 msgstr "Indica se l'handle è bloccato per un singolo membro dello spazio di lavoro o per l'intero spazio di lavoro"
+
+#. js-lingui-id: zsdmbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether this is a regular chat or a canonical direct message"
+msgstr "Indica se si tratta di una chat normale o di un messaggio diretto canonico"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

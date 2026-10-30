@@ -103,6 +103,7 @@ export const FrontComponentRenderer = ({
       <AiWorkspaceFrontComponent
         key={`${frontComponent.id}:${frontComponent.builtComponentChecksum}`}
         frontComponentId={frontComponent.id}
+        applicationId={frontComponent.applicationId}
       />
     );
   }

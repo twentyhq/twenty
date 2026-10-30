@@ -124,12 +124,12 @@ msgstr "\"{subfieldName}\" không phải là trường con của \"{fieldName}\"
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} tín dụng/tháng)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} tín dụng/năm)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -907,11 +907,6 @@ msgstr "{morphRelationCount} Đối tượng"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, other {Bạn đã nhận {formattedNewlyEarnedCredits} tín dụng miễn phí}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, other {Không có ứng dụng đã được thẩm định nào phù hợp. Có # ứng dụng chưa được thẩm định.}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1058,22 +1053,22 @@ msgstr "{scopeLabel} — giá trị mặc định của phiên bản là {defaul
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, được đặt lại mỗi tháng"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, được đặt lại mỗi tháng · {packageCreditsDisplay} từ gói tín dụng của bạn, được chuyển sang kỳ sau"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, đặt lại mỗi năm"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} từ chỗ ngồi, đặt lại mỗi năm · {packageCreditsDisplay} từ gói tín dụng của bạn, được chuyển sang"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1215,6 +1210,11 @@ msgstr "{unitCount, plural, one {Tuần} other {Tuần}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Năm} other {Năm}}"
 
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr "{unlistedCount, plural, other {Không có ứng dụng nào trong danh sách khớp. Có # ứng dụng chưa được liệt kê.}}"
+
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
 msgid "{unresolvedCount, plural, one {# other object} other {# other objects}}"
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# mục}}"
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, other {{workspaceCreditsPerSeatPerMonthDisplay} tín dụng/tháng}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3245,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Tất cả nhiệm vụ đã được xử lý. Hãy duy trì đà này."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Tất cả các ứng dụng hiện được cài đặt trong không gian làm việc này"
 
@@ -3329,11 +3329,6 @@ msgstr "Cho phép đăng nhập dựa trên Google cho người dùng có quyề
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "Cho phép nhập dữ liệu từ các tệp CSV"
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "Cho phép cài đặt"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3723,6 +3718,11 @@ msgstr "Dấu nháy đơn và dấu chấm"
 msgid "App"
 msgstr "Ứng dụng"
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr "Không thể tải cấu hình ứng dụng. Kiểm tra kết nối của bạn rồi thử lại."
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3800,11 +3800,6 @@ msgstr "Đã cài đặt ứng dụng thành công."
 msgid "Application Logs"
 msgstr "Nhật ký ứng dụng"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "Ứng dụng này không được niêm yết trên chợ ứng dụng. Nó đã được chia sẻ qua liên kết trực tiếp"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3844,10 +3839,10 @@ msgstr "biến ứng dụng"
 msgid "Applications"
 msgstr "Ứng dụng"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "Các ứng dụng bên dưới chưa được thẩm định. Tự chịu rủi ro khi sử dụng."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr "Các ứng dụng bên dưới chưa được Twenty xem xét. Tự chịu rủi ro khi sử dụng."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -3915,6 +3910,7 @@ msgid "Apps"
 msgstr "Ứng dụng"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3924,6 +3920,11 @@ msgstr "Ứng dụng"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
 msgstr "Tùy chọn ứng dụng"
+
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr "Tùy chọn ứng dụng - Cài đặt"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -6941,6 +6942,12 @@ msgstr "Kết nối với không gian làm việc này"
 msgid "Connect via IMAP/SMTP"
 msgstr "Kết nối qua IMAP/SMTP"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr "Kết nối với {0}"
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8035,7 +8042,7 @@ msgstr "Đã đạt giới hạn tín dụng. Cập nhật gói tín dụng đ�
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "Gói tín dụng"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8943,6 +8950,11 @@ msgstr "Xác định tên và mô tả của đối tượng của bạn"
 msgid "Define the name and instructions for this skill"
 msgstr "Xác định tên và hướng dẫn cho kỹ năng này"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "Xác định các mối quan hệ mà quyền của một bản ghi được mở rộng sang các bản ghi liên quan."
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -9708,11 +9720,6 @@ msgstr "Tên hiển thị cho mô hình"
 msgid "Display text on multiple lines"
 msgstr "Hiển thị văn bản trên nhiều dòng"
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "Hiển thị ứng dụng này trong danh sách gói NPM"
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10114,6 +10121,11 @@ msgstr "Mỗi thành viên nhận được một hạn mức AI, được dùng 
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Mỗi phần đại diện cho"
+
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr "Trước đó"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -14612,7 +14624,7 @@ msgstr "Đã bao gồm"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "Bao gồm cho mỗi chỗ ngồi"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14861,7 +14873,7 @@ msgid "Installed"
 msgstr "Đã cài đặt"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr "Ứng dụng đã cài đặt"
 
@@ -16278,8 +16290,14 @@ msgstr "Danh sách có hộp kiểm"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Đã niêm yết"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr "Được niêm yết trên chợ ứng dụng"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16328,6 +16346,11 @@ msgstr "Tải thêm"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
+msgstr "Tải thêm cuộc trò chuyện"
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
 msgstr "Tải thêm cuộc trò chuyện"
 
 #. js-lingui-id: CZGQgK
@@ -16464,6 +16487,7 @@ msgstr "Đang tải..."
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Đang tải…"
@@ -16909,10 +16933,10 @@ msgstr "Đánh dấu tất cả là đã hoàn thành"
 msgid "Mark as favourite"
 msgstr "Đánh dấu là yêu thích"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "Đánh dấu ứng dụng này là đã xem xét và phê duyệt"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr "Đánh dấu ứng dụng này là đã được xem xét và hiển thị trên chợ ứng dụng"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17366,7 +17390,7 @@ msgid "Missing calendar permission."
 msgstr "Thiếu quyền truy cập lịch."
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr "Thiếu cấu hình"
 
@@ -19391,7 +19415,7 @@ msgid "Not configured"
 msgstr "Chưa được cấu hình"
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr "Chưa kết nối"
 
@@ -21998,8 +22022,8 @@ msgid "Reconnect"
 msgstr "Kết nối lại"
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr "Cần kết nối lại"
@@ -22346,6 +22370,16 @@ msgstr "Từ chối"
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Đã từ chối"
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "đường dẫn bản ghi liên quan"
+
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "Đường dẫn bản ghi liên quan"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -25194,6 +25228,7 @@ msgstr "Hiện hộp thư đến"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr "Hiển thị ít hơn"
 
@@ -25203,6 +25238,7 @@ msgid "Show logs"
 msgstr "Hiển thị nhật ký"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25229,6 +25265,11 @@ msgstr "Hiển thị loại hoạt động này trong dòng thời gian của b�
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
 msgstr "Hiển thị các bản ghi của đối tượng này trong menu lệnh ({0})."
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr "Hiển thị các ứng dụng chưa được niêm yết"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27320,11 +27361,11 @@ msgstr "Ứng dụng này không có trên chợ ứng dụng. Có thể ứng d
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "Ứng dụng này chưa được cài đặt trong không gian làm việc này. Có thể ứng dụng đã bị gỡ cài đặt hoặc liên kết không đúng."
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "Ứng dụng này chưa được Twenty thẩm định. Tự chịu rủi ro khi sử dụng."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr "Ứng dụng này không được niêm yết trên chợ ứng dụng và chưa được Twenty xem xét. Hãy tự chịu rủi ro khi sử dụng."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -27659,6 +27700,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "Chế độ xem này sử dụng {usageLabel} trên đối tượng \"{0}\" mà không thể truy cập được."
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29091,6 +29133,7 @@ msgstr "cập nhật"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29947,17 +29990,6 @@ msgstr ""
 msgid "Very High"
 msgstr "Rất cao"
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "Đã thẩm định"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "Chỉ đã thẩm định"
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30346,7 +30378,6 @@ msgstr "Xem bản demo thành viên"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Hiện tại chúng tôi đang gặp sự cố với ứng dụng này; trong khi chúng tôi khắc phục, hoạt động của ứng dụng có thể bị ảnh hưởng."
 
@@ -31329,12 +31360,6 @@ msgstr "Bạn không có quyền truy cập vào đối tượng này."
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "Bạn không có quyền truy cập vào trang cài đặt này."
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "Bạn chưa có kết nối {0}."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

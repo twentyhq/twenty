@@ -1,6 +1,11 @@
 import '@/testing/setupServerRenderingGlobals';
 
 import { ThreadMessagePort } from '@quilted/threads';
+import {
+  MUTATION_TYPE_INSERT_CHILD,
+  NODE_TYPE_TEXT,
+  ROOT_ID,
+} from '@remote-dom/core';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { act, createElement, type ComponentProps } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -10,6 +15,7 @@ import { type HostFocusController } from '@/host/focus/types/HostFocusController
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
+import { createHostOutsidePressControllerStub } from '@/testing/createHostOutsidePressControllerStub';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentWorkerEffect } from '../FrontComponentWorkerEffect';
 
@@ -67,7 +73,13 @@ const createDeferredRender = () => {
     control.rejectRender = reject;
   });
 
-  return { ...control, render: jest.fn(() => pendingRender) };
+  return {
+    ...control,
+    render: jest.fn<
+      ReturnType<FrontComponentThread['imports']['render']>,
+      Parameters<FrontComponentThread['imports']['render']>
+    >(() => pendingRender),
+  };
 };
 
 const mockThreadRender = (
@@ -129,6 +141,7 @@ describe('FrontComponentWorkerEffect', () => {
       geometryTracker: createGeometryTrackerStub(),
       hostFocusController: createHostFocusControllerStub(),
       hostScrollController: createHostScrollControllerStub(),
+      outsidePressController: createHostOutsidePressControllerStub(),
       setReceiver,
       setThread: jest.fn(),
       setError,
@@ -150,42 +163,82 @@ describe('FrontComponentWorkerEffect', () => {
     return renderEffect;
   };
 
-  it('should hand the receiver to the host only once the worker has rendered', async () => {
+  it('keeps the receiver connected while waiting for readiness', async () => {
     const { render, resolveRender } = createDeferredRender();
-
     mockThreadRender(render);
-
     const setReceiver = jest.fn();
+    const onReady = jest.fn();
 
-    mountEffect({ setReceiver, setError: jest.fn() });
+    mountEffect({ setReceiver, setError: jest.fn(), onReady });
     await flushPendingWork();
 
-    expect(render).toHaveBeenCalledTimes(1);
-    expect(setReceiver).not.toHaveBeenCalled();
+    expect(setReceiver).toHaveBeenCalledWith(expect.any(RemoteReceiver));
+    expect(onReady).not.toHaveBeenCalled();
 
     resolveRender();
     await flushPendingWork();
 
     expect(setReceiver).toHaveBeenCalledTimes(1);
-    expect(setReceiver).toHaveBeenCalledWith(expect.any(RemoteReceiver));
+    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
-  it('should report a failed render instead of handing over the receiver', async () => {
+  it('keeps receiving late mutations after the initial render times out', async () => {
     const { render, rejectRender } = createDeferredRender();
-
     mockThreadRender(render);
-
     const setReceiver = jest.fn();
     const setError = jest.fn();
+    const onReady = jest.fn();
 
-    mountEffect({ setReceiver, setError });
+    mountEffect({ setReceiver, setError, onReady });
     await flushPendingWork();
 
-    rejectRender(new Error('render failed'));
+    const error = new Error('Front component initial render timed out.');
+    rejectRender(error);
     await flushPendingWork();
 
-    expect(setReceiver).not.toHaveBeenCalled();
-    expect(setError).toHaveBeenCalledWith(expect.any(Error));
+    const receiver = setReceiver.mock.calls[0][0] as RemoteReceiver;
+    const connection = render.mock.calls[0][0];
+    connection.mutate([
+      [
+        MUTATION_TYPE_INSERT_CHILD,
+        ROOT_ID,
+        { id: 'late-text', type: NODE_TYPE_TEXT, data: 'Late render' },
+        0,
+      ],
+    ]);
+
+    expect(receiver.root.children).toEqual([
+      expect.objectContaining({ data: 'Late render' }),
+    ]);
+    expect(setReceiver).toHaveBeenCalledTimes(1);
+    expect(setError).toHaveBeenLastCalledWith(error);
+    expect(onReady).not.toHaveBeenCalled();
+  });
+
+  it('clears a previous error when new props restart the worker', async () => {
+    const error = new Error('Initial render failed');
+    const render = jest
+      .fn()
+      .mockRejectedValueOnce(error)
+      .mockResolvedValue(undefined);
+    mockThreadRender(render);
+    const setError = jest.fn();
+    const onReady = jest.fn();
+    const rerender = mountEffect({
+      setReceiver: jest.fn(),
+      setError,
+      onReady,
+      componentProps: { count: 1 },
+    });
+    await flushPendingWork();
+    expect(setError).toHaveBeenLastCalledWith(error);
+
+    rerender({ componentProps: { count: 2 } });
+    expect(setError).toHaveBeenLastCalledWith(null);
+    await flushPendingWork();
+
+    expect(setError).toHaveBeenLastCalledWith(null);
+    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the worker for equal props and uses the latest ready callback', async () => {

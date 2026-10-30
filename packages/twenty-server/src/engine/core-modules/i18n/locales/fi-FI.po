@@ -2803,6 +2803,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "Keskustelut"
 
+#. js-lingui-id: Xm27Tc
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chats are not available yet. Try again in a few minutes."
+msgstr "Keskustelut eivät ole vielä käytettävissä. Yritä uudelleen muutaman minuutin kuluttua."
+
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3035,15 +3040,15 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Valmis"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "Komponentin koonti ylitti 10 sekunnin aikarajan."
+#. js-lingui-id: 3/Bvdi
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeded the {timeoutSeconds} second time limit."
+msgstr "Komponentin koonti ylitti {timeoutSeconds} sekunnin aikarajan."
 
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "Komponentin koonti ylittää 5 Mt:n tulosterajan."
+#. js-lingui-id: PfwSQo
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+msgstr "Komponentin koonti ylittää {maximumOutputMegabytes} Mt:n tulosterajan."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3388,6 +3393,12 @@ msgstr "Keskustelun koko"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Keskustelun koko"
+
+#. js-lingui-id: mjQZyl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversation type"
+msgstr "Keskustelutyyppi"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4360,6 +4371,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
 msgstr "Kehittäjät"
 
+#. js-lingui-id: Kggq11
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Direct message"
+msgstr "Suora viesti"
+
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "Direct upload is not supported for this file type."
@@ -4546,6 +4563,12 @@ msgstr "Monistettu vaihtoehto {field}"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Each agent trigger must be an object"
 msgstr "Jokaisen agentin laukaisimen on oltava objekti"
+
+#. js-lingui-id: CRI2qP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Each related record path field must belong to the object reached by the previous relation"
+msgstr "Jokaisen liittyvän tietueen polun kentän on kuuluttava edellisen relaation kautta saavutettuun objektiin"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5144,7 +5167,7 @@ msgid "Failed to add people to the list."
 msgstr "Henkilöiden lisääminen listaan epäonnistui."
 
 #. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
 msgstr "Front-komponentin koonti epäonnistui."
 
@@ -6792,12 +6815,12 @@ msgid "Invalid front component input."
 msgstr "Virheellinen front-komponentin syöte."
 
 #. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
 msgstr "Virheelliset front-komponentin asetukset."
 
 #. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
 msgstr "Virheellinen front-komponentin lähde."
 
@@ -7042,6 +7065,11 @@ msgstr "Virheelliset vastaanottajat"
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Virheellinen päivitystunnus."
+
+#. js-lingui-id: gKBOwI
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Invalid related record path input."
+msgstr "Virheellinen liittyvän tietueen polun syöte."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -8181,6 +8209,18 @@ msgstr "Jäsenet"
 msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Jäsenet"
+
+#. js-lingui-id: fqpInK
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Mentions resolved at"
+msgstr "Maininnat selvitetty ajankohtana"
+
+#. js-lingui-id: gzZpjR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Mentions up to this time are resolved for the member"
+msgstr "Jäsenen tähän ajankohtaan asti tehdyt maininnat on selvitetty"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -9613,7 +9653,7 @@ msgstr "Kaaviosuodattimen operaandia \"{rawOperand}\" pienoisohjelmassa \"{widge
 #. js-lingui-id: XBLJbc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand {operand} is not supported for field type {filterType}"
-msgstr ""
+msgstr "Operaandia {operand} ei tueta kenttätyypille {filterType}"
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10917,6 +10957,12 @@ msgstr "Päivitystunnusta ei löytynyt."
 msgid "Registered by another workspace."
 msgstr "Toisen työtilan rekisteröimä."
 
+#. js-lingui-id: jLE5Bj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Regular chat"
+msgstr "Tavallinen keskustelu"
+
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10939,6 +10985,53 @@ msgstr "Liittyvä tietue"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
 msgstr "Liittyvää tietuetta ei löytynyt."
+
+#. js-lingui-id: WrvTKN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot skip its second relation"
+msgstr "Liittyvän tietueen polku ei voi ohittaa toista relaatiota"
+
+#. js-lingui-id: 4sEoVQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot visit the same object twice"
+msgstr "Liittyvän tietueen polku ei voi käydä samassa objektissa kahdesti"
+
+#. js-lingui-id: fXYaod
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path field not found"
+msgstr "Liittyvän tietueen polun kenttää ei löytynyt"
+
+#. js-lingui-id: ZyTgMJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be active"
+msgstr "Liittyvän tietueen polun kenttien on oltava aktiivisia"
+
+#. js-lingui-id: mpKEGh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be relations"
+msgstr "Liittyvän tietueen polun kenttien on oltava relaatioita"
+
+#. js-lingui-id: pHqQra
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path not found"
+msgstr "Liittyvän tietueen polkua ei löytynyt"
+
+#. js-lingui-id: JUo4rP
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record path not found."
+msgstr "Liittyvän tietueen polkua ei löytynyt."
+
+#. js-lingui-id: YYg7qq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path object not found"
+msgstr "Liittyvän tietueen polun objektia ei löytynyt"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11884,10 +11977,20 @@ msgstr "Palvelinlogiikkafunktiota ei löytynyt."
 msgid "Server logic function requires authentication."
 msgstr "Palvelinlogiikkafunktio edellyttää todennusta."
 
+#. js-lingui-id: VOUkzJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "Server routes can only be defined by an application."
+msgstr "Vain sovellus voi määrittää palvelinreitit."
+
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Server-level impersonation is not enabled for this user or workspace."
 msgstr "Palvelintason tekeytyminen toiseksi käyttäjäksi ei ole käytössä tälle käyttäjälle tai työtilalle."
+
+#. js-lingui-id: y4fTj2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "serverRouteTriggerSettings can only be set by an installed application"
+msgstr "serverRouteTriggerSettings voidaan asettaa vain asennetulla sovelluksella"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11959,6 +12062,11 @@ msgstr "Asetusten valikkokohdan otsikko \"{updatedTitle}\" on varattu"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item title is required"
 msgstr "Asetusten valikkokohdan otsikko vaaditaan"
+
+#. js-lingui-id: AaiDcy
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "Several applications declare this server route. Use the application registration URL instead."
+msgstr "Useat sovellukset määrittävät tämän palvelinreitin. Käytä sen sijaan sovelluksen rekisteröinti-URL-osoitetta."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -14173,7 +14281,7 @@ msgstr "Tämä kohteen käyttöoikeus on jo asetettu roolille"
 #. js-lingui-id: JHfGIK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this field"
-msgstr ""
+msgstr "Tätä operandia ei tueta tälle kentälle"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14250,6 +14358,12 @@ msgstr "Tätä tietuetta ei voi poistaa, koska muut tietueet viittaavat siihen e
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Tätä tietuetta ei ole olemassa tai se on poistettu."
+
+#. js-lingui-id: AzRcHW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "This related record path already exists"
+msgstr "Tämä liittyvän tietueen polku on jo olemassa"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16302,6 +16416,12 @@ msgstr "Osallistuuko avustaja tähän keskusteluun"
 msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
 msgstr "Onko tunniste estetty yksittäiseltä työtilan jäseneltä vai koko työtilalta"
+
+#. js-lingui-id: zsdmbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether this is a regular chat or a canonical direct message"
+msgstr "Onko tämä tavallinen keskustelu vai kanoninen suora viesti"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

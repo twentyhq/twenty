@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { type NextFunction, type Request, type Response } from 'express';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { CookieSessionCsrfMiddleware } from 'src/engine/middlewares/cookie-session-csrf.middleware';
@@ -52,6 +53,10 @@ describe('CookieSessionCsrfMiddleware', () => {
           useValue: {
             get: jest.fn((key: string) => mockConfig[key]),
           },
+        },
+        {
+          provide: MetricsService,
+          useValue: { incrementCounterBy: jest.fn() },
         },
         {
           provide: JwtWrapperService,
