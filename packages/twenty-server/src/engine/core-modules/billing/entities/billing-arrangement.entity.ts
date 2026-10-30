@@ -9,11 +9,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 
-// No foreign keys: the history must outlive the workspace and the rows it points to
 @Entity({ name: 'billingArrangement', schema: 'core' })
 @Index('IDX_BILLING_ARRANGEMENT_WORKSPACE_ID_TYPE', ['workspaceId', 'type'])
 export class BillingArrangementEntity {
@@ -30,8 +30,8 @@ export class BillingArrangementEntity {
   })
   type: BillingArrangementType;
 
-  @Column({ nullable: false, type: 'varchar', length: 100 })
-  label: string;
+  @Column({ nullable: false, type: 'varchar' })
+  label: BillingArrangementLabel;
 
   @Column({ nullable: true, type: 'varchar', length: 500 })
   comment: string | null;

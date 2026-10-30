@@ -44,10 +44,6 @@ export const getBillingArrangementValidationErrors = (
     }
   }
 
-  if (!isNonEmptyString(arrangement.label.trim())) {
-    errors.push({ code: 'EMPTY_LABEL' });
-  }
-
   if (
     isDefined(arrangement.seats) &&
     (!Number.isInteger(arrangement.seats) || arrangement.seats <= 0)

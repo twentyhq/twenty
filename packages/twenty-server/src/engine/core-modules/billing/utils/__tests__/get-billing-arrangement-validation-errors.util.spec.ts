@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
@@ -11,7 +12,7 @@ const draft = (
   overrides: Partial<BillingArrangementDraft> &
     Pick<BillingArrangementDraft, 'type'>,
 ): BillingArrangementDraft => ({
-  label: 'CUSTOM_DEAL',
+  label: BillingArrangementLabel.CUSTOM_DEAL,
   comment: null,
   startsAt: STARTS_AT,
   endsAt: null,
@@ -106,18 +107,6 @@ describe('getBillingArrangementValidationErrors', () => {
         }),
       ),
     ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeCouponId' }]);
-  });
-
-  it('requires a label', () => {
-    expect(
-      getBillingArrangementValidationErrors(
-        draft({
-          type: BillingArrangementType.FREE_SEATS,
-          seats: 3,
-          label: ' ',
-        }),
-      ),
-    ).toEqual([{ code: 'EMPTY_LABEL' }]);
   });
 
   it.each([0, -1, 1.5])('rejects %s seats', (seats) => {

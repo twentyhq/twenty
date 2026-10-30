@@ -8,7 +8,6 @@ export class CreateBillingArrangementTableFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Billing entities only load when billing is enabled
     const isBillingSchemaPresent = await queryRunner.query(
       `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
     );
@@ -30,7 +29,7 @@ export class CreateBillingArrangementTableFastInstanceCommand
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
         "type" "core"."billingArrangement_type_enum" NOT NULL,
-        "label" character varying(100) NOT NULL,
+        "label" character varying NOT NULL,
         "comment" character varying(500),
         "seats" integer,
         "seatCapMode" "core"."billingArrangement_seatcapmode_enum",
