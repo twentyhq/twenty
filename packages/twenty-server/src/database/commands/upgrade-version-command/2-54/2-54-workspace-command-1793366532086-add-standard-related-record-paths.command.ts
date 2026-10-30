@@ -69,15 +69,20 @@ export class AddStandardRelatedRecordPathsCommand extends ProvisionedWorkspaceCo
       }).byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        ({ firstFieldMetadataUniversalIdentifier }) =>
+      .filter(({ firstFieldMetadataUniversalIdentifier }) => {
+        const firstFlatFieldMetadata =
+          flatFieldMetadataMaps.byUniversalIdentifier[
+            firstFieldMetadataUniversalIdentifier
+          ];
+
+        return (
           !existingOneHopFieldUniversalIdentifiers.has(
             firstFieldMetadataUniversalIdentifier,
           ) &&
-          flatFieldMetadataMaps.byUniversalIdentifier[
-            firstFieldMetadataUniversalIdentifier
-          ]?.isActive === true,
-      );
+          isDefined(firstFlatFieldMetadata) &&
+          firstFlatFieldMetadata.isActive
+        );
+      });
 
     if (flatRelatedRecordPathsToCreate.length === 0) {
       return;
