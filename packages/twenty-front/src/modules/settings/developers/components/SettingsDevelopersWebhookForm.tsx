@@ -186,7 +186,7 @@ export const SettingsDevelopersWebhookForm = ({
           <Section.Root>
             <Section.Header
               title={t`Role`}
-              description={t`Only records and fields this role can read are sent to this endpoint.`}
+              description={t`The role attached to this webhook.`}
             />
             <Controller
               name="roleId"

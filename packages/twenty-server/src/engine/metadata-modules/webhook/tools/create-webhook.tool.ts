@@ -29,7 +29,7 @@ const createWebhookInputSchema = z.object({
   roleId: z
     .uuid()
     .describe(
-      'Id of the role whose read permissions filter the payloads. Must be a role assignable to API keys.',
+      'Id of the role attached to the webhook. Must be a role assignable to API keys.',
     ),
 });
 
