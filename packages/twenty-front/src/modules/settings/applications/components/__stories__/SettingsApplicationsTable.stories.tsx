@@ -210,7 +210,7 @@ export const MemberRowsLinkToTheirPreferences: Story = {
 
     expect(
       within(canvas.getByRole('link', { name: /Zapier/ })).getByText(
-        'Inactive',
+        'Not connected',
       ),
     ).toBeVisible();
   },
