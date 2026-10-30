@@ -21,6 +21,7 @@ import { type RedisClientService } from 'src/engine/core-modules/redis-client/re
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -71,14 +72,6 @@ describe('Shared conversation API boundaries', () => {
       );
   };
 
-  const readTurnCount = async (threadId: string) => {
-    const [{ count }]: { count: number }[] = await global.testDataSource.query(
-      `SELECT count(*)::int AS count FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
-      [threadId],
-    );
-
-    return count;
-  };
   const createSharedThread = async () => {
     const threadId = await context.createThread();
 
@@ -519,14 +512,18 @@ describe('Shared conversation API boundaries', () => {
       queued: false,
       streamId: null,
     });
-    expect(
-      await context.chatService.getMessagesForThread({
-        threadId,
-        workspaceId: context.workspaceId,
-        workspaceMemberId: context.workspaceMemberId,
-      }),
-    ).toContainEqual(expect.objectContaining({ id: messageId }));
-    expect(await readTurnCount(threadId)).toBe(0);
+    await waitForAllJobsToFinish();
+    const messages = await context.chatService.getMessagesForThread({
+      threadId,
+      workspaceId: context.workspaceId,
+      workspaceMemberId: context.workspaceMemberId,
+    });
+
+    expect(messages).toContainEqual(expect.objectContaining({ id: messageId }));
+    expect(messages).not.toContainEqual(
+      expect.objectContaining({ role: AgentMessageRole.ASSISTANT }),
+    );
+    expect((await context.readThread(threadId)).activeStreamId).toBeNull();
   });
 
   it('still replies when the assistant is off but the inbox is not enabled', async () => {
