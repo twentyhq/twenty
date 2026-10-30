@@ -1,14 +1,14 @@
 import { useAgentModelCapabilities } from '@/ai/hooks/useAgentModelCapabilities';
-import { type AgentModelConfiguration } from '@/ai/types/AgentModelConfiguration';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { t } from '@lingui/core/macro';
+import { type ModelConfiguration } from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
 
 type SettingsAgentModelCapabilitiesProps = {
   selectedModelId: string;
-  modelConfiguration: AgentModelConfiguration;
-  onConfigurationChange: (configuration: AgentModelConfiguration) => void;
+  modelConfiguration: ModelConfiguration;
+  onConfigurationChange: (configuration: ModelConfiguration) => void;
   disabled?: boolean;
 };
 

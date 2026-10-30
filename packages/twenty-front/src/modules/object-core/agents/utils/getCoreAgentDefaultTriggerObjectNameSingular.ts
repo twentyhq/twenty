@@ -1,6 +1,8 @@
 import { type AgentTrigger } from 'twenty-shared/application';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
+
 export const getCoreAgentDefaultTriggerObjectNameSingular = ({
   triggers,
   objectNameSingulars,
@@ -11,7 +13,7 @@ export const getCoreAgentDefaultTriggerObjectNameSingular = ({
   const existingObjectNameSingular = triggers
     .flatMap((trigger) =>
       trigger.type === 'DATABASE_EVENT'
-        ? [trigger.settings.eventName.split('.')[0]]
+        ? [splitWorkflowTriggerEventName(trigger.settings.eventName).objectType]
         : [],
     )
     .at(0);

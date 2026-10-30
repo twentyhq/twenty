@@ -6,6 +6,7 @@ import {
 
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
@@ -32,9 +33,9 @@ export const AiModelPicker = ({
   const aiModels = useAtomStateValue(aiModelsState);
   const { agentTier } = useWorkspaceAiModelTiers();
 
-  const workspaceDefaultModel = tiers.find(
-    (tier) => tier.tier === agentTier,
-  )?.model;
+  const workspaceDefaultModel = useResolvedAiModel(
+    AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  );
 
   const automaticOptions = [
     {

@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLock, useIcons } from 'twenty-ui/icon';
+import { IconLock } from 'twenty-ui/icon';
 
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
 import { SidePanelCoreAgentRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessGroup';
@@ -9,14 +9,12 @@ import { useCoreAgentSidePanelRole } from '@/object-core/agents/hooks/useCoreAge
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 
 export const SidePanelCoreAgentDataAccessPage = () => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
   const { agent, role, updateRole, isAgentReadOnly, isReadOnly } =
     useCoreAgentSidePanelRole();
   const { objectMetadataItemsThatCanHavePermission } =
@@ -68,10 +66,7 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           key={objectMetadataItem.id}
           heading={objectMetadataItem.labelPlural}
           objectIcon={
-            <ColoredIcon
-              Icon={getIcon(objectMetadataItem.icon)}
-              color={getObjectColorWithFallback(objectMetadataItem)}
-            />
+            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
           }
           role={role}
           objectMetadataId={objectMetadataItem.id}

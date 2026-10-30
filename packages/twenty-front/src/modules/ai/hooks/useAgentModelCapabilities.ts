@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ModelConfiguration } from 'twenty-shared/ai';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
 
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
-import { type AgentModelConfiguration } from '@/ai/types/AgentModelConfiguration';
 
 export const useAgentModelCapabilities = ({
   selectedModelId,
@@ -11,8 +11,8 @@ export const useAgentModelCapabilities = ({
   disabled = false,
 }: {
   selectedModelId: string;
-  modelConfiguration: AgentModelConfiguration;
-  onConfigurationChange: (configuration: AgentModelConfiguration) => void;
+  modelConfiguration: ModelConfiguration;
+  onConfigurationChange: (configuration: ModelConfiguration) => void;
   disabled?: boolean;
 }) => {
   const { t } = useLingui();

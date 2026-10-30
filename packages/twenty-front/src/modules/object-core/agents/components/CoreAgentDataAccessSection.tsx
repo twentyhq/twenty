@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
-import { IconEdit, IconLock, useIcons } from 'twenty-ui/icon';
+import { IconEdit, IconLock } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
 
@@ -15,9 +15,8 @@ import { type CoreAgentSectionListItem } from '@/object-core/agents/types/CoreAg
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
-import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type CoreAgentDataAccessSectionProps = {
@@ -31,7 +30,6 @@ export const CoreAgentDataAccessSection = ({
 }: CoreAgentDataAccessSectionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { getIcon } = useIcons();
   const { openCoreAgentSidePanelPage } = useOpenCoreAgentSidePanelPage();
   const { role, updateRole, canEditRole } = useCoreAgentRole(agent);
   const { objectMetadataItemsThatCanHavePermission } =
@@ -96,12 +94,7 @@ export const CoreAgentDataAccessSection = ({
           id: objectMetadataItem.id,
           label: objectLabel,
           description: formatLevels(levels),
-          icon: (
-            <ColoredIcon
-              Icon={getIcon(objectMetadataItem.icon)}
-              color={getObjectColorWithFallback(objectMetadataItem)}
-            />
-          ),
+          icon: <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />,
           remove:
             canRemoveAccess && levels.length > 0
               ? {
