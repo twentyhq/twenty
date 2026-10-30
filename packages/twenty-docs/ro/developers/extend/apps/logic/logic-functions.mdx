@@ -309,10 +309,10 @@ const destinationUrl = getServerRouteUrl(
 
 <Note>
   URL-urile care conțin doar `id` sau `universalIdentifier` ale resolverului
-  (`/webhooks/server/:identifier`) se rezolvă în continuare deocamdată. Forma
-  `universalIdentifier` răspunde cu un antet `Deprecation` și returnează
-  `404` atunci când două înregistrări declară același identificator. Mutați URL-urile
-  înregistrate la furnizorii dvs. în formularul de înregistrare.
+  (`/webhooks/server/:identifier`) sunt încă rezolvate deocamdată, iar ambele răspund cu
+  un antet `Deprecation`. Forma `universalIdentifier` returnează `409` atunci când două
+  înregistrări declară același identificator. Mutați URL-urile înregistrate la
+  furnizorii dvs. în formularul de înregistrare.
 </Note>
 
 **Răspunsul la un GET de verificare.** Unii furnizori verifică un punct final înainte de a livra către acesta, trimițând un `GET` care conține o provocare la același URL către care vor trimite ulterior evenimente prin `POST` — WhatsApp Cloud API de la Meta este unul dintre aceștia. O rută de server răspunde numai la `POST`, cu excepția cazului în care specifici altfel, așa că declară ambele metode:
