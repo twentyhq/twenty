@@ -5,7 +5,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 ## Prerequisites
 
 - Node.js (version in `.nvmrc`) and Yarn 4
-- A Twenty server on 2.52 or later
+- A Twenty server on 2.53 or later
 - A Unipile application on [dashboardv2.unipile.com](https://dashboardv2.unipile.com)
 - A public HTTPS URL reaching the Twenty server, so Unipile can deliver webhooks (a tunnel such as `cloudflared tunnel --url http://localhost:3000` in development)
 
