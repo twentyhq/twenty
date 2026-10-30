@@ -19,8 +19,6 @@ const getIsoInstant = (stringDateTime: string): Temporal.Instant | null => {
   }
 };
 
-// date-fns `yyyy` also accepts one to three digits, which would turn 01/15/24
-// into the year 24 instead of rejecting it.
 const isYearWrittenInFull = (stringDateTime: string, parsedDate: Date) =>
   stringDateTime.includes(parsedDate.getFullYear().toString().padStart(4, '0'));
 
