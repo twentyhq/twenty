@@ -7,7 +7,7 @@ export const getDropdownItemLabel = (item: HTMLElement) => {
     return ariaLabel;
   }
 
-  const announcedItem = item.cloneNode(true) as HTMLElement;
+  const announcedItem = item.ownerDocument.importNode(item, true);
 
   for (const decorativeElement of Array.from(
     announcedItem.querySelectorAll('[aria-hidden="true"]'),
