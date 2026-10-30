@@ -141,7 +141,6 @@ export const GettingStartedImportAction = () => {
         {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
           <Button
             key={guide.name}
-            // An href Button renders its label only, so the anchor is passed in to keep the icon
             render={<a href={guide.url} target="_blank" rel="noreferrer" />}
             nativeButton={false}
             endIcon={<IconExternalLink />}

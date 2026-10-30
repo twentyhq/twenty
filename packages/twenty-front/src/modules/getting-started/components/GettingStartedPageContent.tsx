@@ -174,7 +174,6 @@ export const GettingStartedPageContent = () => {
           onAdvance={() => selectStep(nextStep)}
         />
       )}
-      {/* Mounted at page level so the import wizard survives the step advancing */}
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID }}
       >

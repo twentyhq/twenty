@@ -55,7 +55,6 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   }
 `;
 
-// Tabler draws the circle first and the check last, so only the check is redrawn.
 const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
   color: ${themeCssVariables.tag.text.green};
   display: flex;
