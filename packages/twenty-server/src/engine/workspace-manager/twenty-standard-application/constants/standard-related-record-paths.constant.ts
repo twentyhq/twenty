@@ -34,9 +34,20 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
   },
   {
     objectName: 'company',
-    fieldNames: ['people', 'messageParticipants', 'message'],
+    fieldNames: ['people', 'messageThreadTargets', 'messageThread', 'messages'],
   },
-  { objectName: 'person', fieldNames: ['messageParticipants', 'message'] },
+  {
+    objectName: 'company',
+    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
+  },
+  {
+    objectName: 'opportunity',
+    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
+  },
+  {
+    objectName: 'person',
+    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
+  },
   { objectName: 'company', fieldNames: ['noteTargets', 'note', 'attachments'] },
   {
     objectName: 'company',
