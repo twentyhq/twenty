@@ -1,4 +1,5 @@
 declare const classNames: {
+  readonly closeButton: 'closeButton';
   readonly root: 'root';
   readonly progress: 'progress';
   readonly header: 'header';
@@ -8,6 +9,5 @@ declare const classNames: {
   readonly description: 'description';
   readonly footer: 'footer';
   readonly footerAction: 'footerAction';
-  readonly closeButton: 'closeButton';
 };
 export default classNames;

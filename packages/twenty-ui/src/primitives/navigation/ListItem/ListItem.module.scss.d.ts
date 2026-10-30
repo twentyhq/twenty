@@ -1,6 +1,6 @@
 declare const classNames: {
   readonly root: 'root';
-  readonly submenuIcon: 'submenuIcon';
+  readonly actions: 'actions';
   readonly startIcon: 'startIcon';
   readonly endIcon: 'endIcon';
   readonly label: 'label';
@@ -9,7 +9,7 @@ declare const classNames: {
   readonly inlineDescription: 'inlineDescription';
   readonly endDescription: 'endDescription';
   readonly hotkeys: 'hotkeys';
-  readonly actions: 'actions';
   readonly checkIndicator: 'checkIndicator';
+  readonly submenuIcon: 'submenuIcon';
 };
 export default classNames;

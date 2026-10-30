@@ -1,9 +1,11 @@
-declare const classNames: {
-  readonly root: 'root';
-  readonly items: 'items';
-  readonly item: 'item';
-  readonly popupItem: 'popupItem';
-  readonly trigger: 'trigger';
-  readonly popup: 'popup';
+export type Styles = {
+  root: string;
+  items: string;
+  item: string;
+  trigger: string;
+  popup: string;
+  popupItem: string;
 };
-export default classNames;
+
+declare const styles: Styles;
+export default styles;

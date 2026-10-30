@@ -1,8 +1,8 @@
-declare const classNames: {
-  readonly header: 'header';
-  readonly titleRow: 'titleRow';
-  readonly title: 'title';
-  readonly actions: 'actions';
-  readonly description: 'description';
+declare const styles: {
+  readonly header: string;
+  readonly titleRow: string;
+  readonly title: string;
+  readonly actions: string;
+  readonly description: string;
 };
-export default classNames;
+export default styles;
