@@ -71,14 +71,15 @@ export const ManagedIframeSession = ({
     allow,
     permission: delegatedPermission,
   });
-  const iframeSandbox = isActivated
-    ? [
-        ...new Set([
-          ...(sandbox ?? '').split(/\s+/).filter(isNonEmptyString),
-          'allow-same-origin',
-        ]),
-      ].join(' ')
-    : sandbox;
+  const iframeSandbox =
+    isActivated && isDefined(sandbox)
+      ? [
+          ...new Set([
+            ...sandbox.split(/\s+/).filter(isNonEmptyString),
+            'allow-same-origin',
+          ]),
+        ].join(' ')
+      : sandbox;
 
   return (
     <>
