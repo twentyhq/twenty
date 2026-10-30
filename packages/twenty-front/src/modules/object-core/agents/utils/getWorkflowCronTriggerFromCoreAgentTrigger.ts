@@ -8,7 +8,7 @@ const HOURS_PATTERN = /^(\d+) \*\/(\d+) \* \* \*$/;
 const MINUTES_PATTERN = /^\*\/(\d+) \* \* \* \*$/;
 
 export const getWorkflowCronTriggerFromCoreAgentTrigger = (
-  trigger: AgentCronTrigger,
+  trigger: Pick<AgentCronTrigger, 'settings'>,
 ): WorkflowCronTrigger => {
   const pattern = trigger.settings.pattern.trim();
 
