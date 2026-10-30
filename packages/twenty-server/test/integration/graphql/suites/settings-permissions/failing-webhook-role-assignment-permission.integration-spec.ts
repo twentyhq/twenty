@@ -57,16 +57,18 @@ describe('Webhook role assignment should fail', () => {
     });
 
     const response = await createWebhook({
-      targetUrl: WEBHOOK_TARGET_URL,
-      operations: ['*.*'],
-      roleId: adminRoleId,
+      input: {
+        targetUrl: WEBHOOK_TARGET_URL,
+        operations: ['*.*'],
+        roleId: adminRoleId,
+      },
     });
 
     webhookId = response.body.data.createWebhook.id;
   });
 
   afterAll(async () => {
-    await deleteWebhook(webhookId);
+    await deleteWebhook({ id: webhookId });
 
     await updateWorkspaceMemberRole({
       input: {
@@ -81,9 +83,11 @@ describe('Webhook role assignment should fail', () => {
 
   it('when creating a webhook without a role', async () => {
     const response = await createWebhook({
-      targetUrl: WEBHOOK_TARGET_URL,
-      operations: ['*.*'],
-      roleId: null,
+      input: {
+        targetUrl: WEBHOOK_TARGET_URL,
+        operations: ['*.*'],
+        roleId: null,
+      },
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
@@ -114,35 +118,37 @@ describe('Webhook role assignment should fail', () => {
 
   it('when creating a webhook with an unknown role', async () => {
     const response = await createWebhook({
-      targetUrl: WEBHOOK_TARGET_URL,
-      operations: ['*.*'],
-      roleId: '20202020-0000-4000-8000-000000000000',
+      input: {
+        targetUrl: WEBHOOK_TARGET_URL,
+        operations: ['*.*'],
+        roleId: '20202020-0000-4000-8000-000000000000',
+      },
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('when creating a webhook without the ROLES permission', async () => {
-    const response = await createWebhook(
-      {
+    const response = await createWebhook({
+      input: {
         targetUrl: WEBHOOK_TARGET_URL,
         operations: ['*.*'],
         roleId: adminRoleId,
       },
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });
 
   it('when editing a webhook without the ROLES permission', async () => {
-    const response = await updateWebhook(
-      {
+    const response = await updateWebhook({
+      input: {
         id: webhookId,
         update: { targetUrl: 'https://attacker.example.com/webhook' },
       },
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
   });

@@ -37,9 +37,11 @@ describe('Webhook role assignment', () => {
 
   beforeEach(async () => {
     const response = await createWebhook({
-      targetUrl: 'https://example.com/webhook',
-      operations: ['*.*'],
-      roleId: adminRoleId,
+      input: {
+        targetUrl: 'https://example.com/webhook',
+        operations: ['*.*'],
+        roleId: adminRoleId,
+      },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -49,7 +51,7 @@ describe('Webhook role assignment', () => {
   });
 
   afterEach(async () => {
-    await deleteWebhook(webhookId);
+    await deleteWebhook({ id: webhookId });
   });
 
   afterAll(async () => {
@@ -58,8 +60,10 @@ describe('Webhook role assignment', () => {
 
   it('changes the role of a webhook', async () => {
     const response = await updateWebhook({
-      id: webhookId,
-      update: { roleId: otherRoleId },
+      input: {
+        id: webhookId,
+        update: { roleId: otherRoleId },
+      },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -71,8 +75,10 @@ describe('Webhook role assignment', () => {
 
   it('keeps the role when an update does not set one', async () => {
     const response = await updateWebhook({
-      id: webhookId,
-      update: { description: 'Updated description' },
+      input: {
+        id: webhookId,
+        update: { description: 'Updated description' },
+      },
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -80,7 +86,7 @@ describe('Webhook role assignment', () => {
   });
 
   it('removes the role assignment along with the webhook', async () => {
-    await deleteWebhook(webhookId);
+    await deleteWebhook({ id: webhookId });
 
     expect(await findRoleTargetRoleIdsOfWebhook(webhookId)).toEqual([]);
   });

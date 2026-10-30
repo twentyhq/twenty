@@ -90,7 +90,13 @@ export type WebhookReceiver = {
 };
 
 // A null roleId is sent as is, to exercise the missing role rejection
-export const createWebhook = async (input: WebhookInput, token?: string) => {
+export const createWebhook = async ({
+  input,
+  token,
+}: {
+  input: WebhookInput;
+  token?: string;
+}) => {
   const roleId =
     input.roleId === undefined
       ? (await findOneRoleByLabel({ label: 'Admin' })).id
@@ -105,7 +111,13 @@ export const createWebhook = async (input: WebhookInput, token?: string) => {
   );
 };
 
-export const deleteWebhook = (id: string, token?: string) => {
+export const deleteWebhook = ({
+  id,
+  token,
+}: {
+  id: string;
+  token?: string;
+}) => {
   return makeMetadataApiRequest(
     {
       query: DELETE_WEBHOOK_MUTATION,
@@ -128,10 +140,13 @@ export const getWebhooks = () => {
   });
 };
 
-export const updateWebhook = (
-  input: { id: string; update: Partial<WebhookInput> },
-  token?: string,
-) => {
+export const updateWebhook = ({
+  input,
+  token,
+}: {
+  input: { id: string; update: Partial<WebhookInput> };
+  token?: string;
+}) => {
   return makeMetadataApiRequest(
     {
       query: UPDATE_WEBHOOK_MUTATION,
