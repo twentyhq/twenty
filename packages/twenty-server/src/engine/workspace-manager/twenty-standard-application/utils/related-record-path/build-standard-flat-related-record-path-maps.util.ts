@@ -34,7 +34,7 @@ const getFieldKey = ({
   name: string;
 }) => `${objectMetadataUniversalIdentifier}:${name}`;
 
-const resolveStandardRelatedRecordPathHops = ({
+const resolveStandardRelatedRecordPathHopsOrThrow = ({
   standardRelatedRecordPath: { objectName, fieldNames },
   flatFieldMetadataByFieldKey,
 }: {
@@ -97,7 +97,7 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
 
   for (const standardRelatedRecordPath of STANDARD_RELATED_RECORD_PATHS) {
     const [firstHop, secondHop, thirdHop, fourthHop] =
-      resolveStandardRelatedRecordPathHops({
+      resolveStandardRelatedRecordPathHopsOrThrow({
         standardRelatedRecordPath,
         flatFieldMetadataByFieldKey,
       });
