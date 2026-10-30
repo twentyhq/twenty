@@ -8950,6 +8950,11 @@ msgstr "Definiți numele și descrierea obiectului dvs"
 msgid "Define the name and instructions for this skill"
 msgstr "Definiți numele și instrucțiunile pentru această abilitate"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr ""
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -22370,6 +22375,11 @@ msgstr "Respins"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "calea înregistrării asociate"
+
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr ""
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
