@@ -1,0 +1,141 @@
+---
+title: الحقل
+description: اربط عنصر تحكم في نموذج بتسميته ووصفه وملاحظات التحقق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+## نظرة عامة
+
+استخدم `Field` لتجميع عنصر تحكم واحد مع تسميته القابلة للوصول ونصه المساعد. تتكامل مكونات مثل [Input](/ar/ui/primitives/input/input) مباشرةً مع الحقل.
+
+<StoryEmbed storyId="ui-input-field--display" title="مثال على Field" height={180} />
+
+## استخدام
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+يدير `Field.Root` اسم عنصر التحكم وحالة تعطيله وصلاحيته. يربط `Field.Label` و`Field.Description` محتواهما بعنصر التحكم. عيّن توقيت التحقق باستخدام `validationMode`؛ واستخدم `validate` للتحقق المخصص.
+
+## البنية التشريحية العربية
+
+ضع عنصر تحكم واحدًا وأجزاءه الداعمة داخل `Field.Root`. تُظهر هذه الشجرة حقلًا مُنشأ باستخدام المكوّن `Input` المنسّق.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| الجزء                           | المتطلبة          | الغرض                                                        |
+| ------------------------------- | ----------------- | ------------------------------------------------------------ |
+| `Root`                          | مطلوب             | يشارك الاسم وحالة التعطيل والتحقق مع عنصر التحكم.            |
+| `Item`                          | اختياري للمجموعات | يربط كل زر اختيار أو مربع اختيار بتسميته ووصفه الخاصين.      |
+| `Label`                         | مُوصى به          | يوفّر تسمية مرئية ومرتبطة. يلزم دائمًا اسم يمكن الوصول إليه. |
+| `Input` أو عنصر تحكم متكامل آخر | مطلوب             | يتلقى إدخال المستخدم ويتصل بالحقل.                           |
+| `Control`                       | عنصر تحكم بديل    | يوفّر إدخالًا بلا تنسيق عندما لا تستخدم عنصر تحكم متكاملًا.  |
+| `Description`                   | اختياري           | يضيف نص مساعدة دائمًا مرتبطًا بعنصر التحكم.                  |
+| `خطأ`                           | اختياري           | يعرض ملاحظات لحالة تحقق مطابقة.                              |
+| `Validity`                      | اختياري           | يكشف عن الصلاحية عبر دالة تصيير الأبناء.                     |
+
+يتكامل `Input` و`Textarea` بالفعل مع الحقل. ضعهما مباشرةً داخل `Root`؛ فهما يوفّران سلوك عنصر التحكم بنفسيهما. تحتفظ عناصر التحكم المركّبة، مثل [تحديد](/ar/ui/primitives/input/select#compose-with-a-field)، بجذرها وأجزائها الخاصة داخل الحقل.
+
+## أخطاء خارجية
+
+استخدم `invalid` عندما يكون تطبيقك مسؤولًا عن حالة الخطأ. يجعل `match` الصريح رسالة الخطأ مرئية.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+اجعل رسائل الخطأ قابلة للتنفيذ وقدّم تسمية مرئية حتى عندما يحتوي عنصر التحكم على نص نائب.
+
+## عناصر التحكم المجمّعة
+
+استخدم `Field.Item` داخل مجموعة أزرار اختيار أو مربعات اختيار لربط كل خيار بتسمية ووصف خاصين به. أبقِ تسمية المجموعة خارج العناصر. يمكن تعطيل عنصر بشكل مستقل؛ إذ يعطّل `Field.Root` المعطّل كل عنصر.
+
+<StoryEmbed storyId="ui-input-field--grouped-items" title="عناصر الحقل" height={220} />
+
+```tsx
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsField = () => (
+  <Field.Root name="notifications">
+    <Field.Label>Notifications</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="important" />
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
+        <Radio value="digest" />
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
+      </Field.Item>
+    </RadioGroup>
+  </Field.Root>
+);
+```
+
+## التكامل والأنواع الأصلية
+
+يحافظ الحقل على توقيت التحقق في Base UI، والتحقق المخصص، وقيم عناصر التحكم المُتحكَّم بها وغير المُتحكَّم بها، وتفاصيل حدث تغيير القيمة. يكشف `Validity` عن نتيجة التحقق من خلال دالة الأبناء الخاصة به. تحتفظ عناصر التحكم المتكاملة بسلوك النموذج الأصلي الخاص بها.
+
+تمرّر `Root` و`Item` و`Label` و`Control` و`Description` و`Error` الخصائص الأصلية والمراجع وتكوين `render`. عناصرها الافتراضية هي div وdiv وlabel وinput وparagraph وdiv، على التوالي. لا يعرض `Validity` عنصره الخاص.
+
+استورد `FieldRootProps` و`FieldItemProps` و`FieldLabelProps` و`FieldControlProps` و`FieldDescriptionProps` و`FieldErrorProps` و`FieldValidityProps` من `twenty-ui/primitives/input` لعقود الأجزاء الأساسية المقابلة.
+
+## الإزاحة
+
+يُنشأ المرجع من الأنواع العامة للمكونات. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء القابلة للوصول ومعالجات الأحداث، على الأجزاء التي تصيّر عناصر.
+
+<FieldReference />
+
+<PageBanner illustration="page-cover-input" />

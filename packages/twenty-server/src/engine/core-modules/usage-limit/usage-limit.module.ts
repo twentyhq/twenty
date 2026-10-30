@@ -5,6 +5,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { BillingSubscriptionUserCreditsResolver } from 'src/engine/core-modules/usage-limit/billing-subscription-user-credits.resolver';
 import { BillingSubscriptionItemCapResolver } from 'src/engine/core-modules/usage-limit/billing-subscription-item-cap.resolver';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
@@ -63,6 +64,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitResolver,
     UsageQuotaAdmissionService,
     BillingSubscriptionItemCapResolver,
+    BillingSubscriptionUserCreditsResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
     provideWorkspaceScopedRepository(ApiKeyEntity),
     provideWorkspaceScopedRepository(ApplicationEntity),

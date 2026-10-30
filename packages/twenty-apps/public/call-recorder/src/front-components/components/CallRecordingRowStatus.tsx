@@ -1,5 +1,5 @@
 import { isUndefined } from '@sniptt/guards';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconClock } from 'twenty-ui/icon';
 
 import { CallRecordingRowMetadata } from 'src/front-components/components/CallRecordingRowMetadata';
@@ -15,7 +15,7 @@ export const CallRecordingRowStatus = ({
   formattedDuration,
 }: CallRecordingRowStatusProps) => {
   if (!isUndefined(statusTag)) {
-    return <Tag color={statusTag.color} text={statusTag.text} />;
+    return <Tag color={statusTag.color}>{statusTag.text}</Tag>;
   }
 
   if (isUndefined(formattedDuration)) {

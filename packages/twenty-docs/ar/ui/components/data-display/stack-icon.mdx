@@ -1,0 +1,47 @@
+---
+title: أيقونة التكديس
+description: أيقونة بحجم 16px مع عنصر أصغر مكدس في زاويتها السفلية اليمنى.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## نظرة عامة
+
+مرر الأيقونة الرئيسية عبر فتحة العقدة `icon` والعنصر المكدس عبر `stackedIcon`. يبلغ عرض الحاوية وارتفاعها 16px؛ ويوضع العنصر المكدس بوضع مطلق على مسافة 8px من اليسار و7px من الأعلى، بحيث يتجاوز الزاوية السفلية اليمنى. الصورة الرمزية المربعة بحجم 12px هي الحجم المقصود لشعار التطبيق. كلتا العقدتين للزينة، لذا أبقِ تسمية مرئية بجانب الأيقونة.
+
+اترك مساحة لتجاوز العنصر المكدس عند وضع المحتوى المجاور. يستخدم المثال فجوة بمقدار 12px بين حاوية الأيقونة وتسميتها.
+
+<StoryEmbed storyId="ui-components-data-display-stackicon--display" title="أيقونة الشركة مع شعار مكدس" height={100} />
+
+## استخدام
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+تستهدف السمات والأحداث الأصلية و`className` و`style` و`ref` عنصر div الخارجي. يستبدل `render` ذلك الهدف عبر تركيب Base UI مع الحفاظ على عقدتي الأيقونة كلتيهما.
+
+## الخصائص
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

@@ -13,6 +13,7 @@
   },
   "compilerOptions": {
     "builder": "swc",
+    "tsConfigPath": "tsconfig.build.json",
     "typeCheck": false,
     "watchAssets": true,
     "assets": [
@@ -25,7 +26,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/application/application-package/constants/seed-dependencies/**",
+        "include": "engine/core-modules/application/application-package/constants/standard-application-dependencies/**",
         "outDir": "dist/assets"
       },
       {
@@ -49,6 +50,10 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },
@@ -63,6 +68,10 @@
       {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
+        "outDir": "dist/assets"
       }
     ]
   },

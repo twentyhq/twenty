@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
+import { findWorkspaceCustomApplicationId } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
@@ -123,6 +124,7 @@ const sendChatMessageAndWaitForAnswer = async (token: string) => {
 describe('Ask AI tools for an installed application acting for a user', () => {
   let application: ApplicationWithVariable;
   let applicationToken: string;
+  let workspaceCustomApplicationToken: string;
   const threadIds: string[] = [];
 
   beforeAll(async () => {
@@ -141,6 +143,14 @@ describe('Ask AI tools for an installed application acting for a user', () => {
       });
 
     applicationToken = applicationAccessToken.token;
+
+    const { applicationAccessToken: workspaceCustomApplicationAccessToken } =
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: await findWorkspaceCustomApplicationId(),
+      });
+
+    workspaceCustomApplicationToken =
+      workspaceCustomApplicationAccessToken.token;
   });
 
   beforeEach(() => jest.useRealTimers());
@@ -181,6 +191,21 @@ describe('Ask AI tools for an installed application acting for a user', () => {
 
       expect(offeredToolContexts).toHaveLength(1);
       expect(offeredToolContexts[0]).not.toContain(WORKFLOW_TOOL_NAME);
+    },
+    CHAT_TURN_TIMEOUT_MS,
+  );
+
+  it(
+    'still offers the workflow tools to the workspace custom application',
+    async () => {
+      const offeredToolContexts = mockAnsweringModel();
+
+      threadIds.push(
+        await sendChatMessageAndWaitForAnswer(workspaceCustomApplicationToken),
+      );
+
+      expect(offeredToolContexts).toHaveLength(1);
+      expect(offeredToolContexts[0]).toContain(WORKFLOW_TOOL_NAME);
     },
     CHAT_TURN_TIMEOUT_MS,
   );

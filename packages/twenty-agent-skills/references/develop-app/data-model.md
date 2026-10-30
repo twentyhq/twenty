@@ -8,7 +8,7 @@ Objects and fields define the records users will create, view, search, and autom
 
 When adding or modifying data model entities:
 
-- Prefer generated app entity patterns from `yarn twenty dev:add`.
+- Prefer generated app entity patterns from `twenty app add`.
 - Use clear object and field names that map to user-facing language.
 - Add relations only when users need to navigate or report across records.
 - Avoid duplicating data that already exists on core Twenty objects.
@@ -95,7 +95,7 @@ For select fields, default values must be quoted string expressions like `"'PLAN
 
 ### Relations
 
-A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `yarn twenty dev:add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
+A relation is two `FieldType.RELATION` fields that point at each other through `relationTargetFieldMetadataUniversalIdentifier`, one on each object. The `MANY_TO_ONE` side must set `universalSettings.joinColumnName` (the convention is `<fieldName>Id`); the build rejects a `MANY_TO_ONE` relation without one. `twenty app add field` emits it, but the reverse `ONE_TO_MANY` field still has to be written by hand, including on a standard object such as Company:
 
 ```ts
 // src/fields/company-on-contract.ts
@@ -120,7 +120,7 @@ When adding permissions:
 - Grant the smallest useful scope.
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
-- For sensitive objects, set `sharingReach: ObjectSharingReach.ROLE_ACCESS` on `defineObject()` (imported from `twenty-sdk/define`) so records can only be shared with people whose role already reaches them. The default, `ObjectSharingReach.WORKSPACE`, lets a record be shared with anyone in the workspace. It only matters while record sharing is enabled, and objects with `APPLICATION` or `SYSTEM` readability are never shared.
+- To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
 
 ## Verification
 

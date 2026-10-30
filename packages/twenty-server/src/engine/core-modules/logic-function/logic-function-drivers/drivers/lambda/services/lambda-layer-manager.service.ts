@@ -1,5 +1,3 @@
-import * as fs from 'fs/promises';
-
 import {
   DeleteLayerVersionCommand,
   type GetFunctionCommandOutput,
@@ -9,8 +7,10 @@ import {
   ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
+import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -26,8 +26,7 @@ import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
-import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { sanitizeApplicationPackageJson } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/sanitize-application-package-json.util';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -57,7 +56,7 @@ export class LambdaLayerManagerService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly toolFunctions: LambdaToolFunctionsService,
-    private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -75,6 +74,9 @@ export class LambdaLayerManagerService {
       return existingArn;
     }
 
+    const { packageJson, yarnLock } =
+      await this.getVerifiedDependencies(context);
+
     return this.cacheLockService.withLock(
       async () => {
         const arnCreatedWhileWaiting =
@@ -84,7 +86,7 @@ export class LambdaLayerManagerService {
           return arnCreatedWhileWaiting;
         }
 
-        await this.createDepsLayer({ ...context, layerName });
+        await this.createDepsLayer({ layerName, packageJson, yarnLock });
 
         const newArn = await this.awsClient.getExistingLayerArn(layerName);
 
@@ -247,20 +249,19 @@ export class LambdaLayerManagerService {
   }
 
   private async createDepsLayer({
-    flatApplication,
-    applicationUniversalIdentifier,
     layerName,
-  }: LayerAppContext & { layerName: string }): Promise<void> {
+    packageJson,
+    yarnLock,
+  }: {
+    layerName: string;
+    packageJson: string;
+    yarnLock: string;
+  }): Promise<void> {
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
       return;
     }
-
-    const { packageJson, yarnLock } = await this.getDependencyContents({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
 
     const s3Key = `lambda-layers/${layerName}.zip`;
     const presignedUploadUrl =
@@ -311,29 +312,23 @@ export class LambdaLayerManagerService {
     }
   }
 
-  private async getDependencyContents({
+  private async getVerifiedDependencies({
     flatApplication,
     applicationUniversalIdentifier,
   }: LayerAppContext): Promise<{ packageJson: string; yarnLock: string }> {
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir } = await temporaryDirManager.init();
+    const { packageJsonContent, yarnLockContent } =
+      await this.applicationDependencyFilesService.getVerifiedDependencyContentsOrThrow(
+        {
+          workspaceId: flatApplication.workspaceId,
+          applicationUniversalIdentifier,
+          declaredChecksums: flatApplication,
+        },
+      );
 
-    try {
-      await this.logicFunctionResourceService.copyDependenciesInMemory({
-        applicationUniversalIdentifier,
-        workspaceId: flatApplication.workspaceId,
-        inMemoryFolderPath: sourceTemporaryDir,
-      });
-
-      const [packageJson, yarnLock] = await Promise.all([
-        fs.readFile(`${sourceTemporaryDir}/package.json`, 'utf-8'),
-        fs.readFile(`${sourceTemporaryDir}/yarn.lock`, 'utf-8'),
-      ]);
-
-      return { packageJson, yarnLock };
-    } finally {
-      await temporaryDirManager.clean();
-    }
+    return {
+      packageJson: sanitizeApplicationPackageJson(packageJsonContent),
+      yarnLock: yarnLockContent ?? EMPTY_YARN_LOCK_CONTENT,
+    };
   }
 
   private async publishLayer({

@@ -3,6 +3,10 @@ title: Rami Di Workflow
 description: Crea percorsi paralleli e logica condizionale nei tuoi flussi di lavoro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 I rami ti consentono di suddividere il tuo workflow in più percorsi che possono essere eseguiti simultaneamente o in modo condizionale in base ai tuoi dati.
 
 <img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
@@ -29,9 +33,21 @@ Ogni ramo è indipendente. L'aggiunta di un ramo non influisce sugli altri perco
 
 I rami appaiono come percorsi paralleli nell'editor del workflow. Puoi trascinare i nodi per riorganizzare il layout visivo senza influire sull'esecuzione.
 
-## Rami condizionali
+## Rami If/Else
 
-Poiché tutti i rami vengono eseguiti per impostazione predefinita, usa nodi **Filtro** per controllare quali percorsi vengono effettivamente eseguiti:
+Per percorsi mutuamente esclusivi, in cui vuoi che venga eseguito esattamente un ramo e non più di uno, aggiungi un'azione **If/else** invece di suddividere manualmente l'area di lavoro.
+
+**Configurazione:**:
+
+* Il primo ramo (**If**) ha una condizione di filtro.
+* Fai clic su **Aggiungi percorso** per inserire ulteriori rami **Else if**, ciascuno con la propria condizione.
+* L'ultimo ramo (**Else**) non ha condizioni e intercetta tutto ciò a cui gli altri rami non corrispondono.
+
+**Come funziona**: le condizioni vengono valutate in ordine, dall'alto verso il basso. Il workflow prosegue lungo il primo ramo la cui condizione corrisponde; tutti gli altri rami vengono ignorati.
+
+## Rami condizionali (manuali, con filtro)
+
+If/else copre la maggior parte dei casi, ma puoi anche creare manualmente lo stesso schema: poiché tutti i rami creati manualmente vengono eseguiti per impostazione predefinita, usa i nodi **Filter** per controllare quali percorsi vengono effettivamente eseguiti:
 
 | Ramo | Condizione del filtro | Azione                            |
 | ---- | --------------------- | --------------------------------- |
@@ -64,3 +80,5 @@ Sebbene tu possa usare un nodo [Delay](/it/user-guide/workflows/capabilities/wor
 
 * [Come usare i rami nei workflow](/it/user-guide/workflows/capabilities/use-branches-in-workflows) - Guida passo passo
 * [Azioni del workflow](/it/user-guide/workflows/capabilities/workflow-actions) - Azioni disponibili, incluso Filtro
+
+<PageBanner illustration="page-cover-branches" />

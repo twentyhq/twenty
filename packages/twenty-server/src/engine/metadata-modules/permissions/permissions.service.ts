@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -51,11 +52,15 @@ export class PermissionsService {
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       rolesPermissions,
+      flatObjectMetadataMaps,
+      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'rolesPermissions',
+      'flatObjectMetadataMaps',
+      'flatApplicationMaps',
     ]);
 
     const flatRole = this.findUserWorkspaceFlatRoleOrThrow({
@@ -77,7 +82,12 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: rolesPermissions[flatRole.id] ?? {},
+      objectsPermissions: computeObjectsPermissionsForRolePermissionConfig({
+        intersectionOf: { userWorkspaceRoleId: flatRole.id },
+        rolesPermissions,
+        flatObjectMetadataMaps,
+        flatApplicationMaps,
+      }),
     };
   }
 

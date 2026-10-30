@@ -1,12 +1,15 @@
+import { AdvancedTextEditorTableHandles } from '@/advanced-text-editor/components/AdvancedTextEditorTableHandles';
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
+import { useHoveredTableCell } from '@/advanced-text-editor/hooks/useHoveredTableCell';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { getAdvancedTextEditorTypographyStyle } from '@/advanced-text-editor/utils/getAdvancedTextEditorTypographyStyle';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
+import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledEditorContainer = styled.div<{
@@ -17,6 +20,7 @@ const StyledEditorContainer = styled.div<{
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
   width: 100%;
 
   .editor-content {
@@ -52,7 +56,8 @@ const StyledEditorContainer = styled.div<{
     height: 100%;
     line-height: var(--editor-line-height);
     overflow-wrap: anywhere;
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    padding: var(--editor-padding);
+    white-space: pre-wrap;
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -115,10 +120,83 @@ const StyledEditorContainer = styled.div<{
       font-size: var(--editor-heading-3-font-size);
     }
 
-    h4,
-    h5,
-    h6 {
+    h4 {
+      font-size: calc(var(--editor-font-size) * 1.15);
+    }
+
+    h5 {
       font-size: var(--editor-font-size);
+    }
+
+    h6 {
+      font-size: calc(var(--editor-font-size) * 0.9);
+    }
+
+    .toggle-block {
+      align-items: baseline;
+      column-gap: ${themeCssVariables.spacing[1]};
+      display: grid;
+      grid-template-columns: ${themeCssVariables.spacing[5]} minmax(0, 1fr);
+      margin-bottom: var(--editor-block-spacing);
+    }
+
+    .toggle-block-button {
+      background: none;
+      border: none;
+      border-radius: ${themeCssVariables.border.radius.sm};
+      color: ${themeCssVariables.font.color.tertiary};
+      cursor: pointer;
+      display: inline-block;
+      line-height: var(--editor-line-height);
+      padding: 0;
+
+      &::before {
+        border-bottom: ${themeCssVariables.spacing[1]} solid transparent;
+        border-left: ${themeCssVariables.spacing['1.5']} solid currentColor;
+        border-top: ${themeCssVariables.spacing[1]} solid transparent;
+        content: '';
+        display: inline-block;
+        transition: transform
+          calc(${themeCssVariables.animation.duration.fast} * 1s);
+        vertical-align: middle;
+      }
+
+      &:hover {
+        background-color: ${themeCssVariables.background.transparent.light};
+      }
+    }
+
+    .toggle-block[data-open='true'] > .toggle-block-button::before {
+      transform: rotate(90deg);
+    }
+
+    .toggle-block[data-open='false']
+      > .toggle-block-content
+      > :not(:first-child) {
+      display: none;
+    }
+
+    .toggle-block[data-open='false'] > .toggle-block-content > :first-child {
+      margin-bottom: 0;
+    }
+
+    .toggle-block-content > p:first-child {
+      padding-block: max(0px, (var(--editor-toggle-row-height) - 1lh) / 2);
+    }
+
+    .toggle-block-add-button {
+      background: none;
+      border: none;
+      color: ${themeCssVariables.font.color.light};
+      cursor: pointer;
+      font: inherit;
+      grid-column: 2;
+      padding: 0;
+      text-align: left;
+
+      &:hover {
+        color: ${themeCssVariables.font.color.tertiary};
+      }
     }
 
     ul,
@@ -134,7 +212,7 @@ const StyledEditorContainer = styled.div<{
       margin: 0 0 var(--editor-list-item-spacing);
 
       &::marker {
-        color: var(--editor-accent-color);
+        color: var(--editor-list-marker-color);
       }
 
       & > p {
@@ -149,6 +227,7 @@ const StyledEditorContainer = styled.div<{
 
       & > :is(ul, ol) {
         --editor-parent-list-offset: var(--editor-list-item-offset);
+        margin-top: var(--editor-nested-list-spacing);
       }
     }
 
@@ -178,7 +257,7 @@ const StyledEditorContainer = styled.div<{
       border-radius: ${themeCssVariables.border.radius.md};
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+      padding: var(--editor-code-block-padding);
 
       code {
         background-color: transparent;
@@ -200,6 +279,13 @@ const StyledEditorContainer = styled.div<{
           user-select: none;
         }
 
+        & > label > input {
+          height: var(--editor-task-checkbox-height);
+          margin: var(--editor-task-checkbox-margin);
+          vertical-align: var(--editor-task-checkbox-vertical-align);
+          width: var(--editor-task-checkbox-width);
+        }
+
         & > div {
           flex: 1 1 auto;
           min-width: 0;
@@ -207,6 +293,11 @@ const StyledEditorContainer = styled.div<{
 
         & > div > p {
           margin: 0;
+          min-height: var(--editor-task-checkbox-height);
+        }
+
+        & > div > :is(ul, ol) {
+          margin-top: var(--editor-nested-list-spacing);
         }
       }
 
@@ -219,6 +310,7 @@ const StyledEditorContainer = styled.div<{
     .tableWrapper {
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
+      padding: var(--editor-table-wrapper-padding);
     }
 
     table {
@@ -231,7 +323,7 @@ const StyledEditorContainer = styled.div<{
         border: 1px solid ${themeCssVariables.border.color.medium};
         box-sizing: border-box;
         min-width: 1em;
-        padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+        padding: var(--editor-table-cell-padding);
         position: relative;
         vertical-align: top;
 
@@ -250,6 +342,7 @@ const StyledEditorContainer = styled.div<{
         background-color: ${themeCssVariables.color.blue3};
         content: '';
         inset: 0;
+        mix-blend-mode: multiply;
         pointer-events: none;
         position: absolute;
       }
@@ -333,6 +426,13 @@ const StyledEditorContainer = styled.div<{
       border-left: none;
       border-right: none;
       border-top: 1px solid ${themeCssVariables.border.color.medium};
+      margin: var(--editor-divider-spacing) 0;
+
+      & + .block-divider {
+        margin-top: calc(
+          2 * var(--editor-divider-spacing) - var(--editor-block-spacing)
+        );
+      }
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
@@ -345,7 +445,20 @@ const StyledEditorContainer = styled.div<{
       outline: 2px solid ${themeCssVariables.color.blue};
     }
 
-    :is(p, h1, h2, h3, ul, ol, li, blockquote).ProseMirror-selectednode {
+    :is(
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      ul,
+      ol,
+      li,
+      blockquote,
+      .toggle-block
+    ).ProseMirror-selectednode {
       background-color: ${themeCssVariables.color.blue3};
       outline: none;
     }
@@ -369,8 +482,8 @@ const StyledEditorContainer = styled.div<{
       }
     }
 
-    :is(h1, h2, h3):first-child {
-      margin-top: 0;
+    :is(h1, h2, h3, h4, h5, h6):first-child {
+      margin-top: var(--editor-heading-first-spacing-top);
     }
 
     :is(
@@ -378,10 +491,14 @@ const StyledEditorContainer = styled.div<{
       h1,
       h2,
       h3,
+      h4,
+      h5,
+      h6,
       ul,
       ol,
       li,
       blockquote,
+      .toggle-block,
       .node-image,
       .block-section,
       .block-columns,
@@ -422,14 +539,34 @@ export const AdvancedTextEditor = ({
   const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
+  const {
+    hoveredTableCell,
+    handleMouseMove,
+    handleMouseLeave,
+    handleTableMenuOpenChange,
+    clearHoveredTableCell,
+  } = useHoveredTableCell({
+    editor,
+    isEnabled: !readonly && hasEditorExtension(editor, TIPTAP_NODE_TYPES.TABLE),
+  });
 
   return (
     <StyledEditorContainer
       readonly={readonly}
       minHeight={minHeight}
       style={getAdvancedTextEditorTypographyStyle(variant)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <EditorContent className="editor-content" editor={editor} />
+      {isDefined(hoveredTableCell) && (
+        <AdvancedTextEditorTableHandles
+          editor={editor}
+          hoveredTableCell={hoveredTableCell}
+          onMenuOpenChange={handleTableMenuOpenChange}
+          onCellCommandRun={clearHoveredTableCell}
+        />
+      )}
       {hasEditorExtension(editor, 'image') &&
         !hasEditorExtension(editor, 'section') && (
           <ImageBubbleMenu editor={editor} />

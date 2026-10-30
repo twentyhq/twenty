@@ -23,6 +23,10 @@ See the [app tooling overview](../README.md) for package boundaries.
 
 Translation string extraction uses the CLI's TypeScript parser. Traversal, static-string rules, whitespace normalization and deduplication are checked against the SDK reference by parity tests. It does not depend on ts-morph or load parser tooling for help and command discovery.
 
+Workflows arrive in `manifest.workflows` and are written as `defineWorkflow` files. Their filter operands and form field types use SDK enums; filter group logical operators stay string literals, which every SDK with `defineWorkflow` accepts. A workflow the server cannot express as a definition is reported as `UNSUPPORTED` coverage, so its local file is kept.
+
+Skills and agents arrive in `manifest.skills` and `manifest.agents` and are written as `defineSkill` and `defineAgent` files, with no enum bindings. The server exports one only when its definition reproduces the stored entity; otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
+
 Pull accepts metadata exports with `files: []` and refuses nonempty source/dependency-file exports. It does not restore package files, generate the typed client or write logic-function/front-component source. Export responses have a 16 MiB cap. Pull does not modify the workspace.
 
 Tests cover writers, planning and reconciliation. Command tests build the actual Vite worker, exercise an authoring-only SDK, local mock HTTP, credentials/output isolation, SDK export refusal and forced termination after the first destination write. The repository SDK tests cover canonical generated definitions, nested coverage, translation preservation, target mismatch, overwrite reporting and rollback.

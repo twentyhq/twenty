@@ -1,0 +1,1 @@
+export const RICH_TEXT_MAX_INDENT_LEVEL = 8;

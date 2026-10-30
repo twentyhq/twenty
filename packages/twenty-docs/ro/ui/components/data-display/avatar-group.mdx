@@ -1,0 +1,159 @@
+---
+title: Grup de avatare
+description: Avatare suprapuse cu un indicator de depășire derivat.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
+
+## Prezentare generală
+
+`AvatarGroup` primește avatare randate și derivă numărul ascuns. `maxVisible` numără avatarurile efective; indicatorul de depășire este suplimentar. Opt avataruri furnizate cu `maxVisible={3}` afișează trei avataruri și `+5`.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--display" title="Opt avataruri, dintre care trei vizibile" height={100} />
+
+## Utilizare
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const TeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
+    avatars={[
+      'Ada',
+      'Grace',
+      'Margaret',
+      'Annie',
+      'Mary',
+      'Dorothy',
+      'Katherine',
+      'Joan',
+    ].map((name) => (
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
+    ))}
+  />
+);
+```
+
+Furnizați chei stabile pentru a menține avatarurile rămase montate atunci când limita, totalul sau ordinea de afișare se schimbă. Avatarurile sunt decorative în mod implicit. Când grupul este singura reprezentare a membrilor săi, furnizează numele fiecărui membru prin `imageProps.alt` pentru a eticheta imaginea și alternativa implicită. Păstrează avatarurile decorative atunci când textul vizibil sau o etichetă a proprietarului oferă deja acea identitate.
+
+## Opțiuni vizuale
+
+Comparați avatarele circulare și pătrate la fiecare dimensiune. Grupul păstrează trei membri vizibili în această comparație.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--catalog" title="Comparați formele și dimensiunile avatarelor" height={850} />
+
+## Colecții încărcate parțial
+
+Utilizați `total` pentru dimensiunea completă a colecției atunci când sunt încărcate doar unele avataruri. Trei avataruri furnizate și vizibile cu `total={20}` afișează `+17`. Transmiteți toate avatarurile încărcate și lăsați grupul să aplice `maxVisible`.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const LoadedTeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+  />
+);
+```
+
+`total` este rotunjit în jos și nu poate fi mai mic decât numărul de avataruri randabile furnizate. Totalurile nefinite utilizează numărul furnizat. Numărul derivat de avataruri ascunse este întotdeauna nenegativ.
+
+Valoarea implicită pentru `maxVisible` este `4`. Limitele finite sunt rotunjite în jos și limitate la zero, `Infinity` afișează toate avatarurile furnizate, iar `NaN` nu afișează niciunul. Nodurile React goale nu sunt numărate ca avataruri. O limită zero poate afișa numai indicatorul de depășire. Un grup gol cu un total pozitiv poate afișa acel total în indicatorul său; un grup gol fără avataruri ascunse nu randează nimic.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--partially-loaded" title="Trei membri încărcați dintr-o echipă de douăzeci" height={100} />
+
+## Depășire personalizată
+
+`renderOverflow` primește același număr derivat de avataruri ascunse ca indicatorul implicit `+N`. Se execută numai atunci când acel număr este pozitiv. Returnați `null` pentru a ascunde indicatorul fără a modifica avatarurile vizibile.
+
+Utilizați un control explicit atunci când indicatorul efectuează o acțiune. Numele său accesibil ar trebui să explice acțiunea și numărul.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type TeamAvatarsWithActionProps = { onShowAll: () => void };
+
+export const TeamAvatarsWithAction = ({
+  onShowAll,
+}: TeamAvatarsWithActionProps) => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+    renderOverflow={(hiddenCount) => (
+      <Button
+        size="sm"
+        aria-label={`Show ${hiddenCount} more members`}
+        onClick={onShowAll}
+      >
+        +{hiddenCount}
+      </Button>
+    )}
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatargroup--custom-overflow" title="Buton personalizat de depășire" height={100} />
+
+## Aspect
+
+Avatarurile ulterioare sunt întotdeauna randate deasupra celor anterioare. `overlap` alege marginea fizică, `left` sau `right`, care are decalajul negativ. `overlapOffset` setează acel decalaj ca lungime CSS. `overflowShape` setează forma indicatorului numeric implicit.
+
+## Personalizarea rădăcinii
+
+Atributele native, gestionarii de evenimente, `className` și `style` ajung la rădăcină. Elementul său implicit este un `div`, inclusiv atunci când este furnizat `onClick`. Utilizați elemente interactive native pentru acțiuni, cum ar fi butonul de depășire de mai sus.
+
+Rădăcina acceptă un ref și `render`, care poate fi un element sau o funcție. Componentele personalizate trebuie să redirecționeze props-urile furnizate și ref către rădăcina lor nativă. Consultați [componente personalizate](/ro/ui/primitives/overview#custom-components) pentru cerințele de compunere.
+
+```tsx
+import { useRef } from 'react';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const NamedTeamAvatars = () => {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <AvatarGroup
+      ref={groupRef}
+      role="group"
+      aria-label="Project members"
+      style={{ marginBlock: 8 }}
+      render={<div data-location="project-header" />}
+      avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
+    />
+  );
+};
+```
+
+## Proprietăți
+
+`AvatarGroupProps` este exportat din `twenty-ui/components/data-display`.
+
+<AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

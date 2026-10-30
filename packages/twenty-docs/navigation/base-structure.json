@@ -6,7 +6,7 @@
       "groups": [
         {
           "key": "welcome",
-          "label": "Welcome",
+          "label": "Getting Started",
           "pages": [
             "getting-started/introduction",
             "getting-started/key-features",
@@ -35,13 +35,12 @@
       "groups": [
         {
           "key": "userGuideOverview",
-          "label": "Overview",
+          "label": "User Guide",
           "pages": ["user-guide/introduction"]
         },
         {
           "key": "dataModel",
           "label": "Data Model",
-          "icon": "database",
           "pages": [
             "user-guide/data-model/overview",
             {
@@ -70,7 +69,6 @@
         {
           "key": "dataMigration",
           "label": "Data Migration",
-          "icon": "cloud-arrow-up",
           "pages": [
             "user-guide/data-migration/overview",
             {
@@ -105,7 +103,6 @@
         {
           "key": "calendarEmails",
           "label": "Calendar & Emails",
-          "icon": "envelope",
           "pages": [
             "user-guide/calendar-emails/overview",
             {
@@ -113,6 +110,7 @@
               "label": "Reference",
               "pages": [
                 "user-guide/calendar-emails/capabilities/mailbox",
+                "user-guide/calendar-emails/capabilities/email-channels",
                 "user-guide/calendar-emails/capabilities/calendar"
               ]
             },
@@ -136,7 +134,6 @@
         {
           "key": "emailCampaigns",
           "label": "Email Campaigns",
-          "icon": "paper-plane",
           "pages": [
             "user-guide/email-campaigns/overview",
             {
@@ -155,7 +152,6 @@
         {
           "key": "workflows",
           "label": "Workflows",
-          "icon": "bolt",
           "pages": [
             "user-guide/workflows/overview",
             {
@@ -225,7 +221,6 @@
         {
           "key": "ai",
           "label": "AI",
-          "icon": "robot",
           "pages": [
             "user-guide/ai/overview",
             {
@@ -247,7 +242,6 @@
         {
           "key": "layout",
           "label": "Layout",
-          "icon": "table-columns",
           "pages": [
             "user-guide/layout/overview",
             {
@@ -288,7 +282,6 @@
         {
           "key": "dashboards",
           "label": "Dashboards",
-          "icon": "chart-bar",
           "pages": [
             "user-guide/dashboards/overview",
             {
@@ -313,7 +306,6 @@
         {
           "key": "permissionsAccess",
           "label": "Permissions & Access",
-          "icon": "lock",
           "pages": [
             "user-guide/permissions-access/overview",
             {
@@ -334,7 +326,6 @@
         {
           "key": "billing",
           "label": "Billing",
-          "icon": "credit-card",
           "pages": [
             "user-guide/billing/overview",
             {
@@ -356,7 +347,6 @@
         {
           "key": "settings",
           "label": "Settings",
-          "icon": "gear",
           "pages": [
             "user-guide/settings/overview",
             {
@@ -381,7 +371,6 @@
         {
           "key": "legal",
           "label": "Legal",
-          "icon": "book",
           "pages": [
             "user-guide/legal/overview",
             {
@@ -399,7 +388,7 @@
       "groups": [
         {
           "key": "developersOverview",
-          "label": "Overview",
+          "label": "Developers",
           "pages": ["developers/introduction"]
         },
         {
@@ -422,8 +411,8 @@
             {
               "key": "appsTutorial",
               "label": "Tutorial",
+              "root": "developers/extend/apps/tutorials/document-generator/overview",
               "pages": [
-                "developers/extend/apps/tutorials/document-generator/overview",
                 "developers/extend/apps/tutorials/document-generator/data-model",
                 "developers/extend/apps/tutorials/document-generator/generating-documents",
                 "developers/extend/apps/tutorials/document-generator/http-routes",
@@ -435,8 +424,8 @@
             {
               "key": "appsConfig",
               "label": "Config",
+              "root": "developers/extend/apps/config/overview",
               "pages": [
-                "developers/extend/apps/config/overview",
                 "developers/extend/apps/config/application",
                 "developers/extend/apps/config/roles",
                 "developers/extend/apps/config/install-hooks",
@@ -446,8 +435,8 @@
             {
               "key": "appsData",
               "label": "Data",
+              "root": "developers/extend/apps/data/overview",
               "pages": [
-                "developers/extend/apps/data/overview",
                 "developers/extend/apps/data/objects",
                 "developers/extend/apps/data/extending-objects",
                 "developers/extend/apps/data/system-fields",
@@ -458,8 +447,8 @@
             {
               "key": "appsLogic",
               "label": "Logic",
+              "root": "developers/extend/apps/logic/overview",
               "pages": [
-                "developers/extend/apps/logic/overview",
                 "developers/extend/apps/logic/logic-functions",
                 "developers/extend/apps/logic/key-value-store",
                 "developers/extend/apps/logic/background-jobs",
@@ -473,8 +462,8 @@
             {
               "key": "appsLayout",
               "label": "Layout",
+              "root": "developers/extend/apps/layout/overview",
               "pages": [
-                "developers/extend/apps/layout/overview",
                 "developers/extend/apps/layout/views",
                 "developers/extend/apps/layout/navigation-menu-items",
                 "developers/extend/apps/layout/page-layouts",
@@ -485,13 +474,14 @@
             {
               "key": "appsOperations",
               "label": "Operations",
+              "root": "developers/extend/apps/operations/overview",
               "pages": [
-                "developers/extend/apps/operations/overview",
                 "developers/extend/apps/operations/cli",
                 "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
                 "developers/extend/apps/operations/translations",
                 "developers/extend/apps/operations/publishing",
+                "developers/extend/apps/operations/marketplace-vetting",
                 "developers/extend/apps/operations/monitoring"
               ]
             }
@@ -547,8 +537,8 @@
             {
               "key": "uiPrimitives",
               "label": "Primitives",
+              "root": "ui/primitives/overview",
               "pages": [
-                "ui/primitives/overview",
                 {
                   "key": "uiAccessibility",
                   "label": "Accessibility",
@@ -642,8 +632,8 @@
             {
               "key": "uiComponents",
               "label": "Components",
+              "root": "ui/components/overview",
               "pages": [
-                "ui/components/overview",
                 {
                   "key": "uiComponentsDataDisplay",
                   "label": "Data display",

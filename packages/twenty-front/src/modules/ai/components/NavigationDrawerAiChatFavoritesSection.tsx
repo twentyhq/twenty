@@ -57,6 +57,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}
+          isExpandable={false}
         />
       ))}
       {threads.map((thread) => (

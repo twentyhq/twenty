@@ -1,0 +1,64 @@
+---
+title: Riquadro icona colorato
+description: Un'icona su uno sfondo colorato derivato da un colore del tema.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## Panoramica
+
+Passa il contenuto dell'icona tramite lo slot del nodo `icon` in minuscolo. Il riquadro deriva lo sfondo e il colore di primo piano ereditato dalla tavolozza del tema. Il contenuto dell'icona è decorativo. Mantieni un'etichetta visibile accanto a essa oppure assegna alla radice `role="img"` e un nome accessibile per un'immagine etichettata autonoma.
+
+<StoryEmbed storyId="ui-components-data-display-tintedicontile--display" title="Icona dell'azienda su un riquadro colorato" height={100} />
+
+## Utilizzo
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+## Geometria e composizione native
+
+Il riquadro è impostato per impostazione predefinita a 16px tramite il token di spaziatura e utilizza il token piccolo per border-radius. Imposta le dimensioni e il tratto dell'icona sul nodo stesso. `style` o `className` dell'elemento radice controllano larghezza, altezza, bordo, forma e colori del riquadro; gli stili espliciti sovrascrivono i valori predefiniti della tavolozza. La grafica personalizzata deve ereditare `currentColor` quando utilizza il colore di primo piano della tavolozza.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+Gli attributi nativi, gli eventi, `className`, `style` e `ref` si applicano al div esterno. `render` sostituisce tale destinazione tramite la composizione Base UI, mantenendo il contenuto decorativo dell'icona. Assegna un nome al controllo circostante quando componi un riquadro in un'azione.
+
+Sostituisci `Icon={CompanyIcon}` con `icon={<CompanyIcon size={16} />}`. Sposta le precedenti opzioni `size` e `stroke` nel nodo dell'icona e utilizza gli stili dell'elemento radice per dimensioni personalizzate del riquadro.
+
+## Props
+
+<TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

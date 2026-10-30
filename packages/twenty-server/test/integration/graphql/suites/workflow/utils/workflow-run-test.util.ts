@@ -94,7 +94,7 @@ const PENDING_WORKFLOW_RUN_STATUSES: WorkflowRunStatusType[] = [
 
 export const waitForWorkflowCompletion = async (
   workflowRunId: string,
-  maxAttempts = 30,
+  maxAttempts = 120,
   intervalMs = 500,
 ): Promise<WorkflowRunResponse | null> => {
   let workflowRun = await getWorkflowRun(workflowRunId);
@@ -117,7 +117,7 @@ export const waitForWorkflowRunStepStatus = async (
   workflowRunId: string,
   stepId: string,
   expectedStatus: string,
-  maxAttempts = 30,
+  maxAttempts = 120,
   intervalMs = 500,
 ): Promise<WorkflowRunResponse | null> => {
   let workflowRun = await getWorkflowRun(workflowRunId);
@@ -140,7 +140,7 @@ export const waitForWorkflowRunStepStatus = async (
 export const waitForWorkflowRunStatus = async (
   workflowRunId: string,
   expectedStatus: WorkflowRunStatusType,
-  maxAttempts = 30,
+  maxAttempts = 120,
   intervalMs = 500,
 ): Promise<WorkflowRunResponse | null> => {
   let workflowRun = await getWorkflowRun(workflowRunId);

@@ -3,4 +3,5 @@ export type CaptchaServerResponse = {
   challenge_ts: string;
   hostname: string;
   'error-codes': string[];
+  score?: number;
 };

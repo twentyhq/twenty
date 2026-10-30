@@ -23,7 +23,6 @@ import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
   EngineComponentKey,
-  FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -177,12 +176,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
         ...mockCurrentWorkspace.installedApplications,
         THIRD_PARTY_APPLICATION,
       ],
-      featureFlags: [
-        {
-          key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-          value: true,
-        },
-      ],
+      featureFlags: [],
     });
   },
 };

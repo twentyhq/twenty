@@ -1,59 +1,92 @@
 ---
-title: User Guide
-description: Welcome to Twenty User Guide, your resources for advanced configurations and best practices.
+title: Master Twenty
+description: Step-by-step guides to model your data, automate your work, and run your workspace.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
-  <Card href="/user-guide/data-model/overview" img="/images/user-guide/halftone/data-model.png">
+<LandingActions>
+  <LandingButton href="/user-guide/data-model/overview">Model your data</LandingButton>
+  <LandingButton href="/user-guide/data-migration/overview" outlined>Import data</LandingButton>
+</LandingActions>
+
+## Make Twenty fit your team
+
+Twenty is built to change with your business. This guide shows you how to set up your workspace and shape it as you go, from the data you track to the screens your team works in every day.
+
+- **Set up your data.** Model objects and fields around your business, then bring in your records from CSV files or another CRM.
+- **Bring your conversations in.** Sync email and calendar so every exchange lands on the right record, and reach your contacts with email campaigns.
+- **Organize the work.** Build the views, pipelines and record pages your team uses every day.
+- **Automate the busywork.** Hand repetitive steps to workflows and multi-step tasks to AI agents.
+- **Stay in control.** Follow your numbers on dashboards, decide who sees what with roles, and manage billing and settings.
+
+## Explore the user guide
+
+Each section covers one part of Twenty, from your data model to billing and settings.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card href="/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Data Model</CardTitle>
     Customize your data model to fit your business processes.
   </Card>
 
-  <Card href="/user-guide/data-migration/overview" img="/images/user-guide/halftone/data-migration.png">
+  <Card href="/user-guide/data-migration/overview" img="/images/documentation/banner-icons-v2/data-migration.svg">
     <CardTitle>Data Migration</CardTitle>
     Import and export your data via CSV or API.
   </Card>
 
-  <Card href="/user-guide/calendar-emails/overview" img="/images/user-guide/halftone/calendar-emails.png">
+  <Card href="/user-guide/calendar-emails/overview" img="/images/documentation/banner-icons-v2/calendar-emails.svg">
     <CardTitle>Calendar & Emails</CardTitle>
     Centralize your team's meetings and emails.
   </Card>
 
-  <Card href="/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows.png">
+  <Card href="/user-guide/email-campaigns/overview" img="/images/documentation/section-overview-icons-v1/email-campaigns.svg">
+    <CardTitle>Email Campaigns</CardTitle>
+    Send email campaigns built on your CRM data.
+  </Card>
+
+  <Card href="/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
     <CardTitle>Workflows</CardTitle>
     Automate processes and integrate with external tools.
   </Card>
 
-  <Card href="/user-guide/ai/overview" img="/images/user-guide/halftone/ai.png">
+  <Card href="/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>AI</CardTitle>
     Enhance your team with AI agents.
   </Card>
 
-  <Card href="/user-guide/layout/overview" img="/images/user-guide/halftone/layout.png">
+  <Card href="/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
     <CardTitle>Layout</CardTitle>
     Sidebar, views, and record page customization.
   </Card>
 
-  <Card href="/user-guide/dashboards/overview" img="/images/user-guide/halftone/dashboards.png">
+  <Card href="/user-guide/dashboards/overview" img="/images/documentation/banner-icons-v2/dashboards.svg">
     <CardTitle>Dashboards</CardTitle>
     Real-time insights to track performance.
   </Card>
 
-  <Card href="/user-guide/permissions-access/overview" img="/images/user-guide/halftone/permissions.png">
+  <Card href="/user-guide/permissions-access/overview" img="/images/documentation/banner-icons-v2/permissions.svg">
     <CardTitle>Permissions & Access</CardTitle>
     Manage roles and access to Twenty.
   </Card>
 
-  <Card href="/user-guide/billing/overview" img="/images/user-guide/halftone/billing.png">
+  <Card href="/user-guide/billing/overview" img="/images/documentation/banner-icons-v3/billing.svg">
     <CardTitle>Billing</CardTitle>
     Understand how Twenty pricing and billing works.
   </Card>
 
-  <Card href="/user-guide/settings/overview" img="/images/user-guide/halftone/settings.png">
+  <Card href="/user-guide/settings/overview" img="/images/documentation/banner-icons-v2/settings.svg">
     <CardTitle>Settings</CardTitle>
     Configure your workspace preferences.
   </Card>
 
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    Ask questions and share what you build with the Twenty community.
+  </Card>
+
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

@@ -28,7 +28,7 @@ describe('App installation', () => {
 });
 
 // The published twenty-client-sdk types only export CoreApiClient/CoreSchema;
-// the enum exports appear at runtime after dev:generate-client regenerates the
+// the enum exports appear at runtime after twenty app generate-client regenerates the
 // client against the server, hence the cast and the runtime guard.
 type GeneratedCoreSchemaRuntime = {
   enumCallRecordingStatusEnum?: Record<string, string>;
@@ -41,7 +41,7 @@ const getServerCallRecordingStatuses = async (): Promise<string[]> => {
 
   if (statusEnum === undefined) {
     throw new Error(
-      'enumCallRecordingStatusEnum is missing from twenty-client-sdk/core; regenerate the client against a running server (yarn twenty dev) before the integration suite',
+      'enumCallRecordingStatusEnum is missing from twenty-client-sdk/core; regenerate the client against a running server (twenty app generate-client) before the integration suite',
     );
   }
 

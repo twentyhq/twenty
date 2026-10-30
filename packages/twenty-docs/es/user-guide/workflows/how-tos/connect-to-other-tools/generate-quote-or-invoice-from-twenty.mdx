@@ -3,7 +3,7 @@ title: Generar una cotización o una factura desde Twenty
 description: Crea automáticamente facturas en herramientas externas cuando se ganan las oportunidades.
 ---
 
-Envía automáticamente los datos de la oportunidad a tu sistema de facturación (Stripe, QuickBooks, Xero, etc.) cuando se gana una oportunidad.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Estructura del flujo de trabajo
 
@@ -37,10 +37,10 @@ El disparador se activa con cualquier actualización de una Oportunidad. El filt
 
 Es posible que el registro de Oportunidad no incluya todos los campos de Empresa que necesitas para la factura. Añade una acción **Search Record**:
 
-| Configuración     | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| **Objeto**        | Empresa                                   |
-| **Coincidir por** | ID igual a `{{trigger.object.companyId}}` |
+| Configuración     | Valor                                               |
+| ----------------- | --------------------------------------------------- |
+| **Objeto**        | Empresa                                             |
+| **Coincidir por** | ID igual a `{{trigger.properties.after.companyId}}` |
 
 Esto recupera el registro completo de Empresa con dirección de facturación, ID fiscal, etc.
 
@@ -142,3 +142,5 @@ Body: {{code.invoice}}
 * [Disparadores de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-triggers)
 * [Acciones de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions)
 * [Automatizaciones de Cerrado ganado](/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+
+<PageBanner illustration="section-document-generator" />

@@ -183,16 +183,19 @@ export const CurrencyStaysOnOneLine: Story = {
     expect(amountBounds.top).toBeGreaterThanOrEqual(displayBounds.top);
     expect(amountBounds.bottom).toBeLessThanOrEqual(displayBounds.bottom);
 
-    const [fieldIcon, currencyIcon] = canvasElement.querySelectorAll('svg');
+    const currencySymbol = canvas.getByText('$', { exact: true });
+    const [fieldIcon] = canvasElement.querySelectorAll('svg');
     const fieldIconBounds = fieldIcon.getBoundingClientRect();
-    const currencyIconBounds = currencyIcon.getBoundingClientRect();
+    const currencySymbolBounds = currencySymbol.getBoundingClientRect();
     const amountCenter = amountBounds.top + amountBounds.height / 2;
     const fieldIconCenter = fieldIconBounds.top + fieldIconBounds.height / 2;
-    const currencyIconCenter =
-      currencyIconBounds.top + currencyIconBounds.height / 2;
+    const currencySymbolCenter =
+      currencySymbolBounds.top + currencySymbolBounds.height / 2;
 
     expect(Math.abs(amountCenter - fieldIconCenter)).toBeLessThanOrEqual(1);
-    expect(Math.abs(amountCenter - currencyIconCenter)).toBeLessThanOrEqual(1);
+    expect(Math.abs(amountCenter - currencySymbolCenter)).toBeLessThanOrEqual(
+      1,
+    );
   },
 };
 

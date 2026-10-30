@@ -33,7 +33,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     availableApplicationId: registration.universalIdentifier,
   });
 
-  const publishCommands = [doNotTranslate('yarn twenty app:publish')];
+  const publishCommands = [doNotTranslate('twenty app publish')];
 
   return (
     <>

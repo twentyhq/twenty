@@ -17,9 +17,10 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-const SYNC_STATUSES_NEEDING_ACTION: ReadonlySet<SyncStatus> = new Set([
+const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
   SyncStatus.FAILED,
   SyncStatus.PENDING_CONFIGURATION,
+  SyncStatus.IMPORTING,
 ]);
 
 type SettingsAccountGroupTableRowProps = {
@@ -43,10 +44,10 @@ export const SettingsAccountGroupTableRow = ({
   const { messageChannel, calendarChannel } =
     getConnectedAccountSettingsChannels(builtInAccount);
   const hasSettings = isDefined(messageChannel) || isDefined(calendarChannel);
-  const needsAction =
+  const shouldShowSyncStatus =
     isDefined(builtInAccount) &&
     (isDefined(builtInAccount.archivedAt) ||
-      SYNC_STATUSES_NEEDING_ACTION.has(
+      DISPLAYED_SYNC_STATUSES.has(
         computeSyncStatus(
           builtInAccount.messageChannels[0],
           builtInAccount.calendarChannels[0],
@@ -61,9 +62,6 @@ export const SettingsAccountGroupTableRow = ({
     >
       <ProviderIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       <OverflowingTextWithTooltip text={group.handle} />
-      {needsAction && (
-        <SettingsConnectedAccountSyncStatus account={builtInAccount} />
-      )}
     </TableCell>
   );
 
@@ -97,14 +95,26 @@ export const SettingsAccountGroupTableRow = ({
           account={builtInAccount}
         />
       ) : (
-        <TableCell align="right">
+        <TableCell align="right" gap={themeCssVariables.spacing[4]}>
           <SettingsAccountGroupUsedBy group={group} />
+          {shouldShowSyncStatus && (
+            <SettingsConnectedAccountSyncStatus account={builtInAccount} />
+          )}
         </TableCell>
       )}
-      <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-        {isDefined(builtInAccount) && (
-          <SettingsAppPreferencesRowDropdownMenu account={builtInAccount} />
+      <TableCell
+        align="right"
+        gap={themeCssVariables.spacing[4]}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {isDefined(builtInAccountApp) && shouldShowSyncStatus && (
+          <SettingsConnectedAccountSyncStatus account={builtInAccount} />
         )}
+        <SettingsAppPreferencesRowDropdownMenu
+          group={group}
+          hasAccountSettings={hasSettings}
+          builtInAccountApp={builtInAccountApp}
+        />
       </TableCell>
     </TableRow>
   );

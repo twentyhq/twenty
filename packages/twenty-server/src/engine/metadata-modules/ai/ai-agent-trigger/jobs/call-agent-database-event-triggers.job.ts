@@ -13,8 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -103,9 +102,6 @@ export class CallAgentDatabaseEventTriggersJob {
             flatObjectMetadataMaps,
           }),
         );
-      const restrictedFields =
-        agentObjectsPermissions[objectMetadata.id]?.restrictedFields;
-
       const admittedEvents = workspaceEventBatch.events
         .filter((event) => admittedRecordIds.has(event.recordId))
         .filter(
@@ -117,13 +113,13 @@ export class CallAgentDatabaseEventTriggersJob {
             }),
         )
         .map((event) =>
-          omitInheritedReadabilityChildRecords(
-            omitRestrictedFieldsFromEvent({
-              event,
-              restrictedFields,
-              flatFieldMetadataMaps,
-            }),
-          ),
+          omitRestrictedFieldsFromEvent({
+            event,
+            objectMetadata,
+            objectsPermissions: agentObjectsPermissions,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         )
         .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
 

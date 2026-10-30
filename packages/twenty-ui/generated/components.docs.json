@@ -2109,6 +2109,13 @@
         "description": "Identifies the form that owns the radio inputs.\nUseful when the radio group is rendered outside the form."
       },
       {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Stretch the control to the width of its container."
+      },
+      {
         "name": "inputRef",
         "type": "Ref<HTMLInputElement>",
         "required": false,
@@ -3916,6 +3923,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",
@@ -8414,6 +8428,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Native styles applied to the rendered part."
+          },
+          {
+            "name": "variant",
+            "type": "\"compact\" | \"default\"",
+            "required": false,
+            "defaultValue": "default",
+            "description": "default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider."
           }
         ]
       },
@@ -12852,6 +12873,13 @@
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           },
           {
+            "name": "textAlign",
+            "type": "\"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+          },
+          {
             "name": "value",
             "type": "string | number | readonly string[]",
             "required": false,
@@ -14887,6 +14915,13 @@
         "description": "CSS class applied to the group root."
       },
       {
+        "name": "contentPaddingInline",
+        "type": "PaddingInline<string | number>",
+        "required": false,
+        "defaultValue": "var(--t-spacing-2)",
+        "description": "Inline padding around the field content, defaulting to the --t-spacing-2 theme token (8 pixels in the standard theme). Numbers use pixels; CSS padding values are also supported. Set 0 to align content with the row inset when no visible label is present."
+      },
+      {
         "name": "hasDivider",
         "type": "boolean",
         "required": false,
@@ -15494,6 +15529,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",
