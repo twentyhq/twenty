@@ -1,7 +1,6 @@
 type InjectableWrapper = { instance: unknown };
 type ContainerModule = { injectables: Map<unknown, InjectableWrapper> };
 
-// Guards live in each module's injectables, one instance per module that uses them.
 export const getAppInjectablesByClassName = <T>(className: string): T[] => {
   if (!global.app) {
     throw new Error(

@@ -234,7 +234,6 @@ export class GettingStartedService {
     });
   }
 
-  // Saved once final so late enrichment does not reshuffle the step list.
   private async getOrSaveAssignedStepActionKeys({
     userId,
     userEmail,
