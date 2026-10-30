@@ -3,6 +3,7 @@ import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceSta
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
+  AiChatAssistantMode,
   AiModelTier,
   OnboardingStatus,
   PermissionFlagType,
@@ -91,6 +92,8 @@ export const mockCurrentWorkspace = {
   metadataVersion: 1,
   trashRetentionDays: 14,
   aiChatModelTier: AiModelTier.fast,
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+  aiChatInboxAssistantMode: AiChatAssistantMode.AUTOMATIC,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
   aiModelIdByTier: {},
