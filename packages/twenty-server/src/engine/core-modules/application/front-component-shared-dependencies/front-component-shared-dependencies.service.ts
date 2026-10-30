@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -12,6 +13,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getFrontComponentSharedDependenciesPath } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/get-front-component-shared-dependencies-path.util';
 
 const SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE = 'application/javascript';
 
@@ -26,9 +28,11 @@ export class FrontComponentSharedDependenciesService {
   async getBuiltSharedDependenciesPresignedUrlOrStream({
     applicationId,
     workspaceId,
+    checksum,
   }: {
     applicationId: string;
     workspaceId: string;
+    checksum?: string;
   }): Promise<{
     fileResponse: FileResponse;
     frontComponentSharedDependenciesChecksum: string | null;
@@ -39,7 +43,11 @@ export class FrontComponentSharedDependenciesService {
         workspaceId,
       });
 
-    if (!isDefined(application.frontComponentSharedDependenciesBuiltPath)) {
+    const builtPath = isDefined(checksum)
+      ? getFrontComponentSharedDependenciesPath(checksum)
+      : application.frontComponentSharedDependenciesBuiltPath;
+
+    if (!isDefined(builtPath)) {
       throw new ApplicationException(
         `Application "${applicationId}" does not declare shared dependencies`,
         ApplicationExceptionCode.ENTITY_NOT_FOUND,
@@ -50,7 +58,7 @@ export class FrontComponentSharedDependenciesService {
       workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
-      resourcePath: application.frontComponentSharedDependenciesBuiltPath,
+      resourcePath: builtPath,
     };
 
     const presignedUrl = await this.fileStorageService.getPresignedUrl({
@@ -68,7 +76,7 @@ export class FrontComponentSharedDependenciesService {
       return {
         fileResponse: { type: 'redirect', presignedUrl },
         frontComponentSharedDependenciesChecksum:
-          application.frontComponentSharedDependenciesChecksum,
+          checksum ?? application.frontComponentSharedDependenciesChecksum,
       };
     }
 
@@ -81,7 +89,41 @@ export class FrontComponentSharedDependenciesService {
         mimeType: SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE,
       },
       frontComponentSharedDependenciesChecksum:
-        application.frontComponentSharedDependenciesChecksum,
+        checksum ?? application.frontComponentSharedDependenciesChecksum,
     };
+  }
+
+  async saveBuiltSharedDependencies({
+    applicationId,
+    workspaceId,
+    source,
+    checksum,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    source: string;
+    checksum: string;
+  }) {
+    if (createHash('sha256').update(source).digest('hex') !== checksum) {
+      throw new ApplicationException(
+        'Shared dependencies checksum mismatch',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        id: applicationId,
+        workspaceId,
+      });
+
+    return this.fileStorageService.writeFile({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder: FileFolder.BuiltFrontComponent,
+      resourcePath: getFrontComponentSharedDependenciesPath(checksum),
+      sourceFile: source,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
   }
 }

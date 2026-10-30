@@ -16,5 +16,6 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   ],
   controllers: [FrontComponentSharedDependenciesController],
   providers: [FrontComponentSharedDependenciesService],
+  exports: [FrontComponentSharedDependenciesService],
 })
 export class FrontComponentSharedDependenciesModule {}

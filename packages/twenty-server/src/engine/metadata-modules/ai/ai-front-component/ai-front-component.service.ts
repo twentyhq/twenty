@@ -1,42 +1,44 @@
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
-import { getFrontComponentSharedDependenciesPath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies-path.util';
-import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { createHash } from 'crypto';
-import { text } from 'stream/consumers';
-
-import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { FrontComponentSharedDependenciesService } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.service';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { doNotTranslate } from 'twenty-shared/i18n';
-
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
+import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
+import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
+import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
+import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
+import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
+import { Injectable } from '@nestjs/common';
+import { msg } from '@lingui/core/macro';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { createHash } from 'crypto';
+import { text } from 'stream/consumers';
+
+import {
+  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+  getAiFrontComponentSourcePath,
+} from 'twenty-shared/application';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
-import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
-import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
 import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
-import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
-import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
 
 const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
@@ -54,6 +56,7 @@ export class AiFrontComponentService {
     private readonly cache: CacheStorageService,
     private readonly locks: CacheLockService,
     private readonly permissions: PermissionsService,
+    private readonly sharedDependencies: FrontComponentSharedDependenciesService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -63,16 +66,24 @@ export class AiFrontComponentService {
     );
   }
 
-  async assertEnabled(workspaceId: string) {
+  async assertEnabledOrThrow(workspaceId: string) {
     if (!(await this.isEnabled(workspaceId))) {
-      throw new ForbiddenException(
+      throw new ApplicationException(
         doNotTranslate('AI component builder is disabled.'),
+        ApplicationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`AI component builder is disabled.` },
       );
     }
   }
 
-  async assertCanAuthor(workspaceId: string, userWorkspaceId: string) {
-    await this.assertEnabled(workspaceId);
+  async assertCanAuthorOrThrow({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }) {
+    await this.assertEnabledOrThrow(workspaceId);
     if (
       !(await this.permissions.userHasWorkspaceSettingPermission({
         workspaceId,
@@ -82,66 +93,60 @@ export class AiFrontComponentService {
         agentId: undefined,
       }))
     ) {
-      throw new ForbiddenException(
+      throw new ApplicationException(
         doNotTranslate('Managing applications is required.'),
+        ApplicationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`Managing applications is required.` },
       );
     }
   }
 
-  private draftKey(workspaceId: string, draftId: string) {
+  private draftKey({
+    workspaceId,
+    draftId,
+  }: {
+    workspaceId: string;
+    draftId: string;
+  }) {
     return `ai-front-component:${workspaceId}:${draftId}`;
   }
 
-  private sharedDependenciesKey(checksum: string) {
-    return `ai-front-component-shared-dependencies:${checksum}`;
+  private currentKey({
+    workspaceId,
+    rootId,
+  }: {
+    workspaceId: string;
+    rootId: string;
+  }) {
+    return `${this.draftKey({ workspaceId, draftId: rootId })}:current`;
   }
 
-  private async getDraftSharedDependencies(draft: FrontComponentDraft) {
-    const checksum = readFrontComponentSharedDependenciesChecksum(
-      draft.compiledSource,
-    );
-
-    if (!isDefined(checksum)) {
-      return undefined;
-    }
-    const source = await this.cache.get<string>(
-      this.sharedDependenciesKey(checksum),
-    );
-
-    if (
-      !isDefined(source) ||
-      createHash('sha256').update(source).digest('hex') !== checksum
-    ) {
-      throw new NotFoundException(
-        doNotTranslate(
-          'Component draft dependencies are missing or expired. Create a new preview.',
-        ),
-      );
-    }
-
-    return source;
-  }
-
-  private currentKey(workspaceId: string, rootId: string) {
-    return `${this.draftKey(workspaceId, rootId)}:current`;
-  }
-
-  private async saveDraft(workspaceId: string, draft: FrontComponentDraft) {
+  private async saveDraft({
+    workspaceId,
+    draft,
+  }: {
+    workspaceId: string;
+    draft: FrontComponentDraft;
+  }) {
     await this.cache.set(
-      this.draftKey(workspaceId, draft.id),
+      this.draftKey({ workspaceId, draftId: draft.id }),
       draft,
       Math.max(1, draft.expiresAt - Date.now()),
     );
   }
 
-  async getDraft(
-    workspaceId: string,
-    userWorkspaceId: string,
-    draftId: string,
-  ) {
-    await this.assertCanAuthor(workspaceId, userWorkspaceId);
+  async getDraft({
+    workspaceId,
+    userWorkspaceId,
+    draftId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    draftId: string;
+  }) {
+    await this.assertCanAuthorOrThrow({ workspaceId, userWorkspaceId });
     const draft = await this.cache.get<FrontComponentDraft>(
-      this.draftKey(workspaceId, draftId),
+      this.draftKey({ workspaceId, draftId }),
     );
 
     if (
@@ -151,53 +156,44 @@ export class AiFrontComponentService {
       !isDefined(draft.compiledSource) ||
       !isDefined(draft.entrySource)
     ) {
-      throw new NotFoundException(
+      throw new ApplicationException(
         doNotTranslate('Component draft not found or expired.'),
+        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+        { userFriendlyMessage: msg`Component draft not found or expired.` },
       );
     }
 
     return draft;
   }
 
-  private async isCurrent(workspaceId: string, draft: FrontComponentDraft) {
+  private async isCurrent({
+    workspaceId,
+    draft,
+  }: {
+    workspaceId: string;
+    draft: FrontComponentDraft;
+  }) {
     return (
       (await this.cache.get<string>(
-        this.currentKey(workspaceId, draft.rootId),
+        this.currentKey({ workspaceId, rootId: draft.rootId }),
       )) === draft.id
     );
   }
 
-  private async validateQuery(
-    query: FrontComponentQuery,
-    authContext: WorkspaceAuthContext,
-    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'],
-  ) {
-    const { selectedFields } = await this.queryContext.build({
-      authContext,
-      objectName: query.objectName,
-      rolePermissionConfig,
-    });
-
-    for (const fieldName of query.select) {
-      if (!isDefined(selectedFields[fieldName])) {
-        throw new ForbiddenException(
-          doNotTranslate(
-            `Field ${query.objectName}.${fieldName} is unavailable. Select accessible top-level fields.`,
-          ),
-        );
-      }
-    }
-  }
-
-  async createDraft(
-    draftInput: FrontComponentDraftInput,
-    context: ToolProviderContext,
-  ) {
+  async createDraft({
+    draftInput,
+    context,
+  }: {
+    draftInput: FrontComponentDraftInput;
+    context: ToolProviderContext;
+  }) {
     const validation = frontComponentDraftSchema.safeParse(draftInput);
 
     if (!validation.success) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         doNotTranslate('Invalid component draft input.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Invalid component draft input.` },
       );
     }
 
@@ -208,19 +204,26 @@ export class AiFrontComponentService {
       !isDefined(context.threadId) ||
       !isDefined(context.authContext)
     ) {
-      throw new ForbiddenException(
+      throw new ApplicationException(
         doNotTranslate('A signed-in chat is required.'),
+        ApplicationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`A signed-in chat is required.` },
       );
     }
-    await this.assertCanAuthor(context.workspaceId, context.userWorkspaceId);
-    await this.validateQuery(
-      input.query,
-      context.authContext,
-      context.rolePermissionConfig,
-    );
+    await this.assertCanAuthorOrThrow({
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+    });
+    await this.validateQueryOrThrow({
+      query: input.query,
+      authContext: context.authContext,
+      rolePermissionConfig: context.rolePermissionConfig,
+    });
     if (JSON.stringify(input.sampleRecords).length > 100000) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         doNotTranslate('Sample records exceed 100 KB.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Sample records exceed 100 KB.` },
       );
     }
     if (
@@ -230,21 +233,29 @@ export class AiFrontComponentService {
         ),
       )
     ) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         doNotTranslate(
           'Sample records must only contain selected fields and id.',
         ),
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Sample records must only contain selected fields and id.`,
+        },
       );
     }
     const previous = isDefined(input.previousDraftId)
-      ? await this.getDraft(
-          context.workspaceId,
-          context.userWorkspaceId,
-          input.previousDraftId,
-        )
+      ? await this.getDraft({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          draftId: input.previousDraftId,
+        })
       : undefined;
     const id = v4();
     const rootId = previous?.rootId ?? id;
+    const { workspaceCustomFlatApplication: application } =
+      await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: context.workspaceId },
+      );
     const built = await this.compiler.build({
       workspaceId: context.workspaceId,
       input: {
@@ -259,21 +270,27 @@ export class AiFrontComponentService {
     return this.locks.withLock(
       async () => {
         if (isDefined(previous)) {
-          const latestPrevious = await this.getDraft(
-            context.workspaceId,
-            context.userWorkspaceId!,
-            previous.id,
-          );
+          const latestPrevious = await this.getDraft({
+            workspaceId: context.workspaceId,
+            userWorkspaceId: context.userWorkspaceId!,
+            draftId: previous.id,
+          });
 
           if (
-            !(await this.isCurrent(context.workspaceId, latestPrevious)) ||
-            latestPrevious.publicationStarted ||
+            !(await this.isCurrent({
+              workspaceId: context.workspaceId,
+              draft: latestPrevious,
+            })) ||
             latestPrevious.threadId !== context.threadId
           ) {
-            throw new BadRequestException(
+            throw new ApplicationException(
               doNotTranslate(
-                'This draft was superseded or published. Start a new draft.',
+                'This draft was superseded or belongs to another chat. Start a new draft.',
               ),
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`This draft was superseded or belongs to another chat. Start a new draft.`,
+              },
             );
           }
         }
@@ -285,20 +302,22 @@ export class AiFrontComponentService {
           entrySource: built.source,
           componentName: built.componentName,
           id,
+          applicationId: application.id,
           rootId,
           expiresAt: Date.now() + DRAFT_TTL,
           userWorkspaceId: context.userWorkspaceId!,
           threadId: context.threadId!,
         };
 
+        await this.sharedDependencies.saveBuiltSharedDependencies({
+          applicationId: application.id,
+          workspaceId: context.workspaceId,
+          source: built.sharedDependencies.source,
+          checksum: built.sharedDependencies.checksum,
+        });
+        await this.saveDraft({ workspaceId: context.workspaceId, draft });
         await this.cache.set(
-          this.sharedDependenciesKey(built.sharedDependencies.checksum),
-          built.sharedDependencies.source,
-          DRAFT_TTL,
-        );
-        await this.saveDraft(context.workspaceId, draft);
-        await this.cache.set(
-          this.currentKey(context.workspaceId, rootId),
+          this.currentKey({ workspaceId: context.workspaceId, rootId }),
           id,
           DRAFT_TTL,
         );
@@ -310,25 +329,35 @@ export class AiFrontComponentService {
           sampleRecordCount: input.sampleRecords.length,
         };
       },
-      this.currentKey(context.workspaceId, rootId),
+      this.currentKey({ workspaceId: context.workspaceId, rootId }),
     );
   }
 
-  async getPreview(
-    userWorkspaceId: string,
-    draftId: string,
-    authContext: WorkspaceAuthContext,
-  ) {
+  async getPreview({
+    userWorkspaceId,
+    draftId,
+    authContext,
+  }: {
+    userWorkspaceId: string;
+    draftId: string;
+    authContext: WorkspaceAuthContext;
+  }) {
     const workspaceId = authContext.workspace.id;
-    const draft = await this.getDraft(workspaceId, userWorkspaceId, draftId);
+    const draft = await this.getDraft({
+      workspaceId,
+      userWorkspaceId,
+      draftId,
+    });
 
     return {
       draftId: draft.id,
       name: draft.name,
-      isCurrent: await this.isCurrent(workspaceId, draft),
-      published: isDefined(draft.publishedComponentId),
+      isCurrent: await this.isCurrent({ workspaceId, draft }),
       componentSource: draft.compiledSource,
-      sharedDependenciesSource: await this.getDraftSharedDependencies(draft),
+      applicationId: draft.applicationId,
+      sharedDependenciesChecksum: readFrontComponentSharedDependenciesChecksum(
+        draft.compiledSource,
+      ),
       data: {
         records: draft.sampleRecords,
         count: draft.sampleRecords.length,
@@ -337,34 +366,81 @@ export class AiFrontComponentService {
     };
   }
 
-  async recordDiagnostic(
-    workspaceId: string,
-    userWorkspaceId: string,
-    draftId: string,
-    diagnostic: FrontComponentDiagnostic,
-  ) {
-    const draft = await this.getDraft(workspaceId, userWorkspaceId, draftId);
+  async recordDiagnostic({
+    workspaceId,
+    userWorkspaceId,
+    draftId,
+    diagnostic,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    draftId: string;
+    diagnostic: FrontComponentDiagnostic;
+  }) {
+    const draft = await this.getDraft({
+      workspaceId,
+      userWorkspaceId,
+      draftId,
+    });
 
     await this.locks.withLock(
       async () => {
-        const latest = await this.getDraft(
+        const latest = await this.getDraft({
           workspaceId,
           userWorkspaceId,
           draftId,
-        );
+        });
 
-        await this.saveDraft(workspaceId, { ...latest, diagnostic });
+        await this.saveDraft({ workspaceId, draft: { ...latest, diagnostic } });
       },
-      this.currentKey(workspaceId, draft.rootId),
+      this.currentKey({ workspaceId, rootId: draft.rootId }),
     );
   }
 
-  private async readRecords(
-    query: FrontComponentQuery,
-    authContext: WorkspaceAuthContext,
-    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'],
-  ) {
-    await this.validateQuery(query, authContext, rolePermissionConfig);
+  private async validateQueryOrThrow({
+    query,
+    authContext,
+    rolePermissionConfig,
+  }: {
+    query: FrontComponentQuery;
+    authContext: WorkspaceAuthContext;
+    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
+  }) {
+    const { selectedFields } = await this.queryContext.build({
+      authContext,
+      objectName: query.objectName,
+      rolePermissionConfig,
+    });
+
+    for (const fieldName of query.select) {
+      if (!isDefined(selectedFields[fieldName])) {
+        throw new ApplicationException(
+          doNotTranslate(
+            `Field ${query.objectName}.${fieldName} is unavailable. Select accessible top-level fields.`,
+          ),
+          ApplicationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Field ${query.objectName}.${fieldName} is unavailable. Select accessible top-level fields.`,
+          },
+        );
+      }
+    }
+  }
+
+  private async readRecords({
+    query,
+    authContext,
+    rolePermissionConfig,
+  }: {
+    query: FrontComponentQuery;
+    authContext: WorkspaceAuthContext;
+    rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
+  }) {
+    await this.validateQueryOrThrow({
+      query,
+      authContext,
+      rolePermissionConfig,
+    });
     const output = await this.records.execute({
       ...query,
       authContext,
@@ -377,20 +453,28 @@ export class AiFrontComponentService {
       !isDefined(output.result) ||
       isDefined(output.warnings)
     ) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         output.error ??
           output.warnings?.join(' ') ??
           doNotTranslate('Unable to read component records.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Unable to read component records.` },
       );
     }
 
     return { ...output.result, count: Number(output.result.count) };
   }
 
-  async getRecords(componentId: string, authContext: WorkspaceAuthContext) {
+  async getRecords({
+    componentId,
+    authContext,
+  }: {
+    componentId: string;
+    authContext: WorkspaceAuthContext;
+  }) {
     const workspaceId = authContext.workspace.id;
 
-    await this.assertEnabled(workspaceId);
+    await this.assertEnabledOrThrow(workspaceId);
     const component = await this.components.findById(componentId, workspaceId);
     const { workspaceCustomFlatApplication: application } =
       await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -401,10 +485,12 @@ export class AiFrontComponentService {
       !isDefined(component) ||
       component.applicationId !== application.id ||
       component.sourceComponentPath !==
-        `src/ai-front-components/${componentId}.front-component.tsx`
+        getAiFrontComponentSourcePath(componentId)
     ) {
-      throw new NotFoundException(
+      throw new ApplicationException(
         doNotTranslate('AI front component not found.'),
+        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+        { userFriendlyMessage: msg`AI front component not found.` },
       );
     }
     const queryFile = await this.files.readFile({
@@ -416,11 +502,17 @@ export class AiFrontComponentService {
     const content = await text(queryFile);
     const query = readFrontComponentQuery(content);
 
-    return this.readRecords(query, authContext);
+    return this.readRecords({ query, authContext });
   }
 
-  async getRuntime(componentId: string, authContext: WorkspaceAuthContext) {
-    const data = await this.getRecords(componentId, authContext);
+  async getRuntime({
+    componentId,
+    authContext,
+  }: {
+    componentId: string;
+    authContext: WorkspaceAuthContext;
+  }) {
+    const data = await this.getRecords({ componentId, authContext });
     const component = await this.components.findById(
       componentId,
       authContext.workspace.id,
@@ -429,10 +521,14 @@ export class AiFrontComponentService {
     if (
       !isDefined(component) ||
       component.sourceComponentPath !==
-        `src/ai-front-components/${componentId}.front-component.tsx`
+        getAiFrontComponentSourcePath(componentId)
     ) {
-      throw new NotFoundException(
+      throw new ApplicationException(
         doNotTranslate('Recreate this component with the current builder.'),
+        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Recreate this component with the current builder.`,
+        },
       );
     }
     const { workspaceCustomFlatApplication: application } =
@@ -452,8 +548,10 @@ export class AiFrontComponentService {
       createHash('sha256').update(componentSource).digest('hex') !==
       component.builtComponentChecksum
     ) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         doNotTranslate('Component source checksum mismatch.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Component source checksum mismatch.` },
       );
     }
 
@@ -478,8 +576,12 @@ export class AiFrontComponentService {
           applicationDependencies.frontComponentSharedDependenciesBuiltPath,
         )
       ) {
-        throw new BadRequestException(
+        throw new ApplicationException(
           doNotTranslate('Component shared dependencies are missing.'),
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Component shared dependencies are missing.`,
+          },
         );
       }
       sharedDependenciesSource = await text(
@@ -495,52 +597,22 @@ export class AiFrontComponentService {
         createHash('sha256').update(sharedDependenciesSource).digest('hex') !==
         applicationDependencies.frontComponentSharedDependenciesChecksum
       ) {
-        throw new BadRequestException(
+        throw new ApplicationException(
           doNotTranslate('Component shared dependencies checksum mismatch.'),
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Component shared dependencies checksum mismatch.`,
+          },
         );
       }
     }
 
     return {
+      applicationId: application.id,
       componentSource,
       sharedDependenciesSource,
       sharedDependenciesChecksum,
       data,
     };
-  }
-
-  async getSharedDependencies(
-    cacheKey: string,
-    authContext: WorkspaceAuthContext,
-  ) {
-    const workspaceId = authContext.workspace.id;
-    await this.assertEnabled(workspaceId);
-    const checksum = extractChecksumFromCacheKey(cacheKey);
-
-    if (!isDefined(checksum)) {
-      throw new BadRequestException(
-        doNotTranslate('Invalid component shared dependencies checksum.'),
-      );
-    }
-    const { workspaceCustomFlatApplication: application } =
-      await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-    const source = await text(
-      await this.files.readFile({
-        workspaceId,
-        applicationUniversalIdentifier: application.universalIdentifier,
-        fileFolder: FileFolder.BuiltFrontComponent,
-        resourcePath: getFrontComponentSharedDependenciesPath(checksum),
-      }),
-    );
-
-    if (createHash('sha256').update(source).digest('hex') !== checksum) {
-      throw new BadRequestException(
-        doNotTranslate('Component shared dependencies checksum mismatch.'),
-      );
-    }
-
-    return source;
   }
 }

@@ -1,5 +1,10 @@
+import { msg } from '@lingui/core/macro';
 import {
-  BadRequestException,
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
+import {
   Body,
   Controller,
   Get,
@@ -8,6 +13,7 @@ import {
   ParseUUIDPipe,
   Post,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 import { ApiPath } from 'twenty-shared/types';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -22,6 +28,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
 import { frontComponentDiagnosticSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-diagnostic.schema';
 
 @Controller(`${ApiPath.Rest}/ai-front-components`)
+@UseFilters(ApplicationRestApiExceptionFilter)
 export class AiFrontComponentController {
   constructor(private readonly components: AiFrontComponentService) {}
 
@@ -45,11 +52,11 @@ export class AiFrontComponentController {
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.components.getPreview(
+    return this.components.getPreview({
       userWorkspaceId,
       draftId,
-      getWorkspaceAuthContext(),
-    );
+      authContext: getWorkspaceAuthContext(),
+    });
   }
 
   @Post('drafts/:draftId/diagnostic')
@@ -76,17 +83,19 @@ export class AiFrontComponentController {
     const diagnostic = frontComponentDiagnosticSchema.safeParse(body);
 
     if (!diagnostic.success) {
-      throw new BadRequestException(
+      throw new ApplicationException(
         doNotTranslate('Invalid component preview diagnostic.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Invalid component preview diagnostic.` },
       );
     }
 
-    return this.components.recordDiagnostic(
-      workspace.id,
+    return this.components.recordDiagnostic({
+      workspaceId: workspace.id,
       userWorkspaceId,
       draftId,
-      diagnostic.data,
-    );
+      diagnostic: diagnostic.data,
+    });
   }
 
   @Get(':frontComponentId/runtime')
@@ -108,33 +117,9 @@ export class AiFrontComponentController {
   getRuntime(
     @Param('frontComponentId', ParseUUIDPipe) frontComponentId: string,
   ) {
-    return this.components.getRuntime(
-      frontComponentId,
-      getWorkspaceAuthContext(),
-    );
-  }
-
-  @Get('shared-dependencies/:cacheKey')
-  @Header('Content-Type', 'application/javascript')
-  @Header('Cache-Control', 'private, max-age=31536000, immutable')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
-  getSharedDependencies(@Param('cacheKey') cacheKey: string) {
-    return this.components.getSharedDependencies(
-      cacheKey,
-      getWorkspaceAuthContext(),
-    );
+    return this.components.getRuntime({
+      componentId: frontComponentId,
+      authContext: getWorkspaceAuthContext(),
+    });
   }
 }

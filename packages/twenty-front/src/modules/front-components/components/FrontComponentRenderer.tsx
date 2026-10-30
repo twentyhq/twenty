@@ -1,3 +1,4 @@
+import { getAiFrontComponentSourcePath } from 'twenty-shared/application';
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
@@ -77,37 +78,48 @@ export const FrontComponentRenderer = ({
 
   const frontComponent = data?.frontComponent;
 
+  if (isDefined(error)) {
+    return (
+      <>
+        <FrontComponentLoadErrorToastEffect errorMessage={error.message} />
+        {unavailableFallback}
+      </>
+    );
+  }
+
+  if (loading) {
+    return loadingFallback;
+  }
+
+  if (!isDefined(frontComponent)) {
+    return unavailableFallback;
+  }
+
+  if (
+    frontComponent.sourceComponentPath ===
+    getAiFrontComponentSourcePath(frontComponent.id)
+  ) {
+    return (
+      <AiWorkspaceFrontComponent
+        key={`${frontComponent.id}:${frontComponent.builtComponentChecksum}`}
+        frontComponentId={frontComponent.id}
+      />
+    );
+  }
+
   return (
-    <>
-      <FrontComponentLoadErrorToastEffect errorMessage={error?.message} />
-      {loading && loadingFallback}
-      {!loading &&
-        (!isDefined(frontComponent) || isDefined(error)) &&
-        unavailableFallback}
-      {!loading &&
-        isDefined(frontComponent) &&
-        !isDefined(error) &&
-        (frontComponent.sourceComponentPath ===
-        `src/ai-front-components/${frontComponent.id}.front-component.tsx` ? (
-          <AiWorkspaceFrontComponent
-            key={`${frontComponent.id}:${frontComponent.builtComponentChecksum}`}
-            frontComponentId={frontComponent.id}
-          />
-        ) : (
-          <FrontComponentRendererContent
-            key={frontComponent.id}
-            frontComponent={frontComponent}
-            commandMenuItemId={commandMenuItemId}
-            selectedRecordIds={selectedRecordIds}
-            selectedRecordsFilter={selectedRecordsFilter}
-            objectNameSingular={objectNameSingular}
-            timelineActivityId={timelineActivityId}
-            toolCall={toolCall}
-            loadingFallback={loadingFallback}
-            unavailableFallback={unavailableFallback}
-          />
-        ))}
-    </>
+    <FrontComponentRendererContent
+      key={frontComponent.id}
+      frontComponent={frontComponent}
+      commandMenuItemId={commandMenuItemId}
+      selectedRecordIds={selectedRecordIds}
+      selectedRecordsFilter={selectedRecordsFilter}
+      objectNameSingular={objectNameSingular}
+      timelineActivityId={timelineActivityId}
+      toolCall={toolCall}
+      loadingFallback={loadingFallback}
+      unavailableFallback={unavailableFallback}
+    />
   );
 };
 

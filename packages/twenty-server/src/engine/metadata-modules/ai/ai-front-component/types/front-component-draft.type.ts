@@ -3,6 +3,7 @@ import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai
 
 export type FrontComponentDraft = FrontComponentDraftInput & {
   id: string;
+  applicationId: string;
   rootId: string;
   expiresAt: number;
   threadId: string;
@@ -13,6 +14,4 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   checksum: string;
   dependencyRevision?: string;
   diagnostic?: FrontComponentDiagnostic;
-  publicationStarted?: boolean;
-  publishedComponentId?: string;
 };
