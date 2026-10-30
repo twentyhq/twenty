@@ -36,11 +36,7 @@ export const CoreAgentRecordTriggerForm = ({
   );
 
   const handleFieldsChange = (fields: FieldMultiSelectValue | string) => {
-    const updatedFields = Array.isArray(fields)
-      ? fields
-      : isDefined(fields)
-        ? [fields]
-        : [];
+    const updatedFields = isDefined(fields) ? [fields].flat() : [];
 
     onTriggerUpdate({
       ...trigger,

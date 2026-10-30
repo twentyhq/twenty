@@ -3,11 +3,13 @@ import { TOOL_PERMISSION_FLAGS } from 'twenty-shared/constants';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 export const getCoreAgentEnabledToolFlags = (
-  role: RoleWithPartialMembers | undefined,
+  role:
+    | Pick<RoleWithPartialMembers, 'canAccessAllTools' | 'permissionFlags'>
+    | undefined,
 ): string[] => {
   const toolFlags: string[] = [...TOOL_PERMISSION_FLAGS];
 
-  if (role?.canAccessAllTools === true) {
+  if (role?.canAccessAllTools) {
     return toolFlags;
   }
 

@@ -58,23 +58,18 @@ export const CoreAgentDataAccessSection = ({
 
   const allRecordsLevels = getCoreAgentRecordAccessLevels({ role });
 
-  const allRecordsItems: CoreAgentSectionListItem[] =
-    allRecordsLevels.length > 0
-      ? [
-          {
-            id: 'all-records',
-            label: t`All records`,
-            description: formatLevels(allRecordsLevels),
-            icon: <IconLock size={theme.icon.size.md} />,
-            remove: canRemoveAccess
-              ? {
-                  label: t`Remove access to all records`,
-                  onClick: () => removeAccess(),
-                }
-              : undefined,
-          },
-        ]
-      : [];
+  const allRecordsItem: CoreAgentSectionListItem = {
+    id: 'all-records',
+    label: t`All records`,
+    description: formatLevels(allRecordsLevels),
+    icon: <IconLock size={theme.icon.size.md} />,
+    remove: canRemoveAccess
+      ? {
+          label: t`Remove access to all records`,
+          onClick: () => removeAccess(),
+        }
+      : undefined,
+  };
 
   const objectItems: CoreAgentSectionListItem[] =
     objectMetadataItemsThatCanHavePermission.flatMap((objectMetadataItem) => {
@@ -114,7 +109,11 @@ export const CoreAgentDataAccessSection = ({
       />
       <CoreAgentSectionBody>
         <CoreAgentSectionList
-          items={[...allRecordsItems, ...objectItems]}
+          items={
+            allRecordsLevels.length > 0
+              ? [allRecordsItem, ...objectItems]
+              : objectItems
+          }
           emptyMessage={t`This agent can't see any records yet.`}
         />
         {!isReadOnly && (

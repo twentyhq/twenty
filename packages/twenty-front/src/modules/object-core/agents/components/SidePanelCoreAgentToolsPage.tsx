@@ -22,18 +22,24 @@ export const SidePanelCoreAgentToolsPage = () => {
 
   const enabledToolFlags = getCoreAgentEnabledToolFlags(role);
 
-  const toggleToolFlag = (toolFlag: string, isEnabled: boolean) =>
+  const toggleToolFlag = ({
+    toolFlag,
+    isEnabled,
+  }: {
+    toolFlag: string;
+    isEnabled: boolean;
+  }) =>
     updateRole((currentRole) => {
       const currentToolFlags = getCoreAgentEnabledToolFlags(currentRole);
 
-      return getRoleWithCoreAgentToolFlags(
-        currentRole,
-        isEnabled
+      return getRoleWithCoreAgentToolFlags({
+        role: currentRole,
+        enabledToolFlags: isEnabled
           ? [...currentToolFlags, toolFlag]
           : currentToolFlags.filter(
               (currentToolFlag) => currentToolFlag !== toolFlag,
             ),
-      );
+      });
     });
 
   const readOnlyMessage = isAgentReadOnly
@@ -55,7 +61,10 @@ export const SidePanelCoreAgentToolsPage = () => {
               itemId={toolPermission.key}
               onEnter={() => {
                 if (!isReadOnly) {
-                  toggleToolFlag(toolPermission.key, !isEnabled);
+                  toggleToolFlag({
+                    toolFlag: toolPermission.key,
+                    isEnabled: !isEnabled,
+                  });
                 }
               }}
             >
@@ -65,7 +74,10 @@ export const SidePanelCoreAgentToolsPage = () => {
                 text={toolPermission.name}
                 checked={isEnabled}
                 onCheckedChange={(isChecked) =>
-                  toggleToolFlag(toolPermission.key, isChecked)
+                  toggleToolFlag({
+                    toolFlag: toolPermission.key,
+                    isEnabled: isChecked,
+                  })
                 }
                 disabled={isReadOnly}
               />

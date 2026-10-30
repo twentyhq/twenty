@@ -1,5 +1,4 @@
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -10,7 +9,7 @@ import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft'
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
-import { coreAgentFormSchema } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
+import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -25,7 +24,6 @@ import {
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSaveCoreAgent = (agent: CoreAgent) => {
-  const { t } = useLingui();
   const { enqueueToast } = useToast();
   const apolloClient = useApolloClient();
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
@@ -64,25 +62,6 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
     agent.id,
   );
 
-  const getDraftError = () => {
-    const validation = coreAgentFormSchema.safeParse(draft);
-
-    if (validation.success) {
-      return undefined;
-    }
-
-    const [issue] = validation.error.issues;
-
-    switch (issue?.path[0]) {
-      case 'label':
-        return t`Agent name cannot be empty`;
-      case 'prompt':
-        return t`Instructions cannot be empty`;
-      default:
-        return issue?.message;
-    }
-  };
-
   const replaceDraftRoleWithSavedRole = async (
     savedDraftRole: typeof settingsDraftRole,
   ) => {
@@ -106,7 +85,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   };
 
   const saveCoreAgent = async () => {
-    const draftError = getDraftError();
+    const draftError = getCoreAgentDraftError(draft);
 
     if (isDefined(draftError)) {
       enqueueToast({ status: 'error', children: draftError });

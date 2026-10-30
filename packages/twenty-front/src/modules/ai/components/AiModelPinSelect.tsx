@@ -62,6 +62,10 @@ export const AiModelPinSelect = ({
     isAutomaticOptionSelected ? '' : (modelId ?? ''),
   );
   const baseModel = aiModels.find((model) => model.modelId === baseModelId);
+  const selectedModelOptionValue =
+    isAutomaticOptionSelected || !isDefined(modelId)
+      ? (modelId ?? AUTOMATIC_MODEL_PIN)
+      : baseModelId;
   const efforts = (baseModel?.efforts ?? []).filter(isAiModelEffort);
 
   const handleModelChange = (value: string) => {
@@ -96,11 +100,7 @@ export const AiModelPinSelect = ({
         dropdownId={dropdownId}
         label={label}
         description={description}
-        value={
-          isAutomaticOptionSelected || !isDefined(modelId)
-            ? (modelId ?? AUTOMATIC_MODEL_PIN)
-            : baseModelId
-        }
+        value={selectedModelOptionValue}
         onChange={handleModelChange}
         showIconInControl={isDefined(modelId)}
         options={[

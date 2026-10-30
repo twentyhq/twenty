@@ -37,12 +37,12 @@ export const CoreAgentToolsSection = ({
 
   const removeTool = (toolFlag: string) =>
     updateRole((currentRole) =>
-      getRoleWithCoreAgentToolFlags(
-        currentRole,
-        getCoreAgentEnabledToolFlags(currentRole).filter(
+      getRoleWithCoreAgentToolFlags({
+        role: currentRole,
+        enabledToolFlags: getCoreAgentEnabledToolFlags(currentRole).filter(
           (enabledToolFlag) => enabledToolFlag !== toolFlag,
         ),
-      ),
+      }),
     );
 
   const items: CoreAgentSectionListItem[] = toolPermissions

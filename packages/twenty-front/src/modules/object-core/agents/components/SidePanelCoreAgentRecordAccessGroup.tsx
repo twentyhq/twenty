@@ -20,10 +20,13 @@ type SidePanelCoreAgentRecordAccessGroupProps = {
   role: RoleWithPartialMembers | undefined;
   objectMetadataId?: string;
   isReadOnly: boolean;
-  onLevelChange: (
-    level: CoreAgentRecordAccessLevel,
-    isEnabled: boolean,
-  ) => void;
+  onLevelChange: ({
+    level,
+    isEnabled,
+  }: {
+    level: CoreAgentRecordAccessLevel;
+    isEnabled: boolean;
+  }) => void;
 };
 
 export const SidePanelCoreAgentRecordAccessGroup = ({
@@ -62,7 +65,7 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
               itemId={itemId}
               onEnter={() => {
                 if (!isReadOnly) {
-                  onLevelChange(level, !isEnabled);
+                  onLevelChange({ level, isEnabled: !isEnabled });
                 }
               }}
             >
@@ -73,7 +76,9 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
                 }
                 text={t(isDefined(objectMetadataId) ? label : allRecordsLabel)}
                 checked={isEnabled}
-                onCheckedChange={(isChecked) => onLevelChange(level, isChecked)}
+                onCheckedChange={(isChecked) =>
+                  onLevelChange({ level, isEnabled: isChecked })
+                }
                 disabled={isReadOnly}
               />
             </SelectableListItem>

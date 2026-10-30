@@ -39,7 +39,10 @@ export const SettingsAgentModelCapabilities = ({
             startElement={<capability.Icon />}
             checked={capability.enabled}
             onCheckedChange={(isChecked) =>
-              toggleCapability(capability.key, isChecked)
+              toggleCapability({
+                capability: capability.key,
+                enabled: isChecked,
+              })
             }
             disabled={disabled}
           >

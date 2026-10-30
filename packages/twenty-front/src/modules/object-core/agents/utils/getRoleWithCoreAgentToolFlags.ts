@@ -3,10 +3,13 @@ import { v4 } from 'uuid';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const getRoleWithCoreAgentToolFlags = (
-  role: RoleWithPartialMembers,
-  enabledToolFlags: string[],
-): RoleWithPartialMembers => {
+export const getRoleWithCoreAgentToolFlags = ({
+  role,
+  enabledToolFlags,
+}: {
+  role: RoleWithPartialMembers;
+  enabledToolFlags: string[];
+}): RoleWithPartialMembers => {
   const toolFlags: string[] = [...TOOL_PERMISSION_FLAGS];
   const permissionFlags = role.permissionFlags ?? [];
 

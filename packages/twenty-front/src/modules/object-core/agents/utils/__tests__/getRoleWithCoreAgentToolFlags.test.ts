@@ -13,7 +13,10 @@ describe('getRoleWithCoreAgentToolFlags', () => {
       ],
     };
 
-    const nextRole = getRoleWithCoreAgentToolFlags(role, ['HTTP_REQUEST_TOOL']);
+    const nextRole = getRoleWithCoreAgentToolFlags({
+      role,
+      enabledToolFlags: ['HTTP_REQUEST_TOOL'],
+    });
 
     expect(nextRole.permissionFlags?.map(({ flag }) => flag)).toEqual([
       'WORKFLOWS',
@@ -26,7 +29,10 @@ describe('getRoleWithCoreAgentToolFlags', () => {
     const [removedToolFlag, ...remainingToolFlags] =
       getCoreAgentEnabledToolFlags(role);
 
-    const nextRole = getRoleWithCoreAgentToolFlags(role, remainingToolFlags);
+    const nextRole = getRoleWithCoreAgentToolFlags({
+      role,
+      enabledToolFlags: remainingToolFlags,
+    });
 
     expect(nextRole.canAccessAllTools).toBe(false);
     expect(getCoreAgentEnabledToolFlags(nextRole)).toEqual(remainingToolFlags);

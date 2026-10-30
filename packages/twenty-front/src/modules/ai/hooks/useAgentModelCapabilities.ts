@@ -20,7 +20,7 @@ export const useAgentModelCapabilities = ({
   const nativeCapabilities = selectedModel?.nativeCapabilities;
 
   const capabilities = [
-    ...(nativeCapabilities?.webSearch === true
+    ...(nativeCapabilities?.webSearch
       ? [
           {
             key: 'webSearch' as const,
@@ -30,7 +30,7 @@ export const useAgentModelCapabilities = ({
           },
         ]
       : []),
-    ...(nativeCapabilities?.twitterSearch === true
+    ...(nativeCapabilities?.twitterSearch
       ? [
           {
             key: 'twitterSearch' as const,
@@ -42,10 +42,13 @@ export const useAgentModelCapabilities = ({
       : []),
   ];
 
-  const toggleCapability = (
-    capability: 'webSearch' | 'twitterSearch',
-    enabled: boolean,
-  ) => {
+  const toggleCapability = ({
+    capability,
+    enabled,
+  }: {
+    capability: 'webSearch' | 'twitterSearch';
+    enabled: boolean;
+  }) => {
     if (disabled) {
       return;
     }

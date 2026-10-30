@@ -72,7 +72,10 @@ export const CoreAgentModelSection = ({
               }
               checked={capability.enabled}
               onCheckedChange={(isChecked) =>
-                toggleCapability(capability.key, isChecked)
+                toggleCapability({
+                  capability: capability.key,
+                  enabled: isChecked,
+                })
               }
               size="md"
               disabled={isReadOnly}

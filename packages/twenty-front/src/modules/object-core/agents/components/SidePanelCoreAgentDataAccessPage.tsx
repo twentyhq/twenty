@@ -20,11 +20,15 @@ export const SidePanelCoreAgentDataAccessPage = () => {
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
 
-  const handleLevelChange = (
-    level: CoreAgentRecordAccessLevel,
-    isEnabled: boolean,
-    objectMetadataId?: string,
-  ) =>
+  const handleLevelChange = ({
+    level,
+    isEnabled,
+    objectMetadataId,
+  }: {
+    level: CoreAgentRecordAccessLevel;
+    isEnabled: boolean;
+    objectMetadataId?: string;
+  }) =>
     updateRole((currentRole) =>
       getRoleWithCoreAgentRecordAccessLevel({
         role: currentRole,
@@ -57,8 +61,8 @@ export const SidePanelCoreAgentDataAccessPage = () => {
         Icon={IconLock}
         role={role}
         isReadOnly={isReadOnly}
-        onLevelChange={(level, isEnabled) =>
-          handleLevelChange(level, isEnabled)
+        onLevelChange={({ level, isEnabled }) =>
+          handleLevelChange({ level, isEnabled })
         }
       />
       {objectMetadataItemsThatCanHavePermission.map((objectMetadataItem) => (
@@ -71,8 +75,12 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           role={role}
           objectMetadataId={objectMetadataItem.id}
           isReadOnly={isReadOnly}
-          onLevelChange={(level, isEnabled) =>
-            handleLevelChange(level, isEnabled, objectMetadataItem.id)
+          onLevelChange={({ level, isEnabled }) =>
+            handleLevelChange({
+              level,
+              isEnabled,
+              objectMetadataId: objectMetadataItem.id,
+            })
           }
         />
       ))}
