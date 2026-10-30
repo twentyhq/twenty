@@ -123,6 +123,7 @@ type AgentChatThreadParticipant {
   isSubscribed: Boolean!
   lastMentionedAt: DateTime
   lastReadAt: DateTime
+  mentionsResolvedAt: DateTime
   snoozedUntil: DateTime
   threadId: UUID!
   updatedAt: DateTime!
@@ -5390,6 +5391,7 @@ input UpdateViewInput {
   openRecordIn: ViewOpenRecordIn
   position: Float
   shouldHideEmptyGroups: Boolean
+  translations: [MetadataTranslationOverrideInput!]
   type: ViewType
   visibility: ViewVisibility
 }

@@ -120,6 +120,7 @@ export interface AgentChatThreadParticipant {
     isSubscribed: Scalars['Boolean']
     lastMentionedAt?: Scalars['DateTime']
     lastReadAt?: Scalars['DateTime']
+    mentionsResolvedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
     threadId: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -4333,6 +4334,7 @@ export interface AgentChatThreadParticipantGenqlSelection{
     isSubscribed?: boolean | number
     lastMentionedAt?: boolean | number
     lastReadAt?: boolean | number
+    mentionsResolvedAt?: boolean | number
     snoozedUntil?: boolean | number
     threadId?: boolean | number
     updatedAt?: boolean | number
@@ -8400,7 +8402,7 @@ export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID']
 
 export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewSortInput {
 /** The id of the view sort to update */

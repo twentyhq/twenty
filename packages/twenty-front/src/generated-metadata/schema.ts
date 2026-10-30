@@ -150,6 +150,7 @@ export type AgentChatThreadParticipant = {
   isSubscribed: Scalars['Boolean']['output'];
   lastMentionedAt?: Maybe<Scalars['DateTime']['output']>;
   lastReadAt?: Maybe<Scalars['DateTime']['output']>;
+  mentionsResolvedAt?: Maybe<Scalars['DateTime']['output']>;
   snoozedUntil?: Maybe<Scalars['DateTime']['output']>;
   threadId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -7684,6 +7685,7 @@ export type UpdateViewInput = {
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };

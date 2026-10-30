@@ -1,7 +1,8 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 
-export type AppPreferencesAppStatus<TConnectedAccount = ConnectedAccount> =
+export type SettingsApplicationStatus<TConnectedAccount = ConnectedAccount> =
   | { type: 'accountSyncIssue'; account: TConnectedAccount }
   | { type: 'reconnectNeeded' }
   | { type: 'missingConfiguration' }
-  | { type: 'notConnected' };
+  | { type: 'notConnected' }
+  | { type: 'updateAvailable' };

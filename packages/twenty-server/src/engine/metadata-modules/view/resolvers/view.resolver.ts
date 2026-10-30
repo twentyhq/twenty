@@ -214,6 +214,7 @@ export class ViewResolver {
 
   @Mutation(() => ViewDTO)
   @UseGuards(ViewPermissionGuard)
+  @UsePipes(ResolverValidationPipe)
   async updateView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
