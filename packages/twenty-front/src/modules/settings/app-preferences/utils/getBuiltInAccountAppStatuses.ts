@@ -4,33 +4,40 @@ import { type AppPreferencesAppStatusAccount } from '@/settings/app-preferences/
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { type SettingsMemberApplicationStatus } from '@/settings/applications/types/SettingsMemberApplicationStatus';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const getBuiltInAccountAppStatuses = <
   TConnectedAccount extends AppPreferencesAppStatusAccount,
 >({
   builtInAccountAppId,
-  activeBuiltInAccounts,
+  builtInAccounts,
 }: {
   builtInAccountAppId: BuiltInAccountApp['id'];
-  activeBuiltInAccounts: TConnectedAccount[];
+  builtInAccounts: TConnectedAccount[];
 }): SettingsMemberApplicationStatus<TConnectedAccount>[] => {
-  const accountsUsingApp = activeBuiltInAccounts.filter((account) =>
+  const accountsUsingApp = builtInAccounts.filter((account) =>
     getBuiltInAccountAppsUsingAccount(account).some(
       (app) => app.id === builtInAccountAppId,
     ),
   );
-  const findAccountWithStatus = (status: SyncStatus) =>
+
+  // Archived built-in accounts are paused, so they still count as connected
+  if (!isNonEmptyArray(accountsUsingApp)) {
+    return [{ type: 'notConnected' }];
+  }
+
+  const findActiveAccountWithStatus = (status: SyncStatus) =>
     accountsUsingApp.find(
       (account) =>
+        !isDefined(account.archivedAt) &&
         computeSyncStatus(
           account.messageChannels[0],
           account.calendarChannels[0],
         ) === status,
     );
   const brokenAccount =
-    findAccountWithStatus(SyncStatus.FAILED) ??
-    findAccountWithStatus(SyncStatus.PENDING_CONFIGURATION);
+    findActiveAccountWithStatus(SyncStatus.FAILED) ??
+    findActiveAccountWithStatus(SyncStatus.PENDING_CONFIGURATION);
 
   return isDefined(brokenAccount)
     ? [{ type: 'accountSyncIssue', account: brokenAccount }]
