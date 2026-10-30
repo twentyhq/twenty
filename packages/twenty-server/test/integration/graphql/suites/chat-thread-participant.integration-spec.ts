@@ -1538,9 +1538,9 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await responseStarted;
 
-    const laterMention = participantService.markAsMentioned(
-      buildJonyThreadAccess(threadId),
-    );
+    const laterMention = addParticipants(threadId, [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    ]);
 
     responseEvents.emit('finished');
     await Promise.all([response, laterMention]);

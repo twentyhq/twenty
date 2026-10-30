@@ -14,7 +14,6 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -131,10 +130,22 @@ describe('Answering a chat tool call', () => {
       )
     )[0]?.toolOutput?.result?.status;
 
-  const markAsMentioned = () =>
-    getAppProviderByClassName<AgentChatThreadParticipantService>(
-      'AgentChatThreadParticipantService',
-    ).markAsMentioned({ workspaceId, workspaceMemberId, threadId });
+  const markAsMentioned = async () => {
+    const threadService = getAgentChatThreadService();
+
+    await threadService.deliverToParticipants({
+      workspaceId,
+      workspaceMemberId,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+    await threadService.mentionParticipants({
+      workspaceId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      threadId,
+      participantWorkspaceMemberIds: [workspaceMemberId],
+    });
+  };
 
   const readMentionState = async (memberId = workspaceMemberId) => {
     const [participant]: {
