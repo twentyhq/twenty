@@ -1,7 +1,6 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -15,12 +14,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
@@ -51,10 +44,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => WebhookDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class WebhookResolver {
-  constructor(
-    private readonly webhookService: WebhookService,
-    private readonly permissionsService: PermissionsService,
-  ) {}
+  constructor(private readonly webhookService: WebhookService) {}
 
   @Query(() => [WebhookDTO])
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS))
@@ -84,16 +74,15 @@ export class WebhookResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
-    if (input.roleId !== undefined) {
-      await this.assertCanAssignRoleOrThrow({
-        workspaceId: workspace.id,
+    return await this.webhookService.create({
+      input,
+      workspaceId: workspace.id,
+      caller: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-      });
-    }
-
-    return await this.webhookService.create(input, workspace.id);
+      },
+    });
   }
 
   @Mutation(() => WebhookDTO)
@@ -107,16 +96,15 @@ export class WebhookResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<WebhookDTO> {
-    if (input.update.roleId !== undefined) {
-      await this.assertCanAssignRoleOrThrow({
-        workspaceId: workspace.id,
+    return await this.webhookService.update({
+      input,
+      workspaceId: workspace.id,
+      caller: {
         userWorkspaceId,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
-      });
-    }
-
-    return await this.webhookService.update(input, workspace.id);
+      },
+    });
   }
 
   @Mutation(() => WebhookDTO)
@@ -137,38 +125,5 @@ export class WebhookResolver {
       webhookId: webhook.id,
       workspaceId: workspace.id,
     });
-  }
-
-  // Binding a role to a webhook requires ROLES to prevent privilege escalation.
-  private async assertCanAssignRoleOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    apiKeyId,
-    applicationId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    apiKeyId: string | undefined;
-    applicationId: string | undefined;
-  }): Promise<void> {
-    const canAssignRole =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId,
-        setting: PermissionFlagType.ROLES,
-        apiKeyId,
-        applicationId,
-        agentId: undefined,
-      });
-
-    if (!canAssignRole) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You need the Roles permission to assign a role to a webhook.`,
-        },
-      );
-    }
   }
 }

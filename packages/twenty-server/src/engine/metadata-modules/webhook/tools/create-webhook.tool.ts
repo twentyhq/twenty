@@ -55,15 +55,15 @@ export class CreateWebhookTool extends BaseTool<
     input: { targetUrl, operations, description, secret },
     context: { workspaceId },
   }: ToolExecuteArgs<typeof createWebhookInputSchema>): Promise<ToolOutput> {
-    const webhook = await this.webhookService.create(
-      {
+    const webhook = await this.webhookService.create({
+      input: {
         targetUrl,
         operations: compileWebhookOperations(operations),
         description,
         secret,
       },
       workspaceId,
-    );
+    });
 
     return {
       success: true,

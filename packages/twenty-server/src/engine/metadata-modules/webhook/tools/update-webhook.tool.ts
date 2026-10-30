@@ -64,10 +64,10 @@ export class UpdateWebhookTool extends BaseTool<
       update.secret = input.secret;
     }
 
-    const webhook = await this.webhookService.update(
-      { id: input.id, update },
+    const webhook = await this.webhookService.update({
+      input: { id: input.id, update },
       workspaceId,
-    );
+    });
 
     return {
       success: true,
