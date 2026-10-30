@@ -1,10 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// twenty-ui's Toggle is a base-ui Switch whose click handler constructs a
-// PointerEvent, which the front component sandbox does not provide. This is
-// the same control as a plain button, styled after twenty-ui's Toggle. The
-// host theme squircles every corner, so the capsule and thumb opt out.
 export type ToggleSize = 'small' | 'medium';
 
 type ToggleDimensions = {

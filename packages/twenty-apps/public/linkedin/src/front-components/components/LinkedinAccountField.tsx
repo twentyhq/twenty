@@ -19,7 +19,6 @@ const StyledLabel = styled.span`
   font-weight: ${() => themeCssVariables.font.weight.semiBold};
 `;
 
-// Read-only on purpose: a member has a single LinkedIn connection
 const StyledValue = styled.div`
   align-items: center;
   background-color: ${() => themeCssVariables.background.transparent.lighter};

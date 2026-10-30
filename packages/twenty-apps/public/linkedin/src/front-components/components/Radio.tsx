@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// twenty-ui's Radio is a base-ui control whose click handler constructs a
-// PointerEvent, which the front component sandbox does not provide.
 const RADIO_CONTROL_SIZE_PIXELS = 16;
 const RADIO_INDICATOR_SIZE_PIXELS = 6;
 
@@ -74,7 +72,6 @@ export const Radio = ({
     aria-describedby={ariaDescribedBy}
     disabled={disabled}
     onClick={(event) => {
-      // The row around the radio selects too
       event.stopPropagation();
       onSelect();
     }}

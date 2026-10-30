@@ -26,6 +26,7 @@ type LinkedinImportSectionProps = {
   onChange: (importPolicy: LinkedinImportPolicy) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onSync: () => void;
+  onCancelSync: () => void;
 };
 
 export const LinkedinImportSection = ({
@@ -36,6 +37,7 @@ export const LinkedinImportSection = ({
   onChange,
   onGroupChatsImportChange,
   onSync,
+  onCancelSync,
 }: LinkedinImportSectionProps) => (
   <Section.Root>
     <Section.Header
@@ -78,6 +80,7 @@ export const LinkedinImportSection = ({
         historyImport={historyImport}
         isStarting={isSyncStarting}
         onSync={onSync}
+        onCancel={onCancelSync}
       />
     </StyledStack>
   </Section.Root>

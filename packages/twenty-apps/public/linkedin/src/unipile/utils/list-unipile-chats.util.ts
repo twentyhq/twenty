@@ -5,7 +5,6 @@ import { type UnipilePage } from 'src/unipile/types/unipile-page.type';
 import { withUnipileErrorContext } from 'src/unipile/utils/with-unipile-error-context.util';
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
-// LinkedIn refuses the account-wide chat list, so chats are listed per inbox, most recently active first
 export const listUnipileChats = async ({
   accountId,
   inboxId,

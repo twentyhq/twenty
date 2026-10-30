@@ -10,7 +10,6 @@ export class UnipileRequestError extends Error {
   }
 }
 
-// The Unipile client throws its JSON error body as a plain object, which Twenty logs as [object Object]
 export const withUnipileErrorContext = async <TResult>(
   requestName: string,
   request: () => Promise<TResult>,

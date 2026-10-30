@@ -140,11 +140,25 @@ export const LinkedinSettings = () => {
     }
   };
 
+  const handleCancelSync = async () => {
+    try {
+      showView(
+        await postLinkedinSettingsRouteOrThrow({
+          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.cancelHistoryImport,
+        }),
+      );
+    } catch {
+      enqueueSnackbar({
+        message: t('Could not cancel the LinkedIn sync. Try again.'),
+        variant: 'error',
+      });
+    }
+  };
+
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
     view?.isConnected === true && view.historyImport?.status === 'IMPORTING';
 
-  // Without an explicit theme, icon sizes resolve to var() strings SVG attributes cannot use.
   return (
     <ThemeProvider
       colorScheme={colorScheme}
@@ -202,6 +216,7 @@ export const LinkedinSettings = () => {
                 handleSettingsChange({ areGroupChatsImported })
               }
               onSync={handleSync}
+              onCancelSync={handleCancelSync}
             />
             <LinkedinVisibilitySection
               visibility={view.settings.visibility}

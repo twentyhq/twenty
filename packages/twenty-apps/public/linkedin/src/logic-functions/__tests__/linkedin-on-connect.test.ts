@@ -55,7 +55,7 @@ describe('linkedinOnConnectHandler', () => {
     );
   });
 
-  it('creates a private channel on the member profile, claims the account and imports its history', async () => {
+  it('creates a private channel on the member profile, claims the account and leaves importing to the Sync button', async () => {
     await expect(linkedinOnConnectHandler(PAYLOAD)).resolves.toEqual({
       messageChannelId: 'channel-id',
     });
@@ -73,25 +73,7 @@ describe('linkedinOnConnectHandler', () => {
       undefined,
       { scope: 'SERVER' },
     );
-    expect(mocks.kvSet).toHaveBeenCalledWith(
-      'linkedin-history-import:connected-account-id',
-      expect.objectContaining({
-        importPolicy: 'ALL',
-        status: 'IMPORTING',
-      }),
-    );
-    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        jobs: [
-          expect.objectContaining({
-            payload: expect.objectContaining({
-              connectedAccountId: 'connected-account-id',
-              pageIndex: 0,
-            }),
-          }),
-        ],
-      }),
-    );
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('reuses the channel of a reconnected account', async () => {

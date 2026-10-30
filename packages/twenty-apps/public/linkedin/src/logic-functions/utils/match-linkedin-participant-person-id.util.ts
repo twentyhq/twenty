@@ -7,7 +7,6 @@ import { setPersonLinkedinLink } from 'src/logic-functions/utils/set-person-link
 import { splitLinkedinUserName } from 'src/logic-functions/utils/split-linkedin-user-name.util';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
-// Namesakes are never guessed between: the member links the right one by adding the profile link
 export const matchLinkedinParticipantPersonId = async ({
   user,
   isNameMatchingEnabled,

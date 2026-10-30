@@ -4,9 +4,8 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
-import { isLinkedinHistoryImportStalled } from 'src/logic-functions/utils/is-linkedin-history-import-running.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
+import { refreshLinkedinHistoryImportState } from 'src/logic-functions/utils/refresh-linkedin-history-import-state.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
 export const buildLinkedinSettingsView = async (
@@ -18,7 +17,7 @@ export const buildLinkedinSettingsView = async (
 
   const [settings, historyImport, [channel]] = await Promise.all([
     getLinkedinSettings(connection.id),
-    getLinkedinHistoryImportState(connection.id),
+    refreshLinkedinHistoryImportState(connection.id),
     listMessageChannels({ connectedAccountId: connection.id }),
   ]);
 
@@ -31,24 +30,11 @@ export const buildLinkedinSettingsView = async (
     },
     settings: {
       ...settings,
-      // Only the two levels this app offers; anything else reads as the private one
       visibility:
         channel?.visibility === 'SHARE_EVERYTHING'
           ? 'SHARE_EVERYTHING'
           : 'METADATA',
     },
-    // Jobs that died never mark their run failed, so the page offers Retry instead of spinning forever
-    historyImport:
-      isDefined(historyImport) &&
-      isLinkedinHistoryImportStalled({ historyImport, now: Date.now() })
-        ? {
-            ...historyImport,
-            status: 'FAILED',
-            error: {
-              code: 'STALLED',
-              message: 'The import stopped making progress.',
-            },
-          }
-        : historyImport,
+    historyImport,
   };
 };

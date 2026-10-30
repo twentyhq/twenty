@@ -34,7 +34,6 @@ const ingestUnipileMessage = async ({
 
   const settings = await getLinkedinSettings(connectedAccountId);
 
-  // Needed for received messages too: the chat says whether it is a group and names the conversation
   const chat = await getUnipileChat({
     accountId: unipileAccountId,
     chatId: message.chat_id,

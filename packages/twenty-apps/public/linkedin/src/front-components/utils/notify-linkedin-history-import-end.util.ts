@@ -3,7 +3,6 @@ import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { getLinkedinHistoryImportErrorReason } from 'src/front-components/utils/get-linkedin-history-import-error-reason.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
-// Only a run this page saw going reports its end, so reopening the page stays quiet
 export const notifyLinkedinHistoryImportEnd = ({
   previous,
   next,

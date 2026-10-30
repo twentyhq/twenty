@@ -4,7 +4,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
 import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
 
-// People that already have a LinkedIn link belong to someone else's profile, so they never match by name
 export const findUnlinkedPersonIdsByName = async ({
   firstName,
   lastName,

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors twenty-front's SettingsAccountsMessageAutoCreationIcon, which a front component cannot import.
 const StyledIconContainer = styled.div`
   align-items: stretch;
   border: 2px solid ${() => themeCssVariables.border.color.medium};

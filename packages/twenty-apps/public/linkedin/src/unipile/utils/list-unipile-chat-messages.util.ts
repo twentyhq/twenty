@@ -5,10 +5,8 @@ import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { withUnipileErrorContext } from 'src/unipile/utils/with-unipile-error-context.util';
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
-// Unipile's documented default; larger pages are not accepted by every provider
 const UNIPILE_MESSAGES_PAGE_SIZE = 20;
 
-// A chat with more messages than this is cut, rather than letting a cursor that never ends eat the job timeout
 const UNIPILE_MESSAGES_MAX_PAGES = 250;
 
 export const listUnipileChatMessages = async ({

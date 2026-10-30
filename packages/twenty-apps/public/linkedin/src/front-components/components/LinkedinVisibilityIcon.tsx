@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors twenty-front's SettingsAccountsVisibilityIcon, which a front component cannot import.
 const StyledCardMedia = styled.div`
   align-items: stretch;
   border: 2px solid ${() => themeCssVariables.border.color.medium};

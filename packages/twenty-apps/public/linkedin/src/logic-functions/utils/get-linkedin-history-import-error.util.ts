@@ -3,7 +3,6 @@ import { AppConnectionAuthFailedError } from 'twenty-sdk/logic-function';
 
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
-// 501 and other server errors mean the request itself is wrong, retrying cannot fix them
 const TRANSIENT_HTTP_STATUSES = [429, 500, 502, 503, 504];
 
 const getErrorMessage = (error: unknown): string => {
@@ -26,7 +25,6 @@ const getErrorMessage = (error: unknown): string => {
   return String(error);
 };
 
-// The Unipile client throws the JSON error body on HTTP errors and the fetch error on network failures
 export const getLinkedinHistoryImportError = (
   error: unknown,
 ): NonNullable<LinkedinHistoryImportState['error']> => {

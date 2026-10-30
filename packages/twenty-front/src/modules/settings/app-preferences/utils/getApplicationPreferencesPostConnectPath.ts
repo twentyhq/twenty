@@ -3,7 +3,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type SettingsMenuItem } from '~/generated-metadata/graphql';
 
-// A new connection usually needs configuring next, so it lands on the app's own settings tab when there is one
 export const getApplicationPreferencesPostConnectPath = ({
   applicationId,
   settingsMenuItems,

@@ -3,7 +3,6 @@ import { t } from 'twenty-sdk/front-component';
 import { SKELETON_HEIGHT_SIZES, Skeleton } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors twenty-front's SettingsSectionSkeletonLoader, which the host shows while this component loads
 const TITLE_WIDTH = 140;
 const LAST_DESCRIPTION_LINE_WIDTH = '60%';
 const ROW_COUNT = 5;

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
-// SVG size attributes need numbers, not the var() strings theme tokens resolve to here.
 const StyledIconCustomizer = styled.div<{ $zoom: number; $rotate: number }>`
   align-items: center;
   color: ${() => themeCssVariables.IllustrationIcon.color.gray};

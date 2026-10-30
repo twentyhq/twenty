@@ -1,9 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors twenty-ui's Card without its overflow: hidden, which would clip the
-// select menus that open inline below their rows. The rows paint their own
-// background, so the first and last ones take over the card's corners.
 export const StyledSettingsCard = styled.div`
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};

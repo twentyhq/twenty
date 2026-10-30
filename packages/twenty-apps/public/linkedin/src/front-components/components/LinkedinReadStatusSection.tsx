@@ -5,7 +5,6 @@ import { IconCheck } from 'twenty-ui/icon';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 
-// Disabled until Twenty tells apps when a member opens a conversation
 export const LinkedinReadStatusSection = () => (
   <Section.Root>
     <Section.Header

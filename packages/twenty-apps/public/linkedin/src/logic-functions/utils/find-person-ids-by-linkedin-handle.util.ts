@@ -4,7 +4,6 @@ import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-
 import { getLinkedinProfileSlug } from 'src/logic-functions/utils/get-linkedin-profile-slug.util';
 import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
 
-// Stored links vary in scheme, www. and trailing slash, so candidates are narrowed by slug then compared exactly
 export const findPersonIdsByLinkedinHandle = async (
   handle: string,
 ): Promise<string[]> => {

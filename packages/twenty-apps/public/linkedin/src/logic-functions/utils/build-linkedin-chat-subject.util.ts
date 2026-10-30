@@ -6,7 +6,6 @@ import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 
 const NAMED_PARTICIPANT_COUNT = 2;
 
-// LinkedIn messages carry no subject, so the conversation is named after the people in it
 export const buildLinkedinChatSubject = (
   chat: UnipileChat,
 ): string | undefined => {

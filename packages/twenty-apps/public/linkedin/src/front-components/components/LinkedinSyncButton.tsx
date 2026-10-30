@@ -33,12 +33,14 @@ type LinkedinSyncButtonProps = {
   historyImport: LinkedinHistoryImportState | null;
   isStarting: boolean;
   onSync: () => void;
+  onCancel: () => void;
 };
 
 export const LinkedinSyncButton = ({
   historyImport,
   isStarting,
   onSync,
+  onCancel,
 }: LinkedinSyncButtonProps) => {
   const isRunning = historyImport?.status === 'IMPORTING';
   const hasFailed = historyImport?.status === 'FAILED';
@@ -66,13 +68,18 @@ export const LinkedinSyncButton = ({
           {getLinkedinHistoryImportErrorReason(historyImport.error)}
         </StyledError>
       )}
+      {isRunning && (
+        <Button variant="outline" size="md" onClick={onCancel}>
+          {t('Cancel')}
+        </Button>
+      )}
       <Button
         startIcon={<IconRefresh />}
         variant="solid"
         color="accent"
         size="md"
         onClick={onSync}
-        loading={isRunning}
+        loading={isRunning || isStarting}
         loadingPosition="end"
       >
         {label}

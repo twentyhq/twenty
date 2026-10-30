@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   listConnections: vi.fn(),
   listMessageChannels: vi.fn(),
   enqueueJobs: vi.fn(),
+  getJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
 }));
 
@@ -15,6 +16,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   listConnections: mocks.listConnections,
   listMessageChannels: mocks.listMessageChannels,
   enqueueJobs: mocks.enqueueJobs,
+  getJobs: mocks.getJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
     set: async (key: string, value: unknown) => {
@@ -34,8 +36,7 @@ const syncHistory = () =>
   });
 
 const setHistoryImport = (
-  status: 'IMPORTING' | 'COMPLETED' | 'FAILED',
-  updatedAt = new Date().toISOString(),
+  status: 'IMPORTING' | 'COMPLETED' | 'FAILED' | 'CANCELLED',
 ) =>
   mocks.kvStore.set(HISTORY_KEY, {
     runId: 'run-1',
@@ -44,7 +45,6 @@ const setHistoryImport = (
     importedConversationCount: 12,
     processedConversationCount: 20,
     startedAt: '2026-10-01T00:00:00.000Z',
-    updatedAt,
   });
 
 describe('linkedinSyncHistoryHandler', () => {
@@ -60,12 +60,15 @@ describe('linkedinSyncHistoryHandler', () => {
         authFailedAt: null,
       },
     ]);
+    mocks.getJobs.mockImplementation(async (jobIds: string[]) =>
+      jobIds.map((jobId) => ({ jobId, state: 'ACTIVE' })),
+    );
     mocks.listMessageChannels.mockResolvedValue([
       { id: 'channel-id', visibility: 'METADATA' },
     ]);
   });
 
-  it.each(['COMPLETED', 'FAILED'] as const)(
+  it.each(['COMPLETED', 'FAILED', 'CANCELLED'] as const)(
     'starts a new run after a %s one',
     async (status) => {
       setHistoryImport(status);
@@ -104,8 +107,9 @@ describe('linkedinSyncHistoryHandler', () => {
     );
   });
 
-  it('restarts a run that stopped making progress', async () => {
-    setHistoryImport('IMPORTING', '2026-10-01T00:00:00.000Z');
+  it('restarts a run whose planning job is gone', async () => {
+    setHistoryImport('IMPORTING');
+    mocks.getJobs.mockResolvedValue([]);
 
     await syncHistory();
 

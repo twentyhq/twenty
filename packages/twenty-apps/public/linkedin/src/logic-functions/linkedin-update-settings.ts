@@ -12,11 +12,8 @@ import { LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER } from 'src/constants/uni
 import { buildLinkedinSettingsView } from 'src/logic-functions/utils/build-linkedin-settings-view.util';
 import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-linkedin-connection.util';
 import { getLinkedinConnectionKvKey } from 'src/logic-functions/utils/get-linkedin-connection-kv-key.util';
-import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
-import { isLinkedinHistoryImportStalled } from 'src/logic-functions/utils/is-linkedin-history-import-running.util';
 import { parseLinkedinSettingsUpdate } from 'src/logic-functions/utils/parse-linkedin-settings-update.util';
-import { startLinkedinHistoryImport } from 'src/logic-functions/utils/start-linkedin-history-import.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
 export const linkedinUpdateSettingsHandler = async (
@@ -32,8 +29,10 @@ export const linkedinUpdateSettingsHandler = async (
   const { visibility, ...settingsUpdate } = parseLinkedinSettingsUpdate(
     routePayload.body,
   );
-  const previousSettings = await getLinkedinSettings(connection.id);
-  const settings = { ...previousSettings, ...settingsUpdate };
+  const settings = {
+    ...(await getLinkedinSettings(connection.id)),
+    ...settingsUpdate,
+  };
 
   await kv.set(
     getLinkedinConnectionKvKey({
@@ -53,23 +52,6 @@ export const linkedinUpdateSettingsHandler = async (
     }
   }
 
-  const historyImport = await getLinkedinHistoryImportState(connection.id);
-
-  // Messages are imported once, so only chats an earlier setting skipped are left to import
-  if (
-    !isDefined(historyImport) ||
-    historyImport.status === 'FAILED' ||
-    isLinkedinHistoryImportStalled({ historyImport, now: Date.now() }) ||
-    (settings.importPolicy === 'ALL' &&
-      historyImport.importPolicy === 'CONTACTS_ONLY') ||
-    (settings.areGroupChatsImported && !previousSettings.areGroupChatsImported)
-  ) {
-    await startLinkedinHistoryImport({
-      connectedAccountId: connection.id,
-      importPolicy: settings.importPolicy,
-    });
-  }
-
   return buildLinkedinSettingsView(connection);
 };
 
@@ -77,7 +59,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_UPDATE_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-update-settings',
   description:
-    'Saves the LinkedIn sync settings of the requesting member connection and imports the chats Contacts only skipped when switching to All chats.',
+    'Saves the LinkedIn sync settings of the requesting member connection.',
   timeoutSeconds: 15,
   handler: linkedinUpdateSettingsHandler,
   httpRouteTriggerSettings: {

@@ -105,29 +105,14 @@ describe('linkedinUpdateSettingsHandler', () => {
     ).not.toHaveProperty('visibility');
   });
 
-  it('imports the skipped chats when switching from Contacts only to All chats', async () => {
+  it.each([
+    [{ importPolicy: 'ALL' }],
+    [{ importPolicy: 'CONTACTS_ONLY' }],
+    [{ areGroupChatsImported: true }],
+  ])('leaves importing to the Sync button when saving %o', async (update) => {
     setHistoryImport('CONTACTS_ONLY');
 
-    await updateSettings({ importPolicy: 'ALL' });
-
-    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
-    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
-      expect.objectContaining({ importPolicy: 'ALL', status: 'IMPORTING' }),
-    );
-  });
-
-  it('imports the skipped group chats when they get turned back on', async () => {
-    mocks.kvStore.set('linkedin-settings:connection-id', {
-      areGroupChatsImported: false,
-    });
-
-    await updateSettings({ areGroupChatsImported: true });
-
-    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not re-import when switching to Contacts only', async () => {
-    await updateSettings({ importPolicy: 'CONTACTS_ONLY' });
+    await updateSettings(update);
 
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });

@@ -6,14 +6,11 @@ import {
   kv,
   listMessageChannels,
 } from 'twenty-sdk/logic-function';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-linkedin-link-field-universal-identifier.constant';
 import { LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinConnectionHookPayload } from 'src/logic-functions/types/linkedin-connection-hook-payload.type';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
-import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
-import { startLinkedinHistoryImport } from 'src/logic-functions/utils/start-linkedin-history-import.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
 
@@ -53,13 +50,6 @@ export const linkedinOnConnectHandler = async ({
     scope: 'SERVER',
   });
 
-  // Reconnecting keeps its channel and does not re-import history
-  if (!isDefined(existingChannel)) {
-    const { importPolicy } = await getLinkedinSettings(connectedAccountId);
-
-    await startLinkedinHistoryImport({ connectedAccountId, importPolicy });
-  }
-
   return { messageChannelId: channel.id };
 };
 
@@ -67,7 +57,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-on-connect',
   description:
-    'Creates the message channel of a new LinkedIn connection, routes its Unipile webhooks to this workspace and starts importing its conversation history.',
+    'Creates the message channel of a new LinkedIn connection, routes its Unipile webhooks to this workspace.',
   timeoutSeconds: 30,
   handler: linkedinOnConnectHandler,
 });

@@ -46,7 +46,6 @@ const resolvePersonIdByHandle = async ({
     }
   }
 
-  // Group chats are only imported when at least one member is already in Twenty, whatever the import policy
   if (
     (settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat) &&
     personIdByHandle.size === 0
@@ -79,7 +78,6 @@ const resolvePersonIdByHandle = async ({
   return personIdByHandle;
 };
 
-// counterparts must already carry their public identifier, so handles match the ones People are linked on
 export const ingestLinkedinMessages = async ({
   channel,
   settings,
@@ -107,7 +105,6 @@ export const ingestLinkedinMessages = async ({
     return 0;
   }
 
-  // Contacts only skips chats where nobody is already in Twenty, before anyone gets created
   const personIdByHandle = await resolvePersonIdByHandle({
     settings,
     counterparts,

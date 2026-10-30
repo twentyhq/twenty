@@ -3,7 +3,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 
-// Mirrors twenty-front's SettingsAccountsMessageFolderIcon, which a front component cannot import.
 const StyledCardMedia = styled.div`
   background-color: ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.sm};

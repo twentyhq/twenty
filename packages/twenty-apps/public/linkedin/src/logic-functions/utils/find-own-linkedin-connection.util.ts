@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { LINKEDIN_PROVIDER_NAME } from 'src/constants/linkedin-provider-name.constant';
 
-// Settings belong to the member who connected the account, never to another viewer
 export const findOwnLinkedinConnection = async (
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<AppConnection | undefined> => {
