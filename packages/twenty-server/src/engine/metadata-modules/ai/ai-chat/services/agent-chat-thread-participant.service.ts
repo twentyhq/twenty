@@ -11,8 +11,6 @@ import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-columns.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
-import { AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-has-unresolved-mention-predicate.constant';
-import { type AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze-job-name.constant';
@@ -43,34 +41,15 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-
-const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
 
 const PARTICIPANT_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
 
 const PARTICIPANTS_LOCK_QUERY = `SELECT pg_advisory_xact_lock(hashtextextended(lock_key, 0))
    FROM unnest($1::text[]) lock_key ORDER BY lock_key`;
-
-const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
-  openThreadCount: 0,
-  unreadOpenThreadCount: 0,
-  needsInputThreadCount: 0,
-  mentionThreadCount: 0,
-  assignedToMeThreadCount: 0,
-  assignedThreadCount: 0,
-  unassignedThreadCount: 0,
-  hasUnreadOpenThread: false,
-  hasUnreadMentionThread: false,
-  hasUnreadAssignedThread: false,
-};
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -417,88 +396,6 @@ export class AgentChatThreadParticipantService {
     );
 
     return memberCount;
-  }
-
-  // Over the chats the member can open and follows, the way the inbox lists
-  // them
-  async findOpenThreadsSummary({
-    workspaceId,
-    workspaceMemberId,
-  }: Omit<
-    AgentChatThreadAccessArgs,
-    'threadId'
-  >): Promise<AgentChatOpenThreadsSummaryDTO> {
-    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
-
-    const authContext = await this.sharingService.getAuthContext({
-      workspaceId,
-      workspaceMemberId,
-    });
-
-    const [summary] = await this.workspaceOrmManager
-      .executeInWorkspaceContext(() => {
-        const repository =
-          this.workspaceOrmManager.getRepositoryWithContextPermissions(
-            'agentChatThread',
-          );
-        const readableThreads = repository
-          .createQueryBuilder('thread')
-          .select([])
-          .addSelect('"thread"."id"', 'id')
-          .addSelect('"thread"."lastActivityAt"', 'lastActivityAt')
-          .addSelect('"thread"."assigneeId"', 'assigneeId')
-          .addSelect(
-            '"thread"."pendingQuestionMessageId"',
-            'pendingQuestionMessageId',
-          )
-          .applyRowLevelPermissions();
-
-        return repository.executeRaw<
-          Pick<
-            AgentChatOpenThreadsSummaryDTO,
-            keyof AgentChatOpenThreadsSummaryDTO
-          >
-        >(
-          `WITH open_thread AS (
-             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
-               thread."lastActivityAt" IS NOT NULL
-                 AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
-             FROM (${readableThreads.getQuery()}) thread
-             JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
-               ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
-             WHERE ${IS_IN_INBOX}
-           )
-           SELECT
-             COUNT(*)::int AS "openThreadCount",
-             COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
-             COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
-             COUNT(*) FILTER (WHERE "hasUnresolvedMention")::int AS "mentionThreadCount",
-             COUNT(*) FILTER (WHERE "assigneeId" = :summaryWorkspaceMemberId)::int AS "assignedToMeThreadCount",
-             COUNT("assigneeId")::int AS "assignedThreadCount",
-             COUNT(*) FILTER (WHERE "assigneeId" IS NULL)::int AS "unassignedThreadCount",
-             COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
-             COALESCE(BOOL_OR("isUnread" AND "hasUnresolvedMention"), false) AS "hasUnreadMentionThread",
-             COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
-           FROM open_thread`,
-          {
-            ...readableThreads.getParameters(),
-            summaryWorkspaceMemberId: workspaceMemberId,
-          },
-        );
-      }, authContext)
-      .catch((error: unknown) => {
-        // A role that cannot read chats has none open
-        if (
-          error instanceof PermissionsException &&
-          error.code === PermissionsExceptionCode.PERMISSION_DENIED
-        ) {
-          return [EMPTY_OPEN_THREADS_SUMMARY];
-        }
-
-        throw error;
-      });
-
-    return summary;
   }
 
   private async scheduleSnoozeEnd({
