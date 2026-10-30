@@ -319,9 +319,11 @@ export const buildManifest = async (
         break;
       }
       case 'relatedRecordPaths': {
-        const extract = await extractManifestFromFile<RelatedRecordPathManifest>(
-          { appPath, filePath },
-        );
+        const extract =
+          await extractManifestFromFile<RelatedRecordPathManifest>({
+            appPath,
+            filePath,
+          });
         relatedRecordPaths.push(extract.config);
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
