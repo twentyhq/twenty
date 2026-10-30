@@ -1,5 +1,4 @@
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
-import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
 
 export type FrontComponentDraft = FrontComponentDraftInput & {
   id: string;
@@ -15,5 +14,5 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   compiledSource: string;
   checksum: string;
   dependencyRevision?: string;
-  diagnostic?: FrontComponentDiagnostic;
+  previewError?: string;
 };

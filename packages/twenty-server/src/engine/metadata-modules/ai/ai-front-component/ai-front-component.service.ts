@@ -10,7 +10,6 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
 import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
@@ -181,7 +180,7 @@ export class AiFrontComponentService {
         (await streamToBuffer(stream)).toString(),
       );
 
-      return { ...draft, diagnostic: reference.diagnostic };
+      return { ...draft, previewError: reference.previewError };
     } catch (error) {
       if (error.code !== FileStorageExceptionCode.FILE_NOT_FOUND) {
         throw error;
@@ -408,16 +407,16 @@ export class AiFrontComponentService {
     };
   }
 
-  async recordDiagnostic({
+  async reportPreviewError({
     workspaceId,
     userWorkspaceId,
     draftId,
-    diagnostic,
+    previewError,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
     draftId: string;
-    diagnostic: FrontComponentDiagnostic;
+    previewError: string;
   }) {
     const draft = await this.getDraftReferenceOrThrow({
       workspaceId,
@@ -425,21 +424,10 @@ export class AiFrontComponentService {
       draftId,
     });
 
-    await this.locks.withLock(
-      async () => {
-        const latest = await this.getDraftReferenceOrThrow({
-          workspaceId,
-          userWorkspaceId,
-          draftId,
-        });
-
-        await this.saveDraftReference({
-          workspaceId,
-          draft: { ...latest, diagnostic },
-        });
-      },
-      this.currentKey({ workspaceId, rootId: draft.rootId }),
-    );
+    await this.saveDraftReference({
+      workspaceId,
+      draft: { ...draft, previewError },
+    });
   }
 
   private async validateQueryOrThrow({

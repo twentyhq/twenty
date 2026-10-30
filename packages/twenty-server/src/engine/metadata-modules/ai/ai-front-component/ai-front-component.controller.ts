@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { z } from 'zod';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -25,7 +26,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
-import { frontComponentDiagnosticSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-diagnostic.schema';
 
 @Controller(`${ApiPath.Rest}/ai-front-components`)
 @UseFilters(ApplicationRestApiExceptionFilter)
@@ -59,7 +59,7 @@ export class AiFrontComponentController {
     });
   }
 
-  @Post('drafts/:draftId/diagnostic')
+  @Post('drafts/:draftId/preview-error')
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -74,27 +74,27 @@ export class AiFrontComponentController {
     }),
     NoPermissionGuard,
   )
-  reportDiagnostic(
+  reportPreviewError(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Body() body: unknown,
+    @Body('message') message: unknown,
   ) {
-    const diagnostic = frontComponentDiagnosticSchema.safeParse(body);
+    const previewError = z.string().min(1).max(2000).safeParse(message);
 
-    if (!diagnostic.success) {
+    if (!previewError.success) {
       throw new ApplicationException(
-        doNotTranslate('Invalid component preview diagnostic.'),
+        doNotTranslate('Invalid preview error message.'),
         ApplicationExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: msg`Invalid component preview diagnostic.` },
+        { userFriendlyMessage: msg`Invalid preview error message.` },
       );
     }
 
-    return this.components.recordDiagnostic({
+    return this.components.reportPreviewError({
       workspaceId: workspace.id,
       userWorkspaceId,
       draftId,
-      diagnostic: diagnostic.data,
+      previewError: previewError.data,
     });
   }
 }
