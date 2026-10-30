@@ -52,6 +52,7 @@ let previousContainer: ReturnType<typeof makeContainer> | undefined;
 let failure: string | undefined;
 let shouldCancelCreation = false;
 let nextImageId: string;
+let nextImageVersion: string | undefined;
 
 const runJson = async (args: string[]) => {
   const result = await runCliForTest(['local', ...args, '--test', '--json']);
@@ -80,6 +81,7 @@ describe('local commands', () => {
     failure = undefined;
     shouldCancelCreation = false;
     nextImageId = 'new-image';
+    nextImageVersion = '2.54.0';
     vi.stubEnv('DOCKER_HOST', '');
     vi.stubEnv('DOCKER_CONTEXT', '');
     vi.stubEnv('TWENTY_REMOTE', '');
@@ -108,9 +110,17 @@ describe('local commands', () => {
           return JSON.stringify(container);
         }
         if (args[0] === 'image') {
-          return args[3] === '{{.Id}}'
-            ? nextImageId
-            : JSON.stringify(['APP_VERSION=2.53.0', 'NODE_PORT=3000']);
+          if (args[3] === '{{.Id}}') {
+            return nextImageId;
+          }
+          if (args.at(-1) === 'old-image') {
+            return JSON.stringify(['APP_VERSION=2.53.0', 'NODE_PORT=3000']);
+          }
+          return JSON.stringify(
+            isDefined(nextImageVersion)
+              ? [`APP_VERSION=${nextImageVersion}`]
+              : [],
+          );
         }
         if (args[0] === 'rename') {
           if (args[2] === environment.name) {
@@ -312,6 +322,51 @@ describe('local commands', () => {
       false,
     );
     expect(mutations()).toEqual([['pull', 'twentycrm/twenty-app-dev:v2.54.0']]);
+  });
+
+  it.each(['2.50.0', 'latest'])(
+    'refuses an older version behind %s before replacing the container',
+    async (version) => {
+      container!.Config.Image = 'twentycrm/twenty-app-dev:latest';
+      container!.Config.Env[0] = 'APP_VERSION=2.40.0';
+      const previousSettings = structuredClone(container);
+      nextImageVersion = '2.50.0';
+      const { exitCode, envelope } = await runJson(['upgrade', version]);
+      expect(exitCode).toBe(1);
+      expect(envelope.error).toMatchObject({
+        code: 'CONFLICT',
+        message:
+          'Cannot downgrade the local environment from 2.53.0 to 2.50.0.',
+      });
+      expect(mutations()).toEqual([
+        [
+          'pull',
+          `twentycrm/twenty-app-dev:${version === 'latest' ? version : `v${version}`}`,
+        ],
+      ]);
+      expect(container).toEqual(previousSettings);
+    },
+  );
+
+  it.each([undefined, 'not-a-version'])(
+    'leaves the instance untouched if the image version is %s',
+    async (version) => {
+      const previousSettings = structuredClone(container);
+      nextImageVersion = version;
+      const { envelope } = await runJson(['upgrade', 'latest']);
+      expect(envelope.error.code).toBe('INVALID_RESPONSE');
+      expect(container).toEqual(previousSettings);
+      expect(mutations()).toEqual([
+        ['pull', 'twentycrm/twenty-app-dev:latest'],
+      ]);
+    },
+  );
+
+  it('allows a rebuilt image of the same version', async () => {
+    nextImageVersion = '2.53.0';
+    expect((await runJson(['upgrade', '2.53.0'])).envelope.data.upgraded).toBe(
+      true,
+    );
   });
 
   it('upgrades gracefully, preserving volumes, port mapping and user overrides without stale image defaults', async () => {

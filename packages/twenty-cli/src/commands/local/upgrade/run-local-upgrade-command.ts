@@ -1,8 +1,10 @@
+import lt from 'semver/functions/lt';
 import { isDefined } from 'twenty-shared/utils';
 import { readStringArgument } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type CommandContext } from '@/catalog/types/command-context.type';
 import { checkLocalRuntime } from '@/local/check-local-runtime';
+import { readLocalImageVersion } from '@/local/read-local-image-version';
 import { replaceLocalContainer } from '@/local/replace-local-container';
 import { getLocalStatus } from '@/local/get-local-status';
 import { readLocalOptions } from '@/local/read-local-options';
@@ -54,10 +56,25 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
       human: `Already using ${image}.`,
     };
   }
-  const environmentVariables = await readLocalEnvironmentOverrides(
-    existing,
+  const currentVersion = await readLocalImageVersion({
+    imageId: existing.imageId,
     signal,
-  );
+  });
+  const nextVersion = await readLocalImageVersion({
+    imageId: nextImageId,
+    signal,
+  });
+  if (lt(nextVersion, currentVersion)) {
+    throw new CliError({
+      code: 'CONFLICT',
+      message: `Cannot downgrade the local environment from ${currentVersion} to ${nextVersion}.`,
+      hint: 'Database migrations cannot be rolled back. Keep the current version or use a newer one.',
+    });
+  }
+  const environmentVariables = await readLocalEnvironmentOverrides({
+    container: existing,
+    signal,
+  });
   output.progress({
     message: 'Replacing the local environment, preserving its data volumes…',
   });

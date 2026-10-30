@@ -171,7 +171,8 @@ Use `local status`, `local logs` and `local stop` to inspect and stop it.
 `start [version]` preserves existing instances. New instances use the explicit
 version, the highest published match for `engines.twenty`, or `latest` when no
 range exists. `local upgrade [version]` replaces the image while preserving
-ports, data volumes and environment overrides.
+ports, data volumes and environment overrides. It rejects downgrades and images
+without a valid `APP_VERSION` before replacing the existing instance.
 
 Use `--test` consistently for the separate test instance on port `2021`.
 `local reset` deletes that selected instance and its data, and requires explicit

@@ -44,7 +44,11 @@ twenty local upgrade 2.53.1
 Upgrade pulls the requested image before replacing the instance. It preserves
 its ports, database and file volumes, and environment overrides. Without a
 version, it follows the same version selection as a new start. Custom storage
-layouts are rejected. If replacement creation fails or is cancelled, the CLI
+layouts are rejected. Downgrades are rejected before replacing the container,
+including when using a tag such as `latest`. Both images must declare a valid
+`APP_VERSION` so the CLI can compare their actual versions.
+
+If replacement creation fails or is cancelled, the CLI
 restores the previous container and settings. Once the new version starts,
 failed upgrades retain data volumes but do not roll back database migrations.
 

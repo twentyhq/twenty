@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { readBooleanOption } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type CommandContext } from '@/catalog/types/command-context.type';
@@ -29,7 +31,7 @@ export const runLocalResetCommand: CommandRun<CommandContext> = async ({
   });
   await checkLocalRuntime(signal);
   const container = await readLocalContainer({ environment, signal });
-  if (container) {
+  if (isDefined(container)) {
     assertLocalStorage({ environment, container });
     await runDocker({ args: ['rm', '--force', container.id], signal });
   }
