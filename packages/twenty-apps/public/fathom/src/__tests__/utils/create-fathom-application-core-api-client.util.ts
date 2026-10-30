@@ -2,11 +2,11 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-// fathomRecordingImport is declared writability: APPLICATION, so only a request
-// carrying the application's identity may write it. The engine never hands that
-// identity to a caller, so a harness running outside the engine earns it the
-// way any external backend would: by proving it holds the application's OAuth
-// client secret.
+// fathomRecordingImport disables update and delete for everyone but the app,
+// so only a request carrying the application's identity may write it. The
+// engine never hands that identity to a caller, so a harness running outside
+// the engine earns it the way any external backend would: by proving it holds
+// the application's OAuth client secret.
 //
 // Raw GraphQL rather than the generated client, so the harness does not depend
 // on which operations the pinned twenty-client-sdk happens to expose.
