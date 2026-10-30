@@ -139,12 +139,13 @@ describe('local commands', () => {
         if (args[0] === 'stop' && isDefined(target)) {
           target.State.Running = false;
         }
+        if (args[0] === 'rm' && target === previousContainer) {
+          previousContainer = undefined;
+          return '';
+        }
         if (args[0] === 'rm') {
-          if (target === previousContainer) {
-            previousContainer = undefined;
-          } else {
-            container = undefined;
-          }
+          container = undefined;
+          return '';
         }
         if (args[0] === 'run' || args[0] === 'create') {
           container = makeContainer(args[0] === 'run');
@@ -374,6 +375,10 @@ describe('local commands', () => {
   });
 
   it('upgrades gracefully, preserving volumes, port mapping and user overrides without stale image defaults', async () => {
+    container!.Config.Env.push(
+      'API_RATE_LIMITING_SHORT_LIMIT=50',
+      'MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=true',
+    );
     const { exitCode, envelope } = await runJson(['upgrade', '2.54.0']);
     expect(exitCode).toBe(0);
     expect(envelope.data).toMatchObject({
@@ -395,6 +400,12 @@ describe('local commands', () => {
     expect(run).toContain('127.0.0.1:12021:2021');
     expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
     expect(run).toContain('CUSTOM_SETTING=enabled');
+    expect(run).toContain('API_RATE_LIMITING_SHORT_LIMIT=50');
+    expect(run).toContain('MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=true');
+    expect(run).not.toContain('API_RATE_LIMITING_SHORT_LIMIT=100000');
+    expect(run.filter((value) => value.startsWith('SERVER_URL='))).toEqual([
+      'SERVER_URL=http://localhost:12021',
+    ]);
     expect(run).not.toContain('APP_VERSION=2.53.0');
     expect(run).not.toContain('APP_VERSION=2.54.0');
   });

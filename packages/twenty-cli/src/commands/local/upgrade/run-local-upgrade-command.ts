@@ -1,4 +1,4 @@
-import lt from 'semver/functions/lt';
+import isLessThan from 'semver/functions/lt';
 import { isDefined } from 'twenty-shared/utils';
 import { readStringArgument } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
@@ -64,7 +64,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     imageId: nextImageId,
     signal,
   });
-  if (lt(nextVersion, currentVersion)) {
+  if (isLessThan(nextVersion, currentVersion)) {
     throw new CliError({
       code: 'CONFLICT',
       message: `Cannot downgrade the local environment from ${currentVersion} to ${nextVersion}.`,

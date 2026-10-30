@@ -20,19 +20,20 @@ export const createLocalContainer = async ({
   environmentVariables?: string[];
   shouldStart?: boolean;
   signal: AbortSignal;
-}) =>
-  runDocker({
+}) => {
+  const variables = [`NODE_PORT=${containerPort}`, ...environmentVariables];
+  if (!environmentVariables.some((value) => value.startsWith('SERVER_URL='))) {
+    variables.push(`SERVER_URL=http://localhost:${port}`);
+  }
+
+  return runDocker({
     args: [
       ...(shouldStart ? ['run', '--detach'] : ['create']),
       '--name',
       environment.name,
       '--publish',
       `127.0.0.1:${port}:${containerPort}`,
-      '--env',
-      `NODE_PORT=${containerPort}`,
-      '--env',
-      `SERVER_URL=http://localhost:${port}`,
-      ...environmentVariables.flatMap((value) => ['--env', value]),
+      ...variables.flatMap((value) => ['--env', value]),
       ...Object.entries(environment.volumes).flatMap(([destination, name]) => [
         '--volume',
         `${name}:${destination}`,
@@ -41,3 +42,4 @@ export const createLocalContainer = async ({
     ],
     signal,
   });
+};

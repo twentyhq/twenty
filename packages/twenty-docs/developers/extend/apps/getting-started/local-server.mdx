@@ -42,8 +42,9 @@ twenty local upgrade 2.53.1
 ```
 
 Upgrade pulls the requested image before replacing the instance. It preserves
-its ports, database and file volumes, and environment overrides. Without a
-version, it follows the same version selection as a new start. Custom storage
+its ports, database and file volumes, and environment overrides. New CLI defaults
+apply to newly created instances; upgrades preserve existing environment values.
+Without a version, it follows the same version selection as a new start. Custom storage
 layouts are rejected. Downgrades are rejected before replacing the container,
 including when using a tag such as `latest`. Both images must declare a valid
 `APP_VERSION` so the CLI can compare their actual versions.
