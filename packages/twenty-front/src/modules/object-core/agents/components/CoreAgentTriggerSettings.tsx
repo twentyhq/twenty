@@ -3,7 +3,7 @@ import { type AgentTrigger } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CoreAgentTriggerForm } from '@/object-core/agents/components/CoreAgentTriggerForm';
-import { CoreAgentTriggerOptions } from '@/object-core/agents/components/CoreAgentTriggerOptions';
+import { CoreAgentTriggerInstructions } from '@/object-core/agents/components/CoreAgentTriggerInstructions';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
@@ -59,7 +59,7 @@ export const CoreAgentTriggerSettings = ({
         isReadOnly={isReadOnly}
         onTriggerChange={updateTrigger}
       />
-      <CoreAgentTriggerOptions
+      <CoreAgentTriggerInstructions
         trigger={trigger}
         isReadOnly={isReadOnly}
         onTriggerChange={updateTrigger}

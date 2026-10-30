@@ -2,30 +2,26 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentTrigger } from 'twenty-shared/application';
-import { SettingsRow } from 'twenty-ui/components/settings';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TextArea } from '@/ui/input/components/TextArea';
 
 const StyledContainer = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-type CoreAgentTriggerOptionsProps = {
+type CoreAgentTriggerInstructionsProps = {
   trigger: AgentTrigger;
   isReadOnly: boolean;
   onTriggerChange: (nextTrigger: AgentTrigger) => void;
 };
 
-export const CoreAgentTriggerOptions = ({
+export const CoreAgentTriggerInstructions = ({
   trigger,
   isReadOnly,
   onTriggerChange,
-}: CoreAgentTriggerOptionsProps) => {
+}: CoreAgentTriggerInstructionsProps) => {
   const { t } = useLingui();
 
   return (
@@ -47,16 +43,6 @@ export const CoreAgentTriggerOptions = ({
         }
         disabled={isReadOnly}
       />
-      <SettingsRow
-        checked={trigger.isActive}
-        onCheckedChange={(isActive) =>
-          onTriggerChange({ ...trigger, isActive })
-        }
-        size="md"
-        disabled={isReadOnly}
-      >
-        {t`Active`}
-      </SettingsRow>
     </StyledContainer>
   );
 };
