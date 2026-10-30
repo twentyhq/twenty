@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
+import { UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
 
 describe('workspace embedding origin edits', () => {
   it.each([
@@ -8,7 +8,7 @@ describe('workspace embedding origin edits', () => {
     'https://PORTAL.example.com:443/',
   ])('accepts an explicit origin: %s', async (origin) => {
     const input = Object.assign(
-      new UpdateWorkspaceAllowedIframeOriginsInput(),
+      new UpdateWorkspaceAllowedEmbeddingOriginsInput(),
       { operation: 'add', origin },
     );
     expect(await validate(input)).toEqual([]);
@@ -23,7 +23,7 @@ describe('workspace embedding origin edits', () => {
     undefined,
   ])('rejects an invalid origin: %s', async (origin) => {
     const input = Object.assign(
-      new UpdateWorkspaceAllowedIframeOriginsInput(),
+      new UpdateWorkspaceAllowedEmbeddingOriginsInput(),
       { operation: 'add', origin },
     );
     expect(await validate(input)).toEqual(
@@ -32,7 +32,7 @@ describe('workspace embedding origin edits', () => {
   });
   it('rejects replacing the whole list', async () => {
     const input = Object.assign(
-      new UpdateWorkspaceAllowedIframeOriginsInput(),
+      new UpdateWorkspaceAllowedEmbeddingOriginsInput(),
       { operation: 'replace', origin: 'https://portal.example.com' },
     );
     expect(await validate(input)).toEqual(

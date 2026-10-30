@@ -11,6 +11,7 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Open](#open-the-workspace)
 - [Metadata](#inspect-the-data-model)
 - [Records](#read-records)
+- [Local development environment](#run-a-local-development-environment)
 - [App init](#create-an-app) and [add](#add-definitions-to-an-app)
 - [Build and typecheck](#build-and-check-an-app)
 - [Plan](#preview-app-changes), [apply](#apply-an-app) and [dev](#develop-an-app)
@@ -18,6 +19,51 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Function execution](#execute-an-app-function) and [logs](#watch-app-logs)
 - [Expired browser sessions](#expired-browser-sessions)
 - [Output and exit codes](#output)
+
+## Run a local development environment
+
+```bash
+twenty local start
+twenty local status
+twenty auth login --url http://localhost:2020 --name local
+twenty local logs --no-follow
+twenty local stop
+```
+
+`local` runs the full Twenty development environment, including the web UI,
+API, worker and databases. Docker must be installed and running with a local
+socket context; remote Docker endpoints are rejected. These commands need
+neither an app directory nor a saved workspace connection. They do not sign in,
+change remotes or apply an app.
+
+`start [version]` creates an instance or starts the existing one, and waits up
+to five minutes for `/healthz`. For a new instance, version selection is:
+explicit version or image tag, the highest published version matching the nearest
+`package.json`'s `engines.twenty`, then `latest` when no range exists. A failed
+lookup or unmatched range is an error, never a fallback to another version.
+New instances pull the selected image before creation, including when the tag
+is cached locally. Existing instances keep their image and port.
+A readiness failure leaves the container and data in place for diagnosis.
+
+New instances bind to loopback on port `2020`. Use `--port <port>` when creating
+one. `--test` selects the separate test instance, default port `2021`; pass it
+to every command intended for that instance. Data and file storage use separate
+named volumes for each instance. Existing SDK development containers and their
+volumes are reused.
+
+```bash
+twenty local start 2.53.1 --test
+twenty local logs --test --lines 100 --no-follow
+```
+
+`status` reports `not-created`, `stopped`, `starting` or `healthy`; unavailable
+Docker is an error. `logs` follows by default; `--no-follow` prints recent logs
+and exits. It supports human or NDJSON output, with a terminal result or error;
+other local commands support human or JSON output. Ctrl+C cancels the CLI
+operation, without stopping the environment or deleting data.
+
+`stop` preserves the container and all data. This development environment is
+not a production deployment tool.
 
 ## Connections and authentication
 

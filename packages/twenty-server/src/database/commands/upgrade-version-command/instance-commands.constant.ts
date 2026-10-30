@@ -272,6 +272,8 @@ import { AddWorkspaceChatAssistantModesFastInstanceCommand } from 'src/database/
 import { AddRelatedRecordPathTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793291361887-add-related-record-path-table';
 import { AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793357800472-add-access-token-expires-at-to-connected-account';
 import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793369399690-add-webhook-id-to-role-target';
+import { AddWorkspaceIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022948-add-workspace-iframe-media-permissions';
+import { RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022971-rename-workspace-allowed-iframe-origins-to-allowed-embedding-origins';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -546,4 +548,6 @@ export const INSTANCE_COMMANDS = [
   AddRelatedRecordPathTableFastInstanceCommand,
   AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand,
   AddWebhookIdToRoleTargetFastInstanceCommand,
+  AddWorkspaceIframeMediaPermissionsFastInstanceCommand,
+  RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand,
 ];
