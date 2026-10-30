@@ -58,15 +58,15 @@ export const DirectMessagePresentationExample = ({
   >(showDataControls ? 'loading' : 'results');
   const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
   const normalizedSearch = normalizeSearchText(searchValue);
-  const humanMembers =
+  const suppliedHumanMembers =
     memberState === 'empty'
       ? []
-      : [currentMember, ...directMessages.map(({ peer }) => peer)].filter(
-          (member) =>
-            normalizeSearchText(`${member.name} ${member.email}`).includes(
-              normalizedSearch,
-            ),
-        );
+      : [currentMember, ...directMessages.map(({ peer }) => peer)];
+  const humanMembers = suppliedHumanMembers.filter((member) =>
+    normalizeSearchText(`${member.name} ${member.email}`).includes(
+      normalizedSearch,
+    ),
+  );
 
   const handlePickerOpenChange = (isOpen: boolean) => {
     setIsPickerOpen(isOpen);
