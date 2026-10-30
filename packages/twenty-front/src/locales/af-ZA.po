@@ -2365,7 +2365,7 @@ msgstr "Voeg Uitvoerveld by"
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
 msgid "Add path"
-msgstr ""
+msgstr "Voeg pad by"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2520,7 +2520,7 @@ msgstr "Voeg hierdie rekords by jou DNS-verskaffer. Twenty kontroleer dit outoma
 #. js-lingui-id: Bc+ryO
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Add this path"
-msgstr ""
+msgstr "Voeg hierdie pad by"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7496,7 +7496,7 @@ msgstr "Kon nie mediatoegang toestaan nie. Probeer asseblief weer."
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "Could not load related records"
-msgstr ""
+msgstr "Kon nie verwante rekords laai nie"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -9272,7 +9272,7 @@ msgstr "Verwyder verwante {relationObjectLabelSingular}"
 #. js-lingui-id: CW/kVJ
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Delete related record path"
-msgstr ""
+msgstr "Skrap pad vir verwante rekord"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -19057,7 +19057,7 @@ msgstr "Geen rekords om te hersien nie"
 #. js-lingui-id: AxHLth
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "No related records follow this object yet"
-msgstr ""
+msgstr "Geen verwante rekords volg nog hierdie objek nie"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19067,7 +19067,7 @@ msgstr "Geen verwantskap om volgens te tel nie"
 #. js-lingui-id: dPgrAv
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "No relations"
-msgstr ""
+msgstr "Geen verwantskappe nie"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -22313,7 +22313,7 @@ msgstr "Rekords"
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
-msgstr ""
+msgstr "Rekords wat deur hierdie verwantskappe bereik word, volg toegang tot {objectLabel}."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22452,7 +22452,7 @@ msgstr "Verwante rekordpaaie"
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Related records"
-msgstr ""
+msgstr "Verwante rekords"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -24085,7 +24085,7 @@ msgstr "Soek registrasies..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
-msgstr ""
+msgstr "Soek verwantskappe"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -28728,7 +28728,7 @@ msgstr "Nie beskikbaar nie"
 #. js-lingui-id: HY7voI
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Unavailable object"
-msgstr ""
+msgstr "Objek nie beskikbaar nie"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29457,7 +29457,7 @@ msgstr "Gradeer op na Organisasie"
 #. js-lingui-id: T10DNC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to change related records"
-msgstr ""
+msgstr "Gradeer op na Organization om verwante rekords te verander"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

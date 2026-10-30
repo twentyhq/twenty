@@ -2365,7 +2365,7 @@ msgstr "Chiqish maydoni qo‘shish"
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
 msgid "Add path"
-msgstr ""
+msgstr "Yo‘l qo‘shish"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2520,7 +2520,7 @@ msgstr "Ushbu yozuvlarni DNS provayderingizga qo‘shing. Twenty ularni avtomati
 #. js-lingui-id: Bc+ryO
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Add this path"
-msgstr ""
+msgstr "Bu yo‘lni qo‘shish"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7496,7 +7496,7 @@ msgstr "Media ruxsatini berib bo‘lmadi. Iltimos, qayta urinib ko‘ring."
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "Could not load related records"
-msgstr ""
+msgstr "Bog‘liq yozuvlarni yuklab bo‘lmadi"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -9272,7 +9272,7 @@ msgstr "Bogʻlangan {relationObjectLabelSingular}ni oʻchirish"
 #. js-lingui-id: CW/kVJ
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Delete related record path"
-msgstr ""
+msgstr "Bog‘liq yozuv yo‘lini o‘chirish"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -19057,7 +19057,7 @@ msgstr "Ko‘rib chiqish uchun yozuvlar yo‘q"
 #. js-lingui-id: AxHLth
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "No related records follow this object yet"
-msgstr ""
+msgstr "Hozircha hech qanday bog‘liq yozuv bu obyektga amal qilmaydi"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19067,7 +19067,7 @@ msgstr "Hisoblash uchun munosabat tanlanmagan"
 #. js-lingui-id: dPgrAv
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "No relations"
-msgstr ""
+msgstr "Munosabatlar yo‘q"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -22313,7 +22313,7 @@ msgstr "Yozuvlar"
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
-msgstr ""
+msgstr "Ushbu munosabatlar orqali erishilgan yozuvlar {objectLabel} uchun kirish huquqiga amal qiladi."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22452,7 +22452,7 @@ msgstr "Bog‘liq yozuv yo‘llari"
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Related records"
-msgstr ""
+msgstr "Bog‘liq yozuvlar"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -24085,7 +24085,7 @@ msgstr "Ro‘yxatdan o‘tkazishlarni qidiring..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
-msgstr ""
+msgstr "Munosabatlarni qidirish"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -28728,7 +28728,7 @@ msgstr "Mavjud emas"
 #. js-lingui-id: HY7voI
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Unavailable object"
-msgstr ""
+msgstr "Mavjud bo‘lmagan obyekt"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29457,7 +29457,7 @@ msgstr "Tashkilot rejasiga yangilash"
 #. js-lingui-id: T10DNC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to change related records"
-msgstr ""
+msgstr "Bog‘liq yozuvlarni o‘zgartirish uchun Tashkilotga yangilang"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

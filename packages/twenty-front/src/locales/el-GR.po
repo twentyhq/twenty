@@ -2365,7 +2365,7 @@ msgstr "Προσθήκη Πεδίου Εξόδου"
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
 msgid "Add path"
-msgstr ""
+msgstr "Προσθήκη διαδρομής"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2520,7 +2520,7 @@ msgstr "Προσθέστε αυτές τις εγγραφές στον πάρο�
 #. js-lingui-id: Bc+ryO
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Add this path"
-msgstr ""
+msgstr "Προσθήκη αυτής της διαδρομής"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7496,7 +7496,7 @@ msgstr "Δεν ήταν δυνατή η παραχώρηση πρόσβασης 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "Could not load related records"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση σχετικών εγγραφών"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -9272,7 +9272,7 @@ msgstr "Διαγραφή σχετικού {relationObjectLabelSingular}"
 #. js-lingui-id: CW/kVJ
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Delete related record path"
-msgstr ""
+msgstr "Διαγραφή διαδρομής σχετικής εγγραφής"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -19057,7 +19057,7 @@ msgstr "Δεν υπάρχουν εγγραφές για αναθεώρηση"
 #. js-lingui-id: AxHLth
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "No related records follow this object yet"
-msgstr ""
+msgstr "Δεν υπάρχουν ακόμα σχετικές εγγραφές που ακολουθούν αυτό το αντικείμενο"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19067,7 +19067,7 @@ msgstr "Καμία σχέση για καταμέτρηση"
 #. js-lingui-id: dPgrAv
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "No relations"
-msgstr ""
+msgstr "Δεν υπάρχουν σχέσεις"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -22313,7 +22313,7 @@ msgstr "Εγγραφές"
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
-msgstr ""
+msgstr "Οι εγγραφές στις οποίες γίνεται πρόσβαση μέσω αυτών των σχέσεων ακολουθούν την πρόσβαση στο {objectLabel}."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22452,7 +22452,7 @@ msgstr "Διαδρομές σχετικών εγγραφών"
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Related records"
-msgstr ""
+msgstr "Σχετικές εγγραφές"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -24085,7 +24085,7 @@ msgstr "Αναζήτηση καταχωρίσεων..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
-msgstr ""
+msgstr "Αναζήτηση σχέσεων"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -28730,7 +28730,7 @@ msgstr "Μη διαθέσιμο"
 #. js-lingui-id: HY7voI
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Unavailable object"
-msgstr ""
+msgstr "Μη διαθέσιμο αντικείμενο"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29459,7 +29459,7 @@ msgstr "Αναβάθμιση σε Organization"
 #. js-lingui-id: T10DNC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to change related records"
-msgstr ""
+msgstr "Αναβαθμίστε σε Organization για να αλλάξετε τις σχετικές εγγραφές"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

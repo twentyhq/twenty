@@ -11116,7 +11116,7 @@ msgstr "관련 레코드 경로 객체를 찾을 수 없음"
 #. js-lingui-id: 0ppWJe
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record paths require the Organization plan."
-msgstr ""
+msgstr "관련 레코드 경로를 사용하려면 Organization 플랜이 필요합니다."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts

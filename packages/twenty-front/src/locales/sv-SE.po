@@ -2365,7 +2365,7 @@ msgstr "Lägg till utdatafält"
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
 msgid "Add path"
-msgstr ""
+msgstr "Lägg till sökväg"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2520,7 +2520,7 @@ msgstr "Lägg till dessa poster hos din DNS-leverantör. Twenty kontrollerar dem
 #. js-lingui-id: Bc+ryO
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Add this path"
-msgstr ""
+msgstr "Lägg till den här sökvägen"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7496,7 +7496,7 @@ msgstr "Det gick inte att bevilja medieåtkomst. Försök igen."
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "Could not load related records"
-msgstr ""
+msgstr "Det gick inte att läsa in relaterade poster"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -9272,7 +9272,7 @@ msgstr "Ta bort relaterad {relationObjectLabelSingular}"
 #. js-lingui-id: CW/kVJ
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Delete related record path"
-msgstr ""
+msgstr "Ta bort sökväg för relaterade poster"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -19059,7 +19059,7 @@ msgstr "Inga poster att granska"
 #. js-lingui-id: AxHLth
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "No related records follow this object yet"
-msgstr ""
+msgstr "Inga relaterade poster följer det här objektet ännu"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19069,7 +19069,7 @@ msgstr "Ingen relation att räkna efter"
 #. js-lingui-id: dPgrAv
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "No relations"
-msgstr ""
+msgstr "Inga relationer"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -22315,7 +22315,7 @@ msgstr "Poster"
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
-msgstr ""
+msgstr "Poster som nås via dessa relationer följer åtkomsten till {objectLabel}."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22454,7 +22454,7 @@ msgstr "Sökvägar för relaterade poster"
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Related records"
-msgstr ""
+msgstr "Relaterade poster"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -24089,7 +24089,7 @@ msgstr "Sök registreringar..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
-msgstr ""
+msgstr "Sök relationer"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -28736,7 +28736,7 @@ msgstr "Inte tillgänglig"
 #. js-lingui-id: HY7voI
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Unavailable object"
-msgstr ""
+msgstr "Otillgängligt objekt"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29465,7 +29465,7 @@ msgstr "Uppgradera till organisation"
 #. js-lingui-id: T10DNC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to change related records"
-msgstr ""
+msgstr "Uppgradera till Organization för att ändra relaterade poster"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

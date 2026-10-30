@@ -2365,7 +2365,7 @@ msgstr "出力フィールドを追加"
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
 msgid "Add path"
-msgstr ""
+msgstr "パスを追加"
 
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -2520,7 +2520,7 @@ msgstr "DNSプロバイダーでこれらのレコードを追加してくださ
 #. js-lingui-id: Bc+ryO
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Add this path"
-msgstr ""
+msgstr "このパスを追加"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7496,7 +7496,7 @@ msgstr "メディアへのアクセスを許可できませんでした。もう
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "Could not load related records"
-msgstr ""
+msgstr "関連レコードを読み込めませんでした"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
@@ -9272,7 +9272,7 @@ msgstr "関連する{relationObjectLabelSingular}を削除"
 #. js-lingui-id: CW/kVJ
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Delete related record path"
-msgstr ""
+msgstr "関連レコードパスを削除"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -19057,7 +19057,7 @@ msgstr "確認するレコードはありません"
 #. js-lingui-id: AxHLth
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 msgid "No related records follow this object yet"
-msgstr ""
+msgstr "このオブジェクトに従う関連レコードはまだありません"
 
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -19067,7 +19067,7 @@ msgstr "カウント対象となるリレーションがありません"
 #. js-lingui-id: dPgrAv
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "No relations"
-msgstr ""
+msgstr "リレーションがありません"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -22313,7 +22313,7 @@ msgstr "レコード"
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
-msgstr ""
+msgstr "これらのリレーションを通じて到達するレコードは、{objectLabel} へのアクセスに従います。"
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22452,7 +22452,7 @@ msgstr "関連レコードのパス"
 #. js-lingui-id: uGfOFe
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Related records"
-msgstr ""
+msgstr "関連レコード"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -24085,7 +24085,7 @@ msgstr "登録を検索..."
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 msgid "Search relations"
-msgstr ""
+msgstr "リレーションを検索"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -28728,7 +28728,7 @@ msgstr "利用できません"
 #. js-lingui-id: HY7voI
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
 msgid "Unavailable object"
-msgstr ""
+msgstr "利用できないオブジェクト"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29457,7 +29457,7 @@ msgstr "Organizationにアップグレード"
 #. js-lingui-id: T10DNC
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Upgrade to Organization to change related records"
-msgstr ""
+msgstr "Organizationにアップグレードして関連レコードを変更"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx

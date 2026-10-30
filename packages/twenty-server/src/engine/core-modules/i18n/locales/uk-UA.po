@@ -11116,7 +11116,7 @@ msgstr "Об'єкт шляху пов'язаного запису не знай�
 #. js-lingui-id: 0ppWJe
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record paths require the Organization plan."
-msgstr ""
+msgstr "Шляхи пов’язаних записів потребують плану Organization."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts

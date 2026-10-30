@@ -11116,7 +11116,7 @@ msgstr "未找到相关记录路径对象"
 #. js-lingui-id: 0ppWJe
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record paths require the Organization plan."
-msgstr ""
+msgstr "关联记录路径需要 Organization 套餐。"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts

@@ -11116,7 +11116,7 @@ msgstr "Bog‘liq yozuv yo‘li obyekti topilmadi"
 #. js-lingui-id: 0ppWJe
 #: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
 msgid "Related record paths require the Organization plan."
-msgstr ""
+msgstr "Tegishli yozuv yoʻllari Organization rejasini talab qiladi."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
