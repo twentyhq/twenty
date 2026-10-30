@@ -1,36 +1,79 @@
 import { GettingStartedRollingText } from '@/getting-started/components/GettingStartedRollingText';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
-import { AnimatedCheckmark } from '@/ui/navigation/step-bar/components/internal/AnimatedCheckmark/AnimatedCheckmark';
+import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
-import { IconCheck, useIcons } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/primitives/surfaces';
+import { isDefined } from 'twenty-shared/utils';
+import { IconCircleCheck, useIcons } from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
 import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
-const StyledHeading = styled.div<{ isCompleted: boolean }>`
-  align-items: flex-start;
-  background: ${({ isCompleted }) =>
-    isCompleted
-      ? themeCssVariables.color.green3
-      : themeCssVariables.background.secondary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[4]};
-  transition: background
+const StyledCard = styled.section<{ isCompleted: boolean }>`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid
+    ${({ isCompleted }) =>
+      isCompleted
+        ? themeCssVariables.color.green5
+        : themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: border-color
     calc(${themeCssVariables.animation.duration.normal} * 1s) ease-out;
+  width: 100%;
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 `;
 
-const StyledAnimatedCheckmark = styled.span`
+const StyledHeading = styled.div<{ isCompleted: boolean }>`
+  align-items: flex-start;
+  background: ${({ isCompleted }) =>
+    isCompleted
+      ? themeCssVariables.color.green2
+      : themeCssVariables.background.secondary};
+  border-bottom: 1px solid
+    ${({ isCompleted }) =>
+      isCompleted
+        ? themeCssVariables.color.green3
+        : themeCssVariables.border.color.light};
   display: flex;
-  margin: calc(-1 * ${themeCssVariables.spacing[1]});
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[3]};
+  transition:
+    background calc(${themeCssVariables.animation.duration.normal} * 1s)
+      ease-out,
+    border-color calc(${themeCssVariables.animation.duration.normal} * 1s)
+      ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+// Tabler draws the circle first and the check last, so only the check is redrawn.
+const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
+  color: ${themeCssVariables.tag.text.green};
+  display: flex;
+
+  & svg path:last-of-type {
+    animation: ${({ isAnimating }) =>
+      isAnimating
+        ? 'getting-started-step-card-draw-check 0.5s ease forwards'
+        : 'none'};
+    stroke-dasharray: 9;
+    stroke-dashoffset: ${({ isAnimating }) => (isAnimating ? 9 : 0)};
+  }
+
+  @keyframes getting-started-step-card-draw-check {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
 `;
 
 const StyledTitle = styled.div`
@@ -43,6 +86,7 @@ const StyledTitle = styled.div`
 
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
 `;
 
 const StyledBody = styled.div`
@@ -64,24 +108,20 @@ export const GettingStartedStepCard = ({
   const { getIcon } = useIcons();
 
   const StepIcon = getIcon(stepDefinition.icon);
+  const DoneDescription = isCompleted
+    ? GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS[stepDefinition.step]
+    : undefined;
 
   return (
-    <Card.Root
-      fullWidth
-      backgroundColor={themeCssVariables.background.primary}
-      render={<section />}
-      aria-label={stepDefinition.title}
-    >
+    <StyledCard isCompleted={isCompleted} aria-label={stepDefinition.title}>
       <StyledHeading isCompleted={isCompleted}>
-        {isCompleted && isJustCompleted ? (
-          <StyledAnimatedCheckmark>
-            <AnimatedCheckmark isAnimating color={theme.font.color.primary} />
-          </StyledAnimatedCheckmark>
-        ) : isCompleted ? (
-          <IconCheck size={theme.icon.size.lg} />
+        {isCompleted ? (
+          <StyledDoneIcon isAnimating={isJustCompleted}>
+            <IconCircleCheck size={theme.icon.size.xl} />
+          </StyledDoneIcon>
         ) : (
           <StepIcon
-            size={theme.icon.size.lg}
+            size={theme.icon.size.xl}
             color={
               themeCssVariables.tag.text[
                 parseThemeColor(stepDefinition.iconColor)
@@ -97,12 +137,18 @@ export const GettingStartedStepCard = ({
               }
             />
           </Heading>
-          <StyledDescription>{stepDefinition.description}</StyledDescription>
+          <StyledDescription>
+            {isDefined(DoneDescription) ? (
+              <DoneDescription description={stepDefinition.description} />
+            ) : (
+              stepDefinition.description
+            )}
+          </StyledDescription>
         </StyledTitle>
       </StyledHeading>
       <StyledBody>
         <GettingStartedStepAction stepDefinition={stepDefinition} />
       </StyledBody>
-    </Card.Root>
+    </StyledCard>
   );
 };

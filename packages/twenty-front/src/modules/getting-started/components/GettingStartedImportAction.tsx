@@ -28,27 +28,23 @@ import {
 const StyledColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
+  outline: none;
 `;
 
-const StyledDropZone = styled.div<{ isFileOver: boolean }>`
-  align-items: center;
-  background: ${({ isFileOver }) =>
-    isFileOver
-      ? themeCssVariables.background.tertiary
-      : themeCssVariables.background.secondary};
-  border: 1px dashed ${themeCssVariables.border.color.strong};
-  border-radius: ${themeCssVariables.border.radius.md};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
+const StyledUploadField = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[4]};
-  text-align: center;
+  gap: ${themeCssVariables.spacing['0.5']};
 `;
 
-const StyledRow = styled.div`
+const StyledHelperRow = styled.div`
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledExportRow = styled.div`
   align-items: center;
   display: flex;
   flex-wrap: wrap;
@@ -85,8 +81,11 @@ export const GettingStartedImportAction = () => {
     });
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     multiple: true,
+    noClick: true,
+    noKeyboard: true,
+    disabled: !canImportWithAi,
     accept: {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
@@ -115,64 +114,48 @@ export const GettingStartedImportAction = () => {
       value={{ instanceId: GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID }}
     >
       <SpreadsheetImportProvider>
-        <StyledColumn>
-          {canImportWithAi ? (
-            <>
-              <StyledDropZone
-                // oxlint-disable-next-line react/jsx-props-no-spreading
-                {...getRootProps()}
-                isFileOver={isDragActive}
-              >
-                <input
-                  // oxlint-disable-next-line react/jsx-props-no-spreading
-                  {...getInputProps()}
-                />
-                <IconUpload />
-                <Text size="sm">{t`Drop your CSV or Excel exports`}</Text>
-                <Text
-                  size="sm"
-                  color="tertiary"
-                >{t`AI maps the columns and links the records for you`}</Text>
-              </StyledDropZone>
-              <StyledRow>
+        <StyledColumn
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...getRootProps()}
+        >
+          <input
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...getInputProps()}
+          />
+          <StyledUploadField>
+            <Text size="xs" color="light">{t`Spreadsheet`}</Text>
+            <Button
+              fullWidth
+              startIcon={<IconUpload />}
+              onClick={canImportWithAi ? open : openImportDialog}
+            >{t`Upload file`}</Button>
+            <StyledHelperRow>
+              <Text
+                size="sm"
+                color="light"
+              >{t`A CSV or Excel export from any tool`}</Text>
+              {canImportWithAi && (
                 <Button
-                  size="sm"
                   variant="link"
                   onClick={openImportDialog}
                 >{t`Use the import wizard instead`}</Button>
-              </StyledRow>
-            </>
-          ) : (
-            <>
-              <Text size="sm" color="tertiary">{t`Spreadsheet`}</Text>
-              <Button
-                size="sm"
-                fullWidth
-                startIcon={<IconUpload />}
-                onClick={openImportDialog}
-              >{t`Upload file`}</Button>
-              <Text
-                size="sm"
-                color="tertiary"
-              >{t`A CSV or Excel import from any tool`}</Text>
-            </>
-          )}
-          <StyledRow>
+              )}
+            </StyledHelperRow>
+          </StyledUploadField>
+          <StyledExportRow>
             <Text size="sm" color="tertiary">{t`Export a CSV from`}</Text>
             {SPREADSHEET_EXPORT_GUIDES.map((guide) => (
               <Button
                 key={guide.name}
-                size="sm"
-                variant="outline"
-                href={guide.url}
-                target="_blank"
-                rel="noreferrer"
+                // An href Button renders its label only, so the anchor is passed in to keep the icon
+                render={<a href={guide.url} target="_blank" rel="noreferrer" />}
+                nativeButton={false}
                 endIcon={<IconExternalLink />}
               >
                 {guide.name}
               </Button>
             ))}
-          </StyledRow>
+          </StyledExportRow>
         </StyledColumn>
       </SpreadsheetImportProvider>
     </ContextStoreComponentInstanceContext.Provider>

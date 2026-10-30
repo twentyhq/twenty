@@ -12,10 +12,20 @@ import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type GettingStartedStepDefinition } from '~/generated-metadata/graphql';
 
-const StyledColumn = styled.div`
+const StyledComposer = styled.div`
+  background: ${themeCssVariables.background.transparent.lighter};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  min-height: ${themeCssVariables.spacing[20]};
+  padding: calc(
+      ${themeCssVariables.spacing[2]} + ${themeCssVariables.spacing['1.5']}
+    )
+    ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
 `;
 
 type GettingStartedPromptActionProps = {
@@ -42,11 +52,10 @@ export const GettingStartedPromptAction = ({
   };
 
   return (
-    <StyledColumn>
+    <StyledComposer role="group" aria-label={promptLabel ?? undefined}>
       <TextArea
         textAreaId={`getting-started-${step}-prompt`}
-        label={promptLabel ?? undefined}
-        minRows={3}
+        variant="transparent"
         value={prompt}
         onChange={setPrompt}
       />
@@ -66,6 +75,6 @@ export const GettingStartedPromptAction = ({
           </IconButton>
         }
       />
-    </StyledColumn>
+    </StyledComposer>
   );
 };

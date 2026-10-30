@@ -45,7 +45,6 @@ export const GettingStartedAppInstallButton = ({
     <>
       <IconButton
         size="sm"
-        variant="ghost"
         aria-label={t`Install ${appLabel}`}
         loading={isInstalling}
         disabled={isInstalled || !isDefined(marketplaceAppDetail)}

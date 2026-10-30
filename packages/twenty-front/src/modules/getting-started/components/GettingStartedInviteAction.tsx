@@ -1,6 +1,8 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -18,7 +20,19 @@ import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledEmailField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledEmailInputs = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledFooter = styled.div`
@@ -30,6 +44,11 @@ export const GettingStartedInviteAction = () => {
   const { enqueueToast } = useToast();
   const { refetch } = useGettingStartedProgress();
   const { sendInvitation } = useCreateWorkspaceInvitation();
+  const currentUser = useAtomStateValue(currentUserState);
+  const emailDomain = currentUser?.email.split('@').at(1);
+  const emailPlaceholder = isNonEmptyString(emailDomain)
+    ? t`name@${emailDomain}`
+    : t`Email address`;
   const { data } = useQuery(GetInviteSuggestionsDocument, {
     fetchPolicy: 'cache-first',
   });
@@ -103,34 +122,37 @@ export const GettingStartedInviteAction = () => {
 
   return (
     <StyledForm onSubmit={(event) => void sendInvitations(event)}>
-      {inviteSuggestions.length > 0 && (
-        <Text size="sm" color="tertiary">{t`Found in your emails`}</Text>
-      )}
-      {emails.map((email, index) => {
-        const emailNumber = index + 1;
+      <StyledEmailField>
+        {inviteSuggestions.length > 0 && (
+          <Text size="xs" color="light">{t`Found in your emails`}</Text>
+        )}
+        <StyledEmailInputs>
+          {emails.map((email, index) => {
+            const emailNumber = index + 1;
 
-        return (
-          <TextInput
-            key={index}
-            type="email"
-            value={email}
-            error={isInvalidEmail(email) ? t`Invalid email` : undefined}
-            noErrorHelper
-            aria-label={t`Teammate email ${emailNumber}`}
-            placeholder={t`Email address`}
-            onChange={(text) => updateEmail({ index, email: text })}
-            RightIcon={isNonEmptyString(email) ? IconX : undefined}
-            onRightIconClick={
-              isNonEmptyString(email) ? () => removeEmail(index) : undefined
-            }
-            fullWidth
-          />
-        );
-      })}
+            return (
+              <TextInput
+                key={index}
+                type="email"
+                value={email}
+                error={isInvalidEmail(email) ? t`Invalid email` : undefined}
+                noErrorHelper
+                aria-label={t`Teammate email ${emailNumber}`}
+                placeholder={emailPlaceholder}
+                onChange={(text) => updateEmail({ index, email: text })}
+                RightIcon={isNonEmptyString(email) ? IconX : undefined}
+                onRightIconClick={
+                  isNonEmptyString(email) ? () => removeEmail(index) : undefined
+                }
+                fullWidth
+              />
+            );
+          })}
+        </StyledEmailInputs>
+      </StyledEmailField>
       <StyledFooter>
         <Button
           type="submit"
-          size="sm"
           variant="solid"
           color="accent"
           loading={isSending}

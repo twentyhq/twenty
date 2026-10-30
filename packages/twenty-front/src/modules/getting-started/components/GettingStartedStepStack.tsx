@@ -13,8 +13,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 const StyledActiveStep = styled.div`
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow: ${themeCssVariables.boxShadow.light};
+  border-radius: ${themeCssVariables.border.radius.lg};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
   position: relative;
 `;
 
@@ -67,8 +67,8 @@ const StyledStackedStepBase = styled.button<{ depth: number }>`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md}
-    ${themeCssVariables.border.radius.md} 0 0;
+  border-radius: ${themeCssVariables.border.radius.lg}
+    ${themeCssVariables.border.radius.lg} 0 0;
   color: ${({ depth }) =>
     depth === 1
       ? themeCssVariables.font.color.primary
