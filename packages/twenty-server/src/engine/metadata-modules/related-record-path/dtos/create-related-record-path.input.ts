@@ -10,12 +10,12 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 export class CreateRelatedRecordPathInput {
   @IsUUID()
   @IsNotEmpty()
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   objectMetadataId: string;
 
   @IsUUID()
   @IsNotEmpty()
-  @Field(() => UUIDScalarType)
+  @Field(() => UUIDScalarType, { nullable: true })
   firstFieldMetadataId: string;
 
   @IsUUID()

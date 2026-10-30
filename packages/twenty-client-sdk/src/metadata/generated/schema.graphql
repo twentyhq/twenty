@@ -1689,8 +1689,8 @@ input CreateRecordExportInput {
 }
 
 input CreateRelatedRecordPathInput {
-  firstFieldMetadataId: UUID!
-  objectMetadataId: UUID!
+  firstFieldMetadataId: UUID
+  objectMetadataId: UUID
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
 }

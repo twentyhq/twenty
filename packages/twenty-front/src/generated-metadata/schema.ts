@@ -1811,8 +1811,8 @@ export type CreateRecordExportInput = {
 };
 
 export type CreateRelatedRecordPathInput = {
-  firstFieldMetadataId: Scalars['UUID']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  firstFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   secondFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   thirdFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };

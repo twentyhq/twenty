@@ -1,6 +1,8 @@
 /* @license Enterprise */
 
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -54,6 +56,21 @@ const deleteObject = async (objectMetadataId: string) => {
   await deleteOneObjectMetadata({
     expectToFail: false,
     input: { idToDelete: objectMetadataId },
+  });
+};
+
+const deleteField = async (fieldMetadataId: string) => {
+  await updateOneFieldMetadata({
+    expectToFail: false,
+    input: {
+      idToUpdate: fieldMetadataId,
+      updatePayload: { isActive: false },
+    },
+    gqlFields: 'id',
+  });
+  await deleteOneFieldMetadata({
+    expectToFail: false,
+    input: { idToDelete: fieldMetadataId },
   });
 };
 
@@ -176,7 +193,20 @@ describe('Related record path metadata', () => {
       }
 
       await deleteObject(projectObjectMetadataId);
-      await deleteObject(taskObjectMetadataId);
+
+      const { objects } = await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id',
+      });
+
+      if (
+        objects.some(
+          (object: { id: string }) => object.id === taskObjectMetadataId,
+        )
+      ) {
+        await deleteObject(taskObjectMetadataId);
+      }
     } finally {
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
@@ -292,7 +322,7 @@ describe('Related record path metadata', () => {
     });
 
     expect(JSON.stringify(unknownObjectResponse.body.errors)).toContain(
-      'Related record path object not found',
+      'Could not find objectMetadata for given objectMetadataId',
     );
 
     const unknownFieldResponse = await createPath({
@@ -300,7 +330,37 @@ describe('Related record path metadata', () => {
     });
 
     expect(JSON.stringify(unknownFieldResponse.body.errors)).toContain(
-      'Related record path field not found',
+      'Could not find fieldMetadata for given firstFieldMetadataId',
     );
+  });
+
+  it('should delete the path when one of its fields is deleted', async () => {
+    const response = await createPath({
+      firstFieldMetadataId: projectTasksFieldMetadataId,
+      secondFieldMetadataId: taskAssigneeFieldMetadataId,
+    });
+    const createdPath = response.body.data.createRelatedRecordPath;
+
+    jestExpectToBeDefined(createdPath);
+
+    await deleteField(taskAssigneeFieldMetadataId);
+
+    expect(await findPathIds()).not.toContain(createdPath.id);
+  });
+
+  it('should delete the paths that reach a deleted object', async () => {
+    const createdPathIdsBefore = await findPathIds();
+
+    expect(
+      createdPathIds.filter((pathId) => createdPathIdsBefore.includes(pathId)),
+    ).not.toHaveLength(0);
+
+    await deleteObject(taskObjectMetadataId);
+
+    const remainingPathIds = await findPathIds();
+
+    expect(
+      createdPathIds.filter((pathId) => remainingPathIds.includes(pathId)),
+    ).toHaveLength(0);
   });
 });

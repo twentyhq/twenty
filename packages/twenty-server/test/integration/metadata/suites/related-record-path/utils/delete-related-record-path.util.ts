@@ -1,16 +1,9 @@
 /* @license Enterprise */
 
-import gql from 'graphql-tag';
+import { deleteRelatedRecordPathQueryFactory } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const deleteRelatedRecordPath = (id: string) =>
-  makeMetadataApiRequest({
-    query: gql`
-      mutation DeleteRelatedRecordPath($id: UUID!) {
-        deleteRelatedRecordPath(id: $id) {
-          id
-        }
-      }
-    `,
-    variables: { id },
-  });
+  makeMetadataApiRequest(
+    deleteRelatedRecordPathQueryFactory({ input: { id } }),
+  );
