@@ -1,13 +1,13 @@
-import { type ApplicationCallerAccess } from 'src/engine/core-modules/application/types/application-caller-access.type';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 
 export const canCallerReachApplication = ({
   applicationId,
-  ...callerAccess
-}: ApplicationCallerAccess & {
+  ...callerOperation
+}: ApplicationCallerOperation & {
   applicationId: string | null | undefined;
 }): boolean => {
-  const reachableApplications = getReachableApplications(callerAccess);
+  const reachableApplications = getReachableApplications(callerOperation);
 
   return (
     reachableApplications.type === 'all' ||

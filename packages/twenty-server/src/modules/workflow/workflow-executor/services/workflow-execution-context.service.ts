@@ -84,7 +84,7 @@ export class WorkflowExecutionContextService {
       canCallerReachApplication({
         callingApplication: application,
         applicationId: targetApplicationId,
-        access: 'trigger',
+        operation: 'trigger',
         workspaceCustomApplicationId:
           authContext.workspace.workspaceCustomApplicationId,
       })

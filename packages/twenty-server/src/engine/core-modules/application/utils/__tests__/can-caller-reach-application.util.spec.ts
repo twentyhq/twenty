@@ -25,12 +25,12 @@ describe('canCallerReachApplication', () => {
 
     it.each(['read', 'trigger'] as const)(
       'should %s its own application only',
-      (access) => {
+      (operation) => {
         expect(
           canCallerReachApplication({
             callingApplication,
             applicationId: CALLING_APPLICATION_ID,
-            access,
+            operation,
             workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
           }),
         ).toBe(true);
@@ -38,7 +38,7 @@ describe('canCallerReachApplication', () => {
           canCallerReachApplication({
             callingApplication,
             applicationId: OTHER_APPLICATION_ID,
-            access,
+            operation,
             workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
           }),
         ).toBe(false);
@@ -50,14 +50,14 @@ describe('canCallerReachApplication', () => {
         canCallerReachApplication({
           callingApplication,
           applicationId: CALLING_APPLICATION_ID,
-          access: 'manage',
+          operation: 'manage',
         }),
       ).toBe(true);
       expect(
         canCallerReachApplication({
           callingApplication,
           applicationId: OTHER_APPLICATION_ID,
-          access: 'manage',
+          operation: 'manage',
         }),
       ).toBe(false);
     });
@@ -72,12 +72,12 @@ describe('canCallerReachApplication', () => {
 
     it.each(['read', 'trigger'] as const)(
       'should %s another application',
-      (access) => {
+      (operation) => {
         expect(
           canCallerReachApplication({
             callingApplication,
             applicationId: OTHER_APPLICATION_ID,
-            access,
+            operation,
             workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
           }),
         ).toBe(true);
@@ -89,14 +89,14 @@ describe('canCallerReachApplication', () => {
         canCallerReachApplication({
           callingApplication,
           applicationId: callingApplication.id,
-          access: 'manage',
+          operation: 'manage',
         }),
       ).toBe(true);
       expect(
         canCallerReachApplication({
           callingApplication,
           applicationId: OTHER_APPLICATION_ID,
-          access: 'manage',
+          operation: 'manage',
         }),
       ).toBe(false);
     });
@@ -104,7 +104,7 @@ describe('canCallerReachApplication', () => {
 
   it.each(['read', 'trigger'] as const)(
     'should let the standard application %s its own application only',
-    (access) => {
+    (operation) => {
       const callingApplication = {
         id: STANDARD_APPLICATION_ID,
         universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -115,7 +115,7 @@ describe('canCallerReachApplication', () => {
         canCallerReachApplication({
           callingApplication,
           applicationId: STANDARD_APPLICATION_ID,
-          access,
+          operation,
           workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         }),
       ).toBe(true);
@@ -123,7 +123,7 @@ describe('canCallerReachApplication', () => {
         canCallerReachApplication({
           callingApplication,
           applicationId: OTHER_APPLICATION_ID,
-          access,
+          operation,
           workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         }),
       ).toBe(false);
@@ -139,7 +139,7 @@ describe('canCallerReachApplication', () => {
           sourceType: ApplicationRegistrationSourceType.LOCAL,
         },
         applicationId: OTHER_APPLICATION_ID,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId: undefined,
       }),
     ).toBe(false);
@@ -154,7 +154,7 @@ describe('canCallerReachApplication', () => {
           sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
         },
         applicationId: OTHER_APPLICATION_ID,
-        access: 'manage',
+        operation: 'manage',
       }),
     ).toBe(true);
   });
@@ -164,7 +164,7 @@ describe('canCallerReachApplication', () => {
       canCallerReachApplication({
         callingApplication: undefined,
         applicationId: OTHER_APPLICATION_ID,
-        access: 'manage',
+        operation: 'manage',
       }),
     ).toBe(true);
   });

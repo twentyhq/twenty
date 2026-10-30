@@ -69,7 +69,7 @@ export class AgentResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: flatAgent.applicationId,
-          access: 'read',
+          operation: 'read',
           workspaceCustomApplicationId,
         }),
       )

@@ -37,7 +37,7 @@ export class WorkflowToolProvider implements ToolProvider {
     // Workspace workflows can call any application, so only callers reaching them all get these tools
     const reachableApplications = getReachableApplications({
       callingApplication: context.application,
-      access: 'trigger',
+      operation: 'trigger',
       workspaceCustomApplicationId:
         context.authContext?.workspace.workspaceCustomApplicationId,
     });

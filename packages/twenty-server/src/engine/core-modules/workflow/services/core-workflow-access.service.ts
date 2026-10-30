@@ -78,7 +78,7 @@ export class CoreWorkflowAccessService {
   }): Promise<void> {
     const reachableApplications = getReachableApplications({
       callingApplication: callerApplication,
-      access: 'trigger',
+      operation: 'trigger',
       workspaceCustomApplicationId,
     });
 

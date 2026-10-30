@@ -190,7 +190,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       !canCallerReachApplication({
         callingApplication: callerApplication,
         applicationId: agent.applicationId,
-        access: 'trigger',
+        operation: 'trigger',
         workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {

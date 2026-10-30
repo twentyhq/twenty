@@ -61,7 +61,7 @@ export class EventLogsResolver {
     return this.eventLogsService.queryEventLogs(workspace, input, {
       reachableApplications: getReachableApplications({
         callingApplication,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       }),
     });

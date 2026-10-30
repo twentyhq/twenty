@@ -87,7 +87,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
         canCallerReachApplication({
           callingApplication: context.application,
           applicationId: fn.applicationId,
-          access: 'trigger',
+          operation: 'trigger',
           workspaceCustomApplicationId:
             context.authContext?.workspace.workspaceCustomApplicationId,
         }),

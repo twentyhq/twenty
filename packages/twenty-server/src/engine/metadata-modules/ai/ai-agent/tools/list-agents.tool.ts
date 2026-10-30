@@ -39,7 +39,7 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
           canCallerReachApplication({
             callingApplication: application,
             applicationId: agent.applicationId,
-            access: 'read',
+            operation: 'read',
             workspaceCustomApplicationId:
               authContext?.workspace.workspaceCustomApplicationId,
           }),

@@ -134,7 +134,7 @@ export class FrontComponentResolver {
       canCallerReachApplication({
         callingApplication,
         applicationId: frontComponent.applicationId,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       }),
     );

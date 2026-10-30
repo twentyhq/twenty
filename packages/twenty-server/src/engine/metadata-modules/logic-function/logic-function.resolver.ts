@@ -141,7 +141,7 @@ export class LogicFunctionResolver {
             canCallerReachApplication({
               callingApplication,
               applicationId: flatLogicFunction.applicationId,
-              access: 'read',
+              operation: 'read',
               workspaceCustomApplicationId,
             }),
         )
@@ -406,7 +406,7 @@ export class LogicFunctionResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: payload.logicFunctionLogs.applicationId,
-          access: 'read',
+          operation: 'read',
           workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
         })
           ? payload

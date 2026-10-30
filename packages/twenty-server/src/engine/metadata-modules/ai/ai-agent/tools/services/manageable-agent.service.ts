@@ -38,7 +38,7 @@ export class ManageableAgentService {
       !canCallerReachApplication({
         callingApplication: context.application,
         applicationId: agent.applicationId,
-        access: 'manage',
+        operation: 'manage',
       })
     ) {
       throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND);

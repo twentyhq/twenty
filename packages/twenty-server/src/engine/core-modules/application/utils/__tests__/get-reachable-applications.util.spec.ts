@@ -22,18 +22,18 @@ describe('getReachableApplications', () => {
     expect(
       getReachableApplications({
         callingApplication: undefined,
-        access: 'manage',
+        operation: 'manage',
       }),
     ).toEqual({ type: 'all' });
   });
 
   it.each(['read', 'trigger'] as const)(
     'should let the workspace custom application %s every application',
-    (access) => {
+    (operation) => {
       expect(
         getReachableApplications({
           callingApplication: workspaceCustomApplication,
-          access,
+          operation,
           workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         }),
       ).toEqual({ type: 'all' });
@@ -44,7 +44,7 @@ describe('getReachableApplications', () => {
     expect(
       getReachableApplications({
         callingApplication: workspaceCustomApplication,
-        access: 'manage',
+        operation: 'manage',
       }),
     ).toEqual({
       type: 'own',
@@ -56,7 +56,7 @@ describe('getReachableApplications', () => {
     expect(
       getReachableApplications({
         callingApplication: installedApplication,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
       }),
     ).toEqual({

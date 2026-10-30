@@ -1,15 +1,15 @@
-import { type ApplicationTargetAccess } from 'src/engine/core-modules/application/types/application-target-access.type';
+import { type ApplicationOperation } from 'src/engine/core-modules/application/types/application-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
-export type ApplicationCallerAccess = {
+export type ApplicationCallerOperation = {
   callingApplication:
     | Pick<FlatApplication, 'id' | 'universalIdentifier' | 'sourceType'>
     | null
     | undefined;
 } & (
-  | { access: 'manage'; workspaceCustomApplicationId?: never }
+  | { operation: 'manage'; workspaceCustomApplicationId?: never }
   | {
-      access: Exclude<ApplicationTargetAccess, 'manage'>;
+      operation: Exclude<ApplicationOperation, 'manage'>;
       workspaceCustomApplicationId: string | undefined;
     }
 );

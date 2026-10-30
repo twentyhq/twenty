@@ -1,6 +1,6 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationCallerAccess } from 'src/engine/core-modules/application/types/application-caller-access.type';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type ReachableApplications } from 'src/engine/core-modules/application/types/reachable-applications.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
@@ -10,9 +10,9 @@ import { isWorkspaceCustomApplication } from 'src/engine/core-modules/applicatio
 // triggers. Any other caller reaches its own application only.
 export const getReachableApplications = ({
   callingApplication,
-  access,
+  operation,
   workspaceCustomApplicationId,
-}: ApplicationCallerAccess): ReachableApplications => {
+}: ApplicationCallerOperation): ReachableApplications => {
   const scopedCallingApplication =
     getScopedCallingApplication(callingApplication);
 
@@ -25,7 +25,7 @@ export const getReachableApplications = ({
     applicationId: scopedCallingApplication.id,
   };
 
-  switch (access) {
+  switch (operation) {
     case 'read':
     case 'trigger':
       return isWorkspaceCustomApplication({
@@ -37,6 +37,6 @@ export const getReachableApplications = ({
     case 'manage':
       return ownApplication;
     default:
-      return assertUnreachable(access);
+      return assertUnreachable(operation);
   }
 };

@@ -149,7 +149,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -175,7 +175,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -201,7 +201,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -227,7 +227,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -253,7 +253,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -279,7 +279,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'read',
+        operation: 'read',
         workspaceCustomApplicationId,
       })
     ) {
@@ -304,7 +304,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
-        access: 'manage',
+        operation: 'manage',
       })
     ) {
       throw new ForbiddenError(
