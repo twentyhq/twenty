@@ -1,0 +1,119 @@
+import { Command } from 'nest-commander';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildSkillContentReplacement } from 'src/database/commands/upgrade-version-command/2-54/utils/build-skill-content-replacement.util';
+import { DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX } from 'src/database/commands/upgrade-version-command/2-55/constants/data-manipulation-skill-content-before-import-check-fix.constant';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER =
+  STANDARD_SKILL['data-manipulation'].universalIdentifier;
+
+@RegisteredWorkspaceCommand('2.55.0', 1793373118794)
+@Command({
+  name: 'upgrade:2-55:update-data-manipulation-skill-import-check',
+  description:
+    'Update the data-manipulation skill so a bulk import does not write its 2 check rows twice',
+})
+export class UpdateDataManipulationSkillImportCheckCommand extends ProvisionedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatSkillMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatSkillMaps'],
+    );
+
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
+    const standardContent =
+      standardAllFlatEntityMaps.flatSkillMaps.byUniversalIdentifier[
+        DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER
+      ]?.content;
+
+    if (!isDefined(standardContent)) {
+      throw new Error(
+        'The data-manipulation skill is missing from the standard application definition',
+      );
+    }
+
+    const skillToUpdate = buildSkillContentReplacement({
+      skill:
+        flatSkillMaps.byUniversalIdentifier[
+          DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER
+        ],
+      fromContent: DATA_MANIPULATION_SKILL_CONTENT_BEFORE_IMPORT_CHECK_FIX,
+      toContent: standardContent,
+    });
+
+    if (!isDefined(skillToUpdate)) {
+      this.logger.log(
+        `The data-manipulation skill is missing or its content was edited in workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating the data-manipulation skill content`,
+    );
+
+    if (options.dryRun) {
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          shouldDeferActions: false,
+          workspaceId,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          allFlatEntityOperationByMetadataName: {
+            skill: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [skillToUpdate],
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to update the data-manipulation skill for workspace ${workspaceId}`,
+      );
+    }
+  }
+}
