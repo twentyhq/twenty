@@ -51,7 +51,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     return {
       data: {
         ...(await getLocalStatus({ environment, container: existing, signal })),
-        upgraded: false,
+        isUpgraded: false,
       },
       human: `Already using ${image}.`,
     };
@@ -90,7 +90,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     signal,
   });
   return {
-    data: { ...data, upgraded: true, dataPreserved: true },
+    data: { ...data, isUpgraded: true, isDataPreserved: true },
     human: `Local environment upgraded to ${image} at ${data.url}. Data volumes preserved.`,
   };
 };

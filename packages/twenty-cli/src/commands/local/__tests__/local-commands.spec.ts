@@ -331,9 +331,9 @@ describe('local commands', () => {
 
   it('does not recreate an instance already on the requested image digest', async () => {
     nextImageId = 'old-image';
-    expect((await runJson(['upgrade', '2.54.0'])).envelope.data.upgraded).toBe(
-      false,
-    );
+    expect(
+      (await runJson(['upgrade', '2.54.0'])).envelope.data.isUpgraded,
+    ).toBe(false);
     expect(mutations()).toEqual([['pull', 'twentycrm/twenty-app-dev:v2.54.0']]);
   });
 
@@ -377,9 +377,9 @@ describe('local commands', () => {
 
   it('allows a rebuilt image of the same version', async () => {
     nextImageVersion = '2.53.0';
-    expect((await runJson(['upgrade', '2.53.0'])).envelope.data.upgraded).toBe(
-      true,
-    );
+    expect(
+      (await runJson(['upgrade', '2.53.0'])).envelope.data.isUpgraded,
+    ).toBe(true);
   });
 
   it('upgrades gracefully, preserving volumes, port mapping and user overrides without stale image defaults', async () => {
@@ -390,8 +390,8 @@ describe('local commands', () => {
     const { exitCode, envelope } = await runJson(['upgrade', '2.54.0']);
     expect(exitCode).toBe(0);
     expect(envelope.data).toMatchObject({
-      upgraded: true,
-      dataPreserved: true,
+      isUpgraded: true,
+      isDataPreserved: true,
       url: 'http://localhost:12021',
     });
     expect(mutations().slice(0, 3)).toEqual([
