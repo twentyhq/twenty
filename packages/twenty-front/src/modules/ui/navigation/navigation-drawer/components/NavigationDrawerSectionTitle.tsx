@@ -37,10 +37,9 @@ const StyledLabelContainer = styled.button`
   font: inherit;
   gap: ${themeCssVariables.spacing[1]};
   padding: 0;
-  text-align: left;
+  text-align: start;
 
-  .section-title-container:hover &,
-  .section-title-container:has(:focus-visible) & {
+  .section-title-container:is(:hover, :has(:focus-visible)) & {
     color: ${themeCssVariables.font.color.tertiary};
   }
 
@@ -57,8 +56,7 @@ const StyledChevron = styled.span`
   opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease;
-  .section-title-container:hover &,
-  .section-title-container:has(:focus-visible) & {
+  .section-title-container:is(:hover, :has(:focus-visible)) & {
     opacity: 1;
   }
 `;
@@ -75,14 +73,13 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
   opacity: ${({ isMobile, $alwaysVisible }) =>
     isMobile || $alwaysVisible ? 1 : 0};
 
-  .section-title-container:hover &,
-  .section-title-container:has(:focus-visible) & {
+  .section-title-container:is(:hover, :has(:focus-visible)) & {
     opacity: 1;
   }
 `;
 
 type NavigationDrawerSectionTitleProps = {
-  onClick?: () => void;
+  onClick: () => void;
   label: string;
   rightIcon?: React.ReactNode;
   alwaysShowRightIcon?: boolean;
@@ -101,22 +98,32 @@ export const NavigationDrawerSectionTitle = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const isInteractive = isDefined(onClick);
-  const handleTitleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleTitleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    if (isDefined(onClick) && isNavigationDrawerExpanded) {
+    if (isNavigationDrawerExpanded) {
       onClick();
+    }
+  };
+  const preventPointerFocus = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+  const keepActivationKeysFromDocumentHotkeys = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.stopPropagation();
     }
   };
 
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer
-        as={isInteractive ? 'button' : 'div'}
-        type={isInteractive ? 'button' : undefined}
+        type="button"
         onClick={handleTitleClick}
-        aria-expanded={isInteractive ? isOpen : undefined}
-        aria-controls={isInteractive ? ariaControls : undefined}
+        onMouseDown={preventPointerFocus}
+        onKeyDown={keepActivationKeysFromDocumentHotkeys}
+        aria-expanded={isOpen}
+        aria-controls={ariaControls}
       >
         <Text render={<span />} size="xs" weight="semibold">
           {label}

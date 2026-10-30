@@ -4,9 +4,11 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
+const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
+
 type NavigationDrawerDirectMessagesSectionProps = {
   directMessages: readonly DirectMessageSidebarItem[];
-  activeThreadId?: string;
+  currentThreadId: string | null;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onSelect: (threadId: string) => void;
@@ -15,7 +17,7 @@ type NavigationDrawerDirectMessagesSectionProps = {
 
 export const NavigationDrawerDirectMessagesSection = ({
   directMessages,
-  activeThreadId,
+  currentThreadId,
   isOpen,
   onOpenChange,
   onSelect,
@@ -25,8 +27,11 @@ export const NavigationDrawerDirectMessagesSection = ({
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId="DirectMessages"
-      label={t`DMs`}
+      sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
+      label={t({
+        message: 'DMs',
+        comment: 'Abbreviation of direct messages, sidebar section title',
+      })}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       rightIcon={memberPicker}
@@ -36,7 +41,7 @@ export const NavigationDrawerDirectMessagesSection = ({
         <NavigationDrawerDirectMessageItem
           key={directMessage.threadId}
           directMessage={directMessage}
-          isActive={directMessage.threadId === activeThreadId}
+          isActive={directMessage.threadId === currentThreadId}
           onSelect={onSelect}
         />
       ))}

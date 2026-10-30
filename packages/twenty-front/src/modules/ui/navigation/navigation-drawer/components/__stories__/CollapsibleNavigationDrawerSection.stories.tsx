@@ -94,21 +94,33 @@ export const KeyboardFocusAndPointerHover: Story = {
     const sidebarToggle = canvas.getByRole('button', {
       name: 'Collapse sidebar',
     });
+    const cancelDocumentKeyDown = (event: KeyboardEvent) => {
+      event.preventDefault();
+    };
 
     await trustedUserEvent.hover(sidebarToggle);
     const restingColor = getComputedStyle(sectionTitle).color;
 
+    await trustedUserEvent.hover(sectionTitle);
+    await expect(sectionTitle).not.toHaveStyle({ color: restingColor });
+
     await trustedUserEvent.click(sectionTitle);
     await trustedUserEvent.hover(sidebarToggle);
-    await expect(sectionTitle).toHaveFocus();
+    await trustedUserEvent.keyboard('{Shift}');
+    await expect(sectionTitle).not.toHaveFocus();
     await waitFor(() =>
       expect(sectionTitle).toHaveStyle({ color: restingColor }),
     );
 
-    await trustedUserEvent.tab({ shift: true });
+    sidebarToggle.focus();
     await trustedUserEvent.tab();
     await expect(sectionTitle).toHaveFocus();
     await expect(sectionTitle).not.toHaveStyle({ color: restingColor });
     await expect(getComputedStyle(sectionTitle).outlineStyle).toBe('solid');
+
+    document.addEventListener('keydown', cancelDocumentKeyDown);
+    await trustedUserEvent.keyboard('{Enter}');
+    document.removeEventListener('keydown', cancelDocumentKeyDown);
+    await expect(sectionTitle).toHaveAttribute('aria-expanded', 'true');
   },
 };

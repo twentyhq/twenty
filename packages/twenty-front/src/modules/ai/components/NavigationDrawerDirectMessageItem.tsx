@@ -19,6 +19,7 @@ export const NavigationDrawerDirectMessageItem = ({
       <Avatar
         name={directMessage.peer.name}
         src={directMessage.peer.avatarUrl}
+        colorSeed={directMessage.peer.workspaceMemberId}
         shape="circle"
         size="md"
       />

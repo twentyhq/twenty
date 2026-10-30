@@ -286,7 +286,9 @@ export const TypeaheadAndHomeEnd: Story = {
     <RecordActionsMenu>
       <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
       <Dropdown.ActionItem>Export</Dropdown.ActionItem>
-      <Dropdown.ActionItem>Email</Dropdown.ActionItem>
+      <Dropdown.ActionItem startIcon={<span aria-hidden="true">E</span>}>
+        Email
+      </Dropdown.ActionItem>
       <Dropdown.ActionItem>Share</Dropdown.ActionItem>
     </RecordActionsMenu>
   ),

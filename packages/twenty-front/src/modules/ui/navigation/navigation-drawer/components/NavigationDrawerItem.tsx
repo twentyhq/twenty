@@ -117,7 +117,7 @@ const StyledItem = styled.button<StyledItemProps>`
         : themeCssVariables.font.color.primary};
   }
 
-  &:has(.navigation-drawer-item-label:focus-visible) {
+  &:is(:focus-visible, :has(.navigation-drawer-item-label:focus-visible)) {
     outline: 2px solid ${themeCssVariables.color.blue};
     outline-offset: -2px;
   }

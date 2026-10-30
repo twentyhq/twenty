@@ -1,14 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { DirectMessagePresentationExample } from '@/ai/components/__stories__/DirectMessagePresentationExample';
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta = {
   title: 'Modules/AI/NavigationDrawerDirectMessagesSection',
   component: DirectMessagePresentationExample,
-  decorators: [ComponentWithRouterDecorator],
-  parameters: { container: { width: 420 } },
+  decorators: [ComponentDecorator, MemoryRouterDecorator],
   args: {
     onSelectThread: fn(),
     onSelectMember: fn(),
@@ -45,10 +45,6 @@ export const SidebarSelectionAndCollapse: Story = {
         canvas.queryByRole('button', { name: 'Anna' }),
       ).not.toBeInTheDocument(),
     );
-    await expect(canvas.getByRole('button', { name: 'General' })).toBeVisible();
-    await expect(
-      canvas.getByRole('button', { name: 'Research notes' }),
-    ).toBeVisible();
 
     await userEvent.keyboard('{Enter}');
     await expect(sectionToggle).toHaveAttribute('aria-expanded', 'true');
@@ -65,14 +61,22 @@ export const SearchAndKeyboardSelection: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', { name: 'Add DM' });
 
+    await expect(trigger).toBeVisible();
     await userEvent.click(trigger);
     const search = await body.findByRole('searchbox', {
       name: 'Search members',
     });
+    await expect(body.getByRole('dialog', { name: 'Add DM' })).toBeVisible();
     await waitFor(() => expect(search).toHaveFocus());
     await expect(
       body.queryByRole('option', { name: /Raphael/ }),
     ).not.toBeInTheDocument();
+
+    await userEvent.type(search, 'raphael');
+    await expect(body.getByRole('status')).toHaveTextContent(
+      'No members found',
+    );
+    await userEvent.clear(search);
 
     await userEvent.type(search, 'ali');
     await expect(body.getAllByRole('option')).toHaveLength(1);
@@ -104,60 +108,36 @@ export const SearchAndKeyboardSelection: Story = {
   },
 };
 
-export const LoadingAndEmptyResults: Story = {
-  args: { showDataControls: true },
+export const LoadingMembers: Story = {
+  args: { memberState: 'loading' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Add DM' }));
+
+    await expect(await body.findByRole('status')).toHaveTextContent(
+      'Loading members',
+    );
+    await expect(body.queryByRole('option')).not.toBeInTheDocument();
+  },
+};
+
+export const RefreshingMembersDisablesStaleRows: Story = {
+  args: { memberState: 'refreshing' },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Add DM' });
 
-    await userEvent.click(trigger);
+    await userEvent.click(canvas.getByRole('button', { name: 'Add DM' }));
     const search = await body.findByRole('searchbox', {
       name: 'Search members',
     });
     await waitFor(() => expect(search).toHaveFocus());
-    await expect(body.getByRole('status')).toHaveTextContent('Loading members');
-    await expect(body.queryByRole('option')).not.toBeInTheDocument();
-    await userEvent.type(search, 'Anna');
-    await userEvent.keyboard('{ArrowDown}{Enter}');
-    await expect(args.onSelectMember).not.toHaveBeenCalled();
 
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() =>
-      expect(
-        body.queryByRole('dialog', { name: 'Add DM' }),
-      ).not.toBeInTheDocument(),
-    );
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Show empty result' }),
-    );
-    await userEvent.click(trigger);
-    const emptySearch = await body.findByRole('searchbox', {
-      name: 'Search members',
-    });
-    await waitFor(() => expect(emptySearch).toHaveFocus());
-    await expect(body.getByRole('status')).toHaveTextContent(
-      'No members found',
-    );
-    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await userEvent.type(search, 'anna');
+    await expect(body.getByRole('option', { name: /Anna/ })).toBeDisabled();
+    await userEvent.keyboard('{Enter}');
     await expect(args.onSelectMember).not.toHaveBeenCalled();
-
-    await userEvent.keyboard('{Escape}');
-    await waitFor(() =>
-      expect(
-        body.queryByRole('dialog', { name: 'Add DM' }),
-      ).not.toBeInTheDocument(),
-    );
-    await userEvent.click(canvas.getByRole('button', { name: 'Show members' }));
-    await userEvent.click(trigger);
-    await userEvent.click(await body.findByRole('option', { name: /Anna/ }));
-    await expect(args.onSelectMember).toHaveBeenCalledTimes(1);
-    await expect(args.onSelectMember).toHaveBeenCalledWith('anna');
-    await waitFor(() =>
-      expect(
-        body.queryByRole('dialog', { name: 'Add DM' }),
-      ).not.toBeInTheDocument(),
-    );
-    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };

@@ -15,15 +15,16 @@ const StyledItems = styled.div`
 `;
 
 type CollapsibleNavigationDrawerSectionProps = {
-  // Namespaced id (e.g. 'settings/User') used to persist open/closed state.
+  // Namespaced id (e.g. 'settings/User') used to persist open/closed state unless isOpen is supplied.
   sectionId: string;
   label: string;
   children: ReactNode;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
-  isOpen?: boolean;
-  onOpenChange?: (isOpen: boolean) => void;
-};
+} & (
+  | { isOpen: boolean; onOpenChange: (isOpen: boolean) => void }
+  | { isOpen?: never; onOpenChange?: never }
+);
 
 export const CollapsibleNavigationDrawerSection = ({
   sectionId,
@@ -57,7 +58,7 @@ export const CollapsibleNavigationDrawerSection = ({
           alwaysShowRightIcon={alwaysShowRightIcon}
           onClick={handleToggle}
           isOpen={isSectionOpen}
-          aria-controls={panelId}
+          aria-controls={isSectionOpen ? panelId : undefined}
         />
       )}
       <Collapsible.Root open={!isNavigationDrawerExpanded || isSectionOpen}>

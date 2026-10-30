@@ -2,16 +2,16 @@ import { styled } from '@linaria/react';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 import { IconHash, IconMessage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
 import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/ai/components/__stories__/directMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const StyledSidebar = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -21,60 +21,36 @@ const StyledSidebar = styled.div`
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[2]};
   padding-right: 0;
-  width: 220px;
-`;
-
-const StyledControls = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[3]};
+  width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
 `;
 
 type DirectMessagePresentationExampleProps = {
   onSelectThread: (threadId: string) => void;
   onSelectMember: (workspaceMemberId: string) => void;
-  showDataControls?: boolean;
+  memberState?: 'loading' | 'refreshing' | 'results';
 };
 
 export const DirectMessagePresentationExample = ({
   onSelectThread,
   onSelectMember,
-  showDataControls = false,
+  memberState = 'results',
 }: DirectMessagePresentationExampleProps) => {
   const [store] = useState(() => {
     const initialStore = createStore();
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
     return initialStore;
   });
-  const [activeThreadId, setActiveThreadId] = useState('dm-anna');
+  const [currentThreadId, setCurrentThreadId] = useState('dm-anna');
   const [isChannelsOpen, setIsChannelsOpen] = useState(true);
-  const [isSectionOpen, setIsSectionOpen] = useState(true);
+  const [isDirectMessagesOpen, setIsDirectMessagesOpen] = useState(true);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [memberState, setMemberState] = useState<
-    'loading' | 'empty' | 'results'
-  >(showDataControls ? 'loading' : 'results');
   const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
-  const normalizedSearch = normalizeSearchText(searchValue);
-  const suppliedHumanMembers =
-    memberState === 'empty'
-      ? []
-      : [currentMember, ...directMessages.map(({ peer }) => peer)];
-  const humanMembers = suppliedHumanMembers.filter((member) =>
-    normalizeSearchText(`${member.name} ${member.email}`).includes(
-      normalizedSearch,
-    ),
-  );
-
-  const handlePickerOpenChange = (isOpen: boolean) => {
-    setIsPickerOpen(isOpen);
-
-    if (isOpen) {
-      setSearchValue('');
-    }
-  };
+  const matchingHumanMembers = filterBySearchQuery({
+    items: [currentMember, ...directMessages.map(({ peer }) => peer)],
+    searchQuery: searchValue,
+    getSearchableValues: ({ name, email }) => [name, email],
+  });
 
   return (
     <Provider store={store}>
@@ -90,23 +66,26 @@ export const DirectMessagePresentationExample = ({
         </CollapsibleNavigationDrawerSection>
         <NavigationDrawerDirectMessagesSection
           directMessages={directMessages}
-          activeThreadId={activeThreadId}
-          isOpen={isSectionOpen}
-          onOpenChange={setIsSectionOpen}
+          currentThreadId={currentThreadId}
+          isOpen={isDirectMessagesOpen}
+          onOpenChange={setIsDirectMessagesOpen}
           onSelect={(threadId) => {
-            setActiveThreadId(threadId);
+            setCurrentThreadId(threadId);
             onSelectThread(threadId);
           }}
           memberPicker={
             <DirectMessageMemberPicker
-              humanMembers={humanMembers}
+              humanMembers={
+                memberState === 'loading' ? [] : matchingHumanMembers
+              }
               currentWorkspaceMemberId={currentMember.workspaceMemberId}
-              isOpen={isPickerOpen}
-              onOpenChange={handlePickerOpenChange}
               searchValue={searchValue}
               onSearchChange={setSearchValue}
-              isLoading={memberState === 'loading'}
-              onSelect={onSelectMember}
+              isLoading={memberState !== 'results'}
+              onSelect={(workspaceMemberId) => {
+                setIsDirectMessagesOpen(true);
+                onSelectMember(workspaceMemberId);
+              }}
             />
           }
         />
@@ -120,19 +99,6 @@ export const DirectMessagePresentationExample = ({
           <NavigationDrawerItem label="Quarterly planning" Icon={IconMessage} />
         </CollapsibleNavigationDrawerSection>
       </StyledSidebar>
-      {showDataControls && (
-        <StyledControls>
-          <Button size="sm" onClick={() => setMemberState('loading')}>
-            Load members
-          </Button>
-          <Button size="sm" onClick={() => setMemberState('empty')}>
-            Show empty result
-          </Button>
-          <Button size="sm" onClick={() => setMemberState('results')}>
-            Show members
-          </Button>
-        </StyledControls>
-      )}
     </Provider>
   );
 };
