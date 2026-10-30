@@ -42,6 +42,9 @@ vi.mock('src/logic-functions/utils/ingest-linkedin-messages.util', () => ({
   ingestLinkedinMessages: mocks.ingestLinkedinMessages,
 }));
 
+const { UnipileRateLimitError } =
+  await import('src/unipile/utils/request-unipile.util');
+
 const { linkedinImportHistoryHandler } =
   await import('src/logic-functions/linkedin-import-history');
 
@@ -99,8 +102,11 @@ describe('linkedinImportHistoryHandler', () => {
       id: chatId,
       user: { id: `user-${chatId}`, public_identifier: chatId },
     }));
-    mocks.listUnipileChatMessages.mockResolvedValue([{ id: 'message' }]);
+    mocks.listUnipileChatMessages
+      .mockReset()
+      .mockResolvedValue([{ id: 'message' }]);
     mocks.ingestLinkedinMessages
+      .mockReset()
       .mockResolvedValueOnce({
         ingestedMessageCount: 12,
         matchedPersonCount: 1,
@@ -167,6 +173,8 @@ describe('linkedinImportHistoryHandler', () => {
         expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
           ...PROGRESS_BEFORE_CHUNK_2,
           currentChunkProcessedCount: 1,
+          currentChunkImportedCount: 1,
+          currentJobId: 'linkedin-history-chunk-run-1-2',
         });
 
         return [];
@@ -223,7 +231,68 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
       ...PROGRESS_BEFORE_CHUNK_2,
       currentChunkProcessedCount: 1,
+      currentChunkImportedCount: 1,
+      currentJobId: 'linkedin-history-chunk-run-1-2',
       error: { code: 'UNKNOWN', message: 'Invalid querystring' },
+    });
+  });
+
+  it('pauses until the limit resets when LinkedIn refuses for hours', async () => {
+    vi.useFakeTimers({ now: Date.parse('2026-10-30T22:00:00.000Z') });
+    mocks.listUnipileChatMessages
+      .mockResolvedValueOnce([{ id: 'message' }])
+      .mockRejectedValueOnce(
+        new UnipileRateLimitError(
+          'Unipile list chat messages failed (429): We only allow 100 requests. Retry in 22 hours.',
+          22 * 60 * 60 + 1,
+        ),
+      );
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'PAUSED',
+    });
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: 'linkedin-history-chunk-run-1-2-resume-1',
+            payload: { ...PAYLOAD, resumeIndex: 1 },
+          },
+        ],
+        delayMs: (22 * 60 * 60 + 1) * 1000,
+      }),
+    );
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
+      ...PROGRESS_BEFORE_CHUNK_2,
+      currentChunkProcessedCount: 1,
+      currentChunkImportedCount: 1,
+      currentJobId: 'linkedin-history-chunk-run-1-2-resume-1',
+      resumeAt: '2026-10-31T20:00:01.000Z',
+    });
+    vi.useRealTimers();
+  });
+
+  it('resumes after the chats a paused job already imported', async () => {
+    mocks.kvStore.set(PROGRESS_KEY, {
+      ...PROGRESS_BEFORE_CHUNK_2,
+      currentChunkProcessedCount: 1,
+      currentChunkImportedCount: 1,
+    });
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue({
+      ingestedMessageCount: 3,
+      matchedPersonCount: 1,
+      createdPersonCount: 0,
+    });
+
+    await linkedinImportHistoryHandler({ ...PAYLOAD, resumeIndex: 1 });
+
+    expect(mocks.ingestLinkedinMessages).toHaveBeenCalledTimes(1);
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
+      completedChunkCount: 3,
+      completedConversationCount: 42,
+      importedConversationCount: 32,
+      currentChunkProcessedCount: 0,
     });
   });
 });

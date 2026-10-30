@@ -13,6 +13,7 @@ import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/li
 import { type LinkedinImportHistoryJobPayload } from 'src/logic-functions/types/linkedin-import-history-job-payload.type';
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
+import { getLinkedinImportHistoryJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
 import {
@@ -24,10 +25,11 @@ import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-sett
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 import { listUnipileChatMessages } from 'src/unipile/utils/list-unipile-chat-messages.util';
 
 type LinkedinImportHistoryResult = {
-  status: 'CANCELLED' | 'SKIPPED' | 'COMPLETED';
+  status: 'CANCELLED' | 'SKIPPED' | 'PAUSED' | 'COMPLETED';
   importedConversationCount?: number;
 };
 
@@ -64,8 +66,18 @@ export const linkedinImportHistoryHandler = async (
   }
 
   const startedAt = Date.now();
-  let importedConversationCount = 0;
-  let processedChatCount = 0;
+  const jobId = getLinkedinImportHistoryJobId(payload);
+  let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
+  let processedChatCount = startProgress.currentChunkProcessedCount;
+
+  const buildCurrentProgress = (): LinkedinHistoryImportProgress => ({
+    completedChunkCount: startProgress.completedChunkCount,
+    completedConversationCount: startProgress.completedConversationCount,
+    importedConversationCount: startProgress.importedConversationCount,
+    currentChunkProcessedCount: processedChatCount,
+    currentChunkImportedCount: importedConversationCount,
+    currentJobId: jobId,
+  });
   const totals = {
     messageCount: 0,
     matchedPersonCount: 0,
@@ -90,7 +102,7 @@ export const linkedinImportHistoryHandler = async (
 
     const settings = await getLinkedinSettings(connectedAccountId);
 
-    for (const listedChat of chats) {
+    for (const listedChat of chats.slice(processedChatCount)) {
       const chat =
         getLinkedinChatCounterparts(listedChat).length > 0
           ? listedChat
@@ -131,27 +143,54 @@ export const linkedinImportHistoryHandler = async (
       if (
         !(await saveProgressIfActive({
           payload,
-          progress: {
-            ...startProgress,
-            currentChunkProcessedCount: processedChatCount,
-          },
+          progress: buildCurrentProgress(),
         }))
       ) {
         return { status: 'CANCELLED' };
       }
     }
   } catch (error) {
+    if (error instanceof UnipileRateLimitError) {
+      const resumePayload = {
+        ...payload,
+        resumeIndex: (payload.resumeIndex ?? 0) + 1,
+      };
+      const resumeAt = new Date(
+        Date.now() + error.retryAfterSeconds * 1000,
+      ).toISOString();
+
+      if (
+        !(await saveProgressIfActive({
+          payload,
+          progress: {
+            ...buildCurrentProgress(),
+            currentJobId: getLinkedinImportHistoryJobId(resumePayload),
+            resumeAt,
+          },
+        }))
+      ) {
+        return { status: 'CANCELLED' };
+      }
+
+      await enqueueLinkedinImportHistoryJob(
+        resumePayload,
+        error.retryAfterSeconds * 1000,
+      );
+
+      console.log(
+        `[linkedin] history run ${runId} chunk ${chunkIndex}: paused after ${processedChatCount} of ${chats.length} chats until ${resumeAt}: ${error.message}`,
+      );
+
+      return { status: 'PAUSED' };
+    }
+
     return failLinkedinHistoryImportJob({
       error,
       context,
       onFinalFailure: async (importError) => {
         await saveProgressIfActive({
           payload,
-          progress: {
-            ...startProgress,
-            currentChunkProcessedCount: processedChatCount,
-            error: importError,
-          },
+          progress: { ...buildCurrentProgress(), error: importError },
         });
       },
     });

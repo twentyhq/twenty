@@ -22,6 +22,7 @@ import {
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
+import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 import { listUnipileInboxIds } from 'src/unipile/utils/list-unipile-inbox-ids.util';
 import { sortUnipileChatsByLastMessage } from 'src/unipile/utils/sort-unipile-chats-by-last-message.util';
 
@@ -36,6 +37,7 @@ type LinkedinPlanHistoryImportResult = {
 
 const continuePlanning = async (
   payload: LinkedinPlanHistoryImportJobPayload,
+  delayMs?: number,
 ): Promise<LinkedinPlanHistoryImportResult> => {
   const state = await getActiveLinkedinHistoryImportState(payload);
 
@@ -50,13 +52,20 @@ const continuePlanning = async (
 
   await saveLinkedinHistoryImportState({
     connectedAccountId: payload.connectedAccountId,
-    state: { ...state, planJobId },
+    state: {
+      ...state,
+      planJobId,
+      resumeAt: isDefined(delayMs)
+        ? new Date(Date.now() + delayMs).toISOString()
+        : undefined,
+    },
   });
   await enqueueJobs({
     logicFunctionUniversalIdentifier:
       LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
     jobs: [{ jobId: planJobId, payload }],
     retryLimit: LINKEDIN_PLAN_HISTORY_IMPORT_RETRY_LIMIT,
+    delayMs,
   });
 
   return { status: 'CONTINUED' };
@@ -92,6 +101,7 @@ const planChunk = async ({
     connectedAccountId,
     state: {
       ...state,
+      resumeAt: undefined,
       plannedChunkCount: chunkIndex + 1,
       plannedConversationCount: conversationCount,
       ...(isDefined(reportedConversationCount)
@@ -162,19 +172,15 @@ const planHistoryImport = async (
     );
   }
 
-  const inboxIds = await listUnipileInboxIds(unipileAccountId);
   let inboxIndex = payload.inboxIndex ?? 0;
   let cursor = payload.cursor;
   let chunkCount = payload.plannedChunkCount ?? 0;
   let conversationCount = payload.plannedConversationCount ?? 0;
   let reportedConversationCount = payload.reportedConversationCount;
 
-  while (inboxIndex < inboxIds.length) {
-    if (
-      Date.now() - startedAt >
-      LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS
-    ) {
-      return continuePlanning({
+  const continueFromHere = (delayMs?: number) =>
+    continuePlanning(
+      {
         connectedAccountId,
         runId,
         continuationIndex: (payload.continuationIndex ?? 0) + 1,
@@ -183,15 +189,56 @@ const planHistoryImport = async (
         plannedChunkCount: chunkCount,
         plannedConversationCount: conversationCount,
         reportedConversationCount,
-      });
+      },
+      delayMs,
+    );
+
+  const pauseOnRateLimit = async <TResult>(
+    request: () => Promise<TResult>,
+  ): Promise<TResult | LinkedinPlanHistoryImportResult> => {
+    try {
+      return await request();
+    } catch (error) {
+      if (!(error instanceof UnipileRateLimitError)) {
+        throw error;
+      }
+
+      console.log(
+        `[linkedin] history run ${runId}: listing paused for ${error.retryAfterSeconds}s: ${error.message}`,
+      );
+
+      return continueFromHere(error.retryAfterSeconds * 1000);
+    }
+  };
+
+  const inboxIds = await pauseOnRateLimit(() =>
+    listUnipileInboxIds(unipileAccountId),
+  );
+
+  if (!Array.isArray(inboxIds)) {
+    return inboxIds;
+  }
+
+  while (inboxIndex < inboxIds.length) {
+    if (
+      Date.now() - startedAt >
+      LINKEDIN_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS
+    ) {
+      return continueFromHere();
     }
 
-    const page = await listUnipileChats({
-      accountId: unipileAccountId,
-      inboxId: inboxIds[inboxIndex],
-      cursor,
-      limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
-    });
+    const page = await pauseOnRateLimit(() =>
+      listUnipileChats({
+        accountId: unipileAccountId,
+        inboxId: inboxIds[inboxIndex],
+        cursor,
+        limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+      }),
+    );
+
+    if (!('items' in page)) {
+      return page;
+    }
 
     if (
       inboxIds.length === 1 &&

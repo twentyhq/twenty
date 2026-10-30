@@ -5,5 +5,8 @@ export type LinkedinHistoryImportProgress = {
   completedConversationCount: number;
   importedConversationCount: number;
   currentChunkProcessedCount: number;
+  currentChunkImportedCount?: number;
+  currentJobId?: string;
+  resumeAt?: string;
   error?: LinkedinHistoryImportState['error'];
 };

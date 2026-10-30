@@ -35,6 +35,9 @@ vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
   listUnipileChats: mocks.listUnipileChats,
 }));
 
+const { UnipileRateLimitError } =
+  await import('src/unipile/utils/request-unipile.util');
+
 const { linkedinPlanHistoryImportHandler } =
   await import('src/logic-functions/linkedin-plan-history-import');
 
@@ -211,6 +214,43 @@ describe('linkedinPlanHistoryImportHandler', () => {
       plannedConversationCount: 60,
       planJobId: 'linkedin-history-plan-run-1-1',
     });
+  });
+
+  it('pauses the listing until the limit resets and resumes where it stopped', async () => {
+    mocks.listUnipileChats
+      .mockResolvedValueOnce({
+        items: [{ id: 'chat-0' }],
+        nextCursor: 'cursor-1',
+      })
+      .mockRejectedValueOnce(
+        new UnipileRateLimitError('Retry in 2 hours.', 2 * 60 * 60 + 1),
+      );
+
+    await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'CONTINUED',
+    });
+
+    expect(mocks.enqueueJobs.mock.lastCall?.[0]).toEqual(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: 'linkedin-history-plan-run-1-1',
+            payload: expect.objectContaining({
+              inboxIndex: 0,
+              cursor: 'cursor-1',
+              plannedChunkCount: 1,
+            }),
+          },
+        ],
+        delayMs: (2 * 60 * 60 + 1) * 1000,
+      }),
+    );
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({
+        planJobId: 'linkedin-history-plan-run-1-1',
+        resumeAt: expect.any(String),
+      }),
+    );
   });
 
   it('completes a run with no conversations right away', async () => {

@@ -8,11 +8,13 @@ const LINKEDIN_IMPORT_HISTORY_RETRY_LIMIT = 3;
 
 export const enqueueLinkedinImportHistoryJob = async (
   payload: LinkedinImportHistoryJobPayload,
+  delayMs?: number,
 ): Promise<void> => {
   await enqueueJobs({
     logicFunctionUniversalIdentifier:
       LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER,
     jobs: [{ jobId: getLinkedinImportHistoryJobId(payload), payload }],
     retryLimit: LINKEDIN_IMPORT_HISTORY_RETRY_LIMIT,
+    delayMs,
   });
 };

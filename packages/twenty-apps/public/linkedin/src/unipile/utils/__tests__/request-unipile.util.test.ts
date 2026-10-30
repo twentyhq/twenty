@@ -29,6 +29,21 @@ describe('requestUnipile', () => {
     expect(mocks.wait).toHaveBeenCalledExactlyOnceWith(38_000);
   });
 
+  it('hands a long rate limit back to the caller with its wait', async () => {
+    const request = vi.fn().mockRejectedValue({
+      status: 429,
+      title: 'We only allow 100 requests. Retry in 22 hours.',
+    });
+
+    await expect(
+      requestUnipile('list chat messages', request),
+    ).rejects.toMatchObject({
+      name: 'UnipileRateLimitError',
+      retryAfterSeconds: 22 * 60 * 60 + 1,
+    });
+    expect(mocks.wait).not.toHaveBeenCalled();
+  });
+
   it('gives up after 5 waits', async () => {
     const request = vi.fn().mockRejectedValue(RATE_LIMITED_ERROR);
 

@@ -111,11 +111,28 @@ export const LinkedinSyncButton = ({
           {label}
         </Button>
       </StyledRow>
-      {isListing && (
+      {isRunning && isDefined(historyImport.resumeAt) ? (
         <StyledCaption aria-live="polite">
-          {t('Listing conversations')} (
-          <AnimatedCount count={historyImport.plannedConversationCount ?? 0} />)
+          {t(
+            'LinkedIn limits how much can be imported each day. The sync resumes {resumeAt}.',
+            {
+              resumeAt: new Date(historyImport.resumeAt).toLocaleString(
+                undefined,
+                { weekday: 'short', hour: 'numeric', minute: '2-digit' },
+              ),
+            },
+          )}
         </StyledCaption>
+      ) : (
+        isListing && (
+          <StyledCaption aria-live="polite">
+            {t('Listing conversations')} (
+            <AnimatedCount
+              count={historyImport.plannedConversationCount ?? 0}
+            />
+            )
+          </StyledCaption>
+        )
       )}
     </StyledContainer>
   );

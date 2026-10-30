@@ -67,10 +67,17 @@ export const refreshLinkedinHistoryImportState = async (
   const progress = await getLinkedinHistoryImportProgress(run);
   const processedConversationCount =
     progress.completedConversationCount + progress.currentChunkProcessedCount;
+  const resumeAt = progress.resumeAt ?? state.resumeAt;
   const currentState: LinkedinHistoryImportState = {
     ...state,
-    importedConversationCount: progress.importedConversationCount,
+    importedConversationCount:
+      progress.importedConversationCount +
+      (progress.currentChunkImportedCount ?? 0),
     processedConversationCount,
+    resumeAt:
+      isDefined(resumeAt) && Date.parse(resumeAt) > Date.now()
+        ? resumeAt
+        : undefined,
   };
 
   const isImportDone =
@@ -92,10 +99,11 @@ export const refreshLinkedinHistoryImportState = async (
     (state.plannedChunkCount ?? 0) > progress.completedChunkCount;
   const currentChunkJob = hasPlannedCurrentChunk
     ? await getJobStatus(
-        getLinkedinImportHistoryJobId({
-          runId: state.runId,
-          chunkIndex: progress.completedChunkCount,
-        }),
+        progress.currentJobId ??
+          getLinkedinImportHistoryJobId({
+            runId: state.runId,
+            chunkIndex: progress.completedChunkCount,
+          }),
       )
     : undefined;
   const error =

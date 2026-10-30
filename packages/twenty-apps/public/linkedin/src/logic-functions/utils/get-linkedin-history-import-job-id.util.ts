@@ -9,7 +9,10 @@ export const getLinkedinPlanHistoryImportJobId = ({
 export const getLinkedinImportHistoryJobId = ({
   runId,
   chunkIndex,
+  resumeIndex = 0,
 }: {
   runId: string;
   chunkIndex: number;
-}): string => `linkedin-history-chunk-${runId}-${chunkIndex}`;
+  resumeIndex?: number;
+}): string =>
+  `linkedin-history-chunk-${runId}-${chunkIndex}${resumeIndex > 0 ? `-resume-${resumeIndex}` : ''}`;

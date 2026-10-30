@@ -37,10 +37,28 @@ const toUnipileRequestError = (
   );
 };
 
+export class UnipileRateLimitError extends UnipileRequestError {
+  readonly retryAfterSeconds: number;
+
+  constructor(message: string, retryAfterSeconds: number) {
+    super(message, UNIPILE_RATE_LIMITED_STATUS);
+    this.name = 'UnipileRateLimitError';
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+const SECONDS_BY_UNIT: Record<string, number> = {
+  second: 1,
+  minute: 60,
+  hour: 60 * 60,
+  day: 24 * 60 * 60,
+};
+
 const getRateLimitWaitSeconds = (error: UnipileRequestError): number => {
-  const retryAfterSeconds = Number(
-    /retry in (\d+) seconds?/i.exec(error.message)?.[1],
-  );
+  const [, amount, unit] =
+    /retry in (\d+) (second|minute|hour|day)s?/i.exec(error.message) ?? [];
+  const retryAfterSeconds =
+    Number(amount) * (SECONDS_BY_UNIT[unit?.toLowerCase() ?? ''] ?? NaN);
 
   return Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
     ? retryAfterSeconds + 1
@@ -62,12 +80,15 @@ export const requestUnipile = async <TResult>(
       const requestError = toUnipileRequestError(requestName, error);
       const waitSeconds = getRateLimitWaitSeconds(requestError);
 
+      if (requestError.status !== UNIPILE_RATE_LIMITED_STATUS) {
+        throw requestError;
+      }
+
       if (
-        requestError.status !== UNIPILE_RATE_LIMITED_STATUS ||
         waitCount >= UNIPILE_RATE_LIMIT_MAX_WAITS ||
         waitSeconds > UNIPILE_RATE_LIMIT_MAX_WAIT_SECONDS
       ) {
-        throw requestError;
+        throw new UnipileRateLimitError(requestError.message, waitSeconds);
       }
 
       console.log(
