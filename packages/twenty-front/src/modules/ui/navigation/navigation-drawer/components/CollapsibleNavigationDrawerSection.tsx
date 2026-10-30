@@ -3,7 +3,8 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useId } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -20,6 +21,8 @@ type CollapsibleNavigationDrawerSectionProps = {
   children: ReactNode;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
 };
 
 export const CollapsibleNavigationDrawerSection = ({
@@ -28,10 +31,22 @@ export const CollapsibleNavigationDrawerSection = ({
   children,
   rightIcon,
   alwaysShowRightIcon,
+  isOpen,
+  onOpenChange,
 }: CollapsibleNavigationDrawerSectionProps) => {
+  const panelId = useId();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const { toggleNavigationSection, isNavigationSectionOpen } =
     useNavigationSection(sectionId);
+  const isSectionOpen = isOpen ?? isNavigationSectionOpen;
+
+  const handleToggle = () => {
+    if (!isDefined(isOpen)) {
+      toggleNavigationSection();
+    }
+
+    onOpenChange?.(!isSectionOpen);
+  };
 
   return (
     <NavigationDrawerSection>
@@ -40,14 +55,13 @@ export const CollapsibleNavigationDrawerSection = ({
           label={label}
           rightIcon={rightIcon}
           alwaysShowRightIcon={alwaysShowRightIcon}
-          onClick={toggleNavigationSection}
-          isOpen={isNavigationSectionOpen}
+          onClick={handleToggle}
+          isOpen={isSectionOpen}
+          aria-controls={panelId}
         />
       )}
-      <Collapsible.Root
-        open={!isNavigationDrawerExpanded || isNavigationSectionOpen}
-      >
-        <Collapsible.Panel dimension="height" containAnimation>
+      <Collapsible.Root open={!isNavigationDrawerExpanded || isSectionOpen}>
+        <Collapsible.Panel id={panelId} dimension="height" containAnimation>
           <StyledItems>{children}</StyledItems>
         </Collapsible.Panel>
       </Collapsible.Root>

@@ -8,12 +8,6 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-const StyledDisplayLabel = styled(Text)`
-  .section-title-container:hover & {
-    color: ${themeCssVariables.font.color.tertiary};
-  }
-`;
-
 const StyledTitle = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.md};
@@ -31,20 +25,39 @@ const StyledTitle = styled.div`
   }
 `;
 
-const StyledLabelContainer = styled.div`
+const StyledLabelContainer = styled.button`
   align-items: center;
+  background: none;
+  border: none;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.light};
+  cursor: inherit;
   display: flex;
   flex-grow: 1;
+  font: inherit;
   gap: ${themeCssVariables.spacing[1]};
+  padding: 0;
+  text-align: left;
+
+  .section-title-container:hover &,
+  .section-title-container:focus-within & {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 2px;
+  }
 `;
 
-const StyledChevron = styled.div`
+const StyledChevron = styled.span`
   align-items: center;
   display: flex;
   opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease;
-  .section-title-container:hover & {
+  .section-title-container:hover &,
+  .section-title-container:focus-within & {
     opacity: 1;
   }
 `;
@@ -61,7 +74,8 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
   opacity: ${({ isMobile, $alwaysVisible }) =>
     isMobile || $alwaysVisible ? 1 : 0};
 
-  .section-title-container:hover & {
+  .section-title-container:hover &,
+  .section-title-container:focus-within & {
     opacity: 1;
   }
 `;
@@ -72,6 +86,7 @@ type NavigationDrawerSectionTitleProps = {
   rightIcon?: React.ReactNode;
   alwaysShowRightIcon?: boolean;
   isOpen?: boolean;
+  'aria-controls'?: string;
 };
 
 export const NavigationDrawerSectionTitle = ({
@@ -80,12 +95,14 @@ export const NavigationDrawerSectionTitle = ({
   rightIcon,
   alwaysShowRightIcon = false,
   isOpen,
+  'aria-controls': ariaControls,
 }: NavigationDrawerSectionTitleProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
+  const isInteractive = isDefined(onClick);
+  const handleTitleClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
     if (isDefined(onClick) && isNavigationDrawerExpanded) {
       onClick();
     }
@@ -93,12 +110,18 @@ export const NavigationDrawerSectionTitle = ({
 
   return (
     <StyledTitle className="section-title-container">
-      <StyledLabelContainer onClick={handleTitleClick}>
-        <StyledDisplayLabel size="xs" weight="semibold" color="light">
+      <StyledLabelContainer
+        as={isInteractive ? 'button' : 'div'}
+        type={isInteractive ? 'button' : undefined}
+        onClick={handleTitleClick}
+        aria-expanded={isInteractive ? isOpen : undefined}
+        aria-controls={isInteractive ? ariaControls : undefined}
+      >
+        <Text render={<span />} size="xs" weight="semibold">
           {label}
-        </StyledDisplayLabel>
-        {isOpen !== undefined && (
-          <StyledChevron>
+        </Text>
+        {isDefined(isOpen) && (
+          <StyledChevron aria-hidden="true">
             <MotionIconChevronRight
               initial={false}
               animate={{ rotate: isOpen ? 90 : 0 }}
