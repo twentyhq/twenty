@@ -25,9 +25,14 @@ export const MessageThreadWidget = ({
 }: MessageThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
 
-  const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
-    targetRecord.id,
-  );
+  const {
+    thread,
+    messages,
+    fetchMoreMessages,
+    refetchMessages,
+    threadLoading,
+    lastMessageChannelId,
+  } = useEmailThread(targetRecord.id);
 
   const { messageThreadChannel, messageThreadChannelLoading } =
     useMessageThreadChannel(targetRecord.id);
@@ -67,9 +72,12 @@ export const MessageThreadWidget = ({
   if (isChatTimelineThreadChannel(messageThreadChannel)) {
     return (
       <ChatThreadWidgetContent
+        messageThreadId={thread.id}
         messages={messages}
         loading={threadLoading}
         onFetchMoreMessages={fetchMoreMessages}
+        messageChannelId={lastMessageChannelId}
+        onMessageSent={refetchMessages}
       />
     );
   }
