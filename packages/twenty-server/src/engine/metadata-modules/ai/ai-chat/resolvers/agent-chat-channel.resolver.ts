@@ -26,6 +26,7 @@ import { AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { CreateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/create-agent-chat-channel.input';
@@ -91,6 +92,11 @@ export class AgentChatChannelResolver {
       nullable: true,
     })
     assignment: AgentChatChannelAssignmentFilter | null,
+    @Args('filter', {
+      type: () => AgentChatChannelThreadFilter,
+      nullable: true,
+    })
+    filter: AgentChatChannelThreadFilter | null,
     @Args('first', { type: () => Int, nullable: true }) first: number | null,
     @Args('after', { type: () => String, nullable: true }) after: string | null,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
@@ -100,6 +106,7 @@ export class AgentChatChannelResolver {
       channelId,
       status,
       assignment,
+      filter,
       first,
       after,
       workspaceMemberId,

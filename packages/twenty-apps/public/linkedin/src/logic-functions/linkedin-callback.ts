@@ -20,7 +20,9 @@ export const linkedinCallbackHandler = async ({
 
   if (isNonEmptyString(errorTitle)) {
     throw new Error(
-      isNonEmptyString(errorDetail) ? `${errorTitle}: ${errorDetail}` : errorTitle,
+      isNonEmptyString(errorDetail)
+        ? `${errorTitle}: ${errorDetail}`
+        : errorTitle,
     );
   }
 

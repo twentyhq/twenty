@@ -2,6 +2,7 @@ import { ThreadMessagePort } from '@quilted/threads';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
+import { type HostOutsidePressController } from '@/host/events/types/HostOutsidePressController';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
@@ -17,6 +18,7 @@ type CreateFrontComponentHostThreadInput = {
   hostFetch: HostFetchFunction;
   imageLoadingHost: ImageLoadingHost;
   geometryTracker: GeometryTracker;
+  outsidePressController: HostOutsidePressController;
   mediaSessionHost?: FrontComponentMediaSessionHost;
 };
 
@@ -59,6 +61,7 @@ export const createFrontComponentHostThread = ({
   hostFetch,
   imageLoadingHost,
   geometryTracker,
+  outsidePressController,
   mediaSessionHost,
 }: CreateFrontComponentHostThreadInput): FrontComponentThread => {
   const thread = new ThreadMessagePort<
@@ -76,6 +79,12 @@ export const createFrontComponentHostThread = ({
       },
       unobserveElementGeometry: async (remoteElementIds) => {
         geometryTracker.unobserve(remoteElementIds);
+      },
+      observeOutsidePresses: async () => {
+        outsidePressController.observeOutsidePresses();
+      },
+      unobserveOutsidePresses: async () => {
+        outsidePressController.unobserveOutsidePresses();
       },
     },
     serialization: createClonableErrorThreadSerialization(),
