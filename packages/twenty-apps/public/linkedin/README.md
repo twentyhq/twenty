@@ -24,6 +24,6 @@
 
 - **Read-only for now.** Messages are imported as they happen; reply from LinkedIn. Marking chats as read on LinkedIn is not available yet.
 - **Namesakes are not guessed.** When several People share a participant's name, nobody is linked: add the LinkedIn URL to the right Person and their messages link to it.
-- **Settings are per member.** Import, visibility, contact auto-creation and people matching live in **Settings → Applications → LinkedIn** and apply to your own connection.
+- **Settings are per member.** Import, visibility, contact auto-creation and people matching live in **Settings → App preferences → LinkedIn → Messaging** and apply to your own connection.
 
 Self-hosting or developing the app? See [SETUP.md](./SETUP.md).
