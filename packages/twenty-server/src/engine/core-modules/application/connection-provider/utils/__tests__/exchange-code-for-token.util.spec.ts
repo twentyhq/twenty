@@ -44,7 +44,7 @@ describe('exchangeCodeForToken', () => {
       refreshToken: 'lin_refresh',
       idToken: null,
       scopes: ['read', 'write'],
-      expiresAt: expect.any(Date),
+      accessTokenExpiresAt: expect.any(Date),
     });
 
     const init = (
@@ -144,7 +144,7 @@ describe('exchangeRefreshTokenForToken', () => {
       refreshToken: 'new_refresh',
       idToken: null,
       scopes: null,
-      expiresAt: null,
+      accessTokenExpiresAt: null,
     });
 
     const init = (
