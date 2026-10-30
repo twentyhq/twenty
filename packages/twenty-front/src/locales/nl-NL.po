@@ -3924,7 +3924,7 @@ msgstr "Appvoorkeuren"
 #. js-lingui-id: Nk6yc9
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
-msgstr ""
+msgstr "App-voorkeuren - Instellingen"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -8953,7 +8953,7 @@ msgstr "Definieer de naam en instructies voor deze vaardigheid"
 #. js-lingui-id: zDccHY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Define the relations along which a record's permissions extend to related records."
-msgstr ""
+msgstr "Definieer de relaties waarlangs de machtigingen van een record worden uitgebreid naar gerelateerde records."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -22379,7 +22379,7 @@ msgstr "pad van gerelateerd record"
 #. js-lingui-id: l3qF/i
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Related record paths"
-msgstr ""
+msgstr "Paden van gerelateerde records"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts

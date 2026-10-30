@@ -3924,7 +3924,7 @@ msgstr "應用程式偏好設定"
 #. js-lingui-id: Nk6yc9
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
-msgstr ""
+msgstr "應用程式偏好設定 - 設定"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -8953,7 +8953,7 @@ msgstr ""
 #. js-lingui-id: zDccHY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Define the relations along which a record's permissions extend to related records."
-msgstr ""
+msgstr "定義記錄的權限延伸至相關記錄所依據的關係。"
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -22379,7 +22379,7 @@ msgstr "相關記錄路徑"
 #. js-lingui-id: l3qF/i
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Related record paths"
-msgstr ""
+msgstr "相關記錄路徑"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts

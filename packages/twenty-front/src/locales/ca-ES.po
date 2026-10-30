@@ -3924,7 +3924,7 @@ msgstr "Preferències de les aplicacions"
 #. js-lingui-id: Nk6yc9
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
-msgstr ""
+msgstr "Preferències de les aplicacions - Configuració"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -8953,7 +8953,7 @@ msgstr "Defineix el nom i les instruccions d'aquesta habilitat"
 #. js-lingui-id: zDccHY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Define the relations along which a record's permissions extend to related records."
-msgstr ""
+msgstr "Definiu les relacions a través de les quals els permisos d'un registre s'estenen als registres relacionats."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -22379,7 +22379,7 @@ msgstr "camí del registre relacionat"
 #. js-lingui-id: l3qF/i
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Related record paths"
-msgstr ""
+msgstr "Camins de registres relacionats"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
