@@ -84,19 +84,21 @@ export class AddStandardRelatedRecordPathsCommand extends ProvisionedWorkspaceCo
           getHopsKey(standardFlatRelatedRecordPath),
         );
 
-      if (isDefined(existingFlatRelatedRecordPath)) {
-        if (
-          existingFlatRelatedRecordPath.applicationUniversalIdentifier ===
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
-          existingFlatRelatedRecordPath.isInherent !==
-            standardFlatRelatedRecordPath.isInherent
-        ) {
-          flatRelatedRecordPathsToUpdate.push({
-            ...existingFlatRelatedRecordPath,
-            isInherent: standardFlatRelatedRecordPath.isInherent,
-          });
-        }
+      const shouldAlignInherentFlag =
+        isDefined(existingFlatRelatedRecordPath) &&
+        existingFlatRelatedRecordPath.applicationUniversalIdentifier ===
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
+        existingFlatRelatedRecordPath.isInherent !==
+          standardFlatRelatedRecordPath.isInherent;
 
+      if (shouldAlignInherentFlag) {
+        flatRelatedRecordPathsToUpdate.push({
+          ...existingFlatRelatedRecordPath,
+          isInherent: standardFlatRelatedRecordPath.isInherent,
+        });
+      }
+
+      if (isDefined(existingFlatRelatedRecordPath)) {
         continue;
       }
 
