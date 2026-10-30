@@ -1,40 +1,78 @@
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
+import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
+import { SettingsApplicationStatusCell } from '@/settings/applications/components/SettingsApplicationStatusCell';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/components/SettingsApplicationTableRowChevronIcon';
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
-import { type SettingsApplicationsTableLinkTarget } from '@/settings/applications/types/SettingsApplicationsTableLinkTarget';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
-import { type SettingsApplicationsTableRowItem } from '@/settings/applications/types/SettingsApplicationsTableRowItem';
-import { getSettingsApplicationLink } from '@/settings/applications/utils/getSettingsApplicationLink';
+import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+
+const SOURCE_TYPE_LABELS: Record<
+  ApplicationRegistrationSourceType,
+  MessageDescriptor
+> = {
+  [ApplicationRegistrationSourceType.LOCAL]: msg`Local`,
+  [ApplicationRegistrationSourceType.NPM]: msg`NPM`,
+  [ApplicationRegistrationSourceType.OAUTH_ONLY]: msg`OAuth`,
+  [ApplicationRegistrationSourceType.TARBALL]: msg`Tarball`,
+};
+
+const getSourceTypeLabel = (sourceType?: ApplicationRegistrationSourceType) =>
+  isDefined(sourceType) ? t(SOURCE_TYPE_LABELS[sourceType]) : t`Built-in`;
 
 type SettingsApplicationsTableApplicationRowProps = {
-  rowItem: SettingsApplicationsTableRowItem;
-  linkTarget: SettingsApplicationsTableLinkTarget;
-  middleColumn: SettingsApplicationTableRowMiddleColumn;
+  application: ApplicationDisplayData & {
+    description?: string | null;
+    sourceType?: ApplicationRegistrationSourceType;
+  };
+  link: string;
+  middleColumn?: SettingsApplicationTableRowMiddleColumn;
   statuses?: SettingsApplicationStatus[];
 };
 
 export const SettingsApplicationsTableApplicationRow = ({
-  rowItem,
-  linkTarget,
-  middleColumn,
-  statuses,
+  application,
+  link,
+  middleColumn = 'type',
+  statuses = [],
 }: SettingsApplicationsTableApplicationRowProps) => {
+  const resolvedDescription = useResolvedApplicationDescription(application);
   const shouldShowUpdateTag =
     middleColumn === 'type' &&
-    (statuses ?? []).some((status) => status.type === 'updateAvailable');
+    statuses.some((status) => status.type === 'updateAvailable');
 
   return (
     <SettingsApplicationTableRow
-      application={rowItem}
-      shouldShowUpdateTag={shouldShowUpdateTag}
-      sourceType={rowItem.sourceType}
       middleColumn={middleColumn}
-      statuses={statuses}
+      link={link}
+      name={<ApplicationDisplay application={application} />}
+      middle={
+        middleColumn === 'status' ? (
+          <SettingsApplicationStatusCell statuses={statuses} />
+        ) : (
+          getSourceTypeLabel(application.sourceType)
+        )
+      }
+      details={
+        <>
+          <OverflowingTextWithTooltip
+            text={getApplicationDescriptionSummary(resolvedDescription)}
+          />
+          {shouldShowUpdateTag && (
+            <Tag color="blue" weight="medium" truncate={false}>
+              {t`Update`}
+            </Tag>
+          )}
+        </>
+      }
       action={<SettingsApplicationTableRowChevronIcon />}
-      link={getSettingsApplicationLink({
-        linkTarget,
-        applicationId: rowItem.id,
-      })}
     />
   );
 };

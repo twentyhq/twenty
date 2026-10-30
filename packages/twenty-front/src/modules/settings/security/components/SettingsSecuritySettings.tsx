@@ -11,6 +11,7 @@ import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles'
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
+import { SettingsSecurityIframeMediaPermissions } from '@/settings/security/components/SettingsSecurityIframeMediaPermissions';
 import { SettingsSecurityIframeOrigins } from '@/settings/security/components/SettingsSecurityIframeOrigins';
 import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
@@ -201,6 +202,7 @@ export const SettingsSecuritySettings = () => {
         </Section.Root>
         <SettingsRoleDefaultRole roles={roles} />
         <SettingsSecurityIframeOrigins />
+        <SettingsSecurityIframeMediaPermissions />
         {shouldShowBypassSection && (
           <Section.Root>
             <StyledContainer>

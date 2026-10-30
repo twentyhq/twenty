@@ -1,6 +1,7 @@
 export const ROW_LEVEL_PERMISSION_PREDICATE_GQL_FIELDS = `
     id
     fieldMetadataId
+    relationFieldMetadataId
     objectMetadataId
     operand
     value

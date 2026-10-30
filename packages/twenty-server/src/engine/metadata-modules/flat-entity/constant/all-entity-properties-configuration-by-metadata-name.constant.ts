@@ -937,6 +937,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    webhookId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'webhookUniversalIdentifier',
+    },
     agentId: {
       toCompare: true,
       toStringify: false,
@@ -1629,6 +1634,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    relationFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationFieldMetadataUniversalIdentifier',
+    },
     workspaceMemberFieldMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -2219,6 +2229,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'thirdFieldMetadataUniversalIdentifier',
+    },
+    isInherent: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,

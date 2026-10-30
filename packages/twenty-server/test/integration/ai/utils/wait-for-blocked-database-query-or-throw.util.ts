@@ -24,5 +24,5 @@ export const waitForBlockedDatabaseQueryOrThrow = async (
     );
   }
 
-  fail('The competing conversation creation did not wait for its ID');
+  fail('No query waited for the blocking database process');
 };

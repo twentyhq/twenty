@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -9,6 +9,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
@@ -35,7 +37,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   WebhookGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver(() => WebhookDTO)
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
 export class WebhookResolver {
   constructor(private readonly webhookService: WebhookService) {}
 
@@ -57,21 +59,37 @@ export class WebhookResolver {
   }
 
   @Mutation(() => WebhookDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS))
+  @UseGuards(
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
+  )
   async createWebhook(
     @Args('input') input: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookDTO> {
-    return await this.webhookService.create(input, workspace.id);
+    return await this.webhookService.create({
+      input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => WebhookDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS))
+  @UseGuards(
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
+  )
   async updateWebhook(
     @Args('input') input: UpdateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookDTO> {
-    return await this.webhookService.update(input, workspace.id);
+    return await this.webhookService.update({
+      input,
+      workspaceId: workspace.id,
+    });
   }
 
   @Mutation(() => WebhookDTO)
@@ -81,5 +99,16 @@ export class WebhookResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<WebhookDTO> {
     return await this.webhookService.delete(id, workspace.id);
+  }
+
+  @ResolveField(() => RoleDTO, { nullable: true })
+  async role(
+    @Parent() webhook: WebhookDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RoleDTO | null> {
+    return this.webhookService.findRoleByWebhookId({
+      webhookId: webhook.id,
+      workspaceId: workspace.id,
+    });
   }
 }
