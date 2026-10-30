@@ -1,6 +1,10 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
 import { SidePanelCoreAgentRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessGroup';
@@ -12,11 +16,18 @@ import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/util
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+
+const StyledSearchContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: 0 ${themeCssVariables.spacing[2]};
+`;
 
 export const SidePanelCoreAgentDataAccessPage = () => {
   const { t } = useLingui();
   const { agent, role, updateRole, isAgentReadOnly, isReadOnly } =
     useCoreAgentSidePanelRole();
+  const [search, setSearch] = useState('');
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
 
@@ -38,9 +49,16 @@ export const SidePanelCoreAgentDataAccessPage = () => {
       }),
     );
 
+  const searchTerm = search.trim().toLowerCase();
+  const isGeneralShown = !isNonEmptyString(searchTerm);
+  const matchingObjectMetadataItems =
+    objectMetadataItemsThatCanHavePermission.filter(({ labelPlural }) =>
+      labelPlural.toLowerCase().includes(searchTerm),
+    );
+
   const selectableItemIds = [
-    undefined,
-    ...objectMetadataItemsThatCanHavePermission.map(({ id }) => id),
+    ...(isGeneralShown ? [undefined] : []),
+    ...matchingObjectMetadataItems.map(({ id }) => id),
   ].flatMap((objectMetadataId) =>
     CORE_AGENT_RECORD_ACCESS_LEVELS.map(({ level }) =>
       getCoreAgentRecordAccessItemId({ objectMetadataId, level }),
@@ -52,38 +70,53 @@ export const SidePanelCoreAgentDataAccessPage = () => {
     : t`This agent shares its role with other members or agents. Change its access in Settings > Roles.`;
 
   return (
-    <SidePanelList selectableItemIds={selectableItemIds}>
-      {isDefined(agent) && isReadOnly && (
-        <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
-      )}
-      <SidePanelCoreAgentRecordAccessGroup
-        heading={t`General`}
-        Icon={IconLock}
-        role={role}
-        isReadOnly={isReadOnly}
-        onLevelChange={({ level, isEnabled }) =>
-          handleLevelChange({ level, isEnabled })
-        }
-      />
-      {objectMetadataItemsThatCanHavePermission.map((objectMetadataItem) => (
-        <SidePanelCoreAgentRecordAccessGroup
-          key={objectMetadataItem.id}
-          heading={objectMetadataItem.labelPlural}
-          objectIcon={
-            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
-          }
-          role={role}
-          objectMetadataId={objectMetadataItem.id}
-          isReadOnly={isReadOnly}
-          onLevelChange={({ level, isEnabled }) =>
-            handleLevelChange({
-              level,
-              isEnabled,
-              objectMetadataId: objectMetadataItem.id,
-            })
-          }
+    <>
+      <StyledSearchContainer>
+        <DropdownMenuSearchInput
+          value={search}
+          placeholder={t`Search objects`}
+          onChange={(event) => setSearch(event.target.value)}
         />
-      ))}
-    </SidePanelList>
+      </StyledSearchContainer>
+      <SidePanelList
+        selectableItemIds={selectableItemIds}
+        noResults={selectableItemIds.length === 0}
+        noResultsText={t`No objects match your search`}
+      >
+        {isDefined(agent) && isReadOnly && (
+          <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
+        )}
+        {isGeneralShown && (
+          <SidePanelCoreAgentRecordAccessGroup
+            heading={t`General`}
+            Icon={IconLock}
+            role={role}
+            isReadOnly={isReadOnly}
+            onLevelChange={({ level, isEnabled }) =>
+              handleLevelChange({ level, isEnabled })
+            }
+          />
+        )}
+        {matchingObjectMetadataItems.map((objectMetadataItem) => (
+          <SidePanelCoreAgentRecordAccessGroup
+            key={objectMetadataItem.id}
+            heading={objectMetadataItem.labelPlural}
+            objectIcon={
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            }
+            role={role}
+            objectMetadataId={objectMetadataItem.id}
+            isReadOnly={isReadOnly}
+            onLevelChange={({ level, isEnabled }) =>
+              handleLevelChange({
+                level,
+                isEnabled,
+                objectMetadataId: objectMetadataItem.id,
+              })
+            }
+          />
+        ))}
+      </SidePanelList>
+    </>
   );
 };
