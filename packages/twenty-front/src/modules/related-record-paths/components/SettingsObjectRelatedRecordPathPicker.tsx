@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -8,6 +9,7 @@ import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { useRelatedRecordPathMutations } from '@/related-record-paths/hooks/useRelatedRecordPathMutations';
 import { RELATED_RECORD_PATH_MAXIMUM_FIELD_COUNT } from '@/related-record-paths/constants/RelatedRecordPathMaximumFieldCount';
 import { getRelatedRecordPathNextFieldMetadataItems } from '@/related-record-paths/utils/getRelatedRecordPathNextFieldMetadataItems';
 import { getRelatedRecordPathSteps } from '@/related-record-paths/utils/getRelatedRecordPathSteps';
@@ -15,22 +17,15 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
 type SettingsObjectRelatedRecordPathPickerProps = {
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
-  fieldMetadataIds: string[];
-  searchInput: string;
-  onSearchInputChange: (searchInput: string) => void;
-  onFieldMetadataIdsChange: (fieldMetadataIds: string[]) => void;
-  onSubmit: (fieldMetadataIds: string[]) => void;
 };
 
 export const SettingsObjectRelatedRecordPathPicker = ({
   sourceObjectMetadataItem,
-  fieldMetadataIds,
-  searchInput,
-  onSearchInputChange,
-  onFieldMetadataIdsChange,
-  onSubmit,
 }: SettingsObjectRelatedRecordPathPickerProps) => {
   const { t } = useLingui();
+  const [fieldMetadataIds, setFieldMetadataIds] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState('');
+  const { createRelatedRecordPath } = useRelatedRecordPathMutations();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -56,9 +51,22 @@ export const SettingsObjectRelatedRecordPathPicker = ({
       .sort((left, right) => left.label.localeCompare(right.label));
 
   const navigateTo = (nextFieldMetadataIds: string[]) => {
-    onSearchInputChange('');
-    onFieldMetadataIdsChange(nextFieldMetadataIds);
+    setSearchInput('');
+    setFieldMetadataIds(nextFieldMetadataIds);
   };
+
+  const createPath = ([
+    firstFieldMetadataId,
+    secondFieldMetadataId,
+    thirdFieldMetadataId,
+  ]: string[]) =>
+    createRelatedRecordPath({
+      objectMetadataId: sourceObjectMetadataItem.id,
+      firstFieldMetadataId,
+      secondFieldMetadataId,
+      thirdFieldMetadataId,
+      isInherent: false,
+    });
 
   return (
     <>
@@ -84,7 +92,7 @@ export const SettingsObjectRelatedRecordPathPicker = ({
         aria-label={t`Search relations`}
         placeholder={t`Search relations`}
         value={searchInput}
-        onValueChange={onSearchInputChange}
+        onValueChange={setSearchInput}
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
@@ -100,7 +108,7 @@ export const SettingsObjectRelatedRecordPathPicker = ({
                   )}
                 />
               }
-              onSelect={() => onSubmit(fieldMetadataIds)}
+              onSelect={() => createPath(fieldMetadataIds)}
             >
               {lastStep.targetObjectMetadataItem.labelPlural}
             </Dropdown.OptionItem>
@@ -132,7 +140,7 @@ export const SettingsObjectRelatedRecordPathPicker = ({
               }
               onSelect={() =>
                 isLastHop
-                  ? onSubmit(nextFieldMetadataIds)
+                  ? createPath(nextFieldMetadataIds)
                   : navigateTo(nextFieldMetadataIds)
               }
             >

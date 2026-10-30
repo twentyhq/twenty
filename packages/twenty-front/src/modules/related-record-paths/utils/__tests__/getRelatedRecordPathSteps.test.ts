@@ -12,7 +12,7 @@ const getFieldOrThrow = ({
   objectMetadataItem,
   fieldName,
 }: {
-  objectMetadataItem: typeof company;
+  objectMetadataItem: Pick<typeof company, 'fields'>;
   fieldName: string;
 }) => {
   const field = objectMetadataItem.fields.find(

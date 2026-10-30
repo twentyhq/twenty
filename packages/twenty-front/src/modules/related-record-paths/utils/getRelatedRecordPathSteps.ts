@@ -8,12 +8,13 @@ export const getRelatedRecordPathSteps = ({
   fieldMetadataIds,
   objectMetadataItems,
 }: {
-  sourceObjectMetadataItem: EnrichedObjectMetadataItem;
+  sourceObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   fieldMetadataIds: string[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): RelatedRecordPathStep[] => {
   const steps: RelatedRecordPathStep[] = [];
-  let currentObjectMetadataItem = sourceObjectMetadataItem;
+  let currentObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'> =
+    sourceObjectMetadataItem;
 
   for (const fieldMetadataId of fieldMetadataIds) {
     const fieldMetadataItem = currentObjectMetadataItem.fields.find(

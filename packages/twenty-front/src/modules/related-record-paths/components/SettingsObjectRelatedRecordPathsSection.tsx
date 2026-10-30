@@ -48,21 +48,7 @@ export const SettingsObjectRelatedRecordPathsSection = ({
   const { relatedRecordPaths, loading, error } = useRelatedRecordPaths({
     objectMetadataId: objectMetadataItem.id,
   });
-  const { createRelatedRecordPath, deleteRelatedRecordPath, isSaving } =
-    useRelatedRecordPathMutations();
-
-  const handleSubmit = ([
-    firstFieldMetadataId,
-    secondFieldMetadataId,
-    thirdFieldMetadataId,
-  ]: string[]) =>
-    createRelatedRecordPath({
-      objectMetadataId: objectMetadataItem.id,
-      firstFieldMetadataId,
-      secondFieldMetadataId,
-      thirdFieldMetadataId,
-      isInherent: false,
-    });
+  const { deleteRelatedRecordPath, isSaving } = useRelatedRecordPathMutations();
 
   return (
     <StyledContent>
@@ -105,7 +91,6 @@ export const SettingsObjectRelatedRecordPathsSection = ({
           <SettingsObjectRelatedRecordPathAddDropdown
             sourceObjectMetadataItem={objectMetadataItem}
             disabled={isSaving}
-            onSubmit={handleSubmit}
           />
         </StyledButtonContainer>
       )}
