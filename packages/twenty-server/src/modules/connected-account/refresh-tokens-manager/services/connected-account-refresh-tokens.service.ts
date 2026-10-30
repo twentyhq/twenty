@@ -21,6 +21,7 @@ import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-acc
 export type ConnectedAccountPlaintextTokens = {
   accessToken: PlaintextString;
   refreshToken: PlaintextString | null;
+  expiresIn?: number | null;
 };
 
 export type ConnectedAccountEncryptedTokens = {
@@ -31,6 +32,12 @@ export type ConnectedAccountEncryptedTokens = {
 export type ConnectedAccountTokens = ConnectedAccountEncryptedTokens;
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
+
+const hasProviderTtl = (storedExpiresIn: unknown): storedExpiresIn is number =>
+  typeof storedExpiresIn === 'number' &&
+  Number.isFinite(storedExpiresIn) &&
+  storedExpiresIn > 0 &&
+  storedExpiresIn <= 365 * 24 * 3600;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
@@ -131,6 +138,14 @@ export class ConnectedAccountRefreshTokensService {
         accessToken: encryptedAccessToken,
         refreshToken: reEncryptedRefreshToken,
         lastCredentialsRefreshedAt: new Date(),
+        ...(hasProviderTtl(plaintextTokens.expiresIn)
+          ? {
+              oidcTokenClaims: {
+                ...(connectedAccount.oidcTokenClaims ?? {}),
+                expiresIn: plaintextTokens.expiresIn,
+              },
+            }
+          : {}),
       },
     );
 
@@ -159,10 +174,24 @@ export class ConnectedAccountRefreshTokensService {
           return false;
         }
 
-        const BUFFER_TIME = 5 * 60 * 1000;
+        const storedExpiresIn = connectedAccount.oidcTokenClaims?.expiresIn;
 
-        const tokenExpirationTime =
-          CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
+        if (!hasProviderTtl(storedExpiresIn)) {
+          const tokenExpirationTime =
+            CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - 5 * 60 * 1000;
+
+          return (
+            connectedAccount.lastCredentialsRefreshedAt >
+            new Date(Date.now() - tokenExpirationTime)
+          );
+        }
+
+        const expirationDurationMs = storedExpiresIn * 1000;
+        const bufferTimeMs = Math.min(
+          5 * 60 * 1000,
+          Math.floor(expirationDurationMs * 0.2),
+        );
+        const tokenExpirationTime = expirationDurationMs - bufferTimeMs;
 
         return (
           connectedAccount.lastCredentialsRefreshedAt >

@@ -58,6 +58,7 @@ export class AppOAuthRefreshAccessTokenService {
         refreshToken: isDefined(tokenResponse.refreshToken)
           ? tokenResponse.refreshToken
           : refreshToken,
+        expiresIn: tokenResponse.expiresIn,
       };
     } catch (error) {
       this.logger.warn(
