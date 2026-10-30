@@ -103,7 +103,7 @@ export const Default: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerSection>
-          <NavigationDrawerSectionTitle label="Workspace" onClick={() => {}} />
+          <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="Companies"
             to="/companies"
@@ -127,7 +127,7 @@ export const Settings: Story = {
     children: (
       <>
         <NavigationDrawerSection>
-          <NavigationDrawerSectionTitle label="User" onClick={() => {}} />
+          <NavigationDrawerSectionTitle label="User" />
           <NavigationDrawerItem
             label="Profile"
             to={getSettingsPath(SettingsPath.ProfilePage)}
@@ -161,7 +161,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerSection>
-          <NavigationDrawerSectionTitle label="Workspace" onClick={() => {}} />
+          <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
             to={getSettingsPath(SettingsPath.General)}
@@ -175,7 +175,7 @@ export const Settings: Story = {
         </NavigationDrawerSection>
 
         <NavigationDrawerSection>
-          <NavigationDrawerSectionTitle label="Other" onClick={() => {}} />
+          <NavigationDrawerSectionTitle label="Other" />
           <NavigationDrawerItem
             label="Admin Panel"
             to={getSettingsPath(SettingsPath.AdminPanel)}

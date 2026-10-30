@@ -9,8 +9,6 @@ const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 type NavigationDrawerDirectMessagesSectionProps = {
   directMessages: readonly DirectMessageSidebarItem[];
   currentThreadId: string | null;
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
   onSelect: (threadId: string) => void;
   memberPicker: ReactNode;
 };
@@ -18,8 +16,6 @@ type NavigationDrawerDirectMessagesSectionProps = {
 export const NavigationDrawerDirectMessagesSection = ({
   directMessages,
   currentThreadId,
-  isOpen,
-  onOpenChange,
   onSelect,
   memberPicker,
 }: NavigationDrawerDirectMessagesSectionProps) => {
@@ -32,8 +28,6 @@ export const NavigationDrawerDirectMessagesSection = ({
         message: 'DMs',
         comment: 'Abbreviation of direct messages, sidebar section title',
       })}
-      isOpen={isOpen}
-      onOpenChange={onOpenChange}
       rightIcon={memberPicker}
       alwaysShowRightIcon
     >

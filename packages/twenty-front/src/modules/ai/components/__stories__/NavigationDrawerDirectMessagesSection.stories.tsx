@@ -23,7 +23,7 @@ export const SidebarSelectionAndCollapse: Story = {
     const canvas = within(canvasElement);
     const anna = canvas.getByRole('button', { name: 'Anna' });
     const felix = canvas.getByRole('button', { name: /Felix\s*, unread/ });
-    const sectionToggle = canvas.getByRole('button', { name: 'DMs' });
+    const sectionTitle = canvas.getByText('DMs');
 
     await expect(anna).toHaveAttribute('aria-current', 'true');
     await expect(
@@ -37,17 +37,14 @@ export const SidebarSelectionAndCollapse: Story = {
     await expect(felix).toHaveAttribute('aria-current', 'true');
     await expect(anna).not.toHaveAttribute('aria-current');
 
-    sectionToggle.focus();
-    await userEvent.keyboard(' ');
-    await expect(sectionToggle).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(sectionTitle);
     await waitFor(() =>
       expect(
         canvas.queryByRole('button', { name: 'Anna' }),
       ).not.toBeInTheDocument(),
     );
 
-    await userEvent.keyboard('{Enter}');
-    await expect(sectionToggle).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.click(sectionTitle);
     await expect(
       await canvas.findByRole('button', { name: /Felix\s*, unread/ }),
     ).toHaveAttribute('aria-current', 'true');

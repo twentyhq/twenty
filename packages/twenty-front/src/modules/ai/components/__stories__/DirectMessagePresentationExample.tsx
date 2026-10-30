@@ -41,9 +41,6 @@ export const DirectMessagePresentationExample = ({
     return initialStore;
   });
   const [currentThreadId, setCurrentThreadId] = useState('dm-anna');
-  const [isChannelsOpen, setIsChannelsOpen] = useState(true);
-  const [isDirectMessagesOpen, setIsDirectMessagesOpen] = useState(true);
-  const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [searchValue, setSearchValue] = useState('');
   const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
   const matchingHumanMembers = filterBySearchQuery({
@@ -58,8 +55,6 @@ export const DirectMessagePresentationExample = ({
         <CollapsibleNavigationDrawerSection
           sectionId="stories/direct-messages/channels"
           label="Channels"
-          isOpen={isChannelsOpen}
-          onOpenChange={setIsChannelsOpen}
         >
           <NavigationDrawerItem label="General" Icon={IconHash} />
           <NavigationDrawerItem label="Product" Icon={IconHash} />
@@ -67,8 +62,6 @@ export const DirectMessagePresentationExample = ({
         <NavigationDrawerDirectMessagesSection
           directMessages={directMessages}
           currentThreadId={currentThreadId}
-          isOpen={isDirectMessagesOpen}
-          onOpenChange={setIsDirectMessagesOpen}
           onSelect={(threadId) => {
             setCurrentThreadId(threadId);
             onSelectThread(threadId);
@@ -82,18 +75,13 @@ export const DirectMessagePresentationExample = ({
               searchValue={searchValue}
               onSearchChange={setSearchValue}
               isLoading={memberState !== 'results'}
-              onSelect={(workspaceMemberId) => {
-                setIsDirectMessagesOpen(true);
-                onSelectMember(workspaceMemberId);
-              }}
+              onSelect={onSelectMember}
             />
           }
         />
         <CollapsibleNavigationDrawerSection
           sectionId="stories/direct-messages/recent"
           label="Recent"
-          isOpen={isRecentOpen}
-          onOpenChange={setIsRecentOpen}
         >
           <NavigationDrawerItem label="Research notes" Icon={IconMessage} />
           <NavigationDrawerItem label="Quarterly planning" Icon={IconMessage} />
