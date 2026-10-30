@@ -90,12 +90,20 @@ export class MessagingMessageService {
 
         const messageChannelMessageAssociationsReferencingMessageThread =
           await messageChannelMessageAssociationRepository.find({
-            where: {
-              messageThreadExternalId: In(
-                messages.map((message) => message.messageThreadExternalId),
-              ),
-              messageChannelId,
-            },
+            where: [
+              {
+                messageThreadExternalId: In(
+                  messages.map((message) => message.messageThreadExternalId),
+                ),
+                messageChannelId,
+              },
+              {
+                messageExternalId: In(
+                  messages.map((message) => message.externalId),
+                ),
+                messageChannelId,
+              },
+            ],
             relations: { message: true },
           });
 
@@ -181,6 +189,33 @@ export class MessagingMessageService {
             messageAccumulator.messageToCreate = messageToCreate;
           } else {
             newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
+
+            if (
+              messageAccumulator.existingMessageInDB.isDraft &&
+              message.isDraft === false
+            ) {
+              await messageRepository.update(newOrExistingMessageId, {
+                headerMessageId: message.headerMessageId,
+                subject: message.subject,
+                receivedAt: message.receivedAt,
+                text: message.text,
+                isDraft: false,
+              });
+
+              const existingAssociation =
+                messageAccumulator.existingMessageChannelMessageAssociationInDB;
+
+              if (isDefined(existingAssociation)) {
+                await messageChannelMessageAssociationRepository.update(
+                  existingAssociation.id,
+                  {
+                    messageExternalId: message.externalId,
+                    messageThreadExternalId: message.messageThreadExternalId,
+                    direction: message.direction,
+                  },
+                );
+              }
+            }
           }
 
           if (
@@ -233,7 +268,9 @@ export class MessagingMessageService {
 
           if (
             isDefined(messageAccumulator.existingThreadInDB) &&
-            isDefined(messageAccumulator.messageToCreate) &&
+            (isDefined(messageAccumulator.messageToCreate) ||
+              (messageAccumulator.existingMessageInDB?.isDraft === true &&
+                message.isDraft === false)) &&
             isDefined(message.subject)
           ) {
             const threadId = messageAccumulator.existingThreadInDB.id;
