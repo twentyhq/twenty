@@ -61,12 +61,13 @@ describe('local image selection', () => {
     'never falls back to latest when range selection is %s',
     async (failure) => {
       vi.mocked(getEngineVersionRange).mockReturnValue('^2.52.0');
-      if (failure === 'unavailable')
+      if (failure === 'unavailable') {
         vi.mocked(fetchWithProxy).mockRejectedValue(new Error('Offline'));
-      else
+      } else {
         vi.mocked(fetchWithProxy).mockResolvedValue(
           Response.json({ results: [{ name: 'v1.0.0' }], next: null }),
         );
+      }
       await expect(resolveLocalImage(undefined, signal)).rejects.toMatchObject({
         code: 'LOCAL_ENVIRONMENT_FAILED',
       });

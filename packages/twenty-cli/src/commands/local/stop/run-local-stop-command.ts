@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type CommandContext } from '@/catalog/types/command-context.type';
 import { checkLocalRuntime } from '@/local/check-local-runtime';
@@ -11,18 +12,18 @@ export const runLocalStopCommand: CommandRun<CommandContext> = async ({
 }) => {
   const { environment } = readLocalOptions(options);
   await checkLocalRuntime(signal);
-  const container = await readLocalContainer(environment, signal);
-  if (container?.running) {
+  const container = await readLocalContainer({ environment, signal });
+  if (container?.isRunning) {
     await runDocker({ args: ['stop', container.id], signal });
   }
 
   return {
     data: {
       name: environment.name,
-      stopped: Boolean(container),
+      stopped: isDefined(container),
       dataPreserved: true,
     },
-    human: container
+    human: isDefined(container)
       ? 'Local environment stopped. Data is preserved.'
       : 'No local environment has been created.',
   };

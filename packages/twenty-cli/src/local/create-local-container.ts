@@ -7,7 +7,10 @@ export const createLocalContainer = async ({
   port,
   signal,
 }: {
-  environment: LocalEnvironment;
+  environment: Pick<
+    LocalEnvironment,
+    'name' | 'volumes' | 'environmentVariables'
+  >;
   image: string;
   port: number;
   signal: AbortSignal;
@@ -24,6 +27,7 @@ export const createLocalContainer = async ({
       `NODE_PORT=${port}`,
       '--env',
       `SERVER_URL=http://localhost:${port}`,
+      ...environment.environmentVariables.flatMap((value) => ['--env', value]),
       ...Object.entries(environment.volumes).flatMap(([destination, name]) => [
         '--volume',
         `${name}:${destination}`,

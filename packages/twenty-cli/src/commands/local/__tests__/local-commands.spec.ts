@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   parseSingleJsonLine,
@@ -19,18 +20,21 @@ vi.mock('@/local/check-local-health', () => ({
 }));
 
 const environment = getLocalEnvironment(true);
-const makeContainer = (running = true) => ({
-  Id: 'test-container',
-  Config: {
-    Image: 'twentycrm/twenty-app-dev:v2.53.0',
-  },
-  State: { Running: running },
-  HostConfig: {
-    PortBindings: {
-      ['2021/tcp' as string]: [{ HostIp: '127.0.0.1', HostPort: '12021' }],
+const makeContainer = (isRunning = true) => {
+  const portBindings: Record<string, { HostIp: string; HostPort: string }[]> = {
+    '2021/tcp': [{ HostIp: '127.0.0.1', HostPort: '12021' }],
+  };
+  return {
+    Id: 'test-container',
+    Config: {
+      Image: 'twentycrm/twenty-app-dev:v2.53.0',
     },
-  },
-});
+    State: { Running: isRunning },
+    HostConfig: {
+      PortBindings: portBindings,
+    },
+  };
+};
 let container: ReturnType<typeof makeContainer> | undefined;
 let failure: string | undefined;
 
@@ -57,18 +61,30 @@ describe('local commands', () => {
     vi.mocked(checkLocalHealth).mockResolvedValue(true);
     vi.mocked(waitForLocalHealth).mockResolvedValue(undefined);
     vi.mocked(runDocker).mockImplementation(async ({ args, onOutput }) => {
-      if (args[0] === failure || args.slice(0, 2).join(' ') === failure)
+      if (args[0] === failure || args.slice(0, 2).join(' ') === failure) {
         throw new CliError({
           code: 'LOCAL_ENVIRONMENT_FAILED',
           message: 'Docker failed',
         });
-      if (args[0] === 'context') return 'unix:///var/run/docker.sock';
-      if (args[0] === 'info') return '28.0';
-      if (args[0] === 'container' && args[1] === 'ls')
+      }
+      if (args[0] === 'context') {
+        return 'unix:///var/run/docker.sock';
+      }
+      if (args[0] === 'info') {
+        return '28.0';
+      }
+      if (args[0] === 'container' && args[1] === 'ls') {
         return container?.Id ?? '';
-      if (args[0] === 'container') return JSON.stringify(container);
-      if (args[0] === 'start' && container) container.State.Running = true;
-      if (args[0] === 'stop' && container) container.State.Running = false;
+      }
+      if (args[0] === 'container') {
+        return JSON.stringify(container);
+      }
+      if (args[0] === 'start' && isDefined(container)) {
+        container.State.Running = true;
+      }
+      if (args[0] === 'stop' && isDefined(container)) {
+        container.State.Running = false;
+      }
       if (args[0] === 'run') {
         container = makeContainer();
         container.Config.Image = args.at(-1)!;
@@ -80,8 +96,9 @@ describe('local commands', () => {
           ],
         };
       }
-      if (args[0] === 'logs')
+      if (args[0] === 'logs') {
         await onOutput?.('server started\nworker ready\n');
+      }
       return '';
     });
   });
@@ -108,6 +125,9 @@ describe('local commands', () => {
     expect(run).toContain('127.0.0.1:12021:12021');
     expect(run).toContain('twentycrm/twenty-app-dev:v2.54.0');
     expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
+    expect(run).toContain('API_RATE_LIMITING_SHORT_LIMIT=100000');
+    expect(run).toContain('API_RATE_LIMITING_LONG_LIMIT=100000');
+    expect(run).toContain('MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false');
     expect(run).not.toContain('twenty-app-dev-data:/data/postgres');
   });
 
@@ -167,6 +187,12 @@ describe('local commands', () => {
   it('stops without removing the container or its data', async () => {
     expect((await runJson(['stop'])).exitCode).toBe(0);
     expect(mutations()).toEqual([['stop', 'test-container']]);
+  });
+
+  it('rejects malformed port bindings before changing the container', async () => {
+    container!.HostConfig.PortBindings = {};
+    expect((await runJson(['start'])).envelope.error.code).toBe('CONFLICT');
+    expect(mutations()).toEqual([]);
   });
 
   it('streams logs as NDJSON and emits a terminal result', async () => {

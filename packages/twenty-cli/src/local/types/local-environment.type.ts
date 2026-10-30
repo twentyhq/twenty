@@ -2,11 +2,12 @@ export type LocalEnvironment = {
   name: string;
   port: number;
   volumes: Record<string, string>;
+  environmentVariables: string[];
 };
 
 export type LocalContainer = {
   id: string;
   image: string;
-  running: boolean;
+  isRunning: boolean;
   port: number;
 };

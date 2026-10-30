@@ -2,20 +2,15 @@ import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
 
 export const checkLocalRuntime = async (signal: AbortSignal) => {
-  const endpoint =
-    process.env.DOCKER_HOST && !process.env.DOCKER_CONTEXT
-      ? process.env.DOCKER_HOST
-      : (
-          await runDocker({
-            args: [
-              'context',
-              'inspect',
-              '--format',
-              '{{.Endpoints.docker.Host}}',
-            ],
-            signal,
-          })
-        ).trim();
+  let endpoint = process.env.DOCKER_HOST;
+  if (!endpoint || process.env.DOCKER_CONTEXT) {
+    endpoint = (
+      await runDocker({
+        args: ['context', 'inspect', '--format', '{{.Endpoints.docker.Host}}'],
+        signal,
+      })
+    ).trim();
+  }
 
   if (!endpoint.startsWith('unix://') && !endpoint.startsWith('npipe://')) {
     throw new CliError({

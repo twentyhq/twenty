@@ -26,6 +26,13 @@ beforeAll(async () => {
 if (process.argv[2] === 'fail') {
   process.stderr.write('image version does not exist');
   process.exitCode = 1;
+} else if (process.argv[2] === 'unicode') {
+  const stdout = Buffer.from('é🙂');
+  const stderr = Buffer.from('汉');
+  process.stdout.write(stdout.subarray(0, 1));
+  setTimeout(() => process.stderr.write(stderr.subarray(0, 1)), 50);
+  setTimeout(() => process.stdout.write(stdout.subarray(1)), 100);
+  setTimeout(() => process.stderr.write(stderr.subarray(1)), 150);
 } else if (process.argv[2] === 'logs') {
   process.on('SIGTERM', () => {});
   process.stdout.write(String(process.pid));
@@ -53,6 +60,19 @@ describe('Docker subprocess', () => {
         await runDocker({ args, signal: new AbortController().signal }),
       ),
     ).toEqual(args);
+  });
+
+  it('preserves split UTF-8 characters independently on stdout and stderr', async () => {
+    vi.stubEnv('PATH', directory);
+    let output = '';
+    await runDocker({
+      args: ['unicode'],
+      signal: new AbortController().signal,
+      onOutput: async (message) => {
+        output += message;
+      },
+    });
+    expect(output).toBe('é🙂汉');
   });
 
   it('reports Docker failures with the actual diagnostic', async () => {
@@ -109,15 +129,15 @@ describe('Docker subprocess', () => {
           stdio: ['ignore', 'pipe', 'pipe'],
         });
         let output = '';
-        let interrupted = false;
+        let hasInterrupted = false;
         const timeout = setTimeout(() => {
           child.kill('SIGKILL');
           reject(new Error('Cancellation timed out'));
         }, 5000);
         child.stdout.on('data', (chunk) => {
           output += String(chunk);
-          if (!interrupted && output.includes('\n')) {
-            interrupted = true;
+          if (!hasInterrupted && output.includes('\n')) {
+            hasInterrupted = true;
             child.kill('SIGINT');
           }
         });

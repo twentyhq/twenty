@@ -1,4 +1,6 @@
 import execa from 'execa';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
@@ -21,6 +23,9 @@ export const runDocker = async ({
     reject: false,
     maxBuffer: 4 * 1024 * 1024,
   });
+  subprocess.stdout?.setEncoding('utf8');
+  subprocess.stderr?.setEncoding('utf8');
+  subprocess.all?.setEncoding('utf8');
   const cancel = () =>
     subprocess.kill('SIGTERM', { forceKillAfterTimeout: 1000 });
 
@@ -30,7 +35,7 @@ export const runDocker = async ({
   }
 
   try {
-    if (onOutput && subprocess.all) {
+    if (isDefined(onOutput) && isDefined(subprocess.all)) {
       for await (const chunk of subprocess.all) {
         await onOutput(String(chunk));
       }
@@ -43,7 +48,7 @@ export const runDocker = async ({
     if (result.failed) {
       throw new CliError({
         code: 'LOCAL_ENVIRONMENT_FAILED',
-        message: result.stderr?.trim()
+        message: isNonEmptyString(result.stderr?.trim())
           ? `docker ${args[0]} failed: ${result.stderr.trim().slice(-4096)}`
           : `docker ${args[0]} failed.`,
         hint: 'Check Docker is installed and running, then retry.',
