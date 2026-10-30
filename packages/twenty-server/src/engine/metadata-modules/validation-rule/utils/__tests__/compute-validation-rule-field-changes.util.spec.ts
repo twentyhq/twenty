@@ -32,7 +32,7 @@ describe('computeValidationRuleFieldChanges', () => {
         updatedFields: [
           {
             ...STAGE,
-            universalOverrides: {
+            overrides: {
               'workspace-application': { isActive: false },
             },
           },

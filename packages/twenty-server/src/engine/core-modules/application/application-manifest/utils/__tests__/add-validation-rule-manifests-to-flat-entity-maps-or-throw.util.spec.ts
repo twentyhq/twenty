@@ -2,8 +2,9 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { addValidationRuleManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-validation-rule-manifests-to-flat-entity-maps-or-throw.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 
 const OWNER_APPLICATION = {
@@ -22,20 +23,42 @@ const buildField = (
   > &
     Partial<FlatFieldMetadata>,
 ) =>
-  ({
-    isActive: true,
+  getFlatFieldMetadataMock({
+    objectMetadataId: 'object-metadata-id',
     applicationId: 'other-application-id',
-    universalSettings: null,
-    relationTargetObjectMetadataUniversalIdentifier: null,
     ...field,
-  }) as FlatFieldMetadata;
+  });
+
+const buildExistingRule = (
+  rule: Partial<FlatValidationRule>,
+): FlatValidationRule => ({
+  id: 'rule-id',
+  workspaceId: 'workspace-id',
+  applicationId: OWNER_APPLICATION.id,
+  universalIdentifier: 'rule',
+  applicationUniversalIdentifier: OWNER_APPLICATION.universalIdentifier,
+  objectMetadataId: 'object-metadata-id',
+  objectMetadataUniversalIdentifier: 'company',
+  errorFieldMetadataId: null,
+  errorFieldMetadataUniversalIdentifier: null,
+  name: 'Rule',
+  description: null,
+  icon: null,
+  expression: 'true',
+  bindings: {},
+  message: 'Message',
+  isActive: true,
+  createdAt: NOW,
+  updatedAt: NOW,
+  ...rule,
+});
 
 const buildMaps = () => {
   const existingAllFlatEntityMaps = createEmptyAllFlatEntityMaps();
   const toAllUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
   existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.company =
-    { universalIdentifier: 'company' } as FlatObjectMetadata;
+    getFlatObjectMetadataMock({ universalIdentifier: 'company' });
   existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
     buildField({
       universalIdentifier: 'employees',
@@ -53,10 +76,10 @@ const buildMaps = () => {
     });
 
   toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
-    {
+    getFlatObjectMetadataMock({
       universalIdentifier: 'ticket',
       applicationUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
-    } as FlatObjectMetadata;
+    });
   toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.reference =
     buildField({
       universalIdentifier: 'reference',
@@ -72,7 +95,7 @@ const buildMaps = () => {
       objectMetadataUniversalIdentifier: 'ticket',
       universalSettings: { relationType: RelationType.MANY_TO_ONE },
       relationTargetObjectMetadataUniversalIdentifier: 'company',
-    } as Partial<FlatFieldMetadata> as FlatFieldMetadata);
+    });
 
   return { existingAllFlatEntityMaps, toAllUniversalFlatEntityMaps };
 };
@@ -152,12 +175,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       expression: 'employees > 0',
       message: 'Add employees',
     };
-    const EXISTING_RULE = {
-      universalIdentifier: 'rule',
+    const EXISTING_RULE = buildExistingRule({
       expression: RULE.expression,
       bindings: { employees: 'employees' },
-      isActive: true,
-    } as unknown as FlatValidationRule;
+    });
 
     const sync = (maps: ReturnType<typeof buildMaps>) =>
       addValidationRuleManifestsToFlatEntityMapsOrThrow({
@@ -181,8 +202,8 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           type: FieldMetadataType.NUMBER,
           objectMetadataUniversalIdentifier: 'company',
           applicationUniversalIdentifier: 'other-application',
-          universalOverrides: { workspace: { isActive: false } },
-        } as Partial<FlatFieldMetadata> as FlatFieldMetadata);
+          overrides: { workspace: { isActive: false } },
+        });
 
       const { warnings } = sync(maps);
 
@@ -251,7 +272,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     const maps = buildMaps();
 
     maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.off =
-      { isActive: false, universalIdentifier: 'off' } as FlatValidationRule;
+      buildExistingRule({ isActive: false, universalIdentifier: 'off' });
 
     const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
       validationRules: ['off', 'new'].map((universalIdentifier) => ({
@@ -305,7 +326,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       const maps = buildMaps();
 
       maps.existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
-        { universalIdentifier: 'ticket' } as FlatObjectMetadata;
+        getFlatObjectMetadataMock({ universalIdentifier: 'ticket' });
       maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.updatedAt =
         buildField({
           universalIdentifier: 'updatedAt',
@@ -356,11 +377,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       const maps = buildMaps();
 
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
-        {
-          universalIdentifier: 'rule',
-          isActive: true,
-          errorFieldMetadataUniversalIdentifier: null,
-        } as FlatValidationRule;
+        buildExistingRule({ errorFieldMetadataUniversalIdentifier: null });
 
       const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [RULE],

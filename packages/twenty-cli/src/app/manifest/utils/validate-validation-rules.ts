@@ -74,22 +74,23 @@ export const validateValidationRules = (
       }
 
       const relationType = field.universalSettings?.relationType;
+
+      if (relationType !== RelationType.MANY_TO_ONE) {
+        return { ...toFieldDescriptor(field), relationType };
+      }
+
       const targetObjectUniversalIdentifier =
         field.relationTargetObjectMetadataUniversalIdentifier;
-      const targetFields = fieldsByObjectUniversalIdentifier.get(
-        targetObjectUniversalIdentifier,
-      );
 
       return {
         ...toFieldDescriptor(field),
         relationType,
-        relationTargetFields:
-          relationType === RelationType.MANY_TO_ONE
-            ? [
-                ...(targetFields ?? []),
-                ...buildGeneratedFields(targetObjectUniversalIdentifier),
-              ].map(toFieldDescriptor)
-            : undefined,
+        relationTargetFields: [
+          ...(fieldsByObjectUniversalIdentifier.get(
+            targetObjectUniversalIdentifier,
+          ) ?? []),
+          ...buildGeneratedFields(targetObjectUniversalIdentifier),
+        ].map(toFieldDescriptor),
       };
     }),
     ...buildGeneratedFields(objectUniversalIdentifier).map(toFieldDescriptor),

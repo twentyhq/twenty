@@ -318,6 +318,64 @@ describe('Validation rules declared in an application manifest', () => {
     expect(await findValidationRuleRow()).toMatchObject({ isActive: true });
   }, 60000);
 
+  it('should turn the rule off and warn when the workspace deactivates a standard field through an override', async () => {
+    const { data: companyObjectMetadataId } =
+      await findCompanyObjectMetadataId();
+    const rows: { id: string }[] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND name = 'employees'`,
+      [companyObjectMetadataId],
+    );
+    const standardFieldId = rows[0].id;
+    const manifest = buildManifest({
+      fieldName: 'code',
+      validationRules: [
+        buildValidationRuleManifest({
+          universalIdentifier: OUTSIDE_VALIDATION_RULE_ID,
+          objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+          expression: 'employees > 0',
+          errorFieldUniversalIdentifier: undefined,
+        }),
+      ],
+    });
+
+    await syncApplication({ manifest, expectToFail: false });
+
+    try {
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: standardFieldId,
+          updatePayload: { isActive: false },
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      expect(
+        await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
+      ).toMatchObject({ isActive: false });
+
+      const { data } = await syncApplication({
+        manifest,
+        expectToFail: false,
+      });
+
+      expect(data.syncApplication.warnings).toEqual([
+        expect.stringContaining(
+          'uses the field "employees", which is deactivated',
+        ),
+      ]);
+    } finally {
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: standardFieldId,
+          updatePayload: { isActive: true },
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+    }
+  }, 120000);
+
   it('should delete the rule once the manifest no longer declares it', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({ fieldName: 'code', validationRules: [] }),

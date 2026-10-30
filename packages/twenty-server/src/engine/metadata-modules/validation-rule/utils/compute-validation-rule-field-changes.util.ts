@@ -4,12 +4,12 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type OverridableUniversalFlatEntity,
-  resolveEffectiveUniversalFlatEntityProperty,
-} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/validation-rule/types/validation-rule-field-change.type';
 
-type ValidationRuleFieldState = OverridableUniversalFlatEntity & {
+type ValidationRuleFieldState = OverridableFlatEntity & {
   universalIdentifier: string;
   name: string;
   type: FieldMetadataType;
@@ -18,9 +18,9 @@ type ValidationRuleFieldState = OverridableUniversalFlatEntity & {
 
 // A workspace deactivates another application's field through an override
 const isFieldActive = (field: ValidationRuleFieldState): boolean =>
-  resolveEffectiveUniversalFlatEntityProperty({
+  resolveEffectiveFlatEntityProperty({
     metadataName: 'fieldMetadata',
-    universalFlatEntity: field,
+    flatEntity: field,
     property: 'isActive',
   });
 
