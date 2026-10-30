@@ -14,6 +14,7 @@ import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { type DragDropProviderBeforeDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderBeforeDragStartEvent';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -63,7 +64,9 @@ export const RecordDragDropContextProvider = ({
     setActiveDroppableId(null);
   };
 
-  const handleBeforeDragStart = (event: { preventDefault: () => void }) => {
+  const handleBeforeDragStart = (
+    event: DragDropProviderBeforeDragStartEvent<DragDropItemData>,
+  ) => {
     if (isDefined(canStartDrag) && !canStartDrag()) {
       event.preventDefault();
     }

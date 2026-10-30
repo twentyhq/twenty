@@ -4,6 +4,7 @@ import { useRecordBoardQueryIdentifier } from '@/object-record/record-board/hook
 import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { lastRecordBoardQueryIdentifierComponentState } from '@/object-record/record-board/states/lastRecordBoardQueryIdentifierComponentState';
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
+import { recordBoardFetchMoreFailureCountComponentState } from '@/object-record/record-board/states/recordBoardFetchMoreFailureCountComponentState';
 import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -56,6 +57,11 @@ export const useTriggerRecordBoardInitialQuery = () => {
       recordBoardQueryGenerationComponentState,
     );
 
+  const recordBoardFetchMoreFailureCountCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardFetchMoreFailureCountComponentState,
+    );
+
   const setRecordBoardCurrentGroupByQueryOffset = useSetAtomComponentState(
     recordBoardCurrentGroupByQueryOffsetComponentState,
   );
@@ -80,6 +86,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
         recordBoardQueryGenerationCallbackState,
         store.get(recordBoardQueryGenerationCallbackState) + 1,
       );
+      store.set(recordBoardFetchMoreFailureCountCallbackState, 0);
 
       const cleanStateBeforeExit = () => {
         store.set(recordIndexRecordGroupsAreInInitialLoading, false);
@@ -173,6 +180,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
     [
       recordIndexRecordGroupsAreInInitialLoading,
       recordBoardQueryGenerationCallbackState,
+      recordBoardFetchMoreFailureCountCallbackState,
       store,
       executeRecordIndexGroupsRecordsLazyGroupBy,
       objectMetadataItem,

@@ -19,10 +19,10 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { sleep } from '~/utils/sleep';
 
 const executeMock = jest.fn();
 
@@ -47,10 +47,6 @@ jest.mock(
     }),
   }),
 );
-
-jest.mock('~/utils/sleep', () => ({
-  sleep: jest.fn(() => Promise.resolve()),
-}));
 
 const VIEW_INSTANCE_ID = 'instanceId';
 const BOARD_INSTANCE_ID = 'board-instance-id';
@@ -116,7 +112,10 @@ const buildServer = (serverRecords: ServerRecord[]) => {
     respond: ({
       variables,
     }: {
-      variables: { offsetForRecords: number; filter: Record<string, any> };
+      variables: {
+        offsetForRecords: number;
+        filter: { stage?: { in?: string[] } };
+      };
     }) => {
       const stages: string[] = variables.filter?.stage?.in ?? [];
 
@@ -250,7 +249,7 @@ const failureCountAtom = () =>
 describe('useTriggerRecordBoardFetchMore', () => {
   beforeEach(() => {
     executeMock.mockReset();
-    jest.mocked(sleep).mockClear();
+    jest.useRealTimers();
   });
 
   it('does not append a record the column already holds when a later page returns it', async () => {
@@ -265,7 +264,7 @@ describe('useTriggerRecordBoardFetchMore', () => {
     });
 
     // b5 was dragged to the end of column A: local arrays are patched and the
-    // server now ranks it as row 11 of A, which is the first row of the next page
+    // server now ranks it inside the next page of A (tied with a11 at position 11)
     const draggedId = 'b5';
     const draggedServerRecord = { id: draggedId, position: 11, stage: STAGE_A };
 
@@ -300,7 +299,7 @@ describe('useTriggerRecordBoardFetchMore', () => {
     ]);
   });
 
-  it('applies the whole page without sleeping between columns', async () => {
+  it('applies the page to every column that has more', async () => {
     const aRecords = makeRecords(STAGE_A, 'a', 25);
     const bRecords = makeRecords(STAGE_B, 'b', 25);
 
@@ -319,7 +318,6 @@ describe('useTriggerRecordBoardFetchMore', () => {
       await result.current.triggerRecordBoardFetchMore();
     });
 
-    expect(sleep).not.toHaveBeenCalled();
     expect(jotaiStore.get(idsAtom(GROUP_A.id))).toHaveLength(20);
     expect(jotaiStore.get(idsAtom(GROUP_B.id))).toHaveLength(20);
     expect(jotaiStore.get(offsetAtom())).toBe(10);
@@ -386,17 +384,23 @@ describe('useTriggerRecordBoardFetchMore', () => {
       pageZeroByGroup: { [GROUP_A.id]: aRecords.slice(0, 10) },
     });
 
+    jest.useFakeTimers();
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+
     executeMock.mockImplementation(() => Promise.reject(new Error('network')));
 
     for (let attempt = 0; attempt < 3; attempt++) {
       await act(async () => {
-        await result.current.triggerRecordBoardFetchMore();
+        const fetchMorePromise = result.current.triggerRecordBoardFetchMore();
+
+        await jest.advanceTimersByTimeAsync(30000);
+        await fetchMorePromise;
       });
     }
 
-    expect(jest.mocked(sleep).mock.calls.map(([delay]) => delay)).toEqual([
-      1000, 2000, 4000,
-    ]);
+    expect(
+      setTimeoutSpy.mock.calls.map(([, delay]) => delay).filter(isDefined),
+    ).toEqual([1000, 2000, 4000]);
     expect(jotaiStore.get(failureCountAtom())).toBe(3);
     expect(jotaiStore.get(offsetAtom())).toBe(0);
     expect(jotaiStore.get(idsAtom(GROUP_A.id))).toHaveLength(10);
@@ -412,34 +416,27 @@ describe('useTriggerRecordBoardFetchMore', () => {
     expect(jotaiStore.get(idsAtom(GROUP_A.id))).toHaveLength(20);
   });
 
-  it('keeps the fetching flag raised while the retry backoff is pending', async () => {
+  it('keeps the fetching flag raised during the backoff and releases it on a reset', async () => {
     const aRecords = makeRecords(STAGE_A, 'a', 25);
 
     const { result } = renderFetchMore({
       pageZeroByGroup: { [GROUP_A.id]: aRecords.slice(0, 10) },
     });
 
-    let resolveBackoff: () => void = () => undefined;
-
-    jest.mocked(sleep).mockImplementationOnce(
-      () =>
-        new Promise<void>((resolve) => {
-          resolveBackoff = resolve;
-        }),
-    );
+    jest.useFakeTimers();
     executeMock.mockImplementation(() => Promise.reject(new Error('network')));
 
     let fetchMorePromise: Promise<void> = Promise.resolve();
 
     await act(async () => {
       fetchMorePromise = result.current.triggerRecordBoardFetchMore();
-      await Promise.resolve();
+      await jest.advanceTimersByTimeAsync(0);
     });
 
     expect(jotaiStore.get(isFetchingMoreAtom())).toBe(true);
 
     await act(async () => {
-      resolveBackoff();
+      jotaiStore.set(generationAtom(), jotaiStore.get(generationAtom()) + 1);
       await fetchMorePromise;
     });
 
