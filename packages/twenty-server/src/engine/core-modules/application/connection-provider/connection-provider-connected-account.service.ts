@@ -25,6 +25,7 @@ type ConnectedAccountCredentials = {
   accessToken: PlaintextString | null;
   refreshToken: PlaintextString | null;
   scopes: string[] | null;
+  accessTokenExpiresAt?: Date | null;
 };
 
 @Injectable()
@@ -130,6 +131,7 @@ export class ConnectionProviderConnectedAccountService {
           }),
         scopes: credentials.scopes,
         lastCredentialsRefreshedAt: new Date(),
+        accessTokenExpiresAt: credentials.accessTokenExpiresAt ?? null,
       }),
       ...(isDefined(handle) && { handle }),
       authFailedAt: null,

@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.54.0', 1793354310809)
+@RegisteredInstanceCommand('2.54.0', 1793360021964)
 export class AddWebhookIdToRoleTargetFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."roleTarget" ADD "webhookId" uuid');

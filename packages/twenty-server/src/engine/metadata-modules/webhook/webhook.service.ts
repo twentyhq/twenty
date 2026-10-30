@@ -14,7 +14,7 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import { computeWebhookRoleTargetOperations } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations.util';
+import { computeWebhookRoleTargetOperationsOrThrow } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
@@ -139,27 +139,28 @@ export class WebhookService {
         },
       );
 
-    const { flatRoleTargetsToCreate } = computeWebhookRoleTargetOperations({
-      webhookId: flatWebhookToCreate.id,
-      roleId,
-      workspaceId,
-      flatApplication: workspaceCustomFlatApplication,
-      flatRoleTargetMaps,
-      flatRoleMaps,
-      flatAgentMaps,
-      // A duplicate id is left for the migration validation to report
-      flatWebhookMaps: isDefined(
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatWebhookToCreate.id,
-          flatEntityMaps: flatWebhookMaps,
-        }),
-      )
-        ? flatWebhookMaps
-        : addFlatEntityToFlatEntityMapsOrThrow({
-            flatEntity: flatWebhookToCreate,
+    const { flatRoleTargetsToCreate } =
+      computeWebhookRoleTargetOperationsOrThrow({
+        webhookId: flatWebhookToCreate.id,
+        roleId,
+        workspaceId,
+        flatApplication: workspaceCustomFlatApplication,
+        flatRoleTargetMaps,
+        flatRoleMaps,
+        flatAgentMaps,
+        // A duplicate id is left for the migration validation to report
+        flatWebhookMaps: isDefined(
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: flatWebhookToCreate.id,
             flatEntityMaps: flatWebhookMaps,
           }),
-    });
+        )
+          ? flatWebhookMaps
+          : addFlatEntityToFlatEntityMapsOrThrow({
+              flatEntity: flatWebhookToCreate,
+              flatEntityMaps: flatWebhookMaps,
+            }),
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -253,7 +254,7 @@ export class WebhookService {
       });
 
     const { flatRoleTargetsToCreate, flatRoleTargetsToDelete } =
-      computeWebhookRoleTargetOperations({
+      computeWebhookRoleTargetOperationsOrThrow({
         webhookId: flatWebhookToUpdate.id,
         roleId,
         workspaceId,
