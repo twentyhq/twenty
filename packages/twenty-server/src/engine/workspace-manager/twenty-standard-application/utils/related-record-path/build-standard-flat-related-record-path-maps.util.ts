@@ -26,25 +26,31 @@ type StandardRelatedRecordPathHop = {
   fieldMetadataUniversalIdentifier: string;
 };
 
+const getFieldKey = ({
+  objectMetadataUniversalIdentifier,
+  name,
+}: {
+  objectMetadataUniversalIdentifier: string | null;
+  name: string;
+}) => `${objectMetadataUniversalIdentifier}:${name}`;
+
 const resolveStandardRelatedRecordPathHops = ({
   standardRelatedRecordPath: { objectName, fieldNames },
-  flatFieldMetadataMaps,
+  flatFieldMetadataByFieldKey,
 }: {
   standardRelatedRecordPath: StandardRelatedRecordPath;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataByFieldKey: Map<string, FlatFieldMetadata>;
 }): StandardRelatedRecordPathHop[] => {
-  const flatFieldMetadatas = Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined);
   let currentObjectMetadataUniversalIdentifier: string | null =
     STANDARD_OBJECTS[objectName].universalIdentifier;
 
   return fieldNames.map((fieldName) => {
-    const flatFieldMetadata = flatFieldMetadatas.find(
-      (candidate) =>
-        candidate.objectMetadataUniversalIdentifier ===
-          currentObjectMetadataUniversalIdentifier &&
-        candidate.name === fieldName,
+    const flatFieldMetadata = flatFieldMetadataByFieldKey.get(
+      getFieldKey({
+        objectMetadataUniversalIdentifier:
+          currentObjectMetadataUniversalIdentifier,
+        name: fieldName,
+      }),
     );
 
     if (!isDefined(flatFieldMetadata)) {
@@ -80,12 +86,20 @@ export const buildStandardFlatRelatedRecordPathMaps = ({
   };
 }): FlatEntityMaps<FlatRelatedRecordPath> => {
   let flatRelatedRecordPathMaps = createEmptyFlatEntityMaps();
+  const flatFieldMetadataByFieldKey = new Map(
+    Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .map((flatFieldMetadata) => [
+        getFieldKey(flatFieldMetadata),
+        flatFieldMetadata,
+      ]),
+  );
 
   for (const standardRelatedRecordPath of STANDARD_RELATED_RECORD_PATHS) {
     const [firstHop, secondHop, thirdHop, fourthHop] =
       resolveStandardRelatedRecordPathHops({
         standardRelatedRecordPath,
-        flatFieldMetadataMaps,
+        flatFieldMetadataByFieldKey,
       });
 
     flatRelatedRecordPathMaps = addFlatEntityToFlatEntityMapsOrThrow({
