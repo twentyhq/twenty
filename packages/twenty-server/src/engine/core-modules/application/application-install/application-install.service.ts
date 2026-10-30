@@ -869,6 +869,7 @@ export class ApplicationInstallService {
       resourcePath,
       fileFolder,
       isRequired,
+      shouldDeleteStoredFileWhenMissing,
     } of filesToWrite) {
       const absolutePath = this.resolveWithinDirOrThrow(
         extractedDir,
@@ -884,6 +885,16 @@ export class ApplicationInstallService {
           this.logger.warn(
             `Optional file not found in package: ${relativePath}; skipping for backward compatibility`,
           );
+
+          // A copy left by an earlier upload would otherwise be checked and built as this version's
+          if (shouldDeleteStoredFileWhenMissing === true) {
+            await this.fileStorageService.deleteFile({
+              fileFolder,
+              applicationUniversalIdentifier,
+              workspaceId,
+              resourcePath: resourcePath ?? relativePath,
+            });
+          }
 
           continue;
         }
