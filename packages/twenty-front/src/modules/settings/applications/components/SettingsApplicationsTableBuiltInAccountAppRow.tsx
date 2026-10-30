@@ -5,7 +5,7 @@ import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { type SettingsApplicationsTableLinkTarget } from '@/settings/applications/types/SettingsApplicationsTableLinkTarget';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
-import { getSettingsBuiltInAccountAppLink } from '@/settings/applications/utils/getSettingsBuiltInAccountAppLink';
+import { getSettingsApplicationLink } from '@/settings/applications/utils/getSettingsApplicationLink';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsApplicationsTableBuiltInAccountAppRowProps = {
@@ -33,9 +33,9 @@ export const SettingsApplicationsTableBuiltInAccountAppRow = ({
       middleColumn={middleColumn}
       statuses={statuses}
       action={<SettingsApplicationTableRowChevronIcon />}
-      link={getSettingsBuiltInAccountAppLink({
+      link={getSettingsApplicationLink({
         linkTarget,
-        builtInAccountAppId: builtInAccountApp.id,
+        applicationId: builtInAccountApp.id,
       })}
     />
   );

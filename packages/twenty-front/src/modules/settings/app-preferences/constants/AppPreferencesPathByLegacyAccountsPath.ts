@@ -4,9 +4,6 @@ export const APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH = {
   [SettingsPath.Accounts]: SettingsPath.AppPreferences,
   [SettingsPath.AccountsEmails]: SettingsPath.AppPreferences,
   [SettingsPath.AccountsCalendars]: SettingsPath.AppPreferences,
-  [SettingsPath.AccountDetail]: SettingsPath.AppPreferencesAccountDetail,
-  [SettingsPath.BuiltInAccountApp]: SettingsPath.AppPreferencesApp,
-  [SettingsPath.ApplicationPreferences]: SettingsPath.AppPreferencesApp,
   [SettingsPath.NewAccount]: SettingsPath.AppPreferencesNewAccount,
   [SettingsPath.AccountsConfiguration]:
     SettingsPath.AppPreferencesAccountConfiguration,

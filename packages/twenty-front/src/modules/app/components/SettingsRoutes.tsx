@@ -836,19 +836,6 @@ const createSettingsRouteElements = ({
           path={SettingsPath.EditImapSmtpCaldavConnection}
           element={<SettingsEditImapSmtpCaldavConnection />}
         />
-        {[
-          SettingsPath.AccountDetail,
-          SettingsPath.BuiltInAccountApp,
-          SettingsPath.ApplicationPreferences,
-        ].map((path) => (
-          <Route
-            key={path}
-            path={path}
-            element={
-              <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-            }
-          />
-        ))}
       </Route>
     </Route>
     <Route
