@@ -1,3 +1,6 @@
+import { FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-core-api-client-import-specifier.constant';
+import { isDefined } from 'twenty-shared/utils';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 import { PageLayoutType } from 'twenty-shared/types';
 import { createHash } from 'crypto';
 import { dirname, join } from 'path';
@@ -31,7 +34,7 @@ export const buildFrontComponent = async ({
   componentName: string;
   compiledSource: string;
   checksum: string;
-  usesSdkClient: boolean;
+  hasSdkClientImport: boolean;
   sharedDependenciesChecksum: string;
 }> => {
   validateFrontComponentSourceOrThrow(input.source);
@@ -50,7 +53,7 @@ export const buildFrontComponent = async ({
     platform: 'browser',
     external: [
       FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-      'twenty-client-sdk/core',
+      FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
     ],
     plugins: [
       {
@@ -71,7 +74,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React, twenty-client-sdk/core and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER} and the supported twenty-ui imports.`,
                 },
               ],
             };
@@ -97,15 +100,23 @@ export const buildFrontComponent = async ({
       }),
     ],
   });
+  if (!isDefined(result.metafile)) {
+    throw new FrontComponentBuildException({
+      message: 'Component build did not return import metadata.',
+      code: 'BUILD_FAILED',
+    });
+  }
+
   const compiledSource = result.outputFiles[0].text;
 
   return {
     source,
-    usesSdkClient: Object.values(result.metafile?.outputs ?? {}).some(
-      (output) =>
-        output.imports.some(
-          (entry) => entry.external && entry.path === 'twenty-client-sdk/core',
-        ),
+    hasSdkClientImport: Object.values(result.metafile.outputs).some((output) =>
+      output.imports.some(
+        (entry) =>
+          entry.external &&
+          entry.path === FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
+      ),
     ),
     sharedDependenciesChecksum: sharedDependencies.checksum,
     componentName: FRONT_COMPONENT_WRAPPER_NAME,

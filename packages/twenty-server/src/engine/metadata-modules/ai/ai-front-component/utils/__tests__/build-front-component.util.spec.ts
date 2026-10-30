@@ -1,3 +1,4 @@
+import * as buildWithLimits from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
 import { build, transform } from 'esbuild';
 import { PageLayoutType } from 'twenty-shared/types';
 
@@ -5,6 +6,21 @@ import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-fr
 import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
+
+jest.mock(
+  'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util',
+  () => {
+    const actual = jest.requireActual<typeof buildWithLimits>(
+      'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util',
+    );
+
+    return {
+      buildFrontComponentWithLimitsOrThrow: jest.fn(
+        actual.buildFrontComponentWithLimitsOrThrow,
+      ),
+    };
+  },
+);
 
 jest.useRealTimers();
 
@@ -63,7 +79,7 @@ describe('buildFrontComponent', () => {
   it.each([PageLayoutType.DASHBOARD, PageLayoutType.RECORD_PAGE] as const)(
     'builds one editable SDK file for the selected %s surface',
     async (pageLayoutType) => {
-      const { source, compiledSource, checksum, usesSdkClient } =
+      const { source, compiledSource, checksum, hasSdkClientImport } =
         await buildFrontComponent({
           ...INPUT,
           pageLayoutType,
@@ -74,7 +90,7 @@ describe('buildFrontComponent', () => {
         `widgetAvailability: { pageLayoutType: TwentyPageLayoutType.${pageLayoutType} }`,
       );
       expect(source).not.toContain('componentQuery');
-      expect(usesSdkClient).toBe(true);
+      expect(hasSdkClientImport).toBe(true);
       expect(compiledSource).toContain('twenty-client-sdk/core');
       expect(checksum).toMatch(/^[a-f0-9]{64}$/);
       expect(compiledSource).not.toContain('TWENTY_APP_ACCESS_TOKEN');
@@ -99,6 +115,29 @@ describe('buildFrontComponent', () => {
       ).resolves.toHaveProperty('outputFiles');
     },
   );
+
+  it('fails when the build omits import metadata', async () => {
+    const { buildFrontComponentWithLimitsOrThrow: originalBuild } =
+      jest.requireActual<typeof buildWithLimits>(
+        'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util',
+      );
+    const buildSpy = jest
+      .mocked(buildWithLimits.buildFrontComponentWithLimitsOrThrow)
+      .mockImplementationOnce(async (options) => {
+        const result = await originalBuild(options);
+        result.metafile = undefined;
+        return result;
+      });
+
+    try {
+      await expect(buildFrontComponent(INPUT)).rejects.toMatchObject({
+        code: 'BUILD_FAILED',
+        message: 'Component build did not return import metadata.',
+      });
+    } finally {
+      buildSpy.mockImplementation(originalBuild);
+    }
+  });
 
   it.each([
     'node:fs',

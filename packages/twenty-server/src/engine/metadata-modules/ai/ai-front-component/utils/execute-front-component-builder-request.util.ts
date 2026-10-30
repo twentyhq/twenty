@@ -40,14 +40,14 @@ export const executeFrontComponentBuilderRequest = async ({
       compiledSource,
       checksum,
       sharedDependenciesChecksum,
-      usesSdkClient,
+      hasSdkClientImport,
     } = built;
     const result = {
       success: true as const,
       builtCode: compiledSource,
       checksum,
       sharedDependenciesChecksum,
-      usesSdkClient,
+      hasSdkClientImport,
     };
     return checkResponseSizeOrThrow(result);
   } catch (error) {

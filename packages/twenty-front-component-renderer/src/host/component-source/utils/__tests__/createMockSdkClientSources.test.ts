@@ -1,16 +1,18 @@
 import { createMockSdkClientSources } from '../createMockSdkClientSources';
 
-const loadModule = (source: string) =>
+const loadModule = (
+  source: string,
+): {
+  CoreApiClient: new () => {
+    query: () => Promise<unknown>;
+    mutation: () => Promise<never>;
+  };
+  MetadataApiClient: new () => object;
+} =>
   new Function(`${source.replace('export class', 'class')}; return {
     CoreApiClient: typeof CoreApiClient === 'undefined' ? undefined : CoreApiClient,
     MetadataApiClient: typeof MetadataApiClient === 'undefined' ? undefined : MetadataApiClient,
-  };`)() as {
-    CoreApiClient: new () => {
-      query: () => Promise<unknown>;
-      mutation: () => Promise<never>;
-    };
-    MetadataApiClient: new () => object;
-  };
+  };`)();
 
 describe('createMockSdkClientSources', () => {
   it('returns sample query results without executing embedded strings', async () => {

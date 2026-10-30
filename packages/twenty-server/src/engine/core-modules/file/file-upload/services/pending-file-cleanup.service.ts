@@ -75,10 +75,18 @@ export class PendingFileCleanupService {
               isDefined(file.settings.expiresAt))) &&
           isDefined(file.workspaceId)
         ) {
+          const fileFolder = Object.values(FileFolder).find(
+            (folder) => folder === file.path.split('/')[0],
+          );
+
+          if (!isDefined(fileFolder)) {
+            throw new Error(`Invalid folder for stale file ${file.id}`);
+          }
+
           await this.fileStorageService.deleteByFileId({
             fileId: file.id,
             workspaceId: file.workspaceId,
-            fileFolder: file.path.split('/')[0] as FileFolder,
+            fileFolder,
           });
           deletedCount++;
 

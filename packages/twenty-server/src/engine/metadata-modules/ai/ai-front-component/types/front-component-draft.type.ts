@@ -10,7 +10,7 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   userWorkspaceId: string;
   entrySource: string;
   componentName: string;
-  usesSdkClient: boolean;
+  hasSdkClientImport: boolean;
   objectNamePlural: string;
   compiledSource: string;
   checksum: string;

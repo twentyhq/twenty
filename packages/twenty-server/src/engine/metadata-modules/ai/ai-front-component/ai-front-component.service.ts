@@ -125,7 +125,7 @@ export class AiFrontComponentService {
     );
   }
 
-  private async getDraftReference({
+  private async getDraftReferenceOrThrow({
     workspaceId,
     userWorkspaceId,
     draftId,
@@ -154,7 +154,7 @@ export class AiFrontComponentService {
     return draft;
   }
 
-  async getDraft({
+  async getDraftOrThrow({
     workspaceId,
     userWorkspaceId,
     draftId,
@@ -163,7 +163,7 @@ export class AiFrontComponentService {
     userWorkspaceId: string;
     draftId: string;
   }): Promise<FrontComponentDraft> {
-    const reference = await this.getDraftReference({
+    const reference = await this.getDraftReferenceOrThrow({
       workspaceId,
       userWorkspaceId,
       draftId,
@@ -260,7 +260,7 @@ export class AiFrontComponentService {
       selectedFields: input.query.select,
     });
     const previous = isDefined(input.previousDraftId)
-      ? await this.getDraftReference({
+      ? await this.getDraftReferenceOrThrow({
           workspaceId: context.workspaceId,
           userWorkspaceId,
           draftId: input.previousDraftId,
@@ -285,7 +285,7 @@ export class AiFrontComponentService {
     return this.locks.withLock(
       async () => {
         if (isDefined(previous)) {
-          const latestPrevious = await this.getDraftReference({
+          const latestPrevious = await this.getDraftReferenceOrThrow({
             workspaceId: context.workspaceId,
             userWorkspaceId,
             draftId: previous.id,
@@ -316,7 +316,7 @@ export class AiFrontComponentService {
           dependencyRevision: built.dependencyRevision,
           entrySource: built.source,
           componentName: built.componentName,
-          usesSdkClient: built.usesSdkClient,
+          hasSdkClientImport: built.hasSdkClientImport,
           objectNamePlural,
           id,
           applicationId: application.id,
@@ -378,7 +378,7 @@ export class AiFrontComponentService {
     authContext: WorkspaceAuthContext;
   }) {
     const workspaceId = authContext.workspace.id;
-    const draft = await this.getDraft({
+    const draft = await this.getDraftOrThrow({
       workspaceId,
       userWorkspaceId,
       draftId,
@@ -419,7 +419,7 @@ export class AiFrontComponentService {
     draftId: string;
     diagnostic: FrontComponentDiagnostic;
   }) {
-    const draft = await this.getDraftReference({
+    const draft = await this.getDraftReferenceOrThrow({
       workspaceId,
       userWorkspaceId,
       draftId,
@@ -427,7 +427,7 @@ export class AiFrontComponentService {
 
     await this.locks.withLock(
       async () => {
-        const latest = await this.getDraftReference({
+        const latest = await this.getDraftReferenceOrThrow({
           workspaceId,
           userWorkspaceId,
           draftId,
