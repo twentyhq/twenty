@@ -1,0 +1,2 @@
+export const RELATED_RECORD_PATH_TABLE_GRID_TEMPLATE_COLUMNS =
+  '1fr 2fr 96px 36px';
