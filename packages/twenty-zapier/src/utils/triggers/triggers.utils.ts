@@ -13,7 +13,13 @@ export enum DatabaseEventAction {
   DELETED = 'deleted',
 }
 
-const getApiKeyRoleId = async (z: ZObject, bundle: Bundle): Promise<string> => {
+const getApiKeyRoleId = async ({
+  z,
+  bundle,
+}: {
+  z: ZObject;
+  bundle: Bundle;
+}): Promise<string> => {
   const [, payload] = bundle.authData.apiKey.split('.');
   const { jti: apiKeyId } = JSON.parse(
     Buffer.from(payload, 'base64url').toString(),
@@ -34,7 +40,7 @@ export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
       `${bundle.inputData.nameSingular}.${bundle.inputData.operation}`,
     ],
     secret: '',
-    roleId: await getApiKeyRoleId(z, bundle),
+    roleId: await getApiKeyRoleId({ z, bundle }),
   };
   const result = await requestDb({
     z,

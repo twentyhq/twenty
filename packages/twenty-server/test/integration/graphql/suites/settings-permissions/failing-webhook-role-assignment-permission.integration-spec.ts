@@ -16,6 +16,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WEBHOOK_TARGET_URL = 'https://example.com/webhook';
+const ROLE_LESS_WEBHOOK_TARGET_URL = 'https://example.com/role-less-webhook';
 
 describe('Webhook role assignment should fail', () => {
   let adminRoleId: string;
@@ -86,6 +87,29 @@ describe('Webhook role assignment should fail', () => {
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
+  });
+
+  it('when creating a webhook through REST without a role', async () => {
+    const response = await makeRestApiRequest({
+      method: 'post',
+      path: '/webhooks',
+      body: {
+        targetUrl: ROLE_LESS_WEBHOOK_TARGET_URL,
+        operations: ['*.*'],
+      },
+    });
+
+    expectOneNotInternalServerErrorHttpResponseSnapshot({
+      status: response.status,
+      body: response.body,
+    });
+
+    const webhooks = await testDataSource.query(
+      'SELECT id FROM core."webhook" WHERE "targetUrl" = $1',
+      [ROLE_LESS_WEBHOOK_TARGET_URL],
+    );
+
+    expect(webhooks).toEqual([]);
   });
 
   it('when creating a webhook with an unknown role', async () => {

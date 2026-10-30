@@ -1,7 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
+import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -13,6 +15,10 @@ import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { computeWebhookRoleTargetOperationsOrThrow } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util';
 import { generateWebhookSecret } from 'src/engine/metadata-modules/webhook/utils/generate-webhook-secret.util';
+import {
+  WebhookException,
+  WebhookExceptionCode,
+} from 'src/engine/metadata-modules/webhook/webhook.exception';
 
 export const fromCreateWebhookInputToFlatWebhookToCreate = ({
   createWebhookInput,
@@ -33,6 +39,14 @@ export const fromCreateWebhookInputToFlatWebhookToCreate = ({
   flatWebhookToCreate: FlatWebhook;
   flatRoleTargetsToCreate: FlatRoleTarget[];
 } => {
+  if (!isNonEmptyString(createWebhookInput.roleId)) {
+    throw new WebhookException(
+      'A role is required to create a webhook',
+      WebhookExceptionCode.INVALID_WEBHOOK_INPUT,
+      { userFriendlyMessage: msg`Select a role for this webhook.` },
+    );
+  }
+
   const now = new Date().toISOString();
 
   const { targetUrl, description } =

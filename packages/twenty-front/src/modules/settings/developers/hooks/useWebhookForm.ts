@@ -78,18 +78,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const roles = rolesData?.getApiKeyRoles ?? [];
 
   useEffect(() => {
-    const firstRoleId = rolesData?.getApiKeyRoles[0]?.id;
-
-    if (
-      isCreationMode &&
-      isDefined(firstRoleId) &&
-      !isNonEmptyString(formConfig.getValues('roleId'))
-    ) {
-      formConfig.setValue('roleId', firstRoleId, { shouldValidate: true });
-    }
-  }, [rolesData, isCreationMode, formConfig]);
-
-  useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
       if (!webhook) return;
@@ -108,6 +96,18 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     }
   }, [webhookData, formConfig]);
+
+  // Runs after the reset above so a webhook without a role gets the role the selector displays
+  useEffect(() => {
+    const firstRoleId = rolesData?.getApiKeyRoles[0]?.id;
+
+    if (
+      isDefined(firstRoleId) &&
+      !isNonEmptyString(formConfig.getValues('roleId'))
+    ) {
+      formConfig.setValue('roleId', firstRoleId, { shouldValidate: true });
+    }
+  }, [rolesData, webhookData, formConfig]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode
