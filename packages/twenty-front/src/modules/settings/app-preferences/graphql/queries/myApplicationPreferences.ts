@@ -30,6 +30,7 @@ export const MY_APPLICATION_PREFERENCES = gql`
       connectionProviders {
         ...ApplicationConnectionProviderFragment
       }
+      hasUserHealthCheck
     }
   }
 `;

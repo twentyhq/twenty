@@ -1,5 +1,5 @@
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
-import { getApplicationHealthBannerAppearance } from '~/pages/settings/applications/utils/getApplicationHealthBannerAppearance';
+import { getApplicationHealthBannerAppearance } from '@/settings/applications/utils/getApplicationHealthBannerAppearance';
 
 describe('getApplicationHealthBannerAppearance', () => {
   it.each([

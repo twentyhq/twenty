@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
-import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
+import { SettingsApplicationHealthBanner } from '@/settings/applications/components/SettingsApplicationHealthBanner';
 
 const renderBanner = ({
   healthStatus = ApplicationHealthStatus.ERROR,
