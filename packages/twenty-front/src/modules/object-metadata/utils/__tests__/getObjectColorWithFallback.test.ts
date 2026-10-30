@@ -35,6 +35,27 @@ describe('getObjectColorWithFallback', () => {
     ).toBe('blue');
   });
 
+  it('should give each main standard object its own color', () => {
+    const colors = [
+      'company',
+      'person',
+      'opportunity',
+      'task',
+      'note',
+      'dashboard',
+      'workflow',
+    ].map((nameSingular) =>
+      getObjectColorWithFallback({
+        nameSingular,
+        color: null,
+        isSystem: false,
+      }),
+    );
+
+    expect(new Set(colors).size).toBe(colors.length);
+    expect(colors).not.toContain('gray');
+  });
+
   it('should derive a stable color from the name of a custom object', () => {
     const color = getObjectColorWithFallback({
       nameSingular: 'rocket',

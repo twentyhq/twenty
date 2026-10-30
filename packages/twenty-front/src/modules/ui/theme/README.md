@@ -42,6 +42,13 @@ second component library:
 - Focus: `0 0 0 3px var(--t-accent-secondary)` on `:focus-visible`.
 - Type: Inter with the `cv05` and `cv11` alternates; tabular figures for
   numbers in data views.
+- Object colors: each standard object has its own icon hue so it is
+  recognizable in navigation, breadcrumbs and pickers: companies mint,
+  people violet, opportunities cyan, tasks grass, notes gold, dashboards
+  pink, workflows iris. Hues come from `getObjectColorWithFallback` and use
+  step 10, so avoid light families (amber, yellow, sky, lime) that fail 3:1
+  on white. Orange and red stay free for sidebar folders and links. A color
+  picked in layout customization still wins.
 
 Inter is already bundled locally. The reference's optional Sen heading font is
 not added, and no remote fonts or assets are requested. Muted text and status
