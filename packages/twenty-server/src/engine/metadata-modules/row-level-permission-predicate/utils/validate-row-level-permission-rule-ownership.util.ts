@@ -16,6 +16,34 @@ import {
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
+const getRuleFieldObjectMetadataIdOrThrow = ({
+  relationFieldMetadataId,
+  objectMetadataId,
+  flatFieldMetadataMaps,
+}: {
+  relationFieldMetadataId: string | null | undefined;
+  objectMetadataId: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string => {
+  if (!isDefined(relationFieldMetadataId)) {
+    return objectMetadataId;
+  }
+
+  const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: relationFieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  })?.relationTargetObjectMetadataId;
+
+  if (!isDefined(relationTargetObjectMetadataId)) {
+    throw new RowLevelPermissionPredicateException(
+      'relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.',
+      RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+    );
+  }
+
+  return relationTargetObjectMetadataId;
+};
+
 // Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
 // role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
@@ -119,25 +147,11 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       );
     }
 
-    let expectedFieldObjectMetadataId = objectMetadataId;
-
-    if (isDefined(predicate.relationFieldMetadataId)) {
-      const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps(
-        {
-          flatEntityId: predicate.relationFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        },
-      )?.relationTargetObjectMetadataId;
-
-      if (!isDefined(relationTargetObjectMetadataId)) {
-        throw new RowLevelPermissionPredicateException(
-          'relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.',
-          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        );
-      }
-
-      expectedFieldObjectMetadataId = relationTargetObjectMetadataId;
-    }
+    const expectedFieldObjectMetadataId = getRuleFieldObjectMetadataIdOrThrow({
+      relationFieldMetadataId: predicate.relationFieldMetadataId,
+      objectMetadataId,
+      flatFieldMetadataMaps,
+    });
 
     if (fieldMetadata.objectMetadataId !== expectedFieldObjectMetadataId) {
       throw new RowLevelPermissionPredicateException(
