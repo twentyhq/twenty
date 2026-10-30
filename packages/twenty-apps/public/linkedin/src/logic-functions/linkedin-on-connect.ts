@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  defineLogicFunction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 import {
   createMessageChannel,
   getConnection,
@@ -7,7 +10,6 @@ import {
   listMessageChannels,
 } from 'twenty-sdk/logic-function';
 
-import { PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-linkedin-link-field-universal-identifier.constant';
 import { LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinConnectionHookPayload } from 'src/logic-functions/types/linkedin-connection-hook-payload.type';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
@@ -42,7 +44,8 @@ export const linkedinOnConnectHandler = async ({
         displayName: profile.display_name,
         visibility: 'METADATA',
         participantHandleFieldUniversalIdentifier:
-          PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER,
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.linkedinLink
+            .universalIdentifier,
       });
     })());
 

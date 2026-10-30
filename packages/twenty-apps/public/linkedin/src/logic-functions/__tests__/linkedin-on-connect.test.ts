@@ -1,8 +1,6 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/person-linkedin-link-field-universal-identifier.constant';
-
 const mocks = vi.hoisted(() => ({
   getConnection: vi.fn(),
   listMessageChannels: vi.fn(),
@@ -44,13 +42,6 @@ describe('linkedinOnConnectHandler', () => {
     mocks.createMessageChannel.mockResolvedValue({ id: 'channel-id' });
   });
 
-  it('matches participants on the person LinkedIn field', () => {
-    expect(PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER).toBe(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.linkedinLink
-        .universalIdentifier,
-    );
-  });
-
   it('creates a private channel on the member profile and claims the account', async () => {
     await expect(linkedinOnConnectHandler(PAYLOAD)).resolves.toEqual({
       messageChannelId: 'channel-id',
@@ -62,7 +53,8 @@ describe('linkedinOnConnectHandler', () => {
       displayName: 'Ada Lovelace',
       visibility: 'METADATA',
       participantHandleFieldUniversalIdentifier:
-        PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.linkedinLink
+          .universalIdentifier,
     });
     expect(mocks.kvSet).toHaveBeenCalledExactlyOnceWith(
       'unipile-account:acc_1',
