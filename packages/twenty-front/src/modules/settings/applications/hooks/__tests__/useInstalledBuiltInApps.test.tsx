@@ -6,7 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useInstalledBuiltInApps } from '@/settings/applications/hooks/useInstalledBuiltInApps';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -24,12 +24,12 @@ const setAppPreferencesFlag = (value: boolean) =>
     featureFlags: [{ key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value }],
   });
 
-const renderInstalledBuiltInAccountAppIds = () =>
-  renderHook(() => useInstalledBuiltInAccountApps(), {
+const renderInstalledBuiltInAppIds = () =>
+  renderHook(() => useInstalledBuiltInApps(), {
     wrapper,
-  }).result.current.map((builtInAccountApp) => builtInAccountApp.id);
+  }).result.current.map((builtInApp) => builtInApp.id);
 
-describe('useInstalledBuiltInAccountApps', () => {
+describe('useInstalledBuiltInApps', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
@@ -37,18 +37,20 @@ describe('useInstalledBuiltInAccountApps', () => {
     jotaiStore.set(isImapSmtpCaldavEnabledState.atom, false);
   });
 
-  it('returns the built-in account apps enabled on the server when the flag is on', () => {
+  it('returns the built-in account apps enabled on the server, then ChatGPT and Claude, when the flag is on', () => {
     setAppPreferencesFlag(true);
 
-    expect(renderInstalledBuiltInAccountAppIds()).toEqual([
+    expect(renderInstalledBuiltInAppIds()).toEqual([
       'google',
       'outlook',
+      'chatgpt',
+      'claude',
     ]);
   });
 
-  it('returns no built-in account app when the flag is off', () => {
+  it('returns no built-in app when the flag is off', () => {
     setAppPreferencesFlag(false);
 
-    expect(renderInstalledBuiltInAccountAppIds()).toEqual([]);
+    expect(renderInstalledBuiltInAppIds()).toEqual([]);
   });
 });

@@ -1,7 +1,7 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useInstalledBuiltInApps } from '@/settings/applications/hooks/useInstalledBuiltInApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
@@ -17,7 +17,7 @@ const StyledToolbar = styled.div`
 export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
-  const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
+  const installedBuiltInApps = useInstalledBuiltInApps();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -50,7 +50,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
         ) : undefined
       }
       applications={installedApplications}
-      builtInAccountApps={installedBuiltInAccountApps}
+      builtInApps={installedBuiltInApps}
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}
       statusesById={statusesById}

@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -9,17 +9,17 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
-type SettingsBuiltInAccountAppDetailsProps = {
-  builtInAccountApp: BuiltInAccountApp;
+type SettingsBuiltInAppDetailsProps = {
+  builtInApp: BuiltInApp;
 };
 
-export const SettingsBuiltInAccountAppDetails = ({
-  builtInAccountApp,
-}: SettingsBuiltInAccountAppDetailsProps) => {
+export const SettingsBuiltInAppDetails = ({
+  builtInApp,
+}: SettingsBuiltInAppDetailsProps) => {
   const { t } = useLingui();
 
-  const appName = t(builtInAccountApp.name);
-  const logoUrl = getBuiltInAccountAppLogoUrl(builtInAccountApp);
+  const appName = t(builtInApp.name);
+  const logoUrl = getBuiltInAppLogoUrl(builtInApp);
 
   return (
     <SettingsPageLayout
@@ -49,8 +49,8 @@ export const SettingsBuiltInAccountAppDetails = ({
           <SettingsApplicationOverviewCard
             logoUrl={logoUrl}
             displayName={appName}
-            description={t(builtInAccountApp.description)}
-            coverImageUrl={builtInAccountApp.coverImage}
+            description={t(builtInApp.description)}
+            coverImageUrl={builtInApp.coverImage}
           />
         </Section.Root>
       </SettingsPageContainer>

@@ -39,15 +39,15 @@ export const buildMcpSetupCategories = ({
   mcpServerUrl,
 }: BuildMcpSetupCategoriesParams): McpSetupCategory[] => [
   {
-    title: t`Quick install`,
-    description: t`Open a maintained integration or prefill clients that accept MCP install links.`,
+    title: t`Quick connect`,
+    description: t`Connect ChatGPT or Claude to your Twenty account.`,
     showManualConfigurationAfter: true,
     cards: [
       {
         title: t`ChatGPT`,
         badge: t`Official app`,
         description: t`Open Twenty's official ChatGPT integration for your workspace.`,
-        ctaLabel: t`Open`,
+        ctaLabel: t`Connect`,
         href: MCP_SETUP.chatGptTwentyAppUrl,
         logo: <McpClientLogo src={OpenAiLogo} invertInDarkMode />,
       },
@@ -55,8 +55,8 @@ export const buildMcpSetupCategories = ({
         title: t`Claude`,
         badge: t`Preset link`,
         description: t`Open Claude with the Twenty connector name and MCP URL prefilled.`,
-        ctaLabel: t`Install`,
-        disabledTooltip: t`Claude install links require an HTTPS MCP URL.`,
+        ctaLabel: t`Connect`,
+        disabledTooltip: t`Claude connections require an HTTPS MCP URL.`,
         href: isHttpsInstallLinkEnabled
           ? buildClaudeInstallLink(mcpServerUrl)
           : undefined,

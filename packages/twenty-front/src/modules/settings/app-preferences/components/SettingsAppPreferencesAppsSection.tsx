@@ -1,3 +1,4 @@
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -66,7 +67,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       applications={applicationsWithPreferences.map(
         ({ application }) => application,
       )}
-      builtInAccountApps={enabledBuiltInAccountApps}
+      builtInApps={[...enabledBuiltInAccountApps, ...BUILT_IN_MCP_CLIENT_APPS]}
       linkTarget="applicationPreferences"
       middleColumn="status"
       statusesById={statusesById}
