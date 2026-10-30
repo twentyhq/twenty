@@ -1,0 +1,1 @@
+export const AI_FORM_MAX_OPTION_VALUE_LENGTH = 100;

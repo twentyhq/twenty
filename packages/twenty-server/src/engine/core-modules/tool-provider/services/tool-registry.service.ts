@@ -140,11 +140,13 @@ export class ToolRegistryService {
 
       const executeFn = async (
         args: Record<string, unknown>,
+        executionOptions?: { toolCallId?: string },
       ): Promise<ToolOutput> => {
         const result = await this.toolExecutorService.dispatch(
           descriptor,
           args,
           context,
+          { toolCallId: executionOptions?.toolCallId },
         );
 
         const compacted = compactOutput
@@ -311,7 +313,11 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown> | undefined,
     context: ToolContext,
-    options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
+    options?: {
+      compactOutput?: boolean;
+      spillLargeOutput?: boolean;
+      toolCallId?: string;
+    },
   ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
@@ -340,6 +346,7 @@ export class ToolRegistryService {
         entry,
         args,
         fullContext,
+        { toolCallId: options?.toolCallId },
       );
 
       const compacted = options?.compactOutput
@@ -463,6 +470,7 @@ export class ToolRegistryService {
       threadId: context.threadId,
       locale: context.locale,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+      aiActionPolicy: context.aiActionPolicy,
     };
   }
 }

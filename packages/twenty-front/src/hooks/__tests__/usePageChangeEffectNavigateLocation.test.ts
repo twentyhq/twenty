@@ -1,5 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { useLandingPagePath } from '@/navigation/hooks/useLandingPagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useQuery } from '@apollo/client/react';
@@ -47,9 +47,9 @@ const setupMockIsLogged = (isLogged: boolean) => {
 
 const defaultHomePagePath = '/objects/companies';
 
-jest.mock('@/navigation/hooks/useDefaultHomePagePath');
-jest.mocked(useDefaultHomePagePath).mockReturnValue({
-  defaultHomePagePath,
+jest.mock('@/navigation/hooks/useLandingPagePath');
+jest.mocked(useLandingPagePath).mockReturnValue({
+  landingPagePath: defaultHomePagePath,
 });
 
 jest.mock('@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace');

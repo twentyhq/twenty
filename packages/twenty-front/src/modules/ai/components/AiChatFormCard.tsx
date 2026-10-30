@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   type RequestFormField,
   type RequestFormToolResult,
+  validateAiFormAnswers,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -18,6 +19,12 @@ const StyledFields = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledValidationErrors = styled.div`
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActions = styled.div`
@@ -37,9 +44,20 @@ export const AiChatFormCard = ({ toolCallId, fields }: AiChatFormCardProps) => {
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [error, setError] = useState<string | undefined>(undefined);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Mirrors the server's checks so a person sees what to fix before a round
+  // trip; the server still validates every answer.
   const submit = async () => {
+    const errors = validateAiFormAnswers({ fields, values });
+
+    setValidationErrors(errors);
+
+    if (errors.length > 0) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     const isAnswered = await answerAgentChatToolCall({
@@ -72,6 +90,11 @@ export const AiChatFormCard = ({ toolCallId, fields }: AiChatFormCardProps) => {
           onError={setError}
         />
       </StyledFields>
+      {validationErrors.length > 0 && (
+        <StyledValidationErrors role="alert">
+          {validationErrors.join(' ')}
+        </StyledValidationErrors>
+      )}
       <StyledActions>
         <Button
           size="sm"

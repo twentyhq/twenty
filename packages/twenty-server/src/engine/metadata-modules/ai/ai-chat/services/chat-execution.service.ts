@@ -1,4 +1,6 @@
 import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
+import { SetuAiActionChatPolicyService } from 'src/engine/metadata-modules/ai/ai-actions/services/setu-ai-action-chat-policy.service';
+import { SetuAiTaskChatToolsService } from 'src/engine/metadata-modules/ai/ai-tasks/services/setu-ai-task-chat-tools.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { Injectable, Logger } from '@nestjs/common';
@@ -14,7 +16,12 @@ import {
   type SystemModelMessage,
   type ToolSet,
 } from 'ai';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessage,
+  GET_AI_TASK_STATUS_TOOL_NAME,
+  PROPOSE_CRM_ACTION_TOOL_NAME,
+  START_ACCOUNT_RESEARCH_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -158,6 +165,8 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly setuAiActionChatPolicyService: SetuAiActionChatPolicyService,
+    private readonly setuAiTaskChatToolsService: SetuAiTaskChatToolsService,
   ) {}
 
   async streamChat({
@@ -219,6 +228,37 @@ export class ChatExecutionService {
       ...authorization,
       resolveExecutionContext,
     };
+
+    const isWorkspaceSetupChat =
+      threadId ===
+      buildWorkspaceSetupChatThreadId({
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
+
+    // Reviewed actions: every tool call from this chat goes through the
+    // policy, so sends and record changes become proposals the person
+    // approves. Workspace setup keeps its own explicitly identified path.
+    const areReviewedActionsEnabled =
+      !isWorkspaceSetupChat &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SETU_AI_ACTIONS_ENABLED,
+        workspace.id,
+      ));
+
+    if (areReviewedActionsEnabled) {
+      toolContext.aiActionPolicy =
+        this.setuAiActionChatPolicyService.createPolicy(toolContext);
+    }
+
+    // Background research runs in the worker and reports through a task
+    // card, so the chat turn can end while the task keeps going.
+    const areResearchTasksEnabled =
+      !isWorkspaceSetupChat &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SETU_AI_TASKS_ENABLED,
+        workspace.id,
+      ));
 
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
@@ -310,10 +350,14 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
-    // Proposing an email only helps someone who could then send it.
-    const canProposeEmail = toolCatalog.some(
-      (toolIndexEntry) => toolIndexEntry.name === 'send_email',
-    );
+    // Proposing an email only helps someone who could then send it. With
+    // reviewed actions on, propose_crm_action replaces the legacy flow so the
+    // durable ledger is the only path to a send.
+    const canProposeEmail =
+      !areReviewedActionsEnabled &&
+      toolCatalog.some(
+        (toolIndexEntry) => toolIndexEntry.name === 'send_email',
+      );
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
@@ -321,6 +365,10 @@ export class ChatExecutionService {
       ASK_QUESTIONS_TOOL_NAME,
       REQUEST_FORM_TOOL_NAME,
       ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
+      ...(areReviewedActionsEnabled ? [PROPOSE_CRM_ACTION_TOOL_NAME] : []),
+      ...(areResearchTasksEnabled
+        ? [START_ACCOUNT_RESEARCH_TOOL_NAME, GET_AI_TASK_STATUS_TOOL_NAME]
+        : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
         ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
@@ -340,6 +388,27 @@ export class ChatExecutionService {
       [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
       ...(canProposeEmail
         ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
+        : {}),
+      ...(areReviewedActionsEnabled
+        ? {
+            [PROPOSE_CRM_ACTION_TOOL_NAME]:
+              this.setuAiActionChatPolicyService.createProposeCrmActionTool(
+                toolContext,
+              ),
+          }
+        : {}),
+      ...(areResearchTasksEnabled
+        ? {
+            [START_ACCOUNT_RESEARCH_TOOL_NAME]:
+              this.setuAiTaskChatToolsService.createStartAccountResearchTool(
+                toolContext,
+                registeredModel.modelId,
+              ),
+            [GET_AI_TASK_STATUS_TOOL_NAME]:
+              this.setuAiTaskChatToolsService.createGetAiTaskStatusTool(
+                toolContext,
+              ),
+          }
         : {}),
       ...(isWorkspaceSetupThread
         ? {

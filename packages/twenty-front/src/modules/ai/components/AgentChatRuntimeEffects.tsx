@@ -1,3 +1,4 @@
+import { AiActionStatePollingEffect } from '@/ai/components/AiActionStatePollingEffect';
 import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
@@ -20,6 +21,7 @@ export const AgentChatRuntimeEffects = () => {
       <AgentChatPrepromptEffect />
       <AgentChatStreamKeepAliveEffect />
       <AgentChatSessionStartTimeEffect />
+      <AiActionStatePollingEffect />
     </>
   );
 };

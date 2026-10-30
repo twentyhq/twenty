@@ -14,6 +14,8 @@ import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
+import { SetuAiActionDispatcherCronCommand } from 'src/engine/metadata-modules/ai/ai-actions/crons/commands/setu-ai-action-dispatcher.cron.command';
+import { SetuAiTaskDispatcherCronCommand } from 'src/engine/metadata-modules/ai/ai-tasks/crons/commands/setu-ai-task-dispatcher.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
@@ -84,6 +86,8 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
+    private readonly setuAiActionDispatcherCronCommand: SetuAiActionDispatcherCronCommand,
+    private readonly setuAiTaskDispatcherCronCommand: SetuAiTaskDispatcherCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
@@ -238,6 +242,14 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'UserSessionCleanup',
         command: this.userSessionCleanupCronCommand,
+      },
+      {
+        name: 'SetuAiActionDispatcher',
+        command: this.setuAiActionDispatcherCronCommand,
+      },
+      {
+        name: 'SetuAiTaskDispatcher',
+        command: this.setuAiTaskDispatcherCronCommand,
       },
     ];
 

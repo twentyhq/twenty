@@ -55,6 +55,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperationTypes: [
         UsageOperationType.AI_CHAT_TOKEN,
         UsageOperationType.AI_WORKFLOW_TOKEN,
+        UsageOperationType.AI_RESEARCH_TOKEN,
         UsageOperationType.WEB_SEARCH,
       ],
       allowedSpenderTypes: [

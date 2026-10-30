@@ -42,6 +42,10 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
+jest.mock('@/ai/components/AiChatInteractionRenderer', () => ({
+  AiChatInteractionRenderer: () => <div data-testid="interaction-renderer" />,
+}));
+
 jest.mock('@/ai/components/AiChatToolPartRenderer', () => ({
   AiChatToolPartRenderer: ({ toolPart }: { toolPart: { type: string } }) => (
     <div data-testid="tool-widget">{toolPart.type}</div>

@@ -1,5 +1,5 @@
-import { isString } from '@sniptt/guards';
 import {
+  formatAiFormAnswerValue,
   type RequestFormToolInput,
   type RequestFormToolResult,
 } from 'twenty-shared/ai';
@@ -34,11 +34,10 @@ const buildAnswerText = ({
 }: RequestFormToolInput & { values: RequestFormToolOutput }) =>
   fields
     .filter((field) => isDefined(values[field.name]))
-    .map((field) => {
-      const value = values[field.name];
-
-      return `${field.label}: ${isString(value) ? value : JSON.stringify(value)}`;
-    })
+    .map(
+      (field) =>
+        `${field.label}: ${formatAiFormAnswerValue(field, values[field.name])}`,
+    )
     .join('\n') || 'Submitted the form.';
 
 export const REQUEST_FORM_PAUSING_TOOL = definePausingTool<

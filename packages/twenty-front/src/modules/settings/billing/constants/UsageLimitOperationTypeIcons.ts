@@ -13,6 +13,7 @@ import {
   IconSearch,
   IconSend,
   IconSettingsAutomation,
+  IconSparkles,
   IconWebhook,
 } from 'twenty-ui/icon';
 
@@ -25,6 +26,7 @@ export const USAGE_LIMIT_OPERATION_TYPE_ICONS: Record<
   [UsageOperationType.ALL]: IconPlayerPlay,
   [UsageOperationType.AI_CHAT_TOKEN]: IconMessage,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: IconLego,
+  [UsageOperationType.AI_RESEARCH_TOKEN]: IconSparkles,
   [UsageOperationType.WORKFLOW_EXECUTION]: IconSettingsAutomation,
   [UsageOperationType.CODE_EXECUTION]: IconCode,
   [UsageOperationType.WEB_SEARCH]: IconSearch,

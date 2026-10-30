@@ -6,6 +6,7 @@ import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
 import { AiChatEmailApprovalStatusRenderer } from '@/ai/components/AiChatEmailApprovalStatusRenderer';
 import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRenderer';
+import { AiChatInteractionRenderer } from '@/ai/components/AiChatInteractionRenderer';
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolPartRenderer } from '@/ai/components/AiChatToolPartRenderer';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
@@ -13,6 +14,7 @@ import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { useToolWidgetByName } from '@/ai/hooks/useToolWidgetByName';
 import { type ToolWidget } from '@/ai/types/ToolWidget';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
+import { getSetuInteractionFromToolPart } from '@/ai/utils/getSetuInteractionFromToolPart';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
@@ -65,6 +67,12 @@ const MessagePartRenderer = ({
       );
     default:
       if (isToolUIPart(part)) {
+        const interaction = getSetuInteractionFromToolPart(part);
+
+        if (interaction !== null) {
+          return <AiChatInteractionRenderer interaction={interaction} />;
+        }
+
         if (getToolName(part) === ASK_QUESTIONS_TOOL_NAME) {
           return (
             <AiChatQuestionStatusRenderer
@@ -137,10 +145,11 @@ export const AiChatAssistantMessageRenderer = ({
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      shouldToolPartRenderStandalone(
-        part,
-        widgetByToolName.get(getEffectiveToolName(part)),
-      ),
+      (getSetuInteractionFromToolPart(part) !== null ||
+        shouldToolPartRenderStandalone(
+          part,
+          widgetByToolName.get(getEffectiveToolName(part)),
+        )),
   );
 
   const lastRenderItemIndex = renderItems.length - 1;

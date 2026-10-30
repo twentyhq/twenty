@@ -1,0 +1,1 @@
+export const SETU_AI_ACTION_APPROVAL_TTL_MS = 24 * 60 * 60 * 1000;

@@ -1,9 +1,12 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { isAiFormInlineSelectSettings } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowFormFieldsProps = {
@@ -40,6 +43,43 @@ export const WorkflowFormFields = ({
             }}
             objectNameSingulars={[objectNameSingular]}
             disabled={readonly}
+          />
+        );
+      }
+
+      // Choices an agent listed itself; workflow form steps never set them.
+      if (
+        (field.type === 'SELECT' || field.type === 'MULTI_SELECT') &&
+        isAiFormInlineSelectSettings(field.settings)
+      ) {
+        const options = field.settings.options.map((option) => ({
+          value: option.value,
+          label: option.label,
+        }));
+
+        return field.type === 'SELECT' ? (
+          // Nullable, so nothing reads as chosen before the person picks.
+          <FormSelectFieldInput
+            key={field.name}
+            label={field.label}
+            defaultValue={field.value}
+            options={options}
+            isNullable
+            readonly={readonly}
+            onChange={(value) => {
+              onChange(field.name, value);
+            }}
+          />
+        ) : (
+          <FormMultiSelectFieldInput
+            key={field.name}
+            label={field.label}
+            defaultValue={field.value}
+            options={options}
+            readonly={readonly}
+            onChange={(value) => {
+              onChange(field.name, value);
+            }}
           />
         );
       }

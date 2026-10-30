@@ -6,6 +6,9 @@ export enum UsageOperationType {
   ALL = 'ALL',
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
+  // Background research tasks started from chat, kept apart from chat turns
+  // so their spend can be limited and reported on its own.
+  AI_RESEARCH_TOKEN = 'AI_RESEARCH_TOKEN',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',
   WEB_SEARCH = 'WEB_SEARCH',

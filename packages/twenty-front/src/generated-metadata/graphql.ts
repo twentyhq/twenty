@@ -181,12 +181,34 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
+export type AiActionState = {
+  __typename?: 'AiActionState';
+  action?: Maybe<Scalars['JSON']['output']>;
+  isAvailable: Scalars['Boolean']['output'];
+  requestedId: Scalars['String']['output'];
+};
+
+export type AiActiveTask = {
+  __typename?: 'AiActiveTask';
+  task: Scalars['JSON']['output'];
+  threadId?: Maybe<Scalars['String']['output']>;
+};
+
 export type AiChatUsage = {
   __typename?: 'AiChatUsage';
   consumedValue?: Maybe<Scalars['BigInt']['output']>;
   kind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
   periodEnd?: Maybe<Scalars['DateTime']['output']>;
+};
+
+export type AiInteractionStates = {
+  __typename?: 'AiInteractionStates';
+  actions: Array<AiActionState>;
+};
+
+export type AiInteractionStatesInput = {
+  actionRequestIds: Array<Scalars['String']['input']>;
 };
 
 export enum AiModelTier {
@@ -208,6 +230,22 @@ export type AiSystemPromptSection = {
   content: Scalars['String']['output'];
   estimatedTokenCount: Scalars['Int']['output'];
   title: Scalars['String']['output'];
+};
+
+export type AiTaskState = {
+  __typename?: 'AiTaskState';
+  isAvailable: Scalars['Boolean']['output'];
+  requestedId: Scalars['String']['output'];
+  task?: Maybe<Scalars['JSON']['output']>;
+};
+
+export type AiTaskStates = {
+  __typename?: 'AiTaskStates';
+  tasks: Array<AiTaskState>;
+};
+
+export type AiTaskStatesInput = {
+  taskIds: Array<Scalars['String']['input']>;
 };
 
 export enum AllMetadataName {
@@ -259,6 +297,16 @@ export enum AnalyticsType {
   PAGEVIEW = 'PAGEVIEW',
   TRACK = 'TRACK'
 }
+
+export type AnswerAiTaskInputInput = {
+  clientRequestId: Scalars['String']['input'];
+  /** The pending input version being answered */
+  inputVersion: Scalars['Int']['input'];
+  stepId: Scalars['UUID']['input'];
+  taskId: Scalars['UUID']['input'];
+  /** Answers keyed by field name, validated like a chat form */
+  values: Scalars['JSON']['input'];
+};
 
 export type ApiConfig = {
   __typename?: 'ApiConfig';
@@ -1041,6 +1089,18 @@ export type CampaignAudiencePreviewDto = {
   withoutEmail: Scalars['Int']['output'];
 };
 
+export type CancelAiActionInput = {
+  actionRequestId: Scalars['UUID']['input'];
+  clientRequestId: Scalars['String']['input'];
+  expectedStateVersion: Scalars['Int']['input'];
+};
+
+export type CancelAiTaskInput = {
+  clientRequestId: Scalars['String']['input'];
+  expectedStateVersion: Scalars['Int']['input'];
+  taskId: Scalars['UUID']['input'];
+};
+
 export type CancelMessageCampaignInput = {
   campaignId: Scalars['String']['input'];
 };
@@ -1711,6 +1771,14 @@ export enum DatabaseEventAction {
   UPSERTED = 'UPSERTED'
 }
 
+export type DecideAiActionInput = {
+  actionRequestId: Scalars['UUID']['input'];
+  clientRequestId: Scalars['String']['input'];
+  /** approve or reject */
+  decision: Scalars['String']['input'];
+  expectedStateVersion: Scalars['Int']['input'];
+};
+
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID']['input'];
 };
@@ -2151,6 +2219,9 @@ export enum FeatureFlagKey {
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_SHARING_ENABLED = 'IS_RECORD_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
+  IS_SETU_AI_ACTIONS_ENABLED = 'IS_SETU_AI_ACTIONS_ENABLED',
+  IS_SETU_AI_TASKS_ENABLED = 'IS_SETU_AI_TASKS_ENABLED',
+  IS_SETU_CHAT_FIRST_ENABLED = 'IS_SETU_CHAT_FIRST_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
   IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
@@ -3062,9 +3133,12 @@ export type Mutation = {
   addQueryToEventStream: Scalars['Boolean']['output'];
   /** @deprecated Use answerToolCall with the questions tool call */
   answerAgentChatQuestion: SendChatMessageResult;
+  answerAiTaskInput: AiTaskState;
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
+  cancelAiAction: AiActionState;
+  cancelAiTask: AiTaskState;
   cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
   cancelSwitchBillingPlan: BillingUpdate;
@@ -3128,6 +3202,7 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
+  decideAiAction: AiActionState;
   deleteAppKeyValue: Scalars['Boolean']['output'];
   deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
@@ -3220,7 +3295,9 @@ export type Mutation = {
   resetPageLayoutToDefault: PageLayout;
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
   resetTimelineActivityType: TimelineActivityType;
+  retryAiTaskStep: AiTaskState;
   retryChatMessage: SendChatMessageResult;
+  reviseAiAction: AiActionState;
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
@@ -3356,6 +3433,11 @@ export type MutationAnswerAgentChatQuestionArgs = {
 };
 
 
+export type MutationAnswerAiTaskInputArgs = {
+  input: AnswerAiTaskInputInput;
+};
+
+
 export type MutationAssignRoleToAgentArgs = {
   agentId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
@@ -3375,6 +3457,16 @@ export type MutationAuthorizeAppArgs = {
   redirectUrl: Scalars['String']['input'];
   scope?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationCancelAiActionArgs = {
+  input: CancelAiActionInput;
+};
+
+
+export type MutationCancelAiTaskArgs = {
+  input: CancelAiTaskInput;
 };
 
 
@@ -3682,6 +3774,11 @@ export type MutationCreateWebhookArgs = {
 
 export type MutationDeactivateSkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDecideAiActionArgs = {
+  input: DecideAiActionInput;
 };
 
 
@@ -4103,9 +4200,19 @@ export type MutationResetTimelineActivityTypeArgs = {
 };
 
 
+export type MutationRetryAiTaskStepArgs = {
+  input: RetryAiTaskStepInput;
+};
+
+
 export type MutationRetryChatMessageArgs = {
   modelId?: InputMaybe<Scalars['String']['input']>;
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationReviseAiActionArgs = {
+  input: ReviseAiActionInput;
 };
 
 
@@ -5184,7 +5291,10 @@ export type PublicWorkspaceDataSummary = {
 export type Query = {
   __typename?: 'Query';
   agentTurns: Array<AgentTurn>;
+  aiActiveTasks: Array<AiActiveTask>;
   aiChatUsage?: Maybe<AiChatUsage>;
+  aiInteractionStates: AiInteractionStates;
+  aiTaskStates: AiTaskStates;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   appConnection: AppConnection;
@@ -5322,6 +5432,16 @@ export type Query = {
 
 export type QueryAgentTurnsArgs = {
   agentId: Scalars['UUID']['input'];
+};
+
+
+export type QueryAiInteractionStatesArgs = {
+  input: AiInteractionStatesInput;
+};
+
+
+export type QueryAiTaskStatesArgs = {
+  input: AiTaskStatesInput;
 };
 
 
@@ -5927,6 +6047,20 @@ export type ReportAppConnectionAuthFailureInput = {
 export type ResendEmailVerificationToken = {
   __typename?: 'ResendEmailVerificationToken';
   success: Scalars['Boolean']['output'];
+};
+
+export type RetryAiTaskStepInput = {
+  clientRequestId: Scalars['String']['input'];
+  expectedStateVersion: Scalars['Int']['input'];
+  stepId: Scalars['UUID']['input'];
+  taskId: Scalars['UUID']['input'];
+};
+
+export type ReviseAiActionInput = {
+  actionRequestId: Scalars['UUID']['input'];
+  /** Email: to, cc, bcc, subject, body. Record update: fields. Validated like a new proposal. */
+  edits: Scalars['JSON']['input'];
+  expectedStateVersion: Scalars['Int']['input'];
 };
 
 export type RevokeApiKeyInput = {
@@ -7141,6 +7275,7 @@ export type UsageLimit = {
 
 export enum UsageOperationType {
   AI_CHAT_TOKEN = 'AI_CHAT_TOKEN',
+  AI_RESEARCH_TOKEN = 'AI_RESEARCH_TOKEN',
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
@@ -7911,6 +8046,13 @@ export type ActivateSkillMutationVariables = Exact<{
 
 export type ActivateSkillMutation = { __typename?: 'Mutation', activateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isSystem: boolean, isActive: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
+export type AnswerAiTaskInputMutationVariables = Exact<{
+  input: AnswerAiTaskInputInput;
+}>;
+
+
+export type AnswerAiTaskInputMutation = { __typename?: 'Mutation', answerAiTaskInput: { __typename?: 'AiTaskState', requestedId: string, isAvailable: boolean, task?: any | null } };
+
 export type AssignRoleToAgentMutationVariables = Exact<{
   agentId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
@@ -7918,6 +8060,20 @@ export type AssignRoleToAgentMutationVariables = Exact<{
 
 
 export type AssignRoleToAgentMutation = { __typename?: 'Mutation', assignRoleToAgent: boolean };
+
+export type CancelAiActionMutationVariables = Exact<{
+  input: CancelAiActionInput;
+}>;
+
+
+export type CancelAiActionMutation = { __typename?: 'Mutation', cancelAiAction: { __typename?: 'AiActionState', requestedId: string, isAvailable: boolean, action?: any | null } };
+
+export type CancelAiTaskMutationVariables = Exact<{
+  input: CancelAiTaskInput;
+}>;
+
+
+export type CancelAiTaskMutation = { __typename?: 'Mutation', cancelAiTask: { __typename?: 'AiTaskState', requestedId: string, isAvailable: boolean, task?: any | null } };
 
 export type CreateChatThreadMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -7944,6 +8100,13 @@ export type DeactivateSkillMutationVariables = Exact<{
 
 
 export type DeactivateSkillMutation = { __typename?: 'Mutation', deactivateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isSystem: boolean, isActive: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type DecideAiActionMutationVariables = Exact<{
+  input: DecideAiActionInput;
+}>;
+
+
+export type DecideAiActionMutation = { __typename?: 'Mutation', decideAiAction: { __typename?: 'AiActionState', requestedId: string, isAvailable: boolean, action?: any | null } };
 
 export type DeleteOneAgentMutationVariables = Exact<{
   input: AgentIdInput;
@@ -7980,6 +8143,13 @@ export type RemoveRoleFromAgentMutationVariables = Exact<{
 
 export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
 
+export type RetryAiTaskStepMutationVariables = Exact<{
+  input: RetryAiTaskStepInput;
+}>;
+
+
+export type RetryAiTaskStepMutation = { __typename?: 'Mutation', retryAiTaskStep: { __typename?: 'AiTaskState', requestedId: string, isAvailable: boolean, task?: any | null } };
+
 export type RetryChatMessageMutationVariables = Exact<{
   threadId: Scalars['UUID']['input'];
   modelId?: InputMaybe<Scalars['String']['input']>;
@@ -7987,6 +8157,13 @@ export type RetryChatMessageMutationVariables = Exact<{
 
 
 export type RetryChatMessageMutation = { __typename?: 'Mutation', retryChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
+
+export type ReviseAiActionMutationVariables = Exact<{
+  input: ReviseAiActionInput;
+}>;
+
+
+export type ReviseAiActionMutation = { __typename?: 'Mutation', reviseAiAction: { __typename?: 'AiActionState', requestedId: string, isAvailable: boolean, action?: any | null } };
 
 export type RunEvaluationInputMutationVariables = Exact<{
   agentId: Scalars['UUID']['input'];
@@ -8028,6 +8205,25 @@ export type UpdateSkillMutationVariables = Exact<{
 
 
 export type UpdateSkillMutation = { __typename?: 'Mutation', updateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isSystem: boolean, isActive: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type AiActiveTasksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AiActiveTasksQuery = { __typename?: 'Query', aiActiveTasks: Array<{ __typename?: 'AiActiveTask', threadId?: string | null, task: any }> };
+
+export type AiInteractionStatesQueryVariables = Exact<{
+  input: AiInteractionStatesInput;
+}>;
+
+
+export type AiInteractionStatesQuery = { __typename?: 'Query', aiInteractionStates: { __typename?: 'AiInteractionStates', actions: Array<{ __typename?: 'AiActionState', requestedId: string, isAvailable: boolean, action?: any | null }> } };
+
+export type AiTaskStatesQueryVariables = Exact<{
+  input: AiTaskStatesInput;
+}>;
+
+
+export type AiTaskStatesQuery = { __typename?: 'Query', aiTaskStates: { __typename?: 'AiTaskStates', tasks: Array<{ __typename?: 'AiTaskState', requestedId: string, isAvailable: boolean, task?: any | null }> } };
 
 export type FindManyAgentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -10525,22 +10721,31 @@ export const ResetTimelineActivityTypeDocument = {"kind":"Document","definitions
 export const UpdateTimelineActivityTypeIsActiveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTimelineActivityTypeIsActive"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateTimelineActivityTypeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTimelineActivityType"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<UpdateTimelineActivityTypeIsActiveMutation, UpdateTimelineActivityTypeIsActiveMutationVariables>;
 export const FindManyTimelineActivityTypesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyTimelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"timelineActivityTypes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"emit"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"on"}},{"kind":"Field","name":{"kind":"Name","value":"objectUniversalIdentifier"}}]}},{"kind":"Field","name":{"kind":"Name","value":"frontComponentUniversalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]} as unknown as DocumentNode<FindManyTimelineActivityTypesQuery, FindManyTimelineActivityTypesQueryVariables>;
 export const ActivateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ActivateSkillMutation, ActivateSkillMutationVariables>;
+export const AnswerAiTaskInputDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnswerAiTaskInput"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AnswerAiTaskInputInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"answerAiTaskInput"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"task"}}]}}]}}]} as unknown as DocumentNode<AnswerAiTaskInputMutation, AnswerAiTaskInputMutationVariables>;
 export const AssignRoleToAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
+export const CancelAiActionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CancelAiAction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CancelAiActionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cancelAiAction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"action"}}]}}]}}]} as unknown as DocumentNode<CancelAiActionMutation, CancelAiActionMutationVariables>;
+export const CancelAiTaskDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CancelAiTask"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CancelAiTaskInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cancelAiTask"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"task"}}]}}]}}]} as unknown as DocumentNode<CancelAiTaskMutation, CancelAiTaskMutationVariables>;
 export const CreateChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateChatThread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createChatThread"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateChatThreadMutation, CreateChatThreadMutationVariables>;
 export const CreateOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateAgentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"evaluationInputs"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CreateOneAgentMutation, CreateOneAgentMutationVariables>;
 export const CreateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateSkillInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<CreateSkillMutation, CreateSkillMutationVariables>;
 export const DeactivateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeactivateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deactivateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeactivateSkillMutation, DeactivateSkillMutationVariables>;
+export const DecideAiActionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DecideAiAction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DecideAiActionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"decideAiAction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"action"}}]}}]}}]} as unknown as DocumentNode<DecideAiActionMutation, DecideAiActionMutationVariables>;
 export const DeleteOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AgentIdInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"evaluationInputs"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteOneAgentMutation, DeleteOneAgentMutationVariables>;
 export const DeleteQueuedChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteQueuedChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteQueuedChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}}]}]}}]} as unknown as DocumentNode<DeleteQueuedChatMessageMutation, DeleteQueuedChatMessageMutationVariables>;
 export const DeleteSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<DeleteSkillMutation, DeleteSkillMutationVariables>;
 export const EvaluateAgentTurnDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"EvaluateAgentTurn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"turnId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"evaluateAgentTurn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"turnId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"turnId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"turnId"}},{"kind":"Field","name":{"kind":"Name","value":"score"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<EvaluateAgentTurnMutation, EvaluateAgentTurnMutationVariables>;
 export const RemoveRoleFromAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveRoleFromAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeRoleFromAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}}]}]}}]} as unknown as DocumentNode<RemoveRoleFromAgentMutation, RemoveRoleFromAgentMutationVariables>;
+export const RetryAiTaskStepDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryAiTaskStep"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RetryAiTaskStepInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryAiTaskStep"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"task"}}]}}]}}]} as unknown as DocumentNode<RetryAiTaskStepMutation, RetryAiTaskStepMutationVariables>;
 export const RetryChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"queued"}},{"kind":"Field","name":{"kind":"Name","value":"streamId"}}]}}]}}]} as unknown as DocumentNode<RetryChatMessageMutation, RetryChatMessageMutationVariables>;
+export const ReviseAiActionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReviseAiAction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ReviseAiActionInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reviseAiAction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"action"}}]}}]}}]} as unknown as DocumentNode<ReviseAiActionMutation, ReviseAiActionMutationVariables>;
 export const RunEvaluationInputDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RunEvaluationInput"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"runEvaluationInput"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"agentId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"evaluations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"score"}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]}}]} as unknown as DocumentNode<RunEvaluationInputMutation, RunEvaluationInputMutationVariables>;
 export const SendChatMessageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendChatMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"text"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"browsingContext"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FileAttachmentInput"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendChatMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}},{"kind":"Argument","name":{"kind":"Name","value":"text"},"value":{"kind":"Variable","name":{"kind":"Name","value":"text"}}},{"kind":"Argument","name":{"kind":"Name","value":"messageId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"messageId"}}},{"kind":"Argument","name":{"kind":"Name","value":"browsingContext"},"value":{"kind":"Variable","name":{"kind":"Name","value":"browsingContext"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"fileAttachments"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fileAttachments"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"messageId"}},{"kind":"Field","name":{"kind":"Name","value":"queued"}},{"kind":"Field","name":{"kind":"Name","value":"streamId"}}]}}]}}]} as unknown as DocumentNode<SendChatMessageMutation, SendChatMessageMutationVariables>;
 export const StopAgentChatStreamDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StopAgentChatStream"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stopAgentChatStream"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"threadId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"threadId"}}}]}]}}]} as unknown as DocumentNode<StopAgentChatStreamMutation, StopAgentChatStreamMutationVariables>;
 export const UpdateOneAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAgentInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"evaluationInputs"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateOneAgentMutation, UpdateOneAgentMutationVariables>;
 export const UpdateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateSkillInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateSkillMutation, UpdateSkillMutationVariables>;
+export const AiActiveTasksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AiActiveTasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aiActiveTasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"task"}}]}}]}}]} as unknown as DocumentNode<AiActiveTasksQuery, AiActiveTasksQueryVariables>;
+export const AiInteractionStatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AiInteractionStates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AiInteractionStatesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aiInteractionStates"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"actions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"action"}}]}}]}}]}}]} as unknown as DocumentNode<AiInteractionStatesQuery, AiInteractionStatesQueryVariables>;
+export const AiTaskStatesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AiTaskStates"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AiTaskStatesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aiTaskStates"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"requestedId"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"task"}}]}}]}}]}}]} as unknown as DocumentNode<AiTaskStatesQuery, AiTaskStatesQueryVariables>;
 export const FindManyAgentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyAgents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyAgents"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"AgentFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"evaluationInputs"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindManyAgentsQuery, FindManyAgentsQueryVariables>;
 export const FindManySkillsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManySkills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindManySkillsQuery, FindManySkillsQueryVariables>;
 export const FindManySkillsForSuggestionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManySkillsForSuggestion"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"skills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}}]}}]}}]} as unknown as DocumentNode<FindManySkillsForSuggestionQuery, FindManySkillsForSuggestionQueryVariables>;

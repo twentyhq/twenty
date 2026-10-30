@@ -46,6 +46,8 @@ type BuildOptions = {
   isStillAwaiting?: boolean;
   hasOtherAwaitingCalls?: boolean;
   hasPermission?: boolean;
+  formAnswerErrors?: string[];
+  areReviewedActionsEnabled?: boolean;
 };
 
 describe('ToolCallAnswerService', () => {
@@ -67,6 +69,8 @@ describe('ToolCallAnswerService', () => {
     isStillAwaiting = true,
     hasOtherAwaitingCalls = false,
     hasPermission = true,
+    formAnswerErrors = [],
+    areReviewedActionsEnabled = false,
   }: BuildOptions = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const threadRepository = {
@@ -148,6 +152,9 @@ describe('ToolCallAnswerService', () => {
     const agentHistoryWorkspaceStorageService = {
       run: jest.fn().mockImplementation((_workspaceId, work) => work()),
     };
+    const aiFormAnswerValidationService = {
+      validate: jest.fn().mockResolvedValue(formAnswerErrors),
+    };
 
     const service = new ToolCallAnswerService(
       threadRepository as never,
@@ -179,10 +186,17 @@ describe('ToolCallAnswerService', () => {
       } as never,
       toolRegistryService as never,
       agentHistoryWorkspaceStorageService as never,
+      aiFormAnswerValidationService as never,
+      {
+        isFeatureEnabled: jest
+          .fn()
+          .mockResolvedValue(areReviewedActionsEnabled),
+      } as never,
     );
 
     return {
       service,
+      aiFormAnswerValidationService,
       agentHistoryWorkspaceStorageService,
       step,
       agentChatService,
@@ -215,6 +229,47 @@ describe('ToolCallAnswerService', () => {
     });
     expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
     expect(agentChatService.addMessage).not.toHaveBeenCalled();
+  });
+
+  describe('a form an agent asked for in chat', () => {
+    const chatFormPart = {
+      ...questionPart,
+      toolName: 'request_form',
+      toolInput: { fields: FORM_FIELDS },
+      toolOutput: { result: { status: 'pending' } },
+    };
+    const formAnswer = {
+      ...answerArguments,
+      response: { discount: '10%' },
+    };
+
+    it('checks the answers against the form before claiming the conversation', async () => {
+      const { service, aiFormAnswerValidationService } = buildService({
+        toolPart: chatFormPart,
+      });
+
+      await service.answer(formAnswer);
+
+      expect(aiFormAnswerValidationService.validate).toHaveBeenCalledWith({
+        fields: FORM_FIELDS,
+        values: { discount: '10%' },
+      });
+    });
+
+    it('rejects invalid answers without recording anything', async () => {
+      const { service, agentChatStreamingService, agentChatService } =
+        buildService({
+          toolPart: chatFormPart,
+          formAnswerErrors: ['Discount must be text.'],
+        });
+
+      await expect(service.answer(formAnswer)).rejects.toMatchObject({
+        code: 'INVALID_TOOL_CALL_OUTPUT',
+        message: 'Discount must be text.',
+      });
+      expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).not.toHaveBeenCalled();
+    });
   });
 
   describe('a chat tool call', () => {
@@ -392,6 +447,20 @@ describe('ToolCallAnswerService', () => {
       toolInput: PROPOSED_EMAIL,
       toolOutput: { result: { status: 'pending', email: PROPOSED_EMAIL } },
     };
+
+    it('refuses a legacy approval once reviewed actions are on, sending nothing', async () => {
+      const { service, toolRegistryService, agentChatStreamingService } =
+        buildService({ toolPart: emailPart, areReviewedActionsEnabled: true });
+
+      await expect(
+        service.answer({
+          ...answerArguments,
+          response: { decision: 'send', email: PROPOSED_EMAIL },
+        }),
+      ).rejects.toMatchObject({ code: 'TOOL_CALL_NOT_PENDING' });
+      expect(agentChatStreamingService.tryClaimStream).not.toHaveBeenCalled();
+      expect(toolRegistryService.resolveAndExecute).not.toHaveBeenCalled();
+    });
 
     it('sends the edited email as the person, only once the conversation is claimed', async () => {
       const {

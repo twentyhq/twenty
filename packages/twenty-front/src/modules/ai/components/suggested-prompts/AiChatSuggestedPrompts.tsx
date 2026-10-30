@@ -7,6 +7,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
@@ -66,8 +68,13 @@ export const AiChatSuggestedPrompts = ({
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
 
+  const isChatFirstEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SETU_CHAT_FIRST_ENABLED,
+  );
+
   const suggestedPrompts = getAiChatSuggestedPrompts(
     aiChatSuggestedPromptsContext,
+    { isChatFirstEnabled },
   );
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {

@@ -254,6 +254,29 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  // Approved CRM actions: short, bounded provider calls. Stalled jobs are not
+  // re-queued because the ledger, not BullMQ, decides what may run again.
+  [MessageQueue.aiActionQueue]: {
+    priority: 3,
+    workerOptions: {
+      concurrency: 5,
+      lockDuration: 120_000,
+      maxStalledCount: 0,
+      boundedShutdownDrain: true,
+    },
+  },
+  // Research steps: each job runs one account under a five-minute deadline,
+  // inside a longer lock. Stalled jobs are not re-queued; the task ledger
+  // recovers abandoned steps.
+  [MessageQueue.aiTaskQueue]: {
+    priority: 4,
+    workerOptions: {
+      concurrency: 3,
+      lockDuration: 420_000,
+      maxStalledCount: 0,
+      boundedShutdownDrain: true,
+    },
+  },
   [MessageQueue.aiStreamQueue]: {
     priority: 2,
     workerOptions: {

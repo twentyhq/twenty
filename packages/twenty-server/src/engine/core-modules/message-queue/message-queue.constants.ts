@@ -29,4 +29,6 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',
+  aiActionQueue = 'ai-action-queue',
+  aiTaskQueue = 'ai-task-queue',
 }

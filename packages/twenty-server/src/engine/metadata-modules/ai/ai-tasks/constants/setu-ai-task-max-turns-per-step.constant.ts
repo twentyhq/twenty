@@ -1,0 +1,1 @@
+export const SETU_AI_TASK_MAX_TURNS_PER_STEP = 12;

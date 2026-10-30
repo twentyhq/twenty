@@ -7,7 +7,7 @@ import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { useLandingPagePath } from '@/navigation/hooks/useLandingPagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
@@ -41,7 +41,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const { landingPagePath } = useLandingPagePath();
   const location = useLocation();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -190,11 +190,11 @@ export const usePageChangeEffectNavigateLocation = () => {
       return;
     }
 
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    return resolvedReturnToPath ?? landingPagePath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    return resolvedReturnToPath ?? landingPagePath;
   }
 
   if (

@@ -18,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { AiTasksRunningIndicator } from '@/ai/components/AiTasksRunningIndicator';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -79,6 +80,7 @@ export const AiChatTab = () => {
         >
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
+          <AiTasksRunningIndicator />
           <AiChatEditorSection key={editorSectionKey} />
         </AiChatMessageListPreambleContext.Provider>
       )}

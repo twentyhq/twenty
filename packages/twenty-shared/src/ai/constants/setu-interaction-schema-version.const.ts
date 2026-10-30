@@ -1,0 +1,1 @@
+export const SETU_INTERACTION_SCHEMA_VERSION = 1;

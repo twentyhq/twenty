@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
+  formatAiFormAnswerValue,
   type RequestFormToolInput,
   type RequestFormToolResult,
 } from 'twenty-shared/ai';
@@ -70,15 +70,11 @@ export const AiChatFormStatusRenderer = ({
         )}
         {fields
           .filter((field) => isDefined(values[field.name]))
-          .map((field) => {
-            const value = values[field.name];
-
-            return (
-              <StyledDetail key={field.name}>
-                {`${field.label}: ${isString(value) ? value : JSON.stringify(value)}`}
-              </StyledDetail>
-            );
-          })}
+          .map((field) => (
+            <StyledDetail key={field.name}>
+              {`${field.label}: ${formatAiFormAnswerValue(field, values[field.name])}`}
+            </StyledDetail>
+          ))}
       </StyledContent>
     </StyledAiChatAskStatusContainer>
   );
