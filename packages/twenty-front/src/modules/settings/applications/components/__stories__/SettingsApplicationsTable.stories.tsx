@@ -196,11 +196,11 @@ export const MemberRowsLinkToTheirPreferences: Story = {
 
     expect(await canvas.findByText('Gmail and Calendar')).toBeVisible();
     expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual([
-      '/settings/accounts/apps/google',
-      '/settings/accounts/apps/outlook',
-      '/settings/accounts/apps/imap',
-      '/settings/accounts/applications/npm-application-id',
-      '/settings/accounts/applications/oauth-application-id',
+      '/settings/app-preferences/google',
+      '/settings/app-preferences/outlook',
+      '/settings/app-preferences/imap',
+      '/settings/app-preferences/npm-application-id',
+      '/settings/app-preferences/oauth-application-id',
     ]);
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
