@@ -206,6 +206,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     };
     const chatThreadService = new AgentChatThreadService(
       threads as never,
+      messages as never,
       chatSharing as never,
       chatRecordEvents as never,
       {
