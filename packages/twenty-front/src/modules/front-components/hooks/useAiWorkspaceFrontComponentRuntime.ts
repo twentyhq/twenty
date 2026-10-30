@@ -1,21 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { convertUnknownToError } from '@/error-handler/utils/convertUnknownToError';
 import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { type AiWorkspaceFrontComponentRuntime } from '@/front-components/types/AiWorkspaceFrontComponentRuntime';
 import { loadAiWorkspaceFrontComponentRuntime } from '@/front-components/utils/loadAiWorkspaceFrontComponentRuntime';
 
-type AiWorkspaceFrontComponentRuntimeEffectProps = {
-  frontComponentId: string;
-  applicationId: string;
-  onRuntimeLoaded: (runtime: AiWorkspaceFrontComponentRuntime) => void;
-  onError: (error: Error) => void;
-};
-
-export const AiWorkspaceFrontComponentRuntimeEffect = ({
+export const useAiWorkspaceFrontComponentRuntime = ({
   frontComponentId,
   applicationId,
-  onRuntimeLoaded,
-  onError,
-}: AiWorkspaceFrontComponentRuntimeEffectProps) => {
+}: {
+  frontComponentId: string;
+  applicationId: string;
+}) => {
+  const [runtime, setRuntime] = useState<AiWorkspaceFrontComponentRuntime>();
+  const [error, setError] = useState<Error>();
   const { loadFrontComponentApplicationTokenPair } =
     useFrontComponentApplicationTokenPair();
 
@@ -32,23 +29,17 @@ export const AiWorkspaceFrontComponentRuntimeEffect = ({
       )
       .then((runtime) => {
         if (!controller.signal.aborted) {
-          onRuntimeLoaded(runtime);
+          setRuntime(runtime);
         }
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
-          onError(error instanceof Error ? error : new Error(String(error)));
+          setError(convertUnknownToError(error));
         }
       });
 
     return () => controller.abort();
-  }, [
-    applicationId,
-    frontComponentId,
-    loadFrontComponentApplicationTokenPair,
-    onRuntimeLoaded,
-    onError,
-  ]);
+  }, [applicationId, frontComponentId, loadFrontComponentApplicationTokenPair]);
 
-  return null;
+  return { runtime, error, setError };
 };

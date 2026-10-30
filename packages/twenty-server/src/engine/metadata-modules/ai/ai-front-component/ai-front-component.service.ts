@@ -555,8 +555,7 @@ export class AiFrontComponentService {
       );
     }
 
-    let sharedDependenciesSource: string | undefined;
-    const sharedDependenciesChecksum =
+    let sharedDependenciesChecksum =
       readFrontComponentSharedDependenciesChecksum(componentSource);
 
     if (
@@ -574,6 +573,9 @@ export class AiFrontComponentService {
       if (
         !isDefined(
           applicationDependencies.frontComponentSharedDependenciesBuiltPath,
+        ) ||
+        !isDefined(
+          applicationDependencies.frontComponentSharedDependenciesChecksum,
         )
       ) {
         throw new ApplicationException(
@@ -584,33 +586,13 @@ export class AiFrontComponentService {
           },
         );
       }
-      sharedDependenciesSource = await text(
-        await this.files.readFile({
-          workspaceId: authContext.workspace.id,
-          applicationUniversalIdentifier: application.universalIdentifier,
-          fileFolder: FileFolder.BuiltFrontComponent,
-          resourcePath:
-            applicationDependencies.frontComponentSharedDependenciesBuiltPath,
-        }),
-      );
-      if (
-        createHash('sha256').update(sharedDependenciesSource).digest('hex') !==
-        applicationDependencies.frontComponentSharedDependenciesChecksum
-      ) {
-        throw new ApplicationException(
-          doNotTranslate('Component shared dependencies checksum mismatch.'),
-          ApplicationExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`Component shared dependencies checksum mismatch.`,
-          },
-        );
-      }
+      sharedDependenciesChecksum =
+        applicationDependencies.frontComponentSharedDependenciesChecksum;
     }
 
     return {
       applicationId: application.id,
       componentSource,
-      sharedDependenciesSource,
       sharedDependenciesChecksum,
       data,
     };

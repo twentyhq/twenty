@@ -43,9 +43,15 @@ export class FrontComponentSharedDependenciesService {
         workspaceId,
       });
 
-    const builtPath = isDefined(checksum)
-      ? getFrontComponentSharedDependenciesPath(checksum)
-      : application.frontComponentSharedDependenciesBuiltPath;
+    let builtPath = application.frontComponentSharedDependenciesBuiltPath;
+
+    if (
+      isDefined(checksum) &&
+      (checksum !== application.frontComponentSharedDependenciesChecksum ||
+        !isDefined(builtPath))
+    ) {
+      builtPath = getFrontComponentSharedDependenciesPath(checksum);
+    }
 
     if (!isDefined(builtPath)) {
       throw new ApplicationException(
