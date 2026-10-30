@@ -36,6 +36,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   isRemote: entity.isRemote,
   isActive: resolveEffectiveEntityIsActive(entity),
   isSystem: entity.isSystem,
+  isAuditLogged: entity.isAuditLogged,
   isUIEditable: entity.isUIEditable,
   isUICreatable: entity.isUICreatable,
   isUIReadOnly: !entity.isUIEditable,
@@ -44,6 +45,7 @@ export const fromObjectMetadataEntityToObjectMetadataDto = (
   readability: entity.readability,
   readabilityParentFieldUniversalIdentifiers:
     entity.readabilityParentFieldUniversalIdentifiers,
+  disabledObjectPermissionActions: entity.disabledObjectPermissionActions,
   sharingReach: entity.sharingReach ?? ObjectSharingReach.WORKSPACE,
   writability: entity.writability,
   isLabelSyncedWithName: entity.isLabelSyncedWithName,

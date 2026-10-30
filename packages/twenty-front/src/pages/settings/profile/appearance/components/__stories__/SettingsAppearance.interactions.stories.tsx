@@ -51,7 +51,8 @@ export const SelectionAndKeyboard: Story = {
     const dark = group.getByRole('radio', { name: 'Dark' });
     const system = group.getByRole('radio', { name: 'System settings' });
 
-    expect(group.getAllByRole('radio')).toHaveLength(3);
+    // Salesfarce: on removal, expect 3 options
+    expect(group.getAllByRole('radio')).toHaveLength(4);
     expect(light).toBeChecked();
     await userEvent.click(group.getByText('Dark'));
     await waitFor(() => expect(dark).toBeChecked());
@@ -80,8 +81,9 @@ export const SelectionAndKeyboard: Story = {
     await userEvent.tab({ shift: true });
     expect(system).toHaveFocus();
     expect(getComputedStyle(system).outlineStyle).toBe('solid');
-    await userEvent.keyboard('{ArrowRight}');
-    await waitFor(() => expect(light).toBeChecked());
+    // Salesfarce: on removal, press ArrowRight and expect Light, as it wraps around
+    await userEvent.keyboard('{ArrowLeft}');
+    await waitFor(() => expect(dark).toBeChecked());
     expect(system).not.toBeChecked();
   },
 };
@@ -156,30 +158,21 @@ export const RightToLeftKeyboard: Story = {
 export const HorizontalLayout: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const lateRadioGroupStyles =
-      canvasElement.ownerDocument.createElement('style');
+    const group = canvas.getByRole('radiogroup', { name: 'Appearance' });
+    const lightBounds = canvas
+      .getByRole('radio', { name: 'Light' })
+      .getBoundingClientRect();
+    const darkBounds = canvas
+      .getByRole('radio', { name: 'Dark' })
+      .getBoundingClientRect();
+    const systemBounds = canvas
+      .getByRole('radio', { name: 'System settings' })
+      .getBoundingClientRect();
 
-    lateRadioGroupStyles.textContent =
-      '@layer twenty-ui { [role="radiogroup"] { flex-direction: column; } }';
-    canvasElement.ownerDocument.head.append(lateRadioGroupStyles);
-
-    try {
-      const lightBounds = canvas
-        .getByRole('radio', { name: 'Light' })
-        .getBoundingClientRect();
-      const darkBounds = canvas
-        .getByRole('radio', { name: 'Dark' })
-        .getBoundingClientRect();
-      const systemBounds = canvas
-        .getByRole('radio', { name: 'System settings' })
-        .getBoundingClientRect();
-
-      expect(darkBounds.top).toBe(lightBounds.top);
-      expect(systemBounds.top).toBe(lightBounds.top);
-      expect(darkBounds.left).toBeGreaterThan(lightBounds.right);
-      expect(systemBounds.left).toBeGreaterThan(darkBounds.right);
-    } finally {
-      lateRadioGroupStyles.remove();
-    }
+    expect(group).toHaveAttribute('data-orientation', 'horizontal');
+    expect(darkBounds.top).toBe(lightBounds.top);
+    expect(systemBounds.top).toBe(lightBounds.top);
+    expect(darkBounds.left).toBeGreaterThan(lightBounds.right);
+    expect(systemBounds.left).toBeGreaterThan(darkBounds.right);
   },
 };

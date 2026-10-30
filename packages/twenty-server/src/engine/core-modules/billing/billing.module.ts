@@ -14,7 +14,6 @@ import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/com
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -64,7 +63,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingCustomerEntity,
       BillingProductEntity,
       BillingPriceEntity,
-      BillingMeterEntity,
       BillingCreditGrantEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
@@ -104,6 +102,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
   ],
   exports: [
+    BillingPortalWorkspaceService,
     BillingSubscriptionService,
     BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,

@@ -8,17 +8,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   FeatureFlagKey,
   { label: MessageDescriptor; description: MessageDescriptor }
 > = {
-  [FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED]: {
-    label: msg`Async CSV export`,
-    description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
-  },
-  [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
-    label: msg`Email campaigns`,
-    description: msg`Enable email campaigns, lists, and unsubscribe management.`,
   },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {
     label: msg`Direct REST metadata responses`,
@@ -28,17 +20,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED]: {
-    label: msg`Deferred workspace migration actions`,
-    description: msg`Run the slow parts of data model changes in the background after they are saved.`,
-  },
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records, and enable validation rules.`,
-  },
-  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
-    label: msg`Logs console`,
-    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
   },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,
@@ -51,5 +35,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
+  [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
+    label: msg`Related record paths`,
+    description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
 };

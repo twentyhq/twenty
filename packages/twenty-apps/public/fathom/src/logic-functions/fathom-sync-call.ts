@@ -10,6 +10,7 @@ import { FATHOM_SYNC_CALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-i
 import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
 import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
@@ -69,7 +70,9 @@ export const fathomSyncCallHandler = async (
   }
 
   for (const connection of connections) {
-    const fathomClient = createFathomClient(connection.accessToken);
+    const fathomClient = createFathomClient(
+      getConnectionAccessTokenOrThrow(connection),
+    );
     const meetings = await listFathomMeetings({
       fathomClient,
       stopWhen: (listedMeetings) =>

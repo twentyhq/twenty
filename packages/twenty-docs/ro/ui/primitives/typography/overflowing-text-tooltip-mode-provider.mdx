@@ -1,0 +1,55 @@
+---
+title: Furnizor de mod pentru indicația contextuală a textului care depășește
+description: Alegeți când OverflowingTextWithTooltip verifică trunchierea pentru un subarbore.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## Prezentare generală
+
+`OverflowingTextTooltipModeProvider` stabilește cum fiecare [OverflowingTextWithTooltip](/ro/ui/primitives/typography/overflowing-text-with-tooltip) din interiorul său gestionează indicația contextuală. Nu redă niciun element DOM.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--display" title="Exemplu de furnizor de mod pentru tooltipul textului care depășește spațiul disponibil" height={180} />
+
+## Utilizare
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+Treceți cu cursorul peste sau focalizați eticheta trunchiată pentru a-i citi valoarea completă. Modificați `mode` în controalele Storybook pentru a compara când este disponibil tooltipul.
+
+## Moduri
+
+* `measure-on-hover`, modul implicit fără un furnizor, verifică trunchierea la intrarea cursorului și la focalizare. O etichetă care încape nu împiedică afișarea unui indiciu părinte.
+* `measure-on-open` verifică trunchierea atunci când indiciul încearcă să se deschidă. Utilizați-l pentru etichete care se montează sub cursor, cum ar fi o suprapunere la trecerea cursorului, unde nu are loc intrarea cursorului.
+* `disabled` redă numai textul, fără nicio parte a indiciului. Utilizați-l pentru multe etichete peste care un utilizator nu poate trece cu cursorul, cum ar fi conținutul acoperit de o suprapunere.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled" title="Tooltip dezactivat pentru un subarbore" height={90} />
+
+Furnizorii imbricați suprascriu modul pentru subarborele lor.
+
+## Proprietăți
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

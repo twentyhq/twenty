@@ -70,6 +70,12 @@ export const WithField: Story = {
   },
 };
 
+export const EndAligned: Story = {
+  args: { defaultValue: '2,100,000', textAlign: 'end' },
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240 } },
+};
+
 type InputCatalogState = 'default' | 'focus' | 'invalid' | 'disabled';
 
 const getInputCatalogStateProps = (state: InputCatalogState) => {

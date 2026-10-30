@@ -1,0 +1,109 @@
+---
+title: ImageInput
+description: Selección, vista previa y acciones de carga gestionadas por la persona que llama.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ImageInputReference from '/snippets/ui/generated/components/input/image-input.mdx';
+
+## Resumen
+
+`ImageInput` combina una vista previa de imagen, un selector de archivos nativo y acciones de carga, eliminación o cancelación. `onFileSelect` se activa cuando se selecciona un archivo. Su aplicación valida y carga el archivo, gestiona el progreso y la cancelación de la carga, y proporciona la URL de vista previa mediante `src`.
+
+<StoryEmbed storyId="ui-input-imageinput--display" title="Elige, previsualiza y elimina una imagen" height={140} />
+
+## "Uso"
+
+```tsx
+import { useState } from 'react';
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImage = () => {
+  const [preview, setPreview] = useState<{
+    src?: string;
+    reader?: FileReader;
+  }>({});
+
+  return (
+    <ImageInput
+      helperText="Choose a square image for your workspace."
+      src={preview.src}
+      onFileSelect={(file) => {
+        const reader = new FileReader();
+        setPreview((current) => ({ src: current.src, reader }));
+        reader.onload = () => {
+          setPreview((current) => {
+            if (current.reader !== reader) {
+              return current;
+            }
+
+            return { src: reader.result?.toString() };
+          });
+        };
+        reader.readAsDataURL(file);
+      }}
+      onRemove={() => setPreview({})}
+    />
+  );
+};
+```
+
+El ejemplo mantiene la vista previa actual mientras lee un reemplazo e ignora las lecturas de selecciones eliminadas o sustituidas.
+
+## Selección y vista previa
+
+La vista previa y el botón Cargar abren el mismo selector de archivos nativo. `onFileSelect` recibe el `File` seleccionado; no inicia una carga por sí mismo. Cancelar o devolver una selección vacía deja la imagen actual sin cambios. La entrada de archivo se borra después de la selección para que se pueda seleccionar el mismo archivo de nuevo, y el `File` de la devolución de llamada sigue siendo utilizable.
+
+Los componentes Front admiten la selección nativa y contenido de `File` legible. Los flujos de React y Preact creados con el SDK se verifican en Chromium con activación mediante puntero, Intro y Espacio. El selector se abre únicamente desde un clic de confianza dentro del componente. Las URL de objeto creadas por el worker y asignadas a un `src` de imagen admiten vistas previas.
+
+`accept` usa de forma predeterminada `image/*` y filtra el selector de archivos. Valide los formatos, las dimensiones y el tamaño permitidos en la aplicación. Este selector controlado por callbacks no conserva un archivo para el envío de formularios nativos. Sus botones de acción usan `type="button"`, por lo que no envían un formulario contenedor.
+
+Una imagen vacía o con error muestra un marcador de posición. Cambiar `src` vuelve a intentar la vista previa, incluso después de que no se haya podido cargar una imagen anterior. La eliminación llama a `onRemove`; actualice `src` después de que la aplicación elimine la imagen. La aplicación gestiona las URL de vista previa locales y revoca las URL de objetos creadas por el trabajador cuando ya no son necesarias. El renderizador se encarga de limpiar las URL de vista previa de su host.
+
+## Props de la raíz y de la entrada de archivo
+
+`className`, `style` y `ref` se aplican al div raíz. La ref raíz predeterminada recibe un `HTMLDivElement`; use `inputRef` para la entrada de archivo oculta. Usa `render={<div ... />}` para proporcionar atributos raíz nativos o controladores de eventos. Mantenga esa raíz sin interacción, ya que el módulo ya contiene botones. `dir` se aplica tanto a la raíz como a la entrada de archivo; use `dir="rtl"` para el diseño de derecha a izquierda.
+
+Los atributos de entrada de archivo nativos son props de nivel superior, incluidos `accept`, `capture`, `name`, `id`, `title`, `form`, `required`, atributos accesibles, atributos de datos y controladores de eventos. Se aplican a la entrada oculta. `inputRef` recibe su `HTMLInputElement`. El control siempre usa `type="file"`, acepta un archivo y restablece su valor después de cada selección. `children`, `dangerouslySetInnerHTML`, `type`, `multiple`, `value`, `defaultValue` y `hidden` no se pueden personalizar.
+
+La validación nativa de `required` sigue viendo una entrada vacía después de la selección porque la entrada se restablece. Valide las cargas completadas en su aplicación.
+
+`onChange` recibe el evento de cambio nativo mientras la entrada aún contiene el archivo seleccionado. Después, la entrada se restablece antes de que se active `onFileSelect`. Las props de eventos nativos siguen el contrato de entrada de React. `onAbort` es la acción para cancelar la carga.
+
+## Estados de carga y deshabilitado
+
+`isUploading` marca el elemento raíz como ocupado y hace que la selección y la eliminación no estén disponibles. Los controles que estaban disponibles permanecen enfocables, de modo que el foco del teclado no se pierde cuando comienza una carga. Proporcione `onAbort` para sustituir Cargar por Cancelar durante una carga. Cancelar funciona antes de que exista la primera URL de imagen. La aplicación gestiona la cancelación y vuelve a establecer `isUploading` en `false` cuando termina la carga.
+
+`disabled` deshabilita todas las acciones. La selección requiere `onFileSelect`. La eliminación requiere tanto `onRemove` como un `src` no vacío.
+
+<StoryEmbed storyId="ui-input-imageinput--uploading" title="Carga de imagen con una acción de cancelación" height={140} />
+
+## Etiquetas, instrucciones y errores
+
+Proporcione cadenas localizadas para `uploadLabel`, `removeLabel` y `abortLabel`. Sus valores predeterminados son `Upload`, `Remove` y `Abort`. La etiqueta de carga también da nombre al botón de vista previa y a la entrada de archivo oculta. Los atributos accesibles nativos pueden proporcionar un nombre diferente para la entrada de archivo. `aria-describedby` también describe los botones de selección y se combina con el texto de ayuda y de error de la aplicación.
+
+`helperText` y `errorMessage` pertenecen a la aplicación. Ambos describen los controles de selección, y los errores se anuncian como alertas. No hay límites de archivos ni instrucciones de producto integrados.
+
+<StoryEmbed storyId="ui-input-imageinput--with-error" title="Entrada de imagen con instrucciones y un error" height={160} />
+
+## Migración
+
+Reemplace `onUpload` por `onFileSelect`. Mantenga `accept` como una prop de nivel superior. La devolución de llamada sigue recibiendo un `File`; mantenga el código existente de validación y carga en su aplicación.
+
+```tsx
+import { ImageInput } from 'twenty-ui/components/input';
+
+export const WorkspaceImageSelector = ({
+  uploadImage,
+}: {
+  uploadImage: (file: File) => void;
+}) => <ImageInput onFileSelect={uploadImage} accept="image/png, image/jpeg" />;
+```
+
+## "Props"
+
+<ImageInputReference />
+
+<PageBanner illustration="page-cover-image" />

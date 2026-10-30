@@ -4,4 +4,11 @@ export type WorkspaceMigrationBuilderOptions = {
   inferDeletionFromMissingEntities?: InferDeletionFromMissingEntities;
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
+  applicationDefaultRoleUniversalIdentifier?: string;
 };
+
+// The migration runner resolves the workspace Custom application for every build.
+export type WorkspaceMigrationValidationBuildOptions =
+  WorkspaceMigrationBuilderOptions & {
+    workspaceCustomApplicationUniversalIdentifier: string;
+  };

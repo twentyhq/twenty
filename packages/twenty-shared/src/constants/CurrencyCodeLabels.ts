@@ -151,6 +151,7 @@ export const CURRENCY_CODE_LABELS: Record<CurrencyCode, { label: string }> = {
   WST: { label: 'Samoan tala' },
   XOF: { label: 'West African CFA franc' },
   XCD: { label: 'East Caribbean dollar' },
+  XCG: { label: 'Caribbean guilder' },
   YER: { label: 'Yemeni rial' },
   ZAR: { label: 'South African rand' },
   ZMW: { label: 'Zambian kwacha' },

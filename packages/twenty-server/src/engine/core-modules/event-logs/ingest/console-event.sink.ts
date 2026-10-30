@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
@@ -9,8 +11,14 @@ export class ConsoleEventSink implements EventSink {
 
   async write(events: WorkspaceEventEnvelope[]): Promise<void> {
     for (const event of events) {
+      if (event.table === 'applicationMetricEvent') {
+        continue;
+      }
+
       if (event.table === 'applicationLog') {
-        const context = `${event.row.logicFunctionName}:${event.row.executionId}`;
+        const context = isNonEmptyString(event.row.logicFunctionName)
+          ? `${event.row.logicFunctionName}:${event.row.executionId}`
+          : event.row.source;
 
         switch (event.row.level) {
           case 'ERROR':

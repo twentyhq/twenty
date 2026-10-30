@@ -15,12 +15,16 @@ import {
   type WorkspaceRouteObject,
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
+import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import('~/pages/settings/developers/playground/SettingsGraphQLPlayground').then(
@@ -366,6 +370,14 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
+const SettingsAdminApplicationRegistrationMonitoring = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring').then(
+    (module) => ({
+      default: module.SettingsAdminApplicationRegistrationMonitoring,
+    }),
+  ),
+);
+
 const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
@@ -378,6 +390,14 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationRegistrationDetails').then(
     (module) => ({
       default: module.SettingsApplicationRegistrationDetails,
+    }),
+  ),
+);
+
+const SettingsApplicationRegistrationMonitoring = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationRegistrationMonitoring').then(
+    (module) => ({
+      default: module.SettingsApplicationRegistrationMonitoring,
     }),
   ),
 );
@@ -442,18 +462,10 @@ const SettingsAccountDetail = lazy(() =>
   })),
 );
 
-const SettingsNativeAccountApp = lazy(() =>
-  import('~/pages/settings/accounts/SettingsNativeAccountApp').then(
+const SettingsAppPreferencesApp = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAppPreferencesApp').then(
     (module) => ({
-      default: module.SettingsNativeAccountApp,
-    }),
-  ),
-);
-
-const SettingsApplicationPreferences = lazy(() =>
-  import('~/pages/settings/accounts/SettingsApplicationPreferences').then(
-    (module) => ({
-      default: module.SettingsApplicationPreferences,
+      default: module.SettingsAppPreferencesApp,
     }),
   ),
 );
@@ -798,38 +810,86 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+      <Route element={<SettingsLegacyAccountsRedirect />}>
+        <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+        <Route
+          path={SettingsPath.AccountsEmails}
+          element={<SettingsAccountsEmails />}
+        />
+        <Route
+          path={SettingsPath.AccountsCalendars}
+          element={<SettingsAccountsCalendars />}
+        />
+        <Route
+          path={SettingsPath.NewAccount}
+          element={<SettingsNewAccount />}
+        />
+        <Route
+          path={SettingsPath.AccountsConfiguration}
+          element={<SettingsAccountsConfiguration />}
+        />
+        <Route
+          path={SettingsPath.NewImapSmtpCaldavConnection}
+          element={<SettingsNewImapSmtpCaldavConnection />}
+        />
+        <Route
+          path={SettingsPath.EditImapSmtpCaldavConnection}
+          element={<SettingsEditImapSmtpCaldavConnection />}
+        />
+        <Route
+          path={SettingsPath.AccountDetail}
+          element={
+            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
+          }
+        />
+        <Route
+          path={SettingsPath.BuiltInAccountApp}
+          element={
+            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
+          }
+        />
+        <Route
+          path={SettingsPath.ApplicationPreferences}
+          element={
+            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
+          }
+        />
+      </Route>
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
+          requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
+        />
+      }
+    >
       <Route
-        path={SettingsPath.AccountDetail}
+        path={SettingsPath.AppPreferences}
+        element={<SettingsAccounts />}
+      />
+      <Route
+        path={SettingsPath.AppPreferencesApp}
+        element={<SettingsAppPreferencesApp />}
+      />
+      <Route
+        path={SettingsPath.AppPreferencesAccountDetail}
         element={<SettingsAccountDetail />}
       />
       <Route
-        path={SettingsPath.NativeAccountApp}
-        element={<SettingsNativeAccountApp />}
+        path={SettingsPath.AppPreferencesNewAccount}
+        element={<SettingsNewAccount />}
       />
       <Route
-        path={SettingsPath.ApplicationPreferences}
-        element={<SettingsApplicationPreferences />}
-      />
-      <Route
-        path={SettingsPath.AccountsEmails}
-        element={<SettingsAccountsEmails />}
-      />
-      <Route
-        path={SettingsPath.AccountsCalendars}
-        element={<SettingsAccountsCalendars />}
-      />
-      <Route path={SettingsPath.NewAccount} element={<SettingsNewAccount />} />
-      <Route
-        path={SettingsPath.AccountsConfiguration}
+        path={SettingsPath.AppPreferencesAccountConfiguration}
         element={<SettingsAccountsConfiguration />}
       />
       <Route
-        path={SettingsPath.NewImapSmtpCaldavConnection}
+        path={SettingsPath.AppPreferencesNewImapSmtpCaldavConnection}
         element={<SettingsNewImapSmtpCaldavConnection />}
       />
       <Route
-        path={SettingsPath.EditImapSmtpCaldavConnection}
+        path={SettingsPath.AppPreferencesEditImapSmtpCaldavConnection}
         element={<SettingsEditImapSmtpCaldavConnection />}
       />
     </Route>
@@ -1100,6 +1160,10 @@ const createSettingsRouteElements = ({
         element={<SettingsApplicationRegistrationDetails />}
       />
       <Route
+        path={SettingsPath.ApplicationRegistrationMonitoring}
+        element={<SettingsApplicationRegistrationMonitoring />}
+      />
+      <Route
         path={LEGACY_APPLICATION_REGISTRATION_DETAIL_PATH}
         element={
           <LegacySettingsPathRedirect
@@ -1264,6 +1328,10 @@ const createSettingsRouteElements = ({
         <Route
           path={SettingsPath.AdminPanelApplicationRegistrationDetail}
           element={<SettingsAdminApplicationRegistrationDetail />}
+        />
+        <Route
+          path={SettingsPath.AdminPanelApplicationRegistrationMonitoring}
+          element={<SettingsAdminApplicationRegistrationMonitoring />}
         />
         <Route
           path={SettingsPath.AdminPanelWorkspaceChatThread}

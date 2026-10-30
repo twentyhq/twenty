@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { StyledAiChatAskStatusMessage } from '@/ai/components/AiChatAskStyledComponents';
+import { StyledAiChatAskStatusMessage } from '@/ai/components/StyledAiChatAskStatusMessage';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 
 const StyledContainer = styled.div`
@@ -14,7 +14,6 @@ const StyledContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} 0;
 
   svg {
-    flex-shrink: 0;
     margin-top: 1px;
   }
 `;

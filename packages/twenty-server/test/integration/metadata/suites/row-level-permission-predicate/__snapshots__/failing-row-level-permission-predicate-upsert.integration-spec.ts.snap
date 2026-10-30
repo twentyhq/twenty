@@ -1,5 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Row Level Permission Predicate upsert should fail when adding a predicate group to a non-editable role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicateGroup": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicateGroup",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicateGroup",
+    "summary": {
+      "rowLevelPermissionPredicateGroup": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when adding a predicate to a non-editable role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate does not exist 1`] = `
 {
   "extensions": {
@@ -105,5 +175,40 @@ exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissi
   },
   "message": "Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.",
   "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the operand is not supported for the field type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Operand IS is not supported for field type TEXT",
+              "userFriendlyMessage": "This operand is not supported for this field",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This operand is not supported for this field",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
 }
 `;

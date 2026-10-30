@@ -31,6 +31,7 @@ export enum PermissionsExceptionCode {
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'MEMBER_ROLE_CANNOT_BE_DELETED',
+  CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
   NO_PERMISSIONS_FOUND_IN_DATASOURCE = 'NO_PERMISSIONS_FOUND_IN_DATASOURCE',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT',
   CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT',
@@ -111,6 +112,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`The default role cannot be deleted.`;
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
       return msg`The Member role cannot be deleted.`;
+    case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
+      return msg`Custom roles are part of the Organization plan.`;
     case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
       return msg`No permissions found in datasource.`;
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
@@ -193,6 +196,7 @@ export enum PermissionsExceptionMessage {
   ROLE_NOT_EDITABLE = 'Role is not editable',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
+  CUSTOM_ROLES_NOT_ENTITLED = 'Custom roles require the Organization plan',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',
   CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add field permission on system object',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'Cannot give update permission to non-readable object',

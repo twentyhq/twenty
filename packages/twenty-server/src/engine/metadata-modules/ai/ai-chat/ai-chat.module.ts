@@ -30,6 +30,7 @@ import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-cha
 import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
+import { AgentChatChannelResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-channel.resolver';
 import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatMessageReactionResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-message-reaction.resolver';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
@@ -39,12 +40,15 @@ import { WorkspaceSetupChatResolver } from 'src/engine/metadata-modules/ai/ai-ch
 import { WorkspaceSetupChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
+import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 
 @Module({
   imports: [
@@ -73,6 +77,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatResolver,
+    AgentChatChannelResolver,
     AgentChatThreadParticipantResolver,
     AgentChatMessageReactionResolver,
     AgentChatMessageReactionService,
@@ -80,6 +85,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     WorkspaceSetupChatResolver,
     AgentInboxResolver,
     AgentInboxProposalService,
+    AgentChatQueueService,
     AgentChatService,
     AgentChatThreadTargetService,
     AgentChatStreamingService,
@@ -92,10 +98,13 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     StreamAgentChatJob,
     SystemPromptBuilderService,
     provideWorkspaceScopedRepository(FileEntity),
+    AgentInboxThreadResolver,
+    AgentInboxAccessService,
   ],
   exports: [
     AgentChatThreadModule,
     AgentChatActorService,
+    AgentChatQueueService,
     AgentChatService,
     AgentChatStreamingService,
     AgentChatTurnPreflightService,

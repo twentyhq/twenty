@@ -245,6 +245,7 @@ const TextInputComponent = forwardRef<
       'aria-label': ariaLabel,
       className,
       label,
+      hint,
       value,
       onChange,
       onFocus,
@@ -303,15 +304,20 @@ const TextInputComponent = forwardRef<
       onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value));
     };
 
+    const generatedId = useId();
+    const instanceId = inputProps?.id ?? generatedId;
+    const hintId = isNonEmptyString(hint) ? `${instanceId}-hint` : undefined;
+    const describedBy =
+      [inputProps?.['aria-describedby'], hintId]
+        .filter(isNonEmptyString)
+        .join(' ') || undefined;
     const mergedInputProps = mergeProps<'input'>(inputProps, {
       onFocus: handleFocus,
       onBlur: handleBlur,
       onKeyDown,
       onChange: handleChange,
+      'aria-describedby': describedBy,
     });
-
-    const generatedId = useId();
-    const instanceId = inputProps?.id ?? generatedId;
 
     return (
       <Field.Root
@@ -402,6 +408,9 @@ const TextInputComponent = forwardRef<
             )}
           </StyledTrailingIconContainer>
         </StyledInputContainer>
+        {isNonEmptyString(hint) && (
+          <Field.Description id={hintId}>{hint}</Field.Description>
+        )}
         {!noErrorHelper && error && (
           <StyledErrorHelper aria-live="polite">
             <Field.Error match>{error}</Field.Error>

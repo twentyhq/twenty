@@ -1,0 +1,176 @@
+---
+title: Ползунок
+description: Выберите числовое значение или диапазон с помощью перетаскиваемых бегунков, доступных с клавиатуры.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## Обзор
+
+`Slider` поддерживает одно число или массив чисел для диапазона. Скомпонуйте его метку, трек, индикатор и бегунки внутри `Root`.
+
+<StoryEmbed storyId="ui-input-slider--display" title="Пример ползунка" height={120} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultValue`, чтобы задать начальную громкость. Ползунок управляет последующими изменениями.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Варианты оформления
+
+Сравните цвета акцента и успеха для минимального, среднего, максимального и отключенного значений. Включенные ползунки остаются интерактивными.
+
+<StoryEmbed storyId="ui-input-slider--catalog" title="Варианты оформления для ползунка" height={340} />
+
+## Анатомия интерфейса.
+
+Поместите дорожку и бегунки внутрь `Slider.Control`, который обрабатывает взаимодействие с указателем. Это дерево показывает слайдер с одним бегунком.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Часть       | Требование                                    | Назначение                                                                                          |
+| ----------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `Root`      | Обязательно                                   | Управляет значением, границами, шагом и ориентацией.                                                |
+| `Control`   | Обязательно                                   | Обрабатывает взаимодействие с указателем и позиционирует бегунки.                                   |
+| `Track`     | Требуется для стилизованной дорожки           | Отображает полный диапазон значений.                                                                |
+| `Thumb`     | По одному для каждого настраиваемого значения | Предоставляет бегунок, на который можно перевести фокус, с поддержкой взаимодействия с клавиатурой. |
+| `Label`     | Рекомендуется                                 | Предоставляет видимую метку; каждому бегунку требуется доступное имя.                               |
+| `Значение`  | Необязательно                                 | Отображает текущее числовое значение.                                                               |
+| `Indicator` | Необязательно                                 | Отображает выбранную часть трека.                                                                   |
+
+Для диапазона добавьте бегунок для каждого значения с соответствующим `index` и уникальным доступным именем. Метки и числовой вывод остаются за пределами `Control`, поэтому они не становятся частью перетаскиваемой области.
+
+## Контролируемое состояние
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять той же громкостью в состоянии React. Функция обратного вызова получает следующее значение и сведения о событии.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+Используйте `onValueChange`, чтобы поддерживать актуальность контролируемого значения во время взаимодействия. `onValueCommitted` обрабатывает окончательное значение после завершения взаимодействия, например для его сохранения. Обе функции обратного вызова также доступны в неконтролируемом режиме без управления значением.
+
+Сведения об изменении включают исходное `event`, `reason` взаимодействия, `activeThumbIndex` и `cancel()`. Сведения о фиксации используют общий контракт событий Base UI и не включают отмену изменения. Отмененное изменение не фиксируется.
+
+## Диапазон
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Задайте бегункам диапазона разные доступные имена и `index`, соответствующий их значению. `minStepsBetweenValues` задает минимальный промежуток в шагах. Универсальный тип значения корневого элемента — число или доступный только для чтения массив чисел.
+
+Чтобы управлять диапазоном, сохраните массив в состоянии React и передайте его через `value` и `onValueChange`, как и для одного значения.
+
+## Клавиатура и внешний вид
+
+Клавиши со стрелками изменяют сфокусированный бегунок на один шаг. Home и End перемещают его к границам с учетом ограничений диапазона. `orientation="vertical"` изменяет компоновку и направление управления с клавиатуры. Используйте `disabled` в `Root`, чтобы предотвратить изменения.
+
+Укажите `color="success"` для альтернативной палитры; по умолчанию используется `accent`.
+
+Значение `thumbAlignment` по умолчанию — `edge`. Передайте `center` или `edge-client-only`, чтобы переопределить его. Нативная композиция `className`, `style` и `render` остается доступной для каждой части, включая функции состояния.
+
+<Note>
+  При выравнивании `edge` и `edge-client-only` Base UI 1.8 и 1.9 никогда не
+  выполняют повторное измерение бегунка после изменения размера его `Slider.Control`, а ползунок, смонтированный
+  в скрытом состоянии, сохраняет свои бегунки скрытыми после отображения
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). Компоненты интерфейса React
+  сталкиваются с той же проблемой при первом рендеринге. Используйте
+  `thumbAlignment="center"`, пока исправление не войдет в релиз Base UI
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
+## Нативная интеграция и типы
+
+`Slider.Root` выводит число или доступный только для чтения числовой массив из `value` или `defaultValue`, сохраняя этот тип в обоих обратных вызовах. `SliderRootProps` по умолчанию принимает оба варианта; используйте `SliderRootProps\<number>` для помощников с одним значением или `SliderRootProps\<readonly number[]>` для помощников диапазона.
+
+Каждая часть имеет экспортируемый тип свойств в `twenty-ui/primitives/input`: `SliderRootProps`, `SliderControlProps`, `SliderTrackProps`, `SliderIndicatorProps`, `SliderThumbProps`, `SliderLabelProps` и `SliderValueProps`.
+
+Refs указывают на элементы div для Root, Control, Track, Indicator, Thumb и Label, а для Value — на элемент output. Ref Thumb указывает на его видимый ползунок; его доступное имя и нативное значение формы принадлежат вложенному диапазонному input. Используйте `name` и `form` в Root для нативной отправки, с одним input для каждого значения диапазона.
+
+## Свойства
+
+Справочник формируется на основе публичных типов компонентов. Собственные атрибуты, включая доступные имена и обработчики событий, также принимаются частями, которые отображают элементы.
+
+<SliderReference />
+
+<PageBanner illustration="section-apps-config" />

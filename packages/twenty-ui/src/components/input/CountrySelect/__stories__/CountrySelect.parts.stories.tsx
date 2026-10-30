@@ -126,6 +126,7 @@ const assertCancellation: NonNullable<Story['play']> = async ({
   await waitFor(() =>
     expect(trigger).toHaveAttribute('aria-expanded', 'false'),
   );
+  await waitFor(() => expect(popup).not.toBeInTheDocument());
 };
 
 export const ShorthandCancellation: Story = {
@@ -174,6 +175,7 @@ export const DistinctEmptyAndReservedIdentifiers: Story = {
     await waitFor(() =>
       expect(trigger).toHaveAttribute('aria-expanded', 'false'),
     );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
   },
 };
 

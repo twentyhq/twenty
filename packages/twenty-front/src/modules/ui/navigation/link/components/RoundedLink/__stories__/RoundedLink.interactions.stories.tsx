@@ -3,6 +3,8 @@ import { type MouseEvent } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
+import { isDefined } from 'twenty-shared/utils';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof RoundedLink> = {
@@ -113,10 +115,48 @@ export const ClickAndKeyboard: Story = {
     await expect(link).toHaveClass('caller-link');
     await userEvent.tab();
     await expect(link).toHaveFocus();
+    await expect(getComputedStyle(link).outlineStyle).toBe('solid');
     await userEvent.keyboard('{Enter}');
     await expect(handleLinkClick).toHaveBeenCalledTimes(1);
     await userEvent.click(link);
     await expect(handleLinkClick).toHaveBeenCalledTimes(2);
     await expect(handleParentClick).not.toHaveBeenCalled();
+  },
+};
+
+const LONG_LINK_LABEL = 'sarah.miller.operations@initech.com';
+
+export const BoundedAndDirectional: Story = {
+  render: () => (
+    <Text dir="rtl" style={{ width: 180, fontSize: 15, fontWeight: 500 }}>
+      <RoundedLink
+        href={`mailto:${LONG_LINK_LABEL}`}
+        label={LONG_LINK_LABEL}
+        dir="ltr"
+      />
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: LONG_LINK_LABEL });
+    const label = canvas.getByText(LONG_LINK_LABEL);
+    const labelContainer = label.parentElement;
+
+    if (!isDefined(labelContainer)) {
+      throw new Error('The link label must have a truncation container');
+    }
+
+    await expect(link).toHaveAttribute('dir', 'ltr');
+    await expect(label).toHaveAttribute('dir', 'ltr');
+    await expect(link.getBoundingClientRect().width).toBe(180);
+    await expect(link.getBoundingClientRect().height).toBe(20);
+    await expect(getComputedStyle(link).fontSize).toBe('15px');
+    await expect(getComputedStyle(link).fontWeight).toBe('500');
+    await expect(getComputedStyle(labelContainer).textOverflow).toBe(
+      'ellipsis',
+    );
+    await expect(labelContainer.scrollWidth).toBeGreaterThan(
+      labelContainer.clientWidth,
+    );
   },
 };

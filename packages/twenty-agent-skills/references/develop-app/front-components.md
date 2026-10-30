@@ -4,6 +4,12 @@ Use this reference for Twenty app front component source files, registration, da
 
 Use `layout.md` for placing a front component in a page layout. Use `standalone-pages.md` for full-page custom UI rendered through a front component widget. Use `../design/front-component-ui.md` for visual design, spacing, states, and polish. Use `app-structure.md` for the develop-app validation checklist and `../manage-app/cli-and-sync.md` for command behavior or troubleshooting.
 
+## Documentation
+
+Use these instructions for essential app defaults and the official docs for detailed APIs. Start with the [front component guide](https://docs.twenty.com/developers/extend/apps/layout/front-components.md) for app-specific setup and runtime limitations. [Twenty UI getting started](https://docs.twenty.com/ui/getting-started.md) describes the library; its standalone React setup does not apply inside a front component.
+
+Find the relevant component page through the [components](https://docs.twenty.com/ui/components/overview.md) or [primitives](https://docs.twenty.com/ui/primitives/overview.md) index, then read its current props and composition before implementation. Use [theming](https://docs.twenty.com/ui/theming.md) for semantic tokens. When the app pins an older version, check its installed public types before using an API from the latest docs.
+
 ## Source And Registration
 
 By convention, keep front components under `src/front-components/`, often as `<name>.front-component.tsx`.
@@ -35,15 +41,26 @@ Keep imports narrow:
 
 - Use `twenty-sdk/front-component` for front component hooks and host APIs.
 - Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata` for data access.
+- Use `sendInboxMessage` and the inbox mention helpers from `twenty-sdk/front-component` to post in members' inbox (see `logic.md`). Open the conversation with `navigate(AppPath.AiChatInbox, { threadId })`: the route is main-page only, and it opens only for the conversation's participants.
 - Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import Twenty UI components, icons, and theme tokens from its subpaths (`twenty-ui/primitives/input`, `twenty-ui/primitives/data-display`, `twenty-ui/icon`, `twenty-ui/primitives/typography`, `twenty-ui/theme`, and others) before adding external UI libraries.
 
-The front component renderer provides a Twenty `ThemeProvider` around the remote root. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme` is also acceptable.
+Keep the SDK packages and `twenty-ui` in `devDependencies`. Import shared components from their family entry point, such as `twenty-ui/components/input` for `MainButton` and `LightButton`, `twenty-ui/components/feedback` for `Callout`, `twenty-ui/components/layout` for `Section`, and `twenty-ui/components/navigation` for `Dropdown`. Use `twenty-ui/primitives/input` for foundational controls such as `Button`, `Field` and `Input`.
 
-The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/primitives/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/primitives/data-display`; `Section` from `twenty-ui/components`; and `ThemeProvider` from `twenty-ui/theme`.
+Twenty loads the UI stylesheets and applies the workspace color scheme on the host. In the app, inherit the workspace color scheme without adding another root provider, forcing light or dark mode, or importing the standalone stylesheets. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme` is also acceptable.
+
+The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/primitives/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/primitives/data-display`; `Section` from `twenty-ui/components/layout`; and `ThemeProvider` from `twenty-ui/theme`. Its explicit provider is for the isolated showcase.
 
 Read theme tokens with the `useTheme()` hook from `twenty-ui/theme` inside the component body. The same tokens are also exported as the `themeCssVariables` constant, but the SDK mocks `twenty-ui` during manifest extraction, so a module-level constant that dereferences `themeCssVariables` can fail before the component renders — prefer `useTheme()`.
 
 Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG only for app-specific marks or icons that are not available from `twenty-ui/icon`.
+
+Import individual icons, not `IconsProvider` or `useIcons`, which bundle the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
+
+## Host UI And Runtime Constraints
+
+Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for confirmation dialogs, or `CommandModal` for a headless confirmation action. Use `enqueueSnackbar` for notifications. Do not render Twenty UI `Dialog` or `AlertDialog`, native `dialog` elements or native browser popovers directly. Use Twenty UI `Dropdown` for menus, pickers and nonmodal form panels.
+
+The component runs in a Web Worker with a partial DOM. Prefer CSS flexbox, grid and width-based container queries for layout. Avoid height-based breakpoints, which can oscillate when content determines widget height. `canvas`, `scrollIntoView` and native top-layer APIs are unsupported. Check the current limitations in the front component guide before depending on other browser APIs.
 
 ## Record Context And Data
 
@@ -122,5 +139,7 @@ A clean typecheck and sync is not runtime verification. After the standard valid
 
 - The widget mounts without a `FrontComponent error` in the widget body or toast.
 - The component renders loading, empty, and error states correctly.
+- The UI works in both workspace color schemes, at narrow widget widths and with long text values.
+- Inputs have visible labels, icon-only actions have accessible names, and the main controls work with a keyboard.
 - The main user action works against a real record.
 - The page still renders after a hard refresh.

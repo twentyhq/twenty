@@ -3,6 +3,10 @@ title: Afișarea datelor din înregistrări asociate
 description: Afișați date din înregistrări asociate (de ex., informații despre Companie pe Oportunități) folosind fluxuri de lucru.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Afișați date din înregistrări asociate direct pe înregistrările dvs. — de exemplu, afișați numărul de angajați al unei Companii pe Oportunitățile sale. Această soluție de ocolire prin fluxuri de lucru este utilă până când câmpurile imbricate vor fi disponibile nativ.
 
 ## Cazuri de Utilizare Comune
@@ -34,11 +38,11 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 3. **Căutare înregistrări**: Găsiți persoana asociată
    * Obiect: Persoane
-   * Filtru: ID egal cu `{{trigger.object.pointOfContact.id}}`
+   * Filtru: ID egal cu `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Actualizați Înregistrarea**:
    * Obiect: Oportunități
-   * Înregistrare: `{{trigger.object.id}}`
+   * Înregistrare: `{{trigger.properties.after.id}}`
    * Email Contact: `{{searchRecords[0].email}}`
    * Telefon Contact: `{{searchRecords[0].phone}}`
 
@@ -55,16 +59,16 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 2. **Căutare înregistrări**: Găsiți toate oportunitățile pentru această companie
    * Obiect: Oportunități
-   * Filtru: ID Companie egal cu `{{trigger.object.id}}`
+   * Filtru: ID Companie egal cu `{{trigger.properties.after.id}}`
 
 3. **Iterator**: Parcurgeți fiecare oportunitate
 
 4. **Actualizați Înregistrarea** (în interiorul iteratorului):
    * Obiect: Oportunități
    * Înregistrare: `{{iterator.currentItem.id}}`
-   * Industria Companiei: `{{trigger.object.industry}}`
-   * Dimensiunea Companiei: `{{trigger.object.companySize}}`
-   * ARR al Companiei: `{{trigger.object.annualRevenue}}`
+   * Industria Companiei: `{{trigger.properties.after.industry}}`
+   * Dimensiunea Companiei: `{{trigger.properties.after.companySize}}`
+   * ARR al Companiei: `{{trigger.properties.after.annualRevenue}}`
 
 ## Copiere la crearea înregistrării
 
@@ -86,11 +90,11 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 2. **Căutare înregistrări**: Obțineți detaliile companiei asociate
    * Obiect: Companii
-   * Filtru: ID egal cu `{{trigger.object.company.id}}`
+   * Filtru: ID egal cu `{{trigger.properties.after.companyId}}`
 
 3. **Actualizați Înregistrarea**:
    * Obiect: Oportunități
-   * Înregistrare: `{{trigger.object.id}}`
+   * Înregistrare: `{{trigger.properties.after.id}}`
    * Industria Companiei: `{{searchRecords[0].industry}}`
    * Dimensiunea Companiei: `{{searchRecords[0].employees}}`
 
@@ -168,3 +172,5 @@ export const main = async (params) => {
 
 * [Acțiuni ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-actions)
 * [Declanșatoare ale fluxurilor de lucru](/ro/user-guide/workflows/capabilities/workflow-triggers)
+
+<PageBanner illustration="card-page-relations" />

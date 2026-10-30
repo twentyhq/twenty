@@ -13,6 +13,7 @@ import {
 import { LogicFunctionTriggerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/call-database-event-trigger-jobs.job';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -166,6 +167,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         byId: {
           [APPLICATION_ID]: {
             id: APPLICATION_ID,
+            universalIdentifier: 'application-universal-identifier',
             applicationRegistrationId: 'application-registration-id',
             defaultRoleId: APPLICATION_ROLE_ID,
             deletedAt: null,
@@ -208,6 +210,10 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
           useValue: { throttleOrThrow: jest.fn().mockResolvedValue(undefined) },
         },
         {
+          provide: ApplicationRepeatedEventRecorderService,
+          useValue: { record: jest.fn() },
+        },
+        {
           provide: RecordShareStorageService,
           useValue: recordShareStorageService,
         },
@@ -239,11 +245,14 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
           data: expect.objectContaining({
             logicFunctionId: LOGIC_FUNCTION_ID,
             workspaceId: WORKSPACE_ID,
+            applicationUniversalIdentifier: 'application-universal-identifier',
             userId: 'user-id',
             userWorkspaceId: 'user-workspace-id',
             payload: expect.objectContaining(event),
           }),
           jobId: `${TRIGGER_JOB_ID}.${LOGIC_FUNCTION_ID}.0`,
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: 'application-universal-identifier',
         },
       ],
       expect.anything(),

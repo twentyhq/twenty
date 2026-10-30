@@ -3,12 +3,14 @@ import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { render, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const mockSynchronousDownload = jest.fn().mockResolvedValue(undefined);
+const mockIndexDownload = jest.fn().mockResolvedValue(undefined);
+const mockCompletedIndexDownload = jest.fn();
+let mockHasMoreRecords = false;
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
 const mockCancelAsyncDownload = jest.fn();
 const mockSingleRecordDownload = jest.fn().mockResolvedValue(undefined);
@@ -28,8 +30,23 @@ jest.mock(
 jest.mock(
   '@/object-record/record-index/export/hooks/useRecordIndexExportRecords',
   () => ({
-    useRecordIndexExportRecords: () => ({
-      download: mockSynchronousDownload,
+    useRecordIndexExportRecords: ({
+      onMoreRecords,
+      abortSignal,
+    }: {
+      onMoreRecords?: () => Promise<void>;
+      abortSignal?: AbortSignal;
+    }) => ({
+      download: async () => {
+        await mockIndexDownload();
+        if (abortSignal?.aborted) {
+          return;
+        }
+        mockCompletedIndexDownload();
+        if (mockHasMoreRecords && isDefined(onMoreRecords)) {
+          await onMoreRecords();
+        }
+      },
       progress: {},
     }),
   }),
@@ -47,25 +64,20 @@ jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({
   useExportSingleRecord: () => ({ download: mockSingleRecordDownload }),
 }));
 
-const renderExport = (enabled?: boolean) => {
+const renderExport = ({
+  isStrictMode = false,
+}: { isStrictMode?: boolean } = {}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
-        featureFlags:
-          enabled === undefined
-            ? []
-            : [
-                {
-                  key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-                  value: enabled,
-                },
-              ],
+        featureFlags: [],
       });
     },
   });
   return render(<ExportRecordsCommand />, {
+    reactStrictMode: isStrictMode,
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper>
         <CommandComponentInstanceContext.Provider
@@ -82,33 +94,50 @@ beforeEach(() => {
   jest.useRealTimers();
   jest.clearAllMocks();
   mockRecordIndexId = 'record-index';
+  mockHasMoreRecords = false;
 });
 
-it.each([undefined, false, true])(
-  'selects the export path when the workspace flag is %s',
-  async (enabled) => {
-    renderExport(enabled);
+it('exports a complete first batch locally without a feature flag', async () => {
+  renderExport();
+  await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+  expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+});
+
+it('uses the async fallback for additional pages without a feature flag', async () => {
+  mockHasMoreRecords = true;
+  renderExport();
+  await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
+  await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
+  expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+});
+
+it.each([false, true])(
+  'keeps index export active through StrictMode remounts, hasMoreRecords=%s',
+  async (hasMoreRecords) => {
+    mockHasMoreRecords = hasMoreRecords;
+    const { unmount } = renderExport({ isStrictMode: true });
+
     await waitFor(() =>
-      expect(
-        enabled ? mockAsyncDownload : mockSynchronousDownload,
-      ).toHaveBeenCalledTimes(1),
+      expect(mockCompletedIndexDownload).toHaveBeenCalledTimes(1),
     );
-    expect(
-      enabled ? mockSynchronousDownload : mockAsyncDownload,
-    ).not.toHaveBeenCalled();
-    expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+    expect(mockAsyncDownload).toHaveBeenCalledTimes(hasMoreRecords ? 1 : 0);
+    expect(mockCancelAsyncDownload).not.toHaveBeenCalled();
+
+    unmount();
+
+    await waitFor(() =>
+      expect(mockCancelAsyncDownload).toHaveBeenCalledTimes(1),
+    );
   },
 );
 
-it.each([false, true])(
-  'keeps single-record export when the workspace flag is %s',
-  async (enabled) => {
-    mockRecordIndexId = undefined;
-    renderExport(enabled);
-    await waitFor(() =>
-      expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
-    );
-    expect(mockAsyncDownload).not.toHaveBeenCalled();
-    expect(mockSynchronousDownload).not.toHaveBeenCalled();
-  },
-);
+it('keeps single-record exports local', async () => {
+  mockRecordIndexId = undefined;
+  renderExport();
+  await waitFor(() =>
+    expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
+  );
+  expect(mockAsyncDownload).not.toHaveBeenCalled();
+  expect(mockIndexDownload).not.toHaveBeenCalled();
+});

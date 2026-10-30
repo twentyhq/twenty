@@ -1,30 +1,29 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { type ReactNode, useId } from 'react';
+import { Heading } from 'twenty-ui/primitives/typography';
 
 const StyledGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledGroupHeading = styled.label`
-  color: ${themeCssVariables.color.gray10};
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-top: ${themeCssVariables.spacing[4]};
+  gap: var(--t-spacing-2);
 `;
 
 type KeyboardMenuGroupProps = {
   heading: string;
-  children: React.ReactNode | React.ReactNode[];
+  children: ReactNode;
 };
 
 export const KeyboardMenuGroup = ({
   heading,
   children,
 }: KeyboardMenuGroupProps) => {
+  const headingId = useId();
+
   return (
-    <StyledGroup>
-      <StyledGroupHeading>{heading}</StyledGroupHeading>
+    <StyledGroup role="group" aria-labelledby={headingId}>
+      <Heading id={headingId} level={3} size="md" color="tertiary">
+        {heading}
+      </Heading>
       {children}
     </StyledGroup>
   );

@@ -5,14 +5,13 @@ import { TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/feature
 import { TranscriptImportHistorySection } from 'src/features/transcripts/front-components/TranscriptImportHistorySection';
 import { FeatureSettingsSection } from 'src/front-components/components/FeatureSettingsSection';
 import { useFeatureSetting } from 'src/front-components/hooks/use-feature-setting';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 export const TranscriptSettings = () => {
   const { t } = useTranslate();
   const { settingValue, isSaving, hasSaveError, updateSetting } =
     useFeatureSetting({
       variableKey: TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY,
-      isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
+      isAvailable: true,
     });
 
   const handleChange = (isEnabled: boolean) => {
@@ -27,19 +26,15 @@ export const TranscriptSettings = () => {
         description={t(
           'Write an AI summary on each Call Recording imported from Microsoft Teams. Each summary uses AI credits.',
         )}
-        isAvailable={RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED}
-        isEnabled={isFeatureEnabled({
-          isAvailable: RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED,
-          settingValue,
-        })}
+        isAvailable
+        isEnabled={settingValue === 'true'}
         isSaving={isSaving}
         hasSaveError={hasSaveError}
         onChange={handleChange}
       />
-      {RELEASE_FLAGS.IS_TRANSCRIPT_IMPORT_RELEASED &&
-        RELEASE_FLAGS.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED && (
-          <TranscriptImportHistorySection />
-        )}
+      {RELEASE_FLAGS.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED && (
+        <TranscriptImportHistorySection />
+      )}
     </>
   );
 };

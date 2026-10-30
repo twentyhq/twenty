@@ -10,11 +10,17 @@ import { REMOTE_RENDER_CONTAINER_TAG } from '@/constants/RemoteRenderContainerTa
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { workerInputSelectionStore } from '@/polyfills/input-selection/states/workerInputSelectionStore';
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
+import { workerScrollStore } from '@/polyfills/scroll/states/workerScrollStore';
 import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
+
+type RemoteRenderRoot = {
+  renderContainer: Element;
+  flushPendingMutations: () => void;
+};
 
 export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,
-): Element => {
+): RemoteRenderRoot => {
   const batchedConnection = new BatchingRemoteConnection({
     call: connection.call,
     mutate: (records) =>
@@ -38,7 +44,11 @@ export const attachRemoteRenderRootToWorkerDocument = (
   workerGeometryStore.setRootElement(remoteRoot);
   workerFocusTransport.setRootElement(remoteRoot);
   workerInputSelectionStore.setRootElement(remoteRoot);
+  workerScrollStore.setRootElement(remoteRoot);
   installStyleBridge(styleContainer);
 
-  return renderContainer;
+  return {
+    renderContainer,
+    flushPendingMutations: () => batchedConnection.flush(),
+  };
 };

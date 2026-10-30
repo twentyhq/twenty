@@ -21,6 +21,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export type LogicFunctionJobPayload = {
   logicFunctionId: string;
   workspaceId: string;
+  applicationUniversalIdentifier?: string;
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;

@@ -1,16 +1,16 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { IconChevronRight, ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { StyledParagraph } from '@/ai/components/LazyMarkdownRendererStyledComponents';
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ThinkingReasoningStepRow } from '@/ai/components/ThinkingReasoningStepRow';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
-import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
-import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
+import { getThinkingStepLabel } from '@/ai/utils/getThinkingStepLabel';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 import { formatRoundedDuration } from '~/utils/format/formatRoundedDuration';
@@ -35,8 +35,12 @@ const StyledSummaryText = styled.span`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   line-height: ${themeCssVariables.text.lineHeight.md};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
+  white-space: nowrap;
 `;
 
 const StyledSummaryButton = styled.button`
@@ -49,7 +53,9 @@ const StyledSummaryButton = styled.button`
   display: flex;
   font-family: inherit;
   gap: ${themeCssVariables.spacing[2]};
+  max-width: 100%;
   min-height: 24px;
+  min-width: 0;
   padding: 0;
   width: fit-content;
 
@@ -63,71 +69,46 @@ const StyledSummaryButton = styled.button`
   }
 `;
 
-const StyledSummaryChevronContainer = styled.div<{ isExpanded: boolean }>`
+const StyledChevronContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
-  transform: rotate(${({ isExpanded }) => (isExpanded ? '90deg' : '0deg')});
+  min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
+  transform: rotate(0deg);
   transition: transform calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease-in-out;
-`;
 
-const StyledRowsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
-`;
-
-const StyledRowLabel = styled.span`
-  color: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
-`;
-
-const StyledReasoningContainer = styled.div`
-  padding-left: calc(
-    ${themeCssVariables.icon.size.sm} * 1px + ${themeCssVariables.spacing[2]}
-  );
-`;
-
-const StyledReasoningText = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-
-  // reasoning uses single newlines as line breaks, which markdown would collapse
-  ${StyledParagraph} {
-    white-space: pre-line;
+  [data-panel-open] & {
+    transform: rotate(90deg);
   }
+`;
+
+const StyledStepCount = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: ${themeCssVariables.text.lineHeight.md};
+  white-space: nowrap;
+`;
+
+const StyledShimmeringRowLabel = styled(ShimmeringText)`
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: ${themeCssVariables.text.lineHeight.md};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
   min-width: calc(${themeCssVariables.icon.size.sm} * 1px);
-`;
-
-const StyledRowLabelContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
 `;
 
 const ThinkingStepRow = ({
@@ -136,108 +117,84 @@ const ThinkingStepRow = ({
 }: {
   isActive: boolean;
   part: ThinkingStepPart;
-}) => {
-  if (part.type !== 'reasoning') {
-    return <ThinkingToolStepRow part={part} isActive={isActive} />;
-  }
-
-  if (isActive) {
-    return <AiChatThinkingRow />;
-  }
-
-  return (
-    <StyledRow>
-      <StyledIconContainer>
-        <IconCpu size={14} />
-      </StyledIconContainer>
-      <StyledRowLabelContainer>
-        <StyledRowLabel>{t`Thought`}</StyledRowLabel>
-      </StyledRowLabelContainer>
-    </StyledRow>
+}) =>
+  part.type === 'reasoning' ? (
+    <ThinkingReasoningStepRow part={part} isActive={isActive} />
+  ) : (
+    <ThinkingToolStepRow part={part} isActive={isActive} />
   );
-};
 
 export const ThinkingStepsDisplay = ({
   parts,
   isLastMessageStreaming,
-  hasAssistantTextResponseStarted,
   isTrailingWhileStreaming = false,
   workDurationMs,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
-  hasAssistantTextResponseStarted: boolean;
   isTrailingWhileStreaming?: boolean;
   workDurationMs?: number | null;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const displayContext = useToolDisplayContext();
 
-  const stepCount = parts.length;
-  const hasActiveStep = parts.some((part) =>
+  const stepCountLabel = plural(parts.length, {
+    one: '# step',
+    other: '# steps',
+  });
+  const activePart = parts.findLast((part) =>
     isThinkingStepPartActive(part, isLastMessageStreaming),
   );
+  const isWorking =
+    isLastMessageStreaming &&
+    (isDefined(activePart) || isTrailingWhileStreaming);
 
-  const activeReasoningContent = getActiveReasoningContent(parts);
-  const finalReasoningContent = getLastReasoningContent(parts);
-  const reasoningContent = hasActiveStep
-    ? activeReasoningContent
-    : finalReasoningContent;
-  const shouldDisplayReasoningContent = reasoningContent?.trim().length;
-  const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
-  const shouldShowSummaryButton =
-    !hasActiveStep && !shouldKeepExpandedBeforeAnswer;
+  const workingLabel = isDefined(activePart)
+    ? getThinkingStepLabel({ part: activePart, isActive: true, displayContext })
+    : t`Thinking`;
 
-  const shouldRenderRows =
-    hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
+  const summaryLabel =
+    isDefined(workDurationMs) && !isLastMessageStreaming
+      ? t`Worked for ${formatRoundedDuration(workDurationMs)}`
+      : stepCountLabel;
 
   return (
-    <StyledContainer>
-      {shouldShowSummaryButton && (
-        <StyledSummaryButton
-          type="button"
-          aria-expanded={isExpanded}
-          onClick={() => setIsExpanded((previousValue) => !previousValue)}
-        >
-          <StyledSummaryChevronContainer isExpanded={isExpanded}>
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<StyledSummaryButton />}>
+        {isWorking ? (
+          <StyledIconContainer>
+            <ThinkingOrbitLoaderIcon />
+          </StyledIconContainer>
+        ) : (
+          <StyledChevronContainer>
             <IconChevronRight size={14} />
-          </StyledSummaryChevronContainer>
-          <StyledSummaryText>
-            {isDefined(workDurationMs)
-              ? t`Worked for ${formatRoundedDuration(workDurationMs)}`
-              : plural(stepCount, {
-                  one: '# step',
-                  other: '# steps',
-                })}
-          </StyledSummaryText>
-        </StyledSummaryButton>
-      )}
+          </StyledChevronContainer>
+        )}
+        {isWorking ? (
+          <StyledShimmeringRowLabel>{workingLabel}</StyledShimmeringRowLabel>
+        ) : (
+          <StyledSummaryText>{summaryLabel}</StyledSummaryText>
+        )}
+        {isWorking && parts.length > 1 && (
+          <StyledStepCount>{stepCountLabel}</StyledStepCount>
+        )}
+      </Collapsible.Trigger>
 
-      {shouldRenderRows && (
+      <Collapsible.Panel>
         <StyledStepsContentContainer>
-          <StyledRowsContainer>
-            {parts.map((part, index) => (
-              <ThinkingStepRow
-                key={index}
-                part={part}
-                isActive={isThinkingStepPartActive(
-                  part,
-                  isLastMessageStreaming,
-                )}
-              />
-            ))}
-            {isTrailingWhileStreaming && !hasActiveStep && (
-              <AiChatThinkingRow />
-            )}
-          </StyledRowsContainer>
-          {!!shouldDisplayReasoningContent && (
-            <StyledReasoningContainer>
-              <StyledReasoningText>
-                <LazyMarkdownRenderer text={reasoningContent} />
-              </StyledReasoningText>
-            </StyledReasoningContainer>
-          )}
+          {parts.map((part, index) => (
+            <ThinkingStepRow
+              key={index}
+              part={part}
+              isActive={isThinkingStepPartActive(part, isLastMessageStreaming)}
+            />
+          ))}
         </StyledStepsContentContainer>
-      )}
-    </StyledContainer>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

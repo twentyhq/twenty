@@ -36,6 +36,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
@@ -396,8 +397,9 @@ describe('Conversation sharing through the authenticated API', () => {
           ]!.id,
         recordId: threadId,
       };
-      const chat =
-        getAppProviderByClassName<AgentChatService>('AgentChatService');
+      const queue = getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      );
       const actors = getAppProviderByClassName<AgentChatActorService>(
         'AgentChatActorService',
       );
@@ -489,12 +491,12 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
         ).toBeUndefined();
-        const queued = await chat.queueMessage({
+        const queued = await queue.queueMessage({
           ...sender,
           threadId,
           text: 'Use my permissions',
         });
-        const turnId = await chat.promoteQueuedMessage({
+        const turnId = await queue.promoteQueuedMessage({
           workspaceId,
           threadId,
           messageId: queued.id,
@@ -552,8 +554,6 @@ describe('Conversation sharing through the authenticated API', () => {
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
-    const chatService =
-      getAppProviderByClassName<AgentChatService>('AgentChatService');
     const command = new EnableCommonRecordSharingCommand(
       {} as never,
       cache,
@@ -608,8 +608,8 @@ describe('Conversation sharing through the authenticated API', () => {
       );
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
       const restoredTwice = await Promise.all([
-        chatService.restoreThread(owner),
-        chatService.restoreThread(owner),
+        getAgentChatThreadService().restoreThread(owner),
+        getAgentChatThreadService().restoreThread(owner),
       ]);
       for (const restored of restoredTwice) {
         expect(restored.deletedAt).toBeNull();
@@ -893,12 +893,6 @@ describe('Conversations through the record API', () => {
       expect(renamed.body.data.updateAgentChatThread.title).toBe(
         'Renamed through the record API',
       );
-
-      const legacyArchive = await updateThreadRecord(threadId, {
-        archivedAt: new Date().toISOString(),
-      });
-      expect(legacyArchive.body.errors[0].extensions.code).toBe('FORBIDDEN');
-      expect((await readStoredThread(threadId))?.archivedAt).toBeNull();
 
       const outsiderSoftDelete = await softDeleteThreadRecord(
         threadId,

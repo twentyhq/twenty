@@ -1,7 +1,5 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,22 +41,6 @@ const MESSAGE_SUPPRESSIONS = gql`
 
 describe('messageSuppressionResolver (integration)', () => {
   const createdSuppressionIds: string[] = [];
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
 
   afterEach(async () => {
     for (const id of createdSuppressionIds) {
@@ -165,32 +147,6 @@ describe('messageSuppressionResolver (integration)', () => {
       code: 'FORBIDDEN',
       subCode: 'MESSAGE_SUPPRESSION_NOT_REMOVABLE',
     });
-  });
-
-  it('should refuse the list query when message campaigns are disabled for the workspace', async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-
-    try {
-      const listResponse = await makeMetadataApiRequest({
-        query: MESSAGE_SUPPRESSIONS,
-        variables: { input: { searchTerm: '', limit: 30, offset: 0 } },
-      });
-
-      expect(listResponse.body.data).toBeNull();
-      expect(listResponse.body.errors[0].message).toBe(
-        `Feature flag "${FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED}" is not enabled for this workspace`,
-      );
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    }
   });
 
   it('should fail when the suppression does not exist', async () => {

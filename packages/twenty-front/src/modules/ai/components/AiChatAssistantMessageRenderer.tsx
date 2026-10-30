@@ -38,14 +38,23 @@ const MessagePartRenderer = ({
   part,
   frontComponentIdByToolName,
   isStreaming,
+  isUserMessage,
 }: {
   part: ExtendedUIMessagePart;
   frontComponentIdByToolName: Map<string, string>;
   isStreaming: boolean;
+  isUserMessage?: boolean;
 }) => {
+  const displayMode = isUserMessage ? 'bubble' : 'chat';
+
   switch (part.type) {
     case 'text':
-      return <LazyMarkdownContent text={part.text} />;
+      return (
+        <LazyMarkdownContent
+          text={part.text}
+          displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
+        />
+      );
     case 'data-compaction':
       return <AiChatCompactionIndicator />;
     case 'data-code-execution':
@@ -112,12 +121,14 @@ const MessagePartRenderer = ({
 export const AiChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
+  isUserMessage,
   hasError,
   shouldHideThinkingSteps = false,
   workDurationMs,
 }: {
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
+  isUserMessage?: boolean;
   hasError?: boolean;
   shouldHideThinkingSteps?: boolean;
   workDurationMs?: number | null;
@@ -186,14 +197,6 @@ export const AiChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
-              hasAssistantTextResponseStarted={renderItems
-                .slice(index + 1)
-                .some(
-                  (nextRenderItem) =>
-                    nextRenderItem.type === 'part' &&
-                    nextRenderItem.part.type === 'text' &&
-                    nextRenderItem.part.text.trim().length > 0,
-                )}
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
@@ -211,6 +214,7 @@ export const AiChatAssistantMessageRenderer = ({
               part={renderItem.part}
               frontComponentIdByToolName={frontComponentIdByToolName}
               isStreaming={isLastMessageStreaming}
+              isUserMessage={isUserMessage}
             />
           ),
         )}

@@ -3,8 +3,12 @@ title: ListItemButton
 description: Native action buttons with the shared list row appearance.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ListItemButtonReference from '/snippets/ui/generated/components/navigation/list-item-button.mdx';
+
+## Overview
 
 Use `ListItemButton` for action rows and standalone selection buttons. It combines [ListItem](/ui/primitives/navigation/list-item) layout with a native button, including Enter and Space activation, focus, and disabled behavior. It defaults to `type="button"`.
 
@@ -73,7 +77,7 @@ Set `focusableWhenDisabled` to keep a disabled button focusable. It uses `aria-d
 
 ## Selection and visual slots
 
-Your application owns selection. Pair `selected` with the appropriate accessible state, such as `aria-pressed` for a toggle button. `focused` highlights the row without moving DOM focus. Indicators and shortcut hints are decorative; your application registers shortcuts and handles navigation.
+Your application owns the independent `active`, `selected`, and `focused` states. Use `active` for the open or current row. Pair `selected` with the appropriate accessible state, such as `aria-pressed` for a toggle button. `focused` highlights the row without moving DOM focus. Indicators and shortcut hints are decorative; your application registers shortcuts and handles navigation.
 
 ```tsx
 import { useState } from 'react';
@@ -103,9 +107,43 @@ export const ShowArchivedToggle = () => {
 
 Use `startIcon`, `endIcon`, `description`, and `descriptionPlacement` for supporting content. `color="danger"` marks a destructive action. `shortcutJoinLabel` controls the text between sequential shortcuts, and `hasSubmenu` displays a submenu indicator.
 
+## Multiline supporting content
+
+Set `descriptionPlacement="below"` to wrap supporting text beneath the label. The label retains its truncation behavior. Pass [Text](/ui/primitives/typography/text) with `truncate` or `lineClamp` as `description` when you need a shorter preview. The `inline` and `end` placements keep their existing appearance.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+type PlanningActionProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const PlanningAction = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: PlanningActionProps) => (
+  <ListItemButton
+    active={active}
+    disabled={disabled}
+    descriptionPlacement="below"
+    description="Review the proposed timeline and confirm the next steps with the team."
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    onClick={onOpen}
+  >
+    Quarterly planning
+  </ListItemButton>
+);
+```
+
+`active` applies the current-row background. Set `selectionAppearance="accent"` for an accent fill on selected rows with any description placement; the default preserves the existing indicator-based selection styling. `focused` applies the shared highlighted background; the focus-visible outline follows actual keyboard focus. These props do not add accessible state or move focus. Native button activation and disabled behavior remain unchanged.
+
 ## Independent controls
 
-Keep independent buttons beside `ListItemButton` so each retains its own focus and activation. The component has no `actions` slot. Use a passive `ListItem` with `actions` when the row itself does not act.
+Keep independent buttons and checkboxes beside `ListItemButton` so each retains its own focus and activation. Do not nest them in its content or icon slots. The component has no `actions` slot. Use a `ListItem` with its default `div` root for [a row with independent controls](/ui/primitives/navigation/list-item#independent-controls), and supply disabled behavior and event propagation on each control.
 
 ```tsx
 import { ListItemButton } from 'twenty-ui/components/navigation';
@@ -139,3 +177,5 @@ Use `ListItem` for passive content, links, or custom semantic owners. Use the ex
 ## Props
 
 <ListItemButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -3,9 +3,13 @@ title: ListItem
 description: Compose consistent rows with icons, descriptions, indicators, and actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Overview
 
 `ListItem` supplies the visual layout shared by list and menu rows. It renders a `div` by default for passive content. Use [ListItemButton](/ui/components/navigation/list-item-button) for ordinary action rows. Compose `ListItem` with an anchor for navigation or with a custom semantic owner when needed. Use [Dropdown](/ui/components/navigation/dropdown) or [Select](/ui/primitives/input/select) when you need a complete popup or selection owner.
 
@@ -39,15 +43,108 @@ ListItem
 └── endIcon
 ```
 
-| Slot                                  | Requirement                      | Purpose                                                                         |
-| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
-| `children`                            | Required for a visible row label | Supplies the main text.                                                         |
-| `startIcon`, `endIcon`                | Optional                         | Add supporting icons at either end of the row content.                          |
-| `description`                         | Optional                         | Adds supporting text inline or at the end, according to `descriptionPlacement`. |
-| `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                   |
-| `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
+| Slot                                  | Requirement                      | Purpose                                                                        |
+| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------ |
+| `children`                            | Required for a visible row label | Supplies the main text.                                                        |
+| `startIcon`, `endIcon`                | Optional                         | Add icons, avatars, metadata, or independent controls at either end.           |
+| `description`                         | Optional                         | Adds supporting content inline, below the label, or at the end.                |
+| `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                  |
+| `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator. |
 
 The row supplies layout. `render` accepts an element or a callback that receives native props and visual state. Spread those props onto the actual root when using a callback. Native attributes, event handlers, `className`, `style`, and `ref` reach that root. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
+
+## Multiline rows
+
+Set `descriptionPlacement="below"` to place supporting content beneath the label. The title keeps its existing truncation behavior, and supporting content wraps with the available width. The default `inline` placement and the `end` placement retain their existing appearance.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem-multiline--display"
+  title="Multiline ListItem example"
+  height={150}
+/>
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+For shorter previews, pass a [Text](/ui/primitives/typography/text) component with `truncate` or `lineClamp` as `description`. Custom content controls its own layout and accessible labels.
+
+### Independent visual states
+
+All visual state belongs to the caller. `active` identifies the open or current row without selecting it. `selected` represents selection, and `focused` represents a keyboard navigation highlight without moving DOM focus. `active` applies the current-row background. Set `selectionAppearance="accent"` for an accent fill on selected rows, independently of description placement. The default appearance preserves the existing indicator-based selection styling. `focused` applies the shared highlighted background, including when an owner uses it for pointer highlighting. The focus-visible outline follows actual keyboard focus on the root or its controls.
+
+These props do not add accessible states. Supply `aria-current`, `aria-selected`, or a control's `checked` state on the appropriate semantic owner. Actual keyboard focus also retains the native focus-visible outline.
+
+### Independent controls
+
+Keep the default `div` root when a row contains a real checkbox or independent action buttons. Use `startIcon` for the checkbox and `actions` for buttons. The decorative `indicator` is unnecessary when a real checkbox already displays selection.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+Selection and opening are separate interactions. The application owns event propagation and any row activation or keyboard policy. `ListItem.disabled` changes appearance only; pass `disabled` to each real control to prevent its activation.
+
+The existing action visibility behavior applies to multiline rows: `actionsVisibility="hover"` reveals actions on hover or focus within the row and keeps them visible on touch devices. Set it to `always` for persistent actions, including while a caller-owned popup is open. At row widths of 480px or less, multiline actions move to their own line and wrap as needed.
 
 ## Action row
 
@@ -162,6 +259,14 @@ export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
 
 The caller also owns any `preventDefault()` policy, such as preventing a link's navigation. Passing `onClick` does not add a role, make a `div` keyboard-operable, or change propagation.
 
+## Application-owned drag and editor navigation
+
+Compose reorderable rows with `ListItem` inside your application's drag host. Put the host's drag attributes and listeners on its handle, and pass the handle or grip through `startIcon`. Keep independent visibility, edit and delete controls in `actions`. The drag host owns pointer and keyboard reordering, disabled dragging and accessible handle labels.
+
+For editor suggestions, keep the editor's existing listbox and active option owner. Render each `ListItem` with `role="option"` and `aria-selected`, and use `focused` for the active row's appearance. The editor owns arrow navigation and Enter activation while focus stays in the editing surface. Prevent pointer-down focus changes when the editor requires them, and handle pointer selection in the application's row handler.
+
+For suggestions in a Dropdown page, use `Dropdown.OptionItem` or `Dropdown.ActionItem` so that page owns navigation and activation. Do not add a second Enter or Space handler to an owner that already activates from the keyboard.
+
 ## Settings row
 
 Use [SettingsRow](/ui/components/settings/settings-row) for a labeled switch row. It composes `ListItem` and `Switch`, manages their accessible association, and uses the switch’s disabled state for the row’s appearance.
@@ -188,7 +293,7 @@ export const ShowArchivedToggle = () => {
 };
 ```
 
-`selected`, `focused`, and `disabled` control row styling. They do not register actions, move DOM focus, add accessible roles or states, or suppress events. The `check` and `checkbox` indicators are decorative; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. Set `aria-pressed`, `aria-selected`, or other state semantics on the owner that needs them.
+`active`, `selected`, `focused`, and `disabled` independently control row styling. They do not register actions, move DOM focus, add accessible roles or states, or suppress events. The `check` and `checkbox` indicators are decorative; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. Set `aria-pressed`, `aria-selected`, or other state semantics on the owner that needs them.
 
 ## Picker rows
 
@@ -283,7 +388,7 @@ The checkbox indicator is not a form control and does not submit a value. Use [C
 
 ## Slots
 
-Use `startIcon` and `endIcon` for icons, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline` or `end`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
+Use `startIcon` and `endIcon` for icons or caller-owned content, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline`, `end`, or `below`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';
@@ -322,3 +427,5 @@ The reference is generated from the public component types. Native `div` attribu
 <ListItemReference />
 
 Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.
+
+<PageBanner illustration="section-apps-data" />

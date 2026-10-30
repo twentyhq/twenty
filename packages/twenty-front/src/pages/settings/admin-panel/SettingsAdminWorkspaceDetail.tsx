@@ -31,6 +31,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -48,14 +50,11 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import {
-  Text,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/typography';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetUpgradeStatusDocument,
@@ -66,10 +65,7 @@ import {
 } from '~/generated-admin/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledFeatureFlagName = styled(Text)`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
+const StyledFeatureFlagName = styled(OverflowingTextWithTooltip)`
   min-width: 0;
 `;
 
@@ -216,7 +212,10 @@ export const SettingsAdminWorkspaceDetail = () => {
       : []),
   ];
 
-  const workspaceName = workspace?.name || workspaceId || '';
+  const workspaceName = getAdminWorkspaceLabel({
+    id: workspaceId ?? '',
+    name: workspace?.name,
+  });
   const workspaceLogo = isNonEmptyString(workspace?.logo)
     ? workspace.logo
     : DEFAULT_WORKSPACE_LOGO;
@@ -258,15 +257,16 @@ export const SettingsAdminWorkspaceDetail = () => {
       label: t`Name`,
       overflow: 'hidden',
       Cell: ({ item }) => (
-        <StyledFeatureFlagName>
-          <OverflowingTextWithTooltip
-            text={<>{item.label}</>}
-            tooltipContent={item.id}
-            tooltipPlace={'top'}
-            alwaysShowTooltip
-            isFocusable
-          />
-        </StyledFeatureFlagName>
+        <StyledFeatureFlagName
+          size="md"
+          weight="regular"
+          color="primary"
+          text={<>{item.label}</>}
+          tooltipContent={item.id}
+          tooltipPlace="top"
+          alwaysShowTooltip
+          isFocusable
+        />
       ),
     },
     {
@@ -307,8 +307,8 @@ export const SettingsAdminWorkspaceDetail = () => {
         icon={
           <Avatar
             src={getAbsoluteImageUrl(workspaceLogo)}
-            name={workspaceName}
-            colorSeed={workspace?.id}
+            name={workspace?.name ?? ''}
+            colorSeed={getWorkspaceAvatarColorSeed(workspace?.name)}
             size="md"
           />
         }
@@ -362,9 +362,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                   />
                   <Table>
                     <TableBody>
-                      <TableRow gridTemplateColumns="1fr 2fr 100px">
+                      <TableRow gridTemplateColumns="1fr 2fr 80px 100px">
                         <TableHeader>{t`Name`}</TableHeader>
                         <TableHeader>{t`Email`}</TableHeader>
+                        <TableHeader>{t`Admin`}</TableHeader>
                         <TableHeader align="right">{t`Actions`}</TableHeader>
                       </TableRow>
                       {workspace.users?.map((user) => {
@@ -375,7 +376,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                         return (
                           <TableRow
                             key={userId}
-                            gridTemplateColumns="1fr 2fr 100px"
+                            gridTemplateColumns="1fr 2fr 80px 100px"
                             to={getSettingsPath(
                               SettingsPath.AdminPanelUserDetail,
                               {
@@ -406,6 +407,13 @@ export const SettingsAdminWorkspaceDetail = () => {
                               />
                             </TableCell>
                             <TableCell>{user.email}</TableCell>
+                            <TableCell>
+                              {user.isAdmin ? (
+                                <Status color="green">{t`Yes`}</Status>
+                              ) : (
+                                <Status color="gray">{t`No`}</Status>
+                              )}
+                            </TableCell>
                             <TableCell align="right">
                               {workspace.allowImpersonation &&
                                 isDefined(currentUser?.id) &&

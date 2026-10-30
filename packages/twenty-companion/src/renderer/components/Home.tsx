@@ -25,6 +25,9 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
     meetings[0]?.startsAt ?? now,
   ).toLocaleDateString([], { month: 'long' });
   const visibleMeetings = showAllMeetings ? meetings : meetings.slice(0, 3);
+  const lastMeetingDay = new Date(
+    visibleMeetings.at(-1)?.startsAt ?? now,
+  ).toDateString();
   const meetingDays = new Map<string, typeof visibleMeetings>();
   for (const meeting of visibleMeetings) {
     const day = new Date(meeting.startsAt).toDateString();
@@ -37,12 +40,13 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
       <Section.Header title={calendarTitle} />
       {meetings.length ? (
         <>
-          <Card.Root
-            className="agenda-list"
-            backgroundColor="var(--t-background-secondary)"
-          >
+          <Card.Root backgroundColor="var(--t-background-secondary)">
             {Array.from(meetingDays, ([day, dayMeetings]) => (
-              <div className="agenda-day" key={day}>
+              <Card.Content
+                className="agenda-day"
+                key={day}
+                divider={day !== lastMeetingDay}
+              >
                 <time
                   className="agenda-date"
                   dateTime={dayMeetings[0].startsAt}
@@ -76,7 +80,7 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
                     />
                   ))}
                 </div>
-              </div>
+              </Card.Content>
             ))}
           </Card.Root>
           {meetings.length > 3 && (

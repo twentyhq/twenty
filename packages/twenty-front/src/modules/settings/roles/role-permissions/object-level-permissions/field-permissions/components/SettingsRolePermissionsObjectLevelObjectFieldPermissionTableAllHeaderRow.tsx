@@ -102,7 +102,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
     return (
       <>
         <StyledSectionHeader>
-          <StyledDisplayLabel>{t`All`}</StyledDisplayLabel>
+          <Text size="xs" weight="semibold" color="light">{t`All`}</Text>
           <div></div>
           <>
             {shouldShowEmptyTableHeader && <div />}
@@ -131,9 +131,3 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       </>
     );
   };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

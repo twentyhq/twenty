@@ -10,8 +10,11 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 
@@ -117,7 +120,66 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   folderUniversalIdentifier: null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
+  agentChatChannelId: null,
+  agentChatChannelUniversalIdentifier: null,
   position: 0,
+};
+
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'workspace-custom-application-universal-identifier';
+
+const AGENT: FlatAgent = {
+  ...SYNCABLE,
+  id: 'agent-id',
+  universalIdentifier: 'agent-universal-identifier',
+  name: 'researcher',
+  label: 'Researcher',
+  icon: null,
+  description: null,
+  prompt: 'Research the company',
+  modelId: 'auto',
+  responseFormat: { type: 'text' },
+  modelConfiguration: null,
+  triggers: [],
+  isSystem: true,
+  isActive: true,
+  overrides: null,
+  deletedAt: null,
+};
+
+const SKILL: FlatSkill = {
+  ...SYNCABLE,
+  id: 'skill-id',
+  universalIdentifier: 'skill-universal-identifier',
+  name: 'summarize',
+  label: 'Summarize',
+  icon: null,
+  description: null,
+  content: 'Summarize the record',
+  isSystem: false,
+  isActive: true,
+  overrides: null,
+};
+
+const buildAllFlatEntityMapsWithAgentAndSkill = ({
+  agent,
+  skill,
+}: {
+  agent: FlatAgent;
+  skill: FlatSkill;
+}) => {
+  const allFlatEntityMaps = createEmptyAllFlatEntityMaps();
+
+  allFlatEntityMaps.flatAgentMaps = addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: agent,
+    flatEntityMaps: allFlatEntityMaps.flatAgentMaps,
+  });
+  allFlatEntityMaps.flatSkillMaps = addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: skill,
+    flatEntityMaps: allFlatEntityMaps.flatSkillMaps,
+  });
+
+  return allFlatEntityMaps;
 };
 
 const BUILD_OPTIONS = {
@@ -157,6 +219,23 @@ const withRoleTarget =
     flatRoleTargetMaps: addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: flatRoleTarget,
       flatEntityMaps: allFlatEntityMaps.flatRoleTargetMaps,
+    }),
+  });
+
+const ROLE = {
+  ...SYNCABLE,
+  id: 'role-id',
+  universalIdentifier: 'role-universal-identifier',
+  label: 'App role',
+  isEditable: true,
+} as FlatRole;
+
+const withRole =
+  (flatRole: FlatRole) => (allFlatEntityMaps: AllFlatEntityMaps) => ({
+    ...allFlatEntityMaps,
+    flatRoleMaps: addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatRole,
+      flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
     }),
   });
 
@@ -216,6 +295,20 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
 
     expect(
       result.roleTarget?.flatEntityToDelete?.[ROLE_TARGET.universalIdentifier],
+    ).toBeDefined();
+  });
+
+  it('does not delete a non-editable role the manifest cannot express', () => {
+    const result = inferDeletionOf(withRole({ ...ROLE, isEditable: false }));
+
+    expect(result.role?.flatEntityToDelete).toBeUndefined();
+  });
+
+  it('still deletes an editable role', () => {
+    const result = inferDeletionOf(withRole(ROLE));
+
+    expect(
+      result.role?.flatEntityToDelete?.[ROLE.universalIdentifier],
     ).toBeDefined();
   });
 
@@ -355,5 +448,67 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     expect(result.pageLayout?.flatEntityToCreate).toEqual({
       [PAGE_LAYOUT.universalIdentifier]: PAGE_LAYOUT,
     });
+  });
+
+  it('keeps workspace overrides and archives of agents and skills across a sync', () => {
+    const workspaceAgent: FlatAgent = {
+      ...AGENT,
+      overrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          prompt: 'Research the market',
+          isActive: false,
+        },
+      },
+    };
+    const workspaceSkill: FlatSkill = {
+      ...SKILL,
+      overrides: {
+        [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+          content: 'Summarize in one line',
+          isActive: false,
+        },
+      },
+    };
+
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps: buildAllFlatEntityMapsWithAgentAndSkill({
+        agent: workspaceAgent,
+        skill: workspaceSkill,
+      }),
+      toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithAgentAndSkill({
+        agent: { ...AGENT, label: 'Lead researcher' },
+        skill: { ...SKILL, label: 'Summarize record' },
+      }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result.agent?.flatEntityToUpdate).toEqual({
+      [AGENT.universalIdentifier]: {
+        ...workspaceAgent,
+        label: 'Lead researcher',
+      },
+    });
+    expect(result.skill?.flatEntityToUpdate).toEqual({
+      [SKILL.universalIdentifier]: {
+        ...workspaceSkill,
+        label: 'Summarize record',
+      },
+    });
+  });
+
+  it('keeps a skill the workspace deactivated before overrides existed', () => {
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps: buildAllFlatEntityMapsWithAgentAndSkill({
+        agent: AGENT,
+        skill: { ...SKILL, isActive: false },
+      }),
+      toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithAgentAndSkill({
+        agent: AGENT,
+        skill: SKILL,
+      }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result).toEqual({});
   });
 });

@@ -265,7 +265,7 @@ export const SettingsApplicationAboutSidebar = ({
           applicationId={applicationId}
           logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
-          size="xl"
+          size="xxl"
           chipOnly
         />
         <StyledIdentity>

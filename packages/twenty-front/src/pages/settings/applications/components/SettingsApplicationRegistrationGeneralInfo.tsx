@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
@@ -6,6 +7,8 @@ import {
 } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -36,15 +39,6 @@ const StyledSourceRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledDownloadLink = styled.a`
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  text-decoration: underline;
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledGeneralContainer = styled.div`
@@ -98,6 +92,15 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
   const ownerWorkspace = ownerWorkspaceData?.getPublicWorkspaceDataById;
 
+  const ownerWorkspaceAvatar = (
+    <AvatarOrIcon
+      shape="circle"
+      name={ownerWorkspace?.displayName ?? ''}
+      colorSeed={getWorkspaceAvatarColorSeed(ownerWorkspace?.displayName)}
+      src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+    />
+  );
+
   const generateItems = () => {
     const items: TableItem[] = [
       {
@@ -119,26 +122,15 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
             workspaceId: registration.ownerWorkspaceId,
           })}
-          startElement={
-            <AvatarOrIcon
-              shape="circle"
-              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
-            />
-          }
+          startElement={ownerWorkspaceAvatar}
         >
-          {getChipLabel(ownerWorkspace.displayName).content}
+          {getAdminWorkspaceLabel({
+            id: registration.ownerWorkspaceId,
+            name: ownerWorkspace.displayName,
+          })}
         </LinkChip>
       ) : (
-        <Chip
-          size="md"
-          variant="soft"
-          startElement={
-            <AvatarOrIcon
-              shape="circle"
-              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
-            />
-          }
-        >
+        <Chip size="md" variant="soft" startElement={ownerWorkspaceAvatar}>
           {getChipLabel(ownerWorkspace.displayName).content}
         </Chip>
       ),
@@ -161,12 +153,20 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           ) ? (
             <StyledSourceRow>
               <span>{t`Tarball`}</span>
-              <StyledDownloadLink
-                href={tarballUrlData.applicationRegistrationTarballUrl}
-                download
+              <Button
+                variant="link"
+                size="sm"
+                nativeButton={false}
+                role="link"
+                render={
+                  <a
+                    href={tarballUrlData.applicationRegistrationTarballUrl}
+                    download
+                  />
+                }
               >
                 <Trans>Download</Trans>
-              </StyledDownloadLink>
+              </Button>
             </StyledSourceRow>
           ) : (
             t`Tarball`

@@ -22,8 +22,8 @@ const plugins = [
 
 export default [
   {
-    input: 'src/application-build/index.ts',
-    output: { file: 'dist/build/index.d.ts', format: 'es' },
+    input: 'src/front-component-renderer/index.ts',
+    output: { file: 'dist/front-component-renderer/index.d.ts', format: 'es' },
     external,
     plugins,
   },

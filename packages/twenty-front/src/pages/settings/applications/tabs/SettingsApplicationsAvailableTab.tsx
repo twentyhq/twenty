@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -13,7 +14,7 @@ import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconSparkles } from 'twenty-ui/icon';
+import { IconEyeOff } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
@@ -30,7 +31,7 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledNotVettedContainer = styled.div`
+const StyledUnlistedContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -51,20 +52,10 @@ const StyledEmptyState = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledHintLink = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.color.blue};
-  cursor: pointer;
-  font-size: inherit;
-  padding: 0;
-  text-decoration: underline;
-`;
-
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showVettedOnly, setShowVettedOnly] = useState(true);
+  const [showUnlisted, setShowUnlisted] = useState(false);
 
   const {
     data: marketplaceApps,
@@ -80,12 +71,12 @@ export const SettingsApplicationsAvailableTab = () => {
     searchTerm,
   });
 
-  const vettedApplications = textFilteredApplications.filter(
-    (application) => application.isVetted,
+  const listedApplications = textFilteredApplications.filter(
+    (application) => application.isListed,
   );
 
-  const nonVettedApplications = textFilteredApplications.filter(
-    (application) => !application.isVetted,
+  const unlistedApplications = textFilteredApplications.filter(
+    (application) => !application.isListed,
   );
 
   if (isLoading) {
@@ -107,21 +98,21 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }
 
-  const showNonVettedHint =
-    showVettedOnly &&
-    vettedApplications.length === 0 &&
-    nonVettedApplications.length > 0;
+  const showUnlistedHint =
+    !showUnlisted &&
+    listedApplications.length === 0 &&
+    unlistedApplications.length > 0;
 
   const hasNoApplications = textFilteredApplications.length === 0;
 
-  const nonVettedCount = nonVettedApplications.length;
+  const unlistedCount = unlistedApplications.length;
 
   const getEmptyStateMessage = () => {
-    if (showNonVettedHint) {
-      return plural(nonVettedCount, {
-        one: 'No vetted application matches. # non-vetted application is available.',
+    if (showUnlistedHint) {
+      return plural(unlistedCount, {
+        one: 'No listed application matches. # unlisted application is available.',
         other:
-          'No vetted application matches. # non-vetted applications are available.',
+          'No listed application matches. # unlisted applications are available.',
       });
     }
 
@@ -150,10 +141,10 @@ export const SettingsApplicationsAvailableTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startElement={<IconSparkles />}
-                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                    checked={showVettedOnly}
-                  >{t`Vetted only`}</SettingsRow>
+                    startElement={<IconEyeOff />}
+                    onCheckedChange={() => setShowUnlisted(!showUnlisted)}
+                    checked={showUnlisted}
+                  >{t`Show unlisted apps`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
@@ -162,25 +153,28 @@ export const SettingsApplicationsAvailableTab = () => {
       </StyledSearchInputContainer>
 
       {hasNoApplications ||
-      (showVettedOnly && vettedApplications.length === 0) ? (
+      (!showUnlisted && listedApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
           <StyledEmptyState role="status">
             {getEmptyStateMessage()}
-            {showNonVettedHint && (
-              <StyledHintLink
+            {showUnlistedHint && (
+              <Button
+                variant="link"
+                color="accent"
+                size="sm"
                 type="button"
-                onClick={() => setShowVettedOnly(false)}
+                onClick={() => setShowUnlisted(true)}
               >
                 {t`Show all applications`}
-              </StyledHintLink>
+              </Button>
             )}
           </StyledEmptyState>
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledContentContainer>
-          {vettedApplications.length > 0 && (
+          {listedApplications.length > 0 && (
             <StyledCardsGrid>
-              {vettedApplications.map((application) => (
+              {listedApplications.map((application) => (
                 <SettingsAvailableApplicationCard
                   key={application.id}
                   application={application}
@@ -189,18 +183,18 @@ export const SettingsApplicationsAvailableTab = () => {
             </StyledCardsGrid>
           )}
 
-          {!showVettedOnly && nonVettedApplications.length > 0 && (
-            <StyledNotVettedContainer>
-              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
+          {showUnlisted && unlistedApplications.length > 0 && (
+            <StyledUnlistedContainer>
+              <InlineBanner status="warning">{t`Applications below have not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
-                {nonVettedApplications.map((application) => (
+                {unlistedApplications.map((application) => (
                   <SettingsAvailableApplicationCard
                     key={application.id}
                     application={application}
                   />
                 ))}
               </StyledCardsGrid>
-            </StyledNotVettedContainer>
+            </StyledUnlistedContainer>
           )}
         </StyledContentContainer>
       )}

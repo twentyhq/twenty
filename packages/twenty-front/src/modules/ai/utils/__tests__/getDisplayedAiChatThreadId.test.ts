@@ -1,3 +1,4 @@
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 
 const URL_CHAT_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -30,6 +31,16 @@ describe('getDisplayedAiChatThreadId', () => {
         urlThreadId: undefined,
         currentAiChatThread: CURRENT_CHAT_ID,
         isOnNewAiChatSlot: true,
+      }),
+    ).toBeNull();
+  });
+
+  it('shows a draft route before the current chat has switched', () => {
+    expect(
+      getDisplayedAiChatThreadId({
+        urlThreadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBeNull();
   });

@@ -18,6 +18,8 @@ import {
   type AgentManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
+  type McpServerManifest,
+  type MessagingProviderManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
@@ -44,6 +46,8 @@ export type DefinableEntity =
   | UninstallLogicFunctionConfig
   | AgentManifest
   | ConnectionProviderManifest
+  | MessagingProviderManifest
+  | McpServerManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig

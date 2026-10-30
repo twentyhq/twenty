@@ -1,0 +1,58 @@
+---
+title: Revisione del marketplace
+description: Requisiti di sicurezza e qualità che ogni app deve soddisfare per essere pubblicata nel marketplace.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Come funziona la revisione
+
+Ogni app pubblicata nel marketplace ha superato la revisione della sicurezza e della qualità di Twenty. La pubblicazione su npm non inserisce automaticamente un'app nell'elenco: rimane non elencata
+finché la revisione non è completata. Consulta
+[Pubblicazione](/it/developers/extend/apps/operations/publishing#marketplace-visibility-and-review)
+per sapere come funziona l'inserimento nell'elenco.
+
+Le app elencate possono essere rivalutate man mano che esse, le relative dipendenze o i servizi su cui
+si basano evolvono e possono essere rimosse dall'elenco se non soddisfano più la checklist.
+
+## Checklist di revisione
+
+Tutti gli elementi applicabili devono essere superati. Consigliamo di usare un agente per valutare autonomamente
+ogni criterio con prove e correzioni necessarie prima dell'invio.
+
+* [ ] **Editore.** [Rivendica la tua app](/it/developers/extend/apps/operations/publishing#claiming-your-app)
+  e [pubblica con provenienza](/it/developers/extend/apps/operations/publishing#ci-publishing).
+* [ ] **Sicurezza.** Supera la revisione interna della sicurezza di Twenty e risolvi i
+  problemi bloccanti.
+* [ ] **Autorizzazioni.** Richiedi solo le
+  [autorizzazioni](/it/developers/extend/apps/config/roles) necessarie per le funzionalità dell'app.
+* [ ] **Funzionalità.** La configurazione e i workflow principali sono facili da seguire e funzionano come
+  pubblicizzato, senza arresti anomali, lavoro perso o record duplicati. Nessuna funzionalità segnaposto
+  o controllo non funzionante.
+* [ ] **Prestazioni.** Rispetta i limiti di frequenza condivisi per API/processi, gestisci la limitazione e
+  segui le
+  [buone pratiche per lo sviluppo di app](/it/developers/extend/apps/getting-started/good-practices).
+* [ ] **Utilità.** Completa un'attività CRM significativa per un pubblico più ampio rispetto alla
+  configurazione di un singolo cliente. Sono idonei anche connettori piccoli e automazioni headless.
+* [ ] **Esperienza nativa.** Riutilizza oggetti, viste e workflow nativi quando appropriato.
+  Se l'app ha un'interfaccia utente, usa
+  [`twenty-ui`](/it/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  e adotta i layout, le interazioni e le convenzioni di accessibilità di Twenty.
+* [ ] **Privacy.** Spiega quali dati escono dallo spazio di lavoro, dove vanno e perché,
+  inclusi i provider di IA, per quanto tempo vengono conservati e come possono essere eliminati.
+* [ ] **Manutenzione e compatibilità.** Dichiara le versioni di Twenty supportate, mantieni
+  stabili gli identificatori delle entità e correggi nel tempo bug critici e integrazioni non funzionanti.
+* [ ] **Logo e galleria.** Fornisci un logo originale e riconoscibile e immagini
+  curate dell'app effettiva. Segui le
+  [linee guida per le immagini](/it/developers/extend/apps/operations/publishing#marketplace-metadata).
+* [ ] **Scheda e README.** Descrivi accuratamente funzionalità e affiliazioni nel
+  nome, nella descrizione e negli screenshot. Mantieni il README breve, ben formattato
+  e incentrato sul valore dell'app.
+* [ ] **Prezzi.** Indica chiaramente se l'app è gratuita o a pagamento, i prezzi dei piani,
+  la frequenza di fatturazione e gli eventuali servizi di terze parti a pagamento richiesti.
+* [ ] **Documentazione e supporto.** Fornisci istruzioni per la configurazione, un esempio funzionante
+  e un contatto per l'assistenza. Se utilizzi route condivise, completa la
+  [configurazione](/it/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  e verifica che gli eventi raggiungano lo spazio di lavoro corretto.
+
+<PageBanner illustration="card-page-marketplace-review" />

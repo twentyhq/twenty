@@ -26,7 +26,7 @@ import { v4 } from 'uuid';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
@@ -57,6 +57,7 @@ import {
   type UpdateApplicationRegistrationPayload,
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationInstallation } from 'src/engine/core-modules/application/application-registration/types/application-installation.type';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
@@ -110,7 +111,7 @@ export type ApplicationRegistrationCatalogCard = {
   universalIdentifier: string;
   name: string;
   sourcePackage: string | null;
-  isVetted: boolean;
+  isListed: boolean;
   description: string | null;
   author: string | null;
   category: string | null;
@@ -235,6 +236,7 @@ export class ApplicationRegistrationService {
       await this.applicationUpgradeQueueService.add<UpgradeApplicationsJobData>(
         UPGRADE_APPLICATIONS_JOB_NAME,
         { applicationRegistrationId, onlyAutoUpgrade: true },
+        { isSystemJob: true },
       );
     } catch (error) {
       this.logger.error(
@@ -591,14 +593,14 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const {
       id,
-      update: { isListed, isPreInstalled, isVetted, ...update },
+      update: { isListed, isPreInstalled, ...update },
     } = input;
 
     await this.findOneByIdGlobal(id);
     await this.applyUpdate({
       id,
       update,
-      instanceFlags: { isListed, isPreInstalled, isVetted },
+      instanceFlags: { isListed, isPreInstalled },
     });
 
     return this.findOneByIdGlobal(id);
@@ -614,7 +616,7 @@ export class ApplicationRegistrationService {
     update: UpdateApplicationRegistrationPayload;
     instanceFlags?: Pick<
       AdminUpdateApplicationRegistrationPayload,
-      'isListed' | 'isPreInstalled' | 'isVetted'
+      'isListed' | 'isPreInstalled'
     >;
   }): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
@@ -636,8 +638,6 @@ export class ApplicationRegistrationService {
       updateData.isListed = instanceFlags.isListed;
     if (isDefined(instanceFlags.isPreInstalled))
       updateData.isPreInstalled = instanceFlags.isPreInstalled;
-    if (isDefined(instanceFlags.isVetted))
-      updateData.isVetted = instanceFlags.isVetted;
 
     if (Object.keys(updateData).length === 0) {
       return;
@@ -675,7 +675,6 @@ export class ApplicationRegistrationService {
         | 'sourcePackage'
         | 'tarballFileId'
         | 'isListed'
-        | 'isVetted'
         | 'ownerWorkspaceId'
       >
     >;
@@ -934,13 +933,13 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    const officialSourcePackage = MARKETPLACE_VETTED_APPLICATIONS.find(
+    const featuredSourcePackage = MARKETPLACE_FEATURED_APPLICATIONS.find(
       ({ universalIdentifier }) =>
         universalIdentifier === params.universalIdentifier,
     )?.sourcePackage;
 
     const expectedSourcePackage =
-      officialSourcePackage ?? existing?.sourcePackage;
+      featuredSourcePackage ?? existing?.sourcePackage;
 
     if (
       isDefined(expectedSourcePackage) &&
@@ -971,7 +970,7 @@ export class ApplicationRegistrationService {
     }
 
     return this.createFromCatalog(params, {
-      isVetted: isDefined(officialSourcePackage),
+      isListed: isDefined(featuredSourcePackage),
     });
   }
 
@@ -1024,7 +1023,7 @@ export class ApplicationRegistrationService {
 
   private async createFromCatalog(
     params: UpsertApplicationRegistrationFromCatalogParams,
-    { isVetted }: { isVetted: boolean },
+    { isListed }: { isListed: boolean },
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.create({
       universalIdentifier: params.universalIdentifier,
@@ -1032,8 +1031,7 @@ export class ApplicationRegistrationService {
       sourceType: params.sourceType,
       sourcePackage: params.sourcePackage,
       latestAvailableVersion: params.latestAvailableVersion,
-      isListed: true,
-      isVetted,
+      isListed,
       manifest: params.manifest,
       ...fromManifestApplicationToDisplayFields(params.manifest.application),
       oAuthClientId: v4(),
@@ -1109,9 +1107,7 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findManyListedCatalogCards(): Promise<
-    ApplicationRegistrationCatalogCard[]
-  > {
+  async findManyCatalogCards(): Promise<ApplicationRegistrationCatalogCard[]> {
     const registrations = await this.applicationRegistrationRepository.find({
       select: [
         'id',
@@ -1120,7 +1116,7 @@ export class ApplicationRegistrationService {
         'sourceType',
         'sourcePackage',
         'latestAvailableVersion',
-        'isVetted',
+        'isListed',
         'logo',
         'logoFileId',
         'description',
@@ -1129,7 +1125,6 @@ export class ApplicationRegistrationService {
         'manifest',
       ],
       where: {
-        isListed: true,
         sourceType: ApplicationRegistrationSourceType.NPM,
       },
     });
@@ -1139,7 +1134,7 @@ export class ApplicationRegistrationService {
       universalIdentifier: registration.universalIdentifier,
       name: registration.name,
       sourcePackage: registration.sourcePackage,
-      isVetted: registration.isVetted,
+      isListed: registration.isListed,
       description: registration.description,
       author: getApplicationAuthorDisplayName(registration.author),
       category: registration.category,
@@ -1304,20 +1299,9 @@ export class ApplicationRegistrationService {
     periodEnd: Date;
   }): Promise<CreditUsedItemDTO[] | null> {
     try {
-      // Ordered so identical installation lists hit the ClickHouse query cache
-      const installations = await this.applicationRepository
-        .createQueryBuilder('application')
-        .select('application.id', 'applicationId')
-        .addSelect('application.workspaceId', 'workspaceId')
-        .innerJoin('application.workspace', 'workspace')
-        .where(
-          'application.applicationRegistrationId = :applicationRegistrationId',
-          { applicationRegistrationId },
-        )
-        .andWhere('workspace.deletedAt IS NULL')
-        .orderBy('application.workspaceId')
-        .addOrderBy('application.id')
-        .getRawMany<{ applicationId: string; workspaceId: string }>();
+      const installations = await this.findInstallations({
+        applicationRegistrationId,
+      });
 
       return await this.usageAnalyticsService.getCreditsUsedBreakdownForInstallations(
         { installations, periodStart, periodEnd },
@@ -1330,6 +1314,37 @@ export class ApplicationRegistrationService {
 
       return null;
     }
+  }
+
+  async findInstallations({
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationRegistrationId: string;
+    workspaceId?: string;
+  }): Promise<ApplicationInstallation[]> {
+    const queryBuilder = this.applicationRepository
+      .createQueryBuilder('application')
+      .select('application.id', 'applicationId')
+      .addSelect('application.workspaceId', 'workspaceId')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        { applicationRegistrationId },
+      )
+      .andWhere('workspace.deletedAt IS NULL');
+
+    if (isDefined(workspaceId)) {
+      queryBuilder.andWhere('application.workspaceId = :workspaceId', {
+        workspaceId,
+      });
+    }
+
+    // Ordered so identical installation lists hit the ClickHouse query cache
+    return queryBuilder
+      .orderBy('application.workspaceId')
+      .addOrderBy('application.id')
+      .getRawMany<ApplicationInstallation>();
   }
 
   // Admin panel only, which views apps across all workspaces, so ownership is not enforced

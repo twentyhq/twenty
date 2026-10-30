@@ -101,6 +101,29 @@ export const Small: Story = {
   args: { size: 'sm' },
 };
 
+export const Rectangle: Story = {
+  args: { variant: 'rectangle', style: { width: 280 } },
+  play: Default.play,
+};
+
+export const FullWidth: Story = {
+  args: { fullWidth: true, variant: 'rectangle' },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 360 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('radiogroup').getBoundingClientRect().width,
+    ).toBe(360);
+  },
+};
+
 export const ContentWidth: Story = {
   args: { itemWidth: 'content' },
   play: async ({ canvasElement }) => {

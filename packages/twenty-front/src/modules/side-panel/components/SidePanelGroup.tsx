@@ -31,15 +31,11 @@ export const SidePanelGroup = ({ heading, children }: SidePanelGroupProps) => {
   return (
     <>
       <StyledGroupHeadingContainer>
-        <StyledDisplayLabel>{heading}</StyledDisplayLabel>
+        <Text size="xs" weight="semibold" color="light">
+          {heading}
+        </Text>
       </StyledGroupHeadingContainer>
       <StyledGroup>{children}</StyledGroup>
     </>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

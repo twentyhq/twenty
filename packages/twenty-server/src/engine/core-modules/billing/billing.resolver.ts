@@ -32,7 +32,6 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
-import { getCheckoutPlanKeyOrThrow } from 'src/engine/core-modules/billing/utils/get-checkout-plan-key-or-throw.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
@@ -136,41 +135,51 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const checkoutSessionParams = {
-      user,
-      workspace,
-      successUrlPath,
-      plan: getCheckoutPlanKeyOrThrow({ planKey: plan }),
-      requirePaymentMethod,
-    };
-
     const billingPricesPerPlan =
-      await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: checkoutSessionParams.plan,
+      await this.billingPlanService.getSellablePlanPricesByIntervalOrThrow({
+        planKey: plan,
         interval: recurringInterval,
       });
 
-    if (!requirePaymentMethod) {
-      const successUrl =
-        await this.billingPortalWorkspaceService.createDirectSubscription({
-          ...checkoutSessionParams,
-          billingPricesPerPlan,
-        });
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      userEmail: user.email,
+      workspaceId: workspace.id,
+      createSubscription: async (isTrialLimitReached) => {
+        const isPaymentMethodRequired =
+          requirePaymentMethod || isTrialLimitReached;
 
-      return {
-        url: successUrl,
-      };
-    } else {
-      const checkoutSessionURL =
-        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
+        const checkoutSessionParams = {
+          user,
+          workspace,
+          successUrlPath,
+          plan,
+          requirePaymentMethod: isPaymentMethodRequired,
+          isTrialLimitReached,
           billingPricesPerPlan,
-        });
+        };
 
-      return {
-        url: checkoutSessionURL,
-      };
-    }
+        if (!isPaymentMethodRequired) {
+          const successUrl =
+            await this.billingPortalWorkspaceService.createDirectSubscription(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: successUrl,
+          };
+        } else {
+          const checkoutSessionURL =
+            await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: checkoutSessionURL,
+          };
+        }
+      },
+    });
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
@@ -205,20 +214,25 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const checkoutPlanKey = getCheckoutPlanKeyOrThrow({ planKey: plan });
-
     const billingPricesPerPlan =
-      await this.billingPlanService.getPricesPerPlanByInterval({
-        planKey: checkoutPlanKey,
+      await this.billingPlanService.getSellablePlanPricesByIntervalOrThrow({
+        planKey: plan,
         interval: recurringInterval,
       });
 
-    return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
-      user,
-      workspace,
-      plan: checkoutPlanKey,
-      billingPricesPerPlan,
-      idempotencyKey,
+    return await this.billingPortalWorkspaceService.withTrialLimitLock({
+      userId: user.id,
+      userEmail: user.email,
+      workspaceId: workspace.id,
+      createSubscription: (isTrialLimitReached) =>
+        this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
+          user,
+          workspace,
+          plan,
+          billingPricesPerPlan,
+          isTrialLimitReached,
+          idempotencyKey,
+        }),
     });
   }
 
@@ -450,10 +464,31 @@ export class BillingResolver {
     }),
     NoPermissionGuard,
   )
-  async listPlans(): Promise<BillingPlanDTO[]> {
+  async billingPlans(): Promise<BillingPlanDTO[]> {
     const plans = await this.billingPlanService.listPlans();
 
     return plans.map(formatBillingDatabaseProductToGraphqlDTO);
+  }
+
+  @Query(() => [BillingPlanDTO], {
+    deprecationReason: 'Use billingPlans instead.',
+  })
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+    NoPermissionGuard,
+  )
+  async listPlans(): Promise<BillingPlanDTO[]> {
+    return this.billingPlans();
   }
 
   @Mutation(() => BillingEndTrialPeriodDTO)

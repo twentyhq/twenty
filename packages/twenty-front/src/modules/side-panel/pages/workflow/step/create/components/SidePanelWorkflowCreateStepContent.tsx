@@ -31,7 +31,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
   );
 
   const { createStep } = useCreateStep();
-  const { updateStep } = useUpdateStep();
+  const { updateStepNow } = useUpdateStep();
   const flow = useAtomComponentStateValue(flowComponentState);
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
@@ -55,7 +55,7 @@ export const SidePanelWorkflowCreateStepContent = () => {
       targetStepId: createdStepId,
     });
 
-    await updateStep(updatedStep);
+    await updateStepNow(updatedStep);
   };
 
   const handleCreateStep = async (selection: WorkflowActionSelection) => {

@@ -26,6 +26,7 @@ import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { Input } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
@@ -49,24 +50,6 @@ const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   overflow: hidden;
   padding: 0 ${themeCssVariables.spacing[2]};
   position: relative;
-`;
-
-const StyledInput = styled.input`
-  background-color: transparent;
-  border: none;
-  border-radius: 0;
-  color: ${themeCssVariables.font.color.primary};
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  height: 24px;
-  margin: 0;
-  outline: none;
-  padding: 0;
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
 `;
 
 const StyledContentContainer = styled.div`
@@ -243,11 +226,19 @@ export const SidePanelTopBar = ({
         )}
         {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <>
-            <StyledInput
+            <Input
+              variant="plain"
+              hasFocusRing={false}
+              size="sm"
+              aria-label={t`Search`}
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
               value={sidePanelSearch}
-              placeholder={t`Type anything...`}
+              placeholder={
+                sidePanelPage === SidePanelPages.SearchAiChats
+                  ? t`Search chat titles...`
+                  : t`Type anything...`
+              }
               onChange={handleSearchChange}
               onKeyDownCapture={handleInputKeyDownCapture}
               onFocus={handleInputFocus}

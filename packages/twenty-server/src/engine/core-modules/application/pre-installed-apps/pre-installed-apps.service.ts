@@ -35,7 +35,11 @@ export class PreInstalledAppsService {
     await this.messageQueueService.add<InstallPreInstalledAppsJobData>(
       INSTALL_PRE_INSTALLED_APPS_JOB_NAME,
       { workspaceId },
-      { id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}` },
+      {
+        id: `${INSTALL_PRE_INSTALLED_APPS_JOB_NAME}-${workspaceId}`,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

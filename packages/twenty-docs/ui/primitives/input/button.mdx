@@ -3,8 +3,12 @@ title: Button
 description: Trigger actions or navigate with styled buttons.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+## Overview
 
 Use `Button` for an action and supply its visible label as children. Use [IconButton](/ui/components/input/icon-button) for icon-only controls, with an accessible name from `aria-label` or `aria-labelledby`.
 
@@ -48,6 +52,25 @@ export const CreateRecord = () => (
 ```
 
 Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `shortcut` displays keyboard hints on larger screens; bind the shortcuts in your application.
+
+Use `color="inherit"` for controls on a colored surface. The label, icons, loader, and outline border follow the surrounding text color. Interaction fills use translucent black. Outline buttons rest on a transparent surface with a 25% currentColor border and use 10% and 20% black fills on hover and press. Ghost uses transparent, 10%, and 20% black fills; soft uses 10%, 20%, and 30%. Link stays unfilled.
+
+`inherit` supports `outline`, `ghost`, `soft`, and `link`. A resolved `solid` and `inherit` combination throws a runtime error, including defaults supplied by ButtonGroup or a wrapper. `MainButton` defaults to solid, so supply a non-solid variant when inheriting color.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SurfaceActions = () => (
+  <>
+    <Button color="inherit" variant="outline">
+      Save
+    </Button>
+    <Button color="inherit" variant="ghost">
+      Cancel
+    </Button>
+  </>
+);
+```
 
 `link` uses compact text with no border or filled background. It follows its content height at either size, with a smaller font and narrower padding. Its neutral color uses stronger text on hover. The appearance does not determine semantics: use `onClick` for actions and `href` for navigation.
 
@@ -258,3 +281,5 @@ export const LogOut = ({ onLogOut }: LogOutProps) => (
 <ButtonReference />
 
 Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.
+
+<PageBanner illustration="page-cover-pointer" />

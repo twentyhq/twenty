@@ -3,9 +3,13 @@ title: Chip
 description: Show compact caller-owned content with optional leading and trailing slots.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## Overview
 
 Use `Chip` for compact references to people, records, or files. Use [Tag](/ui/primitives/data-display/tag) for colored categories and [Status](/ui/primitives/data-display/status) for workflow states.
 
@@ -44,7 +48,7 @@ Chip never inserts a label. Supply a translated fallback from your application w
   height={200}
 />
 
-`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, `solid`, or `plain`; `ghost` is the default. Plain chips have no resting fill or leading padding. Clickable plain chips retain the ghost hover and pressed backgrounds, pointer cursor, and focus ring. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
+`size` accepts `sm` or `md`, with total heights of 20px and 24px. `variant` accepts `ghost`, `soft`, `solid`, `plain`, or `outline`; `ghost` is the default. Plain chips have no resting fill or leading padding. Outline chips have a strong 1px border, a lighter resting fill, and 8px inline padding on each side, with the same total height as other variants. Clickable plain and outline chips use the ghost hover and pressed backgrounds, pointer cursor, and focus ring. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
 
 ## Buttons and links
 
@@ -81,7 +85,12 @@ Supplying `onClick` keeps the default `div`. Use `render` to compose an explicit
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 export const DocumentationChip = () => (
-  <Chip render={<a href="https://twenty.com/developers" />} clickable>
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
     Documentation
   </Chip>
 );
@@ -101,7 +110,7 @@ export const FileChip = () => (
 );
 ```
 
-`maxWidth` constrains the rendered chip width in pixels, including padding. The same limit applies to plain chips with asymmetric padding. Content truncates with an ellipsis by default; `truncate={false}` leaves it unconstrained by truncation. String children supply their own tooltip text. Set `tooltipContent` for custom text or node content, `tooltipDelay` for the opening delay, and `isTooltipMultiline` to preserve line breaks. `alwaysShowTooltip` also enables the tooltip when content fits. These options follow [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip). Keep essential information available without relying on hover.
+`maxWidth` constrains the rendered chip width in pixels, including padding and any outline border. The same limit applies to plain chips with asymmetric padding. Content truncates with an ellipsis by default; `truncate={false}` leaves it unconstrained by truncation. String children supply their own tooltip text. Set `tooltipContent` for custom text or node content, `tooltipDelay` for the opening delay, and `isTooltipMultiline` to preserve line breaks. `alwaysShowTooltip` also enables the tooltip when content fits. These options follow [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip). Keep essential information available without relying on hover.
 
 ## Migration
 
@@ -114,3 +123,5 @@ Replace leading-padding overrides with `variant="plain"`. Keep `clickable` enabl
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

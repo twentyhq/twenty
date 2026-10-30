@@ -1,3 +1,5 @@
+import { type FieldReferenceFilterOperator } from 'twenty-shared/types';
+
 export type FilterOperator =
   | 'eq'
   | 'neq'
@@ -14,4 +16,5 @@ export type FilterOperator =
   | 'containsAny'
   | 'containsIlike'
   | 'isEmptyArray'
-  | 'search';
+  | 'search'
+  | FieldReferenceFilterOperator;

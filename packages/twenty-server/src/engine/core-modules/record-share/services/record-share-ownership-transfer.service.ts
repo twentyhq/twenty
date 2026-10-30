@@ -51,8 +51,7 @@ export class RecordShareOwnershipTransferService {
     });
   }
 
-  // Only records that access to all records already reaches change hands:
-  // private objects such as chats and workflow runs stay with their creator
+  // Private objects such as chats and workflow runs stay with their creator
   private async findTransferableObjectMetadataIds(
     workspaceId: string,
   ): Promise<string[]> {

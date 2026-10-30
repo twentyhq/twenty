@@ -8,6 +8,7 @@ export enum AiExceptionCode {
   AGENT_NOT_FOUND = 'AGENT_NOT_FOUND',
   AGENT_ALREADY_EXISTS = 'AGENT_ALREADY_EXISTS',
   AGENT_IS_STANDARD = 'AGENT_IS_STANDARD',
+  AGENT_IS_INACTIVE = 'AGENT_IS_INACTIVE',
   AGENT_EXECUTION_FAILED = 'AGENT_EXECUTION_FAILED',
   INVALID_AGENT_INPUT = 'INVALID_AGENT_INPUT',
   THREAD_NOT_FOUND = 'THREAD_NOT_FOUND',
@@ -18,6 +19,18 @@ export enum AiExceptionCode {
   INVALID_CHAT_MESSAGE_REACTION_EMOJI = 'INVALID_CHAT_MESSAGE_REACTION_EMOJI',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
+  CHAT_THREAD_NOT_IN_CHANNEL = 'CHAT_THREAD_NOT_IN_CHANNEL',
+  CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
+  CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
+  CHAT_CHANNELS_UNAVAILABLE = 'CHAT_CHANNELS_UNAVAILABLE',
+  CHAT_UPGRADE_IN_PROGRESS = 'CHAT_UPGRADE_IN_PROGRESS',
+  CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
+  CHAT_CHANNEL_BUSY = 'CHAT_CHANNEL_BUSY',
+  CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
+  INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
+  INVALID_CHAT_CHANNEL_ROLE = 'INVALID_CHAT_CHANNEL_ROLE',
+  INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
+  INVALID_CHAT_CHANNEL_THREAD_CURSOR = 'INVALID_CHAT_CHANNEL_THREAD_CURSOR',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
@@ -45,6 +58,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`An agent with this name already exists.`;
     case AiExceptionCode.AGENT_IS_STANDARD:
       return msg`Standard agents cannot be modified.`;
+    case AiExceptionCode.AGENT_IS_INACTIVE:
+      return msg`This agent is archived.`;
     case AiExceptionCode.AGENT_EXECUTION_FAILED:
       return msg`Agent execution failed.`;
     case AiExceptionCode.INVALID_AGENT_INPUT:
@@ -65,6 +80,30 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       return msg`Unassign yourself before unsubscribing from this chat.`;
+    case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
+      return msg`This chat is not in a channel.`;
+    case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
+      return msg`This chat has no owner, so it has to stay in a channel.`;
+    case AiExceptionCode.CHAT_CHANNEL_NOT_FOUND:
+      return msg`Channel not found.`;
+    case AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE:
+      return msg`Channels are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS:
+      return msg`Chats are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
+      return msg`Move this channel's chats to another channel before deleting it.`;
+    case AiExceptionCode.CHAT_CHANNEL_BUSY:
+      return msg`This channel is being changed. Try again in a moment.`;
+    case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
+      return msg`Standard channels cannot be deleted.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
+      return msg`A channel needs a name.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
+      return msg`One of these roles no longer exists.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_DESTINATION:
+      return msg`Pick another channel to move the chats to.`;
+    case AiExceptionCode.INVALID_CHAT_CHANNEL_THREAD_CURSOR:
+      return msg`This list of chats could not be loaded. Try again.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:

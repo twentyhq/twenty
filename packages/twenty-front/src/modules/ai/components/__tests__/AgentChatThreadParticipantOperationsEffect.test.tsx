@@ -42,7 +42,9 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
+  __typename: 'AgentChatThreadParticipant',
 };
 
 const renderEffect = (

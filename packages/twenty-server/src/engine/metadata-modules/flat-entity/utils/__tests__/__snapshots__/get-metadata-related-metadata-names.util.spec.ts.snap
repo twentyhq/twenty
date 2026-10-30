@@ -2,6 +2,20 @@
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannel 1`] = `
+[
+  "agentChatChannelRole",
+  "navigationMenuItem",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannelRole 1`] = `
+[
+  "agentChatChannel",
+  "role",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for applicationVariable 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
@@ -45,12 +59,21 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for mcpServer 1`] = `
+[
+  "connectionProvider",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for messagingProvider 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
 [
   "objectMetadata",
   "navigationMenuItem",
   "view",
   "pageLayout",
+  "agentChatChannel",
 ]
 `;
 
@@ -103,6 +126,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for relatedRecordPath 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",
@@ -111,6 +141,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "rowLevelPermissionPredicate",
   "rowLevelPermissionPredicateGroup",
+  "agentChatChannelRole",
 ]
 `;
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -19,7 +20,7 @@ import {
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplicationRegistrationOrThrow } from 'src/engine/core-modules/application/utils/can-caller-reach-application-registration-or-throw.util';
-import { findEngineInjectedEnvVariableNames } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/find-engine-injected-env-variable-names.util';
+import { isReservedEnvVariableName } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-reserved-env-variable-name.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
@@ -68,6 +69,36 @@ export class ApplicationRegistrationVariableService {
     return variables.map((variable) => this.toObfuscatedDTO(variable));
   }
 
+  async getServerEnvVariables({
+    applicationRegistrationId,
+  }: {
+    applicationRegistrationId: string | null;
+  }): Promise<Record<string, string>> {
+    if (!isDefined(applicationRegistrationId)) {
+      return {};
+    }
+
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    const envVariables: Record<string, string> = {};
+
+    for (const variable of variables) {
+      if (isReservedEnvVariableName(variable.key)) {
+        continue;
+      }
+
+      const plaintextValue = this.decryptValue(variable);
+
+      if (isNonEmptyString(plaintextValue)) {
+        envVariables[variable.key] = plaintextValue;
+      }
+    }
+
+    return envVariables;
+  }
+
   async updateVariable({
     input,
     workspaceId,
@@ -113,7 +144,7 @@ export class ApplicationRegistrationVariableService {
 
     const declaredKeys = Object.keys(serverVariables);
 
-    const reservedKeys = findEngineInjectedEnvVariableNames(declaredKeys);
+    const reservedKeys = declaredKeys.filter(isReservedEnvVariableName);
 
     if (reservedKeys.length > 0) {
       throw new ApplicationRegistrationException(
@@ -138,7 +169,6 @@ export class ApplicationRegistrationVariableService {
       if (existing) {
         await variableRepository.update(existing.id, {
           description: schema.description ?? '',
-          isSecret: schema.isSecret ?? true,
           isRequired,
           isDeprecated,
           type: schema.type ?? FieldMetadataType.TEXT,

@@ -9,7 +9,13 @@ describe('Agent chat stream state', () => {
 
   const workspaceId = v4();
 
-  const publishChunk = (threadId: string, text: string) =>
+  const publishChunk = ({
+    threadId,
+    text,
+  }: {
+    threadId: string;
+    text: string;
+  }) =>
     eventPublisherService.publish({
       threadId,
       workspaceId,
@@ -28,7 +34,7 @@ describe('Agent chat stream state', () => {
     const streamId = v4();
 
     await eventPublisherService.startStreamState({ threadId, streamId });
-    await publishChunk(threadId, 'partial');
+    await publishChunk({ threadId, text: 'partial' });
 
     await eventPublisherService.resetOwnedStreamState({ threadId, streamId });
 
@@ -47,7 +53,7 @@ describe('Agent chat stream state', () => {
       threadId,
       streamId: deadStreamId,
     });
-    await publishChunk(threadId, 'dead');
+    await publishChunk({ threadId, text: 'dead' });
     await eventPublisherService.resetOwnedStreamState({
       threadId,
       streamId: deadStreamId,
@@ -57,7 +63,7 @@ describe('Agent chat stream state', () => {
       threadId,
       streamId: nextStreamId,
     });
-    await publishChunk(threadId, 'next');
+    await publishChunk({ threadId, text: 'next' });
 
     await eventPublisherService.resetOwnedStreamState({
       threadId,

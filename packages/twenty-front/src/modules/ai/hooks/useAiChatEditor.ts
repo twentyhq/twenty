@@ -52,9 +52,7 @@ export const useAiChatEditor = () => {
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: isAiChatInboxEnabled
-      ? t`Ask anything, @ a teammate or record, / a skill...`
-      : t`Ask anything, @ a record or / a skill...`,
+    placeholder: t`Ask, search or make anything...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {

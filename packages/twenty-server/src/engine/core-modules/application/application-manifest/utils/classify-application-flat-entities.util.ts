@@ -75,8 +75,20 @@ const classifyFlatEntity = ({
         status: ApplicationExportCoverageStatus.EXCLUDED,
         reason: 'runtime configuration',
       };
+    case 'role':
+      return 'isEditable' in flatEntity && flatEntity.isEditable === false
+        ? {
+            status: ApplicationExportCoverageStatus.EXCLUDED,
+            reason: 'non-editable role',
+          }
+        : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
+    case 'workflowVersion':
+      return {
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+        reason: 'workflow version, exported through its workflow',
+      };
     case 'roleTarget':
       return ('userWorkspaceId' in flatEntity &&
         isDefined(flatEntity.userWorkspaceId)) ||

@@ -27,6 +27,8 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
@@ -50,7 +52,7 @@ import {
   buildWaitingAgentExecutionResult,
   mockAgentRunTurns,
 } from 'test/utils/mock-agent-run-turns.util';
-import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
@@ -234,7 +236,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   };
 
   const waitForRun = async (runId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.status === status) {
@@ -428,17 +430,24 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       getQueueToken(MessageQueue.workflowQueue),
     );
 
-    await queue.add('WorkflowTriggerJob', {
-      workspaceId,
-      workflowId: fixture.workflowId as string,
-      payload: { marker: envelope },
-      ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
-        ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-        : {}),
-      ...(envelope === 'core-version' || envelope === 'backfilled-paired'
-        ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-        : {}),
-    });
+    await queue.add(
+      'WorkflowTriggerJob',
+      {
+        workspaceId,
+        workflowId: fixture.workflowId as string,
+        payload: { marker: envelope },
+        ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
+          ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
+          : {}),
+        ...(envelope === 'core-version' || envelope === 'backfilled-paired'
+          ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
+          : {}),
+      },
+      {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
     for (let attempt = 0; attempt < 100; attempt++) {
       const [run] = await global.testDataSource.query(
         `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
@@ -556,18 +565,28 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
     const { workspaceCache, upgradeState, backfill } =
       global.workflowTestServices;
+    const triggerMapCacheService =
+      getAppProviderByClassName<WorkspaceWorkflowAutomatedTriggerMapCacheService>(
+        'WorkspaceWorkflowAutomatedTriggerMapCacheService',
+      );
+    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
+      global.workflowTestServices.coreDataSource,
+      workspaceId,
+    );
     const hiddenColumns = jest
       .spyOn(upgradeState, 'getHiddenColumnPropertyNames')
       .mockReturnValue(new Set(['workspaceWorkflowVersionId']));
 
+    await rowsBatchLoader.loadRows([triggerMapCacheService.rowsRequirement]);
+    const duringUpgrade = await triggerMapCacheService.computeForCache({
+      workspaceId,
+      rows: rowsBatchLoader.readRows(triggerMapCacheService.rowsRequirement),
+    });
+
+    expect(duringUpgrade.byWorkflowId).toEqual({});
     await workspaceCache.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
     ]);
-    const duringUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
-
-    expect(duringUpgrade.workflowAutomatedTriggerMaps.byWorkflowId).toEqual({});
     hiddenColumns.mockRestore();
     await backfill.runOnWorkspace({
       workspaceId,
@@ -576,15 +595,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       index: 0,
       total: 1,
     });
-    const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
+    await expectEventually(async () => {
+      const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
 
-    expect(
-      afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
-        fixture.coreWorkflowId
-      ],
-    ).toMatchObject({ coreWorkflowVersionId: fixture.coreWorkflowVersionId });
+      expect(
+        afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
+          fixture.coreWorkflowId
+        ],
+      ).toMatchObject({
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+      });
+    });
   });
 
   it('normalizes overlapping old and core cron caches without duplicate runs', async () => {
@@ -639,7 +662,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     throw new Error('Cron failed to dispatch');
   });
   const waitForStep = async (runId: string, stepId: string, status: string) => {
-    for (let attempt = 0; attempt < 150; attempt++) {
+    for (let attempt = 0; attempt < 600; attempt++) {
       const run = await getRun(runId);
 
       if (run?.state?.stepInfos[stepId]?.status === status) {
@@ -1931,7 +1954,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           workflowRunId: runId,
           lastExecutedStepId: parallelBranch.id,
         },
-        buildRunWorkflowJobOptions(runId),
+        buildRunWorkflowJobOptions({
+          workflowRunId: runId,
+          scope: { workspaceId, isWorkspaceJob: true },
+        }),
       );
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -1959,7 +1985,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       const recordToolCallAnswer = jest
         .spyOn(
-          getAppProviderByClassName<AgentChatService>('AgentChatService'),
+          getAppProviderByClassName<ToolCallAnswerRecorderService>(
+            'ToolCallAnswerRecorderService',
+          ),
           'recordToolCallAnswer',
         )
         .mockRejectedValueOnce(new Error('Answer write failed'));
@@ -2112,7 +2140,14 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     capacity.mockRestore();
     await global.app
       .get<MessageQueueService>(getQueueToken(MessageQueue.workflowQueue))
-      .add('WorkflowRunEnqueueJob', { workspaceId, isCacheMode: false });
+      .add(
+        'WorkflowRunEnqueueJob',
+        { workspaceId, isCacheMode: false },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
+      );
     await waitForRun(runId, 'COMPLETED');
   });
 

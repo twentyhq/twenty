@@ -55,6 +55,26 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('export default () => {};');
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
+      credentials: 'same-origin',
+    });
+  });
+
+  it('can load an app bundle without the user session', async () => {
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValue(
+        createFakeResponse({ body: 'export const shared = true;' }),
+      );
+    globalThis.fetch = fetchMock;
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
+      headers: { Authorization: 'Bearer app-token' },
       credentials: 'omit',
     });
   });
@@ -82,10 +102,44 @@ describe('fetchComponentSourceFromNetwork', () => {
     expect(source).toBe('presigned bundle source');
     expect(fetchMock).toHaveBeenNthCalledWith(1, CACHE_BUSTED_COMPONENT_URL, {
       headers: { Authorization: 'Bearer token' },
-      credentials: 'omit',
+      credentials: 'same-origin',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
+    });
+  });
+
+  it('does not forward app authorization to a presigned handoff', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        createFakeResponse({
+          contentType: 'application/json',
+          json: { url: PRESIGNED_URL },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createFakeResponse({ body: 'presigned bundle source' }),
+      );
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer token' },
       credentials: 'omit',
+    });
+
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(
+      1,
+      CACHE_BUSTED_COMPONENT_URL,
+      {
+        headers: {
+          Authorization: 'Bearer token',
+        },
+        credentials: 'omit',
+      },
+    );
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
     });
   });
 
@@ -102,7 +156,7 @@ describe('fetchComponentSourceFromNetwork', () => {
 
     expect(fetchMock).toHaveBeenCalledWith(
       `${COMPONENT_URL}?token=abc&cacheBust=v2`,
-      { headers: undefined, credentials: 'omit' },
+      { headers: undefined, credentials: 'same-origin' },
     );
   });
 

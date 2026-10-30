@@ -118,6 +118,7 @@ export class AddWorkspaceMemberJobTitleFieldCommand extends ProvisionedWorkspace
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [flatFieldMetadataToCreate],

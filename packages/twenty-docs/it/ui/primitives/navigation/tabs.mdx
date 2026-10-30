@@ -1,0 +1,230 @@
+---
+title: Schede
+description: Passa da un pannello correlato all'altro con una navigazione a schede accessibile.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+## Panoramica
+
+`Tabs` collega ogni scheda a un pannello di contenuto correlato usando un `value` condiviso. Mantieni i valori univoci all'interno di una root. Usa [TabButton](/it/ui/components/navigation/tab-button) per i collegamenti alle route e le azioni adiacenti.
+
+<StoryEmbed storyId="ui-navigation-tabs--display" title="Esempio di Tabs" height={160} />
+
+## Utilizzo
+
+Usa `defaultValue` per impostare la selezione iniziale. La root gestisce le modifiche successive.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity">Activity</Tabs.Tab>
+      <Tabs.Tab value="settings">Settings</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Record overview</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent activity</Tabs.Panel>
+    <Tabs.Panel value="settings">Record settings</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` accetta `startIcon`, `endIcon`, `badge` e una `size` pari a `compact`, `sm` o `md` (il valore predefinito è `sm`). Le restanti props mantengono il contratto di Base UI installato. I valori non sono limitati a stringhe o numeri. I valori di riferimento devono usare la stessa identità nella scheda, nel pannello e nella root. Un valore root pari a `null` non seleziona alcun pannello.
+
+### Schede compatte
+
+Usa `size="compact"` su ciascuna scheda per controlli Input/Output brevi all'interno di una card. Le schede compatte hanno un'altezza minima della riga di 24px, testo piccolo e una spaziatura interna del contenuto di 4px su ciascun lato. Le dimensioni `sm` e `md` esistenti mantengono la loro altezza minima di 40px. Le schede compatte usano lo stesso indicatore, anello di focus e attivazione tramite tastiera delle altre dimensioni.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ToolCallTabs = () => (
+  <Tabs.Root defaultValue="output">
+    <Tabs.List aria-label="Tool call details">
+      <Tabs.Tab value="output" size="compact">Output</Tabs.Tab>
+      <Tabs.Tab value="input" size="compact">Input</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="output">Tool output</Tabs.Panel>
+    <Tabs.Panel value="input">Tool input</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-tabs--compact" title="Schede di input e output compatte" height={110} />
+
+## Anatomia
+
+Inserisci le schede e un indicatore facoltativo all'interno di `Tabs.List`. Inserisci i relativi pannelli accanto all'elenco, tutti all'interno dello stesso `Tabs.Root`.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   ├── Tabs.Tab
+│   └── Tabs.Indicator
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| Parte       | Requisito                            | Scopo                                                                     |
+| ----------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| `Root`      | Obbligatorio                         | Gestisce il valore e l'orientamento selezionati.                          |
+| `Elenco`    | Obbligatorio                         | Raggruppa le schede e fornisce la navigazione del focus tramite tastiera. |
+| `Scheda`    | Uno per pannello                     | Attiva il pannello con lo stesso `value`.                                 |
+| `Panel`     | Uno per visualizzazione di contenuto | Visualizza il relativo contenuto quando il relativo `value` è attivo.     |
+| `Indicator` | Facoltativo                          | Mostra la posizione della scheda attiva con uno stile a tema.             |
+
+Assegna all'elenco un nome accessibile e fai corrispondere il `value` di ogni scheda al `value` del relativo pannello. Base UI fornisce gli ID di schede e pannelli e le relazioni `aria-controls` e `aria-labelledby`.
+
+Quando fornisci un `id` personalizzato in `Tabs.Panel`, imposta `aria-controls` nella `Tabs.Tab` corrispondente sullo stesso ID. L'implementazione installata di Base UI 1.8.0 richiede questa relazione esplicita. Gli ID delle schede personalizzate vengono registrati correttamente per `aria-labelledby` del pannello.
+
+Aggiungi un `Tabs.Indicator` quando desideri la sottolineatura attiva. `List` non inserisce un indicatore.
+
+## Stato controllato e dettagli dell'evento
+
+Passa `value` e aggiornalo con `onValueChange` per gestire la selezione. La callback riceve il valore successivo e i dettagli dell'evento di Base UI, inclusi `event`, `reason`, `activationDirection` e `cancel()` di origine.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+L'attivazione utente ha `reason` `none`. Nelle root non controllate, il fallback automatico può avere `reason` `initial`, `disabled` o `missing`. Il fallback automatico può selezionare `null` quando non rimane alcuna scheda abilitata. Queste modifiche automatiche non possono essere annullate. Le root controllate mantengono la selezione sotto il controllo dell'applicazione.
+
+Annulla una modifica utente prima di aggiornare lo stato controllato oppure usa la stessa callback con una root non controllata:
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ProtectedTabs = () => (
+  <Tabs.Root
+    defaultValue="overview"
+    onValueChange={(value, details) => {
+      if (value === 'restricted') {
+        details.cancel();
+      }
+    }}
+  >
+    <Tabs.List aria-label="Account sections">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="restricted">Restricted</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="overview">Account details.</Tabs.Panel>
+    <Tabs.Panel value="restricted">Restricted content.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+## Attivazione da tastiera, orientamento e direzione
+
+`Tabs.List` usa per impostazione predefinita l'attivazione manuale (`activateOnFocus={false}`). I tasti freccia spostano il focus; Invio o Spazio attivano la scheda con focus. Imposta `activateOnFocus` per selezionare una scheda quando il focus da tastiera la raggiunge. Entrambi i criteri funzionano con stato controllato e non controllato.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => (
+  <Tabs.Root defaultValue="profile" orientation="vertical">
+    <Tabs.List aria-label="Settings" activateOnFocus loopFocus={false}>
+      <Tabs.Tab value="profile">Profile</Tabs.Tab>
+      <Tabs.Tab value="billing" disabled>
+        Billing
+      </Tabs.Tab>
+      <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+      <Tabs.Indicator />
+    </Tabs.List>
+    <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+    <Tabs.Panel value="billing">Billing settings.</Tabs.Panel>
+    <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+Gli elenchi orizzontali usano Sinistra e Destra; quelli verticali usano Su e Giù. Home ed End posizionano il focus sulla prima e sull'ultima scheda abilitate. Le schede disabilitate vengono ignorate. `loopFocus` è `true` per impostazione predefinita; impostalo su `false` per fermarti a uno dei due limiti.
+
+Usa [DirectionProvider](/it/ui/primitives/layout/direction-provider) per la direzione della tastiera RTL e `dir="rtl"` sulla root per il layout. Imposta `orientation="vertical"` su `Root` per un elenco e un indicatore verticali.
+
+## Durata del pannello
+
+Usa `keepMounted` quando il contenuto dei pannelli deve mantenere il proprio stato mentre è inattivo. I pannelli inattivi montati rimangono nascosti e non occupano spazio nel layout.
+
+## Layout del pannello
+
+`Panel` riempie lo spazio rimanente dell'elenco e può ridursi al di sotto delle dimensioni del proprio contenuto su entrambi gli assi, così rimane all'interno di una radice ad altezza fissa. Per scorrere il relativo contenuto, imposta `overflow: auto` sul pannello o su un elemento figlio che lo riempie, come un elemento figlio `flex: 1` di un pannello flex a colonna.
+
+## Props native, composizione del rendering e ref
+
+Tutte e cinque le parti preservano le props native, i gestori di eventi, le ref e la composizione `render` di Base UI. Anche `className` e `style` possono essere funzioni dello stato della parte. Gli elementi predefiniti sono un `div` per Root, List e Panel, un `button` per Tab e uno `span` per Indicator. Le ref puntano agli elementi effettivamente renderizzati.
+
+```tsx
+import { useRef } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const ComposedTabs = () => {
+  const panelRef = useRef<HTMLElement>(null);
+
+  return (
+    <Tabs.Root defaultValue="overview" render={<section />}>
+      <Tabs.List aria-label="Account details">
+        <Tabs.Tab value="overview" nativeButton render={<button />}>
+          Overview
+        </Tabs.Tab>
+        <Tabs.Indicator render={<span data-testid="active-indicator" />} />
+      </Tabs.List>
+      <Tabs.Panel
+        value="overview"
+        render={<article />}
+        ref={(element) => {
+          panelRef.current = element;
+        }}
+      >
+        Account details.
+      </Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+Mantieni `nativeButton` coerente con l'elemento composto per una scheda. Usa `nativeButton={false}` per un elemento interattivo personalizzato che non sia un pulsante nativo e che inoltri le props e la ref fornite. Un'ancora di route appartiene a `TabButton`, dove la route gestisce la navigazione e `aria-current`.
+
+## Enfasi visiva
+
+Usa `highlighted` su `Tabs.Tab` per evidenziarne il contenuto indipendentemente dalla selezione, ad esempio quando le relative impostazioni sono aperte. La selezione rimane gestita da `Tabs.Root`.
+
+## Props
+
+Il riferimento generato include le props pubbliche di ogni parte. I tipi di stato pubblico delle parti e i tipi di dettaglio/motivo della modifica di Root sono disponibili da `twenty-ui/primitives/navigation`.
+
+<TabsReference />
+
+## Migrazione
+
+Aggiungi un `Tabs.Indicator` esplicito agli elenchi che devono mantenere la sottolineatura attiva. Rimuovi gli indicatori duplicati dalle composizioni che in precedenza si basavano sull'inserimento di uno da parte di `List`. Mantieni i collegamenti alle route, i controlli di creazione e i controlli di overflow al di fuori di `Tabs.List`, i cui elementi figli selezionano pannelli correlati.
+
+<PageBanner illustration="layout" />

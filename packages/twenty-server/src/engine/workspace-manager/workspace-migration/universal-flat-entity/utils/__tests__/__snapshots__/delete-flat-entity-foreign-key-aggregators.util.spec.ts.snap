@@ -8,6 +8,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "createdAt": "2024-01-01T00:00:00.000Z",
   "defaultValue": null,
   "description": "default flat field metadata description",
+  "disabledFieldPermissionActions": null,
   "fieldPermissionUniversalIdentifiers": [],
   "icon": "icon",
   "isActive": true,
@@ -50,6 +51,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "commandMenuItemUniversalIdentifiers": [],
   "createdAt": "2024-01-01T00:00:00.000Z",
   "description": "default flat object metadata description",
+  "disabledObjectPermissionActions": null,
   "duplicateCriteria": null,
   "fieldPermissionUniversalIdentifiers": [],
   "fieldUniversalIdentifiers": [

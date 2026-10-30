@@ -1,16 +1,40 @@
-import { createServer } from 'node:http';
+import { createServer, type ServerResponse } from 'node:http';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { OAUTH_TIMING } from '@/oauth/constants/oauth-timing.constant';
+import { renderCallbackPage } from '@/oauth/render-callback-page';
 import { CliError } from '@/output/cli-error';
 import { getListeningPort } from '@/utils/get-listening-port';
 
 const CALLBACK_PATH = '/callback';
 
-const renderCallbackPage = (message: string) =>
-  `<!doctype html><meta charset="utf-8"><title>Twenty CLI</title><body style="margin:0;display:grid;place-items:center;min-height:100vh;font-family:system-ui,sans-serif"><p>${message}</p></body>`;
+const sendCallbackPage = async ({
+  response,
+  isSuccess,
+  isDarkMode,
+}: {
+  response: ServerResponse;
+  isSuccess: boolean;
+  isDarkMode: boolean;
+}) => {
+  if (response.destroyed) {
+    return;
+  }
+
+  const body = renderCallbackPage({ isSuccess, isDarkMode });
+
+  response.writeHead(isSuccess ? 200 : 400, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Content-Length': Buffer.byteLength(body),
+    Connection: 'close',
+  });
+  await new Promise<void>((resolve) => {
+    response.once('close', resolve);
+    response.end(body, resolve);
+  });
+};
 
 const createSignInError = (message: string) =>
   new CliError({
@@ -88,6 +112,9 @@ export const startCallbackServer = async ({
 
   codePromise.catch(() => undefined);
 
+  let callback: { response: ServerResponse; isDarkMode: boolean } | undefined;
+  let hasReceivedCode = false;
+
   const server = createServer((request, response) => {
     const url = new URL(request.url ?? '/', 'http://127.0.0.1');
 
@@ -97,6 +124,14 @@ export const startCallbackServer = async ({
       return;
     }
 
+    if (hasReceivedCode) {
+      response.writeHead(409, { Connection: 'close' }).end();
+
+      return;
+    }
+
+    const isDarkMode = url.searchParams.get('theme') === 'dark';
+
     try {
       const code = readAuthorizationCode({
         url,
@@ -105,29 +140,14 @@ export const startCallbackServer = async ({
         isIssuerInResponse,
       });
 
-      response
-        .writeHead(200, {
-          'Content-Type': 'text/html; charset=utf-8',
-          Connection: 'close',
-        })
-        .end(
-          renderCallbackPage(
-            'Signed in. You can close this tab and go back to the terminal.',
-          ),
-        );
+      hasReceivedCode = true;
+      callback = { response, isDarkMode };
       resolve(code);
     } catch (error) {
-      response
-        .writeHead(400, {
-          'Content-Type': 'text/html; charset=utf-8',
-          Connection: 'close',
-        })
-        .end(
-          renderCallbackPage(
-            'Sign-in did not complete. Go back to the terminal for details.',
-          ),
-        );
-      reject(error);
+      void sendCallbackPage({ response, isSuccess: false, isDarkMode }).then(
+        () => reject(error),
+        reject,
+      );
     }
   });
 
@@ -166,6 +186,14 @@ export const startCallbackServer = async ({
   return {
     redirectUri: `http://127.0.0.1:${port}${CALLBACK_PATH}`,
     waitForCode: () => codePromise,
+    complete: async (isSuccess: boolean) => {
+      if (isDefined(callback)) {
+        const pendingCallback = callback;
+
+        callback = undefined;
+        await sendCallbackPage({ ...pendingCallback, isSuccess });
+      }
+    },
     close,
   };
 };

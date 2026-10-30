@@ -7,6 +7,7 @@ describe('isBillingExemptApplication', () => {
     'a8c47f21-3b9e-4d2a-8f61-9c0e7d4a2b51',
     'c5fb24b3-15b0-48fb-a9b5-f182ba231e6c',
     'ffcc3979-0ee6-4d7d-912b-c12997d9f0f4',
+    '5955f8fe-6724-4749-b770-b849d63d5330',
   ])('should return true for billing-exempt app %s', (universalIdentifier) => {
     expect(isBillingExemptApplication(universalIdentifier)).toBe(true);
   });

@@ -1,4 +1,7 @@
-import { type FieldManifest } from 'twenty-shared/application';
+import {
+  type FieldManifest,
+  type FieldPermissionAction,
+} from 'twenty-shared/application';
 import {
   type FieldMetadataDefaultActor,
   FieldMetadataType,
@@ -177,6 +180,53 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       });
 
       expect(result.writability).toBe(MetadataWritability.APPLICATION);
+    });
+  });
+
+  describe('disabledFieldPermissionActions', () => {
+    it.each([MetadataWritability.APPLICATION, MetadataWritability.SYSTEM])(
+      'disables updates when omitted and writability is %s',
+      (writability) => {
+        const result = fromFieldManifestToUniversalFlatFieldMetadata({
+          fieldManifest: buildFieldManifest({ writability }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledFieldPermissionActions).toEqual([
+          'canUpdateFieldValue',
+        ]);
+      },
+    );
+
+    it.each<[FieldPermissionAction[]]>([[[]], [['canReadFieldValue']]])(
+      'keeps an explicit value %j over the writability default',
+      (disabledFieldPermissionActions) => {
+        const result = fromFieldManifestToUniversalFlatFieldMetadata({
+          fieldManifest: buildFieldManifest({
+            writability: MetadataWritability.APPLICATION,
+            disabledFieldPermissionActions,
+          }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledFieldPermissionActions).toEqual(
+          disabledFieldPermissionActions,
+        );
+      },
+    );
+
+    it('is null when omitted and writability is OPEN', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          writability: MetadataWritability.OPEN,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.disabledFieldPermissionActions).toBeNull();
     });
   });
 

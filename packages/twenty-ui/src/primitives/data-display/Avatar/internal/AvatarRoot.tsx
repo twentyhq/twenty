@@ -5,11 +5,11 @@ import { type CSSProperties } from 'react';
 import { useTheme } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { stringToThemeColorP3String } from '@ui/utilities';
+import { getAvatarInitial } from '@ui/utilities/utils/getAvatarInitial';
 
 import styles from '../Avatar.module.scss';
 import { type AvatarRootProps } from '../types/AvatarRootProps';
 
-import { getAvatarInitial } from './getAvatarInitial';
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const AvatarRoot = ({

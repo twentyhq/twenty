@@ -1,5 +1,12 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { getCustomApplicationDescription } from '@/applications/utils/getCustomApplicationDescription';
+import { getCustomApplicationReadme } from '@/applications/utils/getCustomApplicationReadme';
+import { getStandardApplicationDescription } from '@/applications/utils/getStandardApplicationDescription';
+import { getStandardApplicationReadme } from '@/applications/utils/getStandardApplicationReadme';
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
@@ -9,6 +16,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -16,7 +24,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconAlertTriangle, IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
+import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -27,6 +35,8 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailAbout } from '~/pages/settings/applications/components/SettingsApplicationDetailAbout';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
+import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/CustomApplicationIllustrations';
+import { STANDARD_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/StandardApplicationIllustrations';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 
@@ -102,8 +112,40 @@ export const SettingsAvailableApplicationDetails = () => {
       ? `https://www.npmjs.com/package/${detail.sourcePackage}`
       : undefined;
 
-  const isUnlisted = isDefined(detail) && !detail.isListed;
-  const isNotVetted = isDefined(detail) && !detail.isVetted;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  // Read from the workspace state so built-in apps are known before the application query resolves
+  const installedApplication = currentWorkspace?.installedApplications.find(
+    (workspaceApplication) =>
+      workspaceApplication.universalIdentifier === availableApplicationId,
+  );
+
+  const getBuiltInApplicationContent = () => {
+    if (isTwentyStandardApplication(installedApplication)) {
+      return {
+        description: getStandardApplicationDescription(),
+        readme: getStandardApplicationReadme(),
+        illustrations: STANDARD_APPLICATION_ILLUSTRATIONS,
+      };
+    }
+
+    if (isWorkspaceCustomApplication(installedApplication, currentWorkspace)) {
+      return {
+        description: getCustomApplicationDescription(),
+        readme: getCustomApplicationReadme(),
+        illustrations: CUSTOM_APPLICATION_ILLUSTRATIONS,
+      };
+    }
+
+    return undefined;
+  };
+
+  const builtInApplicationContent = getBuiltInApplicationContent();
+
+  const isUnlisted =
+    isDefined(detail) &&
+    !detail.isListed &&
+    !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
@@ -141,11 +183,21 @@ export const SettingsAvailableApplicationDetails = () => {
         applicationId={application?.id}
         logoUrl={detail.logoUrl}
         displayName={displayName}
-        description={detail.description ?? undefined}
-        aboutDescription={detail.aboutDescription ?? undefined}
+        description={
+          builtInApplicationContent?.description ??
+          detail.description ??
+          undefined
+        }
+        aboutDescription={
+          builtInApplicationContent?.readme ??
+          detail.aboutDescription ??
+          undefined
+        }
         pricingDescription={detail.pricingDescription ?? undefined}
         billsCredits={detail.billsCredits}
-        screenshots={detail.galleryImages}
+        screenshots={
+          builtInApplicationContent?.illustrations ?? detail.galleryImages
+        }
         author={detail.author ?? undefined}
         version={currentVersion ?? latestAvailableVersion ?? undefined}
         installCount={detail.installCount}
@@ -205,14 +257,9 @@ export const SettingsAvailableApplicationDetails = () => {
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
-              icon={<IconEyeOff aria-hidden="true" />}
-            >{t`Application not listed on the marketplace. It was shared via a direct link`}</InlineBanner>
-          )}
-          {isNotVetted && (
-            <InlineBanner
               status="warning"
-              icon={<IconAlertTriangle aria-hidden="true" />}
-            >{t`This application is not vetted by Twenty. Use at your own risk.`}</InlineBanner>
+              icon={<IconEyeOff aria-hidden="true" />}
+            >{t`This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
           )}
           {renderContent()}
         </SettingsPageContainer>
@@ -225,7 +272,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
         billsCredits={detail?.billsCredits}
-        isVetted={detail?.isVetted}
+        isListed={detail?.isListed}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, ResolveField } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -17,6 +18,7 @@ import { DeleteOneIndexInput } from 'src/engine/metadata-modules/index-metadata/
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/services/index-metadata.service';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { indexMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/index-metadata/utils/index-metadata-graphql-api-exception-handler.util';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -44,6 +46,20 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 )
 export class IndexMetadataResolver {
   constructor(private readonly indexMetadataService: IndexMetadataService) {}
+
+  @ResolveField(() => Boolean, {
+    nullable: true,
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() indexMetadata: IndexMetadataDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return isWorkspaceCustomIndex({
+      indexMetadata,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+    });
+  }
 
   @ResolveField(() => [IndexFieldMetadataDTO], { nullable: false })
   async indexFieldMetadataList(

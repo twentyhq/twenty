@@ -3,9 +3,13 @@ title: Avatar
 description: Represent a person or record with an image, initial, or icon.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import AvatarReference from '/snippets/ui/generated/data-display/avatar.mdx';
+
+## Overview
 
 `Avatar` shows an image with a first-letter fallback. Use it beside a record name or inside a [Chip](/ui/primitives/data-display/chip). Its default root is a presentational `span`.
 
@@ -79,7 +83,7 @@ export const ContactAvatar = ({
   imageUrl,
   initials,
 }: ContactAvatarProps) => (
-  <Avatar.Root name={name} shape="circle" size="xl">
+  <Avatar.Root name={name} shape="circle" size="xxl">
     <Avatar.Image src={imageUrl} alt={name} decoding="async" />
     <Avatar.Fallback role="img" aria-label={name} delay={150}>
       {initials}
@@ -112,7 +116,11 @@ The public `AvatarRootProps`, `AvatarImageProps`, `AvatarFallbackProps`, `Avatar
   height={320}
 />
 
-`shape` accepts `square`, `rounded-square`, or `circle`. Sizes run from `xs` (12px) to `xl` (40px); `md` is 16px. `variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
+`shape` accepts `square`, `rounded-square`, or `circle`. Sizes are `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), and `xxl` (40px). Both `xl` and `xxl` use 16px fallback text.
+
+The former 40px `xl` size is now `xxl`. Update existing `size="xl"` usages to `size="xxl"` when they should remain 40px.
+
+`variant="outline"` adds a border to the fallback. The `color`, `backgroundColor`, and `borderColor` overrides customize the fallback, while a loaded image keeps its original appearance.
 
 ```tsx
 import { IconUser } from 'twenty-ui/icon';
@@ -122,7 +130,7 @@ export const ContactIcon = () => (
   <Avatar
     icon={<IconUser />}
     shape="rounded-square"
-    size="xl"
+    size="xxl"
     role="img"
     aria-label="Contact"
   />
@@ -195,3 +203,5 @@ Shorthand avatars are decorative by default. `name` does not name the image, fal
 Types and defaults are generated from the public component types. The explicit parts accept native attributes and event handlers. Shorthand Avatar omits `onClick`; supply it on the owner passed through `render`.
 
 <AvatarReference />
+
+<PageBanner illustration="page-cover-profile" />

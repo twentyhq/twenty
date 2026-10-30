@@ -51,6 +51,8 @@ export default defineConfig(() => {
         external: [
           ...Object.keys((packageJson as any).dependencies || {}),
           'typescript',
+          'node:fs/promises',
+          'node:path',
           // TODO: i18n now hashes with @noble/hashes, so this node:crypto external looks removable.
           'node:crypto',
         ],

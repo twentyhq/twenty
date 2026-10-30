@@ -1,4 +1,9 @@
-import { type MouseEvent, type MouseEventHandler, useState } from 'react';
+import {
+  Fragment,
+  type MouseEvent,
+  type MouseEventHandler,
+  useState,
+} from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -16,11 +21,24 @@ import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
 import { type AvatarRootProps } from '@ui/primitives/data-display/Avatar/types/AvatarRootProps';
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
+import { type AvatarSize } from '@ui/primitives/data-display/Avatar/types/AvatarSize';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconUser } from '@ui/icon';
+import { IconGitBranch, IconUser, IconUserCircle, IconUserOff } from '@ui/icon';
+import { themeCssVariables } from '@ui/theme';
 
 const VALID_IMAGE = illustrationUserUrl;
 const INVALID_IMAGE = 'data:image/png;base64,invalid';
+const UPLOAD_AVATAR_ICON_SIZE = 16;
+const AVATAR_SIZE_CASES = [
+  { size: 'xs', dimension: 12 },
+  { size: 'sm', dimension: 14 },
+  { size: 'md', dimension: 16 },
+  { size: 'lg', dimension: 24 },
+  { size: 'xl', dimension: 32 },
+  { size: 'xxl', dimension: 40 },
+] as const;
+
+const CustomFallbackIcon = () => <IconUserOff size={48} />;
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI/Data Display/Avatar',
@@ -62,6 +80,80 @@ export const Squared: Story = {
   args: { shape: 'square' },
 };
 
+export const ExtraLargeSizes: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <Avatar name="Acme" size="xl" role="img" aria-label="32px avatar" />
+      <Avatar name="Acme" size="xxl" role="img" aria-label="40px avatar" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const size of [32, 40]) {
+      const avatar = canvas.getByRole('img', { name: `${size}px avatar` });
+
+      await expect(avatar).toHaveStyle({
+        width: `${size}px`,
+        height: `${size}px`,
+        fontSize: '16px',
+      });
+    }
+  },
+};
+
+export const UploadButtonComposition: ButtonInteractionStory = {
+  decorators: [ComponentDecorator],
+  args: { onActivate: fn() },
+  render: ({ onActivate }) => (
+    <Avatar.Root
+      size="xl"
+      shape="circle"
+      variant="outline"
+      color={themeCssVariables.font.color.light}
+      backgroundColor={themeCssVariables.background.transparent.lighter}
+      borderColor={themeCssVariables.border.color.medium}
+      render={
+        <button
+          type="button"
+          aria-label="Upload profile picture"
+          onClick={onActivate}
+        />
+      }
+    >
+      <Avatar.Image alt="" />
+      <Avatar.Fallback
+        aria-hidden
+        render={<IconUserCircle size={UPLOAD_AVATAR_ICON_SIZE} />}
+      />
+    </Avatar.Root>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const avatar = within(canvasElement).getByRole('button', {
+      name: 'Upload profile picture',
+    });
+    const fallbackIcon = avatar.querySelector('svg');
+
+    await expect(avatar).toHaveAttribute('type', 'button');
+    await expect(avatar).toHaveStyle({
+      width: '32px',
+      height: '32px',
+      borderWidth: '1px',
+      borderRadius: '50%',
+    });
+    await expect(fallbackIcon).toHaveAttribute('aria-hidden', 'true');
+    await expect(fallbackIcon).toHaveStyle({
+      width: `${UPLOAD_AVATAR_ICON_SIZE}px`,
+      height: `${UPLOAD_AVATAR_ICON_SIZE}px`,
+    });
+    avatar.focus();
+    await expect(avatar).toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onActivate).toHaveBeenCalledTimes(2);
+  },
+};
+
 export const IconTile: Story = {
   decorators: [ComponentDecorator],
   args: {
@@ -88,6 +180,75 @@ export const IconTileInteraction: Story = {
   },
 };
 
+export const FallbackIconSizes: Story = {
+  decorators: [ComponentDecorator],
+  render: ({ variant }) => (
+    <>
+      {AVATAR_SIZE_CASES.map(({ size }) => (
+        <Fragment key={size}>
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Branch"
+            icon={<IconGitBranch />}
+            role="img"
+            aria-label={`Native ${size}`}
+          />
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Unavailable user"
+            icon={<CustomFallbackIcon />}
+            role="img"
+            aria-label={`Custom ${size}`}
+          />
+          <Avatar.Root
+            size={size}
+            variant={variant}
+            name="User"
+            role="img"
+            aria-label={`Composed ${size}`}
+          >
+            <Avatar.Fallback aria-hidden>
+              <IconUser />
+            </Avatar.Fallback>
+          </Avatar.Root>
+        </Fragment>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const { size, dimension } of AVATAR_SIZE_CASES) {
+      for (const label of ['Native', 'Custom', 'Composed']) {
+        const avatar = canvas.getByRole('img', { name: `${label} ${size}` });
+        const avatarBounds = avatar.getBoundingClientRect();
+        const iconBounds = avatar.querySelector('svg')?.getBoundingClientRect();
+        const expectedIconSize = Math.min(24, avatar.clientWidth);
+
+        await expect(avatarBounds.width).toBe(dimension);
+        await expect(avatarBounds.height).toBe(dimension);
+        await expect(iconBounds?.width).toBe(expectedIconSize);
+        await expect(iconBounds?.height).toBe(expectedIconSize);
+        await expect(iconBounds?.left).toBeGreaterThanOrEqual(
+          avatarBounds.left,
+        );
+        await expect(iconBounds?.top).toBeGreaterThanOrEqual(avatarBounds.top);
+        await expect(iconBounds?.right).toBeLessThanOrEqual(avatarBounds.right);
+        await expect(iconBounds?.bottom).toBeLessThanOrEqual(
+          avatarBounds.bottom,
+        );
+      }
+    }
+  },
+};
+
+export const OutlinedFallbackIconSizes: Story = {
+  ...FallbackIconSizes,
+  args: { variant: 'outline' },
+};
+
 export const NoAvatarPictureRounded: Story = {
   decorators: [ComponentDecorator],
   args: { src: '' },
@@ -104,7 +265,7 @@ export const NoAvatarPictureSquared: Story = {
 export const Parts: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <Avatar.Root name="Jane Doe" shape="circle" size="xl">
+    <Avatar.Root name="Jane Doe" shape="circle" size="xxl">
       <Avatar.Image src={VALID_IMAGE} alt="Jane Doe" decoding="async" />
       <Avatar.Fallback role="img" aria-label="Jane Doe">
         JD
@@ -179,7 +340,7 @@ export const ButtonComposition: Story = {
   args: {
     src: undefined,
     name: 'Jane',
-    size: 'xl',
+    size: 'xxl',
     imageProps: { alt: '' },
     render: <button type="button" />,
     'aria-label': "Open Jane's profile",
@@ -299,7 +460,7 @@ const ImageChangesExample = (props: AvatarProps) => {
         {...props}
         src={src}
         name="Jane"
-        size="xl"
+        size="xxl"
         render={<a href="#jane" aria-label="Jane" />}
         aria-label="Jane"
         imageProps={{ ...props.imageProps, alt: '' }}
@@ -380,7 +541,7 @@ const FallbackDelayExample = () => {
     <>
       <Button onClick={() => setIsVisible(true)}>Show avatar</Button>
       {isVisible && (
-        <Avatar.Root name="Jane Doe" size="xl">
+        <Avatar.Root name="Jane Doe" size="xxl">
           <Avatar.Fallback
             delay={300}
             render={<strong />}
@@ -419,8 +580,8 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
       dimensions: [
         {
           name: 'size',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'],
-          props: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => ({ size }),
+          values: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
+          props: (size: AvatarSize) => ({ size }),
         },
         {
           name: 'shape',
@@ -449,8 +610,8 @@ export const VisualRegression: CatalogStory<Story, typeof Avatar> = {
       dimensions: [
         {
           name: 'size',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'],
-          props: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => ({ size }),
+          values: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
+          props: (size: AvatarSize) => ({ size }),
         },
         {
           name: 'shape',

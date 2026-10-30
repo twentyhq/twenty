@@ -7,8 +7,11 @@
  *                              |___/
  */
 
+export { CountPager } from './CountPager/CountPager';
+export type { CountPagerProps } from './CountPager/types/CountPagerProps';
 export { Dropdown } from './Dropdown/Dropdown';
 export { useDropdownPage } from './Dropdown/hooks/useDropdownPage';
+export { useDropdownPlacementOrThrow } from './Dropdown/hooks/useDropdownPlacementOrThrow';
 export type { DropdownActionItemProps } from './Dropdown/types/DropdownActionItemProps';
 export type { DropdownCloseProps } from './Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './Dropdown/types/DropdownContentProps';
@@ -34,12 +37,5 @@ export type { ListItemButtonProps } from './ListItemButton/types/ListItemButtonP
 export { DEFAULT_COLOR_LABELS } from './MenuItem/constants/DefaultColorLabels';
 export type { ColorLabels } from './MenuItem/types/ColorLabels';
 export type { MenuItemAccent } from './MenuItem/types/MenuItemAccent';
-export type { MenuItemDraggableGripMode } from './MenuItem/types/MenuItemDraggableGripMode';
-export { MenuItemDraggable } from './MenuItemDraggable/MenuItemDraggable';
-export type { MenuItemDraggableProps } from './MenuItemDraggable/types/MenuItemDraggableProps';
-export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
-export type { MenuItemSuggestionProps } from './MenuItemSuggestion/types/MenuItemSuggestionProps';
-export { MenuPicker } from './MenuPicker/MenuPicker';
-export type { MenuPickerProps } from './MenuPicker/types/MenuPickerProps';
 export { TabButton } from './TabButton/TabButton';
 export type { TabButtonProps } from './TabButton/types/TabButtonProps';

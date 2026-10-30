@@ -212,6 +212,7 @@ export class SyncMessageCalendarTargetMetadataCommand extends ProvisionedWorkspa
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             allFlatEntityOperationByMetadataName,
             workspaceId,
             isSystemBuild: true,
@@ -246,6 +247,7 @@ export class SyncMessageCalendarTargetMetadataCommand extends ProvisionedWorkspa
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: true,

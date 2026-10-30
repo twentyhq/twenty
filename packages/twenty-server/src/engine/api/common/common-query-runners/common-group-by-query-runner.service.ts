@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CompositeFieldSubFieldName,
+  type ObjectRecord,
   PartialFieldMetadataItemOption,
   RecordFilterGroupLogicalOperator,
   type RestrictedFieldsPermissions,
@@ -177,6 +178,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     });
   }
 
+  protected getResultRecords(
+    results: CommonGroupByOutputItem[],
+  ): ObjectRecord[] {
+    return results.flatMap((group) => group.records ?? []);
+  }
+
   async processQueryResult(
     queryResult: CommonGroupByOutputItem[],
     _flatObjectMetadata: FlatObjectMetadata,
@@ -265,14 +272,19 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         options: field.options as PartialFieldMetadataItemOption[],
       }));
 
-    const filtersFromView = computeRecordGqlOperationFilterFromFlatMaps({
-      recordFilters,
-      recordFilterGroups: recordFilterGroups,
-      flatFieldMetadataMaps,
+    const filtersFromView = this.filterArgProcessor.process({
+      filter: computeRecordGqlOperationFilterFromFlatMaps({
+        recordFilters,
+        recordFilterGroups: recordFilterGroups,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        filterValueDependencies: {
+          timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+        },
+      }),
+      flatObjectMetadata,
       flatObjectMetadataMaps,
-      filterValueDependencies: {
-        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
-      },
+      flatFieldMetadataMaps,
     });
 
     const viewFromFilter = viewFilters[0]?.view;

@@ -1,0 +1,477 @@
+---
+title: Выбрать
+description: Выберите одно или несколько значений из всплывающего списка вариантов.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+## Обзор
+
+Используйте `Select` для значения формы, выбираемого из списка. [Dropdown](/ru/ui/components/navigation/dropdown) остается основным высокоуровневым API для меню, средств выбора, панелей и страниц, объединяющих эти рабочие процессы.
+
+<StoryEmbed storyId="ui-input-select--display" title="Пример Select" height={240} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultValue`, чтобы задать начальный приоритет. Компонент выбора управляет последующими изменениями выбора.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          {PRIORITIES.map(({ value, label }) => (
+            <Select.Item key={value} value={value}>
+              <Select.ItemText>{label}</Select.ItemText>
+              <Select.ItemIndicator />
+            </Select.Item>
+          ))}
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Передайте `items` в `Root`, чтобы `Value` отображал метку выбранного элемента; без него триггер показывает необработанное значение. Выбранное значение может быть `null`, если ничего не выбрано.
+
+## Структура
+
+Скомпонуйте публичные части внутри `Select.Root`. `Trigger` и `Item` отображают только свои дочерние элементы. Явно добавьте `Icon`, `ItemText` и `ItemIndicator`, если нужны стандартные шеврон, метка и флажок.
+
+```text
+Select.Root
+├── Select.Label
+├── Select.Trigger
+│   ├── Select.Value
+│   └── Select.Icon
+└── Select.Portal
+    ├── Select.Backdrop
+    └── Select.Positioner
+        └── Select.Popup
+            ├── Select.Arrow
+            ├── Select.ScrollUpArrow
+            ├── Select.List
+            │   ├── Select.Group
+            │   │   ├── Select.GroupLabel
+            │   │   └── Select.Item
+            │   │       ├── Select.ItemText
+            │   │       └── Select.ItemIndicator
+            │   └── Select.Separator
+            └── Select.ScrollDownArrow
+```
+
+| Часть                              | Назначение                                                                                                |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `Root`                             | Отвечает за выбранное значение, открытое состояние, обобщённые значения и интеграцию с нативными формами. |
+| `Label`                            | Связывает видимую метку с триггером.                                                                      |
+| `Триггер`                          | Открывает список и содержит отображаемое значение.                                                        |
+| `Значение`                         | Отображает выбранную метку или заполнитель.                                                               |
+| `Icon`                             | Отображает стандартный шеврон или пользовательские дочерние элементы в триггере.                          |
+| `Portal`                           | Перемещает содержимое всплывающего окна в контейнер портала темы или явно указанный контейнер.            |
+| `Backdrop`                         | Предоставляет необязательный фон, пока всплывающее окно открыто.                                          |
+| `Positioner`                       | Отвечает за геометрию якоря, размещение, смещения и поведение при коллизиях.                              |
+| `Popup`                            | Отображает поверхность всплывающего окна без добавления портала или позиционера.                          |
+| `Список`                           | Предоставляет отдельный прокручиваемый контейнер для вариантов.                                           |
+| `Item`                             | Предоставляет поведение выбора для одного варианта.                                                       |
+| `ItemText`                         | Определяет метку варианта, используемую для поиска по мере ввода и выравнивания выбранного значения.      |
+| `ItemIndicator`                    | Отображает стандартную галочку выбранного варианта или пользовательские дочерние элементы.                |
+| `Arrow`                            | Размещает необязательную стрелку относительно якоря всплывающего окна.                                    |
+| `ScrollUpArrow`, `ScrollDownArrow` | Прокручивайте длинный список при наведении.                                                               |
+| `Group`, `GroupLabel`              | Группируйте связанные варианты под меткой.                                                                |
+| `Separator`                        | Визуально разделяет группы.                                                                               |
+
+`Portal`, `List`, `Backdrop`, стрелки и индикаторы являются необязательными. Используйте `Positioner` вокруг `Popup` для позиционирования, в том числе когда отображаете всплывающее окно встроенно без портала.
+
+## Контролируемое состояние
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять тем же приоритетом в состоянии React. Функция обратного вызова получает следующее значение и сведения о событии.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Множественный выбор
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {LANGUAGES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+С `multiple` значение представляет собой массив. Для неконтролируемого множественного выбора используйте `defaultValue={['en']}` вместо `value` и `onValueChange`. Обобщённые типы корневого компонента представляют значение варианта и то, включён ли множественный выбор.
+
+## Состояние открытия
+
+Выбор и видимость всплывающего окна не зависят друг от друга. В приведенных выше примерах видимость всплывающего окна остается неконтролируемой. Выбор одного значения закрывает всплывающее окно; при множественном выборе оно остается открытым. Используйте `defaultOpen`, чтобы задать его начальную видимость; по умолчанию используется `false`.
+
+Передайте `open` и обновляйте его с помощью `onOpenChange`, чтобы управлять видимостью. Этот пример управляет всплывающим окном, оставляя выбранный приоритет неконтролируемым.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+## Композиция с полем
+
+Оберните компонент выбора в `Field.Root`, чтобы связать его триггер с видимой меткой и вспомогательным текстом. Поле обрабатывает маркировку и валидацию; компонент выбора сохраняет собственное состояние выбора и всплывающего окна.
+
+```tsx
+import { Field, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PriorityField = () => (
+  <Field.Root name="priority">
+    <Field.Label>Priority</Field.Label>
+    <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+      <Select.Trigger>
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+    <Field.Description>
+      Choose how soon this record needs attention.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Компоновка элемента
+
+Комбинируйте произвольное содержимое внутри `Item`. Поместите доступную для поиска метку в `ItemText`; дополнительное содержимое не становится его меткой для поиска по мере ввода. Передайте дочерние элементы в `Icon` или `ItemIndicator`, чтобы заменить их стандартные значки, либо полностью опустите эти части.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+export const PrioritySelect = () => (
+  <Select.Root defaultValue="high" items={{ high: 'High' }}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value />
+      <Select.Icon />
+    </Select.Trigger>
+    <Select.Portal>
+      <Select.Positioner
+        align="start"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+      >
+        <Select.Popup>
+          <Select.Item value="high">
+            <Select.ItemText>High</Select.ItemText>
+            <span>Needs attention today</span>
+            <Select.ItemIndicator />
+          </Select.Item>
+        </Select.Popup>
+      </Select.Positioner>
+    </Select.Portal>
+  </Select.Root>
+);
+```
+
+Все части, отображающие элементы, поддерживают нативные атрибуты, refs и API композиции `render`, `className` и `style` из Base UI. Например, используйте `render={<Button />}` в `Trigger`, чтобы скомпоновать его с кнопкой Twenty UI. Для элемента `render`, не являющегося кнопкой, также установите `nativeButton={false}`.
+
+## Размещение
+
+Задайте `size="sm"` или `size="md"` для `Trigger`. Размещение задаётся в `Positioner`; назначение портала задаётся в `Portal`.
+
+`Positioner` сохраняет значения по умолчанию Base UI: `side="bottom"`, `align="center"`, `sideOffset={0}` и `alignItemWithTrigger={true}`. Выравнивание выбранного элемента применяется для ввода указателем, когда достаточно места. Установите `alignItemWithTrigger={false}`, чтобы последовательно использовать позиционирование с привязкой к якорю. В приведённых выше примерах явно выбраны `align="start"` и `sideOffset={8}`.
+
+```tsx
+import { useRef, useState } from 'react';
+import { Button, Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PositionedPrioritySelect = () => {
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const boundaryRef = useRef<HTMLDivElement>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
+
+  return (
+    <div ref={boundaryRef}>
+      <Button ref={anchorRef}>Position anchor</Button>
+      <Select.Root defaultValue="normal" items={PRIORITIES}>
+        <Select.Trigger aria-label="Priority">
+          <Select.Value />
+          <Select.Icon />
+        </Select.Trigger>
+        <Select.Portal container={portalContainer}>
+          <Select.Positioner
+            anchor={anchorRef}
+            positionMethod="fixed"
+            side="inline-end"
+            align="start"
+            alignItemWithTrigger={false}
+            sideOffset={({ anchor }) => anchor.width / 4}
+            alignOffset={4}
+            collisionBoundary={boundaryRef.current ?? undefined}
+            collisionPadding={12}
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            sticky
+          >
+            <Select.Popup>
+              <Select.Arrow />
+              <Select.List>
+                {PRIORITIES.map(({ value, label }) => (
+                  <Select.Item key={value} value={value}>
+                    <Select.ItemText>{label}</Select.ItemText>
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.List>
+            </Select.Popup>
+          </Select.Positioner>
+        </Select.Portal>
+      </Select.Root>
+      <div ref={setPortalContainer} />
+    </div>
+  );
+};
+```
+
+`Positioner` также поддерживает виртуальные якоря, функции смещения, `arrowPadding` и `disableAnchorTracking`. `Portal` использует [контейнер портала темы](/ru/ui/theming#scope-an-override), если вы не предоставите `container`. Явно указанный `container={null}` ожидает, пока этот контейнер станет доступен.
+
+<StoryEmbed storyId="ui-input-select-portals--positioning-documentation" title="Select с пользовательским якорем и прокручиваемым списком" height={480} />
+
+## Нативные формы и сведения о колбэках
+
+Установите `name` в `Root`, чтобы включить выбранное значение в `FormData`. При множественном выборе отправляется одна запись для каждого выбранного значения. `form` связывает скрытое поле ввода с внешней формой, а `inputRef` предоставляет доступ к этому полю. `required`, `disabled` и `autoComplete` сохраняют нативное поведение форм Base UI.
+
+`onValueChange` и `onOpenChange` получают следующее состояние и сведения о вышестоящем событии, включая `reason`, нативное `event`, `cancel()` и `allowPropagation()`. Вызов `cancel()` предотвращает соответствующее внутреннее изменение состояния. Для управляемых корневых компонентов по-прежнему требуется обновлять `value` или `open`.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+type PrioritySelectProps = { canSetHighPriority: boolean };
+
+export const PrioritySelect = ({ canSetHighPriority }: PrioritySelectProps) => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      items={PRIORITIES}
+      value={priority}
+      onValueChange={(nextPriority, details) => {
+        if (nextPriority === 'high' && !canSetHighPriority) {
+          details.cancel();
+          return;
+        }
+        setPriority(nextPriority);
+      }}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value />
+        <Select.Icon />
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Positioner
+          align="start"
+          sideOffset={8}
+          alignItemWithTrigger={false}
+        >
+          <Select.Popup>
+            {PRIORITIES.map(({ value, label }) => (
+              <Select.Item key={value} value={value}>
+                <Select.ItemText>{label}</Select.ItemText>
+                <Select.ItemIndicator />
+              </Select.Item>
+            ))}
+          </Select.Popup>
+        </Select.Positioner>
+      </Select.Portal>
+    </Select.Root>
+  );
+};
+```
+
+Обобщённые типы корневого компонента представляют значение варианта и то, включён ли множественный выбор. Значения-объекты поддерживают `itemToStringLabel`, `itemToStringValue` и `isItemEqualToValue`. Используйте `null` для пустого одиночного выбора и пустой массив для пустого множественного выбора.
+
+## Клавиатура
+
+Пользователи клавиатуры могут открыть список с помощью триггера, перемещаться по вариантам клавишами со стрелками и вводить текст для поиска варианта. Home и End переходят к первому и последнему вариантам. Enter выбирает вариант; Escape закрывает всплывающее окно и возвращает фокус триггеру. При множественном выборе всплывающее окно остаётся открытым при переключении вариантов.
+
+Добавьте триггеру метку с помощью `Select.Label`, доступного имени или [Field](/ru/ui/primitives/input/field). Один лишь заполнитель не задаёт имя элементу управления.
+
+## Свойства
+
+Справочник генерируется из публичных типов компонентов. Нативные атрибуты, включая доступные имена и обработчики событий, также принимаются частями, которые отображают элементы.
+
+<SelectReference />
+
+<PageBanner illustration="page-cover-input" />

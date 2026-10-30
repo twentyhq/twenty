@@ -4,7 +4,6 @@ import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/comp
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
@@ -15,7 +14,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type Agent, GetRoleDocument } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { GetRoleDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -61,13 +61,14 @@ const StyledGroupsContainer = styled.div`
 `;
 
 type WorkflowAiAgentPermissionsTabProps = {
-  action: WorkflowAiAgentAction;
+  stepId: string;
   readonly: boolean;
   isAgentLoading: boolean;
-  refetchAgent: () => Promise<{ data?: { findOneAgent?: Agent } }>;
+  refetchAgent: () => Promise<{ data?: { findOneAgent?: FlatAgent } }>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
+  stepId,
   readonly,
   isAgentLoading,
   refetchAgent,
@@ -162,6 +163,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     handleAddPermissionFlag,
     handleDeletePermissionFlag,
   } = useWorkflowAiAgentPermissionActions({
+    stepId,
     readonly,
     objectPermissions,
     permissionFlagKeys,

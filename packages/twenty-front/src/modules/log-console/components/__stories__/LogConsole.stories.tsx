@@ -34,12 +34,10 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   BillingEntitlementKey,
   EventLogFilterOperand,
-  type EventLogRecord,
   type EventLogsLiveSubscription,
   type EventLogsQuery,
   type EventLogsQueryVariables,
   EventLogTable,
-  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
@@ -71,9 +69,6 @@ const WORKSPACE_WITH_LOGS_CONSOLE = {
     ...mockCurrentWorkspace.installedApplications,
     ...mockedEventLogInstalledApplications,
   ],
-  featureFlags: [
-    { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
-  ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
 
@@ -98,7 +93,9 @@ const fakeSseClient = {
   },
 };
 
-const emitEventLogsLive = (records: EventLogRecord[]) =>
+const emitEventLogsLive = (
+  records: EventLogsLiveSubscription['eventLogsLive'],
+) =>
   eventLogsLiveSubscriptions.forEach((_variables, sink) =>
     sink.next({ data: { eventLogsLive: records } }),
   );
@@ -200,7 +197,7 @@ const meta: Meta<PageDecoratorArgs> = {
               (variables.input.filters?.fieldFilters ?? []).every(
                 ({ field, operand, values }) =>
                   values.includes(
-                    record[field as keyof EventLogRecord] ??
+                    record[field as keyof typeof record] ??
                       record.properties?.[field],
                   ) ===
                   (operand === EventLogFilterOperand.IS),
@@ -309,6 +306,7 @@ export const AppLogsOpen: Story = {
         "TypeError: Cannot read properties of undefined (reading 'amount_due')",
       ),
     ).toHaveLength(2);
+    expect(await canvas.findByText('Lead Scoring')).toBeVisible();
   },
 };
 
