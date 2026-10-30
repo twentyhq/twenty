@@ -45,8 +45,9 @@ const StyledLabelContainer = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-    outline-offset: 2px;
+    outline: ${themeCssVariables.spacing['0.5']} solid
+      ${themeCssVariables.color.blue};
+    outline-offset: ${themeCssVariables.spacing['0.5']};
   }
 `;
 
