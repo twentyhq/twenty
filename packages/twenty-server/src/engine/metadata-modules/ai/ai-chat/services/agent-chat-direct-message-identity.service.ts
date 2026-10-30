@@ -60,9 +60,7 @@ export class AgentChatDirectMessageIdentityService {
           `INSERT INTO ${table('agentChatThread')}
             ("conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId", "isAssistantParticipant")
            VALUES ('DIRECT_MESSAGE', $1, $2, false)
-           ON CONFLICT ("directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId")
-             WHERE "directMessageFirstWorkspaceMemberId" IS NOT NULL
-             DO NOTHING
+           ON CONFLICT ("directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId") DO NOTHING
            RETURNING id`,
           [
             pair.directMessageFirstWorkspaceMemberId,

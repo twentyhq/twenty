@@ -16,7 +16,7 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
         'directMessageSecondWorkspaceMemberId',
       ],
       isUnique: true,
-      indexWhereClause: '"directMessageFirstWorkspaceMemberId" IS NOT NULL',
+      indexWhereClause: null,
     },
   }),
   workspaceMemberIndex: createStandardIndexFlatMetadata({
