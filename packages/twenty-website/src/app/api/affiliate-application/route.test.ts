@@ -3,7 +3,6 @@ export {};
 
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.AFFILIATE_APPLICATION_WEBHOOK_URL;
-const ORIGINAL_SECRET = process.env.AFFILIATE_APPLICATION_SECRET;
 
 const VALID_PAYLOAD = {
   name: 'Ada Lovelace',
@@ -43,7 +42,6 @@ describe('POST /api/affiliate-application', () => {
   beforeEach(() => {
     process.env.AFFILIATE_APPLICATION_WEBHOOK_URL =
       'https://hooks.example/workflow';
-    process.env.AFFILIATE_APPLICATION_SECRET = 'test-secret-abc123';
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -51,10 +49,9 @@ describe('POST /api/affiliate-application', () => {
     jest.restoreAllMocks();
     global.fetch = ORIGINAL_FETCH;
     process.env.AFFILIATE_APPLICATION_WEBHOOK_URL = ORIGINAL_WEBHOOK_URL;
-    process.env.AFFILIATE_APPLICATION_SECRET = ORIGINAL_SECRET;
   });
 
-  it('forwards the workflow payload with the secret in the body and accepts success:true', async () => {
+  it('forwards the workflow payload without a secret and accepts success:true', async () => {
     const fetchSpy = mockWebhookReply({
       success: true,
       workflowRunId: 'run-id',
@@ -67,6 +64,7 @@ describe('POST /api/affiliate-application', () => {
     await expect(response.json()).resolves.toEqual({ success: true });
     const [url, init] = fetchSpy.mock.calls[0];
     expect(url).toBe('https://hooks.example/workflow');
+    expect(init.headers).toEqual({ 'Content-Type': 'application/json' });
     expect(JSON.parse(init.body)).toEqual({
       name: 'Ada Lovelace',
       email: 'ada@example.com',
@@ -76,7 +74,6 @@ describe('POST /api/affiliate-application', () => {
       country: '',
       promotionPlan: '',
       isIntegrationPartner: false,
-      applicationSecret: 'test-secret-abc123',
     });
   });
 
@@ -95,17 +92,6 @@ describe('POST /api/affiliate-application', () => {
     const { POST } = await loadRoute();
 
     const response = await POST(buildRequest({ ip: '198.51.100.3' }));
-
-    expect(response.status).toBe(503);
-    expect(fetchSpy).not.toHaveBeenCalled();
-  });
-
-  it('returns 503 without calling the workflow when the secret is not set', async () => {
-    delete process.env.AFFILIATE_APPLICATION_SECRET;
-    const fetchSpy = mockWebhookReply({ success: true });
-    const { POST } = await loadRoute();
-
-    const response = await POST(buildRequest({ ip: '198.51.100.5' }));
 
     expect(response.status).toBe(503);
     expect(fetchSpy).not.toHaveBeenCalled();
