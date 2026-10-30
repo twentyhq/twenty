@@ -20,7 +20,7 @@ import {
   WebhookExceptionCode,
 } from 'src/engine/metadata-modules/webhook/webhook.exception';
 
-export const fromCreateWebhookInputToFlatWebhookToCreate = ({
+export const fromCreateWebhookInputToFlatWebhookToCreateOrThrow = ({
   createWebhookInput,
   workspaceId,
   flatApplication,
