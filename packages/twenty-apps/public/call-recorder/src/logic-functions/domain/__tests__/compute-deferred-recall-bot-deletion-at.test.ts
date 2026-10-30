@@ -35,15 +35,18 @@ const CALL_RECORDING_ID = buildCallRecordingIdForStart(MEETING_STARTS_AT);
 describe('computeDeferredRecallBotDeletionAt', () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  it('returns the same deletion time for the same recording', () => {
-    const compute = () =>
+  it('returns the same deletion time for the same recording whenever it is asked', () => {
+    const computeAt = (now: Date) =>
       computeDeferredRecallBotDeletionAt({
         callRecordingId: CALL_RECORDING_ID,
         calendarEvent: buildCalendarEvent(),
-        now: NOW,
+        now,
       });
 
-    expect(compute()).toEqual(compute());
+    expect(computeAt(NOW)).toBeDefined();
+    expect(computeAt(NOW)).toEqual(
+      computeAt(new Date('2026-01-02T07:00:00.000Z')),
+    );
   });
 
   it('places the deletion inside the window before the bot joins', () => {

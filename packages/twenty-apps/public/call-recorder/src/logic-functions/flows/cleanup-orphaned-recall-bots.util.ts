@@ -2,9 +2,9 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
-import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
+import { isNonTerminalCallRecordingStatus } from 'src/logic-functions/domain/is-non-terminal-call-recording-status.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
@@ -91,7 +91,7 @@ export const cleanupOrphanedRecallBots = async ({
     callRecordings.map((callRecording) => [callRecording.id, callRecording]),
   );
   const canceledExternalBotIds: string[] = [];
-  const deferredExternalBotIds = await findDeferredRecallBotDeletionBotIds({
+  const deferredExternalBotIds = await findDeferredDeletionRecallBotIds({
     client,
     callRecordings,
     now,
@@ -126,9 +126,12 @@ export const cleanupOrphanedRecallBots = async ({
   };
 };
 
-// The follow-up armed with the cancellation deletes these bots inside their
-// deletion window; deleting them here would bring that Recall traffic back.
-const findDeferredRecallBotDeletionBotIds = async ({
+type CanceledCallRecordingWithBot = CallRecordingRecord & {
+  externalBotId: string;
+  calendarEventId: string;
+};
+
+const findDeferredDeletionRecallBotIds = async ({
   client,
   callRecordings,
   now,
@@ -137,19 +140,19 @@ const findDeferredRecallBotDeletionBotIds = async ({
   callRecordings: CallRecordingRecord[];
   now: Date;
 }): Promise<Set<string>> => {
-  const canceledRecallBots = callRecordings.flatMap(
-    ({ id, recordingRequestStatus, status, externalBotId, calendarEventId }) =>
-      recordingRequestStatus === CallRecordingRequestStatus.CANCELED &&
-      NON_TERMINAL_CALL_RECORDING_STATUSES.some(
-        (nonTerminalStatus) => nonTerminalStatus === status,
-      ) &&
-      !isUndefined(externalBotId) &&
-      !isUndefined(calendarEventId)
-        ? [{ callRecordingId: id, externalBotId, calendarEventId }]
-        : [],
+  const canceledCallRecordingsWithBot = callRecordings.filter(
+    (callRecording): callRecording is CanceledCallRecordingWithBot =>
+      callRecording.recordingRequestStatus ===
+        CallRecordingRequestStatus.CANCELED &&
+      isNonTerminalCallRecordingStatus(callRecording.status) &&
+      !isUndefined(callRecording.externalBotId) &&
+      !isUndefined(callRecording.calendarEventId),
   );
 
-  if (canceledRecallBots.length === 0 || !(await isAppPreferencesEnabled())) {
+  if (
+    canceledCallRecordingsWithBot.length === 0 ||
+    !(await isAppPreferencesEnabled())
+  ) {
     return new Set();
   }
 
@@ -157,24 +160,28 @@ const findDeferredRecallBotDeletionBotIds = async ({
     (
       await fetchCalendarEventsByIds(
         client,
-        canceledRecallBots.map(({ calendarEventId }) => calendarEventId),
+        canceledCallRecordingsWithBot.map(
+          (callRecording) => callRecording.calendarEventId,
+        ),
       )
     ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
 
   return new Set(
-    canceledRecallBots
+    canceledCallRecordingsWithBot
       .filter(
-        ({ callRecordingId, calendarEventId }) =>
+        (callRecording) =>
           !isUndefined(
             computeDeferredRecallBotDeletionAt({
-              callRecordingId,
-              calendarEvent: calendarEventsById.get(calendarEventId),
+              callRecordingId: callRecording.id,
+              calendarEvent: calendarEventsById.get(
+                callRecording.calendarEventId,
+              ),
               now,
             }),
           ),
       )
-      .map(({ externalBotId }) => externalBotId),
+      .map((callRecording) => callRecording.externalBotId),
   );
 };
 

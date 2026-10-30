@@ -4,16 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { checkCreditsBeforeRecallBotJoin } from 'src/logic-functions/flows/check-credits-before-recall-bot-join.util';
 
 const getCreditAvailabilityMock = vi.hoisted(() => vi.fn());
-const metadataQueryMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/billing', () => ({
   getCreditAvailability: getCreditAvailabilityMock,
-}));
-
-vi.mock('twenty-client-sdk/metadata', () => ({
-  MetadataApiClient: class {
-    query = metadataQueryMock;
-  },
 }));
 
 const fetchMock = vi.fn();
@@ -132,14 +125,6 @@ const stubRecallBotRemoval = (status: number) => {
   fetchMock.mockImplementation(async () => new Response(null, { status }));
 };
 
-const stubAppPreferencesFlag = (value: boolean) => {
-  metadataQueryMock.mockResolvedValue({
-    currentWorkspace: {
-      featureFlags: [{ key: 'IS_APP_PREFERENCES_ENABLED', value }],
-    },
-  });
-};
-
 describe('checkCreditsBeforeRecallBotJoin', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -148,8 +133,6 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     fetchMock.mockReset();
     getCreditAvailabilityMock.mockReset();
-    metadataQueryMock.mockReset();
-    stubAppPreferencesFlag(false);
     stubRecallBotRemoval(204);
   });
 
@@ -367,14 +350,14 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     expect(client.callRecording.callRecorderFailureReason).toBeUndefined();
   });
 
-  describe('canceled recording whose bot deletion was deferred', () => {
-    const buildCanceledClient = () =>
+  describe('canceled recording that still holds its bot', () => {
+    const buildCanceledClient = (meetingStartsAt?: string) =>
       new FakeCoreApiClient({
         callRecording: { recordingRequestStatus: 'CANCELED' },
+        meetingStartsAt,
       });
 
-    it('deletes the bot it still holds before it joins', async () => {
-      stubAppPreferencesFlag(true);
+    it('deletes the bot', async () => {
       const client = buildCanceledClient();
 
       const result = await checkCredits({
@@ -397,9 +380,25 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       });
     });
 
-    it('leaves a bot that has already joined to the follow-up instead of ejecting it', async () => {
-      stubAppPreferencesFlag(true);
-      stubRecallBotRemoval(405);
+    it('deletes the bot even when its event has since moved earlier', async () => {
+      const client = buildCanceledClient('2026-01-01T12:30:00.000Z');
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
+
+      expect(result).toEqual({ status: 'canceled' });
+      expect(client.callRecording.externalBotId).toBeNull();
+    });
+
+    it('ejects a bot that has already joined, as the follow-up would', async () => {
+      fetchMock.mockImplementation(
+        async (_url: string, requestInit: RequestInit) =>
+          requestInit.method === 'DELETE'
+            ? new Response(null, { status: 405 })
+            : new Response(JSON.stringify({}), { status: 200 }),
+      );
       const client = buildCanceledClient();
 
       const result = await checkCredits({
@@ -407,32 +406,43 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
         now: TEN_MINUTES_BEFORE_JOIN,
       });
 
-      expect(result).toEqual({
-        status: 'skipped',
-        reason: 'bot has already joined',
-      });
-      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
-        RECALL_BOT_URL,
-        expect.objectContaining({ method: 'DELETE' }),
+      expect(result).toEqual({ status: 'canceled' });
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${RECALL_BOT_URL}leave_call/`,
+        expect.objectContaining({ method: 'POST' }),
       );
-      expect(client.callRecording.externalBotId).toBe('recall-bot-1');
     });
 
-    it('does nothing once the bot join time has passed', async () => {
-      stubAppPreferencesFlag(true);
+    it('leaves the bot of a request that was requested again during the check', async () => {
       const client = buildCanceledClient();
+      const originalQuery = client.query.bind(client);
+      let callRecordingReadCount = 0;
+      client.query = async (query: any) => {
+        if (query.callRecordings !== undefined) {
+          callRecordingReadCount += 1;
 
-      const result = await checkCredits({ client, now: new Date(JOIN_AT) });
+          if (callRecordingReadCount > 1) {
+            client.callRecording.recordingRequestStatus = 'REQUESTED';
+          }
+        }
 
-      expect(result).toEqual({
-        status: 'skipped',
-        reason: 'bot join time has passed',
+        return originalQuery(query);
+      };
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
       });
+
+      expect(result.status).toBe('skipped');
       expect(fetchMock).not.toHaveBeenCalled();
+      expect(client.callRecording).toMatchObject({
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+      });
     });
 
     it('throws so the queue retries when Recall refuses the deletion', async () => {
-      stubAppPreferencesFlag(true);
       stubRecallBotRemoval(403);
       const client = buildCanceledClient();
 
@@ -440,22 +450,6 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
         checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN }),
       ).rejects.toThrow('could not be canceled');
 
-      expect(client.callRecording.externalBotId).toBe('recall-bot-1');
-    });
-
-    it('leaves the bot alone when deferral is disabled', async () => {
-      const client = buildCanceledClient();
-
-      const result = await checkCredits({
-        client,
-        now: TEN_MINUTES_BEFORE_JOIN,
-      });
-
-      expect(result).toEqual({
-        status: 'skipped',
-        reason: 'call recording no longer awaits a scheduled bot',
-      });
-      expect(fetchMock).not.toHaveBeenCalled();
       expect(client.callRecording.externalBotId).toBe('recall-bot-1');
     });
   });

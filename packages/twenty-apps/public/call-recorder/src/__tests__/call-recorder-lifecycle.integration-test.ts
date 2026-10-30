@@ -2453,6 +2453,9 @@ describe('call recorder app lifecycle (integration)', () => {
       await cancelCallRecordingRequest({
         client,
         callRecording: { id: callRecordingId, externalBotId: botId },
+        calendarEvent: undefined,
+        isRecallBotDeletionDeferralEnabled: async () => false,
+        now: new Date(),
       });
 
       const callRecording = await fetchCallRecording(callRecordingId);

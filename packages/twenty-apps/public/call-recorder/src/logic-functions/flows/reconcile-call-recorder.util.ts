@@ -315,7 +315,6 @@ const reconcileCanceledMeetings = async ({
   const callRecordingIdsToFollowUp: string[] = [];
   const callRecordingIdsCanceledInBatch = new Set<string>();
   const canceledMeetingReconciliations: CanceledMeetingReconciliation[] = [];
-  // Read once per run, and only once a cancellation could actually be deferred.
   let isRecallBotDeletionDeferralEnabledPromise: Promise<boolean> | undefined;
   const isRecallBotDeletionDeferralEnabled = (): Promise<boolean> =>
     (isRecallBotDeletionDeferralEnabledPromise ??= isAppPreferencesEnabled());

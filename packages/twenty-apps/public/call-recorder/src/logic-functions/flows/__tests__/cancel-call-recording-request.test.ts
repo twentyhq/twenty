@@ -5,6 +5,7 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { DEFERRED_RECALL_BOT_DELETION_MIN_LEAD_MINUTES } from 'src/logic-functions/constants/deferred-recall-bot-deletion-min-lead-minutes';
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
+import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
@@ -68,12 +69,28 @@ const buildCallRecording = (startsAt: string): CallRecordingRecord => ({
   externalBotId: 'recall-bot-1',
 });
 
+const getDeletionTime = (meetingStartsAt: string): number => {
+  const deferredRecallBotDeletionAt = computeDeferredRecallBotDeletionAt({
+    callRecordingId: buildCallRecording(meetingStartsAt).id,
+    calendarEvent: buildCalendarEvent(meetingStartsAt),
+    now: NOW,
+  });
+
+  if (deferredRecallBotDeletionAt === undefined) {
+    throw new Error('Expected the meeting to have a deferred deletion time');
+  }
+
+  return deferredRecallBotDeletionAt.getTime();
+};
+
 const cancel = async ({
   meetingStartsAt,
   isRecallBotDeletionDeferralEnabled,
+  now = NOW,
 }: {
   meetingStartsAt: string;
   isRecallBotDeletionDeferralEnabled: () => Promise<boolean>;
+  now?: Date;
 }) => {
   const callRecording = buildCallRecording(meetingStartsAt);
   const client = new FakeCoreApiClient({ ...callRecording });
@@ -83,7 +100,7 @@ const cancel = async ({
     callRecording,
     calendarEvent: buildCalendarEvent(meetingStartsAt),
     isRecallBotDeletionDeferralEnabled,
-    now: NOW,
+    now,
   });
 
   return client.callRecording;
@@ -118,6 +135,37 @@ describe('cancelCallRecordingRequest', () => {
       recordingRequestStatus: 'CANCELED',
       externalBotId: 'recall-bot-1',
     });
+  });
+
+  it('deletes the bot right away when its follow-up would arrive after the deletion time', async () => {
+    const callRecording = await cancel({
+      meetingStartsAt: FAR_MEETING_STARTS_AT,
+      isRecallBotDeletionDeferralEnabled: async () => true,
+      now: new Date(
+        getDeletionTime(FAR_MEETING_STARTS_AT) - MILLISECONDS_PER_MINUTE,
+      ),
+    });
+
+    expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+      RECALL_BOT_URL,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+    expect(callRecording).toMatchObject({
+      recordingRequestStatus: 'CANCELED',
+      externalBotId: null,
+    });
+  });
+
+  it('defers once its follow-up arrives before the deletion time', async () => {
+    await cancel({
+      meetingStartsAt: FAR_MEETING_STARTS_AT,
+      isRecallBotDeletionDeferralEnabled: async () => true,
+      now: new Date(
+        getDeletionTime(FAR_MEETING_STARTS_AT) - 41 * MILLISECONDS_PER_MINUTE,
+      ),
+    });
+
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('deletes the bot right away once its deletion window has come', async () => {
@@ -156,8 +204,7 @@ describe('cancelCallRecordingRequest', () => {
     });
   });
 
-  it('deletes the bot right away without reading the flag when the meeting time is unknown', async () => {
-    const isRecallBotDeletionDeferralEnabled = vi.fn(async () => true);
+  it('deletes the bot right away when the meeting time is unknown', async () => {
     const callRecording = buildCallRecording(FAR_MEETING_STARTS_AT);
     const client = new FakeCoreApiClient({ ...callRecording });
 
@@ -165,11 +212,10 @@ describe('cancelCallRecordingRequest', () => {
       client: client as unknown as CoreApiClient,
       callRecording,
       calendarEvent: undefined,
-      isRecallBotDeletionDeferralEnabled,
+      isRecallBotDeletionDeferralEnabled: async () => true,
       now: NOW,
     });
 
-    expect(isRecallBotDeletionDeferralEnabled).not.toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
       RECALL_BOT_URL,
       expect.objectContaining({ method: 'DELETE' }),

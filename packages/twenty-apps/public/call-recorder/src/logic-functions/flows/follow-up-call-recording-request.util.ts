@@ -24,12 +24,7 @@ import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/
 
 export type FollowUpCallRecordingRequestResult =
   | { status: 'settled'; outcome: string }
-  | {
-      status: 'follow-up-again';
-      reason: string;
-      dueAt: Date;
-      isRecallBotDeletionDeferral?: boolean;
-    };
+  | { status: 'follow-up-again'; reason: string; dueAt: Date };
 
 type FollowUpActionResult =
   | { status: 'done'; outcome: string }
@@ -74,7 +69,6 @@ export const followUpCallRecordingRequest = async ({
       status: 'follow-up-again',
       reason: followUp.reason,
       dueAt: followUp.checkAt,
-      isRecallBotDeletionDeferral: followUp.isRecallBotDeletionDeferral,
     };
   }
 

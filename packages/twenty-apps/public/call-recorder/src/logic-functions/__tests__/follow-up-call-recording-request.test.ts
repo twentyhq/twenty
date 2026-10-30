@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
+import { buildCallRecordingRequestFollowUpJobId } from 'src/logic-functions/domain/build-call-recording-request-follow-up-job-id.util';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
 import { followUpCallRecordingRequestHandler } from 'src/logic-functions/follow-up-call-recording-request';
@@ -68,7 +68,7 @@ const getDeferredRecallBotDeletionAt = (): Date => {
 const getEnqueuedFollowUp = () => {
   const [{ jobs, delayMs }] = enqueueJobsMock.mock.calls[0];
 
-  return { payload: jobs[0].payload, delayMs };
+  return { jobId: jobs[0].jobId, payload: jobs[0].payload, delayMs };
 };
 
 describe('followUpCallRecordingRequestHandler', () => {
@@ -80,8 +80,6 @@ describe('followUpCallRecordingRequestHandler', () => {
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
-    // Joining well before the meeting keeps the retry off the meeting-start cap.
-    vi.stubEnv('CALL_RECORDER_JOIN_EARLY_MINUTES', '120');
     fetchMock.mockReset();
     fetchMock.mockResolvedValue(new Response(null, { status: 403 }));
     enqueueJobsMock.mockReset().mockResolvedValue({ enqueued: true });
@@ -139,46 +137,20 @@ describe('followUpCallRecordingRequestHandler', () => {
       attempt: 0,
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       status: 'follow-up-again',
+      reason: 'waiting for the Recall bot deletion window',
       dueAt: deferredRecallBotDeletionAt,
-      isRecallBotDeletionDeferral: true,
     });
     expect(fetchMock).not.toHaveBeenCalled();
     expect(getEnqueuedFollowUp()).toEqual({
-      payload: {
+      jobId: buildCallRecordingRequestFollowUpJobId({
         callRecordingId: CALL_RECORDING_ID,
         attempt: 1,
-        deferralCount: 1,
-      },
+        dueAt: deferredRecallBotDeletionAt,
+      }),
+      payload: { callRecordingId: CALL_RECORDING_ID, attempt: 1 },
       delayMs: deferredRecallBotDeletionAt.getTime() - NOW.getTime(),
-    });
-  });
-
-  it('retries a failed deferred deletion on the first backoff step', async () => {
-    vi.setSystemTime(getDeferredRecallBotDeletionAt());
-
-    const result = await followUpCallRecordingRequestHandler({
-      callRecordingId: CALL_RECORDING_ID,
-      attempt: 1,
-      deferralCount: 1,
-    });
-
-    expect(result).toMatchObject({
-      status: 'follow-up-again',
-      reason: 'Recall bot cancellation failed',
-    });
-    expect(fetchMock).toHaveBeenCalledWith(
-      'https://us-west-2.recall.ai/api/v1/bot/recall-bot-1/',
-      expect.objectContaining({ method: 'DELETE' }),
-    );
-    expect(getEnqueuedFollowUp()).toEqual({
-      payload: {
-        callRecordingId: CALL_RECORDING_ID,
-        attempt: 2,
-        deferralCount: 1,
-      },
-      delayMs: 60 * MILLISECONDS_PER_MINUTE,
     });
   });
 

@@ -12,16 +12,18 @@ import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-
 
 export const enqueueCallRecordingRequestFollowUps = async ({
   callRecordingIds,
-  delayMs = CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS,
+  dueAt,
   attempt = 0,
-  deferralCount = 0,
 }: {
   callRecordingIds: string[];
-  delayMs?: number;
+  dueAt?: Date;
   attempt?: number;
-  deferralCount?: number;
 }): Promise<void> => {
   const now = Date.now();
+  // Bucket the intended due time: enqueue latency must not split one due time across job ids.
+  const firstSlotDueAt =
+    dueAt ?? new Date(now + CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS);
+  const delayMs = Math.max(0, firstSlotDueAt.getTime() - now);
   const followUpSlots = getBatches(
     getUniqueSortedIds(callRecordingIds),
     RECALL_RECOVERY_CALLS_PER_MINUTE,
@@ -38,13 +40,9 @@ export const enqueueCallRecordingRequestFollowUps = async ({
           jobId: buildCallRecordingRequestFollowUpJobId({
             callRecordingId,
             attempt,
-            dueAt: new Date(now + delayMs),
+            dueAt: firstSlotDueAt,
           }),
-          payload: {
-            callRecordingId,
-            attempt,
-            ...(deferralCount === 0 ? {} : { deferralCount }),
-          },
+          payload: { callRecordingId, attempt },
         })),
         retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
         delayMs: slotDelayMs,

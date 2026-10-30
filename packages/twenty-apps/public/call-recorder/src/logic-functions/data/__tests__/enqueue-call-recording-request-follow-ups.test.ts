@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ENQUEUED_JOB_RETRY_LIMIT } from 'src/logic-functions/constants/enqueued-job-retry-limit';
+import { buildCallRecordingRequestFollowUpJobId } from 'src/logic-functions/domain/build-call-recording-request-follow-up-job-id.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { RECALL_RECOVERY_CALLS_PER_MINUTE } from 'src/logic-functions/constants/recall-recovery-calls-per-minute';
 
@@ -65,5 +66,35 @@ describe('enqueueCallRecordingRequestFollowUps', () => {
     expect(bulkCall.jobs).toEqual(individualCall.jobs);
     expect(bulkCall.delayMs).toBe(individualCall.delayMs + 60_000);
     expect(bulkCall.retryLimit).toBe(ENQUEUED_JOB_RETRY_LIMIT);
+  });
+
+  it('keys the job to the intended due time, not to when it is enqueued', async () => {
+    const dueAt = new Date('2026-01-01T12:09:59.900Z');
+    vi.setSystemTime(new Date('2026-01-01T12:05:00.000Z'));
+
+    await enqueueCallRecordingRequestFollowUps({
+      callRecordingIds: ['recording-1'],
+      dueAt,
+      attempt: 1,
+    });
+
+    const [{ jobs, delayMs }] = enqueueJobsMock.mock.calls[0];
+    expect(jobs[0].jobId).toBe(
+      buildCallRecordingRequestFollowUpJobId({
+        callRecordingId: 'recording-1',
+        attempt: 1,
+        dueAt,
+      }),
+    );
+    expect(delayMs).toBe(dueAt.getTime() - Date.now());
+  });
+
+  it('enqueues a follow-up whose due time has passed without a delay', async () => {
+    await enqueueCallRecordingRequestFollowUps({
+      callRecordingIds: ['recording-1'],
+      dueAt: new Date('2026-01-01T12:00:00.000Z'),
+    });
+
+    expect(enqueueJobsMock.mock.calls[0][0].delayMs).toBe(0);
   });
 });

@@ -62,6 +62,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCallRecording(),
           calendarEvent,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({ action: 'book-bot', calendarEvent });
@@ -74,6 +75,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(-5),
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({
@@ -90,6 +92,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(-20),
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'book-bot' });
@@ -102,6 +105,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(5),
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'book-bot' });
@@ -112,6 +116,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCallRecording({ calendarEventId: undefined }),
           calendarEvent: undefined,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -122,6 +127,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCallRecording(),
           calendarEvent: endedCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({
@@ -138,6 +144,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             startsAt: minutesFromNow(-1),
             endsAt: undefined,
           }),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'mark-failed' });
@@ -150,6 +157,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(-180),
           }),
           calendarEvent: endedCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({
@@ -170,6 +178,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             startsAt: minutesFromNow(-9 * MINUTES_PER_DAY),
             endsAt: minutesFromNow(-8 * MINUTES_PER_DAY),
           }),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({
@@ -185,6 +194,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCallRecording({ externalBotId: 'recall-bot-1' }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -198,6 +208,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             externalBotId: 'recall-bot-1',
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -212,6 +223,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             externalBotId: 'recall-bot-1',
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({ action: 'cancel-bot', externalBotId: 'recall-bot-1' });
@@ -224,6 +236,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(-40),
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toEqual({ action: 'find-and-cancel-bot' });
@@ -236,6 +249,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             botScheduleAttemptedAt: minutesFromNow(-1),
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({
@@ -249,6 +263,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCanceledCallRecording(),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -261,6 +276,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             externalBotId: 'recall-bot-1',
           }),
           calendarEvent: endedCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -274,6 +290,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             externalBotId: 'recall-bot-1',
           }),
           calendarEvent: buildCalendarEvent(),
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         }),
       ).toMatchObject({ action: 'none' });
@@ -288,6 +305,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
             updatedAt: minutesFromNow(-canceledMinutesAgo),
           }),
           calendarEvent: undefined,
+          isRecallBotDeletionDeferralEnabled: false,
           now: NOW,
         });
 
@@ -328,11 +346,10 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         action: 'check-again',
         reason: 'waiting for the Recall bot deletion window',
         checkAt: farDeletionAt,
-        isRecallBotDeletionDeferral: true,
       });
     });
 
-    it('waits for the deletion window before looking for an unsaved bot', () => {
+    it('looks for an unsaved bot right away since nothing else would catch it', () => {
       expect(
         resolveCallRecordingRequestFollowUp({
           callRecording: buildCanceledCallRecording({
@@ -343,7 +360,7 @@ describe('resolveCallRecordingRequestFollowUp', () => {
           isRecallBotDeletionDeferralEnabled: true,
           now: NOW,
         }),
-      ).toMatchObject({ action: 'check-again', checkAt: farDeletionAt });
+      ).toEqual({ action: 'find-and-cancel-bot' });
     });
 
     it('cancels the bot once the deletion window has come', () => {

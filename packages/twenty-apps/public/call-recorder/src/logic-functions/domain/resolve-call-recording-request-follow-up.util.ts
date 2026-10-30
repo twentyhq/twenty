@@ -3,12 +3,12 @@ import { isUndefined } from '@sniptt/guards';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
-import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
 import { getMeetingEndTime } from 'src/logic-functions/domain/get-meeting-end-time.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
+import { isNonTerminalCallRecordingStatus } from 'src/logic-functions/domain/is-non-terminal-call-recording-status.util';
 
 const BOT_NEVER_SCHEDULED_FAILURE_REASON = 'bot_never_scheduled';
 const BOT_SCHEDULE_OUTCOME_UNKNOWN_FAILURE_REASON =
@@ -28,12 +28,7 @@ const CANCELED_BOT_FOLLOW_UP_HOURS = 24;
 
 export type CallRecordingRequestFollowUp =
   | { action: 'none'; reason: string }
-  | {
-      action: 'check-again';
-      reason: string;
-      checkAt: Date;
-      isRecallBotDeletionDeferral?: boolean;
-    }
+  | { action: 'check-again'; reason: string; checkAt: Date }
   | { action: 'book-bot'; calendarEvent: CalendarEventRecord }
   | { action: 'mark-failed'; failureReason: string }
   | { action: 'cancel-bot'; externalBotId: string }
@@ -42,12 +37,12 @@ export type CallRecordingRequestFollowUp =
 export const resolveCallRecordingRequestFollowUp = ({
   callRecording,
   calendarEvent,
-  isRecallBotDeletionDeferralEnabled = false,
+  isRecallBotDeletionDeferralEnabled,
   now,
 }: {
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord | undefined;
-  isRecallBotDeletionDeferralEnabled?: boolean;
+  isRecallBotDeletionDeferralEnabled: boolean;
   now: Date;
 }): CallRecordingRequestFollowUp => {
   if (
@@ -149,18 +144,22 @@ const resolveCanceledRequestFollowUp = ({
     return { action: 'none', reason: 'no bot left to stop' };
   }
 
-  const deferredRecallBotDeletionAt = isRecallBotDeletionDeferralEnabled
-    ? computeDeferredRecallBotDeletionAt({
-        callRecordingId: callRecording.id,
-        calendarEvent,
-        now,
-      })
-    : undefined;
-
   if (!isUndefined(callRecording.externalBotId)) {
+    const deferredRecallBotDeletionAt = isRecallBotDeletionDeferralEnabled
+      ? computeDeferredRecallBotDeletionAt({
+          callRecordingId: callRecording.id,
+          calendarEvent,
+          now,
+        })
+      : undefined;
+
     return isUndefined(deferredRecallBotDeletionAt)
       ? { action: 'cancel-bot', externalBotId: callRecording.externalBotId }
-      : buildDeferredRecallBotDeletionFollowUp(deferredRecallBotDeletionAt);
+      : {
+          action: 'check-again',
+          reason: 'waiting for the Recall bot deletion window',
+          checkAt: deferredRecallBotDeletionAt,
+        };
   }
 
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
@@ -180,19 +179,8 @@ const resolveCanceledRequestFollowUp = ({
     };
   }
 
-  return isUndefined(deferredRecallBotDeletionAt)
-    ? { action: 'find-and-cancel-bot' }
-    : buildDeferredRecallBotDeletionFollowUp(deferredRecallBotDeletionAt);
+  return { action: 'find-and-cancel-bot' };
 };
-
-const buildDeferredRecallBotDeletionFollowUp = (
-  deferredRecallBotDeletionAt: Date,
-): CallRecordingRequestFollowUp => ({
-  action: 'check-again',
-  reason: 'waiting for the Recall bot deletion window',
-  checkAt: deferredRecallBotDeletionAt,
-  isRecallBotDeletionDeferral: true,
-});
 
 const getFirstTryGraceEnd = ({
   botScheduleAttemptedAt,
@@ -252,13 +240,5 @@ const canCanceledRequestBotStillJoin = ({
     new Date(canceledAt).getTime() +
       CANCELED_BOT_FOLLOW_UP_HOURS * 60 * MILLISECONDS_PER_MINUTE >
     now.getTime()
-  );
-};
-
-const isNonTerminalCallRecordingStatus = (
-  status: string | undefined,
-): boolean => {
-  return NON_TERMINAL_CALL_RECORDING_STATUSES.some(
-    (nonTerminalStatus) => nonTerminalStatus === status,
   );
 };

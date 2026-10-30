@@ -9,8 +9,7 @@ import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/com
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 
-// Undefined means the bot must be deleted now: its join time is unknown or its
-// deletion time has passed.
+// Undefined means delete now: the join time is unknown or the deletion time has passed.
 export const computeDeferredRecallBotDeletionAt = ({
   callRecordingId,
   calendarEvent,
@@ -41,8 +40,7 @@ export const computeDeferredRecallBotDeletionAt = ({
   return deletionTime > now.getTime() ? new Date(deletionTime) : undefined;
 };
 
-// The bot joins at the start its request was keyed on; once the event moved or
-// changed its link, the event no longer tells that time.
+// A moved or relinked event no longer tells when the bot, booked for the old key, joins.
 const isMeetingOfCallRecording = ({
   calendarEvent,
   callRecordingId,
@@ -59,8 +57,7 @@ const isMeetingOfCallRecording = ({
     }),
   ) === callRecordingId;
 
-// A stable per-recording offset gives every reconcile the same deletion time, so
-// their follow-ups deduplicate, while spreading deletions across the window.
+// Stable per recording so repeated follow-ups share a due time, yet spread across the window.
 const computeDeletionLeadMs = (callRecordingId: string): number =>
   DEFERRED_RECALL_BOT_DELETION_MIN_LEAD_MINUTES * MILLISECONDS_PER_MINUTE +
   (createHash('sha256').update(callRecordingId).digest().readUInt32BE(0) %
