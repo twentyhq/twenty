@@ -15,8 +15,11 @@ export const createHostOutsidePressController = ({
   geometryTracker,
   pointerCaptureController,
 }: {
-  geometryTracker: GeometryTracker;
-  pointerCaptureController: HostPointerCaptureController;
+  geometryTracker: Pick<GeometryTracker, 'findRemoteElementIdContainingNode'>;
+  pointerCaptureController: Pick<
+    HostPointerCaptureController,
+    'claimPointerEventForwarding' | 'hasActivePointerCaptureForEvent'
+  >;
 }): HostOutsidePressController => {
   let isObservedByWorker = false;
   let pressEventTransport: PressEventTransport | null = null;
