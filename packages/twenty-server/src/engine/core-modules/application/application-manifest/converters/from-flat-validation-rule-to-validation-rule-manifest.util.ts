@@ -8,7 +8,17 @@ import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-valida
 export const fromFlatValidationRuleToValidationRuleManifest = ({
   flatValidationRule,
 }: {
-  flatValidationRule: FlatValidationRule;
+  flatValidationRule: Pick<
+    FlatValidationRule,
+    | 'universalIdentifier'
+    | 'objectMetadataUniversalIdentifier'
+    | 'name'
+    | 'expression'
+    | 'message'
+    | 'description'
+    | 'icon'
+    | 'errorFieldMetadataUniversalIdentifier'
+  >;
 }): ValidationRuleManifest => ({
   universalIdentifier: flatValidationRule.universalIdentifier,
   objectUniversalIdentifier:

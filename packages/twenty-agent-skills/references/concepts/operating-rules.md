@@ -9,17 +9,18 @@ This file is the single source of truth for the cross-skill rules. Harness-speci
 2. **Do not run broad validation unless it is requested.** After scaffolding (`twenty app init`) or after the CLI generates entities, prefer the bounded command that matches the task: `twenty app apply` for app sync, the package's unit-test script for unit tests, and `TWENTY_API_URL=http://localhost:2021 yarn test` for the full integration suite. Integration tests must target the isolated test instance on port `2021`, not the dev instance on port `2020`, unless the user explicitly asks otherwise.
 
 3. **Generate new entities with a CLI.** A CLI produces the file structure, identifiers, SDK imports and boilerplate. Hand-craft an entity file only to modify an existing one, or when no option below can produce it. Take the first option that works:
-   1. **The standalone `twenty` CLI, when `command -v twenty` finds it.** Run it directly, not through `yarn`. It works with or without a terminal: with `--no-input` it never prompts and exits with code 2 when a required value is missing. It covers objects, fields, logic functions and front components. For an object, pass the three `--create-*` flags so it also generates the table view, navigation menu item and record page layout that make the object visible in the UI:
+   1. **The standalone `twenty` CLI, when `command -v twenty` finds it.** Run it directly, not through `yarn`. It works with or without a terminal: with `--no-input` it never prompts and exits with code 2 when a required value is missing. It covers objects, fields, validation rules, logic functions and front components. For an object, pass the three `--create-*` flags so it also generates the table view, navigation menu item and record page layout that make the object visible in the UI:
 
       ```bash
       twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
       twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+      twenty app add validation-rule --name invoice-has-amount --object <object-uuid> --no-input
       twenty app add logic-function --name send-invoice --no-input
       twenty app add front-component --name invoice-panel --no-input
       ```
 
    2. **The CLI is missing**: install the standalone `twenty` package, or ask the user to install it when their environment requires that.
-   3. **The entity type is unsupported**: use the corresponding `define*` export directly. The standalone CLI currently generates objects, fields, logic functions and front components.
+   3. **The entity type is unsupported**: use the corresponding `define*` export directly. The standalone CLI currently generates objects, fields, validation rules, logic functions and front components.
    4. **Otherwise, write the file by hand.** Follow the example on the matching docs page (append `.md` to its URL), or an existing file of the same kind in the app, check it against the types exported by `twenty-sdk/define`, and generate every identifier with `crypto.randomUUID()` instead of inventing one.
 
 4. **Confirm destructive operations.** Deploys to production, uninstalls, production remote changes, and production syncs require explicit user confirmation before execution. Treat `--remote production` as user-visible.

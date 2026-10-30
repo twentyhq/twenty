@@ -7,6 +7,7 @@ import {
   type Manifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
+  type ValidationRuleManifest,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -1152,14 +1153,14 @@ describe('manifestValidate', () => {
 
   describe('validation rule validation', () => {
     const objectUniversalIdentifier = '550e8400-e29b-41d4-a716-446655440100';
-    const rule = {
+    const rule: ValidationRuleManifest = {
       universalIdentifier: '550e8400-e29b-41d4-a716-446655440101',
       objectUniversalIdentifier,
       name: 'Has a score',
       expression: 'score > 0',
       message: 'Add a score',
     };
-    const manifestWith = (validationRule: Partial<typeof rule>) => ({
+    const manifestWith = (validationRule: Partial<ValidationRuleManifest>) => ({
       ...validManifest,
       objects: [
         {
@@ -1168,14 +1169,23 @@ describe('manifestValidate', () => {
           namePlural: 'tickets',
           labelSingular: 'Ticket',
           labelPlural: 'Tickets',
+          labelIdentifierFieldMetadataUniversalIdentifier:
+            validField.universalIdentifier,
           fields: [{ ...validField, name: 'score' }],
         },
-      ] as unknown as Manifest['objects'],
+      ],
       validationRules: [{ ...rule, ...validationRule }],
     });
 
     it('accepts an expression reading a field of the object', () => {
       expect(manifestValidate(manifestWith({})).errors).toEqual([]);
+    });
+
+    it('accepts an expression reading a field Twenty generates', () => {
+      expect(
+        manifestValidate(manifestWith({ expression: 'isDefined(createdAt)' }))
+          .errors,
+      ).toEqual([]);
     });
 
     it('names the rule when it reads a field the object does not declare', () => {
@@ -1192,7 +1202,7 @@ describe('manifestValidate', () => {
           manifestWith({
             errorFieldUniversalIdentifier:
               '550e8400-e29b-41d4-a716-446655440102',
-          } as Partial<typeof rule>),
+          }),
         ).errors,
       ).toEqual([
         expect.stringContaining("does not belong to the rule's object"),

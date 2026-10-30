@@ -4185,7 +4185,7 @@ export type WorkspaceMemberTimeFormatEnum = 'HOUR_12' | 'HOUR_24' | 'SYSTEM'
 export interface WorkspaceMigration {
     actions: Scalars['JSON']
     applicationUniversalIdentifier: Scalars['String']
-    warnings: (Scalars['String'][] | null)
+    warnings?: Scalars['String'][]
     __typename: 'WorkspaceMigration'
 }
 

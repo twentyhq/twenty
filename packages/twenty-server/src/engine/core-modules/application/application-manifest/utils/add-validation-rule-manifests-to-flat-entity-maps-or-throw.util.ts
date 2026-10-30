@@ -20,11 +20,18 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
 import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+
+type ValidationRuleFlatEntityMaps = Pick<
+  AllFlatEntityMaps,
+  'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
+>;
 
 const isFieldActiveInWorkspace = (field: UniversalFlatFieldMetadata): boolean =>
   resolveEffectiveUniversalFlatEntityProperty({
@@ -33,60 +40,86 @@ const isFieldActiveInWorkspace = (field: UniversalFlatFieldMetadata): boolean =>
     property: 'isActive',
   });
 
-// Bindings are compiled against the fields the workspace will have once this sync lands:
-// other applications' current fields plus the fields this manifest declares.
-const groupActiveFieldsByObjectUniversalIdentifier = ({
-  ownerFlatApplication,
-  existingAllFlatEntityMaps,
-  toAllUniversalFlatEntityMaps,
-}: {
-  ownerFlatApplication: Pick<FlatApplication, 'id'>;
-  existingAllFlatEntityMaps: AllFlatEntityMaps;
-  toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
-}): Map<string, UniversalFlatFieldMetadata[]> => {
-  const activeFieldsByObjectUniversalIdentifier = new Map<
+const groupFieldsByObjectUniversalIdentifier = (
+  fields: (UniversalFlatFieldMetadata | undefined)[],
+): Map<string, UniversalFlatFieldMetadata[]> => {
+  const fieldsByObjectUniversalIdentifier = new Map<
     string,
     UniversalFlatFieldMetadata[]
   >();
 
-  const otherApplicationFields = Object.values(
-    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  ).filter(
-    (field) =>
-      isDefined(field) && field.applicationId !== ownerFlatApplication.id,
-  );
-  const ownFields = Object.values(
-    toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  );
-
-  for (const field of [...otherApplicationFields, ...ownFields]) {
+  for (const field of fields) {
     if (!isDefined(field)) {
       continue;
     }
 
-    // The sync keeps a workspace's deactivation of a field this manifest still declares
-    const existingField =
-      existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        field.universalIdentifier
-      ];
-
-    if (!isFieldActiveInWorkspace(existingField ?? field)) {
-      continue;
-    }
-
     const objectFields =
-      activeFieldsByObjectUniversalIdentifier.get(
+      fieldsByObjectUniversalIdentifier.get(
         field.objectMetadataUniversalIdentifier,
       ) ?? [];
 
     objectFields.push(field);
-    activeFieldsByObjectUniversalIdentifier.set(
+    fieldsByObjectUniversalIdentifier.set(
       field.objectMetadataUniversalIdentifier,
       objectFields,
     );
   }
 
-  return activeFieldsByObjectUniversalIdentifier;
+  return fieldsByObjectUniversalIdentifier;
+};
+
+// Rules compile against the fields the workspace will have once this sync lands
+const computeFieldsAfterSync = ({
+  ownerFlatApplication,
+  inferDeletionFromMissingEntities,
+  existingAllFlatEntityMaps,
+  toAllUniversalFlatEntityMaps,
+}: {
+  ownerFlatApplication: Pick<FlatApplication, 'id'>;
+  inferDeletionFromMissingEntities: boolean;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
+  toAllUniversalFlatEntityMaps: ValidationRuleFlatEntityMaps;
+}): UniversalFlatFieldMetadata[] => {
+  const retainedExistingFields = Object.values(
+    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+  ).filter(
+    (field) =>
+      isDefined(field) &&
+      (field.applicationId !== ownerFlatApplication.id ||
+        !inferDeletionFromMissingEntities ||
+        isSystemSideEffectFlatEntity(field)),
+  );
+  const reservedFieldsOfNewObjects = Object.values(
+    toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+  ).flatMap((flatObjectMetadata) =>
+    isDefined(flatObjectMetadata) &&
+    !isDefined(
+      existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        flatObjectMetadata.universalIdentifier
+      ],
+    )
+      ? Object.values(
+          buildReservedSystemFlatFieldMetadatasForCustomObject({
+            flatObjectMetadata,
+          }),
+        )
+      : [],
+  );
+
+  return Object.values(
+    Object.fromEntries(
+      [
+        ...retainedExistingFields,
+        ...reservedFieldsOfNewObjects,
+        ...Object.values(
+          toAllUniversalFlatEntityMaps.flatFieldMetadataMaps
+            .byUniversalIdentifier,
+        ),
+      ]
+        .filter(isDefined)
+        .map((field) => [field.universalIdentifier, field]),
+    ),
+  );
 };
 
 const toScalarFieldDescriptor = (
@@ -141,75 +174,65 @@ type UnavailableField = {
   state: 'deactivated' | 'deleted' | 'removedFromApplication';
 };
 
-const findExistingFieldByName = ({
-  name,
-  objectUniversalIdentifier,
-  existingAllFlatEntityMaps,
-}: {
-  name: string;
-  objectUniversalIdentifier: string;
-  existingAllFlatEntityMaps: AllFlatEntityMaps;
-}): UniversalFlatFieldMetadata | undefined =>
-  Object.values(
-    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  ).find(
-    (field) =>
-      isDefined(field) &&
-      field.name === name &&
-      field.objectMetadataUniversalIdentifier === objectUniversalIdentifier,
-  );
-
-// A rule whose field left the workspace outside this application is not something
-// the developer can fix, so only a field the application removed itself fails the sync.
+// Only a field the application removed itself fails the sync: the developer can't fix the others
 const findUnavailableField = ({
   validationRuleManifest,
   existingFlatValidationRule,
+  errorCode,
   errorParams,
   ownerFlatApplication,
+  existingFieldsByObjectUniversalIdentifier,
+  fieldsAfterSyncByObjectUniversalIdentifier,
   existingAllFlatEntityMaps,
-  toAllUniversalFlatEntityMaps,
 }: {
-  validationRuleManifest: ValidationRuleManifest;
-  existingFlatValidationRule: UniversalFlatValidationRule | undefined;
+  validationRuleManifest: Pick<
+    ValidationRuleManifest,
+    'objectUniversalIdentifier' | 'expression'
+  >;
+  existingFlatValidationRule:
+    | Pick<UniversalFlatValidationRule, 'expression' | 'bindings'>
+    | undefined;
+  errorCode: string | undefined;
   errorParams: ValidationRuleErrorParams | undefined;
   ownerFlatApplication: Pick<FlatApplication, 'id'>;
-  existingAllFlatEntityMaps: AllFlatEntityMaps;
-  toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
+  existingFieldsByObjectUniversalIdentifier: Map<
+    string,
+    UniversalFlatFieldMetadata[]
+  >;
+  fieldsAfterSyncByObjectUniversalIdentifier: Map<
+    string,
+    UniversalFlatFieldMetadata[]
+  >;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
 }): UnavailableField | undefined => {
   const name = errorParams?.fieldName;
 
-  if (!isDefined(name)) {
+  if (
+    !isDefined(name) ||
+    (errorCode !== 'UNKNOWN_FIELD' &&
+      errorCode !== 'UNKNOWN_RELATION_TARGET_FIELD')
+  ) {
     return undefined;
   }
 
   const { relationFieldName } = errorParams ?? {};
-  const fieldByUniversalIdentifier = {
-    ...existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    ...toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  };
-  const relationField = isDefined(relationFieldName)
-    ? Object.values(fieldByUniversalIdentifier).find(
-        (field) =>
-          isDefined(field) &&
-          field.name === relationFieldName &&
-          field.objectMetadataUniversalIdentifier ===
-            validationRuleManifest.objectUniversalIdentifier,
-      )
-    : undefined;
   const objectUniversalIdentifier = isDefined(relationFieldName)
-    ? relationField?.relationTargetObjectMetadataUniversalIdentifier
+    ? (
+        fieldsAfterSyncByObjectUniversalIdentifier.get(
+          validationRuleManifest.objectUniversalIdentifier,
+        ) ?? []
+      ).find((field) => field.name === relationFieldName)
+        ?.relationTargetObjectMetadataUniversalIdentifier
     : validationRuleManifest.objectUniversalIdentifier;
 
-  if (isDefined(objectUniversalIdentifier)) {
-    const existingField = findExistingFieldByName({
-      name,
-      objectUniversalIdentifier,
-      existingAllFlatEntityMaps,
-    });
+  const existingField = isDefined(objectUniversalIdentifier)
+    ? existingFieldsByObjectUniversalIdentifier
+        .get(objectUniversalIdentifier)
+        ?.find((field) => field.name === name)
+    : undefined;
 
-    if (isDefined(existingField) && !isFieldActiveInWorkspace(existingField)) {
-      return { name, state: 'deactivated' };
-    }
+  if (isDefined(existingField) && !isFieldActiveInWorkspace(existingField)) {
+    return { name, state: 'deactivated' };
   }
 
   if (
@@ -242,6 +265,39 @@ const findUnavailableField = ({
   };
 };
 
+// The field-deletion side effect already detached this link, so the manifest must not restore it
+const isErrorFieldDetachedByWorkspace = ({
+  validationRuleManifest: { errorFieldUniversalIdentifier },
+  existingFlatValidationRule,
+  existingAllFlatEntityMaps,
+  toAllUniversalFlatEntityMaps,
+}: {
+  validationRuleManifest: Pick<
+    ValidationRuleManifest,
+    'errorFieldUniversalIdentifier'
+  >;
+  existingFlatValidationRule:
+    | Pick<UniversalFlatValidationRule, 'errorFieldMetadataUniversalIdentifier'>
+    | undefined;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
+  toAllUniversalFlatEntityMaps: ValidationRuleFlatEntityMaps;
+}): boolean =>
+  isDefined(errorFieldUniversalIdentifier) &&
+  isDefined(existingFlatValidationRule) &&
+  !isDefined(
+    existingFlatValidationRule.errorFieldMetadataUniversalIdentifier,
+  ) &&
+  !isDefined(
+    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      errorFieldUniversalIdentifier
+    ],
+  ) &&
+  !isDefined(
+    toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      errorFieldUniversalIdentifier
+    ],
+  );
+
 const buildUnavailableFieldMessage = ({
   validationRuleName,
   unavailableField: { name, state },
@@ -262,12 +318,14 @@ const buildUnavailableFieldMessage = ({
 export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
   validationRules,
   ownerFlatApplication,
+  inferDeletionFromMissingEntities,
   existingAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,
   now,
 }: {
   validationRules: ValidationRuleManifest[];
   ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
+  inferDeletionFromMissingEntities: boolean;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   now: string;
@@ -278,12 +336,31 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
     return { warnings };
   }
 
+  const fieldsAfterSync = computeFieldsAfterSync({
+    ownerFlatApplication,
+    inferDeletionFromMissingEntities,
+    existingAllFlatEntityMaps,
+    toAllUniversalFlatEntityMaps,
+  });
+  const fieldsAfterSyncByObjectUniversalIdentifier =
+    groupFieldsByObjectUniversalIdentifier(fieldsAfterSync);
+  const existingFieldsByObjectUniversalIdentifier =
+    groupFieldsByObjectUniversalIdentifier(
+      Object.values(
+        existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+      ),
+    );
+  // The sync keeps a workspace's deactivation of a field this manifest still declares
   const activeFieldsByObjectUniversalIdentifier =
-    groupActiveFieldsByObjectUniversalIdentifier({
-      ownerFlatApplication,
-      existingAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps,
-    });
+    groupFieldsByObjectUniversalIdentifier(
+      fieldsAfterSync.filter((field) =>
+        isFieldActiveInWorkspace(
+          existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+            field.universalIdentifier
+          ] ?? field,
+        ),
+      ),
+    );
 
   for (const validationRuleManifest of validationRules) {
     const { objectUniversalIdentifier } = validationRuleManifest;
@@ -326,18 +403,16 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       bindings = compilationResult.bindings;
       isActive = existingFlatValidationRule?.isActive ?? true;
     } else {
-      const unavailableField =
-        compilationResult.errorCode === 'UNKNOWN_FIELD' ||
-        compilationResult.errorCode === 'UNKNOWN_RELATION_TARGET_FIELD'
-          ? findUnavailableField({
-              validationRuleManifest,
-              existingFlatValidationRule,
-              errorParams: compilationResult.errorParams,
-              ownerFlatApplication,
-              existingAllFlatEntityMaps,
-              toAllUniversalFlatEntityMaps,
-            })
-          : undefined;
+      const unavailableField = findUnavailableField({
+        validationRuleManifest,
+        existingFlatValidationRule,
+        errorCode: compilationResult.errorCode,
+        errorParams: compilationResult.errorParams,
+        ownerFlatApplication,
+        existingFieldsByObjectUniversalIdentifier,
+        fieldsAfterSyncByObjectUniversalIdentifier,
+        existingAllFlatEntityMaps,
+      });
 
       if (!isDefined(unavailableField)) {
         throw new ApplicationException(
@@ -363,10 +438,28 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       isActive = false;
     }
 
+    const isErrorFieldDetached = isErrorFieldDetachedByWorkspace({
+      validationRuleManifest,
+      existingFlatValidationRule,
+      existingAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+    });
+
+    if (isErrorFieldDetached) {
+      warnings.push(
+        `Validation rule "${validationRuleManifest.name}" is no longer attached to its error field, which does not exist in this workspace.`,
+      );
+    }
+
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity:
         fromValidationRuleManifestToUniversalFlatValidationRule({
-          validationRuleManifest,
+          validationRuleManifest: isErrorFieldDetached
+            ? {
+                ...validationRuleManifest,
+                errorFieldUniversalIdentifier: undefined,
+              }
+            : validationRuleManifest,
           bindings,
           isActive,
           applicationUniversalIdentifier:

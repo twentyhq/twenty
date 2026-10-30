@@ -264,6 +264,7 @@ export class ApplicationManifestMigrationService {
     const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
       validationRules: manifest.validationRules ?? [],
       ownerFlatApplication,
+      inferDeletionFromMissingEntities,
       existingAllFlatEntityMaps,
       toAllUniversalFlatEntityMaps,
       now,

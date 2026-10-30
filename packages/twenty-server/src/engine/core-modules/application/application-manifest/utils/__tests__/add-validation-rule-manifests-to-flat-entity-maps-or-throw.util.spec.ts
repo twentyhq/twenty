@@ -53,7 +53,10 @@ const buildMaps = () => {
     });
 
   toAllUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
-    { universalIdentifier: 'ticket' } as FlatObjectMetadata;
+    {
+      universalIdentifier: 'ticket',
+      applicationUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
+    } as FlatObjectMetadata;
   toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.reference =
     buildField({
       universalIdentifier: 'reference',
@@ -90,6 +93,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         },
       ],
       ownerFlatApplication: OWNER_APPLICATION,
+      inferDeletionFromMissingEntities: true,
       ...maps,
       now: NOW,
     });
@@ -131,6 +135,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           },
         ],
         ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
         ...buildMaps(),
         now: NOW,
       }),
@@ -158,6 +163,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [RULE],
         ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
         ...maps,
         now: NOW,
       });
@@ -189,8 +195,8 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     it('leaves an existing rule inactive and warns when its field left the workspace', () => {
       const maps = buildMaps();
 
-      delete maps.existingAllFlatEntityMaps.flatFieldMetadataMaps
-        .byUniversalIdentifier.employees;
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        undefined;
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
         EXISTING_RULE;
 
@@ -208,8 +214,8 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     it('fails with a clear error when the application removed the field itself', () => {
       const maps = buildMaps();
 
-      delete maps.existingAllFlatEntityMaps.flatFieldMetadataMaps
-        .byUniversalIdentifier.employees;
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        undefined;
       maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.ownEmployees =
         buildField({
           universalIdentifier: 'ownEmployees',
@@ -233,6 +239,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         addValidationRuleManifestsToFlatEntityMapsOrThrow({
           validationRules: [{ ...RULE, expression: 'employes > 0' }],
           ownerFlatApplication: OWNER_APPLICATION,
+          inferDeletionFromMissingEntities: true,
           ...maps,
           now: NOW,
         }),
@@ -255,6 +262,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         message: 'Add a reference',
       })),
       ownerFlatApplication: OWNER_APPLICATION,
+      inferDeletionFromMissingEntities: true,
       ...maps,
       now: NOW,
     });
@@ -265,6 +273,132 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     expect(warnings).toEqual([]);
     expect(byUniversalIdentifier.off?.isActive).toBe(false);
     expect(byUniversalIdentifier.new?.isActive).toBe(true);
+  });
+
+  describe('fields that remain after the sync', () => {
+    const buildRule = (expression: string) => ({
+      universalIdentifier: 'rule',
+      objectUniversalIdentifier: 'ticket',
+      name: 'Rule',
+      expression,
+      message: 'Message',
+    });
+
+    it('reads the reserved fields of an object this sync creates', () => {
+      const maps = buildMaps();
+
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isDefined(createdAt)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
+    });
+
+    it('reads an existing engine-owned field the manifest does not declare', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier.ticket =
+        { universalIdentifier: 'ticket' } as FlatObjectMetadata;
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.updatedAt =
+        buildField({
+          universalIdentifier: 'updatedAt',
+          name: 'updatedAt',
+          type: FieldMetadataType.DATE_TIME,
+          objectMetadataUniversalIdentifier: 'ticket',
+          applicationId: OWNER_APPLICATION.id,
+          isSystemSideEffect: true,
+        });
+
+      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isDefined(updatedAt)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(warnings).toEqual([]);
+    });
+
+    it('reads a field the manifest dropped when the sync does not prune', () => {
+      const maps = buildMaps();
+
+      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [buildRule('isNonEmptyString(removedCode)')],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: false,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(warnings).toEqual([]);
+    });
+  });
+
+  describe('when the declared error field is missing', () => {
+    const RULE = {
+      universalIdentifier: 'rule',
+      objectUniversalIdentifier: 'ticket',
+      name: 'Rule',
+      expression: 'isNonEmptyString(reference)',
+      message: 'Message',
+      errorFieldUniversalIdentifier: 'deletedField',
+    };
+
+    it('keeps the link detached and warns when the workspace deleted the field', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        {
+          universalIdentifier: 'rule',
+          isActive: true,
+          errorFieldMetadataUniversalIdentifier: null,
+        } as FlatValidationRule;
+
+      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [RULE],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(warnings).toEqual([
+        expect.stringContaining('is no longer attached to its error field'),
+      ]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule,
+      ).toMatchObject({
+        errorFieldMetadataUniversalIdentifier: null,
+        isActive: true,
+      });
+    });
+
+    it('leaves a new rule pointing at the field so the validator rejects it', () => {
+      const maps = buildMaps();
+
+      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+        validationRules: [RULE],
+        ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
+        ...maps,
+        now: NOW,
+      });
+
+      expect(warnings).toEqual([]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.errorFieldMetadataUniversalIdentifier,
+      ).toBe('deletedField');
+    });
   });
 
   it('rejects a rule on an unknown object', () => {
@@ -280,6 +414,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           },
         ],
         ownerFlatApplication: OWNER_APPLICATION,
+        inferDeletionFromMissingEntities: true,
         ...buildMaps(),
         now: NOW,
       }),

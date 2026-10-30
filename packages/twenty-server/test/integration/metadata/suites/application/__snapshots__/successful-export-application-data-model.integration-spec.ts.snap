@@ -1186,6 +1186,7 @@ exports[`Application export - data model exports the whole application as a stab
       "export.ticket.title": "Titre du ticket",
     },
   },
+  "validationRules": [],
   "viewFields": [
     {
       "fieldMetadataUniversalIdentifier": "<PROJECT_deletedAt_ENGINE_FIELD>",

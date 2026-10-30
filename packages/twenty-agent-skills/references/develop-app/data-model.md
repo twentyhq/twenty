@@ -123,6 +123,26 @@ When adding permissions:
 - To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
 - To do the same on one field, set `disabledFieldPermissionActions` on the field, with `'canReadFieldValue'` and/or `'canUpdateFieldValue'`. `['canUpdateFieldValue']` makes a field only the app can write, which suits values the app computes or syncs.
 
+## Validation Rules
+
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==` and `in [...]` (not `&&`).
+
+```ts
+import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
+
+const { and, field, gt, isNonEmptyString } = ruleExpression;
+
+export default defineValidationRule({
+  universalIdentifier: '<uuid>',
+  objectUniversalIdentifier: '<object-uuid>',
+  name: 'Invoice has an amount',
+  expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
+  message: 'An invoice needs an amount and a reference',
+});
+```
+
+A sync fails if the app removes a field one of its rules reads. If the field is deactivated or deleted outside the app, the sync succeeds, the rule stays off and a warning is shown. A sync keeps an existing rule's `isActive`.
+
 ## Verification
 
 After data model changes, run the app and verify the objects, fields, and roles appear where the user will manage or use them.

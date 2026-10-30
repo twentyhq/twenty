@@ -1,8 +1,21 @@
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { getActiveValidationRulesReadingField } from '@/validation-rules/utils/getActiveValidationRulesReadingField';
 
-const buildRule = (name: string, expression: string, isActive = true) =>
-  ({ name, expression, isActive }) as ValidationRule;
+const buildRule = (
+  name: string,
+  expression: string,
+  isActive = true,
+): ValidationRule => ({
+  id: name,
+  objectMetadataId: 'object-metadata-id',
+  name,
+  description: null,
+  icon: null,
+  errorFieldMetadataId: null,
+  expression,
+  message: 'Message',
+  isActive,
+});
 
 describe('getActiveValidationRulesReadingField', () => {
   const validationRules = [

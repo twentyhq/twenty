@@ -19,6 +19,7 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const REFERENCE_FIELD_ID = uuidv4();
 const VALIDATION_RULE_ID = uuidv4();
+const OUTSIDE_VALIDATION_RULE_ID = uuidv4();
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.company.universalIdentifier;
@@ -75,7 +76,9 @@ const buildManifest = ({
     },
   });
 
-const findValidationRuleRow = async () => {
+const findValidationRuleRow = async (
+  validationRuleId: string = VALIDATION_RULE_ID,
+) => {
   const rows = await globalThis.testDataSource.query(
     `SELECT vr.name, vr.expression, vr.bindings, vr.message, vr."isActive",
        errorField."universalIdentifier" AS "errorFieldUniversalIdentifier",
@@ -84,28 +87,28 @@ const findValidationRuleRow = async () => {
      JOIN core."application" app ON app.id = vr."applicationId"
      LEFT JOIN core."fieldMetadata" errorField ON errorField.id = vr."errorFieldMetadataId"
      WHERE vr."universalIdentifier" = $1`,
-    [VALIDATION_RULE_ID],
+    [validationRuleId],
   );
 
   return rows[0];
 };
 
 const findValidationRuleIdentifiers = async () => {
-  const rows = await globalThis.testDataSource.query(
+  const rows: { id: string }[] = await globalThis.testDataSource.query(
     `SELECT id FROM core."validationRule" WHERE "universalIdentifier" = $1`,
     [VALIDATION_RULE_ID],
   );
 
-  return rows[0] as { id: string };
+  return rows[0];
 };
 
 const findCompanyObjectMetadataId = async () => {
-  const rows = await globalThis.testDataSource.query(
+  const rows: { id: string }[] = await globalThis.testDataSource.query(
     `SELECT id FROM core."objectMetadata" WHERE "universalIdentifier" = $1 LIMIT 1`,
     [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER],
   );
 
-  return { data: rows[0].id as string };
+  return { data: rows[0].id };
 };
 
 describe('Validation rules declared in an application manifest', () => {
@@ -234,14 +237,15 @@ describe('Validation rules declared in an application manifest', () => {
         type: FieldMetadataType.NUMBER,
         objectMetadataId: objectData,
       },
-      gqlFields: 'id',
+      gqlFields: 'id universalIdentifier',
       expectToFail: false,
     });
     const fieldId = data.createOneField.id;
     const outsideRule = buildValidationRuleManifest({
+      universalIdentifier: OUTSIDE_VALIDATION_RULE_ID,
       objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
       expression: 'validationRuleManifestScore > 0',
-      errorFieldUniversalIdentifier: undefined,
+      errorFieldUniversalIdentifier: data.createOneField.universalIdentifier,
     });
     const manifest = buildManifest({
       fieldName: 'code',
@@ -266,7 +270,9 @@ describe('Validation rules declared in an application manifest', () => {
         'uses the field "validationRuleManifestScore", which is deactivated',
       ),
     ]);
-    expect(await findValidationRuleRow()).toMatchObject({ isActive: false });
+    expect(
+      await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
+    ).toMatchObject({ isActive: false });
 
     await deleteOneFieldMetadata({
       input: { idToDelete: fieldId },
@@ -282,9 +288,35 @@ describe('Validation rules declared in an application manifest', () => {
       expect.stringContaining(
         'uses the field "validationRuleManifestScore", which no longer exists',
       ),
+      expect.stringContaining('is no longer attached to its error field'),
     ]);
-    expect(await findValidationRuleRow()).toMatchObject({ isActive: false });
+    expect(
+      await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
+    ).toMatchObject({
+      isActive: false,
+      errorFieldUniversalIdentifier: null,
+    });
   }, 120000);
+
+  it('should accept a rule reading a field Twenty generates, on a new and on an existing object', async () => {
+    const generatedFieldRule = buildValidationRuleManifest({
+      expression: 'isDefined(createdAt)',
+      errorFieldUniversalIdentifier: undefined,
+    });
+
+    for (const validationRules of [
+      [generatedFieldRule],
+      [generatedFieldRule],
+    ]) {
+      const { errors } = await syncApplication({
+        manifest: buildManifest({ fieldName: 'code', validationRules }),
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+    }
+    expect(await findValidationRuleRow()).toMatchObject({ isActive: true });
+  }, 60000);
 
   it('should delete the rule once the manifest no longer declares it', async () => {
     const { errors } = await syncApplication({

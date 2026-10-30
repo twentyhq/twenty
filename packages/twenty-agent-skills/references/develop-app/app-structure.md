@@ -45,7 +45,7 @@ Use official Twenty docs or local SDK source when exact imports, entity fields, 
 
 ## Source Layout
 
-Add these alongside the scaffolded `src/{fields,objects,logic-functions,front-components,page-layouts,navigation-menu-items,constants}/` as needed:
+Add these alongside the scaffolded `src/{fields,objects,validation-rules,logic-functions,front-components,page-layouts,navigation-menu-items,constants}/` as needed:
 
 - `src/utils/` — pure helpers as `<name>.util.ts`, kept flat.
 - `src/types/` — one PascalCase type per file.

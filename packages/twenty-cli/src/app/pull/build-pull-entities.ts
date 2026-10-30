@@ -203,19 +203,6 @@ export const buildPullEntities = ({
   }
 
   for (const validationRuleManifest of manifest.validationRules ?? []) {
-    if (
-      !writtenObjectUniversalIdentifiers.has(
-        validationRuleManifest.objectUniversalIdentifier,
-      )
-    ) {
-      skipped.push({
-        kind: 'validationRule',
-        universalIdentifier: validationRuleManifest.universalIdentifier,
-        reason: 'its object is not part of the written source',
-      });
-      continue;
-    }
-
     entities.push({
       kind: 'validationRule',
       universalIdentifier: validationRuleManifest.universalIdentifier,

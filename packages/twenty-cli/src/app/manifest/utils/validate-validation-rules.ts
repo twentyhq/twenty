@@ -1,5 +1,8 @@
-import { type Manifest } from 'twenty-shared/application';
-import { RelationType } from 'twenty-shared/types';
+import {
+  getFieldUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -15,14 +18,30 @@ type ValidationRuleFields = Parameters<
   typeof compileValidationRuleExpression
 >[0]['fields'];
 
-const toFieldDescriptor = (field: ManifestField) => ({
+// Twenty provisions these on every object, so an app reads them without declaring them
+const GENERATED_FIELD_TYPE_BY_NAME = {
+  id: FieldMetadataType.UUID,
+  createdAt: FieldMetadataType.DATE_TIME,
+  updatedAt: FieldMetadataType.DATE_TIME,
+  deletedAt: FieldMetadataType.DATE_TIME,
+  createdBy: FieldMetadataType.ACTOR,
+  updatedBy: FieldMetadataType.ACTOR,
+  position: FieldMetadataType.POSITION,
+};
+
+const toFieldDescriptor = (
+  field: Pick<ManifestField, 'name' | 'type' | 'universalIdentifier'>,
+) => ({
   name: field.name,
   type: field.type,
   universalIdentifier: field.universalIdentifier,
 });
 
 export const validateValidationRules = (
-  manifest: Pick<Manifest, 'fields' | 'objects' | 'validationRules'>,
+  manifest: Pick<
+    Manifest,
+    'application' | 'fields' | 'objects' | 'validationRules'
+  >,
 ): string[] => {
   const errors: string[] = [];
   const declaredObjectUniversalIdentifiers = new Set(
@@ -40,18 +59,35 @@ export const validateValidationRules = (
       ],
     ]),
   );
+  const buildGeneratedFields = (objectUniversalIdentifier: string) =>
+    Object.entries(GENERATED_FIELD_TYPE_BY_NAME).map(([name, type]) => ({
+      name,
+      type,
+      universalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+        objectUniversalIdentifier,
+        name,
+      }),
+    }));
 
-  const buildFieldDescriptors = (
-    objectFields: ManifestField[],
-  ): ValidationRuleFields =>
-    objectFields.map((field) => {
+  const buildFieldDescriptors = ({
+    objectFields,
+    objectUniversalIdentifier,
+  }: {
+    objectFields: ManifestField[];
+    objectUniversalIdentifier: string;
+  }): ValidationRuleFields => [
+    ...objectFields.map((field) => {
       if (!isRelationFieldManifest(field)) {
         return toFieldDescriptor(field);
       }
 
       const relationType = field.universalSettings?.relationType;
+      const targetObjectUniversalIdentifier =
+        field.relationTargetObjectMetadataUniversalIdentifier;
       const targetFields = fieldsByObjectUniversalIdentifier.get(
-        field.relationTargetObjectMetadataUniversalIdentifier,
+        targetObjectUniversalIdentifier,
       );
 
       return {
@@ -59,10 +95,15 @@ export const validateValidationRules = (
         relationType,
         relationTargetFields:
           relationType === RelationType.MANY_TO_ONE
-            ? (targetFields ?? []).map(toFieldDescriptor)
+            ? [
+                ...(targetFields ?? []),
+                ...buildGeneratedFields(targetObjectUniversalIdentifier),
+              ].map(toFieldDescriptor)
             : undefined,
       };
-    });
+    }),
+    ...buildGeneratedFields(objectUniversalIdentifier).map(toFieldDescriptor),
+  ];
 
   for (const validationRule of manifest.validationRules ?? []) {
     const { name, expression, objectUniversalIdentifier } = validationRule;
@@ -86,7 +127,10 @@ export const validateValidationRules = (
 
     if (
       isDefined(errorFieldUniversalIdentifier) &&
-      !objectFields.some(
+      ![
+        ...objectFields,
+        ...buildGeneratedFields(objectUniversalIdentifier),
+      ].some(
         (field) => field.universalIdentifier === errorFieldUniversalIdentifier,
       )
     ) {
@@ -97,7 +141,10 @@ export const validateValidationRules = (
 
     const compilationResult = compileValidationRuleExpression({
       expression,
-      fields: buildFieldDescriptors(objectFields),
+      fields: buildFieldDescriptors({
+        objectFields,
+        objectUniversalIdentifier,
+      }),
     });
 
     if (compilationResult.isValid) {

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ValidationRuleManifest } from 'twenty-shared/application';
 
 import { type ValidationResult } from '@/sdk/define/common/types/define-entity.type';
@@ -19,23 +20,23 @@ export const defineValidationRule = ({
   const source =
     typeof expression === 'string' ? expression : expression?.source;
 
-  if (!config.universalIdentifier) {
+  if (!isNonEmptyString(config.universalIdentifier)) {
     errors.push('ValidationRule must have a universalIdentifier');
   }
 
-  if (!config.objectUniversalIdentifier) {
+  if (!isNonEmptyString(config.objectUniversalIdentifier)) {
     errors.push('ValidationRule must have an objectUniversalIdentifier');
   }
 
-  if (!config.name?.trim()) {
+  if (!isNonEmptyString(config.name?.trim())) {
     errors.push('ValidationRule must have a name');
   }
 
-  if (!source?.trim()) {
+  if (!isNonEmptyString(source?.trim())) {
     errors.push('ValidationRule must have an expression');
   }
 
-  if (!config.message?.trim()) {
+  if (!isNonEmptyString(config.message?.trim())) {
     errors.push('ValidationRule must have a message');
   }
 
