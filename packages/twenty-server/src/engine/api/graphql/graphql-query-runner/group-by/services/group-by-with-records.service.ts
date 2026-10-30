@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +8,7 @@ import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
@@ -229,13 +229,14 @@ export class GroupByWithRecordsService {
       groupByDefinitions,
     });
 
+    // Outer WHERE lets the window run condition skip rows past the page
     const pageFilter = `record_row_number > ${pageStart} AND record_row_number <= ${pageEnd}`;
 
     const sql =
       `SELECT ${groupByAliases}, ` +
-      `JSONB_AGG(${recordJsonObjectSql} ORDER BY record_row_number) ` +
-      `FILTER (WHERE ${pageFilter}) AS "records" ` +
+      `JSONB_AGG(${recordJsonObjectSql} ORDER BY record_row_number) AS "records" ` +
       `FROM (${subQueryBuilder.getQuery()}) AS "ranked_records" ` +
+      `WHERE ${pageFilter} ` +
       `GROUP BY ${groupByAliases}`;
 
     return { sql, parameters: subQueryBuilder.getParameters() };
@@ -260,25 +261,18 @@ export class GroupByWithRecordsService {
       .map((groupByDefinition) => groupByDefinition.expression)
       .join(', ');
 
-    if (isEmpty(orderByForRecords)) {
-      return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
-    }
-
     const graphqlQueryParser = new GraphqlQueryParser(
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     );
 
+    // Same tiebreaker as find-many; duplicate leaves are dropped so a caller's id order wins
     const { orderByRawSQL, relationJoins } =
       graphqlQueryParser.getOrderByRawSQL(
-        orderByForRecords,
+        [...orderByForRecords, DEFAULT_ID_ORDER_BY_TIEBREAKER],
         flatObjectMetadata.nameSingular,
       );
-
-    if (!isNonEmptyString(orderByRawSQL)) {
-      return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
-    }
 
     for (const joinInfo of relationJoins) {
       subQueryBuilder.leftJoin(
