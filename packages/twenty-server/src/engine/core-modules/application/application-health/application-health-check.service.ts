@@ -37,9 +37,14 @@ export class ApplicationHealthCheckService {
         workspaceId,
       });
 
-    const { healthCheckLogicFunctionId } = application;
+    const { healthCheckLogicFunctionId, isUserHealthCheckEnabled } =
+      application;
 
-    if (!isDefined(healthCheckLogicFunctionId)) {
+    if (
+      !isDefined(isUserHealthCheckEnabled) ||
+      isUserHealthCheckEnabled ||
+      !isDefined(healthCheckLogicFunctionId)
+    ) {
       return null;
     }
 
