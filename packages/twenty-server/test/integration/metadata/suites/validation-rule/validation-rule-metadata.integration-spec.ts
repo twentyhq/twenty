@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createValidationRule,
   deleteValidationRule,
@@ -9,7 +8,6 @@ import {
   updateValidationRule,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 describe('Validation rule metadata', () => {
   let companyObjectMetadataId: string;
@@ -26,12 +24,6 @@ describe('Validation rule metadata', () => {
   };
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },

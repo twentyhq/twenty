@@ -20,7 +20,6 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -32,7 +31,6 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconBolt, IconSearch, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -99,9 +97,6 @@ export const ObjectSettings = ({
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
-  const isRecordCreationFormEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-  );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
 
   const handleDisable = async () => {
@@ -157,29 +152,27 @@ export const ObjectSettings = ({
           objectMetadataItem={objectMetadataItem}
         />
       </Section.Root>
-      {isRecordCreationFormEnabled &&
-        !objectMetadataItem.isRemote &&
-        !objectMetadataItem.isSystem && (
-          <Section.Root>
-            <Section.Header
-              title={t`Validation rules`}
-              description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
-              actions={<OrganizationAdornment />}
+      {!objectMetadataItem.isRemote && !objectMetadataItem.isSystem && (
+        <Section.Root>
+          <Section.Header
+            title={t`Validation rules`}
+            description={t`Block records that break your rules, like an opportunity marked Won with no amount. Checked on every save.`}
+            actions={<OrganizationAdornment />}
+          />
+          {hasValidationRulesEntitlement ? (
+            <SettingsObjectValidationRulesSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
             />
-            {hasValidationRulesEntitlement ? (
-              <SettingsObjectValidationRulesSection
-                objectMetadataItem={objectMetadataItem}
-                isReadOnly={isReadOnly}
-              />
-            ) : (
-              <SettingsEnterpriseFeatureGateCard
-                title={t`Organization feature`}
-                description={t`Upgrade to Organization to set validation rules.`}
-                buttonTitle={t`Activate`}
-              />
-            )}
-          </Section.Root>
-        )}
+          ) : (
+            <SettingsEnterpriseFeatureGateCard
+              title={t`Organization feature`}
+              description={t`Upgrade to Organization to set validation rules.`}
+              buttonTitle={t`Activate`}
+            />
+          )}
+        </Section.Root>
+      )}
       <Section.Root>
         <Section.Header
           title={t`Advanced`}

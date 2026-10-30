@@ -5,14 +5,9 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { SettingsValidationRuleEditForm } from '@/validation-rules/components/SettingsValidationRuleEditForm';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
 import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { NotFound } from '~/pages/not-found/NotFound';
 
 export const SettingsObjectValidationRuleEdit = () => {
-  const isRecordCreationFormEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-  );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
   const { objectNamePlural = '', validationRuleId = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
@@ -25,11 +20,7 @@ export const SettingsObjectValidationRuleEdit = () => {
     objectMetadataId: objectMetadataItem?.id ?? '',
   });
 
-  if (
-    !isRecordCreationFormEnabled ||
-    !hasValidationRulesEntitlement ||
-    !isDefined(objectMetadataItem)
-  ) {
+  if (!hasValidationRulesEntitlement || !isDefined(objectMetadataItem)) {
     return <NotFound />;
   }
 

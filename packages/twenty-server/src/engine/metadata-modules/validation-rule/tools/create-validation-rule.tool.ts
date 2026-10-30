@@ -5,7 +5,6 @@ import {
   PermissionFlagType,
   VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION,
 } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -37,7 +36,6 @@ const createValidationRuleInputSchema = z.object({
   name: 'create_validation_rule',
   category: ToolCategory.METADATA,
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
   icon: 'IconSettings',
   description:
     'Create a validation rule on an object. An invalid expression is rejected with the reason. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), they mean that rule: update it with update_validation_rule instead of creating another one.',

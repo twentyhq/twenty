@@ -9,7 +9,6 @@ import {
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -17,7 +16,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -52,10 +50,7 @@ export class ValidationRuleResolver {
   constructor(private readonly validationRuleService: ValidationRuleService) {}
 
   @Query(() => [ValidationRuleDTO])
-  @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
-    NoPermissionGuard,
-  )
+  @UseGuards(NoPermissionGuard)
   async validationRules(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
     objectMetadataId: string,
@@ -68,10 +63,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
-    SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async createValidationRule(
     @Args('input') input: CreateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -83,10 +75,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
-    SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async updateValidationRule(
     @Args('input') input: UpdateValidationRuleInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -98,10 +87,7 @@ export class ValidationRuleResolver {
   }
 
   @Mutation(() => ValidationRuleDTO)
-  @UseGuards(
-    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
-    SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async deleteValidationRule(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

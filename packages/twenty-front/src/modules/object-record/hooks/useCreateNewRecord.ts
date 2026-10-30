@@ -46,7 +46,7 @@ export const useCreateNewRecord = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { createRecordWithOptionalForm } = useRecordCreationForm();
+  const { requestRecordCreation } = useRecordCreationForm();
 
   const navigate = useNavigateApp();
 
@@ -93,7 +93,7 @@ export const useCreateNewRecord = ({
     async (recordInput?: Partial<ObjectRecord>) => {
       let submittedRecordInput = recordInput;
 
-      const createdRecord = await createRecordWithOptionalForm({
+      const createdRecord = await requestRecordCreation({
         objectMetadataItem,
         initialDraftRecord: {
           ...buildRecordInputFromRLSPredicates(),
@@ -167,7 +167,7 @@ export const useCreateNewRecord = ({
       openRecordIn,
       closeSidePanelMenu,
       workspaceSurface.type,
-      createRecordWithOptionalForm,
+      requestRecordCreation,
     ],
   );
 

@@ -20,10 +20,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
-  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
-    label: msg`Record creation form`,
-    description: msg`Use a dedicated form when creating records, and enable validation rules.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
