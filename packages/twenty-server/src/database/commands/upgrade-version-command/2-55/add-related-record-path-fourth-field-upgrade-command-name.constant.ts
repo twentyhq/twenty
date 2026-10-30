@@ -1,2 +1,0 @@
-export const ADD_RELATED_RECORD_PATH_FOURTH_FIELD_UPGRADE_COMMAND_NAME =
-  '2.55.0_AddRelatedRecordPathFourthFieldFastInstanceCommand_1793370487250';

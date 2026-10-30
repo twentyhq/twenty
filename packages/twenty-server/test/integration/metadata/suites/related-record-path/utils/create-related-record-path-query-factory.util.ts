@@ -9,7 +9,7 @@ export type CreateRelatedRecordPathFactoryInput = {
   firstFieldMetadataId: string;
   secondFieldMetadataId?: string;
   thirdFieldMetadataId?: string;
-  fourthFieldMetadataId?: string;
+  isInherent?: boolean;
 };
 
 export const createRelatedRecordPathQueryFactory = ({

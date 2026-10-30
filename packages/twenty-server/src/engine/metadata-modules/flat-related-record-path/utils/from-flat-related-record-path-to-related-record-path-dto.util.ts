@@ -11,5 +11,5 @@ export const fromFlatRelatedRecordPathToRelatedRecordPathDto = (
   firstFieldMetadataId: flatRelatedRecordPath.firstFieldMetadataId,
   secondFieldMetadataId: flatRelatedRecordPath.secondFieldMetadataId,
   thirdFieldMetadataId: flatRelatedRecordPath.thirdFieldMetadataId,
-  fourthFieldMetadataId: flatRelatedRecordPath.fourthFieldMetadataId,
+  isInherent: flatRelatedRecordPath.isInherent,
 });

@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 import { ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-related-record-path-table-upgrade-command-name.constant';
-import { ADD_RELATED_RECORD_PATH_FOURTH_FIELD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-related-record-path-fourth-field-upgrade-command-name.constant';
+import { ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-related-record-path-is-inherent-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -40,21 +40,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index(
   'IDX_RELATED_RECORD_PATH_UNIQUE_THREE_HOPS',
   ['firstFieldMetadataId', 'secondFieldMetadataId', 'thirdFieldMetadataId'],
-  {
-    unique: true,
-    where:
-      '"thirdFieldMetadataId" IS NOT NULL AND "fourthFieldMetadataId" IS NULL',
-  },
-)
-@Index(
-  'IDX_RELATED_RECORD_PATH_UNIQUE_FOUR_HOPS',
-  [
-    'firstFieldMetadataId',
-    'secondFieldMetadataId',
-    'thirdFieldMetadataId',
-    'fourthFieldMetadataId',
-  ],
-  { unique: true, where: '"fourthFieldMetadataId" IS NOT NULL' },
+  { unique: true, where: '"thirdFieldMetadataId" IS NOT NULL' },
 )
 @Index('IDX_RELATED_RECORD_PATH_APPLICATION_ID', ['applicationId'])
 @Index('IDX_RELATED_RECORD_PATH_OBJECT_METADATA_ID', ['objectMetadataId'])
@@ -66,9 +52,6 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Index('IDX_RELATED_RECORD_PATH_THIRD_FIELD_METADATA_ID', [
   'thirdFieldMetadataId',
-])
-@Index('IDX_RELATED_RECORD_PATH_FOURTH_FIELD_METADATA_ID', [
-  'fourthFieldMetadataId',
 ])
 export class RelatedRecordPathEntity
   extends SyncableEntity
@@ -105,16 +88,12 @@ export class RelatedRecordPathEntity
   @JoinColumn({ name: 'thirdFieldMetadataId' })
   thirdFieldMetadata: Relation<FieldMetadataEntity> | null;
 
-  @Column({ nullable: true, type: 'uuid' })
+  // Inherent paths apply however the source record became readable; others only when access starts on it.
+  @Column({ nullable: false, type: 'boolean', default: false })
   @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_RELATED_RECORD_PATH_FOURTH_FIELD_UPGRADE_COMMAND_NAME,
+    upgradeCommandName: ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME,
   })
-  fourthFieldMetadataId: string | null;
-
-  @ManyToOne(() => FieldMetadataEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'fourthFieldMetadataId' })
-  fourthFieldMetadata: Relation<FieldMetadataEntity> | null;
+  isInherent: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -1705,7 +1705,7 @@ input CreateRecordExportInput {
 
 input CreateRelatedRecordPathInput {
   firstFieldMetadataId: UUID
-  fourthFieldMetadataId: UUID
+  isInherent: Boolean
   objectMetadataId: UUID
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
@@ -4319,8 +4319,8 @@ input RecordTargetInput {
 
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
-  fourthFieldMetadataId: UUID
   id: UUID!
+  isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID

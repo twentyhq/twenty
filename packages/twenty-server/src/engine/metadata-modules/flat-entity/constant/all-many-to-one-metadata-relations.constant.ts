@@ -654,13 +654,6 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'thirdFieldMetadataUniversalIdentifier',
     },
-    fourthFieldMetadata: {
-      metadataName: 'fieldMetadata',
-      foreignKey: 'fourthFieldMetadataId',
-      inverseOneToManyProperty: null,
-      isNullable: true,
-      universalForeignKey: 'fourthFieldMetadataUniversalIdentifier',
-    },
   },
   validationRule: {
     workspace: null,

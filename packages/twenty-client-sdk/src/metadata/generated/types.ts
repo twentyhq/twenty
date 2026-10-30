@@ -3800,8 +3800,8 @@ export default {
             "firstFieldMetadataId": [
                 528
             ],
-            "fourthFieldMetadataId": [
-                528
+            "isInherent": [
+                4
             ],
             "objectMetadataId": [
                 528
@@ -11853,11 +11853,11 @@ export default {
             "firstFieldMetadataId": [
                 528
             ],
-            "fourthFieldMetadataId": [
-                528
-            ],
             "id": [
                 528
+            ],
+            "isInherent": [
+                4
             ],
             "objectMetadataId": [
                 528

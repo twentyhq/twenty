@@ -2,7 +2,7 @@
 
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -28,8 +28,8 @@ export class CreateRelatedRecordPathInput {
   @Field(() => UUIDScalarType, { nullable: true })
   thirdFieldMetadataId?: string | null;
 
-  @IsUUID()
+  @IsBoolean()
   @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  fourthFieldMetadataId?: string | null;
+  @Field(() => Boolean, { nullable: true })
+  isInherent?: boolean | null;
 }

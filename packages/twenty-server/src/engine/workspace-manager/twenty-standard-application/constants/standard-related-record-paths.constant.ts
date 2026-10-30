@@ -9,97 +9,104 @@ export type StandardRelatedRecordPath = {
     fieldNames:
       | [AllStandardObjectFieldName<O>]
       | [AllStandardObjectFieldName<O>, string]
-      | [AllStandardObjectFieldName<O>, string, string]
-      | [AllStandardObjectFieldName<O>, string, string, string];
+      | [AllStandardObjectFieldName<O>, string, string];
+    isInherent: boolean;
   };
 }[AllStandardObjectName];
 
-// A path grants every object it passes through, so only the longest chains are declared.
 export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
   {
-    objectName: 'company',
-    fieldNames: ['people', 'noteTargets', 'note', 'attachments'],
+    objectName: 'agentChatThread',
+    fieldNames: ['attachments'],
+    isInherent: true,
   },
+  { objectName: 'company', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'dashboard', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'note', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'opportunity', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'person', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'task', fieldNames: ['attachments'], isInherent: true },
+  { objectName: 'workflow', fieldNames: ['attachments'], isInherent: true },
   {
     objectName: 'company',
-    fieldNames: ['people', 'noteTargets', 'note', 'timelineActivities'],
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
   {
-    objectName: 'company',
-    fieldNames: ['people', 'taskTargets', 'task', 'attachments'],
+    objectName: 'dashboard',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
   {
-    objectName: 'company',
-    fieldNames: ['people', 'taskTargets', 'task', 'timelineActivities'],
+    objectName: 'messageCampaign',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
   {
-    objectName: 'company',
-    fieldNames: ['people', 'messageThreadTargets', 'messageThread', 'messages'],
+    objectName: 'messageList',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
-  {
-    objectName: 'company',
-    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
-  },
+  { objectName: 'note', fieldNames: ['timelineActivities'], isInherent: true },
   {
     objectName: 'opportunity',
-    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
   {
     objectName: 'person',
-    fieldNames: ['messageThreadTargets', 'messageThread', 'messages'],
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
   },
-  { objectName: 'company', fieldNames: ['noteTargets', 'note', 'attachments'] },
+  { objectName: 'task', fieldNames: ['timelineActivities'], isInherent: true },
+  {
+    objectName: 'workflow',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
+  },
+  {
+    objectName: 'workflowRun',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
+  },
+  {
+    objectName: 'workflowVersion',
+    fieldNames: ['timelineActivities'],
+    isInherent: true,
+  },
   {
     objectName: 'company',
-    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+    fieldNames: ['noteTargets', 'note'],
+    isInherent: false,
   },
-  { objectName: 'company', fieldNames: ['taskTargets', 'task', 'attachments'] },
   {
     objectName: 'company',
-    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
+    fieldNames: ['taskTargets', 'task'],
+    isInherent: false,
   },
   {
     objectName: 'opportunity',
-    fieldNames: ['noteTargets', 'note', 'attachments'],
+    fieldNames: ['noteTargets', 'note'],
+    isInherent: false,
   },
   {
     objectName: 'opportunity',
-    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+    fieldNames: ['taskTargets', 'task'],
+    isInherent: false,
   },
-  {
-    objectName: 'opportunity',
-    fieldNames: ['taskTargets', 'task', 'attachments'],
-  },
-  {
-    objectName: 'opportunity',
-    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
-  },
-  { objectName: 'person', fieldNames: ['noteTargets', 'note', 'attachments'] },
   {
     objectName: 'person',
-    fieldNames: ['noteTargets', 'note', 'timelineActivities'],
+    fieldNames: ['noteTargets', 'note'],
+    isInherent: false,
   },
-  { objectName: 'person', fieldNames: ['taskTargets', 'task', 'attachments'] },
   {
     objectName: 'person',
-    fieldNames: ['taskTargets', 'task', 'timelineActivities'],
+    fieldNames: ['taskTargets', 'task'],
+    isInherent: false,
   },
-  { objectName: 'agentChatThread', fieldNames: ['attachments'] },
-  { objectName: 'company', fieldNames: ['attachments'] },
-  { objectName: 'dashboard', fieldNames: ['attachments'] },
-  { objectName: 'opportunity', fieldNames: ['attachments'] },
-  { objectName: 'person', fieldNames: ['attachments'] },
-  { objectName: 'workflow', fieldNames: ['attachments'] },
-  { objectName: 'company', fieldNames: ['timelineActivities'] },
-  { objectName: 'dashboard', fieldNames: ['timelineActivities'] },
-  { objectName: 'messageCampaign', fieldNames: ['timelineActivities'] },
-  { objectName: 'messageList', fieldNames: ['timelineActivities'] },
-  { objectName: 'opportunity', fieldNames: ['timelineActivities'] },
-  { objectName: 'person', fieldNames: ['timelineActivities'] },
-  { objectName: 'workflow', fieldNames: ['timelineActivities'] },
-  { objectName: 'workflowRun', fieldNames: ['timelineActivities'] },
-  { objectName: 'workflowVersion', fieldNames: ['timelineActivities'] },
-  { objectName: 'agentChatThread', fieldNames: ['recordTargets'] },
-  { objectName: 'calendarEvent', fieldNames: ['calendarEventTargets'] },
-  { objectName: 'messageThread', fieldNames: ['messageThreadTargets'] },
+  {
+    objectName: 'workspaceMember',
+    fieldNames: ['messageParticipants', 'message'],
+    isInherent: false,
+  },
 ];

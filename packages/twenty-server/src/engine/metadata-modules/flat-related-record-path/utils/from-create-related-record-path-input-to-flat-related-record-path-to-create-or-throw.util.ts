@@ -22,7 +22,7 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
       | 'firstFieldMetadataId'
       | 'secondFieldMetadataId'
       | 'thirdFieldMetadataId'
-      | 'fourthFieldMetadataId'
+      | 'isInherent'
     >;
     workspaceId: string;
     flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
@@ -37,8 +37,6 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
         createRelatedRecordPathInput.secondFieldMetadataId ?? null,
       thirdFieldMetadataId:
         createRelatedRecordPathInput.thirdFieldMetadataId ?? null,
-      fourthFieldMetadataId:
-        createRelatedRecordPathInput.fourthFieldMetadataId ?? null,
     };
 
     const relationUniversalIdentifiers =
@@ -59,6 +57,7 @@ export const fromCreateRelatedRecordPathInputToFlatRelatedRecordPathToCreateOrTh
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       ...foreignKeyValues,
       ...relationUniversalIdentifiers,
+      isInherent: createRelatedRecordPathInput.isInherent ?? false,
       createdAt: now,
       updatedAt: now,
     };

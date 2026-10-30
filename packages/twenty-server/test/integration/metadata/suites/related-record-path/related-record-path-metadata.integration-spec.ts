@@ -85,15 +85,12 @@ describe('Related record path metadata', () => {
   let taskProjectFieldMetadataId: string;
   let taskAssigneeFieldMetadataId: string;
   let projectCodeFieldMetadataId: string;
-  let personCompanyFieldMetadataId: string;
-  let companyOpportunitiesFieldMetadataId: string;
   const createdPathIds: string[] = [];
 
   const createPath = async (hops: {
     firstFieldMetadataId: string;
     secondFieldMetadataId?: string;
-    thirdFieldMetadataId?: string;
-    fourthFieldMetadataId?: string;
+    isInherent?: boolean;
   }) => {
     const response = await createRelatedRecordPath({
       objectMetadataId: projectObjectMetadataId,
@@ -121,33 +118,8 @@ describe('Related record path metadata', () => {
       gqlFields: `
         id
         nameSingular
-        fieldsList {
-          id
-          name
-        }
       `,
     });
-
-    const findStandardFieldMetadataId = ({
-      objectName,
-      fieldName,
-    }: {
-      objectName: string;
-      fieldName: string;
-    }): string => {
-      const fieldMetadata = objects
-        .find(
-          (object: { nameSingular: string }) =>
-            object.nameSingular === objectName,
-        )
-        ?.fieldsList?.find(
-          (field: { name: string }) => field.name === fieldName,
-        );
-
-      jestExpectToBeDefined(fieldMetadata);
-
-      return fieldMetadata.id;
-    };
 
     const personObject = objects.find(
       (object: { nameSingular: string }) => object.nameSingular === 'person',
@@ -155,14 +127,6 @@ describe('Related record path metadata', () => {
 
     jestExpectToBeDefined(personObject);
     personObjectMetadataId = personObject.id;
-    personCompanyFieldMetadataId = findStandardFieldMetadataId({
-      objectName: 'person',
-      fieldName: 'company',
-    });
-    companyOpportunitiesFieldMetadataId = findStandardFieldMetadataId({
-      objectName: 'company',
-      fieldName: 'opportunities',
-    });
 
     projectObjectMetadataId = await createObject({
       nameSingular: 'relatedPathProject',
@@ -268,7 +232,7 @@ describe('Related record path metadata', () => {
       firstFieldMetadataId: projectTasksFieldMetadataId,
       secondFieldMetadataId: taskAssigneeFieldMetadataId,
       thirdFieldMetadataId: null,
-      fourthFieldMetadataId: null,
+      isInherent: false,
     });
     expect(await findPathIds()).toContain(createdPath.id);
 
@@ -280,34 +244,17 @@ describe('Related record path metadata', () => {
     expect(await findPathIds()).not.toContain(createdPath.id);
   });
 
-  it('should create a four hop path', async () => {
+  it('should create an inherent path', async () => {
     const response = await createPath({
       firstFieldMetadataId: projectTasksFieldMetadataId,
-      secondFieldMetadataId: taskAssigneeFieldMetadataId,
-      thirdFieldMetadataId: personCompanyFieldMetadataId,
-      fourthFieldMetadataId: companyOpportunitiesFieldMetadataId,
+      isInherent: true,
     });
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.createRelatedRecordPath).toMatchObject({
-      thirdFieldMetadataId: personCompanyFieldMetadataId,
-      fourthFieldMetadataId: companyOpportunitiesFieldMetadataId,
-    });
+    expect(response.body.data.createRelatedRecordPath.isInherent).toBe(true);
 
     await deleteRelatedRecordPath(
       response.body.data.createRelatedRecordPath.id,
-    );
-  });
-
-  it('should reject a path that skips a relation', async () => {
-    const response = await createPath({
-      firstFieldMetadataId: projectTasksFieldMetadataId,
-      secondFieldMetadataId: taskAssigneeFieldMetadataId,
-      fourthFieldMetadataId: companyOpportunitiesFieldMetadataId,
-    });
-
-    expect(JSON.stringify(response.body.errors)).toContain(
-      'Related record path cannot skip a relation',
     );
   });
 
