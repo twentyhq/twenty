@@ -133,17 +133,17 @@ export const StatusColumnShowsTheMostUrgentStatus: Story = {
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
     expect(within(acmeRow).getByText('Setup incomplete')).toBeVisible();
-    expect(acmeRow).not.toHaveTextContent('Outdated');
+    expect(acmeRow).not.toHaveTextContent('Update');
     expect(acmeRow).not.toHaveTextContent('NPM');
 
     const weatherRow = canvas.getByRole('link', { name: /Weather Widget/ });
 
-    expect(within(weatherRow).getByText('Outdated')).toBeVisible();
+    expect(within(weatherRow).getByText('Update')).toBeVisible();
 
     const standardRow = canvas.getByRole('link', { name: /Standard/ });
 
     expect(standardRow).not.toHaveTextContent('Setup incomplete');
-    expect(standardRow).not.toHaveTextContent('Outdated');
+    expect(standardRow).not.toHaveTextContent('Update');
   },
 };
 

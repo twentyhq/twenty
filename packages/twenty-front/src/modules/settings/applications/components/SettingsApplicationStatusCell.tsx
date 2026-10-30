@@ -26,7 +26,7 @@ export const SettingsApplicationStatusCell = ({
     case 'notConnected':
       return <Status color="gray" weight="medium">{t`Not connected`}</Status>;
     case 'updateAvailable':
-      return <Status color="blue" weight="medium">{t`Outdated`}</Status>;
+      return <Status color="blue" weight="medium">{t`Update`}</Status>;
     default:
       return null;
   }

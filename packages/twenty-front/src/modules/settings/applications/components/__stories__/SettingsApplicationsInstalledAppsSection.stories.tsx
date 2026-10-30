@@ -250,19 +250,19 @@ export const ShowsStatusWithAppPreferences: Story = {
     expect(
       await within(recorderRow).findByText('Setup incomplete'),
     ).toBeVisible();
-    expect(recorderRow).not.toHaveTextContent('Outdated');
+    expect(recorderRow).not.toHaveTextContent('Update');
     expect(canvas.getByText('Status')).toBeVisible();
     expect(canvas.queryByText('Type')).not.toBeInTheDocument();
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
-    expect(within(acmeRow).getByText('Outdated')).toBeVisible();
+    expect(within(acmeRow).getByText('Update')).toBeVisible();
     expect(acmeRow).not.toHaveTextContent('NPM');
 
     const notesRow = canvas.getByRole('link', { name: /Notes/ });
 
     expect(notesRow).not.toHaveTextContent('Setup incomplete');
-    expect(notesRow).not.toHaveTextContent('Outdated');
+    expect(notesRow).not.toHaveTextContent('Update');
 
     const gmailRow = canvas.getByRole('link', { name: /Gmail and Calendar/ });
 
@@ -283,7 +283,7 @@ export const KeepsUpdateAndShowsErrorWhenConfigurationFailsToLoad: Story = {
     expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
     expect(
       await within(canvas.getByRole('link', { name: /Acme Sync/ })).findByText(
-        'Outdated',
+        'Update',
       ),
     ).toBeVisible();
     expect(canvas.getByRole('link', { name: /Notes/ })).toBeVisible();
