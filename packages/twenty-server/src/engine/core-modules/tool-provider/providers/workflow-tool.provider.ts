@@ -4,8 +4,7 @@ import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
-import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
+import { getReachableApplicationId } from 'src/engine/core-modules/application/utils/get-reachable-application-id.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -36,19 +35,17 @@ export class WorkflowToolProvider implements ToolProvider {
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    const scopedCallingApplication = getScopedCallingApplication(
-      context.application,
+    // Workspace workflows can call any application, so only callers reaching them all get these tools
+    const reachesEveryApplication = !isDefined(
+      getReachableApplicationId({
+        callingApplication: context.application,
+        access: 'trigger',
+        workspaceCustomApplicationId:
+          context.authContext?.workspace.workspaceCustomApplicationId,
+      }),
     );
 
-    if (
-      !this.workflowToolService ||
-      (isDefined(scopedCallingApplication) &&
-        !isWorkspaceComposerApplication({
-          application: scopedCallingApplication,
-          workspaceCustomApplicationId:
-            context.authContext?.workspace.workspaceCustomApplicationId,
-        }))
-    ) {
+    if (!this.workflowToolService || !reachesEveryApplication) {
       return false;
     }
 

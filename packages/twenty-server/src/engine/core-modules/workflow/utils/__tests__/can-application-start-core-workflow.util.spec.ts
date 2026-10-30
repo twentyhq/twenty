@@ -2,10 +2,7 @@ import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflo
 
 const WORKSPACE_CUSTOM_APPLICATION_ID = 'custom-app-id';
 
-const installedApplication = {
-  id: 'installed-app-id',
-  universalIdentifier: 'installed-app-universal-identifier',
-};
+const installedApplication = { id: 'installed-app-id' };
 
 describe('canApplicationStartCoreWorkflow', () => {
   it('lets a request without an application start any workflow it can reach', () => {
@@ -51,10 +48,7 @@ describe('canApplicationStartCoreWorkflow', () => {
   it('lets the workspace custom application start the workflow of another application', () => {
     expect(
       canApplicationStartCoreWorkflow({
-        callerApplication: {
-          id: WORKSPACE_CUSTOM_APPLICATION_ID,
-          universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ID,
-        },
+        callerApplication: { id: WORKSPACE_CUSTOM_APPLICATION_ID },
         workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         workflowApplicationId: 'installed-app-id',
       }),

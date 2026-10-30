@@ -5,7 +5,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
+import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -153,7 +153,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         step,
         isApplicationBound:
           isDefined(executionContext.application) &&
-          !isWorkspaceComposerApplication({
+          !isWorkspaceCustomApplication({
             application: executionContext.application,
             workspaceCustomApplicationId:
               executionContext.authContext.workspace

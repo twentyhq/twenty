@@ -1,22 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
+import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
 
 export const canApplicationStartCoreWorkflow = ({
   callerApplication,
   workspaceCustomApplicationId,
   workflowApplicationId,
 }: {
-  callerApplication:
-    | Pick<FlatApplication, 'id' | 'universalIdentifier'>
-    | undefined;
+  callerApplication: Pick<FlatApplication, 'id'> | undefined;
   workspaceCustomApplicationId: string;
   workflowApplicationId: string;
 }): boolean =>
   !isDefined(callerApplication) ||
   workflowApplicationId === callerApplication.id ||
-  isWorkspaceComposerApplication({
+  isWorkspaceCustomApplication({
     application: callerApplication,
     workspaceCustomApplicationId,
   });
