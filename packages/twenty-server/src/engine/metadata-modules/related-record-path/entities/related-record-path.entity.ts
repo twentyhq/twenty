@@ -91,7 +91,8 @@ export class RelatedRecordPathEntity
   // Inherent paths apply however the source record became readable; others only when access starts on it.
   @Column({ nullable: false, type: 'boolean', default: false })
   @WasIntroducedInUpgrade({
-    upgradeCommandName: ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME,
+    upgradeCommandName:
+      ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME,
   })
   isInherent: boolean;
 
