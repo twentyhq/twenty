@@ -124,12 +124,12 @@ msgstr "„{subfieldName}” nu este un subcâmp al „{fieldName}”."
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/month)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} credite/lună)"
 
 #. js-lingui-id: M9SJOb
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({currentCreditsByPeriodDisplay} credits/year)"
-msgstr ""
+msgstr "({currentCreditsByPeriodDisplay} credite/an)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -907,11 +907,6 @@ msgstr "{morphRelationCount} obiecte"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, one {Ai obținut {formattedNewlyEarnedCredits} credit gratuit} few {Ai obținut {formattedNewlyEarnedCredits} credite gratuite} other {Ai obținut {formattedNewlyEarnedCredits} de credite gratuite}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, one {Nicio aplicație verificată nu corespunde. Este disponibilă # aplicație neverificată.} few {Nicio aplicație verificată nu corespunde. Sunt disponibile # aplicații neverificate.} other {Nicio aplicație verificată nu corespunde. Sunt disponibile # de aplicații neverificate.}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1058,22 +1053,22 @@ msgstr "{scopeLabel} — valoarea implicită a instanței este {defaultText}. Sa
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month"
-msgstr ""
+msgstr "{seatCreditsDisplay} din locuri, se resetează în fiecare lună"
 
 #. js-lingui-id: QzeEhD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} din locuri, se resetează în fiecare lună · {packageCreditsDisplay} din pachetul tău de credite, se reportează"
 
 #. js-lingui-id: d7aej9
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year"
-msgstr ""
+msgstr "{seatCreditsDisplay} credite din locuri, resetate anual"
 
 #. js-lingui-id: TfWeSD
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
-msgstr ""
+msgstr "{seatCreditsDisplay} credite din locuri, resetate anual · {packageCreditsDisplay} din pachetul de credite, reportate"
 
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
@@ -1215,6 +1210,11 @@ msgstr "{unitCount, plural, one {Săptămână} few {Săptămâni} other {Săpt�
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {An} few {Ani} other {Ani}}"
 
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr "{unlistedCount, plural, one {Nicio aplicație listată nu corespunde. Este disponibilă # aplicație nelistată.} few {Nicio aplicație listată nu corespunde. Sunt disponibile # aplicații nelistate.} other {Nicio aplicație listată nu corespunde. Sunt disponibile # aplicații nelistate.}}"
+
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
 msgid "{unresolvedCount, plural, one {# other object} other {# other objects}}"
@@ -1239,7 +1239,7 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# articol} few 
 #. js-lingui-id: imLPQY
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
-msgstr ""
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/lună} few {{workspaceCreditsPerSeatPerMonthDisplay} credite/lună} other {{workspaceCreditsPerSeatPerMonthDisplay} credite/lună}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -3245,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Toate sarcinile au fost rezolvate. Mențineți ritmul."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Toate aplicațiile instalate în prezent în acest spațiu de lucru"
 
@@ -3329,11 +3329,6 @@ msgstr "Permite conectarea bazată pe Google pentru utilizatorii cu permisiuni d
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "Permite importul de date din fișiere CSV"
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "Permite instalarea"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3723,6 +3718,11 @@ msgstr "Apostrof și punct"
 msgid "App"
 msgstr ""
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr "Configurația aplicației nu a putut fi încărcată. Verifică conexiunea și încearcă din nou."
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3800,11 +3800,6 @@ msgstr "Aplicația a fost instalată cu succes."
 msgid "Application Logs"
 msgstr "Jurnale ale aplicației"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "Această aplicație nu este listată în marketplace. A fost partajată printr-un link direct"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3844,10 +3839,10 @@ msgstr "variabilă de aplicație"
 msgid "Applications"
 msgstr "Aplicații"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "Aplicațiile de mai jos nu sunt verificate. Utilizați-le pe propria răspundere."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr "Aplicațiile de mai jos nu au fost verificate de Twenty. Utilizați-le pe propria răspundere."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -3915,6 +3910,7 @@ msgid "Apps"
 msgstr "Aplicații"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3924,6 +3920,11 @@ msgstr "Aplicații"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Apps preferences"
 msgstr "Preferințe aplicații"
+
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr ""
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -6941,6 +6942,12 @@ msgstr "Conectează-te la acest spațiu de lucru"
 msgid "Connect via IMAP/SMTP"
 msgstr "Conectați-vă prin IMAP/SMTP"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr "Conectați-vă cu {0}"
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8035,7 +8042,7 @@ msgstr "Limita de credite a fost atinsă. Actualizați planul de credite pentru 
 #. js-lingui-id: M9521O
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Credit pack"
-msgstr ""
+msgstr "Pachet de credite"
 
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -9708,11 +9715,6 @@ msgstr "Nume de afișare pentru model"
 msgid "Display text on multiple lines"
 msgstr "Afișați textul pe mai multe linii"
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "Afișați această aplicație în lista de pachete NPM"
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10114,6 +10116,11 @@ msgstr "Fiecare membru primește o alocație AI, utilizată înaintea creditelor
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Each slice represents"
 msgstr "Fiecare secțiune reprezintă"
+
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr "Mai devreme"
 
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -14612,7 +14619,7 @@ msgstr "Incluse"
 #. js-lingui-id: 6FtcQl
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Included per seat"
-msgstr ""
+msgstr "Incluse per loc"
 
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -14861,7 +14868,7 @@ msgid "Installed"
 msgstr "Instalat"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr "Aplicații instalate"
 
@@ -16278,8 +16285,14 @@ msgstr "Listă cu casete de selectare"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Listată"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr "Listată în marketplace"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16328,6 +16341,11 @@ msgstr "Încarcă mai multe"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
+msgstr "Încarcă mai multe conversații"
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
 msgstr "Încarcă mai multe conversații"
 
 #. js-lingui-id: CZGQgK
@@ -16464,6 +16482,7 @@ msgstr "Se încarcă..."
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Se încarcă…"
@@ -16909,10 +16928,10 @@ msgstr "Marchează toate ca realizate"
 msgid "Mark as favourite"
 msgstr "Marcați ca favorit"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "Marcați această aplicație ca verificată și aprobată"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr "Marcați această aplicație ca revizuită și afișați-o în marketplace"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17366,7 +17385,7 @@ msgid "Missing calendar permission."
 msgstr "Lipsește permisiunea pentru calendar."
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr "Configurație lipsă"
 
@@ -19391,7 +19410,7 @@ msgid "Not configured"
 msgstr "Neconfigurat"
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr "Neconectat"
 
@@ -21998,8 +22017,8 @@ msgid "Reconnect"
 msgstr "Reconectare"
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr "Este necesară reconectarea"
@@ -22346,6 +22365,11 @@ msgstr "Respinge"
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Respins"
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "calea înregistrării asociate"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -25194,6 +25218,7 @@ msgstr "Afișați căsuța de primire"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr "Afișează mai puțin"
 
@@ -25203,6 +25228,7 @@ msgid "Show logs"
 msgstr "Afișați jurnalele"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25229,6 +25255,11 @@ msgstr "Afișați acest tip de activitate în cronologiile înregistrărilor"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
 msgstr "Afișează înregistrările acestui obiect în meniul de comenzi ({0})."
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr "Afișați aplicațiile nelistate"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27320,11 +27351,11 @@ msgstr "Această aplicație nu este disponibilă în marketplace. Este posibil s
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "Această aplicație nu este instalată în acest spațiu de lucru. Este posibil să fi fost dezinstalată sau linkul este incorect."
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "Această aplicație nu este verificată de Twenty. Utilizați-o pe propria răspundere."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr "Această aplicație nu este listată în marketplace și nu a fost revizuită de Twenty. Utilizați-o pe propriul risc."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -27659,6 +27690,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "Această vizualizare folosește {usageLabel} pe obiectul \"{0}\", care nu este accesibil."
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29091,6 +29123,7 @@ msgstr "actualizează"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29947,17 +29980,6 @@ msgstr ""
 msgid "Very High"
 msgstr "Foarte ridicat"
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "Verificat"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "Doar verificate"
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30346,7 +30368,6 @@ msgstr "Urmărește demonstrația pentru membri"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "În prezent întâmpinăm probleme cu această aplicație, iar funcționarea ei poate fi afectată în timp ce lucrăm la o remediere."
 
@@ -31329,12 +31350,6 @@ msgstr "Nu aveți acces la acest obiect."
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "Nu ai acces la această pagină de setări."
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "Nu aveți încă nicio conexiune {0}."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

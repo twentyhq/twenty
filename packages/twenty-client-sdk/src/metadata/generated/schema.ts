@@ -120,6 +120,7 @@ export interface AgentChatThreadParticipant {
     isSubscribed: Scalars['Boolean']
     lastMentionedAt?: Scalars['DateTime']
     lastReadAt?: Scalars['DateTime']
+    mentionsResolvedAt?: Scalars['DateTime']
     snoozedUntil?: Scalars['DateTime']
     threadId: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -1512,7 +1513,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2273,6 +2274,7 @@ export interface Mutation {
     createPageLayoutTab: PageLayoutTab
     createPageLayoutWidget: PageLayoutWidget
     createPublicDomain: PublicDomain
+    createRelatedRecordPath: RelatedRecordPath
     createSAMLIdentityProvider: SetupSso
     createSkill: Skill
     createSubscriptionPaymentIntent: BillingPaymentIntent
@@ -2311,6 +2313,7 @@ export interface Mutation {
     deleteOneRole: Scalars['String']
     deletePublicDomain: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
+    deleteRelatedRecordPath: RelatedRecordPath
     deleteSSOIdentityProvider: DeleteSso
     deleteSkill: Skill
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
@@ -3082,6 +3085,7 @@ export interface Query {
     publicMarketplaceApps: MarketplaceApp[]
     recordPermissions: RecordPermissionsResult[]
     recordSharing: RecordSharingDTO
+    relatedRecordPaths: RelatedRecordPath[]
     skill?: Skill
     skills: Skill[]
     timelineActivityTypes: TimelineActivityType[]
@@ -3181,6 +3185,15 @@ export interface RecordTableConfiguration {
     recordLimit?: Scalars['Int']
     viewId?: Scalars['String']
     __typename: 'RecordTableConfiguration'
+}
+
+export interface RelatedRecordPath {
+    firstFieldMetadataId: Scalars['UUID']
+    id: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    secondFieldMetadataId?: Scalars['UUID']
+    thirdFieldMetadataId?: Scalars['UUID']
+    __typename: 'RelatedRecordPath'
 }
 
 export interface Relation {
@@ -4324,6 +4337,7 @@ export interface AgentChatThreadParticipantGenqlSelection{
     isSubscribed?: boolean | number
     lastMentionedAt?: boolean | number
     lastReadAt?: boolean | number
+    mentionsResolvedAt?: boolean | number
     snoozedUntil?: boolean | number
     threadId?: boolean | number
     updatedAt?: boolean | number
@@ -5651,6 +5665,8 @@ export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],obj
 
 export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
 
+export interface CreateRelatedRecordPathInput {firstFieldMetadataId?: (Scalars['UUID'] | null),objectMetadataId?: (Scalars['UUID'] | null),secondFieldMetadataId?: (Scalars['UUID'] | null),thirdFieldMetadataId?: (Scalars['UUID'] | null)}
+
 export interface CreateRoleInput {canAccessAllAgentChatChannels?: (Scalars['Boolean'] | null),canAccessAllTools?: (Scalars['Boolean'] | null),canBeAssignedToAgents?: (Scalars['Boolean'] | null),canBeAssignedToApiKeys?: (Scalars['Boolean'] | null),canBeAssignedToUsers?: (Scalars['Boolean'] | null),canDestroyAllObjectRecords?: (Scalars['Boolean'] | null),canReadAllObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllObjectRecords?: (Scalars['Boolean'] | null),canUpdateAllSettings?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['String'] | null),label: Scalars['String']}
 
 export interface CreateSkillInput {content: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),label: Scalars['String'],name: Scalars['String']}
@@ -6765,6 +6781,7 @@ export interface MutationGenqlSelection{
     createPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {input: CreatePageLayoutTabInput} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {applicationId: Scalars['String'], domain: Scalars['String']} })
+    createRelatedRecordPath?: (RelatedRecordPathGenqlSelection & { __args: {input: CreateRelatedRecordPathInput} })
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {idempotencyKey: Scalars['String'], plan: BillingPlanKey, recurringInterval: SubscriptionInterval, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
@@ -6803,6 +6820,7 @@ export interface MutationGenqlSelection{
     deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
+    deleteRelatedRecordPath?: (RelatedRecordPathGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
@@ -7624,6 +7642,7 @@ export interface QueryGenqlSelection{
     publicMarketplaceApps?: MarketplaceAppGenqlSelection
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordTargetInput[]} })
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordTargetInput} })
+    relatedRecordPaths?: RelatedRecordPathGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     skills?: SkillGenqlSelection
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
@@ -7728,6 +7747,16 @@ export interface RecordTableConfigurationGenqlSelection{
 }
 
 export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: Scalars['UUID']}
+
+export interface RelatedRecordPathGenqlSelection{
+    firstFieldMetadataId?: boolean | number
+    id?: boolean | number
+    objectMetadataId?: boolean | number
+    secondFieldMetadataId?: boolean | number
+    thirdFieldMetadataId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface RelationGenqlSelection{
     sourceFieldMetadata?: FieldGenqlSelection
@@ -11121,6 +11150,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const RelatedRecordPath_possibleTypes: string[] = ['RelatedRecordPath']
+    export const isRelatedRecordPath = (obj?: { __typename?: any } | null): obj is RelatedRecordPath => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRelatedRecordPath"')
+      return RelatedRecordPath_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Relation_possibleTypes: string[] = ['Relation']
     export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
@@ -12273,6 +12310,7 @@ export const enumFeatureFlagKey = {
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
+   IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
 }
 
