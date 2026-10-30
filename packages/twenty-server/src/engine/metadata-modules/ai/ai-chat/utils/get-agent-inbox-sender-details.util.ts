@@ -5,6 +5,7 @@ import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-lin
 type AgentInboxSenderDetails = {
   key: string;
   applicationId: string | null;
+  roleId: string | null;
   description: string;
 };
 
@@ -25,10 +26,12 @@ export const getAgentInboxSenderDetails = (
     ? {
         key: `application:${sender.application.id}`,
         applicationId: sender.application.id,
+        roleId: sender.application.defaultRoleId,
         description: `The ${quoteSenderName(sender.application.name)} application`,
       }
     : {
         key: `workflow:${sender.workflowId}`,
         applicationId: null,
+        roleId: null,
         description: `The ${quoteSenderName(sender.workflowName)} workflow`,
       };

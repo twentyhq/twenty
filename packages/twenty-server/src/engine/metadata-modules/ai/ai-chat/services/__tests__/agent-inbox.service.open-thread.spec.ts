@@ -1,7 +1,11 @@
 import { QueryFailedError } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
+import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
+import { buildInboxThreadMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-message-ids.util';
 import {
   AiException,
   AiExceptionCode,
@@ -13,11 +17,40 @@ const SENDER = {
   workflowName: 'New deals',
 };
 
+const APPLICATION_SENDER = {
+  type: 'application' as const,
+  application: {
+    id: 'application-id',
+    name: 'Call recorder',
+    defaultRoleId: 'role-id',
+  } as FlatApplication,
+};
+
+const AUTH_CONTEXT = {
+  type: 'application',
+  application: APPLICATION_SENDER.application,
+} as ApplicationWorkspaceAuthContext;
+
 const OPEN_ARGS = {
   workspaceId: 'workspace-id',
   sender: SENDER,
   threadKey: 'run-id',
   title: 'Draft the quote',
+};
+
+const KEYED_INPUT = {
+  addressing: { threadKey: 'run-id', title: 'Draft the quote' },
+  idempotencyKey: 'step-id',
+  text: 'Here is the quote',
+  workspaceMemberIds: ['member-id', 'other-member-id'],
+  mentionedWorkspaceMemberIds: [],
+  recordTargets: [],
+};
+
+const EXISTING_INPUT = {
+  ...KEYED_INPUT,
+  addressing: { threadId: 'thread-id' },
+  workspaceMemberIds: [],
 };
 
 const buildUniqueViolation = () =>
@@ -39,20 +72,44 @@ const buildService = () => {
   const threadService = {
     createThread: jest
       .fn()
-      .mockImplementation(({ id, workspaceMemberId }) =>
-        Promise.resolve({ id, workspaceMemberId }),
+      .mockImplementation(({ id, workspaceMemberId, channelId }) =>
+        Promise.resolve({ id, workspaceMemberId, channelId }),
+      ),
+    createUnownedChannelThread: jest
+      .fn()
+      .mockImplementation(({ id, channelId }) =>
+        Promise.resolve({ id, workspaceMemberId: null, channelId }),
       ),
     deliverToParticipants: jest
       .fn()
       .mockImplementation(({ participantWorkspaceMemberIds }) =>
         Promise.resolve(participantWorkspaceMemberIds),
       ),
+    mentionParticipants: jest
+      .fn()
+      .mockImplementation(({ participantWorkspaceMemberIds }) =>
+        Promise.resolve(participantWorkspaceMemberIds),
+      ),
+    recordThreadActivity: jest.fn().mockResolvedValue(undefined),
   };
   const sharingService = {
     getAuthContext: jest.fn().mockResolvedValue({}),
   };
+  const channelAccessService = {
+    assertChannelOpenToRole: jest.fn().mockResolvedValue(undefined),
+  };
+  const inboxAccessService = {
+    assertThreadIsWritableOrThrow: jest.fn().mockResolvedValue(undefined),
+  };
+  const threadTargetService = {
+    attachThreadToRecord: jest.fn().mockResolvedValue(undefined),
+  };
   const messageRepository = {
     findOne: jest.fn().mockResolvedValue(null),
+  };
+  const conversationWriterService = {
+    insertTurn: jest.fn().mockResolvedValue('turn-id'),
+    insertMessage: jest.fn().mockResolvedValue('message-id'),
   };
 
   const service = new AgentInboxService(
@@ -61,7 +118,10 @@ const buildService = () => {
     {} as never,
     threadService as never,
     sharingService as never,
-    {} as never,
+    channelAccessService as never,
+    inboxAccessService as never,
+    threadTargetService as never,
+    conversationWriterService as never,
     {} as never,
   );
 
@@ -70,7 +130,11 @@ const buildService = () => {
     threadRepository,
     threadService,
     sharingService,
+    channelAccessService,
+    inboxAccessService,
+    threadTargetService,
     messageRepository,
+    conversationWriterService,
   };
 };
 
@@ -113,6 +177,7 @@ describe('AgentInboxService.openThread', () => {
       id: THREAD_ID,
       title: 'Draft the quote',
       isArchived: true,
+      channelId: undefined,
     });
     expect(threadService.deliverToParticipants).toHaveBeenCalledWith({
       workspaceId: 'workspace-id',
@@ -209,6 +274,93 @@ describe('AgentInboxService.openThread', () => {
     });
   });
 
+  it('files the conversation in a channel the sender reaches, owned by the first member', async () => {
+    const { service, threadService, channelAccessService } = buildService();
+
+    await service.openThread({
+      ...OPEN_ARGS,
+      sender: APPLICATION_SENDER,
+      workspaceMemberIds: ['member-id'],
+      channelId: 'channel-id',
+    });
+
+    expect(channelAccessService.assertChannelOpenToRole).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      channelId: 'channel-id',
+      roleId: 'role-id',
+    });
+    expect(threadService.createThread).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspaceMemberId: 'member-id',
+        channelId: 'channel-id',
+      }),
+    );
+  });
+
+  it('files a conversation with no member in the channel, for the roles that reach it', async () => {
+    const { service, threadRepository, threadService } = buildService();
+
+    const { thread, isCreated } = await service.openThread({
+      ...OPEN_ARGS,
+      sender: APPLICATION_SENDER,
+      workspaceMemberIds: [],
+      channelId: 'channel-id',
+    });
+
+    expect(isCreated).toBe(true);
+    expect(thread.channelId).toBe('channel-id');
+    expect(threadService.createUnownedChannelThread).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      id: buildInboxThreadId({
+        senderKey: 'application:application-id',
+        threadKey: 'run-id',
+      }),
+      title: 'Draft the quote',
+      channelId: 'channel-id',
+    });
+    expect(threadService.createThread).not.toHaveBeenCalled();
+    expect(threadRepository.insert).not.toHaveBeenCalled();
+  });
+
+  it('refuses a channel the sender cannot reach before creating anything', async () => {
+    const { service, threadService, channelAccessService } = buildService();
+
+    channelAccessService.assertChannelOpenToRole.mockRejectedValue(
+      new AiException(
+        'Channel not found',
+        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+      ),
+    );
+
+    await expect(
+      service.openThread({
+        ...OPEN_ARGS,
+        workspaceMemberIds: ['member-id'],
+        channelId: 'channel-id',
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND });
+    expect(threadService.createThread).not.toHaveBeenCalled();
+    expect(threadService.createUnownedChannelThread).not.toHaveBeenCalled();
+  });
+
+  it('leaves the channel of a conversation that exists as it is', async () => {
+    const { service, threadRepository, channelAccessService } = buildService();
+
+    threadRepository.findOne.mockResolvedValue({
+      id: THREAD_ID,
+      workspaceMemberId: 'member-id',
+      channelId: null,
+    });
+
+    await service.openThread({
+      ...OPEN_ARGS,
+      workspaceMemberIds: ['member-id'],
+      channelId: 'channel-id',
+    });
+
+    expect(channelAccessService.assertChannelOpenToRole).not.toHaveBeenCalled();
+  });
+
   it('refuses to give members a conversation no inbox receives', async () => {
     const { service, threadRepository, threadService } = buildService();
 
@@ -262,8 +414,13 @@ describe('AgentInboxService.openThread', () => {
 
 describe('AgentInboxService.sendMessage', () => {
   it('adds the members a repeated message lists without writing it again', async () => {
-    const { service, threadRepository, threadService, messageRepository } =
-      buildService();
+    const {
+      service,
+      threadRepository,
+      threadService,
+      messageRepository,
+      conversationWriterService,
+    } = buildService();
 
     threadRepository.findOne.mockResolvedValue({
       id: THREAD_ID,
@@ -275,15 +432,13 @@ describe('AgentInboxService.sendMessage', () => {
       service.sendMessage({
         workspaceId: 'workspace-id',
         sender: SENDER,
-        input: {
-          workspaceMemberIds: ['member-id', 'other-member-id'],
-          threadKey: 'run-id',
-          idempotencyKey: 'step-id',
-          title: 'Draft the quote',
-          text: 'Here is the quote',
-        },
+        input: { ...KEYED_INPUT, mentionedWorkspaceMemberIds: ['member-id'] },
       }),
-    ).resolves.toMatchObject({ threadId: THREAD_ID, isDismissed: false });
+    ).resolves.toMatchObject({
+      threadId: THREAD_ID,
+      isNewThread: false,
+      isDismissed: false,
+    });
     expect(threadService.createThread).not.toHaveBeenCalled();
     expect(threadService.deliverToParticipants).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -291,5 +446,192 @@ describe('AgentInboxService.sendMessage', () => {
         participantWorkspaceMemberIds: ['other-member-id'],
       }),
     );
+    expect(conversationWriterService.insertMessage).not.toHaveBeenCalled();
+    expect(threadService.mentionParticipants).not.toHaveBeenCalled();
+  });
+
+  it('opens the conversation with the message, and mentions the members once it is written', async () => {
+    const { service, threadService, conversationWriterService } =
+      buildService();
+    const { messageId, openingMessageId } = buildInboxMessageIds({
+      senderKey: 'workflow:workflow-id',
+      threadKey: 'run-id',
+      idempotencyKey: 'step-id',
+    });
+
+    await expect(
+      service.sendMessage({
+        workspaceId: 'workspace-id',
+        sender: SENDER,
+        input: {
+          ...KEYED_INPUT,
+          mentionedWorkspaceMemberIds: ['member-id', 'other-member-id'],
+        },
+      }),
+    ).resolves.toMatchObject({
+      threadId: THREAD_ID,
+      messageId,
+      isNewThread: true,
+      isDismissed: false,
+    });
+    expect(
+      conversationWriterService.insertMessage.mock.calls.map(([{ id }]) => id),
+    ).toEqual([openingMessageId, messageId]);
+    expect(threadService.mentionParticipants).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: THREAD_ID,
+      workspaceMemberId: 'member-id',
+      participantWorkspaceMemberIds: ['member-id', 'other-member-id'],
+    });
+  });
+
+  it('writes the message in a conversation the caller may write, without an opener', async () => {
+    const {
+      service,
+      threadRepository,
+      threadService,
+      inboxAccessService,
+      conversationWriterService,
+    } = buildService();
+    const { messageId, turnId } = buildInboxThreadMessageIds({
+      threadId: 'thread-id',
+      senderScope: 'application:application-id',
+      idempotencyKey: 'step-id',
+    });
+
+    threadRepository.findOne.mockResolvedValue({
+      id: 'thread-id',
+      workspaceMemberId: 'owner-id',
+    });
+
+    await expect(
+      service.sendMessage({
+        workspaceId: 'workspace-id',
+        sender: APPLICATION_SENDER,
+        input: EXISTING_INPUT,
+        authContext: AUTH_CONTEXT,
+      }),
+    ).resolves.toMatchObject({
+      threadId: 'thread-id',
+      messageId,
+      isNewThread: false,
+      isDismissed: false,
+    });
+    expect(
+      inboxAccessService.assertThreadIsWritableOrThrow,
+    ).toHaveBeenCalledWith({
+      authContext: AUTH_CONTEXT,
+      threadId: 'thread-id',
+    });
+    expect(threadService.createThread).not.toHaveBeenCalled();
+    expect(conversationWriterService.insertTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ id: turnId, threadId: 'thread-id' }),
+    );
+    expect(conversationWriterService.insertMessage).toHaveBeenCalledTimes(1);
+    expect(conversationWriterService.insertMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: messageId,
+        turnId,
+        senderApplicationId: 'application-id',
+      }),
+    );
+  });
+
+  it('refuses a conversation the caller cannot write without touching it', async () => {
+    const {
+      service,
+      threadRepository,
+      inboxAccessService,
+      conversationWriterService,
+    } = buildService();
+
+    inboxAccessService.assertThreadIsWritableOrThrow.mockRejectedValue(
+      new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
+    );
+
+    await expect(
+      service.sendMessage({
+        workspaceId: 'workspace-id',
+        sender: APPLICATION_SENDER,
+        input: EXISTING_INPUT,
+        authContext: AUTH_CONTEXT,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+    expect(threadRepository.findOne).not.toHaveBeenCalled();
+    expect(conversationWriterService.insertMessage).not.toHaveBeenCalled();
+  });
+
+  it('refuses an existing conversation to a sender with no access of its own', async () => {
+    const { service, inboxAccessService } = buildService();
+
+    await expect(
+      service.sendMessage({
+        workspaceId: 'workspace-id',
+        sender: SENDER,
+        input: EXISTING_INPUT,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+    expect(
+      inboxAccessService.assertThreadIsWritableOrThrow,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('attaches the records under the caller before writing the message', async () => {
+    const { service, threadTargetService, conversationWriterService } =
+      buildService();
+    const recordTarget = {
+      objectNameSingular: 'company',
+      recordId: 'company-id',
+    };
+
+    await service.sendMessage({
+      workspaceId: 'workspace-id',
+      sender: APPLICATION_SENDER,
+      input: {
+        ...KEYED_INPUT,
+        workspaceMemberIds: ['member-id'],
+        recordTargets: [recordTarget],
+      },
+      authContext: AUTH_CONTEXT,
+    });
+
+    expect(threadTargetService.attachThreadToRecord).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadId: buildInboxThreadId({
+        senderKey: 'application:application-id',
+        threadKey: 'run-id',
+      }),
+      authContext: AUTH_CONTEXT,
+      ...recordTarget,
+    });
+    expect(
+      threadTargetService.attachThreadToRecord.mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      conversationWriterService.insertMessage.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('leaves the message unwritten when a record cannot be read', async () => {
+    const { service, threadTargetService, conversationWriterService } =
+      buildService();
+
+    threadTargetService.attachThreadToRecord.mockRejectedValue(
+      new AiException('Record not found', AiExceptionCode.RECORD_NOT_FOUND),
+    );
+
+    await expect(
+      service.sendMessage({
+        workspaceId: 'workspace-id',
+        sender: APPLICATION_SENDER,
+        input: {
+          ...KEYED_INPUT,
+          recordTargets: [
+            { objectNameSingular: 'company', recordId: 'company-id' },
+          ],
+        },
+        authContext: AUTH_CONTEXT,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.RECORD_NOT_FOUND });
+    expect(conversationWriterService.insertMessage).not.toHaveBeenCalled();
   });
 });

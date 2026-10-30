@@ -463,6 +463,56 @@ export class AgentChatSharingService {
     );
   }
 
+  // Filed by an application with no member to own it, so only the channel's
+  // role grants give access to it
+  async createUnownedChannelThread({
+    workspaceId,
+    id,
+    title,
+    channelId,
+  }: {
+    workspaceId: string;
+    id: string;
+    title: string;
+    channelId: string;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
+
+    return this.threadRepository.query(
+      workspaceId,
+      async ({ manager, table }) => {
+        await lockAgentChatChannelForThreadWriteOrThrow({
+          manager,
+          workspaceId,
+          channelId,
+        });
+        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+          manager,
+          workspaceId,
+          channelIds: [channelId],
+        });
+        const [record] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
+          `INSERT INTO ${table('agentChatThread')} (id, title, "channelId", "lastActivityAt")
+           VALUES ($1, $2, $3, clock_timestamp()) RETURNING *`,
+          [id, title, channelId],
+        );
+        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
+          workspaceId,
+          objectMetadataId: objectMetadata.id,
+          recordIds: [record.id],
+          manager,
+        });
+        await this.channelGrantService.rewriteThreadGrantsInTransaction({
+          manager,
+          workspaceId,
+          threadIds: [record.id],
+          affectedChannelIds: [channelId],
+        });
+        return record;
+      },
+    );
+  }
+
   private validateThreadCreationIsPermitted({
     authContext,
     updatedColumns,

@@ -56,6 +56,34 @@ export class AgentChatChannelAccessService {
     return channel;
   }
 
+  async assertChannelOpenToRole({
+    workspaceId,
+    channelId,
+    roleId,
+  }: {
+    workspaceId: string;
+    channelId: string;
+    roleId: string | null;
+  }): Promise<void> {
+    const [channel, { flatRoleMaps }] = await Promise.all([
+      this.channelMetadataService.findChannelOrThrow({
+        workspaceId,
+        channelId,
+      }),
+      this.workspaceCacheService.getOrRecompute(workspaceId, ['flatRoleMaps']),
+    ]);
+    const role = isDefined(roleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: roleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
+
+    if (!isAgentChatChannelOpenToRole({ channel, role })) {
+      throwAgentChatChannelNotFound();
+    }
+  }
+
   async findMemberRole({
     workspaceId,
     workspaceMemberId,

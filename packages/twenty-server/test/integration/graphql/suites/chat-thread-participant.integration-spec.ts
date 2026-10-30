@@ -771,10 +771,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     ).toBeUndefined();
 
     expect(
-      await addParticipants(threadId, [
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ]),
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]),
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),

@@ -170,6 +170,7 @@ export type AgentMessage = {
   processedAt?: Maybe<Scalars['DateTime']['output']>;
   reactions: Array<AgentMessageReactionSummary>;
   role: Scalars['String']['output'];
+  senderApplicationId?: Maybe<Scalars['UUID']['output']>;
   senderUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   senderWorkspaceMemberId?: Maybe<Scalars['UUID']['output']>;
   status: Scalars['String']['output'];
@@ -2765,6 +2766,11 @@ export type Impersonate = {
   __typename?: 'Impersonate';
   loginToken: AuthToken;
   workspace: WorkspaceUrlsAndId;
+};
+
+export type InboxMessageRecordTargetInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 export type InboxThreadRecordInput = {
@@ -6801,16 +6807,23 @@ export type SendEmailViaDomainOutput = {
 };
 
 export type SendInboxMessageInput = {
+  channelId?: InputMaybe<Scalars['UUID']['input']>;
   idempotencyKey: Scalars['String']['input'];
+  mentionedWorkspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  recordTargets?: InputMaybe<Array<InboxMessageRecordTargetInput>>;
   text: Scalars['String']['input'];
-  threadKey: Scalars['String']['input'];
-  title: Scalars['String']['input'];
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
   toolCall?: InputMaybe<Scalars['JSON']['input']>;
-  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+  workspaceMemberIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type SendInboxMessageResult = {
   __typename?: 'SendInboxMessageResult';
+  isDismissed: Scalars['Boolean']['output'];
+  isNewThread: Scalars['Boolean']['output'];
+  messageId: Scalars['UUID']['output'];
   threadId: Scalars['UUID']['output'];
 };
 
