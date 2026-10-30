@@ -7,11 +7,10 @@ describe('validateAndReturnIndexWhereClause', () => {
     expect(validateAndReturnIndexWhereClause('')).toBeUndefined();
   });
 
-  it.each([
-    '"deletedAt" IS NULL',
-    '"directMessageFirstWorkspaceMemberId" IS NOT NULL',
-  ])('should return %s because it is in the allowlist', (clause) => {
-    expect(validateAndReturnIndexWhereClause(clause)).toBe(clause);
+  it('should return the clause when it is in the allowlist', () => {
+    expect(validateAndReturnIndexWhereClause('"deletedAt" IS NULL')).toBe(
+      '"deletedAt" IS NULL',
+    );
   });
 
   it('should throw for clauses not in the allowlist', () => {
