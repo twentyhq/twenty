@@ -3,16 +3,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-type ParticipantWrite = {
-  before: AgentChatThreadParticipantRow | null;
-  after: AgentChatThreadParticipantRow;
-};
 
 // Participant rows are written in SQL, outside the ORM that would send these
 @Injectable()
@@ -29,7 +24,7 @@ export class AgentChatThreadParticipantEventService {
   // Sent once the write has committed, so a failure here must not report the
   // write itself as failed
   async emitParticipantWritten(
-    args: ParticipantWrite & { workspaceId: string },
+    args: AgentChatThreadParticipantWrite & { workspaceId: string },
   ): Promise<void> {
     try {
       await this.emit(args);
@@ -45,7 +40,7 @@ export class AgentChatThreadParticipantEventService {
     workspaceId,
     before,
     after,
-  }: ParticipantWrite & { workspaceId: string }): Promise<void> {
+  }: AgentChatThreadParticipantWrite & { workspaceId: string }): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
