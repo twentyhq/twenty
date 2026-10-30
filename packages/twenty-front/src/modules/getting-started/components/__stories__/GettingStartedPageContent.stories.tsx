@@ -6,6 +6,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,6 +31,7 @@ import {
   mockGettingStartedStepDefinitions,
   mockGettingStartedStepActionKeys,
 } from '~/testing/mock-data/gettingStartedSteps';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const TRIALING_WORKSPACE = {
@@ -111,6 +113,7 @@ const meta: Meta<typeof GettingStartedPageContent> = {
   parameters: { layout: 'fullscreen' },
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, TRIALING_WORKSPACE);
+    jotaiStore.set(billingState.atom, mockedClientConfig.billing);
   },
 };
 

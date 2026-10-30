@@ -1,19 +1,14 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsGettingStartedEnabled } from '@/getting-started/hooks/useIsGettingStartedEnabled';
 import { useQuery } from '@apollo/client/react';
 
-import {
-  FeatureFlagKey,
-  GettingStartedProgressDocument,
-} from '~/generated-metadata/graphql';
+import { GettingStartedProgressDocument } from '~/generated-metadata/graphql';
 
 export const useGettingStartedProgress = ({
   isEnabled = true,
 }: {
   isEnabled?: boolean;
 } = {}) => {
-  const isGettingStartedEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_GETTING_STARTED_ENABLED,
-  );
+  const isGettingStartedEnabled = useIsGettingStartedEnabled();
 
   const { data, loading, error, refetch } = useQuery(
     GettingStartedProgressDocument,
