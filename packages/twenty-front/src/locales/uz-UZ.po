@@ -121,11 +121,15 @@ msgstr "\"{path}\" qiymat emas"
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" \"{fieldName}\"ning quyi maydoni emas."
 
-#. js-lingui-id: TaLmrR
-#. placeholder {0}: formatNumber(currentCreditsByPeriod, { decimals: 2 })
+#. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "({0} credits)"
-msgstr "({0} kreditlar)"
+msgid "({currentCreditsByPeriodDisplay} credits/month)"
+msgstr "({currentCreditsByPeriodDisplay} kredit/oy)"
+
+#. js-lingui-id: M9SJOb
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({currentCreditsByPeriodDisplay} credits/year)"
+msgstr "({currentCreditsByPeriodDisplay} kredit/yil)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -903,11 +907,6 @@ msgstr "{morphRelationCount} ta obyekt"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, one {Siz {formattedNewlyEarnedCredits} ta bepul kredit oldingiz} other {Siz {formattedNewlyEarnedCredits} ta bepul kredit oldingiz}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, one {Tasdiqlangan ilova mos kelmadi. # ta tasdiqlanmagan ilova mavjud.} other {Tasdiqlangan ilova mos kelmadi. # ta tasdiqlanmagan ilova mavjud.}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1051,6 +1050,26 @@ msgstr "{runCount, plural, one {# ta ishga tushirish} other {# ta ishga tushiris
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
 msgstr "{scopeLabel} — instansiya uchun standart qiymat {defaultText}. Saqlash faqat ushbu ish maydoniga tatbiq etiladi."
 
+#. js-lingui-id: FTxMFo
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month"
+msgstr "{seatCreditsDisplay} o‘rinlardan, har oy qayta tiklanadi"
+
+#. js-lingui-id: QzeEhD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} o‘rinlardan, har oy qayta tiklanadi · {packageCreditsDisplay} kredit paketingizdan, keyingi davrga o‘tadi"
+
+#. js-lingui-id: d7aej9
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year"
+msgstr "{seatCreditsDisplay} o‘rinlardan, har yili qayta o‘rnatiladi"
+
+#. js-lingui-id: TfWeSD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} o‘rinlardan, har yili qayta o‘rnatiladi · kredit paketingizdan {packageCreditsDisplay}, keyingi davrga o‘tadi"
+
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
@@ -1191,6 +1210,11 @@ msgstr "{unitCount, plural, one {Hafta} other {Haftalar}}"
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {Yil} other {Yillar}}"
 
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr "{unlistedCount, plural, one {Hech bir ro‘yxatdagi ilova mos kelmaydi. # ta ro‘yxatga kiritilmagan ilova mavjud.} other {Hech bir ro‘yxatdagi ilova mos kelmaydi. # ta ro‘yxatga kiritilmagan ilova mavjud.}}"
+
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
 msgid "{unresolvedCount, plural, one {# other object} other {# other objects}}"
@@ -1212,10 +1236,10 @@ msgstr "{visibleFieldsCount} ta ko‘rinadigan maydon"
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 msgstr ""
 
-#. js-lingui-id: bQNjUR
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr "{workspaceCreditsSeats, plural, one {Har bir davrda qayta tiklanadigan # o‘rin uchun {seatCreditsDisplay} kreditni o‘z ichiga oladi} other {Har bir davrda qayta tiklanadigan # o‘rin uchun {seatCreditsDisplay} kreditni o‘z ichiga oladi}}"
+#. js-lingui-id: imLPQY
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} kredit/oy} other {{workspaceCreditsPerSeatPerMonthDisplay} kredit/oy}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1281,7 +1305,7 @@ msgid "≈ 10,000 workflow steps"
 msgstr "≈ 10 000 ta ish jarayoni qadami"
 
 #. js-lingui-id: tSb6yd
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 100 AI tasks/week"
 msgstr "≈ haftasiga 100 ta AI vazifasi"
 
@@ -1297,7 +1321,7 @@ msgid "≈ 50,000 workflow steps"
 msgstr "≈ 50 000 ta ish jarayoni qadami"
 
 #. js-lingui-id: bLGKEo
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 500 AI tasks/week"
 msgstr "≈ haftasiga 500 ta AI vazifasi"
 
@@ -3221,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "Barcha vazifalar bajarilgan. Shu sur’atda davom eting."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "Ushbu ish maydoniga o‘rnatilgan barcha ilovalar"
 
@@ -3305,11 +3329,6 @@ msgstr "SSO chetlab o‘tish huquqiga ega foydalanuvchilar uchun Google orqali k
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "Ma’lumotlarni CSV fayllardan import qilishga ruxsat berish"
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "O‘rnatishga ruxsat berish"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3699,6 +3718,11 @@ msgstr "Apostrof va nuqta"
 msgid "App"
 msgstr "Ilova"
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr "Ilova konfiguratsiyasini yuklab bo‘lmadi. Ulanishingizni tekshiring va qayta urinib ko‘ring."
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3776,11 +3800,6 @@ msgstr "Ilova muvaffaqiyatli o‘rnatildi."
 msgid "Application Logs"
 msgstr "Ilova jurnallari"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "Ilova bozorda ro‘yxatga olinmagan. U to‘g‘ridan-to‘g‘ri havola orqali ulashilgan."
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3820,10 +3839,10 @@ msgstr "ilova o‘zgaruvchisi"
 msgid "Applications"
 msgstr "Ilovalar"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "Quyidagi ilovalar tekshirilmagan. O‘z xavfingiz hisobidan foydalaning."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr "Quyidagi ilovalar Twenty tomonidan ko‘rib chiqilmagan. O‘z xavfingiz hisobidan foydalaning."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6917,6 +6936,12 @@ msgstr "Ushbu ish maydoniga ulaning"
 msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP orqali ulash"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr "{0} orqali ulang"
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8008,6 +8033,11 @@ msgstr "Kredit limiti tugadi. Ish jarayonlari, AI va ilovalarni qayta ishga tush
 msgid "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
 msgstr "Kredit limiti tugadi. Ish jarayonlari, AI va ilovalar ishlashda davom etishi uchun kredit rejangizni yangilang."
 
+#. js-lingui-id: M9521O
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Credit pack"
+msgstr "Kredit paketi"
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -8050,7 +8080,6 @@ msgstr "kreditlar"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
-#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -9680,11 +9709,6 @@ msgstr "Model uchun ko‘rinadigan nom"
 msgid "Display text on multiple lines"
 msgstr "Matnni bir nechta satrda ko‘rsatish"
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "Ushbu ilovani NPM paketlar ro‘yxatida ko‘rsatish"
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10087,6 +10111,11 @@ msgstr "Har bir a’zoga AI limiti beriladi, u ish maydoni kreditlaridan oldin i
 msgid "Each slice represents"
 msgstr "Har bir bo‘lak ifodalaydi"
 
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr "Oldinroq"
+
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
@@ -10416,11 +10445,6 @@ msgstr "Elektron pochta va Chat"
 msgid "Email and password are required"
 msgstr "Elektron pochta va parol talab qilinadi"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "Elektron pochta kampaniyalari"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10719,6 @@ msgstr "Yoqish"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Chetlab o‘tish parametrlarini yoqish"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "Email kampaniyalari, roʻyxatlar va obunani bekor qilishni boshqarishni yoqing."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11125,6 +11144,11 @@ msgstr "Matningizni kiriting"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Tasdiqlash uchun ikki faktorli autentifikatsiya kodingizni kiriting."
+
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr "Faqat Enterprise"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -14586,6 +14610,11 @@ msgstr "Barcha ishtirokchilari bir xil domenni ishlatadigan elektron xatlarni qo
 msgid "Included"
 msgstr "Kiritilgan"
 
+#. js-lingui-id: 6FtcQl
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Included per seat"
+msgstr "Har bir o‘rin uchun kiritilgan"
+
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14833,7 +14862,7 @@ msgid "Installed"
 msgstr "O‘rnatilgan"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr "O‘rnatilgan ilovalar"
 
@@ -15673,7 +15702,7 @@ msgid "Last active {lastActive}"
 msgstr "Oxirgi faol vaqti {lastActive}"
 
 #. js-lingui-id: vmfZix
-#. placeholder {0}: session.ipAddress
+#. placeholder {0}: details.join(' · ')
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Last active {lastActive} · {0}"
 msgstr "Oxirgi faol vaqti {lastActive} · {0}"
@@ -16250,8 +16279,14 @@ msgstr "Belgilash katakchali ro'yxat"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "Ro‘yxatga olingan"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr "Bozorda roʻyxatga kiritilgan"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16301,6 +16336,11 @@ msgstr "Yana yuklash"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
 msgstr "Ko'proq chatlarni yuklash"
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
+msgstr "Ko‘proq suhbatlarni yuklash"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -16436,6 +16476,7 @@ msgstr "Yuklanmoqda..."
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "Yuklanmoqda…"
@@ -16881,10 +16922,10 @@ msgstr "Barchasini bajarilgan deb belgilash"
 msgid "Mark as favourite"
 msgstr "Sevimli deb belgilash"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "Ushbu ilovani ko‘rib chiqilgan va tasdiqlangan deb belgilash"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr "Bu ilovani ko‘rib chiqilgan deb belgilang va uni bozorda ko‘rsating"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17158,6 +17199,11 @@ msgstr "Yozuvlarni birlashtirish"
 msgid "Merge review tabs"
 msgstr "Birlashtirishni ko‘rib chiqish ichki oynalari"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr "Bilan birlashtirish"
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -17333,7 +17379,7 @@ msgid "Missing calendar permission."
 msgstr "Kalendar uchun ruxsat yetishmaydi."
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr "Konfiguratsiya mavjud emas"
 
@@ -19358,7 +19404,7 @@ msgid "Not configured"
 msgstr "Sozlanmagan"
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr "Ulanmagan"
 
@@ -20782,8 +20828,8 @@ msgid "Per"
 msgstr "Har"
 
 #. js-lingui-id: nU1kSZ
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "har bir a’zo uchun"
 
@@ -20894,8 +20940,9 @@ msgid "Person ID"
 msgstr "Shaxs ID"
 
 #. js-lingui-id: Lz7jRL
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
 msgstr "Shaxsiy AI foydalanishi"
@@ -21964,8 +22011,8 @@ msgid "Reconnect"
 msgstr "Qayta ulash"
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr "Qayta ulash kerak"
@@ -22312,6 +22359,11 @@ msgstr "Rad etish"
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Rad etildi"
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "bog‘liq yozuv yo‘li"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -22871,6 +22923,11 @@ msgstr "Statik qiymatga qaytarish"
 msgid "Reset variable"
 msgstr "O‘zgaruvchini tiklash"
 
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr "{label} ustunining o‘lchamini o‘zgartirish"
+
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"
@@ -23410,6 +23467,11 @@ msgstr "Ruscha"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Sotuvlar"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr "Salesfarce"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -25150,6 +25212,7 @@ msgstr "Kiruvchi xabarlar qutisini ko‘rsatish"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr "Kamroq ko‘rsatish"
 
@@ -25159,6 +25222,7 @@ msgid "Show logs"
 msgstr "Jurnallarni ko‘rsatish"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25185,6 +25249,11 @@ msgstr "Ushbu faoliyat turini yozuv vaqt jadvallarida ko‘rsatish"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
 msgstr "Bu obyekt yozuvlarini buyruqlar menyusida ({0}) ko‘rsatish."
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr "Roʻyxatga kiritilmagan ilovalarni ko‘rsatish"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27276,11 +27345,11 @@ msgstr "Bu ilova marketplace’da mavjud emas. U o‘chirilgan bo‘lishi yoki h
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "Bu ilova ushbu ish maydoniga o‘rnatilmagan. U o‘chirib tashlangan bo‘lishi yoki havola noto‘g‘ri bo‘lishi mumkin."
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "Bu ilova Twenty tomonidan tekshirilmagan. O‘z xavfingiz hisobidan foydalaning."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr "Bu ilova bozorda roʻyxatga kiritilmagan va Twenty tomonidan ko‘rib chiqilmagan. Undan o‘z xavf-xataringiz ostida foydalaning."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -27615,6 +27684,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "Bu ko‘rinishda foydalanib bo‘lmaydigan \"{0}\" obyektida {usageLabel} ishlatilgan."
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29047,6 +29117,7 @@ msgstr "yangilash"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29903,17 +29974,6 @@ msgstr "Vertikal ustunli diagramma"
 msgid "Very High"
 msgstr "Juda yuqori"
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "Tekshirilgan"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "Faqat tekshirilganlar"
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30302,7 +30362,6 @@ msgstr "A'zolar demosini tomosha qilish"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "Hozirda biz ushbu ilova bilan bogʻliq muammolarga duch kelmoqdamiz, tuzatish ustida ishlayotganimizda uning ishlashi yomonlashishi mumkin."
 
@@ -30946,6 +31005,7 @@ msgid "Workspace creation failed"
 msgstr "Ish maydoni yaratish muvaffaqiyatsiz tugadi"
 
 #. js-lingui-id: Rg6QK1
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
 msgstr "Ish maydoni kreditlari"
@@ -31284,12 +31344,6 @@ msgstr "Sizda ushbu obyektga kirish huquqi yo‘q."
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "Sizda ushbu sozlamalar sahifasiga kirish huquqi yo‘q."
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "Sizda hali {0} ulanishi yo‘q."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

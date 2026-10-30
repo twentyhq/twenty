@@ -176,6 +176,8 @@ export class CallDatabaseEventTriggerJobsJob {
             applicationUniversalIdentifier: application.universalIdentifier,
           },
           jobId: logicFunctionTriggerJobIds[index],
+          workspaceId: workspaceEventBatch.workspaceId,
+          applicationUniversalIdentifier: application.universalIdentifier,
         })),
         {
           retryLimit: 3,

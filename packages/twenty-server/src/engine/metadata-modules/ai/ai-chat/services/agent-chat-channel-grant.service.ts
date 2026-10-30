@@ -32,7 +32,11 @@ export class AgentChatChannelGrantService {
     await this.workspaceQueueService.add<RewriteAgentChatChannelGrantsJobData>(
       REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME,
       data,
-      AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS,
+      {
+        ...AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS,
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

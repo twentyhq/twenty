@@ -2385,6 +2385,12 @@ msgctxt "fieldMetadata.label"
 msgid "Campaigns"
 msgstr "Kampanjer"
 
+#. js-lingui-id: ig79t+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Campaigns"
+msgstr "Kampanjer"
+
 #. js-lingui-id: 3KT/1G
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -2797,6 +2803,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Chats"
 msgstr "Chattar"
 
+#. js-lingui-id: Xm27Tc
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chats are not available yet. Try again in a few minutes."
+msgstr ""
+
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3029,15 +3040,15 @@ msgctxt "fieldMetadata.label"
 msgid "Completed"
 msgstr "Slutförd"
 
-#. js-lingui-id: XveQi3
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeded the 10 second time limit."
-msgstr "Komponentbygget överskred tidsgränsen på 10 sekunder."
+#. js-lingui-id: 3/Bvdi
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeded the {timeoutSeconds} second time limit."
+msgstr "Bygget av komponenten överskred tidsgränsen på {timeoutSeconds} sekunder."
 
-#. js-lingui-id: fmCVqA
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util.ts
-msgid "Component build exceeds the 5 MB output limit."
-msgstr "Komponentbygget överskrider utdata-gränsen på 5 MB."
+#. js-lingui-id: PfwSQo
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
+msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+msgstr "Bygget av komponenten överskrider utdata-gränsen på {maximumOutputMegabytes} MB."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3382,6 +3393,12 @@ msgstr "Konversationsstorlek"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Konversationsstorlek"
+
+#. js-lingui-id: mjQZyl
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversation type"
+msgstr "Konversationstyp"
 
 #. js-lingui-id: 5hyV33
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -4354,6 +4371,12 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Developers"
 msgstr "Utvecklare"
 
+#. js-lingui-id: Kggq11
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Direct message"
+msgstr "Direktmeddelande"
+
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "Direct upload is not supported for this file type."
@@ -4540,6 +4563,12 @@ msgstr "Duplicerad alternativ {field}"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Each agent trigger must be an object"
 msgstr "Varje agentutlösare måste vara ett objekt"
+
+#. js-lingui-id: CRI2qP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Each related record path field must belong to the object reached by the previous relation"
+msgstr "Varje fält i sökvägen för relaterad post måste tillhöra objektet som nås via föregående relation"
 
 #. js-lingui-id: nTBzmZ
 #: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
@@ -5138,7 +5167,7 @@ msgid "Failed to add people to the list."
 msgstr "Det gick inte att lägga till personer i listan."
 
 #. js-lingui-id: nVOUB8
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Failed to build front component."
 msgstr "Det gick inte att bygga frontkomponenten."
 
@@ -6786,12 +6815,12 @@ msgid "Invalid front component input."
 msgstr "Ogiltig indata för frontkomponent."
 
 #. js-lingui-id: 5V3pAK
-#: src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component settings."
 msgstr "Ogiltiga inställningar för frontkomponenten."
 
 #. js-lingui-id: r0izKL
-#: src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception.ts
+#: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Invalid front component source."
 msgstr "Ogiltig källkod för frontkomponent."
 
@@ -7036,6 +7065,11 @@ msgstr "Ogiltiga mottagare"
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Ogiltig uppdateringstoken."
+
+#. js-lingui-id: gKBOwI
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Invalid related record path input."
+msgstr "Ogiltig inmatning för sökväg för relaterad post."
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -8176,12 +8210,25 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Medlemmar"
 
+#. js-lingui-id: fqpInK
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Mentions resolved at"
+msgstr ""
+
+#. js-lingui-id: gzZpjR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Mentions up to this time are resolved for the member"
+msgstr ""
+
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 msgid "Merge"
 msgstr "Sammanfoga"
 
 #. js-lingui-id: uHk5U2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
@@ -8192,6 +8239,12 @@ msgstr "Sammanfoga"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Slå ihop {objectLabelPlural}"
+
+#. js-lingui-id: pp414+
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Merge with Another {objectLabelSingular}"
+msgstr "Sammanfoga med en annan {objectLabelSingular}"
 
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
@@ -9599,6 +9652,11 @@ msgstr "Operand \"{operand}\" kräver ett värde, ett tomt predikat skulle ta bo
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
 msgstr "Operanden \"{rawOperand}\" i ett diagramfilter för widgeten \"{widgetTitle}\" stöds inte för fälttypen \"{effectiveFieldType}\". Stödda operander: {allowedOperandsText}."
 
+#. js-lingui-id: XBLJbc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand {operand} is not supported for field type {filterType}"
+msgstr "Operanden {operand} stöds inte för fälttypen {filterType}"
+
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
@@ -10901,6 +10959,12 @@ msgstr "Uppdateringstoken hittades inte."
 msgid "Registered by another workspace."
 msgstr "Registrerad av en annan arbetsyta."
 
+#. js-lingui-id: jLE5Bj
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Regular chat"
+msgstr "Vanlig chatt"
+
 #. js-lingui-id: iIm98l
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-campaign-delivery-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10923,6 +10987,53 @@ msgstr "Relaterad post"
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Related record not found."
 msgstr "Relaterad post hittades inte."
+
+#. js-lingui-id: WrvTKN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot skip its second relation"
+msgstr "Sökvägen för relaterad post kan inte hoppa över sin andra relation"
+
+#. js-lingui-id: 4sEoVQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path cannot visit the same object twice"
+msgstr "Sökvägen för relaterad post kan inte besöka samma objekt två gånger"
+
+#. js-lingui-id: fXYaod
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path field not found"
+msgstr "Fält i sökväg för relaterad post hittades inte"
+
+#. js-lingui-id: ZyTgMJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be active"
+msgstr "Fält i sökväg för relaterad post måste vara aktiva"
+
+#. js-lingui-id: mpKEGh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path fields must be relations"
+msgstr "Fält i sökväg för relaterad post måste vara relationer"
+
+#. js-lingui-id: pHqQra
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path not found"
+msgstr "Sökväg för relaterad post hittades inte"
+
+#. js-lingui-id: JUo4rP
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record path not found."
+msgstr "Sökväg för relaterad post hittades inte."
+
+#. js-lingui-id: YYg7qq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Related record path object not found"
+msgstr "Objekt i sökväg för relaterad post hittades inte"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -12021,6 +12132,11 @@ msgstr "Kort länk"
 msgctxt "objectMetadata.labelPlural"
 msgid "Short links"
 msgstr "Korta länkar"
+
+#. js-lingui-id: XcRf2D
+#: src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver.ts
+msgid "Sign in as a workspace member or use an application token to change this conversation."
+msgstr "Logga in som en arbetsytemedlem eller använd en applikationstoken för att ändra den här konversationen."
 
 #. js-lingui-id: dOTj0U
 #: src/engine/core-modules/record-export/services/record-export.workspace-service.ts
@@ -14153,6 +14269,11 @@ msgstr "Detta objekt har ingen sökvektor"
 msgid "This object permission is already set for the role"
 msgstr "Den här objektbehörigheten är redan angiven för rollen"
 
+#. js-lingui-id: JHfGIK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this field"
+msgstr "Den här operanden stöds inte för det här fältet"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -14228,6 +14349,12 @@ msgstr "Denna post kan inte tas bort eftersom den fortfarande refereras av andra
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Denna post finns inte eller har raderats."
+
+#. js-lingui-id: AzRcHW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "This related record path already exists"
+msgstr "Den här sökvägen för relaterad post finns redan"
 
 #. js-lingui-id: 9F8Ddo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -16281,6 +16408,12 @@ msgctxt "fieldMetadata.description"
 msgid "Whether the handle is blocked for a single workspace member or for the whole workspace"
 msgstr "Om handtaget är blockerat för en enskild arbetsytemedlem eller för hela arbetsytan"
 
+#. js-lingui-id: zsdmbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether this is a regular chat or a canonical direct message"
+msgstr "Om detta är en vanlig chatt eller ett kanoniskt direktmeddelande"
+
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17382,6 +17515,11 @@ msgstr "Din betalningsmetod avslogs. Uppdatera den och försök igen."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your purchased credits could not be added. Please contact support."
 msgstr "Dina köpta krediter kunde inte läggas till. Kontakta supporten."
+
+#. js-lingui-id: vAscP2
+#: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
+msgid "Your role cannot delete some of these records, so they cannot be merged."
+msgstr "Din roll kan inte ta bort vissa av dessa poster, så de kan inte sammanfogas."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

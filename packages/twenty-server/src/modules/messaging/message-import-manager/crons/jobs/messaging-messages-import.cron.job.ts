@@ -121,6 +121,10 @@ export class MessagingMessagesImportCronJob {
               workspaceId,
               messageChannelId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         }
       } catch (error) {

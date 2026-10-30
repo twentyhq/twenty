@@ -1,7 +1,7 @@
 name: CI App Docs Drift
 
 # When a PR changes the app-development surface (twenty-cli, twenty-sdk,
-# create-twenty-app, twenty-client-sdk, or shared manifest types), an agent checks
+# twenty-client-sdk, or shared manifest types), an agent checks
 # whether the app documentation under packages/twenty-docs/developers/extend/apps is
 # impacted and, only when it is, posts a single sticky comment with its findings.
 
@@ -23,7 +23,6 @@ jobs:
       files: |
         packages/twenty-cli/**
         packages/twenty-sdk/**
-        packages/create-twenty-app/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/src/application/**
         packages/twenty-shared/src/types/**

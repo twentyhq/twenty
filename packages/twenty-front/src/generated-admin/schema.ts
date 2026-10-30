@@ -255,7 +255,6 @@ export type AdminUpdateApplicationRegistrationInput = {
 export type AdminUpdateApplicationRegistrationPayload = {
   isListed?: InputMaybe<Scalars['Boolean']['input']>;
   isPreInstalled?: InputMaybe<Scalars['Boolean']['input']>;
-  isVetted?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
   oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;
@@ -363,7 +362,6 @@ export type ApplicationRegistration = {
   isConfigured: Scalars['Boolean']['output'];
   isListed: Scalars['Boolean']['output'];
   isPreInstalled: Scalars['Boolean']['output'];
-  isVetted: Scalars['Boolean']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -542,7 +540,6 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
-  IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'

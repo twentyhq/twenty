@@ -91,6 +91,10 @@ export class MessagingTriggerMessageListFetchCommand extends CommandRunner {
               messageChannelId: messageChannel.id,
               workspaceId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
 
           this.logger.log(

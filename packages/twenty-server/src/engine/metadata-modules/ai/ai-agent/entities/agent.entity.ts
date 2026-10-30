@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   PrimaryGeneratedColumn,
@@ -12,6 +11,7 @@ import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/da
 import { ADD_TRIGGERS_TO_AGENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-triggers-to-agent-upgrade-command-name.constant';
 import { DROP_AGENT_EVALUATION_INPUTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-47/drop-agent-evaluation-inputs-upgrade-command-name.constant';
 import { AGENT_AND_SKILL_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/agent-and-skill-overridable-entity-upgrade-command-name.constant';
+import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
@@ -34,6 +34,7 @@ export type AgentOverrides = {
 };
 
 @Entity('agent')
+// Both indexes go with the deletedAt column in 2.55
 @Index('IDX_AGENT_ID_DELETED_AT', ['id', 'deletedAt'])
 @Index('IDX_AGENT_NAME_WORKSPACE_ID_UNIQUE', ['name', 'workspaceId'], {
   unique: true,
@@ -72,6 +73,10 @@ export class AgentEntity
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
+  })
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;
 
@@ -88,7 +93,7 @@ export class AgentEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })

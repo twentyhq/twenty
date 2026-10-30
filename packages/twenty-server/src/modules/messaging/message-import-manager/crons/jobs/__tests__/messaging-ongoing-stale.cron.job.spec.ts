@@ -41,12 +41,20 @@ describe('MessagingOngoingStaleCronJob', () => {
       {
         workspaceId: 'workspace-1',
       },
+      {
+        workspaceId: 'workspace-1',
+        isWorkspaceJob: true,
+      },
     );
     expect(messageQueueService.add).toHaveBeenNthCalledWith(
       2,
       MessagingOngoingStaleJob.name,
       {
         workspaceId: 'workspace-2',
+      },
+      {
+        workspaceId: 'workspace-2',
+        isWorkspaceJob: true,
       },
     );
   });

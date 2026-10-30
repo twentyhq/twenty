@@ -156,6 +156,23 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       },
     },
     {
+      title: 'when the operand is not supported for the field type',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
       title: 'when adding a predicate to a non-editable role',
       context: {
         input: (testSetup) => ({

@@ -43,22 +43,26 @@ type BuildParticipantWriteQuery = (tables: {
   threadTable: string;
 }) => string;
 
-// A snooze whose end is already due, which its queued end may have checked
-// before this write, is saved as ended. Filing a thread, done or snoozed,
-// follows it, so new activity or the snooze's end brings it back
-const buildArchiveQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
+const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."updatedAt" + interval '1 millisecond')`;
+
+const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
+
+const HAS_UNRESOLVED_MENTION = `(participant."lastMentionedAt" IS NOT NULL AND (participant."mentionsResolvedAt" IS NULL OR participant."lastMentionedAt" > participant."mentionsResolvedAt"))`;
+
+const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
+
+// Saved as ended when already due, since its queued end may have run before this write
+const buildSnoozeQuery: BuildParticipantWriteQuery = ({ participantTable }) =>
   `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "snoozedUntil", "isSubscribed")
    VALUES ($1, $2, CASE WHEN $3::timestamptz <= clock_timestamp() THEN NULL ELSE clock_timestamp() END, $3, true)
    ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
      "archivedAt" = EXCLUDED."archivedAt",
      "snoozedUntil" = EXCLUDED."snoozedUntil",
      "isSubscribed" = true,
-     "updatedAt" = now()
+     "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    RETURNING *`;
 
-// The member's change for each action, written by the database so its
-// timestamps order against thread activity; applyAgentChatInboxAction makes
-// the same change for the copy apps show before the server answers
+// Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
   AgentChatInboxAction,
   BuildParticipantWriteQuery
@@ -70,17 +74,27 @@ const INBOX_ACTION_QUERIES: Record<
      SELECT thread.id, $2, thread."lastActivityAt", false FROM ${threadTable} thread WHERE thread.id = $1
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
-       "updatedAt" = now()
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
   [AgentChatInboxAction.UNREAD]: ({ participantTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
      VALUES ($1, $2, NULL, false)
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "lastReadAt" = NULL,
-       "updatedAt" = now()
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
-  [AgentChatInboxAction.ARCHIVE]: buildArchiveQuery,
-  [AgentChatInboxAction.SNOOZE]: buildArchiveQuery,
+  [AgentChatInboxAction.ARCHIVE]: ({ participantTable }) =>
+    `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "archivedAt", "isSubscribed")
+     VALUES ($1, $2, clock_timestamp(), true)
+     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+       "archivedAt" = EXCLUDED."archivedAt",
+       "snoozedUntil" = NULL,
+       "isSubscribed" = true,
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+     RETURNING *`,
+  [AgentChatInboxAction.SNOOZE]: buildSnoozeQuery,
   [AgentChatInboxAction.MOVE_TO_INBOX]: ({ participantTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
      VALUES ($1, $2)
@@ -88,14 +102,14 @@ const INBOX_ACTION_QUERIES: Record<
        "archivedAt" = NULL,
        "snoozedUntil" = NULL,
        "isSubscribed" = true,
-       "updatedAt" = now()
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
   [AgentChatInboxAction.SUBSCRIBE]: ({ participantTable }) =>
     `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
      VALUES ($1, $2)
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "isSubscribed" = true,
-       "updatedAt" = now()
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
   // Files the chat under done and keeps it there whatever happens in it,
   // until the member is mentioned or writes in it again
@@ -106,7 +120,8 @@ const INBOX_ACTION_QUERIES: Record<
        "isSubscribed" = false,
        "archivedAt" = EXCLUDED."archivedAt",
        "snoozedUntil" = NULL,
-       "updatedAt" = now()
+       "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
 };
 
@@ -119,7 +134,7 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "updatedAt"`;
+const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
 
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
@@ -198,7 +213,7 @@ export class AgentChatThreadParticipantService {
     return this.write(
       { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
       INBOX_ACTION_QUERIES[action],
-      action === AgentChatInboxAction.ARCHIVE || isSnooze ? [snoozeEnd] : [],
+      isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
         ? assertIsNotAssignee
         : writeThread,
@@ -222,8 +237,28 @@ export class AgentChatThreadParticipantService {
            "archivedAt" = NULL,
            "snoozedUntil" = NULL,
            "isSubscribed" = true,
-           "lastMentionedAt" = EXCLUDED."lastMentionedAt",
-           "updatedAt" = now()
+           "lastMentionedAt" = GREATEST(
+             EXCLUDED."lastMentionedAt",
+             participant."lastMentionedAt" + interval '1 millisecond',
+             participant."mentionsResolvedAt" + interval '1 millisecond'
+           ),
+           "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+         RETURNING *`,
+    );
+  }
+
+  async deliverToInbox(args: AgentChatThreadAccessArgs): Promise<void> {
+    await this.write(
+      { ...args, threadIds: [args.threadId] },
+      ({ participantTable }) =>
+        `INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId")
+         VALUES ($1, $2)
+         ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
+           "lastReadAt" = NULL,
+           "archivedAt" = NULL,
+           "snoozedUntil" = NULL,
+           "isSubscribed" = true,
+           "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,
     );
   }
@@ -252,7 +287,7 @@ export class AgentChatThreadParticipantService {
            "archivedAt" = NULL,
            "snoozedUntil" = NULL,
            "isSubscribed" = true,
-           "updatedAt" = now()
+           "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          RETURNING *`,
       [isSelfAssigned],
       writeAssignment,
@@ -303,8 +338,8 @@ export class AgentChatThreadParticipantService {
         threadIds: [args.threadId],
       },
       ({ participantTable }) =>
-        `UPDATE ${participantTable}
-         SET "archivedAt" = NULL, "updatedAt" = now()
+        `UPDATE ${participantTable} AS participant
+         SET "archivedAt" = NULL, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2
            AND "snoozedUntil" = $3 AND "archivedAt" IS NOT NULL
          RETURNING *`,
@@ -313,6 +348,10 @@ export class AgentChatThreadParticipantService {
   }
 
   async isFollowing(args: AgentChatThreadAccessArgs): Promise<boolean> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+
     const participant = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) => this.findOne({ manager, ...args }),
@@ -323,6 +362,10 @@ export class AgentChatThreadParticipantService {
 
   // For the row written along with a new thread
   async emitParticipantCreated(args: AgentChatThreadAccessArgs): Promise<void> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+
     const participant = await this.threadRepository.query(
       args.workspaceId,
       ({ manager }) => this.findOne({ manager, ...args }),
@@ -383,7 +426,7 @@ export class AgentChatThreadParticipantService {
                "archivedAt" = NULL,
                "snoozedUntil" = NULL,
                "isSubscribed" = true,
-               "updatedAt" = now()
+               "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
              ${buildAgentChatThreadParticipantOwnerShareInsert({ workspaceId, participantSource: 'participant', objectMetadataIdParameter: '$4' })}
@@ -453,6 +496,8 @@ export class AgentChatThreadParticipantService {
     AgentChatThreadAccessArgs,
     'threadId'
   >): Promise<AgentChatOpenThreadsSummaryDTO> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
+
     const authContext = await this.sharingService.getAuthContext({
       workspaceId,
       workspaceMemberId,
@@ -483,21 +528,20 @@ export class AgentChatThreadParticipantService {
           >
         >(
           `WITH open_thread AS (
-             SELECT thread."assigneeId", thread."pendingQuestionMessageId", participant."lastMentionedAt",
+             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${HAS_UNRESOLVED_MENTION} AS "hasUnresolvedMention",
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
              JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
-             WHERE participant."isSubscribed"
-               AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt")
+             WHERE ${IS_IN_INBOX}
            )
            SELECT
              COUNT(*)::int AS "openThreadCount",
              COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
-             COALESCE(BOOL_OR("isUnread" AND "lastMentionedAt" IS NOT NULL), false) AS "hasUnreadMentionThread",
+             COALESCE(BOOL_OR("isUnread" AND "hasUnresolvedMention"), false) AS "hasUnreadMentionThread",
              COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
            FROM open_thread`,
           {
@@ -528,7 +572,12 @@ export class AgentChatThreadParticipantService {
     await this.delayedJobsQueueService.add<EndAgentChatThreadSnoozeJobData>(
       END_AGENT_CHAT_THREAD_SNOOZE_JOB_NAME,
       data,
-      { delay, ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS },
+      {
+        delay,
+        ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS,
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

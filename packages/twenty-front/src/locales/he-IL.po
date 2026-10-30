@@ -121,11 +121,15 @@ msgstr "\"{path}\" אינו ערך"
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" אינו תת-שדה של \"{fieldName}\""
 
-#. js-lingui-id: TaLmrR
-#. placeholder {0}: formatNumber(currentCreditsByPeriod, { decimals: 2 })
+#. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "({0} credits)"
-msgstr "({0} קרדיטים)"
+msgid "({currentCreditsByPeriodDisplay} credits/month)"
+msgstr "({currentCreditsByPeriodDisplay} קרדיטים/חודש)"
+
+#. js-lingui-id: M9SJOb
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({currentCreditsByPeriodDisplay} credits/year)"
+msgstr "({currentCreditsByPeriodDisplay} קרדיטים/שנה)"
 
 #. js-lingui-id: LWobc0
 #: src/modules/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel.ts
@@ -903,11 +907,6 @@ msgstr "{morphRelationCount} אובייקטים"
 msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits} free credit} other {You earned {formattedNewlyEarnedCredits} free credits}}"
 msgstr "{newlyEarnedCredits, plural, one {הרווחתם {formattedNewlyEarnedCredits} קרדיט חינם} two {הרווחתם {formattedNewlyEarnedCredits} קרדיטים בחינם} other {הרווחתם {formattedNewlyEarnedCredits} קרדיטים בחינם}}"
 
-#. js-lingui-id: m4Hyoo
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "{nonVettedCount, plural, one {No vetted application matches. # non-vetted application is available.} other {No vetted application matches. # non-vetted applications are available.}}"
-msgstr "{nonVettedCount, plural, one {אין התאמה ליישום שנבדק. יישום אחד שלא נבדק זמין.} two {אין התאמה ליישום שנבדק. # יישומים שלא נבדקו זמינים.} other {אין התאמה ליישום שנבדק. # יישומים שלא נבדקו זמינים.}}"
-
 #. js-lingui-id: hKZAJk
 #: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
@@ -1051,6 +1050,26 @@ msgstr "{runCount, plural, one {# הרצה} two {# הרצות} other {# הרצו
 msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
 msgstr "{scopeLabel} — ברירת המחדל של המופע היא {defaultText}. השמירה חלה על סביבת עבודה זו בלבד."
 
+#. js-lingui-id: FTxMFo
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month"
+msgstr "{seatCreditsDisplay} ממושבים, מתאפסים בכל חודש"
+
+#. js-lingui-id: QzeEhD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each month · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} ממושבים, מתאפסים בכל חודש · {packageCreditsDisplay} מחבילת הקרדיטים שלך, עוברים לחודש הבא"
+
+#. js-lingui-id: d7aej9
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year"
+msgstr "{seatCreditsDisplay} קרדיטים ממושבים, מתאפסים בכל שנה"
+
+#. js-lingui-id: TfWeSD
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "{seatCreditsDisplay} from seats, reset each year · {packageCreditsDisplay} from your credit pack, roll over"
+msgstr "{seatCreditsDisplay} קרדיטים ממושבים, מתאפסים בכל שנה · {packageCreditsDisplay} מחבילת הקרדיטים שלך, מועברים הלאה"
+
 #. js-lingui-id: iL/HBr
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{seconds, plural, one {# second} other {# seconds}}"
@@ -1191,6 +1210,11 @@ msgstr "{unitCount, plural, one {שבוע} two {שבועות} many {שבועות
 msgid "{unitCount, plural, one {Year} other {Years}}"
 msgstr "{unitCount, plural, one {שנה} two {שנים} many {שנים} other {שנים}}"
 
+#. js-lingui-id: ojkfzC
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
+msgstr "{unlistedCount, plural, one {אין יישום תואם ברשימה. # יישום שאינו מופיע ברשימה זמין.} two {אין יישום תואם ברשימה. # יישומים שאינם מופיעים ברשימה זמינים.} other {אין יישום תואם ברשימה. # יישומים שאינם מופיעים ברשימה זמינים.}}"
+
 #. js-lingui-id: GChCUQ
 #: src/modules/marketplace/utils/buildObjectRecordsPermissionSummary.ts
 msgid "{unresolvedCount, plural, one {# other object} other {# other objects}}"
@@ -1212,10 +1236,10 @@ msgstr "{visibleFieldsCount} שדות גלויים"
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# פריט} two {# פריטים} many {# פריטים} other {# פריטים}}"
 
-#. js-lingui-id: bQNjUR
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "{workspaceCreditsSeats, plural, one {Includes {seatCreditsDisplay} credits for # seat, reset each period} other {Includes {seatCreditsDisplay} credits for # seats, reset each period}}"
-msgstr "{workspaceCreditsSeats, plural, one {כולל {seatCreditsDisplay} קרדיטים עבור מושב אחד, המתאפסים בכל תקופה} two {כולל {seatCreditsDisplay} קרדיטים עבור שני מושבים, המתאפסים בכל תקופה} other {כולל {seatCreditsDisplay} קרדיטים עבור # מושבים, המתאפסים בכל תקופה}}"
+#. js-lingui-id: imLPQY
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} credit/month} other {{workspaceCreditsPerSeatPerMonthDisplay} credits/month}}"
+msgstr "{workspaceCreditsPerSeatPerMonth, plural, one {{workspaceCreditsPerSeatPerMonthDisplay} קרדיט/חודש} two {{workspaceCreditsPerSeatPerMonthDisplay} קרדיטים/חודש} other {{workspaceCreditsPerSeatPerMonthDisplay} קרדיטים/חודש}}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -1281,7 +1305,7 @@ msgid "≈ 10,000 workflow steps"
 msgstr "≈ 10,000 שלבי תהליך עבודה"
 
 #. js-lingui-id: tSb6yd
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 100 AI tasks/week"
 msgstr "≈ 100 משימות AI/שבוע"
 
@@ -1297,7 +1321,7 @@ msgid "≈ 50,000 workflow steps"
 msgstr "≈ 50,000 שלבי תהליך עבודה"
 
 #. js-lingui-id: bLGKEo
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "≈ 500 AI tasks/week"
 msgstr "≈ 500 משימות AI/שבוע"
 
@@ -3221,7 +3245,7 @@ msgid "All tasks addressed. Maintain the momentum."
 msgstr "כל המשימות טופלו. שמרו על התנופה."
 
 #. js-lingui-id: 45Gm/K
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "All the applications currently installed on this workspace"
 msgstr "כל האפליקציות המותקנות כעת בסביבת עבודה זו"
 
@@ -3305,11 +3329,6 @@ msgstr "אפשר כניסה מבוססת גוגל למשתמשים עם הרשא
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "אפשר ייבוא נתונים מקבצי CSV"
-
-#. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Allow installation"
-msgstr "לאפשר התקנה"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -3699,6 +3718,11 @@ msgstr "גרש ונקודה"
 msgid "App"
 msgstr "אפליקציה"
 
+#. js-lingui-id: Y5ZsYw
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
+msgid "App configuration could not be loaded. Check your connection and try again."
+msgstr "לא ניתן היה לטעון את תצורת האפליקציה. בדוק את החיבור שלך ונסה שוב."
+
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "App deleted successfully"
@@ -3776,11 +3800,6 @@ msgstr "היישום הותקן בהצלחה."
 msgid "Application Logs"
 msgstr "יומני היישום"
 
-#. js-lingui-id: l/T809
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Application not listed on the marketplace. It was shared via a direct link"
-msgstr "האפליקציה אינה מופיעה במרקטפלייס. היא שותפה באמצעות קישור ישיר"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3820,10 +3839,10 @@ msgstr "משתנה יישום"
 msgid "Applications"
 msgstr "יישומים"
 
-#. js-lingui-id: ZlXhiU
+#. js-lingui-id: q7rlQw
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Applications below are not vetted. Use at your own risk."
-msgstr "היישומים הבאים לא נבדקו. השימוש באחריותך בלבד."
+msgid "Applications below have not been reviewed by Twenty. Use at your own risk."
+msgstr "היישומים הבאים לא נבדקו על ידי Twenty. השימוש באחריותך בלבד."
 
 #. js-lingui-id: p98xmP
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
@@ -6917,6 +6936,12 @@ msgstr "התחברות למרחב עבודה זה"
 msgid "Connect via IMAP/SMTP"
 msgstr "התחבר דרך IMAP/SMTP"
 
+#. js-lingui-id: LqKH42
+#. placeholder {0}: provider.displayName
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+msgid "Connect with {0}"
+msgstr "התחבר עם {0}"
+
 #. js-lingui-id: vPwoq6
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsEmptyState.tsx
 #: src/modules/settings/app-preferences/components/SettingsApplicationConnectCards.tsx
@@ -8008,6 +8033,11 @@ msgstr "הגעת למגבלת האשראי. פנה למנהל המערכת של�
 msgid "Credit limit reached. Update your credit plan to keep workflows, AI, and apps running."
 msgstr "הגעת למגבלת האשראי. עדכן את תוכנית האשראי שלך כדי לשמור על פעילותם של תהליכי העבודה, AI והאפליקציות."
 
+#. js-lingui-id: M9521O
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Credit pack"
+msgstr "חבילת קרדיטים"
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -8050,7 +8080,6 @@ msgstr "קרדיטים"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
-#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -9680,11 +9709,6 @@ msgstr "שם תצוגה עבור המודל"
 msgid "Display text on multiple lines"
 msgstr "הצג טקסט במספר שורות"
 
-#. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Display this app in the NPM packages list"
-msgstr "הצג אפליקציה זו ברשימת חבילות NPM"
-
 #. js-lingui-id: vU/Hht
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -10087,6 +10111,11 @@ msgstr "כל חבר מקבל מכסת AI, המשמשת לפני קרדיטי ס�
 msgid "Each slice represents"
 msgstr "כל פרוסה מייצגת"
 
+#. js-lingui-id: 5oD9f/
+#: src/modules/ai/utils/groupThreadsByDate.ts
+msgid "Earlier"
+msgstr "מוקדם יותר"
+
 #. js-lingui-id: tOkc8o
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Earliest"
@@ -10416,11 +10445,6 @@ msgstr "אימייל וצ'אט"
 msgid "Email and password are required"
 msgstr "נדרשים דוא״ל וסיסמה"
 
-#. js-lingui-id: snb/bC
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Email campaigns"
-msgstr "קמפיינים בדוא\"ל"
-
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -10695,11 +10719,6 @@ msgstr "הפעל"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "הפעל אפשרויות עקיפה"
-
-#. js-lingui-id: vs9cre
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr "הפעלת קמפיינים בדוא\"ל, רשימות וניהול ביטול הרשמה."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -11125,6 +11144,11 @@ msgstr "הזן את הטקסט שלך"
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog.tsx
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "הכנס את קוד האימות הדו-שלבי כדי לאשר."
+
+#. js-lingui-id: YKwRCb
+#: src/modules/salesfarce/components/SalesfarceBadge.tsx
+msgid "Enterprise only"
+msgstr "Enterprise בלבד"
 
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -14586,6 +14610,11 @@ msgstr "כלול הודעות דוא\"ל שבהן כל המשתתפים מאות
 msgid "Included"
 msgstr "כלול"
 
+#. js-lingui-id: 6FtcQl
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Included per seat"
+msgstr "כלול לכל מושב"
+
 #. js-lingui-id: mtGDyy
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -14833,7 +14862,7 @@ msgid "Installed"
 msgstr "מותקן"
 
 #. js-lingui-id: OMxM9j
-#: src/pages/settings/applications/tabs/SettingsApplicationsInstalledTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsInstalledAppsSection.tsx
 msgid "Installed apps"
 msgstr "אפליקציות מותקנות"
 
@@ -15673,7 +15702,7 @@ msgid "Last active {lastActive}"
 msgstr "פעילות אחרונה {lastActive}"
 
 #. js-lingui-id: vmfZix
-#. placeholder {0}: session.ipAddress
+#. placeholder {0}: details.join(' · ')
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Last active {lastActive} · {0}"
 msgstr "פעילות אחרונה {lastActive} · {0}"
@@ -16250,8 +16279,14 @@ msgstr "רשימה עם תיבות סימון"
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
 msgstr "מופיע"
+
+#. js-lingui-id: Xf6LIi
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
+msgid "Listed on the marketplace"
+msgstr "מופיעה במרקטפלייס"
 
 #. js-lingui-id: 5wIe5g
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -16301,6 +16336,11 @@ msgstr "טען עוד"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults.tsx
 msgid "Load more chats"
 msgstr "טען צ'אטים נוספים"
+
+#. js-lingui-id: dW52Ic
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
+msgid "Load more conversations"
+msgstr "טען שיחות נוספות"
 
 #. js-lingui-id: CZGQgK
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
@@ -16436,6 +16476,7 @@ msgstr "טוען..."
 
 #. js-lingui-id: Pwqkdw
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
 msgstr "טוען…"
@@ -16881,10 +16922,10 @@ msgstr "סמן הכול כבוצע"
 msgid "Mark as favourite"
 msgstr "סמן כמועדף"
 
-#. js-lingui-id: fI1Tll
+#. js-lingui-id: 0SF1cJ
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Mark this app as reviewed and approved"
-msgstr "סמן אפליקציה זו כנסקרה ואושרה"
+msgid "Mark this app as reviewed and show it in the marketplace"
+msgstr "סמנו אפליקציה זו כנבדקה והציגו אותה במרקטפלייס"
 
 #. js-lingui-id: u6Hp4N
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
@@ -17158,6 +17199,11 @@ msgstr "מזג רשומות"
 msgid "Merge review tabs"
 msgstr "לשוניות סקירת מיזוג"
 
+#. js-lingui-id: B59qMi
+#: src/modules/side-panel/hooks/useOpenMergeWithRecordInSidePanel.ts
+msgid "Merge with"
+msgstr "מיזוג עם"
+
 #. js-lingui-id: 1uAvIV
 #: src/modules/ai/constants/CrudToolOperationVerbs.ts
 msgid "Merged {objectLabel}"
@@ -17333,7 +17379,7 @@ msgid "Missing calendar permission."
 msgstr "חסרה הרשאת לוח שנה."
 
 #. js-lingui-id: XLNNcv
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Missing configuration"
 msgstr "תצורה חסרה"
 
@@ -19358,7 +19404,7 @@ msgid "Not configured"
 msgstr "לא הוגדר"
 
 #. js-lingui-id: S33tz3
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Not connected"
 msgstr "לא מחובר"
 
@@ -20782,8 +20828,8 @@ msgid "Per"
 msgstr "לכל"
 
 #. js-lingui-id: nU1kSZ
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "לכל חבר"
 
@@ -20894,8 +20940,9 @@ msgid "Person ID"
 msgstr "מזהה אדם"
 
 #. js-lingui-id: Lz7jRL
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingUserCreditsSection.tsx
-#: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
+#: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "Personal AI usage"
 msgstr "שימוש אישי ב-AI"
@@ -21964,8 +22011,8 @@ msgid "Reconnect"
 msgstr "התחבר מחדש"
 
 #. js-lingui-id: XsIxsL
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Reconnect needed"
 msgstr "נדרש חיבור מחדש"
@@ -22312,6 +22359,11 @@ msgstr "דחה"
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "נדחה"
+
+#. js-lingui-id: bFZR4R
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "related record path"
+msgstr "נתיב רשומה קשורה"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -22871,6 +22923,11 @@ msgstr "איפוס לערך סטטי"
 msgid "Reset variable"
 msgstr "אפס משתנה"
 
+#. js-lingui-id: gh0zvo
+#: src/modules/log-console/components/LogConsoleTableHeaderCell.tsx
+msgid "Resize {label} column"
+msgstr "שנה את גודל העמודה {label}"
+
 #. js-lingui-id: NlGeAu
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Resize input"
@@ -23410,6 +23467,11 @@ msgstr "רוסית"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "מכירות"
+
+#. js-lingui-id: T3H3GG
+#: src/pages/settings/profile/appearance/components/SettingsAppearance.tsx
+msgid "Salesfarce"
+msgstr "סיילספארס"
 
 #. js-lingui-id: L8TxaD
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -25150,6 +25212,7 @@ msgstr "הצג תיבת דואר נכנס"
 
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 msgid "Show less"
 msgstr "הצג פחות"
 
@@ -25159,6 +25222,7 @@ msgid "Show logs"
 msgstr "הצג יומנים"
 
 #. js-lingui-id: fMPkxb
+#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -25185,6 +25249,11 @@ msgstr "הצג סוג פעילות זה בצירי זמן של רשומות"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Show this object's records in the command menu ({0})."
 msgstr "הצג את הרשומות של אובייקט זה בתפריט הפקודות ({0})."
+
+#. js-lingui-id: h9ze7D
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Show unlisted apps"
+msgstr "הצגת אפליקציות שאינן מופיעות ברשימה"
 
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -27276,11 +27345,11 @@ msgstr "יישום זה אינו זמין בחנות האפליקציות. יי�
 msgid "This application is not installed on this workspace. It may have been uninstalled or the link is incorrect."
 msgstr "יישום זה אינו מותקן בסביבת עבודה זו. ייתכן שהוסר או שהקישור שגוי."
 
-#. js-lingui-id: 5j3WfU
+#. js-lingui-id: +EhakQ
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "This application is not vetted by Twenty. Use at your own risk."
-msgstr "יישום זה לא נבדק על ידי Twenty. השימוש באחריותך בלבד."
+msgid "This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk."
+msgstr "אפליקציה זו אינה מופיעה במרקטפלייס ולא נבדקה על ידי Twenty. השימוש הוא על אחריותכם בלבד."
 
 #. js-lingui-id: X7w5n6
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -27615,6 +27684,7 @@ msgid "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 msgstr "תצוגה זו משתמשת ב-{usageLabel} באובייקט \"{0}\" שאינו נגיש."
 
 #. js-lingui-id: yByRxz
+#: src/modules/ai/utils/groupThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -29047,6 +29117,7 @@ msgstr "עדכן"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
@@ -29903,17 +29974,6 @@ msgstr ""
 msgid "Very High"
 msgstr "גבוה מאוד"
 
-#. js-lingui-id: Shfac6
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches.tsx
-msgid "Vetted"
-msgstr "מאומת"
-
-#. js-lingui-id: kl33NM
-#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
-msgid "Vetted only"
-msgstr "מאומתים בלבד"
-
 #. js-lingui-id: vSJd18
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Video"
@@ -30302,7 +30362,6 @@ msgstr "צפה בהדגמת חברים"
 
 #. js-lingui-id: Rxoy7e
 #: src/modules/settings/applications/components/SettingsApplicationStoppedBanner.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "We are currently encountering issues with this app, its behavior may be degraded while we work on a fix."
 msgstr "אנו נתקלים כעת בבעיות באפליקציה זו, ייתכן שהתנהגותה תהיה מוגבלת בזמן שאנו עובדים על תיקון."
 
@@ -30946,6 +31005,7 @@ msgid "Workspace creation failed"
 msgstr "יצירת שטח עבודה נכשלה"
 
 #. js-lingui-id: Rg6QK1
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Workspace credits"
 msgstr "קרדיטים של סביבת העבודה"
@@ -31284,12 +31344,6 @@ msgstr "אין לך גישה לאובייקט זה."
 #: src/modules/settings/components/SettingsProtectedRouteWrapper.tsx
 msgid "You don't have access to this settings page."
 msgstr "אין לך גישה לדף הגדרות זה."
-
-#. js-lingui-id: avCHlt
-#. placeholder {0}: provider.displayName
-#: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
-msgid "You have no {0} connection yet."
-msgstr "אין לך עדיין חיבור {0}."
 
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

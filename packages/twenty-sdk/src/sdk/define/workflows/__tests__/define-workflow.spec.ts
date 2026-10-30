@@ -61,6 +61,25 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts the trigger state a workflow built in the workflow builder pulls with', () => {
+    const { universalIdentifier: _universalIdentifier, ...trigger } =
+      workflow.version.trigger;
+    const pulled = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...trigger,
+          name: 'Launch manually',
+          position: null,
+          outputSchema: {},
+        },
+      },
+    };
+
+    expect(defineWorkflow(pulled).errors).toEqual([]);
+  });
+
   it('accepts a workflow flagged as system', () => {
     const systemWorkflow = { ...workflow, isSystem: true };
 

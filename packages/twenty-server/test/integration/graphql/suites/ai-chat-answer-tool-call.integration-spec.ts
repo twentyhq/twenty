@@ -173,6 +173,7 @@ describe('Answering a chat tool call', () => {
         streamId: response.body.data.answerToolCall.streamId,
         userWorkspaceId,
       }),
+      expect.anything(),
     );
 
     await stopStream();
@@ -209,6 +210,7 @@ describe('Answering a chat tool call', () => {
         threadId,
         streamId: last.body.data.answerToolCall.streamId,
       }),
+      expect.anything(),
     );
   });
 

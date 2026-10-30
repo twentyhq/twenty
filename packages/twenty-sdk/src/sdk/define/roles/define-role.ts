@@ -1,6 +1,22 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+
+const keepEachPermissionFlagOnce = <
+  TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
+>(
+  config: TConfig,
+): TConfig =>
+  isDefined(config.permissionFlagUniversalIdentifiers)
+    ? {
+        ...config,
+        permissionFlagUniversalIdentifiers: [
+          ...new Set(config.permissionFlagUniversalIdentifiers),
+        ],
+      }
+    : config;
 
 export const defineRole: DefineEntity<RoleConfig> = (config) => {
   const errors = [];
@@ -112,5 +128,8 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({
+    config: keepEachPermissionFlagOnce(config),
+    errors,
+  });
 };

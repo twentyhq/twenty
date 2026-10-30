@@ -124,7 +124,7 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       predicates: [
         {
           fieldMetadataId: companyNameFieldMetadataId,
-          operand: RowLevelPermissionPredicateOperand.IS,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
           value: 'Test Company',
           subFieldName: null,
           workspaceMemberFieldMetadataId: null,
@@ -147,7 +147,7 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
         id: expect.any(String),
         fieldMetadataId: companyNameFieldMetadataId,
         objectMetadataId: companyObjectMetadataId,
-        operand: RowLevelPermissionPredicateOperand.IS,
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
         value: 'Test Company',
         roleId: createdRoleId,
       },
@@ -290,7 +290,7 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
         {
           id: createdPredicateId,
           fieldMetadataId: companyNameFieldMetadataId,
-          operand: RowLevelPermissionPredicateOperand.IS,
+          operand: RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
           value: 'Updated Value',
         },
       ],
@@ -315,7 +315,7 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       updateData.upsertRowLevelPermissionPredicates.predicates[0],
     ).toMatchObject({
       id: createdPredicateId,
-      operand: RowLevelPermissionPredicateOperand.IS,
+      operand: RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
       value: 'Updated Value',
     });
 

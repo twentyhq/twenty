@@ -166,7 +166,11 @@ node packages/twenty-cli/scripts/prepublish.mjs
 
 ## App integration tests
 
-`app-template/src/__tests__` supplies the integration-test setup for CLI-created apps.
+`app-template/` contains the shared project scaffold. `app init` layers
+`app-template/example/files/` and `example/scripts.json` onto it; `app pull`
+uses only the shared scaffold before writing the exported definitions.
+
+`app-template/example/files/src/__tests__` supplies the integration-test setup for CLI-created apps.
 It deploys the app before tests and uninstalls it afterward by invoking the
 installed CLI with `--json`. Apps invoke the executable rather than import the
 CLI as a library or add it as a dependency. See the

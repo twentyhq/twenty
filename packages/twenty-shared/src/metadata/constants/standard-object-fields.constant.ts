@@ -17,6 +17,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },
     title: { universalIdentifier: '9283c05e-127c-46ec-82e9-6424a7c0a2f1' },
+    conversationType: {
+      universalIdentifier: '66f93c2f-ae10-4c1a-8510-355a521f7899',
+    },
     isAssistantParticipant: {
       universalIdentifier: 'd901f5bc-23ba-48ac-9103-145da4b76afe',
     },
@@ -111,6 +114,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     lastMentionedAt: {
       universalIdentifier: '52a54602-633f-496a-966a-9a70437fa887',
+    },
+    mentionsResolvedAt: {
+      universalIdentifier: '12c0b0c8-86b2-48e5-8e2f-56a9eb9162c4',
     },
   },
   agentChatThreadTarget: {

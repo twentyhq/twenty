@@ -16,10 +16,7 @@ export const computeWorkflowManifestOutputSchema = ({
     | 'agentOutputSchemaByUniversalIdentifier'
   >;
 }): Record<string, unknown> => {
-  if (
-    isDefined(step.outputSchema) &&
-    Object.keys(step.outputSchema).length > 0
-  ) {
+  if (isDefined(step.outputSchema)) {
     return step.outputSchema;
   }
 

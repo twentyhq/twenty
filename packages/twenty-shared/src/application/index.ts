@@ -189,6 +189,7 @@ export type {
   IdentifiedAccount,
   IdentifyAccountResult,
 } from './identifyAccountType';
+export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
@@ -313,6 +314,7 @@ export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
 export {
+  workflowManifestPositionSchema,
   workflowStepFilterManifestSchema,
   workflowStepManifestSchema,
 } from './workflowStepManifestType';

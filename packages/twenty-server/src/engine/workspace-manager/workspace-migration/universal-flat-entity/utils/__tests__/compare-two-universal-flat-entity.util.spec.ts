@@ -12,6 +12,7 @@ import {
 
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
+import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -48,6 +49,18 @@ const buildApplicationVariable = ({ isSecret }: { isSecret: boolean }) =>
     universalIdentifier: 'application-variable-universal-identifier',
     defaultValue: null,
     isSecret,
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    now: NOW,
+  });
+
+const buildViewField = ({ position }: { position: number }) =>
+  fromViewFieldManifestToUniversalFlatViewField({
+    viewFieldManifest: {
+      universalIdentifier: 'view-field-universal-identifier',
+      fieldMetadataUniversalIdentifier: 'field-metadata-universal-identifier',
+      position,
+    },
+    viewUniversalIdentifier: 'view-universal-identifier',
     applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     now: NOW,
   });
@@ -193,6 +206,22 @@ describe('compareTwoFlatEntity', () => {
         }),
       ).toEqual({
         update: { title: 'Renamed' },
+        nonUpdatablePropertyDivergences: [],
+      });
+    });
+
+    it('should ignore the isSystemSideEffect flag of an engine-provisioned entity', () => {
+      expect(
+        compareTwoFlatEntity({
+          fromUniversalFlatEntity: {
+            ...buildViewField({ position: 3 }),
+            isSystemSideEffect: true,
+          },
+          toUniversalFlatEntity: buildViewField({ position: 0.5 }),
+          metadataName: 'viewField',
+        }),
+      ).toEqual({
+        update: { position: 0.5 },
         nonUpdatablePropertyDivergences: [],
       });
     });
