@@ -1,4 +1,5 @@
 import { mkdtemp, rm, writeFile } from 'fs/promises';
+import { z } from 'zod';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { installYarnDependencies } from 'src/engine/core-modules/application/application-package/constants/yarn-engine/install-yarn-dependencies.cjs';
@@ -37,6 +38,11 @@ export const installAndBuildFrontComponentSharedDependencies = async ({
 
     return await buildFrontComponentSharedDependencies({
       resolveDirectory: directory,
+      dependencies: z
+        .object({
+          frontComponentSharedDependencies: z.array(z.string()).optional(),
+        })
+        .parse(JSON.parse(packageJson)).frontComponentSharedDependencies,
     });
   } finally {
     await rm(directory, { recursive: true, force: true });

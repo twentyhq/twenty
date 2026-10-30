@@ -113,6 +113,21 @@ describe('installAndBuildFrontComponentSharedDependencies', () => {
     await expect(access(directory)).rejects.toThrow();
   });
 
+  it('uses the app shared dependency declaration when creating its bundle', async () => {
+    const dependencies = ['react', 'twenty-ui/theme'];
+    await installAndBuildFrontComponentSharedDependencies({
+      packageJson: JSON.stringify({
+        ...JSON.parse(packageJson),
+        frontComponentSharedDependencies: dependencies,
+      }),
+      yarnLock,
+      yarnEngineDirectory,
+    });
+    expect(build).toHaveBeenCalledWith(
+      expect.objectContaining({ dependencies }),
+    );
+  });
+
   it.each(['install', 'build'])(
     'removes the temporary install after %s fails',
     async (stage) => {

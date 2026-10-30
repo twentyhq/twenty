@@ -3,6 +3,4 @@ export type FileFieldSettings = {
   toDelete: boolean;
 };
 
-export type FileSettings = FileFieldSettings & {
-  expiresAt?: string;
-};
+export type FileSettings = FileFieldSettings;
