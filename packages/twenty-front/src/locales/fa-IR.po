@@ -3924,7 +3924,7 @@ msgstr "تنظیمات برگزیده برنامه‌ها"
 #. js-lingui-id: Nk6yc9
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
-msgstr ""
+msgstr "ترجیحات برنامه‌ها - تنظیمات"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -8949,6 +8949,11 @@ msgstr "نام و توضیحات شیء خود را تعریف کنید"
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
 msgid "Define the name and instructions for this skill"
 msgstr "نام و دستورالعمل‌های این مهارت را تعریف کنید"
+
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "روابطی را تعریف کنید که مجوزهای یک رکورد در امتداد آن‌ها به رکوردهای مرتبط گسترش می‌یابند."
 
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -22370,6 +22375,11 @@ msgstr "رد شد"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "مسیر رکورد مرتبط"
+
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "مسیرهای رکوردهای مرتبط"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts

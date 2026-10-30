@@ -9,6 +9,7 @@ import { type HostFocusController } from '@/host/focus/types/HostFocusController
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
+import { createHostOutsidePressControllerStub } from '@/testing/createHostOutsidePressControllerStub';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentWorkerEffect } from '../FrontComponentWorkerEffect';
 
@@ -121,6 +122,7 @@ describe('FrontComponentWorkerEffect', () => {
           geometryTracker: createGeometryTrackerStub(),
           hostFocusController: createHostFocusControllerStub(),
           hostScrollController: createHostScrollControllerStub(),
+          outsidePressController: createHostOutsidePressControllerStub(),
           setReceiver,
           setThread: jest.fn(),
           setError,
