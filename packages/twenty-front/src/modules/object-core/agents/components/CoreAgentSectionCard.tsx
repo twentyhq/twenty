@@ -17,15 +17,15 @@ const StyledContainer = styled.div`
   }
 `;
 
-type CoreAgentListContainerProps = {
+type CoreAgentSectionCardProps = {
   children: ReactNode;
   hasGap?: boolean;
 };
 
-export const CoreAgentListContainer = ({
+export const CoreAgentSectionCard = ({
   children,
   hasGap = false,
-}: CoreAgentListContainerProps) => (
+}: CoreAgentSectionCardProps) => (
   <StyledContainer data-has-gap={hasGap || undefined}>
     {children}
   </StyledContainer>

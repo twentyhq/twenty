@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-export type CoreAgentListItem = {
+export type CoreAgentSectionListItem = {
   id: string;
   label: string;
   description?: string;

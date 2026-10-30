@@ -2,21 +2,19 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type AgentTrigger } from 'twenty-shared/application';
 import { SidePanelPages } from 'twenty-shared/types';
-import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
-import { CoreAgentTriggerTypeIcon } from '@/object-core/agents/components/CoreAgentTriggerTypeIcon';
+import { CoreAgentTriggerTypeItem } from '@/object-core/agents/components/CoreAgentTriggerTypeItem';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useOpenCoreAgentSidePanelPage } from '@/object-core/agents/hooks/useOpenCoreAgentSidePanelPage';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { buildDefaultCoreAgentTrigger } from '@/object-core/agents/utils/buildDefaultCoreAgentTrigger';
 import { getCoreAgentDefaultTriggerObjectNameSingular } from '@/object-core/agents/utils/getCoreAgentDefaultTriggerObjectNameSingular';
-import { getCoreAgentTriggerTypeInfo } from '@/object-core/agents/utils/getCoreAgentTriggerTypeInfo';
+import { getCoreAgentTriggerTypeLabelAndIcon } from '@/object-core/agents/utils/getCoreAgentTriggerTypeLabelAndIcon';
 import { parseCoreAgentTriggers } from '@/object-core/agents/utils/parseCoreAgentTriggers';
 import { useObjectMetadataItemSelectOptions } from '@/object-metadata/hooks/useObjectMetadataItemSelectOptions';
-import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 
 const StyledList = styled.div`
@@ -52,7 +50,7 @@ export const CoreAgentTriggerTypeList = ({
       triggers: [...currentDraft.triggers, trigger],
     }));
 
-    const { label, icon } = getCoreAgentTriggerTypeInfo(trigger);
+    const { label, icon } = getCoreAgentTriggerTypeLabelAndIcon(trigger);
 
     openCoreAgentSidePanelPage({
       agentId: agent.id,
@@ -75,31 +73,19 @@ export const CoreAgentTriggerTypeList = ({
           });
 
           return (
-            <ListItemButton
+            <CoreAgentTriggerTypeItem
               key={triggerType.defaultLabel}
-              startIcon={
-                <ListItemIconContainer>
-                  <CoreAgentTriggerTypeIcon trigger={trigger} />
-                </ListItemIconContainer>
-              }
+              trigger={trigger}
               onClick={() => addTrigger(trigger)}
-            >
-              {getCoreAgentTriggerTypeInfo(trigger).label}
-            </ListItemButton>
+            />
           );
         })}
       </CommandMenuItemSectionGroup>
       <CommandMenuItemSectionGroup heading={t`Others`}>
-        <ListItemButton
-          startIcon={
-            <ListItemIconContainer>
-              <CoreAgentTriggerTypeIcon trigger={cronTrigger} />
-            </ListItemIconContainer>
-          }
+        <CoreAgentTriggerTypeItem
+          trigger={cronTrigger}
           onClick={() => addTrigger(cronTrigger)}
-        >
-          {getCoreAgentTriggerTypeInfo(cronTrigger).label}
-        </ListItemButton>
+        />
       </CommandMenuItemSectionGroup>
     </StyledList>
   );

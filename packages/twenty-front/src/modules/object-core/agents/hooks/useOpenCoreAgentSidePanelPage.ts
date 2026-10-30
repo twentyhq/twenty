@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -12,45 +11,42 @@ export const useOpenCoreAgentSidePanelPage = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openCoreAgentSidePanelPage = useCallback(
-    ({
+  const openCoreAgentSidePanelPage = ({
+    agentId,
+    triggerId = null,
+    page,
+    pageTitle,
+    pageIcon,
+  }: {
+    agentId: string;
+    triggerId?: string | null;
+    page: CoreAgentSidePanelPage;
+    pageTitle: string;
+    pageIcon: IconComponent;
+  }) => {
+    const pageId = v4();
+
+    store.set(
+      coreAgentSidePanelAgentIdComponentState.atomFamily({
+        instanceId: pageId,
+      }),
       agentId,
-      triggerId = null,
+    );
+    store.set(
+      coreAgentSidePanelTriggerIdComponentState.atomFamily({
+        instanceId: pageId,
+      }),
+      triggerId,
+    );
+
+    navigateSidePanelMenu({
       page,
       pageTitle,
       pageIcon,
-    }: {
-      agentId: string;
-      triggerId?: string | null;
-      page: CoreAgentSidePanelPage;
-      pageTitle: string;
-      pageIcon: IconComponent;
-    }) => {
-      const pageId = v4();
-
-      store.set(
-        coreAgentSidePanelAgentIdComponentState.atomFamily({
-          instanceId: pageId,
-        }),
-        agentId,
-      );
-      store.set(
-        coreAgentSidePanelTriggerIdComponentState.atomFamily({
-          instanceId: pageId,
-        }),
-        triggerId,
-      );
-
-      navigateSidePanelMenu({
-        page,
-        pageTitle,
-        pageIcon,
-        pageId,
-        resetNavigationStack: true,
-      });
-    },
-    [navigateSidePanelMenu, store],
-  );
+      pageId,
+      resetNavigationStack: true,
+    });
+  };
 
   return { openCoreAgentSidePanelPage };
 };

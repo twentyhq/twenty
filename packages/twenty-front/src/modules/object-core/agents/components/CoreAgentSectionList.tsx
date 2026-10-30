@@ -5,8 +5,8 @@ import { IconPencil, IconTrash } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreAgentListContainer } from '@/object-core/agents/components/CoreAgentListContainer';
-import { type CoreAgentListItem } from '@/object-core/agents/types/CoreAgentListItem';
+import { CoreAgentSectionCard } from '@/object-core/agents/components/CoreAgentSectionCard';
+import { type CoreAgentSectionListItem } from '@/object-core/agents/types/CoreAgentSectionListItem';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 
 const StyledEmptyMessage = styled.span`
@@ -15,13 +15,16 @@ const StyledEmptyMessage = styled.span`
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-type CoreAgentListProps = {
-  items: CoreAgentListItem[];
+type CoreAgentSectionListProps = {
+  items: CoreAgentSectionListItem[];
   emptyMessage: string;
 };
 
-export const CoreAgentList = ({ items, emptyMessage }: CoreAgentListProps) => (
-  <CoreAgentListContainer>
+export const CoreAgentSectionList = ({
+  items,
+  emptyMessage,
+}: CoreAgentSectionListProps) => (
+  <CoreAgentSectionCard>
     {items.length === 0 ? (
       <StyledEmptyMessage>{emptyMessage}</StyledEmptyMessage>
     ) : (
@@ -58,5 +61,5 @@ export const CoreAgentList = ({ items, emptyMessage }: CoreAgentListProps) => (
         </ListItem>
       ))
     )}
-  </CoreAgentListContainer>
+  </CoreAgentSectionCard>
 );

@@ -10,6 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { RECORD_IS_UPDATED_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/RecordIsUpdatedTrigger';
 
 type CoreAgentRecordTriggerFormProps = {
   trigger: AgentDatabaseEventTrigger;
@@ -74,18 +75,19 @@ export const CoreAgentRecordTriggerForm = ({
         dropdownSideOffset={4}
         dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
       />
-      {isDefined(selectedObjectMetadataItem) && event === 'updated' && (
-        <WorkflowFieldsMultiSelect
-          key={objectType}
-          label={t`Fields (Optional)`}
-          placeholder={t`Select specific fields to listen to`}
-          objectMetadataItem={selectedObjectMetadataItem}
-          handleFieldsChange={handleFieldsChange}
-          readonly={isReadOnly}
-          defaultFields={trigger.settings.updatedFields}
-          actionType="DATABASE_EVENT"
-        />
-      )}
+      {isDefined(selectedObjectMetadataItem) &&
+        event === RECORD_IS_UPDATED_TRIGGER.event && (
+          <WorkflowFieldsMultiSelect
+            key={objectType}
+            label={t`Fields (Optional)`}
+            placeholder={t`Select specific fields to listen to`}
+            objectMetadataItem={selectedObjectMetadataItem}
+            handleFieldsChange={handleFieldsChange}
+            readonly={isReadOnly}
+            defaultFields={trigger.settings.updatedFields}
+            actionType="DATABASE_EVENT"
+          />
+        )}
     </WorkflowStepBody>
   );
 };

@@ -5,12 +5,12 @@ import { IconEdit, IconTool } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
 
-import { CoreAgentList } from '@/object-core/agents/components/CoreAgentList';
+import { CoreAgentSectionList } from '@/object-core/agents/components/CoreAgentSectionList';
 import { CoreAgentSectionBody } from '@/object-core/agents/components/CoreAgentSectionBody';
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
 import { useOpenCoreAgentSidePanelPage } from '@/object-core/agents/hooks/useOpenCoreAgentSidePanelPage';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
-import { type CoreAgentListItem } from '@/object-core/agents/types/CoreAgentListItem';
+import { type CoreAgentSectionListItem } from '@/object-core/agents/types/CoreAgentSectionListItem';
 import { getCoreAgentEnabledToolFlags } from '@/object-core/agents/utils/getCoreAgentEnabledToolFlags';
 import { getRoleWithCoreAgentToolFlags } from '@/object-core/agents/utils/getRoleWithCoreAgentToolFlags';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
@@ -45,7 +45,7 @@ export const CoreAgentToolsSection = ({
       ),
     );
 
-  const items: CoreAgentListItem[] = toolPermissions
+  const items: CoreAgentSectionListItem[] = toolPermissions
     .filter((toolPermission) => enabledToolFlags.includes(toolPermission.key))
     .map((toolPermission) => {
       const toolName = toolPermission.name;
@@ -70,7 +70,7 @@ export const CoreAgentToolsSection = ({
         description={t`What tools can this agent use for its mission`}
       />
       <CoreAgentSectionBody>
-        <CoreAgentList
+        <CoreAgentSectionList
           items={items}
           emptyMessage={t`This agent can't use any tools yet.`}
         />

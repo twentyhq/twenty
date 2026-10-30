@@ -5,16 +5,16 @@ import { IconEdit, IconLock, useIcons } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
 
-import { CoreAgentList } from '@/object-core/agents/components/CoreAgentList';
+import { CoreAgentSectionList } from '@/object-core/agents/components/CoreAgentSectionList';
 import { CoreAgentSectionBody } from '@/object-core/agents/components/CoreAgentSectionBody';
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
 import { useOpenCoreAgentSidePanelPage } from '@/object-core/agents/hooks/useOpenCoreAgentSidePanelPage';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
-import { type CoreAgentListItem } from '@/object-core/agents/types/CoreAgentListItem';
+import { type CoreAgentSectionListItem } from '@/object-core/agents/types/CoreAgentSectionListItem';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
-import { setCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/setCoreAgentRecordAccessLevel';
+import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
@@ -50,7 +50,7 @@ export const CoreAgentDataAccessSection = ({
 
   const removeAccess = (objectMetadataId?: string) =>
     updateRole((currentRole) =>
-      setCoreAgentRecordAccessLevel({
+      getRoleWithCoreAgentRecordAccessLevel({
         role: currentRole,
         level: 'see',
         isEnabled: false,
@@ -60,7 +60,7 @@ export const CoreAgentDataAccessSection = ({
 
   const allRecordsLevels = getCoreAgentRecordAccessLevels({ role });
 
-  const allRecordsItems: CoreAgentListItem[] =
+  const allRecordsItems: CoreAgentSectionListItem[] =
     allRecordsLevels.length > 0
       ? [
           {
@@ -78,7 +78,7 @@ export const CoreAgentDataAccessSection = ({
         ]
       : [];
 
-  const objectItems: CoreAgentListItem[] =
+  const objectItems: CoreAgentSectionListItem[] =
     objectMetadataItemsThatCanHavePermission.flatMap((objectMetadataItem) => {
       const levels = getCoreAgentRecordAccessLevels({
         role,
@@ -120,7 +120,7 @@ export const CoreAgentDataAccessSection = ({
         description={t`Records this agent can see and change`}
       />
       <CoreAgentSectionBody>
-        <CoreAgentList
+        <CoreAgentSectionList
           items={[...allRecordsItems, ...objectItems]}
           emptyMessage={t`This agent can't see any records yet.`}
         />

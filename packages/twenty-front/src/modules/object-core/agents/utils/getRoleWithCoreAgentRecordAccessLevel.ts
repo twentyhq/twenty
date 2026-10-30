@@ -6,7 +6,7 @@ import { getRoleWithUpsertedObjectPermission } from '@/settings/roles/role-permi
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
-export const setCoreAgentRecordAccessLevel = ({
+export const getRoleWithCoreAgentRecordAccessLevel = ({
   role,
   level,
   isEnabled,

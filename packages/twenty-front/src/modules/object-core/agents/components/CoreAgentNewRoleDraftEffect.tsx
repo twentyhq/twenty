@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { buildCoreAgentNewRole } from '@/object-core/agents/utils/buildCoreAgentNewRole';
 import { getAvailableRoleLabel } from '@/object-core/agents/utils/getAvailableRoleLabel';
 import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -58,8 +59,9 @@ export const CoreAgentNewRoleDraftEffect = ({
     }
 
     const agentLabel = agent.label;
-    const newRole = {
-      id: coreAgentNewRoleId,
+    const newRole = buildCoreAgentNewRole({
+      roleId: coreAgentNewRoleId,
+      agent,
       label: getAvailableRoleLabel({
         label: t`${agentLabel} Agent Role`,
         takenLabels: settingsRoleIds.flatMap(
@@ -69,23 +71,7 @@ export const CoreAgentNewRoleDraftEffect = ({
         ),
       }),
       description: t`Role for ${agentLabel} agent`,
-      icon: 'IconLock',
-      canUpdateAllSettings: false,
-      canAccessAllTools: false,
-      canAccessAllAgentChatChannels: false,
-      canReadAllObjectRecords: false,
-      canUpdateAllObjectRecords: false,
-      canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
-      canBeAssignedToUsers: false,
-      canBeAssignedToAgents: true,
-      canBeAssignedToApiKeys: false,
-      applicationId: '',
-      isEditable: true,
-      workspaceMembers: [],
-      apiKeys: [],
-      agents: [agent],
-    };
+    });
 
     setSettingsDraftRole(newRole);
     setSettingsDraftRoleBase(newRole);

@@ -23,7 +23,7 @@ export const useCoreAgentEditionCommands = () => {
   });
   const { isDirty } = useCoreAgentDirtyState(currentCoreAgent);
 
-  const canEditCurrentCoreAgent =
+  const canSaveOrCancelCurrentCoreAgent =
     isDefined(currentCoreAgent) &&
     !isInPreviewMode &&
     !isCurrentCoreAgentReadOnly &&
@@ -31,12 +31,12 @@ export const useCoreAgentEditionCommands = () => {
 
   const saveCommandLabel = t`Save Agent`;
   const shouldDisplaySaveCommand =
-    canEditCurrentCoreAgent &&
+    canSaveOrCancelCurrentCoreAgent &&
     isMatchingSidePanelSearch({ label: saveCommandLabel, sidePanelSearch });
 
   const cancelEditionCommandLabel = t`Cancel Edition`;
   const shouldDisplayCancelEditionCommand =
-    canEditCurrentCoreAgent &&
+    canSaveOrCancelCurrentCoreAgent &&
     isMatchingSidePanelSearch({
       label: cancelEditionCommandLabel,
       sidePanelSearch,

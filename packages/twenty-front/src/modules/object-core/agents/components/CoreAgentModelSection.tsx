@@ -7,7 +7,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
 import { useAgentModelCapabilities } from '@/ai/hooks/useAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { CoreAgentListContainer } from '@/object-core/agents/components/CoreAgentListContainer';
+import { CoreAgentSectionCard } from '@/object-core/agents/components/CoreAgentSectionCard';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -53,7 +53,7 @@ export const CoreAgentModelSection = ({
           {t`No AI provider is configured on this instance.`}
         </StyledErrorMessage>
       ) : (
-        <CoreAgentListContainer hasGap>
+        <CoreAgentSectionCard hasGap>
           <AiModelPicker
             modelId={formValues.modelId}
             onModelIdChange={(value) => onFieldChange('modelId', value)}
@@ -80,7 +80,7 @@ export const CoreAgentModelSection = ({
               {capability.label}
             </SettingsRow>
           ))}
-        </CoreAgentListContainer>
+        </CoreAgentSectionCard>
       )}
     </Section.Root>
   );

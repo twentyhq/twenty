@@ -39,11 +39,13 @@ const toggleId = (ids: Set<string>, id: string): Set<string> => {
   return nextIds;
 };
 
-type CoreAgentRunsTabProps = {
+type CoreAgentRunsContentProps = {
   agentId: string;
 };
 
-export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
+export const CoreAgentRunsContent = ({
+  agentId,
+}: CoreAgentRunsContentProps) => {
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const [expandedThreadIds, setExpandedThreadIds] = useState<Set<string>>(
     new Set(),

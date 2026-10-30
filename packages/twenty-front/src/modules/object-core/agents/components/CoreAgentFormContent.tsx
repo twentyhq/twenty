@@ -32,7 +32,7 @@ import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/CoreAgentNewRoleDraftEffect';
 import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
 import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
-import { CoreAgentRunsTab } from '@/object-core/agents/components/CoreAgentRunsTab';
+import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
 import { CoreAgentSettingsContent } from '@/object-core/agents/components/CoreAgentSettingsContent';
 import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
@@ -174,7 +174,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
         />
         <SettingsPageContainer>
           {isShowingRuns ? (
-            <CoreAgentRunsTab agentId={agent.id} />
+            <CoreAgentRunsContent agentId={agent.id} />
           ) : (
             <CoreAgentSettingsContent
               agent={agent}

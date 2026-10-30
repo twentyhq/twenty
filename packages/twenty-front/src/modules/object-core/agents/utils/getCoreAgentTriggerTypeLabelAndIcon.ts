@@ -7,7 +7,7 @@ import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTri
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { CRON_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/CronTrigger';
 
-export const getCoreAgentTriggerTypeInfo = (
+export const getCoreAgentTriggerTypeLabelAndIcon = (
   trigger: AgentTrigger,
 ): { label: string; icon: string } => {
   if (trigger.type === 'CRON') {

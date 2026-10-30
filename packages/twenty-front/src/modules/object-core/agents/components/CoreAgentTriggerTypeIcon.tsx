@@ -2,7 +2,7 @@ import { type AgentTrigger } from 'twenty-shared/application';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
-import { getCoreAgentTriggerTypeInfo } from '@/object-core/agents/utils/getCoreAgentTriggerTypeInfo';
+import { getCoreAgentTriggerTypeLabelAndIcon } from '@/object-core/agents/utils/getCoreAgentTriggerTypeLabelAndIcon';
 
 type CoreAgentTriggerTypeIconProps = {
   trigger: AgentTrigger;
@@ -13,7 +13,7 @@ export const CoreAgentTriggerTypeIcon = ({
 }: CoreAgentTriggerTypeIconProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const Icon = getIcon(getCoreAgentTriggerTypeInfo(trigger).icon);
+  const Icon = getIcon(getCoreAgentTriggerTypeLabelAndIcon(trigger).icon);
 
   return (
     <Icon

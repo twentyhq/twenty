@@ -12,44 +12,47 @@ export const getWorkflowCronTriggerFromCoreAgentTrigger = (
 ): WorkflowCronTrigger => {
   const pattern = trigger.settings.pattern.trim();
 
-  const days = pattern.match(DAYS_PATTERN);
+  const daysMatch = pattern.match(DAYS_PATTERN);
 
-  if (isDefined(days)) {
+  if (isDefined(daysMatch)) {
     return {
       type: 'CRON',
       settings: {
         type: 'DAYS',
         schedule: {
-          minute: Number(days[1]),
-          hour: Number(days[2]),
-          day: Number(days[3]),
+          minute: Number(daysMatch[1]),
+          hour: Number(daysMatch[2]),
+          day: Number(daysMatch[3]),
         },
         outputSchema: {},
       },
     };
   }
 
-  const hours = pattern.match(HOURS_PATTERN);
+  const hoursMatch = pattern.match(HOURS_PATTERN);
 
-  if (isDefined(hours)) {
+  if (isDefined(hoursMatch)) {
     return {
       type: 'CRON',
       settings: {
         type: 'HOURS',
-        schedule: { minute: Number(hours[1]), hour: Number(hours[2]) },
+        schedule: {
+          minute: Number(hoursMatch[1]),
+          hour: Number(hoursMatch[2]),
+        },
         outputSchema: {},
       },
     };
   }
 
-  const minutes = pattern.match(MINUTES_PATTERN);
+  const minutesMatch = pattern.match(MINUTES_PATTERN);
 
-  if (isDefined(minutes)) {
+  if (isDefined(minutesMatch)) {
     return {
       type: 'CRON',
       settings: {
         type: 'MINUTES',
-        schedule: { minute: Number(minutes[1]) },
+        schedule: { minute: Number(minutesMatch[1]) },
         outputSchema: {},
       },
     };

@@ -1,10 +1,10 @@
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
-import { setCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/setCoreAgentRecordAccessLevel';
+import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 
-describe('setCoreAgentRecordAccessLevel', () => {
+describe('getRoleWithCoreAgentRecordAccessLevel', () => {
   it('grants see along with edit on one object only', () => {
-    const role = setCoreAgentRecordAccessLevel({
+    const role = getRoleWithCoreAgentRecordAccessLevel({
       role: DEFAULT_SETTINGS_DRAFT_ROLE,
       level: 'edit',
       isEnabled: true,
@@ -20,8 +20,8 @@ describe('setCoreAgentRecordAccessLevel', () => {
   });
 
   it('removes every level of an object when see is turned off, even if all records stay readable', () => {
-    const role = setCoreAgentRecordAccessLevel({
-      role: setCoreAgentRecordAccessLevel({
+    const role = getRoleWithCoreAgentRecordAccessLevel({
+      role: getRoleWithCoreAgentRecordAccessLevel({
         role: DEFAULT_SETTINGS_DRAFT_ROLE,
         level: 'edit',
         isEnabled: true,
@@ -38,8 +38,8 @@ describe('setCoreAgentRecordAccessLevel', () => {
   });
 
   it('keeps see when only edit is turned off', () => {
-    const role = setCoreAgentRecordAccessLevel({
-      role: setCoreAgentRecordAccessLevel({
+    const role = getRoleWithCoreAgentRecordAccessLevel({
+      role: getRoleWithCoreAgentRecordAccessLevel({
         role: DEFAULT_SETTINGS_DRAFT_ROLE,
         level: 'edit',
         isEnabled: true,

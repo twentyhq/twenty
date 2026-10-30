@@ -7,6 +7,7 @@ import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/compone
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
+import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
@@ -15,7 +16,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 type SidePanelCoreAgentRecordAccessGroupProps = {
   heading: string;
   Icon?: IconComponent;
-  icon?: ReactNode;
+  objectIcon?: ReactNode;
   role: RoleWithPartialMembers | undefined;
   objectMetadataId?: string;
   isReadOnly: boolean;
@@ -28,7 +29,7 @@ type SidePanelCoreAgentRecordAccessGroupProps = {
 export const SidePanelCoreAgentRecordAccessGroup = ({
   heading,
   Icon,
-  icon,
+  objectIcon,
   role,
   objectMetadataId,
   isReadOnly,
@@ -45,11 +46,14 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
     <CommandMenuItemSectionGroup
       heading={heading}
       Icon={Icon}
-      context={isDefined(icon) ? { icon } : undefined}
+      context={isDefined(objectIcon) ? { icon: objectIcon } : undefined}
     >
       {CORE_AGENT_RECORD_ACCESS_LEVELS.map(
         ({ level, label, allRecordsLabel, objectKey }) => {
-          const itemId = `${objectMetadataId ?? 'all-records'}-${level}`;
+          const itemId = getCoreAgentRecordAccessItemId({
+            objectMetadataId,
+            level,
+          });
           const isEnabled = enabledLevels.includes(level);
 
           return (
