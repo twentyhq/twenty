@@ -30,6 +30,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -115,7 +116,7 @@ export class ConnectionProviderLifecycleHookService {
     connectedAccountId: string;
   }): Promise<void> {
     await this.captureFailures(workspaceId, async () => {
-      const logicFunctionId = await this.resolveLogicFunctionId({
+      const logicFunction = await this.resolveLogicFunction({
         hook: 'onConnect',
         logicFunctionUniversalIdentifier:
           provider.onConnectLogicFunctionUniversalIdentifier,
@@ -123,18 +124,21 @@ export class ConnectionProviderLifecycleHookService {
         workspaceId,
       });
 
-      if (!isDefined(logicFunctionId)) {
+      if (!isDefined(logicFunction)) {
         return;
       }
 
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {
-          logicFunctionId,
+          logicFunctionId: logicFunction.id,
           workspaceId,
           payload: this.buildPayload({ provider, connectedAccountId }),
         },
         {
+          workspaceId,
+          applicationUniversalIdentifier:
+            logicFunction.applicationUniversalIdentifier,
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
         },
@@ -158,7 +162,7 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     accessToken: string;
   }): Promise<IdentifiedAccount | null> {
-    const logicFunctionId = await this.resolveLogicFunctionId({
+    const logicFunction = await this.resolveLogicFunction({
       hook: 'identifyAccount',
       logicFunctionUniversalIdentifier:
         provider.identifyAccountLogicFunctionUniversalIdentifier,
@@ -166,7 +170,7 @@ export class ConnectionProviderLifecycleHookService {
       workspaceId,
     });
 
-    if (!isDefined(logicFunctionId)) {
+    if (!isDefined(logicFunction)) {
       return null;
     }
 
@@ -179,7 +183,7 @@ export class ConnectionProviderLifecycleHookService {
     const data = await this.executeConnectionFlowHook({
       hook: 'identifyAccount',
       provider,
-      logicFunctionId,
+      logicFunctionId: logicFunction.id,
       workspaceId,
       payload,
     });
@@ -209,7 +213,7 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     callbackUrl: string;
   }): Promise<string> {
-    const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
+    const logicFunction = await this.resolveLogicFunctionOrThrow({
       hook: 'authorize',
       logicFunctionUniversalIdentifier:
         provider.customConfig.authorizeLogicFunctionUniversalIdentifier,
@@ -226,7 +230,7 @@ export class ConnectionProviderLifecycleHookService {
     const data = await this.executeConnectionFlowHook({
       hook: 'authorize',
       provider,
-      logicFunctionId,
+      logicFunctionId: logicFunction.id,
       workspaceId,
       payload,
     });
@@ -259,7 +263,7 @@ export class ConnectionProviderLifecycleHookService {
       'httpMethod' | 'queryStringParameters' | 'headers' | 'body' | 'rawBody'
     >;
   }): Promise<ParsedConnectedAccountFromCallback | null> {
-    const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
+    const logicFunction = await this.resolveLogicFunctionOrThrow({
       hook: 'callback',
       logicFunctionUniversalIdentifier:
         provider.customConfig.callbackLogicFunctionUniversalIdentifier,
@@ -276,7 +280,7 @@ export class ConnectionProviderLifecycleHookService {
     const data = await this.executeConnectionFlowHook({
       hook: 'callback',
       provider,
-      logicFunctionId,
+      logicFunctionId: logicFunction.id,
       workspaceId,
       payload,
     });
@@ -310,7 +314,7 @@ export class ConnectionProviderLifecycleHookService {
         id: connectionProviderId,
         workspaceId,
       });
-      const logicFunctionId = await this.resolveLogicFunctionId({
+      const logicFunction = await this.resolveLogicFunction({
         hook: 'onDisconnect',
         logicFunctionUniversalIdentifier:
           provider.onDisconnectLogicFunctionUniversalIdentifier,
@@ -318,12 +322,12 @@ export class ConnectionProviderLifecycleHookService {
         workspaceId,
       });
 
-      if (!isDefined(logicFunctionId)) {
+      if (!isDefined(logicFunction)) {
         return;
       }
 
       const executionResult = await this.logicFunctionExecutorService.execute({
-        logicFunctionId,
+        logicFunctionId: logicFunction.id,
         workspaceId,
         payload: this.buildPayload({ provider, connectedAccountId }),
         shouldEnforceUsageLimits: false,
@@ -393,7 +397,7 @@ export class ConnectionProviderLifecycleHookService {
     };
   }
 
-  private async resolveLogicFunctionId({
+  private async resolveLogicFunction({
     logicFunctionUniversalIdentifier,
     ...logicFunctionLookup
   }: {
@@ -401,18 +405,18 @@ export class ConnectionProviderLifecycleHookService {
     logicFunctionUniversalIdentifier: string | null;
     provider: ConnectionLifecycleHookProvider;
     workspaceId: string;
-  }): Promise<string | undefined> {
+  }): Promise<FlatLogicFunction | undefined> {
     if (!isDefined(logicFunctionUniversalIdentifier)) {
       return undefined;
     }
 
-    return this.resolveLogicFunctionIdOrThrow({
+    return this.resolveLogicFunctionOrThrow({
       ...logicFunctionLookup,
       logicFunctionUniversalIdentifier,
     });
   }
 
-  private async resolveLogicFunctionIdOrThrow({
+  private async resolveLogicFunctionOrThrow({
     hook,
     logicFunctionUniversalIdentifier,
     provider,
@@ -422,7 +426,7 @@ export class ConnectionProviderLifecycleHookService {
     logicFunctionUniversalIdentifier: string;
     provider: Pick<ConnectionLifecycleHookProvider, 'id' | 'applicationId'>;
     workspaceId: string;
-  }): Promise<string> {
+  }): Promise<FlatLogicFunction> {
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
@@ -441,6 +445,6 @@ export class ConnectionProviderLifecycleHookService {
       );
     }
 
-    return flatLogicFunction.id;
+    return flatLogicFunction;
   }
 }

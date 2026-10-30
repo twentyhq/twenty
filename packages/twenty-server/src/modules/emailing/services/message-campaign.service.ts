@@ -358,6 +358,8 @@ export class MessageCampaignService {
         {
           retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
           backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+          workspaceId,
+          isWorkspaceJob: true,
         },
       )
       .catch(async (error) => {

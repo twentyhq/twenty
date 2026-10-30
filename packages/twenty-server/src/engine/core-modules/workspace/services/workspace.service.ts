@@ -814,6 +814,10 @@ export class WorkspaceService {
           await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
             FileWorkspaceFolderDeletionJob.name,
             { workspaceId: workspace.id },
+            {
+              workspaceId: workspace.id,
+              isWorkspaceJob: true,
+            },
           );
 
           const emailingDomains = await this.coreDataSource
@@ -827,6 +831,10 @@ export class WorkspaceService {
               domains: emailingDomains.map(
                 (emailingDomain) => emailingDomain.domain,
               ),
+            },
+            {
+              workspaceId: workspace.id,
+              isWorkspaceJob: true,
             },
           );
 
@@ -869,6 +877,8 @@ export class WorkspaceService {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

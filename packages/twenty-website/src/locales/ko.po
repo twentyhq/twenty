@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-28 14:17\n"
+"PO-Revision-Date: 2026-10-29 14:18\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3673,7 +3673,7 @@ msgstr "CRM 화면을 넘어 확장"
 #. js-lingui-id: l8rr+n
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "앱으로 Twenty를 확장하세요 — 통화 녹음, 데이터 보강, Slack, Discord, Linear 등 다양한 앱을 사용할 수 있습니다. 오픈 소스 CRM 워크스페이스에 어떤 앱이든 클릭 한 번으로 설치하세요."
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
@@ -3683,7 +3683,7 @@ msgstr "CRM 확장하기"
 #. js-lingui-id: NJnspH
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps from Twenty and its community. Every app here is reviewed by our team for security and quality — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "Twenty와 커뮤니티의 앱으로 CRM을 확장하세요. 여기 있는 모든 앱은 보안과 품질을 위해 저희 팀이 검토합니다 — 클릭 한 번으로 설치하면 워크스페이스에서 바로 사용할 수 있습니다."
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4799,7 +4799,7 @@ msgstr "설치"
 #. js-lingui-id: f0Q+8L
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app reviewed by Twenty."
-msgstr ""
+msgstr "통화 녹음, 데이터 보강, Slack, Linear 등 다양한 앱을 설치하세요 — 모든 앱은 Twenty의 검토를 거쳤습니다."
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
@@ -7054,7 +7054,7 @@ msgstr "매출 (연초 이후 누적)"
 #. js-lingui-id: mO7Tm0
 #: src/sections/menu/data/menu.ts
 msgid "Reviewed apps for your workspace"
-msgstr ""
+msgstr "워크스페이스용 검토된 앱"
 
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -8738,7 +8738,7 @@ msgstr "Twenty | 오픈 소스 CRM 1위"
 #. js-lingui-id: yTS4CJ
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Reviewed Apps for the Open Source CRM"
-msgstr ""
+msgstr "Twenty 앱 — 오픈 소스 CRM을 위한 검토된 앱"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts

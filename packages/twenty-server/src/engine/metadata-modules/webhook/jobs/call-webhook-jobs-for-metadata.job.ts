@@ -75,7 +75,11 @@ export class CallWebhookJobsForMetadataJob {
       await this.messageQueueService.add<CallMetadataWebhookJobData[]>(
         CallWebhookJob.name,
         webhookEventsChunk,
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          workspaceId: metadataEventBatch.workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
   }

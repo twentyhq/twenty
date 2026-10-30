@@ -105,6 +105,10 @@ export class WorkflowRunEnqueueCronJob {
       await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
         WorkflowRunEnqueueJob.name,
         { workspaceId, isCacheMode: false },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
 
       return true;
