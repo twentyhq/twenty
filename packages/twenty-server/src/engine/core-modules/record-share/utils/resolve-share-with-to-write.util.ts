@@ -29,7 +29,6 @@ export const resolveShareWithToWrite = ({
       shareWithEntry.accessLevel !== defaultGeneralAccessLevel,
   );
 
-  // A record that needs a share still gets its creator's
   if (isShareRequired) {
     return shareWithToWrite;
   }

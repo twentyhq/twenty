@@ -33,8 +33,20 @@ export type ObjectSharing = {
   operationTypesGrantedBeyondRole: OperationType[];
 };
 
-// The only place that turns object metadata and the sharing flag into how
-// records of the object are shared
+const resolveDefaultGeneralAccessLevel = ({
+  isShareRequired,
+  canRestrictGeneralAccess,
+}: Pick<
+  ObjectSharing,
+  'isShareRequired' | 'canRestrictGeneralAccess'
+>): RecordShareAccessLevel | null => {
+  if (isShareRequired) {
+    return RecordShareAccessLevel.NONE;
+  }
+
+  return canRestrictGeneralAccess ? RecordShareAccessLevel.READ_WRITE : null;
+};
+
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
@@ -54,11 +66,6 @@ export const resolveObjectSharing = ({
   const canRestrictGeneralAccess =
     !isShareRequired && isRecordSharingEnabled && !flatObjectMetadata.isSystem;
   const isShareable = isShareRequired || canRestrictGeneralAccess;
-  const defaultGeneralAccessLevel = isShareRequired
-    ? RecordShareAccessLevel.NONE
-    : canRestrictGeneralAccess
-      ? RecordShareAccessLevel.READ_WRITE
-      : null;
 
   const operationTypesGrantedBeyondRole =
     isRecordSharingEnabled && !flatObjectMetadata.isSystem
@@ -74,7 +81,10 @@ export const resolveObjectSharing = ({
     isShareable,
     isShareRequired,
     canRestrictGeneralAccess,
-    defaultGeneralAccessLevel,
+    defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel({
+      isShareRequired,
+      canRestrictGeneralAccess,
+    }),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,
   };
