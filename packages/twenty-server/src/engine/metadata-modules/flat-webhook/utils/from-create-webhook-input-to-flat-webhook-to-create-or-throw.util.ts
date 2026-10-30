@@ -73,6 +73,21 @@ export const fromCreateWebhookInputToFlatWebhookToCreateOrThrow = ({
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 
+  const isDuplicateId = isDefined(
+    findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatWebhookMaps,
+    }),
+  );
+
+  // A duplicate id is left for the migration validation to report
+  const flatWebhookMapsWithWebhookToCreate = isDuplicateId
+    ? flatWebhookMaps
+    : addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatWebhookToCreate,
+        flatEntityMaps: flatWebhookMaps,
+      });
+
   const { flatRoleTargetsToCreate } = computeWebhookRoleTargetOperationsOrThrow(
     {
       webhookId: id,
@@ -82,18 +97,7 @@ export const fromCreateWebhookInputToFlatWebhookToCreateOrThrow = ({
       flatRoleTargetMaps,
       flatRoleMaps,
       flatAgentMaps,
-      // A duplicate id is left for the migration validation to report
-      flatWebhookMaps: isDefined(
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: id,
-          flatEntityMaps: flatWebhookMaps,
-        }),
-      )
-        ? flatWebhookMaps
-        : addFlatEntityToFlatEntityMapsOrThrow({
-            flatEntity: flatWebhookToCreate,
-            flatEntityMaps: flatWebhookMaps,
-          }),
+      flatWebhookMaps: flatWebhookMapsWithWebhookToCreate,
     },
   );
 
