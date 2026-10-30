@@ -15,13 +15,15 @@ export const useAccountsSettingsBreadcrumbLink = (
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
-  return isAppPreferencesEnabled
-    ? {
-        children: t`Apps preferences`,
-        href: getSettingsPath(SettingsPath.AppPreferences),
-      }
-    : {
-        children: legacyAccountsLabel,
-        href: getSettingsPath(SettingsPath.Accounts),
-      };
+  if (isAppPreferencesEnabled) {
+    return {
+      children: t`Apps preferences`,
+      href: getSettingsPath(SettingsPath.AppPreferences),
+    };
+  }
+
+  return {
+    children: legacyAccountsLabel,
+    href: getSettingsPath(SettingsPath.Accounts),
+  };
 };
