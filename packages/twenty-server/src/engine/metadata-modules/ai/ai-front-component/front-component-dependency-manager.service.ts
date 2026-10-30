@@ -54,9 +54,12 @@ export class FrontComponentDependencyManagerService {
       workspaceId,
     });
     const key = `ai-front-component-dependencies:${builderKey}:${dependencies.revision}`;
+    const fileCacheKey = `${key}:file`;
     return this.cacheLockService.withLock(
       async () => {
-        const cached = await this.cacheStorage.get<unknown>(key);
+        const cached =
+          (await this.cacheStorage.get<unknown>(fileCacheKey)) ??
+          (await this.cacheStorage.get<unknown>(key));
         const location = {
           workspaceId,
           applicationUniversalIdentifier:
@@ -122,10 +125,11 @@ export class FrontComponentDependencyManagerService {
             },
           });
           await this.cacheStorage.set(
-            key,
+            fileCacheKey,
             resourcePath,
             Math.max(1, expiresAt - Date.now()),
           );
+          await this.cacheStorage.del(key);
         }
         return result;
       },
