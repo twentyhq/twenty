@@ -75,7 +75,10 @@ const resolvePersonIdByHandle = async ({
   for (const counterpart of unmatchedCounterparts) {
     const { firstName, lastName } = splitLinkedinUserName(counterpart);
 
-    if (isNonEmptyString(firstName)) {
+    if (
+      isNonEmptyString(firstName) &&
+      isNonEmptyString(counterpart.public_identifier)
+    ) {
       const handle = buildLinkedinProfileHandle(counterpart);
 
       personIdByHandle.set(

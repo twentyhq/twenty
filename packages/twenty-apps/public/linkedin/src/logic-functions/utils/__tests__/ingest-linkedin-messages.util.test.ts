@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DEFAULT_LINKEDIN_SETTINGS } from 'src/constants/default-linkedin-settings.constant';
+import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 
 const mocks = vi.hoisted(() => ({
@@ -65,7 +66,9 @@ const ingest = ({
   settings = DEFAULT_LINKEDIN_SETTINGS,
   messages = [buildMessage(true)],
   chat = ONE_TO_ONE_CHAT,
+  counterparts = [PRIYA],
 }: {
+  counterparts?: UnipileUser[];
   settings?: typeof DEFAULT_LINKEDIN_SETTINGS;
   messages?: UnipileMessage[];
   chat?: typeof ONE_TO_ONE_CHAT | typeof GROUP_CHAT;
@@ -74,7 +77,7 @@ const ingest = ({
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
     chat,
-    counterparts: [PRIYA],
+    counterparts,
     messages,
   });
 
@@ -148,6 +151,14 @@ describe('ingestLinkedinMessages', () => {
       handle: 'https://www.linkedin.com/in/priya-nair',
     });
     expect(ingestedParticipantPersonIds()).toEqual([undefined, 'created-id']);
+  });
+
+  it('creates nobody when the public profile URL is unknown', async () => {
+    await ingest({
+      counterparts: [{ ...PRIYA, public_identifier: undefined }],
+    });
+
+    expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
 
   it('imports without creating anyone when the policy does not allow it', async () => {
