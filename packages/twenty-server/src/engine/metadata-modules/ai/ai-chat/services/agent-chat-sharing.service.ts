@@ -3,7 +3,6 @@ import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
-import { hasAgentChatThreadAssistantParticipantField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-assistant-participant-field.util';
 import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
@@ -117,18 +116,6 @@ export class AgentChatSharingService {
         AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
       );
     }
-  }
-
-  // TODO(@bosiraphael): remove once the 2.53 participation command has reached every workspace
-  async hasAssistantParticipation(workspaceId: string): Promise<boolean> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return hasAgentChatThreadAssistantParticipantField({
-      flatFieldMetadataMaps,
-    });
   }
 
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
