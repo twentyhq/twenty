@@ -11,6 +11,13 @@ export const buildGroupByRecordConditions = ({
   groupsResult: Array<Record<string, unknown>>;
   groupByDefinitions: GroupByDefinition[];
 }): { sql: string; parameters: Record<string, unknown> } => {
+  if (groupByDefinitions.length === 1) {
+    return buildSingleDimensionConditions({
+      groupsResult,
+      groupByDefinition: groupByDefinitions[0],
+    });
+  }
+
   const parameters: Record<string, unknown> = {};
 
   const groupConditions = groupsResult.map((group, groupIndex) => {
@@ -34,4 +41,34 @@ export const buildGroupByRecordConditions = ({
   });
 
   return { sql: `(${groupConditions.join(' OR ')})`, parameters };
+};
+
+// A hashed IN list stays flat in cost where an OR chain of equalities is linear in the group count
+const buildSingleDimensionConditions = ({
+  groupsResult,
+  groupByDefinition,
+}: {
+  groupsResult: Array<Record<string, unknown>>;
+  groupByDefinition: GroupByDefinition;
+}): { sql: string; parameters: Record<string, unknown> } => {
+  const groupValues = groupsResult
+    .map((group) => group[groupByDefinition.alias])
+    .filter(isDefined);
+
+  const hasNullGroup = groupValues.length < groupsResult.length;
+
+  const conditions: string[] = [];
+
+  if (groupValues.length > 0) {
+    conditions.push(`${groupByDefinition.expression} IN (:...groupValues_0)`);
+  }
+
+  if (hasNullGroup) {
+    conditions.push(`${groupByDefinition.expression} IS NULL`);
+  }
+
+  return {
+    sql: `(${conditions.join(' OR ')})`,
+    parameters: groupValues.length > 0 ? { groupValues_0: groupValues } : {},
+  };
 };

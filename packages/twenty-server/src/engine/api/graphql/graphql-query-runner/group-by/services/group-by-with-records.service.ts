@@ -229,13 +229,14 @@ export class GroupByWithRecordsService {
       groupByDefinitions,
     });
 
+    // Paging in the outer WHERE lets Postgres stop ranking a partition past the page (window run condition)
     const pageFilter = `record_row_number > ${pageStart} AND record_row_number <= ${pageEnd}`;
 
     const sql =
       `SELECT ${groupByAliases}, ` +
-      `JSONB_AGG(${recordJsonObjectSql} ORDER BY record_row_number) ` +
-      `FILTER (WHERE ${pageFilter}) AS "records" ` +
+      `JSONB_AGG(${recordJsonObjectSql} ORDER BY record_row_number) AS "records" ` +
       `FROM (${subQueryBuilder.getQuery()}) AS "ranked_records" ` +
+      `WHERE ${pageFilter} ` +
       `GROUP BY ${groupByAliases}`;
 
     return { sql, parameters: subQueryBuilder.getParameters() };

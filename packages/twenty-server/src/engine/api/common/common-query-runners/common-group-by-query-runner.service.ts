@@ -14,6 +14,7 @@ import {
   isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
+import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
@@ -162,7 +163,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         groupByDefinitions,
         selectedFieldsResult: args.selectedFieldsResult,
         queryRunnerContext,
-        orderByForRecords: args.orderByForRecords ?? [],
+        orderByForRecords: addDefaultOrderById(args.orderByForRecords ?? []),
         groupLimit: args.limit,
         offsetForRecords: args.offsetForRecords,
         nestedRelationsReadPathOptions:
