@@ -7,12 +7,12 @@ export const useRelatedRecordPaths = ({
 }: {
   objectMetadataId: string;
 }) => {
-  const { data, loading } = useQuery(FindManyRelatedRecordPathsDocument);
+  const { data, loading, error } = useQuery(FindManyRelatedRecordPathsDocument);
 
   const relatedRecordPaths = (data?.relatedRecordPaths ?? []).filter(
     (relatedRecordPath) =>
       relatedRecordPath.objectMetadataId === objectMetadataId,
   );
 
-  return { relatedRecordPaths, loading };
+  return { relatedRecordPaths, loading, error };
 };

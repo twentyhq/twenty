@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -44,7 +45,7 @@ export const SettingsObjectRelatedRecordPathsSection = ({
   isReadOnly,
 }: SettingsObjectRelatedRecordPathsSectionProps) => {
   const { t } = useLingui();
-  const { relatedRecordPaths, loading } = useRelatedRecordPaths({
+  const { relatedRecordPaths, loading, error } = useRelatedRecordPaths({
     objectMetadataId: objectMetadataItem.id,
   });
   const { createRelatedRecordPath, deleteRelatedRecordPath, isSaving } =
@@ -78,15 +79,21 @@ export const SettingsObjectRelatedRecordPathsSection = ({
             <TableHeader />
           </TableRow>
           <TableBody>
-            {relatedRecordPaths.length === 0 && !loading && (
-              <StyledEmpty>{t`No related records follow this object yet`}</StyledEmpty>
+            {isDefined(error) && (
+              <StyledEmpty>{t`Could not load related records`}</StyledEmpty>
             )}
+            {relatedRecordPaths.length === 0 &&
+              !loading &&
+              !isDefined(error) && (
+                <StyledEmpty>{t`No related records follow this object yet`}</StyledEmpty>
+              )}
             {relatedRecordPaths.map((relatedRecordPath) => (
               <SettingsObjectRelatedRecordPathTableRow
                 key={relatedRecordPath.id}
                 sourceObjectMetadataItem={objectMetadataItem}
                 relatedRecordPath={relatedRecordPath}
                 isReadOnly={isReadOnly}
+                isDeleteDisabled={isSaving}
                 onDelete={deleteRelatedRecordPath}
               />
             ))}

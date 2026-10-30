@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -87,7 +88,7 @@ export const SettingsObjectRelatedRecordPathPicker = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
-        {isDefined(lastStep) && searchInput === '' && (
+        {isDefined(lastStep) && !isNonEmptyString(searchInput) && (
           <>
             <Dropdown.OptionItem
               description={t`Add this path`}

@@ -39,6 +39,7 @@ type SettingsObjectRelatedRecordPathTableRowProps = {
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   relatedRecordPath: RelatedRecordPath;
   isReadOnly: boolean;
+  isDeleteDisabled: boolean;
   onDelete: (relatedRecordPathId: string) => void;
 };
 
@@ -46,6 +47,7 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
   sourceObjectMetadataItem,
   relatedRecordPath,
   isReadOnly,
+  isDeleteDisabled,
   onDelete,
 }: SettingsObjectRelatedRecordPathTableRowProps) => {
   const { t } = useLingui();
@@ -102,6 +104,7 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
         {!isReadOnly && (
           <LightIconButton
             emphasis="subtle"
+            disabled={isDeleteDisabled}
             aria-label={t`Delete related record path`}
             onClick={() => onDelete(relatedRecordPath.id)}
           >

@@ -168,6 +168,9 @@ export const AddPathThroughRelations: Story = {
     );
 
     await waitFor(() =>
+      expect(createRelatedRecordPath).toHaveBeenCalledTimes(1),
+    );
+    await waitFor(() =>
       expect(createRelatedRecordPath).toHaveBeenCalledWith({
         objectMetadataId: company.id,
         firstFieldMetadataId: getFieldMetadataId({
