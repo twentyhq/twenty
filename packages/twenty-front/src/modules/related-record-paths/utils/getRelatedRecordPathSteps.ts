@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RelatedRecordPathStep } from '@/related-record-paths/types/RelatedRecordPathStep';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 
 export const getRelatedRecordPathSteps = ({
   sourceObjectMetadataItem,
@@ -21,13 +22,16 @@ export const getRelatedRecordPathSteps = ({
       (field) => field.id === fieldMetadataId,
     );
 
-    const targetObjectMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.id ===
-        fieldMetadataItem?.relation?.targetObjectMetadata.id,
-    );
+    if (!isDefined(fieldMetadataItem)) {
+      break;
+    }
 
-    if (!isDefined(fieldMetadataItem) || !isDefined(targetObjectMetadataItem)) {
+    const targetObjectMetadataItem = findRelationTargetObjectMetadataItem({
+      fieldMetadataItem,
+      objectMetadataItems,
+    });
+
+    if (!isDefined(targetObjectMetadataItem)) {
       break;
     }
 

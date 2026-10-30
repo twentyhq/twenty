@@ -175,7 +175,7 @@ export const ObjectSettings = ({
           <Section.Root>
             <Section.Header
               title={t`Related records`}
-              description={t`Records reached through these relations follow access to ${objectLabel}. Inherent paths always apply, regular paths only when a role grants direct access.`}
+              description={t`Records reached through these relations follow access to ${objectLabel}.`}
               actions={
                 <OrganizationAdornment
                   tooltipContent={

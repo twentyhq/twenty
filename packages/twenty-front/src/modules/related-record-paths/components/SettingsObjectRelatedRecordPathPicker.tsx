@@ -5,12 +5,14 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useRelatedRecordPathMutations } from '@/related-record-paths/hooks/useRelatedRecordPathMutations';
 import { RELATED_RECORD_PATH_MAXIMUM_FIELD_COUNT } from '@/related-record-paths/constants/RelatedRecordPathMaximumFieldCount';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getRelatedRecordPathNextFieldMetadataItems } from '@/related-record-paths/utils/getRelatedRecordPathNextFieldMetadataItems';
 import { getRelatedRecordPathSteps } from '@/related-record-paths/utils/getRelatedRecordPathSteps';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
@@ -44,9 +46,9 @@ export const SettingsObjectRelatedRecordPathPicker = ({
       steps,
     })
       .filter((fieldMetadataItem) =>
-        fieldMetadataItem.label
-          .toLocaleLowerCase()
-          .includes(searchInput.toLocaleLowerCase()),
+        normalizeSearchText(fieldMetadataItem.label).includes(
+          normalizeSearchText(searchInput),
+        ),
       )
       .sort((left, right) => left.label.localeCompare(right.label));
 
@@ -129,11 +131,10 @@ export const SettingsObjectRelatedRecordPathPicker = ({
               hasSubmenu={!isLastHop}
               closeOnSelect={isLastHop}
               description={
-                objectMetadataItems.find(
-                  (objectMetadataItem) =>
-                    objectMetadataItem.id ===
-                    fieldMetadataItem.relation?.targetObjectMetadata.id,
-                )?.labelPlural
+                findRelationTargetObjectMetadataItem({
+                  fieldMetadataItem,
+                  objectMetadataItems,
+                })?.labelPlural
               }
               startIcon={
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
