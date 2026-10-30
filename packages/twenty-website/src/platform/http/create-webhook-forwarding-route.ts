@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { getClientIpKey } from './client-ip-key';
@@ -19,13 +18,13 @@ const applicationSecretSchema = z.string().trim().min(1);
 const MAX_BODY_BYTES = 16 * 1024;
 const WEBHOOK_TIMEOUT_MS = 8_000;
 
-// Logic functions answer { ok: true }; Twenty workflow webhooks answer
-// { success: true } and cannot read headers, so they take no secret.
+// Twenty workflow webhooks cannot read headers, so they get the secret in the
+// body, and they answer { success: true } where logic functions answer { ok: true }.
 type UpstreamKind = 'logic-function' | 'workflow-webhook';
 
 type WebhookForwardingRouteConfig<TSchema extends z.ZodType> = {
   webhookUrlEnvVar: string;
-  secretEnvVar?: string;
+  secretEnvVar: string;
   upstreamKind?: UpstreamKind;
   schema: TSchema;
   buildPayload: (data: z.infer<TSchema>) => object;
@@ -58,15 +57,13 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     const webhookUrlResult = webhookUrlSchema.safeParse(
       process.env[webhookUrlEnvVar],
     );
-    const secretResult = isDefined(secretEnvVar)
-      ? applicationSecretSchema.safeParse(process.env[secretEnvVar])
-      : undefined;
+    const secretResult = applicationSecretSchema.safeParse(
+      process.env[secretEnvVar],
+    );
 
-    if (!webhookUrlResult.success || secretResult?.success === false) {
+    if (!webhookUrlResult.success || !secretResult.success) {
       const rawWebhookUrl = process.env[webhookUrlEnvVar];
-      const rawSecret = isDefined(secretEnvVar)
-        ? process.env[secretEnvVar]
-        : undefined;
+      const rawSecret = process.env[secretEnvVar];
       console.error(
         `[${logTag}] 503 — endpoint env vars failed validation`,
         JSON.stringify({
@@ -78,17 +75,14 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
               ? null
               : (webhookUrlResult.error.issues[0]?.message ?? 'unknown'),
           },
-          ...(isDefined(secretEnvVar) && {
-            [secretEnvVar]: {
-              present: rawSecret !== undefined,
-              isEmptyAfterTrim: (rawSecret ?? '').trim() === '',
-              length: (rawSecret ?? '').length,
-              parseError:
-                secretResult?.success === false
-                  ? (secretResult.error.issues[0]?.message ?? 'unknown')
-                  : null,
-            },
-          }),
+          [secretEnvVar]: {
+            present: rawSecret !== undefined,
+            isEmptyAfterTrim: (rawSecret ?? '').trim() === '',
+            length: (rawSecret ?? '').length,
+            parseError: secretResult.success
+              ? null
+              : (secretResult.error.issues[0]?.message ?? 'unknown'),
+          },
           envFileHint:
             'Next dev reads .env.local. After editing env vars restart the dev server — Next does not hot-reload them.',
         }),
@@ -100,7 +94,7 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     }
 
     const webhookUrl = webhookUrlResult.data;
-    const applicationSecret = secretResult?.data;
+    const applicationSecret = secretResult.data;
 
     const rateLimit = checkRateLimit(getClientIpKey(request));
     if (!rateLimit.allowed) {
@@ -150,12 +144,14 @@ export function createWebhookForwardingRoute<TSchema extends z.ZodType>({
     const upstream = await fetchWithTimeout(
       webhookUrl,
       {
-        body: JSON.stringify(payload),
+        body: JSON.stringify(
+          upstreamKind === 'workflow-webhook'
+            ? { ...payload, applicationSecret }
+            : payload,
+        ),
         headers: {
           'Content-Type': 'application/json',
-          ...(isDefined(applicationSecret) && {
-            'X-Application-Secret': applicationSecret,
-          }),
+          'X-Application-Secret': applicationSecret,
         },
         method: 'POST',
       },
