@@ -5,6 +5,30 @@ import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-hist
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 
 describe('message part provider metadata mapping', () => {
+  it('persists assistant reply provenance on user text', () => {
+    const providerMetadata = {
+      twenty: {
+        assistantReplyContext: {
+          isAssistantMentioned: true,
+          isDirectAssistantChat: false,
+        },
+      },
+    };
+
+    expect(
+      mapUIMessagePartsToDBParts(
+        [{ type: 'text', text: 'Please help', providerMetadata }],
+        'message-id',
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        type: 'text',
+        textContent: 'Please help',
+        providerMetadata,
+      }),
+    ]);
+  });
+
   it('persists and restores OpenAI encrypted reasoning metadata', () => {
     const providerMetadata = {
       openai: {

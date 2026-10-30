@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Inject, Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -20,6 +20,7 @@ import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-c
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
@@ -29,6 +30,7 @@ import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -44,6 +46,9 @@ export class StreamAgentChatJob {
 
   // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
+
+  @Inject(AgentChatReplyExecutionPolicyService)
+  private readonly replyExecutionPolicyService: AgentChatReplyExecutionPolicyService;
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
@@ -156,13 +161,32 @@ export class StreamAgentChatJob {
     }
 
     const turnId = data.existingTurnId;
-    const { sender, authorization } = await this.actorService.authorizeJob({
-      workspaceId: data.workspaceId,
-      threadId: data.threadId,
-      messageId: data.messageId,
-      turnId,
-      userWorkspaceId: data.userWorkspaceId,
-    });
+    const { sender, authorization, message } =
+      await this.actorService.authorizeJob({
+        workspaceId: data.workspaceId,
+        threadId: data.threadId,
+        messageId: data.messageId,
+        turnId,
+        userWorkspaceId: data.userWorkspaceId,
+      });
+
+    const isExecutionAllowed =
+      await this.replyExecutionPolicyService.shouldExecute({
+        threadId: data.threadId,
+        workspace,
+        userWorkspaceId: sender.userWorkspaceId,
+        messageId: message?.id,
+      });
+
+    if (!isExecutionAllowed) {
+      await this.cancelTurnForWorkspacePolicy({
+        claim,
+        turnId,
+        turnModelId,
+      });
+
+      return;
+    }
 
     const isRunning = await this.turnRecorderService.markRunning({
       workspaceId: data.workspaceId,
@@ -278,6 +302,44 @@ export class StreamAgentChatJob {
         });
       }
     }
+  }
+
+  private async cancelTurnForWorkspacePolicy({
+    claim,
+    turnId,
+    turnModelId,
+  }: {
+    claim: AgentChatStreamClaim;
+    turnId: string;
+    turnModelId: string;
+  }): Promise<void> {
+    const { threadId, workspaceId } = claim;
+    const isCancelled = await this.turnRecorderService.finish({
+      workspaceId,
+      turnId,
+      status: AgentTurnStatus.CANCELLED,
+      streamClaim: claim,
+    });
+
+    if (!isCancelled) {
+      return;
+    }
+
+    this.recordTurnOutcome(
+      { kind: 'cancelled', reason: 'workspace_policy' },
+      turnModelId,
+    );
+
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'stream-ended' },
+    });
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'queue-updated' },
+    });
   }
 
   // resolve auto-select ids here so turn-start and outcome metrics carry the same model label

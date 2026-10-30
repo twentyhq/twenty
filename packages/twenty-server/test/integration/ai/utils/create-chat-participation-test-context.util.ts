@@ -18,9 +18,11 @@ import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { type AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
+import { type AgentChatReplyExecutionPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-execution-policy.service';
 import { type AgentChatReplyPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-reply-policy.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -77,6 +79,13 @@ export const createChatParticipationTestContext = async () => {
     getAppProviderByClassName<AgentChatReplyPolicyService>(
       'AgentChatReplyPolicyService',
     );
+  const replyExecutionPolicyService =
+    getAppProviderByClassName<AgentChatReplyExecutionPolicyService>(
+      'AgentChatReplyExecutionPolicyService',
+    );
+  const streamingService = getAppProviderByClassName<AgentChatStreamingService>(
+    'AgentChatStreamingService',
+  );
   const featureFlagService =
     getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
   const wasInboxEnabled = await featureFlagService.isFeatureEnabled(
@@ -256,6 +265,10 @@ export const createChatParticipationTestContext = async () => {
     sharingService,
     participationService,
     replyPolicyService,
+    replyExecutionPolicyService,
+    streamingService,
+    getWorkspace: () =>
+      workspaceRepository.findOneByOrFail({ id: workspaceId }),
     featureFlagService,
     setAssistantModes,
     setConversationType,
