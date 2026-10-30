@@ -1,8 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
 import { readStringArgument } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type CommandContext } from '@/catalog/types/command-context.type';
 import { checkLocalRuntime } from '@/local/check-local-runtime';
-import { createLocalContainer } from '@/local/create-local-container';
+import { replaceLocalContainer } from '@/local/replace-local-container';
 import { getLocalStatus } from '@/local/get-local-status';
 import { readLocalOptions } from '@/local/read-local-options';
 import {
@@ -24,14 +25,14 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
   const { environment } = readLocalOptions(options);
   await checkLocalRuntime(signal);
   const existing = await readLocalContainer(environment, signal);
-  if (!existing) {
+  if (!isDefined(existing)) {
     throw new CliError({
       code: 'NOT_FOUND',
       message: 'No local environment has been created.',
       hint: 'Use twenty local start with the desired version first.',
     });
   }
-  assertLocalStorage(environment, existing);
+  assertLocalStorage({ environment, container: existing });
   const image = await resolveLocalImage(
     readStringArgument(commandArguments, 0),
     signal,
@@ -60,15 +61,10 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
   output.progress({
     message: 'Replacing the local environment, preserving its data volumes…',
   });
-  if (existing.running) {
-    await runDocker({ args: ['stop', '--time', '30', existing.id], signal });
-  }
-  await runDocker({ args: ['rm', existing.id], signal });
-  await createLocalContainer({
+  await replaceLocalContainer({
     environment,
+    existing,
     image,
-    port: existing.port,
-    containerPort: existing.containerPort,
     environmentVariables,
     signal,
   });

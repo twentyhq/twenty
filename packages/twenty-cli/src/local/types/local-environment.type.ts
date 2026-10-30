@@ -2,6 +2,7 @@ export type LocalEnvironment = {
   name: string;
   port: number;
   volumes: Record<string, string>;
+  requiredVolumeDestinations: string[];
 };
 
 export type LocalContainer = {

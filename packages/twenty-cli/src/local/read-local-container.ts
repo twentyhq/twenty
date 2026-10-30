@@ -92,14 +92,7 @@ export const readLocalContainer = async (
     port > 65535 ||
     !Number.isInteger(containerPort) ||
     containerPort < 1 ||
-    containerPort > 65535 ||
-    value.Mounts.some(
-      (mount: unknown) =>
-        !isPlainObject(mount) ||
-        !isString(mount.Type) ||
-        !isString(mount.Destination) ||
-        (isDefined(mount.Name) && !isString(mount.Name)),
-    )
+    containerPort > 65535
   ) {
     throw new CliError({
       code: 'CONFLICT',
@@ -107,26 +100,50 @@ export const readLocalContainer = async (
     });
   }
 
+  const mounts = value.Mounts.map((mount: unknown) => {
+    if (
+      !isPlainObject(mount) ||
+      !isString(mount.Type) ||
+      !isString(mount.Destination) ||
+      (isDefined(mount.Name) && !isString(mount.Name))
+    ) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message: 'Docker returned an invalid mount description.',
+      });
+    }
+    return {
+      Type: mount.Type,
+      Destination: mount.Destination,
+      Name: isString(mount.Name) ? mount.Name : undefined,
+    };
+  });
+
   return {
     id: value.Id,
     image,
     imageId: value.Image,
-    environmentVariables: value.Config.Env as string[],
+    environmentVariables: value.Config.Env,
     running: value.State.Running,
     port,
     containerPort,
-    mounts: value.Mounts as LocalContainer['mounts'],
+    mounts,
   };
 };
 
-export const assertLocalStorage = (
-  environment: LocalEnvironment,
-  container: LocalContainer,
-) => {
+export const assertLocalStorage = ({
+  environment,
+  container,
+}: {
+  environment: Pick<
+    LocalEnvironment,
+    'name' | 'volumes' | 'requiredVolumeDestinations'
+  >;
+  container: Pick<LocalContainer, 'mounts'>;
+}) => {
   if (
-    !['/data/postgres', '/app/packages/twenty-server/.local-storage'].every(
-      (destination) =>
-        container.mounts.some((mount) => mount.Destination === destination),
+    !environment.requiredVolumeDestinations.every((destination) =>
+      container.mounts.some((mount) => mount.Destination === destination),
     ) ||
     container.mounts.some(
       (mount) =>

@@ -30,7 +30,7 @@ export const runLocalResetCommand: CommandRun<CommandContext> = async ({
   await checkLocalRuntime(signal);
   const container = await readLocalContainer(environment, signal);
   if (container) {
-    assertLocalStorage(environment, container);
+    assertLocalStorage({ environment, container });
     await runDocker({ args: ['rm', '--force', container.id], signal });
   }
   const existingVolumes = (

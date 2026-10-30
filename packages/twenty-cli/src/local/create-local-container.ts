@@ -7,6 +7,7 @@ export const createLocalContainer = async ({
   port,
   containerPort = port,
   environmentVariables = [],
+  shouldStart = true,
   signal,
 }: {
   environment: LocalEnvironment;
@@ -14,12 +15,12 @@ export const createLocalContainer = async ({
   port: number;
   containerPort?: number;
   environmentVariables?: string[];
+  shouldStart?: boolean;
   signal: AbortSignal;
 }) =>
   runDocker({
     args: [
-      'run',
-      '--detach',
+      ...(shouldStart ? ['run', '--detach'] : ['create']),
       '--name',
       environment.name,
       '--publish',

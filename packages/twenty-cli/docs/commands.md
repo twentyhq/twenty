@@ -67,7 +67,9 @@ operation, without stopping the environment or deleting data.
 `stop` preserves the container and all data. `upgrade [version]` uses the same
 version selection as a new start. It pulls the image before stopping the old
 instance, then recreates it with the same ports, named volumes and user-provided
-environment overrides. If the image digest is unchanged, no restart occurs.
+environment overrides. The old container is kept until the replacement is created.
+If creation fails or is cancelled, the CLI restores the old container and its
+previous running state. If the image digest is unchanged, no restart occurs.
 Custom storage layouts are rejected. Data volumes survive a failed upgrade,
 but database migrations are not automatically rolled back.
 
