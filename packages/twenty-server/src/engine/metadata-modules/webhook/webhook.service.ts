@@ -383,7 +383,6 @@ export class WebhookService {
     return fromFlatWebhookToWebhookDto(flatWebhookToDelete);
   }
 
-  // Binding a role to a webhook requires ROLES to prevent privilege escalation.
   private async assertCallerCanManageWebhookRolesOrThrow({
     workspaceId,
     caller,
