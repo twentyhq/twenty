@@ -2806,7 +2806,7 @@ msgstr "Cuộc trò chuyện"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Trò chuyện hiện chưa khả dụng. Vui lòng thử lại sau vài phút."
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8214,13 +8214,13 @@ msgstr "Thành viên"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "Các lượt đề cập đã được xử lý lúc"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "Các lượt đề cập tính đến thời điểm này đã được xử lý cho thành viên"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -11980,7 +11980,7 @@ msgstr "Hàm logic máy chủ yêu cầu xác thực."
 #. js-lingui-id: VOUkzJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "Server routes can only be defined by an application."
-msgstr ""
+msgstr "Tuyến máy chủ chỉ có thể được xác định bởi một ứng dụng."
 
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11990,7 +11990,7 @@ msgstr "Mạo danh ở cấp máy chủ chưa được bật cho người dùng 
 #. js-lingui-id: y4fTj2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "serverRouteTriggerSettings can only be set by an installed application"
-msgstr ""
+msgstr "serverRouteTriggerSettings chỉ có thể được thiết lập bởi một ứng dụng đã cài đặt"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12066,7 +12066,7 @@ msgstr "Tiêu đề mục menu cài đặt là bắt buộc"
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
-msgstr ""
+msgstr "Một số ứng dụng khai báo tuyến máy chủ này. Hãy dùng URL đăng ký ứng dụng thay thế."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
