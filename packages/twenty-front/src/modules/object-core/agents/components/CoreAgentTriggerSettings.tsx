@@ -7,8 +7,10 @@ import { CoreAgentTriggerOptions } from '@/object-core/agents/components/CoreAge
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { coreAgentDiscardCountFamilyState } from '@/object-core/agents/states/coreAgentDiscardCountFamilyState';
 import { parseCoreAgentTriggers } from '@/object-core/agents/utils/parseCoreAgentTriggers';
 import { replaceCoreAgentTrigger } from '@/object-core/agents/utils/replaceCoreAgentTrigger';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -27,6 +29,10 @@ export const CoreAgentTriggerSettings = ({
 }: CoreAgentTriggerSettingsProps) => {
   const isReadOnly = useIsCoreAgentReadOnly(agent);
   const { draft, updateDraft } = useCoreAgentDraft(agent);
+  const coreAgentDiscardCount = useAtomFamilyStateValue(
+    coreAgentDiscardCountFamilyState,
+    agent.id,
+  );
 
   const trigger = parseCoreAgentTriggers(draft.triggers).find(
     ({ id }) => id === triggerId,
@@ -48,7 +54,7 @@ export const CoreAgentTriggerSettings = ({
   return (
     <StyledContainer>
       <CoreAgentTriggerForm
-        key={trigger.id}
+        key={`${trigger.id}-${coreAgentDiscardCount}`}
         trigger={trigger}
         isReadOnly={isReadOnly}
         onTriggerChange={updateTrigger}

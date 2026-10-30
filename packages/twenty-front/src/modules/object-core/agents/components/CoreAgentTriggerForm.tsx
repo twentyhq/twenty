@@ -25,14 +25,6 @@ export const CoreAgentTriggerForm = ({
       ? getWorkflowCronTriggerFromCoreAgentTrigger(trigger)
       : undefined,
   );
-  const [cronPattern, setCronPattern] = useState(
-    trigger.type === 'CRON' ? trigger.settings.pattern : undefined,
-  );
-
-  if (trigger.type === 'CRON' && trigger.settings.pattern !== cronPattern) {
-    setCronPattern(trigger.settings.pattern);
-    setCronTrigger(getWorkflowCronTriggerFromCoreAgentTrigger(trigger));
-  }
 
   if (trigger.type === 'CRON' && isDefined(cronTrigger)) {
     const handleCronTriggerUpdate = (nextCronTrigger: WorkflowCronTrigger) => {
@@ -44,7 +36,6 @@ export const CoreAgentTriggerForm = ({
         return;
       }
 
-      setCronPattern(pattern);
       onTriggerChange({ ...trigger, settings: { pattern } });
     };
 

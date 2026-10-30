@@ -7,6 +7,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentRole } from '@/object-core/agents/hooks/useCoreAgentRole';
+import { coreAgentDiscardCountFamilyState } from '@/object-core/agents/states/coreAgentDiscardCountFamilyState';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
@@ -56,6 +57,10 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
   const setSettingsPersistedRole = useSetAtomFamilyState(
     settingsPersistedRoleFamilyState,
     roleId,
+  );
+  const setCoreAgentDiscardCount = useSetAtomFamilyState(
+    coreAgentDiscardCountFamilyState,
+    agent.id,
   );
   const setCoreAgentNewRoleId = useSetAtomFamilyState(
     coreAgentNewRoleIdFamilyState,
@@ -139,6 +144,7 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
 
   const discardCoreAgentChanges = () => {
     resetDraft();
+    setCoreAgentDiscardCount((discardCount) => discardCount + 1);
 
     if (isDefined(settingsDraftRoleBase)) {
       setSettingsDraftRole(settingsDraftRoleBase);
