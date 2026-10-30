@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
@@ -12,7 +11,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 @Module({
   imports: [
     ApplicationModule,
-    RoleModule,
     UserWorkspaceModule,
     WorkflowRunModule,
     WorkspaceCacheModule,
