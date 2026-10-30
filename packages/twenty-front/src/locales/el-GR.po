@@ -4195,7 +4195,7 @@ msgstr "Ανατεθειμένο σε"
 #. js-lingui-id: iU3XRS
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned to me"
-msgstr ""
+msgstr "Ανατεθειμένο σε εμένα"
 
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -12831,7 +12831,7 @@ msgstr "Φιλτράρισμα κατά αναγνωριστικό εγγραφ�
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 msgid "Filter chats"
-msgstr ""
+msgstr "Φιλτράρισμα συνομιλιών"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx

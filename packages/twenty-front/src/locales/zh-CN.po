@@ -4195,7 +4195,7 @@ msgstr "分配给"
 #. js-lingui-id: iU3XRS
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned to me"
-msgstr ""
+msgstr "分配给我"
 
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -12831,7 +12831,7 @@ msgstr "按记录 ID 筛选"
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 msgid "Filter chats"
-msgstr ""
+msgstr "筛选聊天"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
