@@ -7,14 +7,14 @@ import { type SettingsApplicationsTableRowItem } from '@/settings/applications/t
 import { getSettingsApplicationLink } from '@/settings/applications/utils/getSettingsApplicationLink';
 
 type SettingsApplicationsTableApplicationRowProps = {
-  application: SettingsApplicationsTableRowItem;
+  rowItem: SettingsApplicationsTableRowItem;
   linkTarget: SettingsApplicationsTableLinkTarget;
   middleColumn: SettingsApplicationTableRowMiddleColumn;
   statuses?: SettingsApplicationStatus[];
 };
 
 export const SettingsApplicationsTableApplicationRow = ({
-  application,
+  rowItem,
   linkTarget,
   middleColumn,
   statuses,
@@ -25,15 +25,15 @@ export const SettingsApplicationsTableApplicationRow = ({
 
   return (
     <SettingsApplicationTableRow
-      application={application}
+      application={rowItem}
       shouldShowUpdateTag={shouldShowUpdateTag}
-      sourceType={application.sourceType}
+      sourceType={rowItem.sourceType}
       middleColumn={middleColumn}
       statuses={statuses}
       action={<SettingsApplicationTableRowChevronIcon />}
       link={getSettingsApplicationLink({
         linkTarget,
-        applicationId: application.id,
+        applicationId: rowItem.id,
       })}
     />
   );

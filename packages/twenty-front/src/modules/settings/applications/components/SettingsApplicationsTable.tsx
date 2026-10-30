@@ -108,7 +108,7 @@ export const SettingsApplicationsTable = ({
               {filteredRowItems.map((rowItem) => (
                 <SettingsApplicationsTableApplicationRow
                   key={rowItem.id}
-                  application={rowItem}
+                  rowItem={rowItem}
                   linkTarget={linkTarget}
                   middleColumn={middleColumn}
                   statuses={statusesById?.[rowItem.id]}
