@@ -18,10 +18,9 @@ export const getAppPreferencesAppStatusesById = <
   builtInAccountApps: Pick<BuiltInAccountApp, 'id'>[];
   applicationsWithPreferences: AppPreferencesAppStatusApplication[];
 }): Record<string, SettingsMemberApplicationStatus<TConnectedAccount>[]> => {
-  const activeBuiltInAccounts = groups
+  const builtInAccounts = groups
     .map((group) => group.builtInAccount)
-    .filter(isDefined)
-    .filter((account) => !isDefined(account.archivedAt));
+    .filter(isDefined);
   const activeAppAccounts = groups
     .flatMap((group) => group.appAccounts)
     .filter((account) => !isDefined(account.archivedAt));
@@ -34,7 +33,7 @@ export const getAppPreferencesAppStatusesById = <
   for (const { id } of builtInAccountApps) {
     const statuses = getBuiltInAccountAppStatuses({
       builtInAccountAppId: id,
-      activeBuiltInAccounts,
+      builtInAccounts,
     });
 
     if (isNonEmptyArray(statuses)) {

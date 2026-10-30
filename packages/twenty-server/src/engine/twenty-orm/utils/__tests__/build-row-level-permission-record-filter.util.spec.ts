@@ -32,6 +32,7 @@ const NESTED_GROUP_ROLE_ID = 'nested-group-role-1';
 const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
 const TEXT_IS_ROLE_ID = 'text-is-role-1';
 const SELECT_CONTAINS_ROLE_ID = 'select-contains-role-1';
+const RELATION_HOP_ROLE_ID = 'relation-hop-role-1';
 const COMPANY_OBJECT_ID = 'company-object';
 const PERSON_OBJECT_ID = 'person-object';
 const OWNER_MORPH_ID = 'owner-morph';
@@ -160,6 +161,7 @@ const buildPredicate = (
   roleId,
   objectMetadataId: OBJECT_ID,
   fieldMetadataId: FIELD_ID,
+  relationFieldMetadataId: null,
   operand: 'CONTAINS',
   value: null,
   subFieldName: null,
@@ -238,6 +240,10 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     fieldMetadataId: STATUS_FIELD_ID,
     operand: 'CONTAINS',
     value: 'OPEN',
+  }),
+  buildPredicate('predicate-relation-hop', RELATION_HOP_ROLE_ID, {
+    relationFieldMetadataId: 'relation-field',
+    value: 'reached-through-relation',
   }),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
@@ -362,6 +368,10 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       });
     },
   );
+
+  it('should match nothing for a predicate reached through a relation hop', () => {
+    expect(build([RELATION_HOP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
+  });
 
   describe('predicate bound to a workspace member field', () => {
     it('should filter on the value carried by the workspace member', () => {

@@ -41,8 +41,12 @@ to five minutes for `/healthz`. For a new instance, version selection is:
 explicit version or image tag, the highest published version matching the nearest
 `package.json`'s `engines.twenty`, then `latest` when no range exists. A failed
 lookup or unmatched range is an error, never a fallback to another version.
+Versions such as `2.53` and `2.53.1` select `v2.53` and `v2.53.1`, respectively;
+`2.53` keeps the floating minor tag. Other image tags are used as given.
 New instances pull the selected image before creation, including when the tag
-is cached locally. Existing instances keep their image and port.
+is cached locally. Existing instances keep their image and port; use `upgrade` to change versions.
+Compatibility with `engines.twenty` uses the existing image's `APP_VERSION`.
+A missing, invalid or incompatible version warns without preventing startup.
 A readiness failure leaves the container and data in place for diagnosis.
 
 New instances bind to loopback on port `2020`. Use `--port <port>` when creating
@@ -54,6 +58,8 @@ volumes are reused.
 ```bash
 twenty local start 2.53.1 --test
 twenty local logs --test --lines 100 --no-follow
+twenty local upgrade 2.53.1 --test
+twenty local reset --test --yes
 ```
 
 `status` reports `not-created`, `stopped`, `starting` or `healthy`; unavailable
@@ -62,8 +68,19 @@ and exits. It supports human or NDJSON output, with a terminal result or error;
 other local commands support human or JSON output. Ctrl+C cancels the CLI
 operation, without stopping the environment or deleting data.
 
-`stop` preserves the container and all data. This development environment is
-not a production deployment tool.
+`stop` preserves the container and all data. `upgrade [version]` uses the same
+version selection as a new start. It pulls the image before stopping the old
+instance, then recreates it with the same ports, named volumes and user-provided
+environment overrides. The old container is kept until the replacement is created.
+If creation fails or is cancelled, the CLI restores the old container and its
+previous running state. If the image digest is unchanged, no restart occurs.
+Custom storage layouts are rejected. Data volumes survive a failed upgrade,
+but database migrations are not automatically rolled back.
+
+`reset` removes the selected container and its database, analytics and file
+volumes. It requires confirmation, or `--yes` in scripts. It does not affect
+other containers or saved remote credentials. Run `start` afterward for a fresh
+instance. This development environment is not a production deployment tool.
 
 ## Connections and authentication
 

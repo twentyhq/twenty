@@ -10,6 +10,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: true,
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: false,
+  [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: false,
 };
 
 type SeedFeatureFlagsArgs = {
