@@ -1,3 +1,7 @@
+import {
+  FRONT_COMPONENT_HOST_FETCH_HEADER_NAME,
+  SESSION_COOKIE_OPT_IN_HEADER_NAME,
+} from 'twenty-shared/constants';
 import { CustomError } from 'twenty-shared/utils';
 
 import { createHostFetchEnforcingPolicy } from '../createHostFetchEnforcingPolicy';
@@ -11,6 +15,9 @@ const createFakeResponse = () => ({
   headers: new Map([['content-type', 'application/json']]),
   text: async () => 'response-body',
 });
+
+const getForwardedRequestInit = (fetchSpy: jest.Mock): RequestInit =>
+  (fetchSpy.mock.calls[0] as [string, RequestInit])[1];
 
 describe('createHostFetchEnforcingPolicy', () => {
   afterEach(() => {
@@ -85,7 +92,86 @@ describe('createHostFetchEnforcingPolicy', () => {
     expect(result.status).toBe(200);
     expect(result.body).toBe('response-body');
     expect(result.headers['content-type']).toBe('application/json');
+
+    const requestInit = getForwardedRequestInit(fetchSpy);
+    const forwardedHeaders = requestInit.headers as Headers;
+
+    expect(forwardedHeaders.get('authorization')).toBe('Bearer token');
+    expect(forwardedHeaders.has(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME)).toBe(
+      false,
+    );
   });
+
+  it('should send page cookies with the host fetch marker for page-origin requests', async () => {
+    const fetchSpy = jest.fn(async () => createFakeResponse());
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const pageOrigin = window.location.origin;
+    const hostFetch = createHostFetchEnforcingPolicy({
+      allowedOrigins: [pageOrigin],
+      fileStorageRedirectableUrls: [],
+    });
+    await hostFetch({
+      url: `${pageOrigin}/graphql`,
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer app-token',
+        'X-Twenty-Front-Component-Host-Fetch': 'spoofed',
+        'X-Twenty-Session-Cookie': '1',
+      },
+    });
+
+    const requestInit = getForwardedRequestInit(fetchSpy);
+    const forwardedHeaders = requestInit.headers as Headers;
+
+    expect(requestInit.credentials).toBe('same-origin');
+    expect(forwardedHeaders.get(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME)).toBe(
+      '1',
+    );
+    expect(forwardedHeaders.get('authorization')).toBe('Bearer app-token');
+    expect(forwardedHeaders.has(SESSION_COOKIE_OPT_IN_HEADER_NAME)).toBe(false);
+  });
+
+  it.each([
+    [
+      'a non-API path such as the auth proxy identity endpoint',
+      '/cdn-cgi/access/get-identity',
+      [],
+    ],
+    [
+      'a logic function route, whose handler forwards headers to app code',
+      '/s/my-route',
+      [],
+    ],
+    [
+      'a redirectable file storage URL',
+      '/rest/front-components/component-id',
+      ['/rest/front-components/component-id'],
+    ],
+  ])(
+    'should not send page cookies for %s',
+    async (_description, path, redirectablePaths) => {
+      const fetchSpy = jest.fn(async () => createFakeResponse());
+      globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+      const pageOrigin = window.location.origin;
+      const hostFetch = createHostFetchEnforcingPolicy({
+        allowedOrigins: [pageOrigin],
+        fileStorageRedirectableUrls: redirectablePaths.map(
+          (redirectablePath) => `${pageOrigin}${redirectablePath}`,
+        ),
+      });
+      await hostFetch({ url: `${pageOrigin}${path}` });
+
+      const requestInit = getForwardedRequestInit(fetchSpy);
+      const forwardedHeaders = requestInit.headers as Headers;
+
+      expect(requestInit.credentials).toBe('omit');
+      expect(forwardedHeaders.has(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME)).toBe(
+        false,
+      );
+    },
+  );
 
   it('should refuse redirects by default', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());

@@ -11,6 +11,7 @@ import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retry
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { enqueueFathomBackfillWorker } from 'src/logic-functions/utils/enqueue-fathom-backfill-worker.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { getFathomWebhookDestinationUrl } from 'src/logic-functions/utils/get-fathom-webhook-destination-url.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
@@ -58,7 +59,9 @@ export const fathomRegisterConnectionHandler = async (
   }
 
   const connection = await getConnection(payload.connectedAccountId);
-  const fathomClient = createFathomClient(connection.accessToken);
+  const fathomClient = createFathomClient(
+    getConnectionAccessTokenOrThrow(connection),
+  );
   const registrationKey = getFathomWebhookRegistrationKey(
     payload.connectedAccountId,
   );
