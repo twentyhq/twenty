@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 export const createLinkedinPerson = async ({
   firstName,
@@ -20,6 +21,10 @@ export const createLinkedinPerson = async ({
       id: true,
     },
   });
+
+  if (!isDefined(createPerson)) {
+    throw new Error(`Could not create the person for ${handle}`);
+  }
 
   return createPerson.id;
 };
