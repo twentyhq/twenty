@@ -47,10 +47,12 @@ describe('cancelWorkspaceRecallBots', () => {
     bots,
     cancelStatusByBotId = {},
     listStatus = 200,
+    next = null,
   }: {
     bots: unknown[];
     cancelStatusByBotId?: Record<string, number>;
     listStatus?: number;
+    next?: string | null;
   }) => {
     fetchMock.mockImplementation(
       async (url: string, requestInitialization: RequestInit) => {
@@ -68,7 +70,7 @@ describe('cancelWorkspaceRecallBots', () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ next: null, results: bots }),
+          json: async () => ({ next, results: bots }),
         };
       },
     );
@@ -105,31 +107,26 @@ describe('cancelWorkspaceRecallBots', () => {
     vi.restoreAllMocks();
   });
 
-  it('cancels known record bot ids before one workspace-filtered list pass', async () => {
+  it('cancels every upcoming workspace bot, whatever its status', async () => {
     stubRecallApi({
       bots: [
-        buildBot({ id: 'orphan-bot', twentyWorkspaceId: CURRENT_WORKSPACE_ID }),
+        buildBot({
+          id: 'unstarted-bot',
+          twentyWorkspaceId: CURRENT_WORKSPACE_ID,
+        }),
+        buildBot({ id: 'ready-bot', twentyWorkspaceId: CURRENT_WORKSPACE_ID }),
       ],
     });
 
     const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['known-bot'],
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
 
     expect(workspaceRecallBotCleanupResult).toEqual({
-      scannedBotCount: 1,
-      canceledExternalBotIds: ['known-bot', 'orphan-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
+      scannedBotCount: 2,
+      canceledExternalBotIds: ['unstarted-bot', 'ready-bot'],
     });
-    expect(
-      fetchMock.mock.calls.map(
-        ([, requestInitialization]) => requestInitialization.method,
-      ),
-    ).toEqual(['DELETE', 'GET', 'DELETE']);
     const [listRequestUrl] = getCallsByMethod('GET')[0];
     const listRequestParameters = new URL(listRequestUrl).searchParams;
     expect(listRequestParameters.get('join_at_after')).toBe(JOIN_AT_AFTER);
@@ -137,14 +134,18 @@ describe('cancelWorkspaceRecallBots', () => {
     expect(listRequestParameters.get('metadata__twentyWorkspaceId')).toBe(
       CURRENT_WORKSPACE_ID,
     );
-    expect(listRequestParameters.getAll('status')).toEqual(['ready']);
+    expect(listRequestParameters.getAll('status')).toEqual([]);
   });
 
-  it('cancels known bots five at a time', async () => {
+  it('cancels bots five at a time', async () => {
     let releaseRecallBotCancellations: () => void = () => {};
     const recallBotCancellationsReleased = new Promise<void>((resolve) => {
       releaseRecallBotCancellations = resolve;
     });
+    const externalBotIds = Array.from(
+      { length: 6 },
+      (_, index) => `bot-${index + 1}`,
+    );
     fetchMock.mockImplementation(
       async (_url: string, requestInitialization: RequestInit) => {
         if (requestInitialization.method === 'DELETE') {
@@ -156,53 +157,33 @@ describe('cancelWorkspaceRecallBots', () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ next: null, results: [] }),
+          json: async () => ({
+            next: null,
+            results: externalBotIds.map((id) =>
+              buildBot({ id, twentyWorkspaceId: CURRENT_WORKSPACE_ID }),
+            ),
+          }),
         };
       },
     );
-    const knownExternalBotIds = Array.from(
-      { length: 6 },
-      (_, index) => `known-bot-${index + 1}`,
-    );
 
     const workspaceRecallBotCleanupPromise = cancelWorkspaceRecallBots({
-      knownExternalBotIds,
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
 
-    expect(getCallsByMethod('DELETE')).toHaveLength(5);
+    await vi.waitFor(() => expect(getCallsByMethod('DELETE')).toHaveLength(5));
     releaseRecallBotCancellations();
     const workspaceRecallBotCleanupResult =
       await workspaceRecallBotCleanupPromise;
 
     expect(getCallsByMethod('DELETE')).toHaveLength(6);
     expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual(
-      knownExternalBotIds,
+      externalBotIds,
     );
   });
 
-  it('does not cancel a known bot twice when the safety list also returns it', async () => {
-    stubRecallApi({
-      bots: [
-        buildBot({ id: 'known-bot', twentyWorkspaceId: CURRENT_WORKSPACE_ID }),
-      ],
-    });
-
-    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['known-bot', 'known-bot'],
-      joinAtAfter: JOIN_AT_AFTER,
-      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
-    });
-
-    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([
-      'known-bot',
-    ]);
-    expect(getCallsByMethod('DELETE')).toHaveLength(1);
-    expect(getCallsByMethod('GET')).toHaveLength(1);
-  });
-
-  it('skips safety-list bots that are not claimed by the current workspace', async () => {
+  it('skips listed bots that are not claimed by the current workspace', async () => {
     stubRecallApi({
       bots: [
         buildBot({ id: 'other-bot', twentyWorkspaceId: OTHER_WORKSPACE_ID }),
@@ -211,7 +192,6 @@ describe('cancelWorkspaceRecallBots', () => {
     });
 
     const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: [],
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
@@ -221,108 +201,134 @@ describe('cancelWorkspaceRecallBots', () => {
     expect(getCallsByMethod('DELETE')).toHaveLength(0);
   });
 
-  it('exposes the three retry attempts made for a joined bot returning 409', async () => {
-    vi.useFakeTimers();
-    stubRecallApi({ bots: [], cancelStatusByBotId: { 'joined-bot': 409 } });
-
-    const workspaceRecallBotCleanupPromise = cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['joined-bot'],
-      joinAtAfter: JOIN_AT_AFTER,
-      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
-    });
-
-    await vi.runAllTimersAsync();
-    const workspaceRecallBotCleanupResult =
-      await workspaceRecallBotCleanupPromise;
-
-    expect(workspaceRecallBotCleanupResult.failedExternalBotIds).toEqual([
-      'joined-bot',
-    ]);
-    expect(getCallsByMethod('DELETE')).toHaveLength(3);
-    expect(getCallsByMethod('POST')).toHaveLength(0);
-  });
-
-  it('does not re-attempt a failed known bot returned by the safety list', async () => {
+  it('treats a bot that already started joining as settled', async () => {
     stubRecallApi({
       bots: [
         buildBot({
-          id: 'failing-bot',
+          id: 'joining-bot',
           twentyWorkspaceId: CURRENT_WORKSPACE_ID,
         }),
       ],
-      cancelStatusByBotId: { 'failing-bot': 400 },
+      cancelStatusByBotId: { 'joining-bot': 405 },
     });
 
     const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['failing-bot'],
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
 
-    expect(workspaceRecallBotCleanupResult.failedExternalBotIds).toEqual([
-      'failing-bot',
-    ]);
+    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([]);
     expect(getCallsByMethod('DELETE')).toHaveLength(1);
-    expect(getCallsByMethod('GET')).toHaveLength(1);
   });
 
-  it('keeps direct cancellations when the safety list fails', async () => {
+  it('fails once a bot still cannot be canceled after three attempts', async () => {
+    vi.useFakeTimers();
+    stubRecallApi({
+      bots: [
+        buildBot({ id: 'stuck-bot', twentyWorkspaceId: CURRENT_WORKSPACE_ID }),
+      ],
+      cancelStatusByBotId: { 'stuck-bot': 409 },
+    });
+
+    const workspaceRecallBotCleanupExpectation = expect(
+      cancelWorkspaceRecallBots({
+        joinAtAfter: JOIN_AT_AFTER,
+        cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+      }),
+    ).rejects.toThrow('0 canceled, 1 failed');
+
+    await vi.runAllTimersAsync();
+    await workspaceRecallBotCleanupExpectation;
+
+    expect(getCallsByMethod('DELETE')).toHaveLength(3);
+  });
+
+  it('fails without canceling anything when the Recall list fails', async () => {
     stubRecallApi({ bots: [], listStatus: 400 });
 
-    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['known-bot'],
+    await expect(
+      cancelWorkspaceRecallBots({
+        joinAtAfter: JOIN_AT_AFTER,
+        cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+      }),
+    ).rejects.toThrow('failed to list Recall bots');
+    expect(getCallsByMethod('DELETE')).toHaveLength(0);
+  });
+
+  it('fails when the Recall list is truncated', async () => {
+    stubRecallApi({
+      bots: [],
+      next: 'https://us-east-1.recall.ai/api/v1/bot/?cursor=next-page',
+    });
+
+    await expect(
+      cancelWorkspaceRecallBots({
+        joinAtAfter: JOIN_AT_AFTER,
+        cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+      }),
+    ).rejects.toThrow('list truncated: true');
+  });
+
+  it('fails at the cutoff and a retry finishes the bots that are left', async () => {
+    const remainingBots = new Map(
+      Array.from({ length: 7 }, (_, index) => {
+        const id = `bot-${index + 1}`;
+
+        return [id, buildBot({ id, twentyWorkspaceId: CURRENT_WORKSPACE_ID })];
+      }),
+    );
+    fetchMock.mockImplementation(
+      async (url: string, requestInitialization: RequestInit) => {
+        if (requestInitialization.method === 'DELETE') {
+          const pathSegments = new URL(url).pathname.split('/');
+
+          remainingBots.delete(pathSegments[pathSegments.length - 2] ?? '');
+
+          return buildJsonResponse(204);
+        }
+
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            next: null,
+            results: [...remainingBots.values()],
+          }),
+        };
+      },
+    );
+    vi.spyOn(Date, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(1);
+
+    await expect(
+      cancelWorkspaceRecallBots({
+        joinAtAfter: JOIN_AT_AFTER,
+        cancellationCutoffEpochMs: 1,
+      }),
+    ).rejects.toThrow('5 canceled, 0 failed, cutoff reached: true');
+    expect(remainingBots.size).toBe(2);
+
+    const retryResult = await cancelWorkspaceRecallBots({
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
 
-    expect(workspaceRecallBotCleanupResult).toEqual({
-      scannedBotCount: 0,
-      canceledExternalBotIds: ['known-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
-    });
-    expect(console.warn).toHaveBeenCalledWith(
-      expect.stringContaining('failed to list Recall bots'),
-    );
+    expect(retryResult.canceledExternalBotIds).toEqual(['bot-6', 'bot-7']);
+    expect(remainingBots.size).toBe(0);
   });
 
-  it('stops starting Recall calls at the cancellation cutoff', async () => {
-    stubRecallApi({ bots: [] });
-    vi.spyOn(Date, 'now').mockReturnValueOnce(0).mockReturnValueOnce(1);
-    const knownExternalBotIds = Array.from(
-      { length: 6 },
-      (_, index) => `known-bot-${index + 1}`,
-    );
-
-    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds,
-      joinAtAfter: JOIN_AT_AFTER,
-      cancellationCutoffEpochMs: 1,
-    });
-
-    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual(
-      knownExternalBotIds.slice(0, 5),
-    );
-    expect(workspaceRecallBotCleanupResult.cutoffReached).toBe(true);
-    expect(getCallsByMethod('DELETE')).toHaveLength(5);
-    expect(getCallsByMethod('GET')).toHaveLength(0);
-  });
-
-  it('cancels known bots even when the workspace id is unavailable', async () => {
+  it('fails without calling Recall when the workspace id is unavailable', async () => {
     delete process.env.TWENTY_APP_ACCESS_TOKEN;
     stubRecallApi({ bots: [] });
 
-    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['known-bot'],
-      joinAtAfter: JOIN_AT_AFTER,
-      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
-    });
-
-    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([
-      'known-bot',
-    ]);
-    expect(getCallsByMethod('DELETE')).toHaveLength(1);
-    expect(getCallsByMethod('GET')).toHaveLength(0);
+    await expect(
+      cancelWorkspaceRecallBots({
+        joinAtAfter: JOIN_AT_AFTER,
+        cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+      }),
+    ).rejects.toThrow('workspace id unavailable');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

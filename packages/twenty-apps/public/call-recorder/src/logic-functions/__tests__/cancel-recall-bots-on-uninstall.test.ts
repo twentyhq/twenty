@@ -52,9 +52,6 @@ describe('cancel-recall-bots-on-uninstall', () => {
     mocks.cancelWorkspaceRecallBots.mockResolvedValue({
       scannedBotCount: 1,
       canceledExternalBotIds: ['known-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
     });
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -73,7 +70,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     );
   });
 
-  it('cancels open records by id then passes their bot ids to one 25-hour safety scan', async () => {
+  it('cancels open records by id then cancels the upcoming Recall bots', async () => {
     const uninstallCleanupResult = await cancelRecallBotsOnUninstallHandler();
 
     expect(mocks.cancelOpenScheduledCallRecordingRequests).toHaveBeenCalledWith(
@@ -82,17 +79,13 @@ describe('cancel-recall-bots-on-uninstall', () => {
       expect.any(Function),
     );
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
-      knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
     expect(uninstallCleanupResult).toEqual({
       canceledCallRecordingRequestCount: 3,
       scannedBotCount: 1,
       canceledExternalBotIds: ['known-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
     });
   });
 
@@ -116,8 +109,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
       mocks.cancelOpenScheduledCallRecordingRequests,
     ).not.toHaveBeenCalled();
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
-      knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });
@@ -131,13 +123,12 @@ describe('cancel-recall-bots-on-uninstall', () => {
       'failed to cancel open call recording requests: Cannot update records',
     );
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
-      knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });
 
-  it('runs the Recall safety scan and fails loudly when open records cannot be read', async () => {
+  it('still cancels Recall bots and fails loudly when open records cannot be read', async () => {
     mocks.findOpenScheduledCallRecordings.mockRejectedValue(
       new Error('Cannot read records'),
     );
@@ -149,8 +140,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
       mocks.cancelOpenScheduledCallRecordingRequests,
     ).not.toHaveBeenCalled();
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
-      knownExternalBotIds: [],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });

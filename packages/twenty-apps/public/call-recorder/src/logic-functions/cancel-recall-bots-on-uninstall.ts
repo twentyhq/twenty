@@ -9,10 +9,8 @@ import {
   cancelWorkspaceRecallBots,
   type CancelWorkspaceRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-workspace-recall-bots.util';
-import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 const UNINSTALL_TIMEOUT_SECONDS = 30;
-const RECALL_BOT_JOIN_AT_LOOKBACK_HOURS = 25;
 const RECORD_CLEANUP_REQUEST_START_BUDGET_MS = 5_000;
 const UNINSTALL_RESPONSE_HEADROOM_MS = 5_000;
 const RECALL_CANCELLATION_START_HEADROOM_MS =
@@ -27,7 +25,6 @@ export const cancelRecallBotsOnUninstallHandler =
     const coreApiClient = new CoreApiClient();
     const uninstallStartedAt = new Date();
     let canceledCallRecordingRequestCount = 0;
-    let knownExternalBotIds: string[] = [];
     let recordCleanupError: Error | undefined;
     const recordCleanupRequestStartCutoffEpochMs =
       uninstallStartedAt.getTime() + RECORD_CLEANUP_REQUEST_START_BUDGET_MS;
@@ -38,10 +35,6 @@ export const cancelRecallBotsOnUninstallHandler =
       const openCallRecordings = await findOpenScheduledCallRecordings(
         coreApiClient,
         shouldStartRecordCleanupRequest,
-      );
-
-      knownExternalBotIds = getUniqueSortedIds(
-        openCallRecordings.map((callRecording) => callRecording.externalBotId),
       );
 
       if (openCallRecordings.length > 0 && !shouldStartRecordCleanupRequest()) {
@@ -79,11 +72,7 @@ export const cancelRecallBotsOnUninstallHandler =
 
     const workspaceRecallBotCancellationResult =
       await cancelWorkspaceRecallBots({
-        knownExternalBotIds,
-        joinAtAfter: new Date(
-          uninstallStartedAt.getTime() -
-            RECALL_BOT_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000,
-        ).toISOString(),
+        joinAtAfter: uninstallStartedAt.toISOString(),
         cancellationCutoffEpochMs:
           uninstallStartedAt.getTime() +
           UNINSTALL_TIMEOUT_SECONDS * 1_000 -
@@ -110,7 +99,7 @@ export default defineUninstallLogicFunction({
     CANCEL_RECALL_BOTS_ON_UNINSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cancel-recall-bots-on-uninstall',
   description:
-    'Cancels open call recording requests and the workspace Recall bots discoverable within the uninstall request budget.',
+    'Cancels open call recording requests and upcoming Recall bots, failing while any bot is left so the hook can be retried.',
   timeoutSeconds: UNINSTALL_TIMEOUT_SECONDS,
   handler: cancelRecallBotsOnUninstallHandler,
 });

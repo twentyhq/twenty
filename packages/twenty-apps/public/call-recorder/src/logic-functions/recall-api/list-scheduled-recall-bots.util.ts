@@ -24,7 +24,6 @@ type ListScheduledRecallBotsArguments = {
   joinAtAfter?: string;
   joinAtBefore?: string;
   metadata?: Record<string, string>;
-  statuses?: string[];
 };
 
 export const listScheduledRecallBots = async (
@@ -47,12 +46,7 @@ export const listScheduledRecallBotsBeforeRequestCutoff = async ({
   });
 
 const listScheduledRecallBotsWithPageRequestPolicy = async ({
-  listScheduledRecallBotsArguments: {
-    joinAtAfter,
-    joinAtBefore,
-    metadata,
-    statuses,
-  },
+  listScheduledRecallBotsArguments: { joinAtAfter, joinAtBefore, metadata },
   shouldStartPageRequest,
 }: {
   listScheduledRecallBotsArguments: ListScheduledRecallBotsArguments;
@@ -76,10 +70,6 @@ const listScheduledRecallBotsWithPageRequestPolicy = async ({
 
   Object.entries(metadata ?? {}).forEach(([key, value]) => {
     searchParameters.set(`metadata__${key}`, value);
-  });
-
-  statuses?.forEach((status) => {
-    searchParameters.append('status', status);
   });
 
   const result = await fetchRecallListPages({
