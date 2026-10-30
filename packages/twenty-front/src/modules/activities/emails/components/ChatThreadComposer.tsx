@@ -4,16 +4,14 @@ import { type KeyboardEvent, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { v4 } from 'uuid';
 
+import { AppChip } from '@/applications/components/AppChip';
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { MessageChannelLogo } from '@/activities/emails/components/MessageChannelLogo';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { MessageChannelType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -70,7 +68,7 @@ type ChatThreadComposerProps = {
   messageThreadId: string;
   messageChannelId: string;
   channelName: string;
-  connectionProviderName: string;
+  applicationId: string | null;
   recipientName: string | null;
   isDisconnected: boolean;
   onMessageSent: () => void;
@@ -80,7 +78,7 @@ export const ChatThreadComposer = ({
   messageThreadId,
   messageChannelId,
   channelName,
-  connectionProviderName,
+  applicationId,
   recipientName,
   isDisconnected,
   onMessageSent,
@@ -181,13 +179,7 @@ export const ChatThreadComposer = ({
         />
         <StyledFooter>
           <StyledChannel>
-            <MessageChannelLogo
-              channel={{
-                type: MessageChannelType.APP,
-                provider: ConnectedAccountProvider.APP,
-                connectionProviderName,
-              }}
-            />
+            <AppChip applicationId={applicationId} chipOnly />
             {channelName}
           </StyledChannel>
           <IconButton
