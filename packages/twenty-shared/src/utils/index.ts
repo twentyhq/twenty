@@ -222,6 +222,7 @@ export {
   getLogoUrlFromDomainName,
 } from './image/getLogoUrlFromDomainName';
 export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraintsFields';
+export { isAppMessageHeaderMessageId } from './isAppMessageHeaderMessageId';
 export { isAutoSelectModelId } from './isAutoSelectModelId';
 export { isFieldValueRestricted } from './isFieldValueRestricted';
 export { fastDeepEqual } from './json/fast-deep-equal';
