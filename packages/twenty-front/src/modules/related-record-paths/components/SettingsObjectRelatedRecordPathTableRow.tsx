@@ -8,6 +8,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useRelatedRecordPathMutations } from '@/related-record-paths/hooks/useRelatedRecordPathMutations';
 import { RELATED_RECORD_PATH_TABLE_GRID_TEMPLATE_COLUMNS } from '@/related-record-paths/constants/RelatedRecordPathTableGridTemplateColumns';
 import { getRelatedRecordPathFieldMetadataIds } from '@/related-record-paths/utils/getRelatedRecordPathFieldMetadataIds';
 import { getRelatedRecordPathSteps } from '@/related-record-paths/utils/getRelatedRecordPathSteps';
@@ -37,21 +38,18 @@ type SettingsObjectRelatedRecordPathTableRowProps = {
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
   relatedRecordPath: RelatedRecordPath;
   isReadOnly: boolean;
-  isDeleteDisabled: boolean;
-  onDelete: (relatedRecordPathId: string) => void;
 };
 
 export const SettingsObjectRelatedRecordPathTableRow = ({
   sourceObjectMetadataItem,
   relatedRecordPath,
   isReadOnly,
-  isDeleteDisabled,
-  onDelete,
 }: SettingsObjectRelatedRecordPathTableRowProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { deleteRelatedRecordPath, isSaving } = useRelatedRecordPathMutations();
 
   const steps = getRelatedRecordPathSteps({
     sourceObjectMetadataItem,
@@ -102,9 +100,9 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
         {!isReadOnly && (
           <LightIconButton
             emphasis="subtle"
-            disabled={isDeleteDisabled}
+            disabled={isSaving}
             aria-label={t`Delete related record path`}
-            onClick={() => onDelete(relatedRecordPath.id)}
+            onClick={() => deleteRelatedRecordPath(relatedRecordPath.id)}
           >
             <IconTrash />
           </LightIconButton>

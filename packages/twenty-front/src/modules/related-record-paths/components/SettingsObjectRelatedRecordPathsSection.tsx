@@ -7,7 +7,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { SettingsObjectRelatedRecordPathAddDropdown } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown';
 import { SettingsObjectRelatedRecordPathTableRow } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow';
 import { RELATED_RECORD_PATH_TABLE_GRID_TEMPLATE_COLUMNS } from '@/related-record-paths/constants/RelatedRecordPathTableGridTemplateColumns';
-import { useRelatedRecordPathMutations } from '@/related-record-paths/hooks/useRelatedRecordPathMutations';
 import { useRelatedRecordPaths } from '@/related-record-paths/hooks/useRelatedRecordPaths';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -48,7 +47,6 @@ export const SettingsObjectRelatedRecordPathsSection = ({
   const { relatedRecordPaths, loading, error } = useRelatedRecordPaths({
     objectMetadataId: objectMetadataItem.id,
   });
-  const { deleteRelatedRecordPath, isSaving } = useRelatedRecordPathMutations();
 
   return (
     <StyledContent>
@@ -78,8 +76,6 @@ export const SettingsObjectRelatedRecordPathsSection = ({
                 sourceObjectMetadataItem={objectMetadataItem}
                 relatedRecordPath={relatedRecordPath}
                 isReadOnly={isReadOnly}
-                isDeleteDisabled={isSaving}
-                onDelete={deleteRelatedRecordPath}
               />
             ))}
           </TableBody>
@@ -89,7 +85,6 @@ export const SettingsObjectRelatedRecordPathsSection = ({
         <StyledButtonContainer>
           <SettingsObjectRelatedRecordPathAddDropdown
             sourceObjectMetadataItem={objectMetadataItem}
-            disabled={isSaving}
           />
         </StyledButtonContainer>
       )}

@@ -11,12 +11,10 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 
 type SettingsObjectRelatedRecordPathAddDropdownProps = {
   sourceObjectMetadataItem: EnrichedObjectMetadataItem;
-  disabled: boolean;
 };
 
 export const SettingsObjectRelatedRecordPathAddDropdown = ({
   sourceObjectMetadataItem,
-  disabled,
 }: SettingsObjectRelatedRecordPathAddDropdownProps) => {
   const { t } = useLingui();
 
@@ -26,7 +24,6 @@ export const SettingsObjectRelatedRecordPathAddDropdown = ({
       type="picker"
     >
       <Dropdown.Trigger
-        disabled={disabled}
         render={
           <Button startIcon={<IconPlus />} size="sm" variant="outline">
             {t`Add path`}
