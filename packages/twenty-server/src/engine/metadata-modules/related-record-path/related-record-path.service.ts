@@ -5,6 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -26,7 +28,25 @@ export class RelatedRecordPathService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
+
+  private async assertHasRelatedRecordPathsEntitlement(
+    workspaceId: string,
+  ): Promise<void> {
+    const hasEntitlement =
+      await this.billingSubscriptionService.getWorkspaceEntitlementValue(
+        workspaceId,
+        BillingEntitlementKey.RLS,
+      );
+
+    if (!hasEntitlement) {
+      throw new RelatedRecordPathException(
+        'Related record paths are not included in the workspace plan',
+        RelatedRecordPathExceptionCode.RELATED_RECORD_PATHS_NOT_ENTITLED,
+      );
+    }
+  }
 
   private async getFlatRelatedRecordPathMaps(workspaceId: string) {
     const { flatRelatedRecordPathMaps } =
@@ -110,6 +130,8 @@ export class RelatedRecordPathService {
     input: CreateRelatedRecordPathInput;
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
+    await this.assertHasRelatedRecordPathsEntitlement(workspaceId);
+
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -158,6 +180,8 @@ export class RelatedRecordPathService {
     id: string;
     workspaceId: string;
   }): Promise<RelatedRecordPathDTO> {
+    await this.assertHasRelatedRecordPathsEntitlement(workspaceId);
+
     const flatRelatedRecordPathMaps =
       await this.getFlatRelatedRecordPathMaps(workspaceId);
 
