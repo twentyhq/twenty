@@ -14,10 +14,12 @@ export const enqueueCallRecordingRequestFollowUps = async ({
   callRecordingIds,
   delayMs = CALL_RECORDING_REQUEST_FOLLOW_UP_DELAY_MS,
   attempt = 0,
+  deferralCount = 0,
 }: {
   callRecordingIds: string[];
   delayMs?: number;
   attempt?: number;
+  deferralCount?: number;
 }): Promise<void> => {
   const now = Date.now();
   const followUpSlots = getBatches(
@@ -38,7 +40,11 @@ export const enqueueCallRecordingRequestFollowUps = async ({
             attempt,
             dueAt: new Date(now + delayMs),
           }),
-          payload: { callRecordingId, attempt },
+          payload: {
+            callRecordingId,
+            attempt,
+            ...(deferralCount === 0 ? {} : { deferralCount }),
+          },
         })),
         retryLimit: ENQUEUED_JOB_RETRY_LIMIT,
         delayMs: slotDelayMs,

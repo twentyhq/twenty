@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
@@ -11,6 +12,7 @@ import {
 } from 'src/logic-functions/domain/resolve-call-recording-request-follow-up.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { isAppPreferencesEnabled } from 'src/logic-functions/data/is-app-preferences-enabled.util';
 import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
 import { updatePendingCallRecording } from 'src/logic-functions/data/update-pending-call-recording.util';
 import { cancelRecallBotForCanceledCallRecording } from 'src/logic-functions/flows/cancel-recall-bot-for-canceled-call-recording.util';
@@ -22,7 +24,12 @@ import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/
 
 export type FollowUpCallRecordingRequestResult =
   | { status: 'settled'; outcome: string }
-  | { status: 'follow-up-again'; reason: string; dueAt: Date };
+  | {
+      status: 'follow-up-again';
+      reason: string;
+      dueAt: Date;
+      isRecallBotDeletionDeferral?: boolean;
+    };
 
 type FollowUpActionResult =
   | { status: 'done'; outcome: string }
@@ -55,6 +62,10 @@ export const followUpCallRecordingRequest = async ({
   const followUp = resolveCallRecordingRequestFollowUp({
     callRecording,
     calendarEvent,
+    isRecallBotDeletionDeferralEnabled:
+      callRecording.recordingRequestStatus ===
+        CallRecordingRequestStatus.CANCELED &&
+      (await isAppPreferencesEnabled()),
     now,
   });
 
@@ -63,6 +74,7 @@ export const followUpCallRecordingRequest = async ({
       status: 'follow-up-again',
       reason: followUp.reason,
       dueAt: followUp.checkAt,
+      isRecallBotDeletionDeferral: followUp.isRecallBotDeletionDeferral,
     };
   }
 

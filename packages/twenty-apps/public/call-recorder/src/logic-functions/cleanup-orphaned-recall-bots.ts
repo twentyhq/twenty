@@ -29,6 +29,7 @@ const cleanupOrphanedRecallBotsHandler = async (): Promise<
       joinAtBefore: new Date(
         now.getTime() + ORPHANED_BOT_JOIN_AT_LOOKAHEAD_HOURS * 60 * 60 * 1000,
       ).toISOString(),
+      now,
     });
   } catch (error) {
     return buildStepFailure('orphaned bot cancellation', error);

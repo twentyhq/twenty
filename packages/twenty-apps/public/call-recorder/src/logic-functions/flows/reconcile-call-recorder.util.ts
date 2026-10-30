@@ -26,6 +26,7 @@ import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/e
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { isAppPreferencesEnabled } from 'src/logic-functions/data/is-app-preferences-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
 import { resolveCallRecordingTitle } from 'src/logic-functions/domain/resolve-call-recording-title.util';
@@ -71,6 +72,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
     meetingPolicyResults,
     calendarEventsById,
     removedOccurrences,
+    now,
   });
 };
 
@@ -189,11 +191,13 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
   meetingPolicyResults,
   calendarEventsById,
   removedOccurrences = [],
+  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
   calendarEventsById: Map<string, CalendarEventRecord>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
+  now: Date;
 }): Promise<CallRecorderReconciliationResult[]> => {
   const removedCalendarEventIdsByMeetingKey =
     buildRemovedCalendarEventIdsByMeetingKey(removedOccurrences);
@@ -238,6 +242,8 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
       callRecordingsByCalendarEventId,
       policyManagedCallRecordingsById,
       activeMeetingCallRecordingIds: new Set(activeMeetingCallRecordingIds),
+      calendarEventsById,
+      now,
     });
 
   await clearCanceledMeetingsRecordingOn(
@@ -291,6 +297,8 @@ const reconcileCanceledMeetings = async ({
   callRecordingsByCalendarEventId,
   policyManagedCallRecordingsById,
   activeMeetingCallRecordingIds,
+  calendarEventsById,
+  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResults: CallRecorderPolicyResultForMeeting[];
@@ -298,6 +306,8 @@ const reconcileCanceledMeetings = async ({
   callRecordingsByCalendarEventId: Map<string, CallRecordingRecord[]>;
   policyManagedCallRecordingsById: Map<string, CallRecordingRecord>;
   activeMeetingCallRecordingIds: Set<string>;
+  calendarEventsById: Map<string, CalendarEventRecord>;
+  now: Date;
 }): Promise<{
   canceledMeetingReconciliations: CanceledMeetingReconciliation[];
   callRecordingIdsToFollowUp: string[];
@@ -305,6 +315,10 @@ const reconcileCanceledMeetings = async ({
   const callRecordingIdsToFollowUp: string[] = [];
   const callRecordingIdsCanceledInBatch = new Set<string>();
   const canceledMeetingReconciliations: CanceledMeetingReconciliation[] = [];
+  // Read once per run, and only once a cancellation could actually be deferred.
+  let isRecallBotDeletionDeferralEnabledPromise: Promise<boolean> | undefined;
+  const isRecallBotDeletionDeferralEnabled = (): Promise<boolean> =>
+    (isRecallBotDeletionDeferralEnabledPromise ??= isAppPreferencesEnabled());
 
   for (const meetingPolicyResult of meetingPolicyResults) {
     const meetingCallRecordings = collectCanceledMeetingCallRecordings({
@@ -346,6 +360,9 @@ const reconcileCanceledMeetings = async ({
           meetingCallRecordings,
           cancellableCallRecordings,
           callRecordingIdsCanceledInBatch,
+          calendarEventsById,
+          isRecallBotDeletionDeferralEnabled,
+          now,
         }),
       );
     } catch (error) {
@@ -698,17 +715,28 @@ const reconcileCanceledMeeting = async ({
   meetingCallRecordings,
   cancellableCallRecordings,
   callRecordingIdsCanceledInBatch,
+  calendarEventsById,
+  isRecallBotDeletionDeferralEnabled,
+  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: CallRecorderPolicyResultForMeeting;
   meetingCallRecordings: CallRecordingRecord[];
   cancellableCallRecordings: CallRecordingRecord[];
   callRecordingIdsCanceledInBatch: Set<string>;
+  calendarEventsById: Map<string, CalendarEventRecord>;
+  isRecallBotDeletionDeferralEnabled: () => Promise<boolean>;
+  now: Date;
 }): Promise<CanceledMeetingReconciliation> => {
   for (const callRecording of cancellableCallRecordings) {
     await cancelCallRecordingRequest({
       client,
       callRecording,
+      calendarEvent: isUndefined(callRecording.calendarEventId)
+        ? undefined
+        : calendarEventsById.get(callRecording.calendarEventId),
+      isRecallBotDeletionDeferralEnabled,
+      now,
     });
     callRecordingIdsCanceledInBatch.add(callRecording.id);
   }

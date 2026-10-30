@@ -2,9 +2,13 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { isAppPreferencesEnabled } from 'src/logic-functions/data/is-app-preferences-enabled.util';
 import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -25,10 +29,12 @@ export const cleanupOrphanedRecallBots = async ({
   client,
   joinAtAfter,
   joinAtBefore,
+  now = new Date(),
 }: {
   client: CoreApiClient;
   joinAtAfter: string;
   joinAtBefore: string;
+  now?: Date;
 }): Promise<CleanupOrphanedRecallBotsResult> => {
   const currentWorkspaceId = getCurrentWorkspaceId();
 
@@ -85,6 +91,11 @@ export const cleanupOrphanedRecallBots = async ({
     callRecordings.map((callRecording) => [callRecording.id, callRecording]),
   );
   const canceledExternalBotIds: string[] = [];
+  const deferredExternalBotIds = await findDeferredRecallBotDeletionBotIds({
+    client,
+    callRecordings,
+    now,
+  });
 
   for (const bot of workspaceManagedBots) {
     const claimedCallRecordingId = getClaimedCallRecordingId(bot);
@@ -92,7 +103,10 @@ export const cleanupOrphanedRecallBots = async ({
       ? undefined
       : callRecordingsById.get(claimedCallRecordingId);
 
-    if (isBotClaimed({ bot, callRecording })) {
+    if (
+      isBotClaimed({ bot, callRecording }) ||
+      deferredExternalBotIds.has(bot.id)
+    ) {
       continue;
     }
 
@@ -110,6 +124,58 @@ export const cleanupOrphanedRecallBots = async ({
     canceledExternalBotIds,
     truncatedBotList: listResult.truncated,
   };
+};
+
+// The follow-up armed with the cancellation deletes these bots inside their
+// deletion window; deleting them here would bring that Recall traffic back.
+const findDeferredRecallBotDeletionBotIds = async ({
+  client,
+  callRecordings,
+  now,
+}: {
+  client: CoreApiClient;
+  callRecordings: CallRecordingRecord[];
+  now: Date;
+}): Promise<Set<string>> => {
+  const canceledRecallBots = callRecordings.flatMap(
+    ({ id, recordingRequestStatus, status, externalBotId, calendarEventId }) =>
+      recordingRequestStatus === CallRecordingRequestStatus.CANCELED &&
+      NON_TERMINAL_CALL_RECORDING_STATUSES.some(
+        (nonTerminalStatus) => nonTerminalStatus === status,
+      ) &&
+      !isUndefined(externalBotId) &&
+      !isUndefined(calendarEventId)
+        ? [{ callRecordingId: id, externalBotId, calendarEventId }]
+        : [],
+  );
+
+  if (canceledRecallBots.length === 0 || !(await isAppPreferencesEnabled())) {
+    return new Set();
+  }
+
+  const calendarEventsById = new Map(
+    (
+      await fetchCalendarEventsByIds(
+        client,
+        canceledRecallBots.map(({ calendarEventId }) => calendarEventId),
+      )
+    ).map((calendarEvent) => [calendarEvent.id, calendarEvent]),
+  );
+
+  return new Set(
+    canceledRecallBots
+      .filter(
+        ({ callRecordingId, calendarEventId }) =>
+          !isUndefined(
+            computeDeferredRecallBotDeletionAt({
+              callRecordingId,
+              calendarEvent: calendarEventsById.get(calendarEventId),
+              now,
+            }),
+          ),
+      )
+      .map(({ externalBotId }) => externalBotId),
+  );
 };
 
 const getClaimedCallRecordingId = (

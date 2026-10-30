@@ -4,9 +4,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { checkCreditsBeforeRecallBotJoin } from 'src/logic-functions/flows/check-credits-before-recall-bot-join.util';
 
 const getCreditAvailabilityMock = vi.hoisted(() => vi.fn());
+const metadataQueryMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/billing', () => ({
   getCreditAvailability: getCreditAvailabilityMock,
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = metadataQueryMock;
+  },
 }));
 
 const fetchMock = vi.fn();
@@ -125,6 +132,14 @@ const stubRecallBotRemoval = (status: number) => {
   fetchMock.mockImplementation(async () => new Response(null, { status }));
 };
 
+const stubAppPreferencesFlag = (value: boolean) => {
+  metadataQueryMock.mockResolvedValue({
+    currentWorkspace: {
+      featureFlags: [{ key: 'IS_APP_PREFERENCES_ENABLED', value }],
+    },
+  });
+};
+
 describe('checkCreditsBeforeRecallBotJoin', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -133,6 +148,8 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     fetchMock.mockReset();
     getCreditAvailabilityMock.mockReset();
+    metadataQueryMock.mockReset();
+    stubAppPreferencesFlag(false);
     stubRecallBotRemoval(204);
   });
 
@@ -348,5 +365,98 @@ describe('checkCreditsBeforeRecallBotJoin', () => {
       botScheduleIdempotencyKey: 'idempotency-key',
     });
     expect(client.callRecording.callRecorderFailureReason).toBeUndefined();
+  });
+
+  describe('canceled recording whose bot deletion was deferred', () => {
+    const buildCanceledClient = () =>
+      new FakeCoreApiClient({
+        callRecording: { recordingRequestStatus: 'CANCELED' },
+      });
+
+    it('deletes the bot it still holds before it joins', async () => {
+      stubAppPreferencesFlag(true);
+      const client = buildCanceledClient();
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
+
+      expect(result).toEqual({ status: 'canceled' });
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        RECALL_BOT_URL,
+        expect.objectContaining({ method: 'DELETE' }),
+      );
+      expect(getCreditAvailabilityMock).not.toHaveBeenCalled();
+      expect(client.callRecording).toMatchObject({
+        status: 'SCHEDULED',
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: null,
+        botScheduleAttemptedAt: null,
+        botScheduleIdempotencyKey: null,
+      });
+    });
+
+    it('leaves a bot that has already joined to the follow-up instead of ejecting it', async () => {
+      stubAppPreferencesFlag(true);
+      stubRecallBotRemoval(405);
+      const client = buildCanceledClient();
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
+
+      expect(result).toEqual({
+        status: 'skipped',
+        reason: 'bot has already joined',
+      });
+      expect(fetchMock).toHaveBeenCalledExactlyOnceWith(
+        RECALL_BOT_URL,
+        expect.objectContaining({ method: 'DELETE' }),
+      );
+      expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    });
+
+    it('does nothing once the bot join time has passed', async () => {
+      stubAppPreferencesFlag(true);
+      const client = buildCanceledClient();
+
+      const result = await checkCredits({ client, now: new Date(JOIN_AT) });
+
+      expect(result).toEqual({
+        status: 'skipped',
+        reason: 'bot join time has passed',
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('throws so the queue retries when Recall refuses the deletion', async () => {
+      stubAppPreferencesFlag(true);
+      stubRecallBotRemoval(403);
+      const client = buildCanceledClient();
+
+      await expect(
+        checkCredits({ client, now: TEN_MINUTES_BEFORE_JOIN }),
+      ).rejects.toThrow('could not be canceled');
+
+      expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    });
+
+    it('leaves the bot alone when deferral is disabled', async () => {
+      const client = buildCanceledClient();
+
+      const result = await checkCredits({
+        client,
+        now: TEN_MINUTES_BEFORE_JOIN,
+      });
+
+      expect(result).toEqual({
+        status: 'skipped',
+        reason: 'call recording no longer awaits a scheduled bot',
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(client.callRecording.externalBotId).toBe('recall-bot-1');
+    });
   });
 });

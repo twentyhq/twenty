@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
+import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
+import { computeDeferredRecallBotDeletionAt } from 'src/logic-functions/domain/compute-deferred-recall-bot-deletion-at.util';
 import { resolveCallRecordingRequestFollowUp } from 'src/logic-functions/domain/resolve-call-recording-request-follow-up.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
@@ -293,6 +295,116 @@ describe('resolveCallRecordingRequestFollowUp', () => {
         action: 'cancel-bot',
       });
       expect(resolveWithoutMeeting(25 * 60)).toMatchObject({ action: 'none' });
+    });
+  });
+
+  describe('canceled request with deferred Recall bot deletion', () => {
+    const farCalendarEvent = buildCalendarEvent({
+      startsAt: minutesFromNow(MINUTES_PER_DAY),
+      endsAt: minutesFromNow(MINUTES_PER_DAY + 60),
+    });
+    const farCallRecordingId = computeCallRecordingIdForMeeting(
+      `link:meet.example.com/customer-sync:${farCalendarEvent.startsAt}`,
+    );
+    const farDeletionAt = computeDeferredRecallBotDeletionAt({
+      callRecordingId: farCallRecordingId,
+      calendarEvent: farCalendarEvent,
+      now: NOW,
+    });
+
+    it('waits for the deletion window before canceling the bot', () => {
+      expect(farDeletionAt).toBeDefined();
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            externalBotId: 'recall-bot-1',
+          }),
+          calendarEvent: farCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: true,
+          now: NOW,
+        }),
+      ).toEqual({
+        action: 'check-again',
+        reason: 'waiting for the Recall bot deletion window',
+        checkAt: farDeletionAt,
+        isRecallBotDeletionDeferral: true,
+      });
+    });
+
+    it('waits for the deletion window before looking for an unsaved bot', () => {
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            botScheduleAttemptedAt: minutesFromNow(-40),
+          }),
+          calendarEvent: farCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: true,
+          now: NOW,
+        }),
+      ).toMatchObject({ action: 'check-again', checkAt: farDeletionAt });
+    });
+
+    it('cancels the bot once the deletion window has come', () => {
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            externalBotId: 'recall-bot-1',
+          }),
+          calendarEvent: farCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: true,
+          now: farDeletionAt ?? NOW,
+        }),
+      ).toEqual({ action: 'cancel-bot', externalBotId: 'recall-bot-1' });
+    });
+
+    it('cancels the bot right away when the meeting time is unknown', () => {
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            calendarEventId: undefined,
+            externalBotId: 'recall-bot-1',
+          }),
+          calendarEvent: undefined,
+          isRecallBotDeletionDeferralEnabled: true,
+          now: NOW,
+        }),
+      ).toEqual({ action: 'cancel-bot', externalBotId: 'recall-bot-1' });
+    });
+
+    it('cancels the bot right away when deferral is disabled', () => {
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            externalBotId: 'recall-bot-1',
+          }),
+          calendarEvent: farCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: false,
+          now: NOW,
+        }),
+      ).toEqual({ action: 'cancel-bot', externalBotId: 'recall-bot-1' });
+    });
+
+    it('keeps the first-try grace of a recent booking attempt', () => {
+      expect(
+        resolveCallRecordingRequestFollowUp({
+          callRecording: buildCanceledCallRecording({
+            id: farCallRecordingId,
+            botScheduleAttemptedAt: minutesFromNow(-1),
+          }),
+          calendarEvent: farCalendarEvent,
+          isRecallBotDeletionDeferralEnabled: true,
+          now: NOW,
+        }),
+      ).toEqual({
+        action: 'check-again',
+        reason: 'a bot booking may still be running',
+        checkAt: new Date(minutesFromNow(14)),
+      });
     });
   });
 });

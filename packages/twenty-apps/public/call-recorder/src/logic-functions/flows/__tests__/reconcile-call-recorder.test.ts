@@ -5,10 +5,17 @@ import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/com
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 
 const enqueueJobsMock = vi.hoisted(() => vi.fn());
+const metadataQueryMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   enqueueJobs: enqueueJobsMock,
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = metadataQueryMock;
+  },
 }));
 
 const fetchMock = vi.fn();
@@ -309,6 +316,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
     enqueueJobsMock.mockReset();
+    metadataQueryMock.mockReset();
+    metadataQueryMock.mockResolvedValue({
+      currentWorkspace: { featureFlags: [] },
+    });
     fetchMock.mockReset();
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
@@ -1297,5 +1308,141 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
 
     expect(result).toEqual([expect.objectContaining({ action: 'CREATED' })]);
     expect(recallBotCreateCalls()).toHaveLength(0);
+  });
+
+  describe('with app preferences enabled', () => {
+    const FAR_STARTS_AT = '2026-01-02T13:00:00.000Z';
+    const FAR_ENDS_AT = '2026-01-02T14:00:00.000Z';
+
+    beforeEach(() => {
+      metadataQueryMock.mockResolvedValue({
+        currentWorkspace: {
+          featureFlags: [{ key: 'IS_APP_PREFERENCES_ENABLED', value: true }],
+        },
+      });
+    });
+
+    it('cancels the request at once and leaves the Recall bot deletion to the follow-up', async () => {
+      const client = buildFakeCoreApiClient({
+        calendarEvents: [
+          buildCalendarEvent({
+            startsAt: FAR_STARTS_AT,
+            endsAt: FAR_ENDS_AT,
+            callRecorderPreference: 'OFF',
+          }),
+        ],
+        callRecordings: [
+          {
+            id: buildCustomerSyncCallRecordingId(FAR_STARTS_AT),
+            title: 'Customer Sync',
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'REQUESTED',
+            calendarEventId: 'calendar-event-1',
+            externalBotId: 'recall-bot-1',
+          },
+        ],
+      });
+
+      const result = await reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        now: NOW,
+      });
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          action: 'CANCELED',
+          callRecordingId: buildCustomerSyncCallRecordingId(FAR_STARTS_AT),
+        }),
+      ]);
+      expect(recallBotDeleteCalls()).toHaveLength(0);
+      expect(client.callRecordings).toEqual([
+        expect.objectContaining({
+          recordingRequestStatus: 'CANCELED',
+          externalBotId: 'recall-bot-1',
+        }),
+      ]);
+      expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          jobs: [
+            expect.objectContaining({
+              payload: {
+                callRecordingId:
+                  buildCustomerSyncCallRecordingId(FAR_STARTS_AT),
+                attempt: 0,
+              },
+            }),
+          ],
+        }),
+      );
+    });
+
+    it('deletes the Recall bot at once when the meeting is too close to defer', async () => {
+      const client = buildFakeCoreApiClient({
+        calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'OFF' })],
+        callRecordings: [
+          {
+            id: buildCustomerSyncCallRecordingId(),
+            title: 'Customer Sync',
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'REQUESTED',
+            calendarEventId: 'calendar-event-1',
+            externalBotId: 'recall-bot-1',
+          },
+        ],
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        now: new Date('2026-01-01T12:45:00.000Z'),
+      });
+
+      expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
+        `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
+      ]);
+      expect(client.callRecordings).toEqual([
+        expect.objectContaining({
+          recordingRequestStatus: 'CANCELED',
+          externalBotId: null,
+        }),
+      ]);
+    });
+
+    it('reuses the bot a canceled request still holds when its meeting is requested again', async () => {
+      const client = buildFakeCoreApiClient({
+        calendarEvents: [
+          buildCalendarEvent({ startsAt: FAR_STARTS_AT, endsAt: FAR_ENDS_AT }),
+        ],
+        callRecordings: [
+          {
+            id: buildCustomerSyncCallRecordingId(FAR_STARTS_AT),
+            title: 'Customer Sync',
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'CANCELED',
+            calendarEventId: 'calendar-event-1',
+            externalBotId: 'recall-bot-1',
+          },
+        ],
+      });
+
+      const result = await reconcileCallRecorderForCalendarEventIds({
+        client: client as unknown as CoreApiClient,
+        calendarEventIds: ['calendar-event-1'],
+        now: NOW,
+      });
+
+      expect(result).toEqual([expect.objectContaining({ action: 'UPDATED' })]);
+      expect(recallBotCreateCalls()).toHaveLength(0);
+      expect(recallBotUpdateCalls().map(([requestUrl]) => requestUrl)).toEqual([
+        `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
+      ]);
+      expect(client.callRecordings).toEqual([
+        expect.objectContaining({
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: 'recall-bot-1',
+        }),
+      ]);
+    });
   });
 });

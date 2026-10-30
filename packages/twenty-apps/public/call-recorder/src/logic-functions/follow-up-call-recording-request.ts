@@ -27,6 +27,8 @@ export const followUpCallRecordingRequestHandler = async (
 
   const attemptValue = body?.attempt;
   const attempt = isNumber(attemptValue) ? attemptValue : 0;
+  const deferralCountValue = body?.deferralCount;
+  const deferralCount = isNumber(deferralCountValue) ? deferralCountValue : 0;
   const now = new Date();
 
   try {
@@ -38,7 +40,9 @@ export const followUpCallRecordingRequestHandler = async (
         fetch: fetchWithRateLimitRetry,
       }),
       callRecordingId,
-      attempt,
+      // Waiting for a deferred deletion is not a failed try, so it must not
+      // stretch the retry backoff of the deletion itself.
+      attempt: attempt - deferralCount,
       now,
     });
 
@@ -47,6 +51,9 @@ export const followUpCallRecordingRequestHandler = async (
         callRecordingIds: [callRecordingId],
         delayMs: Math.max(0, result.dueAt.getTime() - now.getTime()),
         attempt: attempt + 1,
+        deferralCount: result.isRecallBotDeletionDeferral
+          ? deferralCount + 1
+          : deferralCount,
       });
     }
 

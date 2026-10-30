@@ -1,7 +1,16 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { cleanupOrphanedRecallBots } from 'src/logic-functions/flows/cleanup-orphaned-recall-bots.util';
+
+const metadataQueryMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = metadataQueryMock;
+  },
+}));
 
 const JOIN_AT_AFTER = '2026-01-01T08:00:00.000Z';
 const JOIN_AT_BEFORE = '2026-01-02T12:00:00.000Z';
@@ -20,6 +29,8 @@ const ORIGINAL_ENV_VALUES = ENV_VAR_NAMES.map(
 type CallRecordingNode = {
   id: string;
   recordingRequestStatus?: string | null;
+  status?: string | null;
+  calendarEventId?: string | null;
   externalBotId?: string | null;
 };
 
@@ -530,5 +541,115 @@ describe('cleanupOrphanedRecallBots', () => {
       canceledExternalBotIds: [],
     });
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  describe('canceled request whose bot deletion was deferred', () => {
+    const NOW = new Date('2026-01-01T12:00:00.000Z');
+
+    class FakeCoreApiClientWithCalendarEvents extends FakeCoreApiClient {
+      constructor(
+        callRecordings: CallRecordingNode[],
+        private meetingStartsAt: string,
+      ) {
+        super(callRecordings);
+      }
+
+      override async query(query: any): Promise<any> {
+        if (query.calendarEvents === undefined) {
+          return super.query(query);
+        }
+
+        return {
+          calendarEvents: {
+            pageInfo: { hasNextPage: false, endCursor: undefined },
+            edges: [
+              {
+                node: {
+                  id: 'calendar-event-1',
+                  startsAt: this.meetingStartsAt,
+                  conferenceLink: {
+                    primaryLinkUrl: 'https://meet.example.com/customer-sync',
+                  },
+                },
+              },
+            ],
+          },
+        };
+      }
+    }
+
+    const cleanupCanceledRequestBot = async (meetingStartsAt: string) => {
+      const callRecordingId = computeCallRecordingIdForMeeting(
+        `link:meet.example.com/customer-sync:${meetingStartsAt}`,
+      );
+
+      stubRecallApi({
+        bots: [
+          buildCurrentWorkspaceBot({
+            id: 'canceled-request-bot',
+            twentyCallRecordingId: callRecordingId,
+          }),
+        ],
+      });
+
+      return cleanupOrphanedRecallBots({
+        client: new FakeCoreApiClientWithCalendarEvents(
+          [
+            {
+              id: callRecordingId,
+              recordingRequestStatus: 'CANCELED',
+              status: 'SCHEDULED',
+              calendarEventId: 'calendar-event-1',
+              externalBotId: 'canceled-request-bot',
+            },
+          ],
+          meetingStartsAt,
+        ) as unknown as CoreApiClient,
+        joinAtAfter: JOIN_AT_AFTER,
+        joinAtBefore: JOIN_AT_BEFORE,
+        now: NOW,
+      });
+    };
+
+    const stubAppPreferencesFlag = (value: boolean) => {
+      metadataQueryMock.mockResolvedValue({
+        currentWorkspace: {
+          featureFlags: [{ key: 'IS_APP_PREFERENCES_ENABLED', value }],
+        },
+      });
+    };
+
+    beforeEach(() => metadataQueryMock.mockReset());
+
+    it('leaves the bot to the follow-up until its deletion window', async () => {
+      stubAppPreferencesFlag(true);
+
+      const result = await cleanupCanceledRequestBot(
+        '2026-01-02T09:00:00.000Z',
+      );
+
+      expect(result.canceledExternalBotIds).toEqual([]);
+      expect(getDeleteCalls()).toHaveLength(0);
+    });
+
+    it('cancels the bot once its deletion window has come', async () => {
+      stubAppPreferencesFlag(true);
+
+      const result = await cleanupCanceledRequestBot(
+        '2026-01-01T12:15:00.000Z',
+      );
+
+      expect(result.canceledExternalBotIds).toEqual(['canceled-request-bot']);
+    });
+
+    it('cancels the bot right away when deferral is disabled', async () => {
+      stubAppPreferencesFlag(false);
+
+      const result = await cleanupCanceledRequestBot(
+        '2026-01-02T09:00:00.000Z',
+      );
+
+      expect(result.canceledExternalBotIds).toEqual(['canceled-request-bot']);
+    });
   });
 });
