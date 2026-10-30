@@ -2,11 +2,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Select } from 'twenty-ui/primitives/input';
-import { type SettingsAiAssistantMode } from '~/pages/settings/ai/types/SettingsAiAssistantMode';
+import { AiChatAssistantMode } from '~/generated-metadata/graphql';
 
 type SettingsAiBehaviorModeSelectProps = {
-  value: SettingsAiAssistantMode | null;
-  onChange: (value: SettingsAiAssistantMode) => void;
+  value: AiChatAssistantMode | null;
+  onChange: (value: AiChatAssistantMode) => void;
   labelledBy: string;
   describedBy: string;
   disabled: boolean;
@@ -28,15 +28,15 @@ export const SettingsAiBehaviorModeSelect = ({
   isLoading,
   hasError,
 }: SettingsAiBehaviorModeSelectProps) => {
-  const options: { value: SettingsAiAssistantMode; label: string }[] = [
-    { value: 'NEVER', label: t`Never` },
-    { value: 'MENTION_ONLY', label: t`Only when mentioned` },
-    { value: 'AUTOMATIC', label: t`Auto` },
+  const options: { value: AiChatAssistantMode; label: string }[] = [
+    { value: AiChatAssistantMode.NEVER, label: t`Never` },
+    { value: AiChatAssistantMode.MENTION_ONLY, label: t`Only when mentioned` },
+    { value: AiChatAssistantMode.AUTOMATIC, label: t`Auto` },
   ];
 
   return (
     <StyledSelectContainer>
-      <Select.Root<SettingsAiAssistantMode>
+      <Select.Root<AiChatAssistantMode>
         items={options}
         value={isLoading ? null : value}
         onValueChange={(nextValue) => {

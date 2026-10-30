@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, within } from 'storybook/test';
 import { Section } from 'twenty-ui/components/layout';
+import { AiChatAssistantMode } from '~/generated-metadata/graphql';
 import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
 import { settingsAiOverviewStoryParameters } from '~/pages/settings/ai/components/__stories__/settingsAiOverviewStoryParameters';
@@ -29,8 +30,8 @@ const meta = {
     ),
     behaviorSection: (
       <SettingsAiBehaviorExample
-        directMessageMode="MENTION_ONLY"
-        inboxMode="AUTOMATIC"
+        directMessageMode={AiChatAssistantMode.MENTION_ONLY}
+        inboxMode={AiChatAssistantMode.AUTOMATIC}
         onDirectMessageModeChange={fn()}
         onInboxModeChange={fn()}
       />
