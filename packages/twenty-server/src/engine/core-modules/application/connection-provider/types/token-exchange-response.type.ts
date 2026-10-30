@@ -1,4 +1,4 @@
-import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
+import { PlaintextString } from "src/engine/core-modules/secret-encryption/branded-strings";
 
 export type TokenExchangeResponse = {
   accessToken: PlaintextString;

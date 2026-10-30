@@ -1,27 +1,27 @@
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
+import { ConnectedAccountProvider } from "twenty-shared/types";
+import { type Repository } from "typeorm";
 
-import { type AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { type GoogleApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { type MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+import { type AppOAuthRefreshAccessTokenService } from "src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service";
+import { type EncryptedString } from "src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type";
+import { type PlaintextString } from "src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type";
+import { type ConnectedAccountEntity } from "src/engine/metadata-modules/connected-account/entities/connected-account.entity";
+import { type ConnectedAccountTokenEncryptionService } from "src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service";
+import { type GoogleApiRefreshAccessTokenService } from "src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service";
+import { type MicrosoftApiRefreshAccessTokenService } from "src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service";
+import { ConnectedAccountRefreshTokensService } from "src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service";
 
-const NOW = new Date('2026-10-30T12:00:00.000Z');
+const NOW = new Date("2026-10-30T12:00:00.000Z");
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const ONE_YEAR_SECONDS = 365 * 24 * 3600;
 
 const EXISTING_CLAIMS = {
-  sub: 'legacy-user',
-  email: 'legacy@example.com',
-  iss: 'https://hydra.example',
+  sub: "legacy-user",
+  email: "legacy@example.com",
+  iss: "https://hydra.example",
 };
 
-describe('ConnectedAccountRefreshTokensService', () => {
+describe("ConnectedAccountRefreshTokensService", () => {
   let googleRefreshTokens: jest.Mock;
   let microsoftRefreshTokens: jest.Mock;
   let appRefreshTokens: jest.Mock;
@@ -30,21 +30,18 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let update: jest.Mock;
   let service: ConnectedAccountRefreshTokensService;
 
-  const refreshedAgo = (ageMs: number): Date =>
-    new Date(NOW.getTime() - ageMs);
+  const refreshedAgo = (ageMs: number): Date => new Date(NOW.getTime() - ageMs);
 
-  const buildAccount = (
-    overrides: Partial<ConnectedAccountEntity> = {},
-  ): ConnectedAccountEntity =>
+  const buildAccount = (overrides: Partial<ConnectedAccountEntity> = {}): ConnectedAccountEntity =>
     ({
-      id: 'account-1111',
-      workspaceId: 'workspace-2222',
+      id: "account-1111",
+      workspaceId: "workspace-2222",
       provider: ConnectedAccountProvider.GOOGLE,
-      accessToken: 'enc-access' as EncryptedString,
-      refreshToken: 'enc-refresh' as EncryptedString,
+      accessToken: "enc-access" as EncryptedString,
+      refreshToken: "enc-refresh" as EncryptedString,
       lastCredentialsRefreshedAt: NOW,
       oidcTokenClaims: null,
-      connectionProviderId: 'provider-1',
+      connectionProviderId: "provider-1",
       ...overrides,
     }) as ConnectedAccountEntity;
 
@@ -53,22 +50,22 @@ describe('ConnectedAccountRefreshTokensService', () => {
     jest.setSystemTime(NOW);
 
     googleRefreshTokens = jest.fn().mockResolvedValue({
-      accessToken: 'google-access' as PlaintextString,
-      refreshToken: 'google-refresh' as PlaintextString,
+      accessToken: "google-access" as PlaintextString,
+      refreshToken: "google-refresh" as PlaintextString,
     });
     microsoftRefreshTokens = jest.fn().mockResolvedValue({
-      accessToken: 'microsoft-access' as PlaintextString,
-      refreshToken: 'microsoft-refresh' as PlaintextString,
+      accessToken: "microsoft-access" as PlaintextString,
+      refreshToken: "microsoft-refresh" as PlaintextString,
     });
     appRefreshTokens = jest.fn().mockResolvedValue({
-      accessToken: 'hydra-access' as PlaintextString,
-      refreshToken: 'hydra-refresh' as PlaintextString,
+      accessToken: "hydra-access" as PlaintextString,
+      refreshToken: "hydra-refresh" as PlaintextString,
       expiresIn: 300,
     });
-    decrypt = jest.fn().mockReturnValue('plain-refresh' as PlaintextString);
+    decrypt = jest.fn().mockReturnValue("plain-refresh" as PlaintextString);
     encryptTokenPair = jest.fn().mockReturnValue({
-      encryptedAccessToken: 'enc-new-access' as EncryptedString,
-      encryptedRefreshToken: 'enc-new-refresh' as EncryptedString,
+      encryptedAccessToken: "enc-new-access" as EncryptedString,
+      encryptedRefreshToken: "enc-new-refresh" as EncryptedString,
     });
     update = jest.fn().mockResolvedValue({ affected: 1 });
 
@@ -117,13 +114,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
     return appRefreshTokens;
   };
 
-  describe('55 minute fallback', () => {
+  describe("55 minute fallback", () => {
     it.each([
       ConnectedAccountProvider.GOOGLE,
       ConnectedAccountProvider.MICROSOFT,
       ConnectedAccountProvider.APP,
     ])(
-      'reuses a %s token that was refreshed 54 minutes ago when no provider TTL is stored',
+      "reuses a %s token that was refreshed 54 minutes ago when no provider TTL is stored",
       async (provider) => {
         const account = buildAccount({
           provider,
@@ -131,18 +128,13 @@ describe('ConnectedAccountRefreshTokensService', () => {
           lastCredentialsRefreshedAt: refreshedAgo(54 * MINUTE),
         });
 
-        await expect(service.isAccessTokenStillValid(account)).resolves.toBe(
-          true,
-        );
+        await expect(service.isAccessTokenStillValid(account)).resolves.toBe(true);
         await expectReused(account);
       },
     );
 
-    it.each([
-      ConnectedAccountProvider.GOOGLE,
-      ConnectedAccountProvider.MICROSOFT,
-    ])(
-      'refreshes a %s token at 56 minutes and does not write oidcTokenClaims',
+    it.each([ConnectedAccountProvider.GOOGLE, ConnectedAccountProvider.MICROSOFT])(
+      "refreshes a %s token at 56 minutes and does not write oidcTokenClaims",
       async (provider) => {
         const account = buildAccount({
           provider,
@@ -150,9 +142,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
           lastCredentialsRefreshedAt: refreshedAgo(56 * MINUTE),
         });
 
-        await expect(service.isAccessTokenStillValid(account)).resolves.toBe(
-          false,
-        );
+        await expect(service.isAccessTokenStillValid(account)).resolves.toBe(false);
 
         await service.resolveTokens(account, account.workspaceId);
 
@@ -160,24 +150,22 @@ describe('ConnectedAccountRefreshTokensService', () => {
         expect(update).toHaveBeenCalledWith(
           { id: account.id, workspaceId: account.workspaceId },
           {
-            accessToken: 'enc-new-access',
-            refreshToken: 'enc-new-refresh',
+            accessToken: "enc-new-access",
+            refreshToken: "enc-new-refresh",
             lastCredentialsRefreshedAt: new Date(NOW),
           },
         );
-        expect(update.mock.calls[0][1]).not.toHaveProperty('oidcTokenClaims');
+        expect(update.mock.calls[0][1]).not.toHaveProperty("oidcTokenClaims");
       },
     );
 
-    it('treats exactly 55 minutes as expired, matching the old strict comparison', async () => {
+    it("treats exactly 55 minutes as expired, matching the old strict comparison", async () => {
       const account = buildAccount({
         oidcTokenClaims: null,
         lastCredentialsRefreshedAt: refreshedAgo(55 * MINUTE),
       });
 
-      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(
-        false,
-      );
+      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(false);
     });
 
     it.each([
@@ -187,33 +175,26 @@ describe('ConnectedAccountRefreshTokensService', () => {
       0,
       -1,
       ONE_YEAR_SECONDS + 1,
-      '300',
-      '',
+      "300",
+      "",
       null,
-    ])(
-      'keeps the 55 minute window when stored expiresIn is %p',
-      async (expiresIn) => {
-        const freshEnough = buildAccount({
-          provider: ConnectedAccountProvider.APP,
-          oidcTokenClaims: { ...EXISTING_CLAIMS, expiresIn },
-          lastCredentialsRefreshedAt: refreshedAgo(54 * MINUTE),
-        });
-        const tooOld = buildAccount({
-          provider: ConnectedAccountProvider.APP,
-          oidcTokenClaims: { ...EXISTING_CLAIMS, expiresIn },
-          lastCredentialsRefreshedAt: refreshedAgo(56 * MINUTE),
-        });
+    ])("keeps the 55 minute window when stored expiresIn is %p", async (expiresIn) => {
+      const freshEnough = buildAccount({
+        provider: ConnectedAccountProvider.APP,
+        oidcTokenClaims: { ...EXISTING_CLAIMS, expiresIn },
+        lastCredentialsRefreshedAt: refreshedAgo(54 * MINUTE),
+      });
+      const tooOld = buildAccount({
+        provider: ConnectedAccountProvider.APP,
+        oidcTokenClaims: { ...EXISTING_CLAIMS, expiresIn },
+        lastCredentialsRefreshedAt: refreshedAgo(56 * MINUTE),
+      });
 
-        await expect(
-          service.isAccessTokenStillValid(freshEnough),
-        ).resolves.toBe(true);
-        await expect(service.isAccessTokenStillValid(tooOld)).resolves.toBe(
-          false,
-        );
-      },
-    );
+      await expect(service.isAccessTokenStillValid(freshEnough)).resolves.toBe(true);
+      await expect(service.isAccessTokenStillValid(tooOld)).resolves.toBe(false);
+    });
 
-    it('uses the same 55 minute window when the provider TTL is 3600 seconds', async () => {
+    it("uses the same 55 minute window when the provider TTL is 3600 seconds", async () => {
       const withinBuffer = buildAccount({
         oidcTokenClaims: { expiresIn: 3600 },
         lastCredentialsRefreshedAt: refreshedAgo(54 * MINUTE),
@@ -223,16 +204,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: refreshedAgo(56 * MINUTE),
       });
 
-      await expect(
-        service.isAccessTokenStillValid(withinBuffer),
-      ).resolves.toBe(true);
-      await expect(service.isAccessTokenStillValid(pastBuffer)).resolves.toBe(
-        false,
-      );
+      await expect(service.isAccessTokenStillValid(withinBuffer)).resolves.toBe(true);
+      await expect(service.isAccessTokenStillValid(pastBuffer)).resolves.toBe(false);
     });
   });
 
-  describe('Ory Hydra 300 second TTL', () => {
+  describe("Ory Hydra 300 second TTL", () => {
     const hydraAccount = (ageMs: number): ConnectedAccountEntity =>
       buildAccount({
         provider: ConnectedAccountProvider.APP,
@@ -240,31 +217,27 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: refreshedAgo(ageMs),
       });
 
-    it('reuses the access token at 239 seconds', async () => {
+    it("reuses the access token at 239 seconds", async () => {
       const account = hydraAccount(239 * SECOND);
 
-      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(
-        true,
-      );
+      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(true);
       await expectReused(account);
     });
 
-    it('refreshes at 240 seconds and merges expiresIn onto the existing claims', async () => {
+    it("refreshes at 240 seconds and merges expiresIn onto the existing claims", async () => {
       const account = hydraAccount(240 * SECOND);
 
-      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(
-        false,
-      );
+      await expect(service.isAccessTokenStillValid(account)).resolves.toBe(false);
 
       await service.resolveTokens(account, account.workspaceId);
 
-      expect(appRefreshTokens).toHaveBeenCalledWith(account, 'plain-refresh');
+      expect(appRefreshTokens).toHaveBeenCalledWith(account, "plain-refresh");
       expect(googleRefreshTokens).not.toHaveBeenCalled();
       expect(update).toHaveBeenCalledWith(
         { id: account.id, workspaceId: account.workspaceId },
         {
-          accessToken: 'enc-new-access',
-          refreshToken: 'enc-new-refresh',
+          accessToken: "enc-new-access",
+          refreshToken: "enc-new-refresh",
           lastCredentialsRefreshedAt: new Date(NOW),
           oidcTokenClaims: {
             ...EXISTING_CLAIMS,
@@ -274,7 +247,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       );
     });
 
-    it('self-heals a legacy account on the next refresh, then follows the 240 second window', async () => {
+    it("self-heals a legacy account on the next refresh, then follows the 240 second window", async () => {
       const account = buildAccount({
         provider: ConnectedAccountProvider.APP,
         oidcTokenClaims: { ...EXISTING_CLAIMS },
@@ -316,10 +289,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       });
     });
 
-    it('leaves the jsonb column out of the update when the refresh response has no expires_in', async () => {
+    it("leaves the jsonb column out of the update when the refresh response has no expires_in", async () => {
       appRefreshTokens.mockResolvedValue({
-        accessToken: 'hydra-access' as PlaintextString,
-        refreshToken: 'hydra-refresh' as PlaintextString,
+        accessToken: "hydra-access" as PlaintextString,
+        refreshToken: "hydra-refresh" as PlaintextString,
         expiresIn: null,
       });
 
@@ -327,15 +300,15 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
       await service.resolveTokens(account, account.workspaceId);
 
-      expect(update.mock.calls[0][1]).not.toHaveProperty('oidcTokenClaims');
+      expect(update.mock.calls[0][1]).not.toHaveProperty("oidcTokenClaims");
     });
 
     it.each([Number.POSITIVE_INFINITY, Number.NaN, 0, -5, ONE_YEAR_SECONDS + 1])(
-      'does not persist illegal refresh expiresIn %p',
+      "does not persist illegal refresh expiresIn %p",
       async (expiresIn) => {
         appRefreshTokens.mockResolvedValue({
-          accessToken: 'hydra-access' as PlaintextString,
-          refreshToken: 'hydra-refresh' as PlaintextString,
+          accessToken: "hydra-access" as PlaintextString,
+          refreshToken: "hydra-refresh" as PlaintextString,
           expiresIn,
         });
 
@@ -343,12 +316,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
         await service.resolveTokens(account, account.workspaceId);
 
-        expect(update.mock.calls[0][1]).not.toHaveProperty('oidcTokenClaims');
+        expect(update.mock.calls[0][1]).not.toHaveProperty("oidcTokenClaims");
       },
     );
   });
 
-  it('keeps an app account without a refresh token valid', async () => {
+  it("keeps an app account without a refresh token valid", async () => {
     const account = buildAccount({
       provider: ConnectedAccountProvider.APP,
       refreshToken: null,
