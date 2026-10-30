@@ -330,7 +330,7 @@ export class WorkspaceEntity {
     {
       previousName: 'allowedIframeOrigins',
       upgradeCommandName:
-        '2.54.0_RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand_1793358115816',
+        '2.55.0_RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand_1793371022971',
     },
   ])
   @Column({ type: 'varchar', array: true, default: '{}' })
@@ -339,7 +339,7 @@ export class WorkspaceEntity {
   @Field(() => [IframeMediaPermissionDTO], { nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.54.0_AddWorkspaceIframeMediaPermissionsFastInstanceCommand_1793358064188',
+      '2.55.0_AddWorkspaceIframeMediaPermissionsFastInstanceCommand_1793371022948',
   })
   @Column({ type: 'jsonb', default: [] })
   iframeMediaPermissions: IframeMediaPermission[];
