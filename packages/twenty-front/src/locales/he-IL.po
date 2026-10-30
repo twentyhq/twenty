@@ -270,7 +270,7 @@ msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} many {# א
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# שלב} two {# שלבים} many {# שלבים} other {# שלבים}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "מקליט יצטרף כאשר הפגישה תתחיל."
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "נדרש תפקיד"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2200,7 +2200,7 @@ msgstr "הוסף ערוץ אימייל"
 #. js-lingui-id: QwQhEf
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add embedded website"
-msgstr ""
+msgstr "הוסף אתר אינטרנט מוטמע"
 
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
@@ -2556,7 +2556,7 @@ msgstr "הוסף תצוגה"
 #. js-lingui-id: hKxpSq
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add website"
-msgstr ""
+msgstr "הוסף אתר אינטרנט"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3747,7 +3747,7 @@ msgstr "יומני אפליקציה"
 #. js-lingui-id: xqkZbG
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "App Operation"
-msgstr ""
+msgstr "פעולת אפליקציה"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5672,7 +5672,7 @@ msgstr "שינויים"
 #. js-lingui-id: OhVo1W
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
-msgstr ""
+msgstr "השינויים נשמרו. טענו מחדש את לשוניות Twenty הפתוחות כדי להחיל את ההרשאות המעודכנות. טעינה מחדש מסיימת שיחות והקלטות פעילות."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6059,7 +6059,7 @@ msgstr ""
 #. js-lingui-id: jgIz8c
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "בחרו אילו אתרים המוטמעים בווידג'טים של iframe יכולים לבקש גישה למיקרופון או למצלמה. חברים עדיין צריכים להפעיל גישה ולאשר את הרשאת הדפדפן."
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10674,7 +10674,7 @@ msgstr "הטמעה"
 #. js-lingui-id: cjPnTO
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
-msgstr ""
+msgstr "גישה למדיה של אתר מוטמע"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -10955,7 +10955,7 @@ msgstr "הזן מקור HTTP או HTTPS ללא נתיב או תו כללי, כג
 #. js-lingui-id: TO+jkh
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
-msgstr ""
+msgstr "הזינו מקור HTTPS ללא נתיב או תו כללי, כגון https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -22464,7 +22464,7 @@ msgstr "טען מחדש"
 #. js-lingui-id: tF5Smn
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
-msgstr ""
+msgstr "טענו מחדש את הדף"
 
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22619,7 +22619,7 @@ msgstr "הסר לוגו"
 #. js-lingui-id: iW2ZAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Remove media access for {origin}"
-msgstr ""
+msgstr "הסירו גישה למדיה עבור {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -27021,7 +27021,7 @@ msgstr "האייקון שתפעול תהליך העבודה שלך יופיע ב
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "אישור שרת הדואר אינו תקף"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27123,7 +27123,7 @@ msgstr "לא ניתן היה לפענח את תצורת הקשר."
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "התפקיד המשויך ל-webhook זה."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27591,7 +27591,7 @@ msgstr "מפתח ארגון זה משויך כעת למופע שרת אחר. ה�
 #. js-lingui-id: NBHLa1
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This origin is already configured. Use its switches to change access."
-msgstr ""
+msgstr "מקור זה כבר מוגדר. השתמשו במתגים שלו כדי לשנות את הגישה."
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30590,7 +30590,7 @@ msgstr "אתר אינטרנט"
 #. js-lingui-id: 9FCp7Z
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Website origin"
-msgstr ""
+msgstr "מקור האתר"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

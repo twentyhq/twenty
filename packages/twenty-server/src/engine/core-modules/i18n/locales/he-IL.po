@@ -4902,7 +4902,7 @@ msgstr "העשרה"
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
-msgstr ""
+msgstr "הזן מקור HTTPS ללא נתיב או תו כללי"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -11360,7 +11360,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "לא ניתן להקצות את התפקיד \"{roleLabel}\" ל-Webhooks."
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
@@ -11462,7 +11462,7 @@ msgstr "ליעד התפקיד חסר מזהה."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgstr "ליעד התפקיד חייב להיות בדיוק אחד מהבאים: apiKeyId, userWorkspaceId, agentUniversalIdentifier, או webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11840,7 +11840,7 @@ msgstr "צפה בתהליך העבודה"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "בחר תפקיד עבור ה-Webhook הזה."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13593,7 +13593,7 @@ msgstr "המודל שנבחר הושבת על ידי מנהל המערכת."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "התפקיד שנבחר אינו קיים."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13827,7 +13827,7 @@ msgstr "לא ניתן לעדכן את השדות האלה לפני הפעלת מ
 #. js-lingui-id: 029tdK
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "These origins are too long to allow together. Remove one and try again."
-msgstr ""
+msgstr "המקורות האלה ארוכים מדי מכדי לאפשר אותם יחד. הסר אחד ונסה שוב."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

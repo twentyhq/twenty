@@ -270,7 +270,7 @@ msgstr "{0, plural, one {# Föremål} other {# Föremål}}"
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# steg} other {# steg}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "En inspelare ansluter när mötet börjar."
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "En roll krävs"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2200,7 +2200,7 @@ msgstr "Lägg till e-postkanal"
 #. js-lingui-id: QwQhEf
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add embedded website"
-msgstr ""
+msgstr "Lägg till inbäddad webbplats"
 
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
@@ -2556,7 +2556,7 @@ msgstr "Lägg till vy"
 #. js-lingui-id: hKxpSq
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add website"
-msgstr ""
+msgstr "Lägg till webbplats"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3747,7 +3747,7 @@ msgstr "Apploggar"
 #. js-lingui-id: xqkZbG
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "App Operation"
-msgstr ""
+msgstr "Appåtgärd"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5672,7 +5672,7 @@ msgstr "Ändringar"
 #. js-lingui-id: OhVo1W
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
-msgstr ""
+msgstr "Ändringarna har sparats. Ladda om öppna Twenty-flikar för att tillämpa de uppdaterade behörigheterna. Omladdning avslutar aktiva samtal och inspelningar."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6059,7 +6059,7 @@ msgstr ""
 #. js-lingui-id: jgIz8c
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Välj vilka webbplatser som är inbäddade i iframe-widgetar och kan begära åtkomst till mikrofon eller kamera. Medlemmar måste fortfarande aktivera åtkomst och godkänna webbläsarbehörigheten."
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10674,7 +10674,7 @@ msgstr "bädda in"
 #. js-lingui-id: cjPnTO
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
-msgstr ""
+msgstr "Medieåtkomst för inbäddad webbplats"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -10955,7 +10955,7 @@ msgstr "Ange ett HTTP- eller HTTPS-ursprung utan sökväg eller jokertecken, til
 #. js-lingui-id: TO+jkh
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
-msgstr ""
+msgstr "Ange ett HTTPS-ursprung utan sökväg eller jokertecken, till exempel https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -22466,7 +22466,7 @@ msgstr "Ladda om"
 #. js-lingui-id: tF5Smn
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
-msgstr ""
+msgstr "Ladda om sidan"
 
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22621,7 +22621,7 @@ msgstr "Ta bort logotyp"
 #. js-lingui-id: iW2ZAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Remove media access for {origin}"
-msgstr ""
+msgstr "Ta bort medieåtkomst för {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -27027,7 +27027,7 @@ msgstr "Ikonen som din arbetsflödesutlösare visar i kommandomenyn"
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "E-postservercertifikatet är ogiltigt"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27129,7 +27129,7 @@ msgstr "Relationskonfigurationen kunde inte lösas."
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "Rollen som är kopplad till denna webhook."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27599,7 +27599,7 @@ msgstr "Den här Organization-nyckeln är för närvarande bunden till en annan 
 #. js-lingui-id: NBHLa1
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This origin is already configured. Use its switches to change access."
-msgstr ""
+msgstr "Detta ursprung är redan konfigurerat. Använd dess reglage för att ändra åtkomsten."
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30598,7 +30598,7 @@ msgstr "Webbplats"
 #. js-lingui-id: 9FCp7Z
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Website origin"
-msgstr ""
+msgstr "Webbplatsursprung"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

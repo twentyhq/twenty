@@ -4902,7 +4902,7 @@ msgstr "Boyitish"
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
-msgstr ""
+msgstr "Yo‘l yoki wildcard belgisisiz HTTPS origin kiriting"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -11360,7 +11360,7 @@ msgstr "\"{roleLabel}\" roli foydalanuvchilarga biriktirilishi mumkin emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "\"{roleLabel}\" roli webhooklarga biriktirilishi mumkin emas"
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
@@ -11462,7 +11462,7 @@ msgstr "Rol nishonida identifikator yetishmaydi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgstr "Rol nishoni quyidagilardan aynan bittasiga ega bo‘lishi kerak: apiKeyId, userWorkspaceId, agentUniversalIdentifier yoki webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11840,7 +11840,7 @@ msgstr "Ish jarayonini ko‘rish"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "Ushbu webhook uchun rolni tanlang."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13593,7 +13593,7 @@ msgstr "Tanlangan model administrator tomonidan o‘chirilgan."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "Tanlangan rol mavjud emas."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13827,7 +13827,7 @@ msgstr "Ish maydoni faollashtirilishidan oldin quyidagi maydonlarni yangilab bo�
 #. js-lingui-id: 029tdK
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "These origins are too long to allow together. Remove one and try again."
-msgstr ""
+msgstr "Bu originlar birgalikda ruxsat berish uchun juda uzun. Birini olib tashlang va qayta urinib ko‘ring."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

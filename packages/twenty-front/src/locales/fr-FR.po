@@ -270,7 +270,7 @@ msgstr "{0, plural, one {# Objet} other {# Objets}}"
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# étape} other {# étapes}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "Un enregistreur rejoindra la réunion lorsqu'elle commencera."
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "Un rôle est requis"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2200,7 +2200,7 @@ msgstr "Ajouter un canal e-mail"
 #. js-lingui-id: QwQhEf
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add embedded website"
-msgstr ""
+msgstr "Ajouter un site web intégré"
 
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
@@ -2556,7 +2556,7 @@ msgstr "Ajouter une vue"
 #. js-lingui-id: hKxpSq
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add website"
-msgstr ""
+msgstr "Ajouter un site web"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3747,7 +3747,7 @@ msgstr "Journaux d'application"
 #. js-lingui-id: xqkZbG
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "App Operation"
-msgstr ""
+msgstr "Opération de l’application"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5672,7 +5672,7 @@ msgstr "Modifications"
 #. js-lingui-id: OhVo1W
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
-msgstr ""
+msgstr "Modifications enregistrées. Rechargez les onglets Twenty ouverts pour appliquer les autorisations mises à jour. Le rechargement met fin aux appels et enregistrements actifs."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6059,7 +6059,7 @@ msgstr ""
 #. js-lingui-id: jgIz8c
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Choisissez quels sites web intégrés dans des widgets iframe peuvent demander l'accès au microphone ou à la caméra. Les membres doivent toujours activer l'accès et approuver l'autorisation du navigateur."
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10674,7 +10674,7 @@ msgstr "Contenu intégré"
 #. js-lingui-id: cjPnTO
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
-msgstr ""
+msgstr "Accès aux médias des sites web intégrés"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -10955,7 +10955,7 @@ msgstr "Saisissez une origine HTTP ou HTTPS sans chemin ni caractère génériqu
 #. js-lingui-id: TO+jkh
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
-msgstr ""
+msgstr "Saisissez une origine HTTPS sans chemin ni caractère générique, telle que https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -22464,7 +22464,7 @@ msgstr "Recharger"
 #. js-lingui-id: tF5Smn
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
-msgstr ""
+msgstr "Recharger la page"
 
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22619,7 +22619,7 @@ msgstr "Supprimer le logo"
 #. js-lingui-id: iW2ZAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Remove media access for {origin}"
-msgstr ""
+msgstr "Supprimer l'accès aux médias pour {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -27021,7 +27021,7 @@ msgstr "L'icône que votre déclencheur de flux de travail affichera dans le men
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "Le certificat du serveur de messagerie n'est pas valide"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27123,7 +27123,7 @@ msgstr "La configuration de la relation n'a pas pu être résolue."
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "Le rôle associé à ce webhook."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27593,7 +27593,7 @@ msgstr "Cette clé Organisation est actuellement liée à une autre instance de 
 #. js-lingui-id: NBHLa1
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This origin is already configured. Use its switches to change access."
-msgstr ""
+msgstr "Cette origine est déjà configurée. Utilisez ses interrupteurs pour modifier l'accès."
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30592,7 +30592,7 @@ msgstr "Site Web"
 #. js-lingui-id: 9FCp7Z
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Website origin"
-msgstr ""
+msgstr "Origine du site web"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

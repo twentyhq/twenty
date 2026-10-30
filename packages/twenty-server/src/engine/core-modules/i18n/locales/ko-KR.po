@@ -4902,7 +4902,7 @@ msgstr "보강"
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
-msgstr ""
+msgstr "경로 또는 와일드카드 없이 HTTPS 오리진을 입력하세요"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -11360,7 +11360,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "역할 \"{roleLabel}\"은 웹훅에 할당할 수 없습니다"
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
@@ -11462,7 +11462,7 @@ msgstr "역할 대상에 식별자가 누락되었습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgstr "역할 대상에는 apiKeyId, userWorkspaceId, agentUniversalIdentifier 또는 webhookUniversalIdentifier 중 정확히 하나만 있어야 합니다"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11840,7 +11840,7 @@ msgstr "워크플로 보기"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "이 웹훅의 역할을 선택하세요."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13593,7 +13593,7 @@ msgstr "선택한 모델은 관리자가 비활성화했습니다."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "선택한 역할이 존재하지 않습니다."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13827,7 +13827,7 @@ msgstr "워크스페이스가 활성화되기 전에 다음 필드는 업데이�
 #. js-lingui-id: 029tdK
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "These origins are too long to allow together. Remove one and try again."
-msgstr ""
+msgstr "이 오리진들은 함께 허용하기에는 너무 깁니다. 하나를 제거한 후 다시 시도하세요."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

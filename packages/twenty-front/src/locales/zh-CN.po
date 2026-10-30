@@ -270,7 +270,7 @@ msgstr "{0, plural, other {# 个对象}}"
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# 步} other {# 步}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "会议开始时，录音机器人将加入。"
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "角色为必填项"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2200,7 +2200,7 @@ msgstr "添加电子邮件渠道"
 #. js-lingui-id: QwQhEf
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add embedded website"
-msgstr ""
+msgstr "添加嵌入式网站"
 
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
@@ -2556,7 +2556,7 @@ msgstr "添加视图"
 #. js-lingui-id: hKxpSq
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add website"
-msgstr ""
+msgstr "添加网站"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3747,7 +3747,7 @@ msgstr "应用日志"
 #. js-lingui-id: xqkZbG
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "App Operation"
-msgstr ""
+msgstr "应用操作"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5672,7 +5672,7 @@ msgstr "更改"
 #. js-lingui-id: OhVo1W
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
-msgstr ""
+msgstr "更改已保存。请重新加载已打开的 Twenty 标签页以应用更新后的权限。重新加载会结束正在进行的通话和录制。"
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6059,7 +6059,7 @@ msgstr ""
 #. js-lingui-id: jgIz8c
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "选择嵌入 iframe 小组件的网站是否可以请求访问麦克风或摄像头。成员仍需启用访问权限并批准浏览器权限。"
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10674,7 +10674,7 @@ msgstr "嵌入"
 #. js-lingui-id: cjPnTO
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
-msgstr ""
+msgstr "嵌入式网站媒体访问权限"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -10955,7 +10955,7 @@ msgstr "输入不含路径或通配符的 HTTP 或 HTTPS 源，例如 https://po
 #. js-lingui-id: TO+jkh
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
-msgstr ""
+msgstr "输入不含路径或通配符的 HTTPS 源，例如 https://workspace.aircall.io。"
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -22464,7 +22464,7 @@ msgstr "重新加载"
 #. js-lingui-id: tF5Smn
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
-msgstr ""
+msgstr "重新加载页面"
 
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22619,7 +22619,7 @@ msgstr "移除徽标"
 #. js-lingui-id: iW2ZAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Remove media access for {origin}"
-msgstr ""
+msgstr "移除 {origin} 的媒体访问权限"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -27021,7 +27021,7 @@ msgstr "你的工作流触发器将在命令菜单中显示的图标"
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "邮件服务器证书无效"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27123,7 +27123,7 @@ msgstr "无法解析关系配置。"
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "附加到此 Webhook 的角色。"
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27591,7 +27591,7 @@ msgstr "此组织密钥当前绑定到其他服务器实例。在此处转移后
 #. js-lingui-id: NBHLa1
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This origin is already configured. Use its switches to change access."
-msgstr ""
+msgstr "此源已配置。请使用其开关更改访问权限。"
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30590,7 +30590,7 @@ msgstr "网站"
 #. js-lingui-id: 9FCp7Z
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Website origin"
-msgstr ""
+msgstr "网站源"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

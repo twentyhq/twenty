@@ -270,7 +270,7 @@ msgstr "{0, plural, one {# Об'єкт} few {# Об'єкти} many {# Об'єк�
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# крок} few {# кроки} many {# кроків} other {# кроків}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "Коли зустріч розпочнеться, приєднаєтьс
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "Роль обов'язкова"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2200,7 +2200,7 @@ msgstr "Додати канал електронної пошти"
 #. js-lingui-id: QwQhEf
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add embedded website"
-msgstr ""
+msgstr "Додати вбудований вебсайт"
 
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
@@ -2556,7 +2556,7 @@ msgstr "Додати перегляд"
 #. js-lingui-id: hKxpSq
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Add website"
-msgstr ""
+msgstr "Додати вебсайт"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3747,7 +3747,7 @@ msgstr "Журнали застосунку"
 #. js-lingui-id: xqkZbG
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "App Operation"
-msgstr ""
+msgstr "Операція застосунку"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5672,7 +5672,7 @@ msgstr "Зміни"
 #. js-lingui-id: OhVo1W
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
-msgstr ""
+msgstr "Зміни збережено. Перезавантажте відкриті вкладки Twenty, щоб застосувати оновлені дозволи. Перезавантаження завершить активні дзвінки та записи."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6059,7 +6059,7 @@ msgstr ""
 #. js-lingui-id: jgIz8c
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
-msgstr ""
+msgstr "Виберіть, які вебсайти, вбудовані у віджети iframe, можуть запитувати доступ до мікрофона або камери. Учасникам усе одно потрібно ввімкнути доступ і схвалити дозвіл браузера."
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10674,7 +10674,7 @@ msgstr "вбудувати"
 #. js-lingui-id: cjPnTO
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Embedded website media access"
-msgstr ""
+msgstr "Доступ до медіа вбудованого вебсайту"
 
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -10955,7 +10955,7 @@ msgstr "Введіть джерело HTTP або HTTPS без шляху чи �
 #. js-lingui-id: TO+jkh
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
-msgstr ""
+msgstr "Введіть джерело HTTPS без шляху або символу підстановки, наприклад https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -22464,7 +22464,7 @@ msgstr "Перезавантажити"
 #. js-lingui-id: tF5Smn
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
 msgid "Reload page"
-msgstr ""
+msgstr "Перезавантажити сторінку"
 
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -22619,7 +22619,7 @@ msgstr "Видалити логотип"
 #. js-lingui-id: iW2ZAl
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Remove media access for {origin}"
-msgstr ""
+msgstr "Відкликати доступ до медіа для {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -27021,7 +27021,7 @@ msgstr "Іконка, яку ваш тригер робочого процесу
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "Сертифікат поштового сервера недійсний"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27123,7 +27123,7 @@ msgstr "Не вдалося визначити конфігурацію зв’�
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "Роль, пов’язана з цим вебхуком."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27593,7 +27593,7 @@ msgstr "Цей ключ Організації наразі прив’язан�
 #. js-lingui-id: NBHLa1
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "This origin is already configured. Use its switches to change access."
-msgstr ""
+msgstr "Це джерело вже налаштовано. Використовуйте його перемикачі, щоб змінити доступ."
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30592,7 +30592,7 @@ msgstr "Вебсайт"
 #. js-lingui-id: 9FCp7Z
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
 msgid "Website origin"
-msgstr ""
+msgstr "Джерело вебсайту"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

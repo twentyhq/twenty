@@ -4902,7 +4902,7 @@ msgstr "Obogati"
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
-msgstr ""
+msgstr "Unesite HTTPS izvor bez putanje ili zamenskog znaka"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -11360,7 +11360,7 @@ msgstr "Uloga \"{roleLabel}\" ne može se dodeliti korisnicima"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
-msgstr ""
+msgstr "Uloga \"{roleLabel}\" ne može se dodeliti vebhukovima"
 
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
@@ -11462,7 +11462,7 @@ msgstr "Nedostaje identifikator cilja uloge."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
-msgstr ""
+msgstr "Cilj uloge mora da ima tačno jedno od sledećeg: apiKeyId, userWorkspaceId, agentUniversalIdentifier ili webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11840,7 +11840,7 @@ msgstr "Pogledajte radni tok"
 #. js-lingui-id: qWQwt8
 #: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
 msgid "Select a role for this webhook."
-msgstr ""
+msgstr "Izaberite ulogu za ovaj vebhuk."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13593,7 +13593,7 @@ msgstr "Administrator je onemogućio izabrani model."
 #. js-lingui-id: pkPsbr
 #: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
 msgid "The selected role does not exist."
-msgstr ""
+msgstr "Izabrana uloga ne postoji."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13827,7 +13827,7 @@ msgstr "Ova polja ne mogu biti ažurirana pre nego što se radni prostor aktivir
 #. js-lingui-id: 029tdK
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "These origins are too long to allow together. Remove one and try again."
-msgstr ""
+msgstr "Ovi izvori su predugački da bi bili dozvoljeni zajedno. Uklonite jedan i pokušajte ponovo."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
