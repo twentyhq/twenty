@@ -6,7 +6,8 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { buildAccessGroupSchemaDefinitions } from 'src/engine/metadata-modules/access-group/utils/build-access-group-schema-definitions.util';
+import { enrichAccessGroupTableSchema } from 'src/engine/metadata-modules/access-group/utils/enrich-access-group-table-schema.util';
+import { enrichRecordTableSchemaWithAccessGroupIds } from 'src/engine/metadata-modules/access-group/utils/enrich-record-table-schema-with-access-group-ids.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -17,7 +18,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Command({
   name: 'upgrade:2-55:add-access-group-storage-columns',
   description:
-    'Add the access group ids column to every object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
+    'Add the access group ids column to every object table except recordShare and accessGroup and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
 export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -75,8 +76,12 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
         }
 
         const { columnDefinitions, indexDefinitions } =
-          buildAccessGroupSchemaDefinitions({
+          enrichRecordTableSchemaWithAccessGroupIds({
             objectMetadata: flatObjectMetadata,
+            tableSchema: enrichAccessGroupTableSchema({
+              objectMetadata: flatObjectMetadata,
+              tableSchema: { columnDefinitions: [], indexDefinitions: [] },
+            }),
           });
         const conflictingColumnNames = columnDefinitions
           .filter(
@@ -101,7 +106,7 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
 
         if (options.dryRun) {
           dryRunColumnCount += missingColumnDefinitions.length;
-          dryRunTableCount++;
+          dryRunTableCount += indexDefinitions.length > 0 ? 1 : 0;
 
           continue;
         }
@@ -121,12 +126,12 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           indexNames: indexDefinitions.map((index) => index.name),
         });
 
-        for (const index of indexDefinitions) {
+        for (const indexDefinition of indexDefinitions) {
           await this.workspaceSchemaManagerService.indexManager.createIndex({
             queryRunner,
             schemaName,
             tableName,
-            index,
+            index: indexDefinition,
             concurrently: true,
           });
         }
@@ -216,6 +221,10 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
     schemaName: string;
     indexNames: string[];
   }): Promise<void> {
+    if (indexNames.length === 0) {
+      return;
+    }
+
     const invalidIndexes: { name: string }[] = await queryRunner.query(
       `SELECT c.relname AS name
        FROM pg_index i
