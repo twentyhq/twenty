@@ -23,7 +23,7 @@ export const removeLinkedinConnectionResources = async ({
   );
 
   await Promise.all(
-    (['settings', 'person-reviews', 'history-import'] as const).map((kind) =>
+    (['settings', 'history-import'] as const).map((kind) =>
       kv.delete(getLinkedinConnectionKvKey({ kind, connectedAccountId })),
     ),
   );

@@ -55,9 +55,9 @@ export const linkedinOnConnectHandler = async ({
 
   // Reconnecting keeps its channel and does not re-import history
   if (!isDefined(existingChannel)) {
-    const { importRange } = await getLinkedinSettings(connectedAccountId);
+    const { importPolicy } = await getLinkedinSettings(connectedAccountId);
 
-    await startLinkedinHistoryImport({ connectedAccountId, importRange });
+    await startLinkedinHistoryImport({ connectedAccountId, importPolicy });
   }
 
   return { messageChannelId: channel.id };

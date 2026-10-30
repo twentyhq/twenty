@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
-import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { LinkedinImportRangeIcon } from 'src/front-components/components/LinkedinImportRangeIcon';
+import { LinkedinImportPolicyIcon } from 'src/front-components/components/LinkedinImportPolicyIcon';
 import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
-import { type LinkedinImportRange } from 'src/types/linkedin-import-range.type';
+import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 
 const StyledStack = styled.div`
   display: flex;
@@ -23,13 +22,13 @@ const StyledHint = styled.p`
 `;
 
 type LinkedinImportSectionProps = {
-  importRange: LinkedinImportRange;
+  importPolicy: LinkedinImportPolicy;
   historyImport: LinkedinHistoryImportState | null;
-  onChange: (importRange: LinkedinImportRange) => void;
+  onChange: (importPolicy: LinkedinImportPolicy) => void;
 };
 
 export const LinkedinImportSection = ({
-  importRange,
+  importPolicy,
   historyImport,
   onChange,
 }: LinkedinImportSectionProps) => (
@@ -37,37 +36,27 @@ export const LinkedinImportSection = ({
     <Section.Header
       title={t('Import')}
       description={t(
-        'Choose how far back conversations are imported. New messages are always imported.',
+        'Choose which LinkedIn conversations are imported, past ones included.',
       )}
     />
     <StyledStack>
       <SettingsRadioCard
-        value={importRange}
+        value={importPolicy}
         onChange={onChange}
         options={[
           {
-            value: 'LAST_30_DAYS',
-            cardMedia: <LinkedinImportRangeIcon importRange="LAST_30_DAYS" />,
-            title: t('Last 30 days'),
-            description: t('Conversations with a message in the last 30 days'),
-          },
-          {
-            value: 'LAST_90_DAYS',
-            cardMedia: <LinkedinImportRangeIcon importRange="LAST_90_DAYS" />,
-            title: t('Last 90 days'),
-            description: t('Conversations with a message in the last 90 days'),
-          },
-          {
-            value: 'LAST_365_DAYS',
-            cardMedia: <LinkedinImportRangeIcon importRange="LAST_365_DAYS" />,
-            title: t('Last year'),
-            description: t('Conversations with a message in the last 365 days'),
-          },
-          {
             value: 'ALL',
-            cardMedia: <LinkedinImportRangeIcon importRange="ALL" />,
-            title: t('All'),
-            description: t('Your whole LinkedIn message history'),
+            cardMedia: <LinkedinImportPolicyIcon importPolicy="ALL" />,
+            title: t('All chats'),
+            description: t('Import every conversation'),
+          },
+          {
+            value: 'CONTACTS_ONLY',
+            cardMedia: (
+              <LinkedinImportPolicyIcon importPolicy="CONTACTS_ONLY" />
+            ),
+            title: t('Contacts only'),
+            description: t('Import chats with people already in Twenty'),
           },
         ]}
       />
@@ -88,14 +77,9 @@ export const LinkedinImportSection = ({
       {historyImport?.status === 'FAILED' && (
         <InlineBanner layout="compact" status="error">
           {t(
-            'The import stopped before finishing. Pick a range to start it again.',
+            'The import stopped before finishing. Pick an option to start it again.',
           )}
         </InlineBanner>
-      )}
-      {!isDefined(historyImport) && (
-        <StyledHint>
-          {t('History is imported when you pick a range.')}
-        </StyledHint>
       )}
     </StyledStack>
   </Section.Root>

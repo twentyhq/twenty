@@ -16,16 +16,21 @@ import {
 } from 'twenty-ui/theme';
 
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
-import { LinkedinAccountSection } from 'src/front-components/components/LinkedinAccountSection';
+import { LinkedinAccountField } from 'src/front-components/components/LinkedinAccountField';
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
-import { LinkedinOptionsSection } from 'src/front-components/components/LinkedinOptionsSection';
-import { LinkedinPersonReviewSection } from 'src/front-components/components/LinkedinPersonReviewSection';
+import { LinkedinPeopleMatchingSection } from 'src/front-components/components/LinkedinPeopleMatchingSection';
+import { LinkedinReadStatusSection } from 'src/front-components/components/LinkedinReadStatusSection';
+import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
 import { postLinkedinSettingsRouteOrThrow } from 'src/front-components/utils/post-linkedin-settings-route-or-throw.util';
-import { type LinkedinSettings as LinkedinSettingsValues } from 'src/types/linkedin-settings.type';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
+
+type LinkedinSettingsValues = Extract<
+  LinkedinSettingsView,
+  { isConnected: true }
+>['settings'];
 
 const HISTORY_IMPORT_POLL_MILLISECONDS = 5000;
 
@@ -52,7 +57,6 @@ export const LinkedinSettings = () => {
     step: 'loading',
   });
   const [pollCount, setPollCount] = useState(0);
-  const [resolvingHandle, setResolvingHandle] = useState<string | undefined>();
 
   const loadSettings = async () => {
     try {
@@ -102,31 +106,6 @@ export const LinkedinSettings = () => {
     }
   };
 
-  const handlePersonReviewResolve = async (body: {
-    handle: string;
-    personId?: string;
-  }) => {
-    setResolvingHandle(body.handle);
-
-    try {
-      setState({
-        step: 'ready',
-        view: await postLinkedinSettingsRouteOrThrow({
-          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.resolvePersonReview,
-          body,
-        }),
-      });
-    } catch {
-      enqueueSnackbar({
-        message: t('Could not link this person. Try again.'),
-        variant: 'error',
-      });
-      await loadSettings();
-    } finally {
-      setResolvingHandle(undefined);
-    }
-  };
-
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
     view?.isConnected === true && view.historyImport?.status === 'IMPORTING';
@@ -172,41 +151,35 @@ export const LinkedinSettings = () => {
         )}
         {view?.isConnected === true && (
           <>
-            <LinkedinAccountSection
+            <LinkedinAccountField
               name={view.connection.name}
               handle={view.connection.handle}
               isAuthFailed={view.connection.isAuthFailed}
             />
             <LinkedinImportSection
-              importRange={view.settings.importRange}
+              importPolicy={view.settings.importPolicy}
               historyImport={view.historyImport}
-              onChange={(importRange) => handleSettingsChange({ importRange })}
+              onChange={(importPolicy) =>
+                handleSettingsChange({ importPolicy })
+              }
             />
-            {view.personReviews.length > 0 && (
-              <LinkedinPersonReviewSection
-                personReviews={view.personReviews}
-                resolvingHandle={resolvingHandle}
-                onResolve={handlePersonReviewResolve}
-              />
-            )}
+            <LinkedinVisibilitySection
+              visibility={view.settings.visibility}
+              onChange={(visibility) => handleSettingsChange({ visibility })}
+            />
             <LinkedinContactAutoCreationSection
               policy={view.settings.contactAutoCreationPolicy}
               onChange={(contactAutoCreationPolicy) =>
                 handleSettingsChange({ contactAutoCreationPolicy })
               }
             />
-            <LinkedinOptionsSection
+            <LinkedinPeopleMatchingSection
               isNameMatchingEnabled={view.settings.isNameMatchingEnabled}
-              areGroupConversationsExcluded={
-                view.settings.areGroupConversationsExcluded
-              }
-              onNameMatchingChange={(isNameMatchingEnabled) =>
+              onChange={(isNameMatchingEnabled) =>
                 handleSettingsChange({ isNameMatchingEnabled })
               }
-              onGroupConversationsExclusionChange={(
-                areGroupConversationsExcluded,
-              ) => handleSettingsChange({ areGroupConversationsExcluded })}
             />
+            <LinkedinReadStatusSection />
           </>
         )}
       </StyledContainer>

@@ -40,7 +40,6 @@ describe('removeLinkedinConnectionResources', () => {
     );
     expect(mocks.kvDelete.mock.calls).toEqual([
       ['linkedin-settings:connection-id'],
-      ['linkedin-person-reviews:connection-id'],
       ['linkedin-history-import:connection-id'],
       ['unipile-account:acc_1', { scope: 'SERVER' }],
     ]);
@@ -56,7 +55,7 @@ describe('removeLinkedinConnectionResources', () => {
       'channel-id',
     );
     expect(mocks.deleteUnipileAccountOrThrow).not.toHaveBeenCalled();
-    expect(mocks.kvDelete).toHaveBeenCalledTimes(3);
+    expect(mocks.kvDelete).toHaveBeenCalledTimes(2);
     expect(mocks.kvDelete).not.toHaveBeenCalledWith(
       'unipile-account:acc_1',
       expect.anything(),

@@ -52,7 +52,7 @@ const STATE_KEY = 'linkedin-history-import:connection-id';
 
 const RUNNING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
-  importRange: 'LAST_30_DAYS',
+  importPolicy: 'ALL',
   status: 'IMPORTING',
   importedConversationCount: 3,
   startedAt: '2026-10-30T00:00:00.000Z',
@@ -99,7 +99,6 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.listUnipileChatMessages).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'recent',
-      after: '2026-09-30T00:00:00.000Z',
     });
     expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -113,40 +112,42 @@ describe('linkedinImportHistoryHandler', () => {
     );
   });
 
-  it('stops at the first chat older than the import range', async () => {
+  it('completes the run on the last page', async () => {
     mocks.listUnipileChats.mockResolvedValue({
-      items: [
-        buildChat('recent', '2026-10-29T00:00:00.000Z'),
-        buildChat('old', '2026-08-01T00:00:00.000Z'),
-      ],
-      nextCursor: 'cursor-2',
+      items: [buildChat('old', '2024-08-01T00:00:00.000Z')],
+      nextCursor: undefined,
     });
 
     await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
       status: 'COMPLETED',
       importedConversationCount: 4,
     });
-    expect(mocks.ingestLinkedinMessages).toHaveBeenCalledTimes(1);
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({ status: 'COMPLETED' }),
     );
   });
 
-  it('skips group conversations when they are excluded', async () => {
-    mocks.kvStore.set('linkedin-settings:connection-id', {
-      areGroupConversationsExcluded: true,
-    });
+  it('fetches the attendees of a chat the list did not embed them in', async () => {
+    const { user: _user, ...chatWithoutAttendees } = buildChat(
+      'bare',
+      '2026-10-29T00:00:00.000Z',
+    );
+
     mocks.listUnipileChats.mockResolvedValue({
-      items: [
-        { ...buildChat('group', '2026-10-29T00:00:00.000Z'), is_group: true },
-      ],
+      items: [chatWithoutAttendees],
       nextCursor: undefined,
     });
+    mocks.getUnipileChat.mockResolvedValue(
+      buildChat('bare', '2026-10-29T00:00:00.000Z'),
+    );
 
     await linkedinImportHistoryHandler(PAYLOAD);
 
-    expect(mocks.ingestLinkedinMessages).not.toHaveBeenCalled();
+    expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'bare',
+    });
   });
 
   it('ignores pages of a superseded run', async () => {

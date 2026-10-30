@@ -10,7 +10,6 @@ import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
-import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
@@ -35,29 +34,16 @@ const ingestUnipileMessage = async ({
 
   const settings = await getLinkedinSettings(connectedAccountId);
 
-  const chat =
-    message.is_sender || settings.areGroupConversationsExcluded
-      ? await getUnipileChat({
+  const counterparts = message.is_sender
+    ? getLinkedinChatCounterparts(
+        await getUnipileChat({
           accountId: unipileAccountId,
           chatId: message.chat_id,
-        })
-      : undefined;
-
-  if (
-    isDefined(chat) &&
-    settings.areGroupConversationsExcluded &&
-    isLinkedinGroupChat(chat)
-  ) {
-    return { handled: false, reason: 'Group conversations are excluded' };
-  }
-
-  const counterparts =
-    message.is_sender && isDefined(chat)
-      ? getLinkedinChatCounterparts(chat)
-      : [message.sender].filter(isDefined);
+        }),
+      )
+    : [message.sender].filter(isDefined);
 
   const ingestedMessageCount = await ingestLinkedinMessages({
-    connectedAccountId,
     channel,
     settings,
     counterparts: await Promise.all(
@@ -69,7 +55,10 @@ const ingestUnipileMessage = async ({
   });
 
   if (ingestedMessageCount === 0) {
-    return { handled: false, reason: 'Message carries no content' };
+    return {
+      handled: false,
+      reason: 'Message carries no content or nobody in it is in Twenty',
+    };
   }
 
   return { handled: true };

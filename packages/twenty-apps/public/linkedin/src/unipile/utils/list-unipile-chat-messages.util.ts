@@ -9,11 +9,9 @@ const UNIPILE_MESSAGES_PAGE_SIZE = 100;
 export const listUnipileChatMessages = async ({
   accountId,
   chatId,
-  after,
 }: {
   accountId: string;
   chatId: string;
-  after?: string;
 }): Promise<UnipileMessage[]> => {
   const messages: UnipileMessage[] = [];
   let cursor: string | undefined;
@@ -22,7 +20,7 @@ export const listUnipileChatMessages = async ({
     const { data } = await new UnipileMessaging().getMessagesList({
       ...getUnipileRequestOptions(),
       path: { account_id: accountId, chat_id: chatId },
-      query: { after, cursor, limit: UNIPILE_MESSAGES_PAGE_SIZE },
+      query: { cursor, limit: UNIPILE_MESSAGES_PAGE_SIZE },
     });
 
     messages.push(...data.data);

@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   listConnections: vi.fn(),
+  listMessageChannels: vi.fn(),
+  updateMessageChannel: vi.fn(),
   enqueueJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
 }));
@@ -12,6 +14,8 @@ vi.mock('twenty-sdk/define', () => ({
 
 vi.mock('twenty-sdk/logic-function', () => ({
   listConnections: mocks.listConnections,
+  listMessageChannels: mocks.listMessageChannels,
+  updateMessageChannel: mocks.updateMessageChannel,
   enqueueJobs: mocks.enqueueJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
@@ -24,10 +28,21 @@ vi.mock('twenty-sdk/logic-function', () => ({
 const { linkedinUpdateSettingsHandler } =
   await import('src/logic-functions/linkedin-update-settings');
 
-const CONTEXT = { userWorkspaceId: 'member-user-workspace-id' };
+const HISTORY_KEY = 'linkedin-history-import:connection-id';
 
 const updateSettings = (body: Record<string, unknown>) =>
-  linkedinUpdateSettingsHandler({ body } as never, CONTEXT);
+  linkedinUpdateSettingsHandler({ body } as never, {
+    userWorkspaceId: 'member-user-workspace-id',
+  });
+
+const setHistoryImport = (importPolicy: 'ALL' | 'CONTACTS_ONLY') =>
+  mocks.kvStore.set(HISTORY_KEY, {
+    runId: 'run-1',
+    importPolicy,
+    status: 'COMPLETED',
+    importedConversationCount: 12,
+    startedAt: '2026-10-01T00:00:00.000Z',
+  });
 
 describe('linkedinUpdateSettingsHandler', () => {
   beforeEach(() => {
@@ -46,50 +61,62 @@ describe('linkedinUpdateSettingsHandler', () => {
         authFailedAt: null,
       },
     ]);
-    mocks.kvStore.set('linkedin-history-import:connection-id', {
-      runId: 'run-1',
-      importRange: 'LAST_90_DAYS',
-      status: 'COMPLETED',
-      importedConversationCount: 12,
-      startedAt: '2026-10-01T00:00:00.000Z',
-    });
+    mocks.listMessageChannels.mockResolvedValue([
+      { id: 'channel-id', visibility: 'METADATA' },
+    ]);
+    setHistoryImport('ALL');
   });
 
   it('saves the valid fields of the member connection and ignores the others', async () => {
     const view = await updateSettings({
       contactAutoCreationPolicy: 'NONE',
       isNameMatchingEnabled: 'yes',
-      importRange: 'LAST_2_DAYS',
+      importPolicy: 'SOME',
     });
 
     expect(view).toEqual(
       expect.objectContaining({
         isConnected: true,
         settings: {
-          importRange: 'LAST_90_DAYS',
+          importPolicy: 'ALL',
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
-          areGroupConversationsExcluded: false,
+          visibility: 'METADATA',
         },
       }),
     );
     expect(mocks.kvStore.has('linkedin-settings:other-connection-id')).toBe(
       false,
     );
+    expect(mocks.updateMessageChannel).not.toHaveBeenCalled();
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
-  it('imports more history when the range grows', async () => {
-    await updateSettings({ importRange: 'ALL' });
+  it('applies the visibility to the message channel instead of the kv settings', async () => {
+    await updateSettings({ visibility: 'SHARE_EVERYTHING' });
+
+    expect(mocks.updateMessageChannel).toHaveBeenCalledExactlyOnceWith({
+      id: 'channel-id',
+      visibility: 'SHARE_EVERYTHING',
+    });
+    expect(
+      mocks.kvStore.get('linkedin-settings:connection-id'),
+    ).not.toHaveProperty('visibility');
+  });
+
+  it('imports the skipped chats when switching from Contacts only to All chats', async () => {
+    setHistoryImport('CONTACTS_ONLY');
+
+    await updateSettings({ importPolicy: 'ALL' });
 
     expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
-    expect(mocks.kvStore.get('linkedin-history-import:connection-id')).toEqual(
-      expect.objectContaining({ importRange: 'ALL', status: 'IMPORTING' }),
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({ importPolicy: 'ALL', status: 'IMPORTING' }),
     );
   });
 
-  it('does not re-import when the range shrinks', async () => {
-    await updateSettings({ importRange: 'LAST_30_DAYS' });
+  it('does not re-import when switching to Contacts only', async () => {
+    await updateSettings({ importPolicy: 'CONTACTS_ONLY' });
 
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });

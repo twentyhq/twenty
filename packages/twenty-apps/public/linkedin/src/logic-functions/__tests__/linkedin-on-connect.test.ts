@@ -76,7 +76,7 @@ describe('linkedinOnConnectHandler', () => {
     expect(mocks.kvSet).toHaveBeenCalledWith(
       'linkedin-history-import:connected-account-id',
       expect.objectContaining({
-        importRange: 'LAST_90_DAYS',
+        importPolicy: 'ALL',
         status: 'IMPORTING',
       }),
     );

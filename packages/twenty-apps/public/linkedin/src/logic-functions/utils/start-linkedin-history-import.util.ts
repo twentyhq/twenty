@@ -1,19 +1,19 @@
 import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
-import { type LinkedinImportRange } from 'src/types/linkedin-import-range.type';
+import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 
 // A new run id supersedes any page still queued from an earlier run
 export const startLinkedinHistoryImport = async ({
   connectedAccountId,
-  importRange,
+  importPolicy,
 }: {
   connectedAccountId: string;
-  importRange: LinkedinImportRange;
+  importPolicy: LinkedinImportPolicy;
 }): Promise<LinkedinHistoryImportState> => {
   const state: LinkedinHistoryImportState = {
     runId: crypto.randomUUID(),
-    importRange,
+    importPolicy,
     status: 'IMPORTING',
     importedConversationCount: 0,
     startedAt: new Date().toISOString(),

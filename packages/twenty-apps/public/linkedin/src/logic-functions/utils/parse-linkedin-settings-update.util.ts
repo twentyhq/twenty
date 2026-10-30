@@ -1,9 +1,11 @@
-import { isBoolean, isString } from '@sniptt/guards';
+import { isBoolean } from '@sniptt/guards';
 
-import { LINKEDIN_IMPORT_RANGE_DAYS } from 'src/constants/linkedin-import-range-days.constant';
 import { type LinkedinContactAutoCreationPolicy } from 'src/types/linkedin-contact-auto-creation-policy.type';
-import { type LinkedinImportRange } from 'src/types/linkedin-import-range.type';
+import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
+import { type LinkedinVisibility } from 'src/types/linkedin-visibility.type';
+
+const IMPORT_POLICIES: LinkedinImportPolicy[] = ['ALL', 'CONTACTS_ONLY'];
 
 const CONTACT_AUTO_CREATION_POLICIES: LinkedinContactAutoCreationPolicy[] = [
   'SENT_AND_RECEIVED',
@@ -11,24 +13,27 @@ const CONTACT_AUTO_CREATION_POLICIES: LinkedinContactAutoCreationPolicy[] = [
   'NONE',
 ];
 
-const isLinkedinImportRange = (value: unknown): value is LinkedinImportRange =>
-  isString(value) && Object.keys(LINKEDIN_IMPORT_RANGE_DAYS).includes(value);
+const VISIBILITIES: LinkedinVisibility[] = ['SHARE_EVERYTHING', 'METADATA'];
 
-const isLinkedinContactAutoCreationPolicy = (
+const isOneOf = <TValue extends string>(
+  values: TValue[],
   value: unknown,
-): value is LinkedinContactAutoCreationPolicy =>
-  CONTACT_AUTO_CREATION_POLICIES.some((policy) => policy === value);
+): value is TValue => values.some((candidate) => candidate === value);
 
 export const parseLinkedinSettingsUpdate = (
   body: Record<string, unknown> | null | undefined,
-): Partial<LinkedinSettings> => {
-  const update: Partial<LinkedinSettings> = {};
+): Partial<LinkedinSettings> & { visibility?: LinkedinVisibility } => {
+  const update: Partial<LinkedinSettings> & {
+    visibility?: LinkedinVisibility;
+  } = {};
 
-  if (isLinkedinImportRange(body?.importRange)) {
-    update.importRange = body.importRange;
+  if (isOneOf(IMPORT_POLICIES, body?.importPolicy)) {
+    update.importPolicy = body.importPolicy;
   }
 
-  if (isLinkedinContactAutoCreationPolicy(body?.contactAutoCreationPolicy)) {
+  if (
+    isOneOf(CONTACT_AUTO_CREATION_POLICIES, body?.contactAutoCreationPolicy)
+  ) {
     update.contactAutoCreationPolicy = body.contactAutoCreationPolicy;
   }
 
@@ -36,8 +41,8 @@ export const parseLinkedinSettingsUpdate = (
     update.isNameMatchingEnabled = body.isNameMatchingEnabled;
   }
 
-  if (isBoolean(body?.areGroupConversationsExcluded)) {
-    update.areGroupConversationsExcluded = body.areGroupConversationsExcluded;
+  if (isOneOf(VISIBILITIES, body?.visibility)) {
+    update.visibility = body.visibility;
   }
 
   return update;

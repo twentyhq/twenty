@@ -18,7 +18,7 @@ export const LinkedinContactAutoCreationSection = ({
     <Section.Header
       title={t('Contact auto-creation')}
       description={t(
-        'Automatically create People records when receiving or sending LinkedIn messages',
+        'Automatically create People records for the profiles you chat with',
       )}
     />
     <SettingsRadioCard

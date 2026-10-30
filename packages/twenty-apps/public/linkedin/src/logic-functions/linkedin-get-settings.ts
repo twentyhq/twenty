@@ -17,7 +17,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_GET_SETTINGS_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-get-settings',
   description:
-    'Returns the LinkedIn sync settings, history import progress and people to review of the requesting member connection.',
+    'Returns the LinkedIn sync settings and history import progress of the requesting member connection.',
   timeoutSeconds: 15,
   handler: linkedinGetSettingsHandler,
   httpRouteTriggerSettings: {
