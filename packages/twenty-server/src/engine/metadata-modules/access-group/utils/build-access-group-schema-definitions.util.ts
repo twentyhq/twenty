@@ -4,8 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import {
   ACCESS_GROUP_COMPACT_ID_COLUMN_NAME,
-  ACCESS_GROUP_RECORD_COLUMN_NAMES,
-  READABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
+  ACCESS_GROUP_IDS_COLUMN_NAME,
 } from 'src/engine/metadata-modules/access-group/constants/access-group-column-names.constant';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -31,7 +30,7 @@ const computeAccessGroupIndexName = ({
     .slice(0, 27)}`;
 
 // No field metadata on purpose: keeps them out of the record APIs, the UI and app manifests.
-// A null array means the record's access groups have not been computed yet.
+// Actions live on each group's grant, so one array serves every action; null means not computed yet.
 export const buildAccessGroupSchemaDefinitions = ({
   objectMetadata,
 }: {
@@ -64,18 +63,16 @@ export const buildAccessGroupSchemaDefinitions = ({
   }
 
   return {
-    columnDefinitions: ACCESS_GROUP_RECORD_COLUMN_NAMES.map((columnName) => ({
-      name: columnName,
-      type: 'integer',
-      isArray: true,
-    })),
+    columnDefinitions: [
+      { name: ACCESS_GROUP_IDS_COLUMN_NAME, type: 'integer', isArray: true },
+    ],
     indexDefinitions: [
       {
         name: computeAccessGroupIndexName({
           objectMetadataId: objectMetadata.id,
-          columnName: READABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME,
+          columnName: ACCESS_GROUP_IDS_COLUMN_NAME,
         }),
-        columns: [READABLE_BY_ACCESS_GROUP_IDS_COLUMN_NAME],
+        columns: [ACCESS_GROUP_IDS_COLUMN_NAME],
         type: 'GIN',
       },
     ],

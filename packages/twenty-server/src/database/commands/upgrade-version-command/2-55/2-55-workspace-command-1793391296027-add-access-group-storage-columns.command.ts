@@ -17,7 +17,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Command({
   name: 'upgrade:2-55:add-access-group-storage-columns',
   description:
-    'Add the readable, writable, deletable and destroyable access group id columns to every object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
+    'Add the access group ids column to every object table and the compact id to accessGroup. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
 export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -151,15 +151,21 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
     queryRunner: QueryRunner;
     schemaName: string;
   }): Promise<Map<string, Map<string, string>>> {
-    const columns: { tableName: string; columnName: string; udtName: string }[] =
-      await queryRunner.query(
-        `SELECT table_name AS "tableName", column_name AS "columnName", udt_name AS "udtName"
+    const columns: {
+      tableName: string;
+      columnName: string;
+      udtName: string;
+    }[] = await queryRunner.query(
+      `SELECT table_name AS "tableName", column_name AS "columnName", udt_name AS "udtName"
          FROM information_schema.columns
          WHERE table_schema = $1`,
-        [schemaName],
-      );
+      [schemaName],
+    );
 
-    const existingColumnTypesByTableName = new Map<string, Map<string, string>>();
+    const existingColumnTypesByTableName = new Map<
+      string,
+      Map<string, string>
+    >();
 
     for (const { tableName, columnName, udtName } of columns) {
       existingColumnTypesByTableName.set(

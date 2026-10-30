@@ -8,12 +8,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const RECORD_TABLE_NAMES = ['person', '_pet'];
-const RECORD_COLUMN_NAMES = [
-  'deletableByAccessGroupIds',
-  'destroyableByAccessGroupIds',
-  'readableByAccessGroupIds',
-  'writableByAccessGroupIds',
-];
+const ACCESS_GROUP_IDS = 'accessGroupIds';
 
 type ColumnRow = {
   tableName: string;
@@ -45,7 +40,7 @@ describe('2-55 workspace command - add access group storage columns (integration
        WHERE table_schema = $1
          AND column_name = ANY($2)
        ORDER BY table_name, column_name`,
-      [SCHEMA, [...RECORD_COLUMN_NAMES, 'compactId']],
+      [SCHEMA, [ACCESS_GROUP_IDS, 'compactId']],
     );
 
   const findIndexDefinitions = async (): Promise<string[]> => {
@@ -61,16 +56,14 @@ describe('2-55 workspace command - add access group storage columns (integration
     return indexes.map(({ definition }) => definition);
   };
 
-  const dropRecordColumns = (tableName: string) =>
+  const dropRecordColumn = (tableName: string) =>
     global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."${tableName}" ${RECORD_COLUMN_NAMES.map(
-        (columnName) => `DROP COLUMN "${columnName}"`,
-      ).join(', ')}`,
+      `ALTER TABLE "${SCHEMA}"."${tableName}" DROP COLUMN "${ACCESS_GROUP_IDS}"`,
     );
 
   const dropStorage = async () => {
     for (const tableName of RECORD_TABLE_NAMES) {
-      await dropRecordColumns(tableName);
+      await dropRecordColumn(tableName);
     }
 
     await global.testDataSource.query(
@@ -94,16 +87,16 @@ describe('2-55 workspace command - add access group storage columns (integration
     for (const tableName of RECORD_TABLE_NAMES) {
       expect(
         columns.filter((column) => column.tableName === tableName),
-      ).toEqual(
-        RECORD_COLUMN_NAMES.map((columnName) => ({
+      ).toEqual([
+        {
           tableName,
-          columnName,
+          columnName: ACCESS_GROUP_IDS,
           dataType: '_int4',
           isNullable: 'YES',
           columnDefault: null,
           isIdentity: 'NO',
-        })),
-      );
+        },
+      ]);
     }
 
     expect(
@@ -116,20 +109,11 @@ describe('2-55 workspace command - add access group storage columns (integration
       }),
     ]);
 
-    const indexDefinitions = await findIndexDefinitions();
-
     expect(
-      indexDefinitions.filter((definition) =>
-        definition.includes('USING gin ("readableByAccessGroupIds")'),
+      (await findIndexDefinitions()).filter((definition) =>
+        definition.includes(`USING gin ("${ACCESS_GROUP_IDS}")`),
       ).length,
     ).toBeGreaterThanOrEqual(RECORD_TABLE_NAMES.length);
-    expect(
-      indexDefinitions.some((definition) =>
-        RECORD_COLUMN_NAMES.filter(
-          (columnName) => columnName !== 'readableByAccessGroupIds',
-        ).some((columnName) => definition.includes(columnName)),
-      ),
-    ).toBe(false);
   });
 
   it('leaves dropped columns absent on a dry run', async () => {
@@ -163,7 +147,7 @@ describe('2-55 workspace command - add access group storage columns (integration
         columns
           .filter((column) => column.tableName === tableName)
           .map((column) => column.columnName),
-      ).toEqual(RECORD_COLUMN_NAMES);
+      ).toEqual([ACCESS_GROUP_IDS]);
     }
     expect(
       columns.find((column) => column.tableName === 'accessGroup'),
@@ -177,9 +161,7 @@ describe('2-55 workspace command - add access group storage columns (integration
     const [{ count: computedRecordCount }]: { count: string }[] =
       await global.testDataSource.query(
         `SELECT count(*) FROM "${SCHEMA}"."person"
-         WHERE ${RECORD_COLUMN_NAMES.map(
-           (columnName) => `"${columnName}" IS NOT NULL`,
-         ).join(' OR ')}`,
+         WHERE "${ACCESS_GROUP_IDS}" IS NOT NULL`,
       );
 
     expect(Number(computedRecordCount)).toBe(0);
@@ -215,10 +197,11 @@ describe('2-55 workspace command - add access group storage columns (integration
       );
     }
   });
+
   it('skips a table whose column of the same name has another type', async () => {
-    await dropRecordColumns('_rocket');
+    await dropRecordColumn('_rocket');
     await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."_rocket" ADD COLUMN "readableByAccessGroupIds" text`,
+      `ALTER TABLE "${SCHEMA}"."_rocket" ADD COLUMN "${ACCESS_GROUP_IDS}" text`,
     );
 
     try {
@@ -228,10 +211,10 @@ describe('2-55 workspace command - add access group storage columns (integration
         (await findColumns())
           .filter((column) => column.tableName === '_rocket')
           .map((column) => [column.columnName, column.dataType]),
-      ).toEqual([['readableByAccessGroupIds', 'text']]);
+      ).toEqual([[ACCESS_GROUP_IDS, 'text']]);
     } finally {
       await global.testDataSource.query(
-        `ALTER TABLE "${SCHEMA}"."_rocket" DROP COLUMN "readableByAccessGroupIds"`,
+        `ALTER TABLE "${SCHEMA}"."_rocket" DROP COLUMN "${ACCESS_GROUP_IDS}"`,
       );
       await runOnWorkspace();
     }
