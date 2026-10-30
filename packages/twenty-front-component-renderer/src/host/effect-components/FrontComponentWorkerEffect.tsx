@@ -40,7 +40,6 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
-  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -68,7 +67,6 @@ export const FrontComponentWorkerEffect = ({
   functionsBaseUrl,
   sdkClientUrls,
   sharedDependenciesUrl,
-  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -172,7 +170,6 @@ export const FrontComponentWorkerEffect = ({
 
           return fetchComponentSource({
             url: sharedDependenciesUrl,
-            credentials: sharedDependenciesCredentials,
             headers: authorizationHeaders,
           });
         };
@@ -261,7 +258,6 @@ export const FrontComponentWorkerEffect = ({
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    sharedDependenciesCredentials,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,

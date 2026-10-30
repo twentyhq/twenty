@@ -1,4 +1,3 @@
-import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 const componentSourceHandoffSchema = z.object({ url: z.url() });
@@ -33,10 +32,7 @@ export const fetchComponentSourceFromNetwork = async ({
   credentials?: RequestCredentials;
 }): Promise<string> => {
   const response = await fetch(appendCacheBustQueryParameter(url), {
-    headers:
-      credentials === 'include'
-        ? { ...headers, [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' }
-        : headers,
+    headers,
     credentials,
   });
 

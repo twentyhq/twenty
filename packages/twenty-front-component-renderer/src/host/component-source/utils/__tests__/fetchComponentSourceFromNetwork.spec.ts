@@ -1,5 +1,3 @@
-import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
-
 import { fetchComponentSourceFromNetwork } from '@/host/component-source/utils/fetchComponentSourceFromNetwork';
 
 const COMPONENT_URL =
@@ -61,7 +59,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
   });
 
-  it('can include the user session for an AI shared-dependency asset', async () => {
+  it('can load an app bundle without the user session', async () => {
     const fetchMock = jest
       .fn()
       .mockResolvedValue(
@@ -71,12 +69,13 @@ describe('fetchComponentSourceFromNetwork', () => {
 
     await fetchComponentSourceFromNetwork({
       url: COMPONENT_URL,
-      credentials: 'include',
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
     });
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
-      headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
-      credentials: 'include',
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
     });
   });
 
@@ -110,7 +109,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
   });
 
-  it('does not forward the session opt-in to a presigned handoff', async () => {
+  it('does not forward app authorization to a presigned handoff', async () => {
     globalThis.fetch = jest
       .fn()
       .mockResolvedValueOnce(
@@ -126,7 +125,7 @@ describe('fetchComponentSourceFromNetwork', () => {
     await fetchComponentSourceFromNetwork({
       url: COMPONENT_URL,
       headers: { Authorization: 'Bearer token' },
-      credentials: 'include',
+      credentials: 'omit',
     });
 
     expect(globalThis.fetch).toHaveBeenNthCalledWith(
@@ -135,9 +134,8 @@ describe('fetchComponentSourceFromNetwork', () => {
       {
         headers: {
           Authorization: 'Bearer token',
-          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
         },
-        credentials: 'include',
+        credentials: 'omit',
       },
     );
     expect(globalThis.fetch).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
