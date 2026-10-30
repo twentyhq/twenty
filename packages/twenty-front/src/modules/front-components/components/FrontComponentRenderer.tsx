@@ -1,4 +1,3 @@
-import { getAiFrontComponentSourcePath } from 'twenty-shared/application';
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
@@ -95,10 +94,7 @@ export const FrontComponentRenderer = ({
     return unavailableFallback;
   }
 
-  if (
-    frontComponent.sourceComponentPath ===
-    getAiFrontComponentSourcePath(frontComponent.id)
-  ) {
+  if (frontComponent.isAiComponent) {
     return (
       <AiWorkspaceFrontComponent
         key={`${frontComponent.id}:${frontComponent.builtComponentChecksum}`}

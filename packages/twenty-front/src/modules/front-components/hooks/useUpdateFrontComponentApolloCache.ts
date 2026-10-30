@@ -29,6 +29,26 @@ export const useUpdateFrontComponentApolloCache = ({
       return;
     }
 
+    const existingData =
+      apolloClient.cache.readQuery<FindOneFrontComponentQuery>({
+        query: FindOneFrontComponentDocument,
+        variables: { id: frontComponentId },
+      });
+
+    if (
+      isDefined(updatedRecord.sourceComponentPath) &&
+      updatedRecord.sourceComponentPath !==
+        existingData?.frontComponent?.sourceComponentPath
+    ) {
+      void apolloClient.query({
+        query: FindOneFrontComponentDocument,
+        variables: { id: frontComponentId },
+        fetchPolicy: 'network-only',
+      });
+
+      return;
+    }
+
     apolloClient.cache.updateQuery<FindOneFrontComponentQuery>(
       {
         query: FindOneFrontComponentDocument,

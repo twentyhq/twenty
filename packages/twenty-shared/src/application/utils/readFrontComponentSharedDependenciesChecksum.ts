@@ -3,10 +3,12 @@ import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from '../constants/
 export const readFrontComponentSharedDependenciesChecksum = (
   source: string,
 ): string | undefined => {
-  const firstLine = source.split('\n', 1)[0];
+  const newlineIndex = source.indexOf('\n');
+  const firstLine =
+    newlineIndex === -1 ? source : source.slice(0, newlineIndex);
 
   if (
-    !firstLine?.startsWith(FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX)
+    !firstLine.startsWith(FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX)
   ) {
     return undefined;
   }

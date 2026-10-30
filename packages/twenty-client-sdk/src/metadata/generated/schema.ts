@@ -1677,6 +1677,7 @@ export interface FrontComponent {
     description?: Scalars['String']
     frontComponentSharedDependenciesChecksum?: Scalars['String']
     id: Scalars['UUID']
+    isAiComponent: Scalars['Boolean']
     isHeadless: Scalars['Boolean']
     name: Scalars['String']
     sourceComponentPath: Scalars['String']
@@ -6169,6 +6170,7 @@ export interface FrontComponentGenqlSelection{
     description?: boolean | number
     frontComponentSharedDependenciesChecksum?: boolean | number
     id?: boolean | number
+    isAiComponent?: boolean | number
     isHeadless?: boolean | number
     name?: boolean | number
     sourceComponentPath?: boolean | number
