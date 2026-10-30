@@ -39,6 +39,10 @@ describe('forwardToTwentyConnect', () => {
 
     expect(await response?.json()).toEqual({ validityToken: 'token' });
 
+    expect(connectFetch).toHaveBeenCalledTimes(1);
+    expect(mockedGetCloudflareContext).toHaveBeenCalledTimes(1);
+    expect(mockedGetCloudflareContext).toHaveBeenCalledWith({ async: true });
+
     const forwardedRequest: Request = connectFetch.mock.calls[0][0];
 
     expect(forwardedRequest.url).toBe(
