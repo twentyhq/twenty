@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ExtendedUIMessage,
   type ExtendedUIMessagePart,
@@ -7,8 +8,7 @@ import {
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
-import { In } from 'typeorm';
+import { In, IsNull, Not, Or } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-history/utils/finalize-dangling-tool-parts.util';
@@ -82,40 +82,44 @@ export class AgentConversationReaderService {
     threadId: string;
     limit: number;
   }): Promise<AgentConversationMessageText[]> {
-    return this.messageRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query<AgentConversationMessageText[]>(
-        doNotTranslate(`WITH recent_messages AS (
-          SELECT message.id, message.role, message."processedAt", message."createdAt"
-          FROM ${table('agentMessage')} message
-          LEFT JOIN ${table('agentTurn')} message_turn
-            ON message_turn.id = message."turnId" AND message_turn."threadId" = message."threadId"
-          WHERE message."threadId" = $1
-            AND message.role = ANY($2::text[])
-            AND message.status IS DISTINCT FROM $3
-            AND message_turn.status IS DISTINCT FROM $4
-          ORDER BY message."processedAt" DESC NULLS FIRST, message."createdAt" DESC, message.id DESC
-          LIMIT $5
-        )
-        SELECT recent_messages.role,
-          COALESCE((
-            SELECT part."textContent"
-            FROM ${table('agentMessagePart')} part
-            WHERE part."messageId" = recent_messages.id AND part.type = $6
-              AND part."textContent" ~ '[^[:space:]]'
-            ORDER BY part."orderIndex" DESC LIMIT 1
-          ), '') AS text
-        FROM recent_messages
-        ORDER BY "processedAt" ASC NULLS LAST, "createdAt" ASC, id ASC`),
-        [
-          threadId,
-          [AgentMessageRole.USER, AgentMessageRole.ASSISTANT],
-          AgentMessageStatus.QUEUED,
-          AgentTurnStatus.FAILED,
-          limit,
-          'text',
-        ],
-      ),
-    );
+    const failedTurns = await this.turnRepository.find(workspaceId, {
+      where: { threadId, status: AgentTurnStatus.FAILED },
+      select: ['id'],
+    });
+    const recentMessages = await this.messageRepository.find(workspaceId, {
+      where: {
+        threadId,
+        role: In([AgentMessageRole.USER, AgentMessageRole.ASSISTANT]),
+        status: Not(AgentMessageStatus.QUEUED),
+        ...(isNonEmptyArray(failedTurns) && {
+          turnId: Or(IsNull(), Not(In(failedTurns.map(({ id }) => id)))),
+        }),
+      },
+      select: ['id', 'role'],
+      order: {
+        processedAt: { order: 'DESC', nulls: 'NULLS FIRST' },
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
+      take: limit,
+    });
+    const textParts = await this.messagePartRepository.find(workspaceId, {
+      where: {
+        messageId: In(recentMessages.map(({ id }) => id)),
+        type: 'text',
+      },
+      select: ['messageId', 'textContent'],
+      order: { orderIndex: 'DESC' },
+    });
+
+    return recentMessages.reverse().map(({ id, role }) => ({
+      role: role as AgentConversationMessageText['role'],
+      text:
+        textParts.find(
+          ({ messageId, textContent }) =>
+            messageId === id && isNonEmptyString(textContent?.trim()),
+        )?.textContent ?? '',
+    }));
   }
 
   async loadMessages({
