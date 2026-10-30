@@ -4,8 +4,12 @@ import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { fetchComponentSource } from 'twenty-front-component-renderer';
 import { CustomError, isDefined } from 'twenty-shared/utils';
+import {
+  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+  readFrontComponentSharedDependenciesChecksum,
+} from 'twenty-shared/application';
 
-export const loadAiWorkspaceFrontComponentRuntime = async ({
+export const loadAiWorkspaceFrontComponentRuntimeOrThrow = async ({
   frontComponentId,
   applicationAccessToken,
   signal,
@@ -27,20 +31,51 @@ export const loadAiWorkspaceFrontComponentRuntime = async ({
     );
   }
 
-  const runtime: AiWorkspaceFrontComponentRuntime = await response.json();
+  const runtime: Omit<
+    AiWorkspaceFrontComponentRuntime,
+    'componentSource' | 'sharedDependenciesSource'
+  > & { builtComponentChecksum: string } = await response.json();
+  const componentSource = await fetchComponentSource({
+    url: getFingerprintedRestUrl({
+      resource: 'front-components',
+      id: frontComponentId,
+      checksum: runtime.builtComponentChecksum,
+    }),
+    headers,
+  });
 
-  if (!isDefined(runtime.sharedDependenciesChecksum)) {
-    return runtime;
+  if (
+    !componentSource.includes(
+      FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+    )
+  ) {
+    return { ...runtime, componentSource };
+  }
+
+  const sharedDependenciesChecksum =
+    readFrontComponentSharedDependenciesChecksum(componentSource) ??
+    runtime.sharedDependenciesChecksum;
+
+  if (!isDefined(sharedDependenciesChecksum)) {
+    throw new CustomError(
+      t`Component shared dependencies are missing.`,
+      'AI_FRONT_COMPONENT_SHARED_DEPENDENCIES_MISSING',
+    );
   }
 
   const sharedDependenciesSource = await fetchComponentSource({
     url: getFingerprintedRestUrl({
       resource: 'front-component-shared-dependencies/bundles',
       id: runtime.applicationId,
-      checksum: runtime.sharedDependenciesChecksum,
+      checksum: sharedDependenciesChecksum,
     }),
     headers,
   });
 
-  return { ...runtime, sharedDependenciesSource };
+  return {
+    ...runtime,
+    componentSource,
+    sharedDependenciesChecksum,
+    sharedDependenciesSource,
+  };
 };

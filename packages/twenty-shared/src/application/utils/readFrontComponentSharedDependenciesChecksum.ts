@@ -1,4 +1,4 @@
-import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-shared-dependencies-banner-prefix.constant';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from '../constants/FrontComponentSharedDependenciesBannerPrefix';
 
 export const readFrontComponentSharedDependenciesChecksum = (
   source: string,
@@ -6,7 +6,7 @@ export const readFrontComponentSharedDependenciesChecksum = (
   const firstLine = source.split('\n', 1)[0];
 
   if (
-    !firstLine.startsWith(FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX)
+    !firstLine?.startsWith(FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX)
   ) {
     return undefined;
   }

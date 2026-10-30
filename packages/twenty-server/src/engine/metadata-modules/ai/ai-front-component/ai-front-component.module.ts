@@ -1,4 +1,5 @@
 import { FrontComponentSharedDependenciesModule } from 'src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { Module } from '@nestjs/common';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -17,6 +18,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
 
 @Module({
   imports: [
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
     FrontComponentSharedDependenciesModule,
     ApplicationPackageModule,

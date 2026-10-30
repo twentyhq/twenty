@@ -9,7 +9,7 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
-export const readFrontComponentQuery = (
+export const readFrontComponentQueryOrThrow = (
   source: string,
 ): FrontComponentQuery => {
   const sourceFile = typescript.createSourceFile(

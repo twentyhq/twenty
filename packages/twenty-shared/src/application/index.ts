@@ -324,3 +324,5 @@ export {
   APPLICATION_WORKFLOW_TRIGGER_TYPES,
   workflowTriggerManifestSchema,
 } from './workflowTriggerManifestType';
+export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from './constants/FrontComponentSharedDependenciesBannerPrefix';
+export { readFrontComponentSharedDependenciesChecksum } from './utils/readFrontComponentSharedDependenciesChecksum';

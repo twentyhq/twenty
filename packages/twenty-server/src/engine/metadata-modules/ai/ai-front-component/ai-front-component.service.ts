@@ -11,19 +11,17 @@ import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-fron
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
-import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { createHash } from 'crypto';
 import { text } from 'stream/consumers';
 
 import {
-  FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
   getAiFrontComponentSourcePath,
+  readFrontComponentSharedDependenciesChecksum,
 } from 'twenty-shared/application';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +36,7 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
-import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
+import { readFrontComponentQueryOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query-or-throw.util';
 
 const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
@@ -500,7 +498,7 @@ export class AiFrontComponentService {
       resourcePath: component.sourceComponentPath,
     });
     const content = await text(queryFile);
-    const query = readFrontComponentQuery(content);
+    const query = readFrontComponentQueryOrThrow(content);
 
     return this.readRecords({ query, authContext });
   }
@@ -531,69 +529,17 @@ export class AiFrontComponentService {
         },
       );
     }
-    const { workspaceCustomFlatApplication: application } =
-      await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: authContext.workspace.id },
-      );
-    const componentSource = await text(
-      await this.files.readFile({
+    const application =
+      await this.applications.findOneApplicationWithRelationsOrThrow({
+        id: component.applicationId,
         workspaceId: authContext.workspace.id,
-        applicationUniversalIdentifier: application.universalIdentifier,
-        fileFolder: FileFolder.BuiltFrontComponent,
-        resourcePath: component.builtComponentPath,
-      }),
-    );
-
-    if (
-      createHash('sha256').update(componentSource).digest('hex') !==
-      component.builtComponentChecksum
-    ) {
-      throw new ApplicationException(
-        doNotTranslate('Component source checksum mismatch.'),
-        ApplicationExceptionCode.INVALID_INPUT,
-        { userFriendlyMessage: msg`Component source checksum mismatch.` },
-      );
-    }
-
-    let sharedDependenciesChecksum =
-      readFrontComponentSharedDependenciesChecksum(componentSource);
-
-    if (
-      componentSource.includes(
-        FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-      ) &&
-      !isDefined(sharedDependenciesChecksum)
-    ) {
-      const applicationDependencies =
-        await this.applications.findOneApplicationWithRelationsOrThrow({
-          id: application.id,
-          workspaceId: authContext.workspace.id,
-        });
-
-      if (
-        !isDefined(
-          applicationDependencies.frontComponentSharedDependenciesBuiltPath,
-        ) ||
-        !isDefined(
-          applicationDependencies.frontComponentSharedDependenciesChecksum,
-        )
-      ) {
-        throw new ApplicationException(
-          doNotTranslate('Component shared dependencies are missing.'),
-          ApplicationExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`Component shared dependencies are missing.`,
-          },
-        );
-      }
-      sharedDependenciesChecksum =
-        applicationDependencies.frontComponentSharedDependenciesChecksum;
-    }
+      });
 
     return {
       applicationId: application.id,
-      componentSource,
-      sharedDependenciesChecksum,
+      builtComponentChecksum: component.builtComponentChecksum,
+      sharedDependenciesChecksum:
+        application.frontComponentSharedDependenciesChecksum,
       data,
     };
   }
