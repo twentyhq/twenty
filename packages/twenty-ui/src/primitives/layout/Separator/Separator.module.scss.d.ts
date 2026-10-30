@@ -1,4 +1,4 @@
-declare const styles: {
-  readonly root: string;
+declare const classNames: {
+  readonly root: 'root';
 };
-export default styles;
+export default classNames;

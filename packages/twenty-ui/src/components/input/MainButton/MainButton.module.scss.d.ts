@@ -1,4 +1,4 @@
-declare const styles: {
-  readonly button: string;
+declare const classNames: {
+  readonly button: 'button';
 };
-export default styles;
+export default classNames;

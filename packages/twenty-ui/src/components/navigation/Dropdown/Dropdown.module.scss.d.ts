@@ -1,18 +1,18 @@
 declare const classNames: {
-  readonly header: 'header';
   readonly content: 'content';
   readonly inactivePositioner: 'inactivePositioner';
   readonly page: 'page';
   readonly selectionGroup: 'selectionGroup';
   readonly group: 'group';
   readonly groupLabel: 'groupLabel';
-  readonly section: 'section';
   readonly separator: 'separator';
+  readonly section: 'section';
   readonly back: 'back';
   readonly backIcon: 'backIcon';
   readonly searchContainer: 'searchContainer';
   readonly search: 'search';
   readonly status: 'status';
+  readonly header: 'header';
   readonly title: 'title';
   readonly itemWithActions: 'itemWithActions';
   readonly itemWithActionsPrimary: 'itemWithActionsPrimary';

@@ -1,4 +1,4 @@
-declare const styles: {
-  readonly heading: string;
+declare const classNames: {
+  readonly heading: 'heading';
 };
-export default styles;
+export default classNames;

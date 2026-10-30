@@ -1,11 +1,11 @@
 declare const classNames: {
   readonly container: 'container';
-  readonly fullWidth: 'fullWidth';
-  readonly icon: 'icon';
-  readonly iconOnly: 'iconOnly';
   readonly item: 'item';
-  readonly label: 'label';
-  readonly md: 'md';
+  readonly fullWidth: 'fullWidth';
   readonly sm: 'sm';
+  readonly md: 'md';
+  readonly iconOnly: 'iconOnly';
+  readonly icon: 'icon';
+  readonly label: 'label';
 };
 export default classNames;
