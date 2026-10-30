@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
+import { type EntityManager, In } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -40,6 +40,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 type BuildParticipantWriteQuery = (tables: {
@@ -163,7 +165,21 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   hasUnreadAssignedThread: false,
 };
 
-const PARTICIPANT_COLUMNS = `id, "workspaceMemberId", "threadId", "lastReadAt", "archivedAt", "snoozedUntil", "isSubscribed", "lastMentionedAt", "mentionsResolvedAt", "updatedAt"`;
+const PARTICIPANT_COLUMN_NAMES = [
+  'id',
+  'workspaceMemberId',
+  'threadId',
+  'lastReadAt',
+  'archivedAt',
+  'snoozedUntil',
+  'isSubscribed',
+  'lastMentionedAt',
+  'mentionsResolvedAt',
+  'updatedAt',
+];
+const PARTICIPANT_COLUMNS = PARTICIPANT_COLUMN_NAMES.map(
+  (columnName) => `"${columnName}"`,
+).join(', ');
 const buildMoveMembersToInboxQuery = (workspaceId: string) =>
   `WITH written_participant AS (
      INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} AS participant ("threadId", "workspaceMemberId", "lastMentionedAt")
@@ -291,17 +307,20 @@ export class AgentChatThreadParticipantService {
     const { workspaceId, threadId } = args;
     const objectMetadataId =
       await this.sharingService.getParticipantObjectMetadataId(workspaceId);
-    const writes = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) =>
-        this.writeMembersToInbox({
-          manager,
-          workspaceId,
-          threadId,
-          memberIds,
-          isMention,
-          objectMetadataId,
-        }),
+    const writes = await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
+          this.writeMembersToInbox({
+            scope,
+            workspaceId,
+            threadId,
+            memberIds,
+            isMention,
+            objectMetadataId,
+          }),
+        ),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
     );
 
     await this.emitParticipantWrites({ workspaceId, writes });
@@ -697,15 +716,15 @@ export class AgentChatThreadParticipantService {
   }
 
   private async lockParticipants({
-    manager,
+    scope,
     workspaceId,
     threadId,
     memberIds,
   }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
-    manager: EntityManager;
+    scope: WorkspaceTransactionScope;
     memberIds: string[];
   }): Promise<void> {
-    await manager.query(PARTICIPANTS_LOCK_QUERY, [
+    await scope.executeRawQuery(PARTICIPANTS_LOCK_QUERY, [
       memberIds.map((workspaceMemberId) =>
         buildAgentChatThreadParticipantLockKey({
           workspaceId,
@@ -756,35 +775,33 @@ export class AgentChatThreadParticipantService {
   }
 
   private async writeMembersToInbox({
-    manager,
+    scope,
     workspaceId,
     threadId,
     memberIds,
     isMention,
     objectMetadataId,
   }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
-    manager: EntityManager;
+    scope: WorkspaceTransactionScope;
     memberIds: string[];
     isMention: boolean;
     objectMetadataId: string;
   }): Promise<AgentChatThreadParticipantWrite[]> {
-    await this.lockParticipants({ manager, workspaceId, threadId, memberIds });
+    await this.lockParticipants({ scope, workspaceId, threadId, memberIds });
 
-    const participantsBefore = await manager.query<
-      AgentChatThreadParticipantRow[]
-    >(
-      `SELECT ${PARTICIPANT_COLUMNS} FROM ${getAgentChatThreadParticipantTable(workspaceId)}
-       WHERE "threadId" = $1 AND "workspaceMemberId" = ANY($2::uuid[])`,
-      [threadId, memberIds],
-    );
-    const participantsAfter = await manager.query<
-      AgentChatThreadParticipantRow[]
-    >(buildMoveMembersToInboxQuery(workspaceId), [
-      threadId,
-      memberIds,
-      objectMetadataId,
-      isMention,
-    ]);
+    const participantsBefore = await scope
+      .getRepository('agentChatThreadParticipant', {
+        shouldBypassPermissionChecks: true,
+      })
+      .createQueryBuilder()
+      .select(PARTICIPANT_COLUMN_NAMES)
+      .where({ threadId, workspaceMemberId: In(memberIds) })
+      .withDeleted()
+      .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
+    const participantsAfter = (await scope.executeRawQuery(
+      buildMoveMembersToInboxQuery(workspaceId),
+      [threadId, memberIds, objectMetadataId, isMention],
+    )) as unknown as AgentChatThreadParticipantRow[];
     const participantBeforeByMemberId = new Map(
       participantsBefore.map((participant) => [
         participant.workspaceMemberId,
