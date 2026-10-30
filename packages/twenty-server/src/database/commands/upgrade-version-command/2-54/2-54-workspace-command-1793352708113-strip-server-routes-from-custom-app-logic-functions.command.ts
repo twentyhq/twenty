@@ -11,7 +11,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.54.0', 1793290200043)
+@RegisteredWorkspaceCommand('2.54.0', 1793352708113)
 @Command({
   name: 'upgrade:2-54:strip-server-routes-from-custom-app-logic-functions',
   description:
