@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ListItemButton } from '@ui/components/navigation/ListItemButton/ListItemButton';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
@@ -16,6 +16,7 @@ const meta: Meta<typeof ListItemButton> = {
   title: 'UI/Components/Navigation/ListItemButton/Interactions',
   component: ListItemButton,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   tags: ['!autodocs'],
   args: { children: 'Open record', onClick: fn(), style: ROW_STYLE },
 };

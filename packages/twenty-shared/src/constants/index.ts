@@ -52,6 +52,7 @@ export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperator
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
+export { FRONT_COMPONENT_HOST_FETCH_HEADER_NAME } from './FrontComponentHostFetchHeaderName';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
@@ -80,6 +81,7 @@ export { RATING_VALUES } from './RatingValues';
 export { RELATION_NESTED_QUERY_KEYWORDS } from './RelationNestedQueriesKeyword';
 export { RESERVED_SUBDOMAINS } from './ReservedSubdomains';
 export { RICH_TEXT_BLOCKNOTE_DEPRECATION_REASON } from './RichTextBlocknoteDeprecationReason';
+export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderName';
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';

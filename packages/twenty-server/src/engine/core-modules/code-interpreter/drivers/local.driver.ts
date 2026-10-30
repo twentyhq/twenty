@@ -7,9 +7,15 @@ import { type Readable, type Writable } from 'stream';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
+import {
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT,
+  CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES,
+  CODE_INTERPRETER_MAX_OUTPUT_LENGTH,
+  DEFAULT_CODE_INTERPRETER_TIMEOUT_MS,
+} from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
 import { LOCAL_DRIVER_PERSISTENT_KERNEL_SCRIPT } from 'src/engine/core-modules/code-interpreter/drivers/local-driver-kernel.constant';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
+import { truncateCodeInterpreterOutput } from 'src/engine/core-modules/code-interpreter/utils/truncate-code-interpreter-output.util';
 
 import {
   type CodeExecutionResult,
@@ -173,8 +179,8 @@ export class LocalDriver implements CodeInterpreterDriver {
     );
 
     return {
-      stdout: response.stdout,
-      stderr: response.stderr,
+      stdout: truncateCodeInterpreterOutput(response.stdout),
+      stderr: truncateCodeInterpreterOutput(response.stderr),
       exitCode: response.exitCode,
       files: outputFiles,
     };
@@ -269,8 +275,19 @@ export class LocalDriver implements CodeInterpreterDriver {
       });
 
       for (const entry of outputEntries) {
+        if (outputFiles.length >= CODE_INTERPRETER_MAX_OUTPUT_FILE_COUNT) {
+          break;
+        }
+
         if (entry.isFile()) {
-          const content = await fs.readFile(join(outputDir, entry.name));
+          const filePath = join(outputDir, entry.name);
+          const { size } = await fs.stat(filePath);
+
+          if (size > CODE_INTERPRETER_MAX_OUTPUT_FILE_SIZE_BYTES) {
+            continue;
+          }
+
+          const content = await fs.readFile(filePath);
           const outputFile: OutputFile = {
             filename: entry.name,
             content,
@@ -501,7 +518,10 @@ export class LocalDriver implements CodeInterpreterDriver {
       child.stdout.on('data', (data: Buffer) => {
         const text = data.toString();
 
-        stdout += text;
+        if (stdout.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH) {
+          stdout = truncateCodeInterpreterOutput(stdout + text);
+        }
+
         const lines = text.split('\n');
 
         for (const line of lines) {
@@ -514,7 +534,10 @@ export class LocalDriver implements CodeInterpreterDriver {
       child.stderr.on('data', (data: Buffer) => {
         const text = data.toString();
 
-        stderr += text;
+        if (stderr.length <= CODE_INTERPRETER_MAX_OUTPUT_LENGTH) {
+          stderr = truncateCodeInterpreterOutput(stderr + text);
+        }
+
         const lines = text.split('\n');
 
         for (const line of lines) {

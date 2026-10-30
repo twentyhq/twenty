@@ -1689,6 +1689,13 @@ input CreateRecordExportInput {
   orderBy: JSON
 }
 
+input CreateRelatedRecordPathInput {
+  firstFieldMetadataId: UUID
+  objectMetadataId: UUID
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
+}
+
 input CreateRoleInput {
   canAccessAllAgentChatChannels: Boolean
   canAccessAllTools: Boolean
@@ -2294,6 +2301,7 @@ enum FeatureFlagKey {
   IS_MCP_SERVERS_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
 }
 
@@ -3269,6 +3277,7 @@ type Mutation {
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
+  createRelatedRecordPath(input: CreateRelatedRecordPathInput!): RelatedRecordPath!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
   createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
@@ -3307,6 +3316,7 @@ type Mutation {
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  deleteRelatedRecordPath(id: UUID!): RelatedRecordPath!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   deleteSkill(id: UUID!): Skill!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -4174,6 +4184,7 @@ type Query {
   publicMarketplaceApps: [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  relatedRecordPaths: [RelatedRecordPath!]!
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -4293,6 +4304,14 @@ type RecordTableConfiguration {
 input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
+}
+
+type RelatedRecordPath {
+  firstFieldMetadataId: UUID!
+  id: UUID!
+  objectMetadataId: UUID!
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
 }
 
 type Relation {
