@@ -120,7 +120,7 @@ describe('refreshLinkedinHistoryImportState', () => {
     };
 
     mocks.kvStore.set(STATE_KEY, planningState);
-    mockJobStates({ 'linkedin-history-plan-run-1': 'ACTIVE' });
+    mockJobStates({ 'linkedin-history-plan-run-1-0': 'ACTIVE' });
 
     await expect(
       refreshLinkedinHistoryImportState('connection-id'),

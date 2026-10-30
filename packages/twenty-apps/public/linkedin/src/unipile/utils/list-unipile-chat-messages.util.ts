@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { UnipileMessaging } from '@unipile/sdk';
 
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
-import { withUnipileErrorContext } from 'src/unipile/utils/with-unipile-error-context.util';
+import { requestUnipile } from 'src/unipile/utils/request-unipile.util';
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
 const UNIPILE_MESSAGES_PAGE_SIZE = 20;
@@ -21,7 +21,7 @@ export const listUnipileChatMessages = async ({
   let cursor: string | undefined;
 
   for (let pageIndex = 0; pageIndex < UNIPILE_MESSAGES_MAX_PAGES; pageIndex++) {
-    const { data } = await withUnipileErrorContext('list chat messages', () =>
+    const { data } = await requestUnipile('list chat messages', () =>
       new UnipileMessaging().getMessagesList({
         ...getUnipileRequestOptions(),
         path: { account_id: accountId, chat_id: chatId },

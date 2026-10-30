@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   enqueueJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
   listUnipileInboxIds: vi.fn(),
-  listUnipileChatIds: vi.fn(),
+  listUnipileChats: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -31,8 +31,8 @@ vi.mock('src/unipile/utils/list-unipile-inbox-ids.util', () => ({
   listUnipileInboxIds: mocks.listUnipileInboxIds,
 }));
 
-vi.mock('src/unipile/utils/list-unipile-chat-ids.util', () => ({
-  listUnipileChatIds: mocks.listUnipileChatIds,
+vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
+  listUnipileChats: mocks.listUnipileChats,
 }));
 
 const { linkedinPlanHistoryImportHandler } =
@@ -51,42 +51,54 @@ const RUNNING_STATE: LinkedinHistoryImportState = {
 
 const PAYLOAD = { connectedAccountId: 'connection-id', runId: 'run-1' };
 
-const buildChatIds = (count: number) =>
-  Array.from({ length: count }, (_, index) => `chat-${index}`);
+const buildChatIds = (count: number, offset = 0) =>
+  Array.from({ length: count }, (_, index) => `chat-${offset + index}`);
+
+const mockChatPages = (pageSizes: number[]) => {
+  pageSizes.forEach((pageSize, pageIndex) =>
+    mocks.listUnipileChats.mockResolvedValueOnce({
+      items: buildChatIds(pageSize, pageIndex * 20).map((id) => ({ id })),
+      nextCursor:
+        pageIndex < pageSizes.length - 1
+          ? `cursor-${pageIndex + 1}`
+          : undefined,
+    }),
+  );
+};
+
+const getEnqueuedJobs = (): {
+  jobId: string;
+  payload: { chatIds: string[] };
+}[] => mocks.enqueueJobs.mock.calls.flatMap(([input]) => input.jobs);
 
 describe('linkedinPlanHistoryImportHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
+    mocks.listUnipileChats.mockReset();
     mocks.kvStore.clear();
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
     mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
     mocks.listUnipileInboxIds.mockResolvedValue(['inbox-1']);
   });
 
-  it('queues one job per chunk of 20 chats, most recent chunk first', async () => {
-    mocks.listUnipileChatIds.mockResolvedValue(buildChatIds(45));
+  it('queues one job per page of chats, most recent first', async () => {
+    mockChatPages([20, 20, 5]);
 
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'PLANNED',
       chunkCount: 3,
     });
 
-    const [{ jobs }] = mocks.enqueueJobs.mock.calls[0];
+    const jobs = getEnqueuedJobs();
 
-    expect(mocks.enqueueJobs).toHaveBeenCalledTimes(1);
-    expect(jobs.map((job: { jobId: string }) => job.jobId)).toEqual([
+    expect(jobs.map((job) => job.jobId)).toEqual([
       'linkedin-history-chunk-run-1-0',
       'linkedin-history-chunk-run-1-1',
       'linkedin-history-chunk-run-1-2',
     ]);
     expect(jobs[0].payload.chatIds).toEqual(buildChatIds(20));
-    expect(jobs[2].payload.chatIds).toEqual([
-      'chat-40',
-      'chat-41',
-      'chat-42',
-      'chat-43',
-      'chat-44',
-    ]);
+    expect(jobs[2].payload.chatIds).toEqual(buildChatIds(5, 40));
     expect(mocks.kvStore.get(STATE_KEY)).toEqual({
       ...RUNNING_STATE,
       totalConversationCount: 45,
@@ -94,22 +106,57 @@ describe('linkedinPlanHistoryImportHandler', () => {
     });
   });
 
-  it('adds the jobs in bulk batches of at most 200', async () => {
-    mocks.listUnipileChatIds.mockResolvedValue(buildChatIds(20 * 250));
+  it('adds the jobs in bulk every 10 chunks', async () => {
+    mockChatPages(Array.from({ length: 25 }, () => 20));
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
     expect(
       mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs.length),
-    ).toEqual([200, 50]);
+    ).toEqual([10, 10, 5]);
+  });
+
+  it('hands over to a new planning job when its time runs out', async () => {
+    vi.useFakeTimers({ now: 0 });
+    mocks.listUnipileChats.mockImplementation(async ({ cursor }) => {
+      vi.setSystemTime(Date.now() + 4 * 60 * 1000);
+
+      return {
+        items: buildChatIds(20).map((id) => ({ id })),
+        nextCursor: `${cursor ?? ''}+`,
+      };
+    });
+
+    await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'CONTINUED',
+    });
+
+    const continuation = mocks.enqueueJobs.mock.lastCall?.[0].jobs[0];
+
+    expect(continuation).toEqual({
+      jobId: 'linkedin-history-plan-run-1-1',
+      payload: {
+        connectedAccountId: 'connection-id',
+        runId: 'run-1',
+        continuationIndex: 1,
+        inboxIndex: 0,
+        cursor: '+++',
+        plannedChunkCount: 3,
+        plannedConversationCount: 60,
+      },
+    });
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual({
+      ...RUNNING_STATE,
+      planJobId: 'linkedin-history-plan-run-1-1',
+    });
   });
 
   it('completes a run with no conversations right away', async () => {
-    mocks.listUnipileChatIds.mockResolvedValue([]);
+    mockChatPages([0]);
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(getEnqueuedJobs()).toEqual([]);
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({ status: 'COMPLETED', chunkCount: 0 }),
     );
@@ -121,11 +168,11 @@ describe('linkedinPlanHistoryImportHandler', () => {
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'CANCELLED',
     });
-    expect(mocks.listUnipileChatIds).not.toHaveBeenCalled();
+    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
   it('closes the run as failed on an error Twenty will not retry', async () => {
-    mocks.listUnipileChatIds.mockRejectedValue({
+    mocks.listUnipileChats.mockRejectedValue({
       status: 400,
       title: 'Invalid querystring',
     });

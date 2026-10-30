@@ -30,7 +30,7 @@ export const startLinkedinHistoryImport = async ({
       LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
     jobs: [
       {
-        jobId: getLinkedinPlanHistoryImportJobId(state.runId),
+        jobId: getLinkedinPlanHistoryImportJobId({ runId: state.runId }),
         payload: { connectedAccountId, runId: state.runId },
       },
     ],

@@ -9,6 +9,7 @@ export type LinkedinHistoryImportState = {
   processedConversationCount: number;
   totalConversationCount?: number;
   chunkCount?: number;
+  planJobId?: string;
   startedAt: string;
   finishedAt?: string;
   error?: { code: LinkedinHistoryImportErrorCode; message: string };

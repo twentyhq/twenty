@@ -1,7 +1,7 @@
 import { UnipileMessaging } from '@unipile/sdk';
 
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { withUnipileErrorContext } from 'src/unipile/utils/with-unipile-error-context.util';
+import { requestUnipile } from 'src/unipile/utils/request-unipile.util';
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 
 export const getUnipileChat = async ({
@@ -11,7 +11,7 @@ export const getUnipileChat = async ({
   accountId: string;
   chatId: string;
 }): Promise<UnipileChat> => {
-  const { data } = await withUnipileErrorContext('get chat', () =>
+  const { data } = await requestUnipile('get chat', () =>
     new UnipileMessaging().getChat({
       ...getUnipileRequestOptions(),
       path: { account_id: accountId, chat_id: chatId },

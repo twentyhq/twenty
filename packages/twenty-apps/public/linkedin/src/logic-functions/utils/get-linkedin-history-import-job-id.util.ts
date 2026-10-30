@@ -1,5 +1,10 @@
-export const getLinkedinPlanHistoryImportJobId = (runId: string): string =>
-  `linkedin-history-plan-${runId}`;
+export const getLinkedinPlanHistoryImportJobId = ({
+  runId,
+  continuationIndex = 0,
+}: {
+  runId: string;
+  continuationIndex?: number;
+}): string => `linkedin-history-plan-${runId}-${continuationIndex}`;
 
 export const getLinkedinImportHistoryJobId = ({
   runId,

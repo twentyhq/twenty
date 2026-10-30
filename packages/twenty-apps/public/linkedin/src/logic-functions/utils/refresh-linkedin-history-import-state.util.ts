@@ -59,7 +59,9 @@ const refreshPlanningHistoryImport = async ({
   connectedAccountId: string;
   state: LinkedinHistoryImportState;
 }): Promise<LinkedinHistoryImportState> => {
-  const planJobId = getLinkedinPlanHistoryImportJobId(state.runId);
+  const planJobId =
+    state.planJobId ??
+    getLinkedinPlanHistoryImportJobId({ runId: state.runId });
   const planJob = (await getJobStatusesById([planJobId])).get(planJobId);
 
   if (isDefined(planJob) && planJob.state !== 'FAILED') {
@@ -68,7 +70,11 @@ const refreshPlanningHistoryImport = async ({
 
   const latestState = await getLinkedinHistoryImportState(connectedAccountId);
 
-  if (latestState?.runId !== state.runId || isDefined(latestState.chunkCount)) {
+  if (
+    latestState?.runId !== state.runId ||
+    latestState.planJobId !== state.planJobId ||
+    isDefined(latestState.chunkCount)
+  ) {
     return latestState ?? state;
   }
 
