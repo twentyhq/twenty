@@ -14,6 +14,9 @@ const CREATE_WEBHOOK_MUTATION = gql`
       operations
       description
       secret
+      role {
+        id
+      }
     }
   }
 `;
@@ -38,6 +41,9 @@ const GET_WEBHOOK_QUERY = gql`
       operations
       description
       secret
+      role {
+        id
+      }
     }
   }
 `;
@@ -62,6 +68,9 @@ const UPDATE_WEBHOOK_MUTATION = gql`
       operations
       description
       secret
+      role {
+        id
+      }
     }
   }
 `;
@@ -71,7 +80,7 @@ export type WebhookInput = {
   operations: string[];
   description?: string;
   secret?: string;
-  roleId?: string;
+  roleId?: string | null;
 };
 
 export type WebhookReceiver = {
@@ -80,21 +89,30 @@ export type WebhookReceiver = {
   close: () => Promise<void>;
 };
 
-export const createWebhook = async (input: WebhookInput) => {
+// A null roleId is sent as is, to exercise the missing role rejection
+export const createWebhook = async (input: WebhookInput, token?: string) => {
   const roleId =
-    input.roleId ?? (await findOneRoleByLabel({ label: 'Admin' })).id;
+    input.roleId === undefined
+      ? (await findOneRoleByLabel({ label: 'Admin' })).id
+      : input.roleId;
 
-  return makeMetadataApiRequest({
-    query: CREATE_WEBHOOK_MUTATION,
-    variables: { input: { ...input, roleId } },
-  });
+  return makeMetadataApiRequest(
+    {
+      query: CREATE_WEBHOOK_MUTATION,
+      variables: { input: { ...input, roleId } },
+    },
+    token,
+  );
 };
 
-export const deleteWebhook = (id: string) => {
-  return makeMetadataApiRequest({
-    query: DELETE_WEBHOOK_MUTATION,
-    variables: { id },
-  });
+export const deleteWebhook = (id: string, token?: string) => {
+  return makeMetadataApiRequest(
+    {
+      query: DELETE_WEBHOOK_MUTATION,
+      variables: { id },
+    },
+    token,
+  );
 };
 
 export const getWebhook = (id: string) => {
@@ -111,12 +129,16 @@ export const getWebhooks = () => {
 };
 
 export const updateWebhook = (
-  input: Partial<WebhookInput> & { id: string },
+  input: { id: string; update: Partial<WebhookInput> },
+  token?: string,
 ) => {
-  return makeMetadataApiRequest({
-    query: UPDATE_WEBHOOK_MUTATION,
-    variables: { input },
-  });
+  return makeMetadataApiRequest(
+    {
+      query: UPDATE_WEBHOOK_MUTATION,
+      variables: { input },
+    },
+    token,
+  );
 };
 
 export const createWebhookReceiver = (
