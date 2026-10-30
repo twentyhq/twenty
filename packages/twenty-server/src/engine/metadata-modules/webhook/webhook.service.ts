@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateWebhookInputToFlatWebhookToCreate } from 'src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create.util';
@@ -14,7 +13,6 @@ import { fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow } from 'src/engine/m
 import { type CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
-import { computeWebhookRoleTargetOperationsOrThrow } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
@@ -111,24 +109,10 @@ export class WebhookService {
     input: CreateWebhookInput;
     workspaceId: string;
   }): Promise<WebhookDTO> {
-    const { roleId, ...createWebhookInput } = input;
-    const normalizedTargetUrl = this.normalizeTargetUrl(
-      createWebhookInput.targetUrl,
-    );
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-
-    const flatWebhookToCreate = fromCreateWebhookInputToFlatWebhookToCreate({
-      createWebhookInput: {
-        ...createWebhookInput,
-        targetUrl: normalizedTargetUrl,
-      },
-      workspaceId,
-      flatApplication: workspaceCustomFlatApplication,
-    });
 
     const { flatRoleTargetMaps, flatRoleMaps, flatAgentMaps, flatWebhookMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -143,27 +127,18 @@ export class WebhookService {
         },
       );
 
-    const { flatRoleTargetsToCreate } =
-      computeWebhookRoleTargetOperationsOrThrow({
-        webhookId: flatWebhookToCreate.id,
-        roleId,
+    const { flatWebhookToCreate, flatRoleTargetsToCreate } =
+      fromCreateWebhookInputToFlatWebhookToCreate({
+        createWebhookInput: {
+          ...input,
+          targetUrl: this.normalizeTargetUrl(input.targetUrl),
+        },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatRoleTargetMaps,
         flatRoleMaps,
         flatAgentMaps,
-        // A duplicate id is left for the migration validation to report
-        flatWebhookMaps: isDefined(
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: flatWebhookToCreate.id,
-            flatEntityMaps: flatWebhookMaps,
-          }),
-        )
-          ? flatWebhookMaps
-          : addFlatEntityToFlatEntityMapsOrThrow({
-              flatEntity: flatWebhookToCreate,
-              flatEntityMaps: flatWebhookMaps,
-            }),
+        flatWebhookMaps,
       });
 
     const validateAndBuildResult =
@@ -222,52 +197,42 @@ export class WebhookService {
         { workspaceId },
       );
 
-    const { roleId, ...webhookUpdate } = input.update;
-
     const normalizedInput = {
       ...input,
       update: {
-        ...webhookUpdate,
-        ...(isDefined(webhookUpdate.targetUrl) && {
-          targetUrl: this.normalizeTargetUrl(webhookUpdate.targetUrl),
+        ...input.update,
+        ...(isDefined(input.update.targetUrl) && {
+          targetUrl: this.normalizeTargetUrl(input.update.targetUrl),
         }),
       },
     };
 
+    const { flatWebhookMaps, flatRoleTargetMaps, flatRoleMaps, flatAgentMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatWebhookMaps',
+            'flatRoleTargetMaps',
+            'flatRoleMaps',
+            'flatAgentMaps',
+          ],
+        },
+      );
+
     const {
-      flatWebhookMaps: existingFlatWebhookMaps,
+      flatWebhookToUpdate,
+      flatRoleTargetsToCreate,
+      flatRoleTargetsToDelete,
+    } = fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow({
+      updateWebhookInput: normalizedInput,
+      workspaceId,
+      flatApplication: workspaceCustomFlatApplication,
       flatRoleTargetMaps,
       flatRoleMaps,
       flatAgentMaps,
-    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatWebhookMaps',
-          'flatRoleTargetMaps',
-          'flatRoleMaps',
-          'flatAgentMaps',
-        ],
-      },
-    );
-
-    const flatWebhookToUpdate =
-      fromUpdateWebhookInputToFlatWebhookToUpdateOrThrow({
-        flatWebhookMaps: existingFlatWebhookMaps,
-        updateWebhookInput: normalizedInput,
-      });
-
-    const { flatRoleTargetsToCreate, flatRoleTargetsToDelete } =
-      computeWebhookRoleTargetOperationsOrThrow({
-        webhookId: flatWebhookToUpdate.id,
-        roleId,
-        workspaceId,
-        flatApplication: workspaceCustomFlatApplication,
-        flatRoleTargetMaps,
-        flatRoleMaps,
-        flatAgentMaps,
-        flatWebhookMaps: existingFlatWebhookMaps,
-      });
+      flatWebhookMaps,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
