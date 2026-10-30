@@ -7,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { buildAccessGroupSchemaDefinitions } from 'src/engine/metadata-modules/access-group/utils/build-access-group-schema-definitions.util';
+import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -105,13 +106,14 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
           continue;
         }
 
-        // A constant default is stored in the catalog, so this does not rewrite the table
-        await this.workspaceSchemaManagerService.columnManager.addColumns({
-          queryRunner,
-          schemaName,
-          tableName,
-          columnDefinitions: missingColumnDefinitions,
-        });
+        if (missingColumnDefinitions.length > 0) {
+          await this.addColumnsWithLockTimeout({
+            queryRunner,
+            schemaName,
+            tableName,
+            columnDefinitions: missingColumnDefinitions,
+          });
+        }
 
         await this.dropInvalidIndexes({
           queryRunner,
@@ -170,6 +172,32 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
     }
 
     return existingColumnTypesByTableName;
+  }
+
+  // Fail fast instead of queueing every query on the table behind the exclusive lock
+  private async addColumnsWithLockTimeout({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnDefinitions,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnDefinitions: WorkspaceSchemaColumnDefinition[];
+  }): Promise<void> {
+    await queryRunner.query(`SET lock_timeout = '8s'`);
+
+    try {
+      await this.workspaceSchemaManagerService.columnManager.addColumns({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinitions,
+      });
+    } finally {
+      await queryRunner.query('RESET lock_timeout');
+    }
   }
 
   // An interrupted CREATE INDEX CONCURRENTLY leaves an invalid index that IF NOT EXISTS would keep

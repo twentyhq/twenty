@@ -99,8 +99,8 @@ describe('2-55 workspace command - add access group storage columns (integration
           tableName,
           columnName,
           dataType: '_int4',
-          isNullable: 'NO',
-          columnDefault: "'{}'::integer[]",
+          isNullable: 'YES',
+          columnDefault: null,
           isIdentity: 'NO',
         })),
       );
@@ -173,14 +173,16 @@ describe('2-55 workspace command - add access group storage columns (integration
     );
   });
 
-  it('gives existing records empty arrays and access groups distinct compact ids', async () => {
-    const [{ count: recordsWithoutEmptyArrays }]: { count: string }[] =
+  it('leaves existing records uncomputed and gives access groups distinct compact ids', async () => {
+    const [{ count: computedRecordCount }]: { count: string }[] =
       await global.testDataSource.query(
         `SELECT count(*) FROM "${SCHEMA}"."person"
-         WHERE "readableByAccessGroupIds" <> '{}' OR "writableByAccessGroupIds" <> '{}'`,
+         WHERE ${RECORD_COLUMN_NAMES.map(
+           (columnName) => `"${columnName}" IS NOT NULL`,
+         ).join(' OR ')}`,
       );
 
-    expect(Number(recordsWithoutEmptyArrays)).toBe(0);
+    expect(Number(computedRecordCount)).toBe(0);
 
     const roleId = randomUUID();
 

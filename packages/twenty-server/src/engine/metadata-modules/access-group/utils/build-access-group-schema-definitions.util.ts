@@ -30,7 +30,8 @@ const computeAccessGroupIndexName = ({
     .digest('hex')
     .slice(0, 27)}`;
 
-// No field metadata on purpose: keeps them out of the record APIs, the UI and app manifests
+// No field metadata on purpose: keeps them out of the record APIs, the UI and app manifests.
+// A null array means the record's access groups have not been computed yet.
 export const buildAccessGroupSchemaDefinitions = ({
   objectMetadata,
 }: {
@@ -67,8 +68,6 @@ export const buildAccessGroupSchemaDefinitions = ({
       name: columnName,
       type: 'integer',
       isArray: true,
-      isNullable: false,
-      default: "'{}'",
     })),
     indexDefinitions: [
       {
