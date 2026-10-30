@@ -97,5 +97,4 @@ export class AiFrontComponentController {
       diagnostic: diagnostic.data,
     });
   }
-
 }

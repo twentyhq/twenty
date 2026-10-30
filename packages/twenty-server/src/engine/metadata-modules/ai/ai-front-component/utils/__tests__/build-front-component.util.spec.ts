@@ -40,19 +40,22 @@ const buildFrontComponent = (
   input: Parameters<typeof compileFrontComponent>[0]['input'],
 ) => compileFrontComponent({ input, sharedDependencies });
 
-const SOURCE = `import { useState } from 'react';
-type Company = { id: string; name: string };
-type ComponentProps = { records: Company[] };
-// Keep this filter local to the widget.
-export const Component = ({ records }: ComponentProps) => {
-  const [filter, setFilter] = useState('');
-  return <div><input value={filter} onChange={event => setFilter(event.target.value)} />{records.filter(record => record.name.includes(filter)).map(record => <p key={record.id}>{record.name}</p>)}</div>;
+const SOURCE = `import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+export const Component = () => {
+  const [records, setRecords] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    new CoreApiClient().query({ companies: {
+      __args: { first: 20 }, edges: { node: { id: true, name: true } },
+      totalCount: true, pageInfo: { hasNextPage: true },
+    } }).then(result => setRecords(result.companies.edges.map(edge => edge.node)));
+  }, []);
+  return <div>{records.map(record => <p key={record.id}>{record.name}</p>)}</div>;
 };`;
 const INPUT = {
   componentId: 'component-id',
   name: 'Sales "this week"',
   source: SOURCE,
-  query: { objectName: 'company', select: ['name'], limit: 20 },
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 
@@ -60,18 +63,19 @@ describe('buildFrontComponent', () => {
   it.each([PageLayoutType.DASHBOARD, PageLayoutType.RECORD_PAGE] as const)(
     'builds one editable SDK file for the selected %s surface',
     async (pageLayoutType) => {
-      const { source, compiledSource, checksum } = await buildFrontComponent({
-        ...INPUT,
-        pageLayoutType,
-      });
+      const { source, compiledSource, checksum, usesSdkClient } =
+        await buildFrontComponent({
+          ...INPUT,
+          pageLayoutType,
+        });
 
       expect(source).toContain(SOURCE);
       expect(source).toContain(
         `widgetAvailability: { pageLayoutType: TwentyPageLayoutType.${pageLayoutType} }`,
       );
-      expect(source).toContain(
-        'export const componentQuery = ' + JSON.stringify(INPUT.query),
-      );
+      expect(source).not.toContain('componentQuery');
+      expect(usesSdkClient).toBe(true);
+      expect(compiledSource).toContain('twenty-client-sdk/core');
       expect(checksum).toMatch(/^[a-f0-9]{64}$/);
       expect(compiledSource).not.toContain('TWENTY_APP_ACCESS_TOKEN');
       await expect(
@@ -84,6 +88,7 @@ describe('buildFrontComponent', () => {
           write: false,
           format: 'esm',
           external: [
+            'twenty-client-sdk/core',
             'react',
             'react/jsx-runtime',
             'twenty-sdk/define',
@@ -113,7 +118,12 @@ describe('buildFrontComponent', () => {
     ).rejects.toThrow('Unsupported import');
   });
 
-  it.each(['node:fs', 'react-dom/client', 'twenty-shared/types'])(
+  it.each([
+    'node:fs',
+    'react-dom/client',
+    'twenty-shared/types',
+    'twenty-client-sdk/core',
+  ])(
     'rejects unsupported dynamic import %s during the build',
     async (importPath) => {
       await expect(
@@ -182,18 +192,6 @@ describe('buildFrontComponent', () => {
   );
 
   it.each([
-    { ...INPUT.query, objectName: 'company.name' },
-    { ...INPUT.query, select: [] },
-    { ...INPUT.query, limit: 101 },
-  ])('returns a structured error for invalid query %j', async (query) => {
-    await expect(
-      buildFrontComponent({ ...INPUT, query }),
-    ).rejects.toMatchObject({
-      code: 'INVALID_SETTINGS',
-    });
-  });
-
-  it.each([
     'export default () => <div />;',
     'export default function Component() { return <div />; }',
     'const View = () => <div />; export { View as default };',
@@ -224,8 +222,8 @@ describe('buildFrontComponent', () => {
       buildFrontComponent({
         ...INPUT,
         source:
-          'export const Component = () => <div />; const componentQuery = "other";',
+          'export const Component = () => <div />; const TwentyComponent = "other";',
       }),
-    ).rejects.toThrow('componentQuery');
+    ).rejects.toThrow('TwentyComponent');
   });
 });

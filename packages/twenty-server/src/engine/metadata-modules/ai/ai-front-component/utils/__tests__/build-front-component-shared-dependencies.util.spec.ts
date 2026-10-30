@@ -40,7 +40,6 @@ const INPUT = {
   componentId: 'component-id',
   name: 'Sales "this week"',
   source: SOURCE,
-  query: { objectName: 'company', select: ['name'], limit: 20 },
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 

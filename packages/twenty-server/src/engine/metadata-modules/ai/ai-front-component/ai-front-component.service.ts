@@ -210,7 +210,7 @@ export class AiFrontComponentService {
       workspaceId: context.workspaceId,
       userWorkspaceId,
     });
-    await this.validateQueryOrThrow({
+    const objectNamePlural = await this.validateQueryOrThrow({
       query: input.query,
       authContext: context.authContext,
       rolePermissionConfig: context.rolePermissionConfig,
@@ -238,7 +238,6 @@ export class AiFrontComponentService {
         componentId: id,
         name: input.name,
         source: input.source,
-        query: input.query,
         pageLayoutType: input.pageLayoutType,
       },
     });
@@ -277,6 +276,8 @@ export class AiFrontComponentService {
           dependencyRevision: built.dependencyRevision,
           entrySource: built.source,
           componentName: built.componentName,
+          usesSdkClient: built.usesSdkClient,
+          objectNamePlural,
           id,
           applicationId: application.id,
           rootId,
@@ -334,10 +335,12 @@ export class AiFrontComponentService {
       sharedDependenciesChecksum: readFrontComponentSharedDependenciesChecksum(
         draft.compiledSource,
       ),
-      data: {
-        records: draft.sampleRecords,
-        count: draft.sampleRecords.length,
-        hasNextPage: false,
+      mockQueryResult: {
+        [draft.objectNamePlural]: {
+          edges: draft.sampleRecords.map((node) => ({ node })),
+          totalCount: draft.sampleRecords.length,
+          pageInfo: { hasNextPage: false },
+        },
       },
     };
   }
@@ -382,11 +385,12 @@ export class AiFrontComponentService {
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: ToolProviderContext['rolePermissionConfig'];
   }) {
-    const { selectedFields } = await this.queryContext.build({
-      authContext,
-      objectName: query.objectName,
-      rolePermissionConfig,
-    });
+    const { selectedFields, flatObjectMetadata } =
+      await this.queryContext.build({
+        authContext,
+        objectName: query.objectName,
+        rolePermissionConfig,
+      });
 
     for (const fieldName of query.select) {
       if (!isDefined(selectedFields[fieldName])) {
@@ -401,6 +405,7 @@ export class AiFrontComponentService {
         );
       }
     }
-  }
 
+    return flatObjectMetadata.namePlural;
+  }
 }

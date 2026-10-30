@@ -6,6 +6,7 @@ export const frontComponentBuildResultSchema = z.discriminatedUnion('success', [
   z.object({
     success: z.literal(true),
     builtCode: z.string(),
+    usesSdkClient: z.boolean(),
     checksum: z.string().regex(/^[a-f0-9]{64}$/),
     sharedDependenciesChecksum: z.string().regex(/^[a-f0-9]{64}$/),
   }),

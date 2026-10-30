@@ -34,6 +34,7 @@ export const buildFrontComponent = async ({
   componentName: string;
   compiledSource: string;
   checksum: string;
+  usesSdkClient: boolean;
   sharedDependenciesChecksum: string;
 }> => {
   validateFrontComponentSourceOrThrow(input.source);
@@ -48,8 +49,12 @@ export const buildFrontComponent = async ({
       loader: 'tsx',
     },
     write: false,
+    metafile: true,
     platform: 'browser',
-    external: [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER],
+    external: [
+      FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+      'twenty-client-sdk/core',
+    ],
     banner: {
       js:
         FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX +
@@ -74,7 +79,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, twenty-client-sdk/core and the supported twenty-ui imports.`,
                 },
               ],
             };
@@ -104,6 +109,12 @@ export const buildFrontComponent = async ({
 
   return {
     source,
+    usesSdkClient: Object.values(result.metafile?.outputs ?? {}).some(
+      (output) =>
+        output.imports.some(
+          (entry) => entry.external && entry.path === 'twenty-client-sdk/core',
+        ),
+    ),
     sharedDependenciesChecksum: sharedDependencies.checksum,
     componentName: FRONT_COMPONENT_WRAPPER_NAME,
     compiledSource,

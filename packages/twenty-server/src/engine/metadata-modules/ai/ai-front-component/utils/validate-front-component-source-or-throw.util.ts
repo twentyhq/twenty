@@ -63,7 +63,7 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
       !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(statement.moduleSpecifier.text)
     ) {
       throw new FrontComponentBuildException({
-        message: `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
+        message: `Unsupported import: ${statement.moduleSpecifier.text}. Use React, twenty-client-sdk/core and the supported twenty-ui imports.`,
         code: 'INVALID_INPUT',
       });
     }
@@ -84,9 +84,12 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
           code: 'INVALID_INPUT',
         });
       }
-      if (!FRONT_COMPONENT_ALLOWED_IMPORTS.includes(specifier.text)) {
+      if (
+        specifier.text === 'twenty-client-sdk/core' ||
+        !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(specifier.text)
+      ) {
         throw new FrontComponentBuildException({
-          message: `Unsupported import: ${specifier.text}. Use React and the supported twenty-ui imports.`,
+          message: `Unsupported import: ${specifier.text}. Use a static import for twenty-client-sdk/core, or supported React and twenty-ui imports.`,
           code: 'INVALID_INPUT',
         });
       }

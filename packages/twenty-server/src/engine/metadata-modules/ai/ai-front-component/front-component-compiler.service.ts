@@ -97,6 +97,7 @@ export class FrontComponentCompilerService {
       dependencyRevision: dependencies.revision,
       componentName: FRONT_COMPONENT_WRAPPER_NAME,
       compiledSource: built.builtCode,
+      usesSdkClient: built.usesSdkClient,
       checksum: built.checksum,
       sharedDependencies: {
         source: builtDependencies.builtCode,
