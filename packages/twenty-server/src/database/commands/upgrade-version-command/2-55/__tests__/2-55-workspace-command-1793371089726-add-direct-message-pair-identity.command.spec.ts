@@ -4,7 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-workspace-command-1793366004507-add-direct-message-pair-identity.command';
+import { AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793371089726-add-direct-message-pair-identity.command';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';

@@ -28,9 +28,9 @@ const DIRECT_MESSAGE_PAIR_INDEX_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
     .universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.54.0', 1793366004507)
+@RegisteredWorkspaceCommand('2.55.0', 1793371089726)
 @Command({
-  name: 'upgrade:2-54:add-direct-message-pair-identity',
+  name: 'upgrade:2-55:add-direct-message-pair-identity',
   description: doNotTranslate(
     'Add fixed direct message pairs without changing existing conversations',
   ),
