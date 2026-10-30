@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronRight, IconTrash, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -15,13 +16,6 @@ import { getRelatedRecordPathSteps } from '@/related-record-paths/utils/getRelat
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type RelatedRecordPath } from '~/generated-metadata/graphql';
-
-const StyledRelation = styled.span`
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 const StyledInlineIcon = styled.span<{ isSeparator?: boolean }>`
   color: ${({ isSeparator }) =>
@@ -76,8 +70,9 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
         {reachedObjectMetadataItem?.labelPlural ?? t`Unavailable object`}
       </TableCell>
       <TableCell minWidth="0" overflow="hidden">
-        <StyledRelation title={relationLabel}>
-          {steps.map(({ fieldMetadataItem }, index) => {
+        <OverflowingTextWithTooltip
+          tooltipContent={relationLabel}
+          text={steps.map(({ fieldMetadataItem }, index) => {
             const FieldIcon = getIcon(fieldMetadataItem.icon);
 
             return (
@@ -94,7 +89,7 @@ export const SettingsObjectRelatedRecordPathTableRow = ({
               </Fragment>
             );
           })}
-        </StyledRelation>
+        />
       </TableCell>
       <TableCell align="center">
         {!isReadOnly && (
