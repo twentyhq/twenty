@@ -608,7 +608,6 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
-  operationIcon: String
   operationLabel: String
   operationType: String!
 }
@@ -1845,6 +1844,7 @@ input CreateWebhookInput {
 
 type CreditUsedItem {
   creditsUsed: Float!
+  icon: String
   label: String
   operation: UsageOperationType
   resource: UsageResourceType

@@ -39,7 +39,6 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_MONITORING = gql`
         bucketStart
         operationType
         operationLabel
-        operationIcon
         creditsUsed
       }
       issues {

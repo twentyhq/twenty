@@ -86,7 +86,6 @@ const MONITORING: ApplicationMonitoringData = {
     bucketStart: `${day}T00:00:00.000Z`,
     operationType,
     operationLabel,
-    operationIcon: operationLabel === null ? null : 'IconMessage',
     creditsUsed,
   })),
   issues: [

@@ -29,10 +29,16 @@ const STATS: ApplicationRegistrationStats = {
   creditsUsedBreakdown: [
     {
       label: null,
+      icon: null,
       operation: UsageOperationType.CODE_EXECUTION,
       creditsUsed: 1171.704,
     },
-    { label: 'HISTORICAL_OPERATION', operation: null, creditsUsed: 1.262302 },
+    {
+      label: 'HISTORICAL_OPERATION',
+      icon: null,
+      operation: null,
+      creditsUsed: 1.262302,
+    },
   ],
 };
 
@@ -107,6 +113,25 @@ describe('Application registration statistics', () => {
       ).not.toBeInTheDocument();
     },
   );
+
+  it('shows the label an app declared for its billing operation', async () => {
+    renderStats({
+      stats: {
+        ...STATS,
+        creditsUsedBreakdown: [
+          {
+            label: 'Person enrichment',
+            icon: 'IconUserSearch',
+            operation: UsageOperationType.APP_OPERATION,
+            creditsUsed: 3,
+          },
+        ],
+      },
+    });
+
+    expect(await screen.findByText('Person enrichment')).toBeVisible();
+    expect(screen.queryByText('App Operation')).not.toBeInTheDocument();
+  });
 
   it.each([null, 0])(
     'distinguishes unavailable usage from zero: %s',

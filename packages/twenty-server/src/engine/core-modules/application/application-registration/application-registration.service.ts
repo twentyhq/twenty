@@ -1300,12 +1300,13 @@ export class ApplicationRegistrationService {
     periodEnd: Date;
   }): Promise<CreditUsedItemDTO[] | null> {
     try {
-      const installations = await this.findInstallations({
-        applicationRegistrationId,
-      });
+      const [installations, billing] = await Promise.all([
+        this.findInstallations({ applicationRegistrationId }),
+        this.findBilling(applicationRegistrationId),
+      ]);
 
       return await this.usageAnalyticsService.getCreditsUsedBreakdownForInstallations(
-        { installations, periodStart, periodEnd },
+        { installations, billing, periodStart, periodEnd },
       );
     } catch (error) {
       this.logger.warn(

@@ -25,17 +25,14 @@ const groupCreditUsageByOperationLabel = ({
       bucketStart: Date;
       operationType: string;
       operationLabel: string | null;
-      operationIcon: string | null;
       creditsUsedMicro: number;
     }
   >();
 
   for (const row of rows) {
-    const declaredCharge = findDeclaredBillingCharge({
-      billing,
-      chargeName: row.operation,
-    });
-    const operationLabel = declaredCharge?.label ?? null;
+    const operationLabel =
+      findDeclaredBillingCharge({ billing, chargeName: row.operation })
+        ?.label ?? null;
     const key = `${row.bucketStart.toISOString()}|${row.operationType}|${operationLabel ?? ''}`;
     const bucket = bucketsByKey.get(key);
 
@@ -46,7 +43,6 @@ const groupCreditUsageByOperationLabel = ({
         bucketStart: row.bucketStart,
         operationType: row.operationType,
         operationLabel,
-        operationIcon: declaredCharge?.icon ?? null,
         creditsUsedMicro: row.creditsUsedMicro,
       });
     }
@@ -104,7 +100,6 @@ export const mapApplicationMonitoringRows = ({
         bucketStart: bucket.bucketStart,
         operationType: bucket.operationType,
         operationLabel: bucket.operationLabel,
-        operationIcon: bucket.operationIcon,
         creditsUsed: toDisplayCredits(bucket.creditsUsedMicro),
       })) ?? null,
     issues: rows.issues.map((row) => ({

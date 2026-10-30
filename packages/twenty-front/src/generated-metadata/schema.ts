@@ -670,7 +670,6 @@ export type ApplicationMonitoringCreditBucket = {
   __typename?: 'ApplicationMonitoringCreditBucket';
   bucketStart: Scalars['DateTime']['output'];
   creditsUsed: Scalars['Float']['output'];
-  operationIcon?: Maybe<Scalars['String']['output']>;
   operationLabel?: Maybe<Scalars['String']['output']>;
   operationType: Scalars['String']['output'];
 };
@@ -1965,6 +1964,7 @@ export type CreateWebhookInput = {
 export type CreditUsedItem = {
   __typename?: 'CreditUsedItem';
   creditsUsed: Scalars['Float']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
   label?: Maybe<Scalars['String']['output']>;
   operation?: Maybe<UsageOperationType>;
   resource?: Maybe<UsageResourceType>;

@@ -13,7 +13,6 @@ type ApplicationMonitoringCreditSeries = {
   key: ApplicationMonitoringCreditSeriesKey;
   operationType: string;
   operationLabel: string | null;
-  operationIcon: string | null;
 };
 
 export const buildApplicationMonitoringCreditChartData = (
@@ -47,7 +46,6 @@ export const buildApplicationMonitoringCreditChartData = (
         key,
         operationType: bucket.operationType,
         operationLabel,
-        operationIcon: bucket.operationIcon ?? null,
         total: bucket.creditsUsed,
       });
     }
@@ -63,11 +61,10 @@ export const buildApplicationMonitoringCreditChartData = (
 
   const series = [...seriesByKey.values()]
     .sort((firstSeries, secondSeries) => secondSeries.total - firstSeries.total)
-    .map(({ key, operationType, operationLabel, operationIcon }) => ({
+    .map(({ key, operationType, operationLabel }) => ({
       key,
       operationType,
       operationLabel,
-      operationIcon,
     }));
 
   return {

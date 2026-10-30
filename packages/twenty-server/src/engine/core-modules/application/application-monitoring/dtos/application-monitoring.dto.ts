@@ -45,9 +45,6 @@ export class ApplicationMonitoringCreditBucketDTO {
   @Field(() => String, { nullable: true })
   operationLabel: string | null;
 
-  @Field(() => String, { nullable: true })
-  operationIcon: string | null;
-
   @Field(() => Float)
   creditsUsed: number;
 }

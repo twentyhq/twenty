@@ -20,6 +20,7 @@ import {
   IconPlayerPause,
   IconRefresh,
   IconVersions,
+  useIcons,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -34,6 +35,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
   isAdminView?: boolean;
 }) => {
   const { t, i18n } = useLingui();
+  const { getIcon } = useIcons();
   const apolloAdminClient = useApolloAdminClient();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -107,10 +109,13 @@ export const SettingsApplicationRegistrationInstallStats = ({
         })
       : '—';
 
+  const creditsUsedBreakdown = stats?.creditsUsedBreakdown ?? [];
+
   const creditsUsedStats: SettingsStatRow[] = [
     {
       Icon: IconCoins,
       label: t`Credits used this month`,
+      hasSeparatorAfter: creditsUsedBreakdown.length > 0,
       value: (
         <Tooltip
           content={t`Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes.`}
@@ -119,25 +124,27 @@ export const SettingsApplicationRegistrationInstallStats = ({
         </Tooltip>
       ),
     },
-    ...(stats?.creditsUsedBreakdown ?? []).map(
-      ({ label, operation, creditsUsed }) => {
-        const operationLabel = isDefined(operation)
-          ? getUsageOperationTypeLabel(operation)
-          : undefined;
+    ...creditsUsedBreakdown.map(({ label, icon, operation, creditsUsed }) => {
+      const operationLabel = isDefined(operation)
+        ? getUsageOperationTypeLabel(operation)
+        : undefined;
 
-        return {
-          Icon:
-            isDefined(operation) &&
-            isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
-              ? USAGE_LIMIT_OPERATION_TYPE_ICONS[operation]
-              : IconCoins,
-          label: isDefined(operationLabel)
-            ? i18n._(operationLabel)
-            : (label ?? operation ?? '—'),
-          value: formatCredits(creditsUsed),
-        };
-      },
-    ),
+      // A label or icon the app declared for its billing operation wins over the platform category's
+      return {
+        Icon: isDefined(icon)
+          ? getIcon(icon)
+          : isDefined(operation) &&
+              isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
+            ? USAGE_LIMIT_OPERATION_TYPE_ICONS[operation]
+            : IconCoins,
+        label:
+          label ??
+          (isDefined(operationLabel) ? i18n._(operationLabel) : undefined) ??
+          operation ??
+          '—',
+        value: formatCredits(creditsUsed),
+      };
+    }),
   ];
 
   return (

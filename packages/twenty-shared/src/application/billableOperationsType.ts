@@ -4,7 +4,7 @@ export type BillableOperationManifest = {
   // Defaults to APP_OPERATION; `label` names the operation in the app's credit monitoring either way
   operationType?: UsageOperationTypeValue;
   label: string;
-  // A Twenty icon name (e.g. `IconUserSearch`) shown next to the label in the app's credit monitoring
+  // A Twenty icon name (e.g. `IconUserSearch`) shown next to the label in the app's credits breakdown
   icon?: string;
 };
 
