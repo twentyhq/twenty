@@ -35,7 +35,6 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
   const syncToDraftRole = useCallback(() => {
     setSettingsDraftRole((previousRole) => {
-      // The filter editor cannot show predicates reached through a relation, so they are kept as stored
       const predicatesNotManagedByFilters = (
         previousRole.rowLevelPermissionPredicates ?? []
       ).filter(

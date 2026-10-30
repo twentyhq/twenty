@@ -57,7 +57,6 @@ export class RowLevelPermissionPredicateEntity
   @JoinColumn({ name: 'fieldMetadataId' })
   fieldMetadata: Relation<FieldMetadataEntity>;
 
-  // When set, fieldMetadataId belongs to the object this relation targets
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_RELATION_FIELD_METADATA_ID_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME,
