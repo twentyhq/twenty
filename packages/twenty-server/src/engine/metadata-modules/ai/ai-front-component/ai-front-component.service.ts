@@ -21,7 +21,7 @@ import {
 import { text } from 'stream/consumers';
 
 import { readFrontComponentSharedDependenciesChecksum } from 'twenty-shared/application';
-import { getAiFrontComponentSourcePath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-ai-front-component-source-path.util';
+import { isAiFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/is-ai-front-component.util';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -450,7 +450,7 @@ export class AiFrontComponentService {
     return { ...output.result, count: Number(output.result.count) };
   }
 
-  async getRecords({
+  async getRuntime({
     componentId,
     authContext,
   }: {
@@ -461,16 +461,15 @@ export class AiFrontComponentService {
 
     await this.assertEnabledOrThrow(workspaceId);
     const component = await this.components.findById(componentId, workspaceId);
-    const { workspaceCustomFlatApplication: application } =
+    const { workspaceCustomFlatApplication } =
       await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
 
     if (
       !isDefined(component) ||
-      component.applicationId !== application.id ||
-      component.sourceComponentPath !==
-        getAiFrontComponentSourcePath(componentId)
+      component.applicationId !== workspaceCustomFlatApplication.id ||
+      !isAiFrontComponent(component)
     ) {
       throw new ApplicationException(
         doNotTranslate('AI front component not found.'),
@@ -480,42 +479,15 @@ export class AiFrontComponentService {
     }
     const queryFile = await this.files.readFile({
       workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: component.sourceComponentPath,
     });
     const content = await text(queryFile);
     const query = readFrontComponentQueryOrThrow(content);
 
-    return this.readRecords({ query, authContext });
-  }
-
-  async getRuntime({
-    componentId,
-    authContext,
-  }: {
-    componentId: string;
-    authContext: WorkspaceAuthContext;
-  }) {
-    const data = await this.getRecords({ componentId, authContext });
-    const component = await this.components.findById(
-      componentId,
-      authContext.workspace.id,
-    );
-
-    if (
-      !isDefined(component) ||
-      component.sourceComponentPath !==
-        getAiFrontComponentSourcePath(componentId)
-    ) {
-      throw new ApplicationException(
-        doNotTranslate('Recreate this component with the current builder.'),
-        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Recreate this component with the current builder.`,
-        },
-      );
-    }
+    const data = await this.readRecords({ query, authContext });
     const application =
       await this.applications.findOneApplicationWithRelationsOrThrow({
         id: component.applicationId,
