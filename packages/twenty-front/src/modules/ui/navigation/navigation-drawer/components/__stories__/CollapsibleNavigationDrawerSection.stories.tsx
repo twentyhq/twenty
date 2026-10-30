@@ -84,3 +84,31 @@ export const PreservesSectionState: Story = {
     );
   },
 };
+
+export const KeyboardFocusAndPointerHover: Story = {
+  tags: ['!dev'],
+  play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const sectionTitle = canvas.getByRole('button', { name: 'User' });
+    const sidebarToggle = canvas.getByRole('button', {
+      name: 'Collapse sidebar',
+    });
+
+    await trustedUserEvent.hover(sidebarToggle);
+    const restingColor = getComputedStyle(sectionTitle).color;
+
+    await trustedUserEvent.click(sectionTitle);
+    await trustedUserEvent.hover(sidebarToggle);
+    await expect(sectionTitle).toHaveFocus();
+    await waitFor(() =>
+      expect(sectionTitle).toHaveStyle({ color: restingColor }),
+    );
+
+    await trustedUserEvent.tab({ shift: true });
+    await trustedUserEvent.tab();
+    await expect(sectionTitle).toHaveFocus();
+    await expect(sectionTitle).not.toHaveStyle({ color: restingColor });
+    await expect(getComputedStyle(sectionTitle).outlineStyle).toBe('solid');
+  },
+};

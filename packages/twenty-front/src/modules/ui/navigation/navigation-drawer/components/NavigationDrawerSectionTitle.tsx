@@ -40,7 +40,7 @@ const StyledLabelContainer = styled.button`
   text-align: left;
 
   .section-title-container:hover &,
-  .section-title-container:focus-within & {
+  .section-title-container:has(:focus-visible) & {
     color: ${themeCssVariables.font.color.tertiary};
   }
 
@@ -58,7 +58,7 @@ const StyledChevron = styled.span`
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease;
   .section-title-container:hover &,
-  .section-title-container:focus-within & {
+  .section-title-container:has(:focus-visible) & {
     opacity: 1;
   }
 `;
@@ -76,7 +76,7 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
     isMobile || $alwaysVisible ? 1 : 0};
 
   .section-title-container:hover &,
-  .section-title-container:focus-within & {
+  .section-title-container:has(:focus-visible) & {
     opacity: 1;
   }
 `;
