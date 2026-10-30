@@ -13,7 +13,10 @@ const sharedDependencies: Parameters<
 >[0]['sharedDependencies'] = {
   checksum: 'a'.repeat(64),
   exportNamesBySpecifier: new Map([
-    ['react', { namedExports: ['useState'], hasDefaultExport: true }],
+    [
+      'react',
+      { namedExports: ['useEffect', 'useState'], hasDefaultExport: true },
+    ],
     [
       'react/jsx-runtime',
       { namedExports: ['jsx', 'jsxs', 'Fragment'], hasDefaultExport: false },

@@ -18,7 +18,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const DATA_MANIPULATION_SKILL_UNIVERSAL_IDENTIFIER =
   STANDARD_SKILL['data-manipulation'].universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.55.0', 1793368438000)
+@RegisteredWorkspaceCommand('2.55.0', 1793373118794)
 @Command({
   name: 'upgrade:2-55:update-data-manipulation-skill-import-check',
   description:

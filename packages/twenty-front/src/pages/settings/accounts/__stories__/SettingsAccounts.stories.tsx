@@ -208,6 +208,26 @@ export const AccountsGroupedByEmail: Story = {
   },
 };
 
+export const AccountsTabKeepsUsedByOnMobile: Story = {
+  ...accountsTabStory,
+  parameters: {
+    ...accountsTabStory.parameters,
+    viewport: { defaultViewport: 'mobile1' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
+
+    expect(canvas.getByText('Used by')).toBeVisible();
+    expect(
+      getTableRow(canvasElement, 'tim@apple.dev').getByRole('img', {
+        name: 'Fathom',
+      }),
+    ).toBeVisible();
+  },
+};
+
 export const WorkspaceSharedAppConnectionsStayOff: Story = {
   ...accountsTabStory,
   play: async ({ canvasElement }) => {
@@ -673,12 +693,10 @@ export const InstalledAppsFlagReconnectAndMissingConfiguration: Story = {
     await canvas.findByText('Fathom', undefined, { timeout: 3000 });
 
     expect(
-      await getTableRow(canvasElement, 'Fathom').findByText(
-        'Missing configuration',
-      ),
+      await getTableRow(canvasElement, 'Fathom').findByText('Setup incomplete'),
     ).toBeVisible();
     expect(
-      await getTableRow(canvasElement, 'Linear').findByText('Reconnect needed'),
+      await getTableRow(canvasElement, 'Linear').findByText('Sync failed'),
     ).toBeVisible();
     expect(
       getStatusCell({ canvasElement, text: 'Granola' }),
@@ -703,7 +721,7 @@ export const InstalledAppWithoutMyConnectionShowsNotConnectedHint: Story = {
 
     const fathomRow = getTableRow(canvasElement, 'Fathom');
 
-    expect(fathomRow.getByText('Missing configuration')).toBeVisible();
+    expect(fathomRow.getByText('Setup incomplete')).toBeVisible();
     expect(fathomRow.queryByText('Not connected')).not.toBeInTheDocument();
     expect(
       getStatusCell({ canvasElement, text: 'Granola' }),
@@ -769,7 +787,7 @@ export const ConnectionsLoadErrorHidesStatusesUntilRetry: Story = {
     ).toBeVisible();
     expect(canvas.getByText('Linear')).toBeVisible();
     expect(canvas.queryByText('Not connected')).not.toBeInTheDocument();
-    expect(canvas.queryByText('Missing configuration')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
 
     await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
 
