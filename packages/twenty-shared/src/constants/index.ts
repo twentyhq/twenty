@@ -11,6 +11,7 @@ export type { AccountType } from './AccountTypes';
 export { ACCOUNT_TYPES } from './AccountTypes';
 export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { APPLICATION_MONITORING_RETENTION_IN_DAYS } from './ApplicationMonitoringRetentionInDays';
+export { APP_MESSAGE_HEADER_MESSAGE_ID_PREFIX } from './AppMessageHeaderMessageIdPrefix';
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
 export { CalendarStartDay } from './CalendarStartDay';
 export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapElementId';

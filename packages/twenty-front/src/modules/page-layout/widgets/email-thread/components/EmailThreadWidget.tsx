@@ -11,6 +11,7 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
+import { ChatThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -21,7 +22,7 @@ import {
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isAppMessageHeaderMessageId, isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -121,6 +122,10 @@ export const EmailThreadWidget = ({
         </StyledWidgetScrollContainer>
       </StyledWidgetContentContainer>
     );
+  }
+
+  if (isAppMessageHeaderMessageId(lastMessage.headerMessageId)) {
+    return <ChatThreadWidgetContent messages={messages} />;
   }
 
   return (
