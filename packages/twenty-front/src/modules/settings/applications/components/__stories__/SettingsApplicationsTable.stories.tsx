@@ -79,6 +79,29 @@ export const SearchMatchesBuiltInAccountApps: Story = {
   },
 };
 
+export const SearchMatchesTheDescriptionShownForTheStandardApp: Story = {
+  args: {
+    applications: [
+      { ...STANDARD_APPLICATION, name: 'twenty-standard' },
+      NPM_APPLICATION,
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(
+      await canvas.findByPlaceholderText('Search an application'),
+      'data model',
+    );
+
+    await waitFor(() =>
+      expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual([
+        '/settings/applications/standard-application-id',
+      ]),
+    );
+  },
+};
+
 export const SearchWithNoMatchShowsAnEmptyState: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
