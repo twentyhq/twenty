@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { createHash } from 'crypto';
 import { readFrontComponentSharedDependenciesChecksum } from 'twenty-shared/application';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -32,10 +33,12 @@ export class FrontComponentCompilerService {
     cacheLockService: CacheLockService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
     cacheStorage: CacheStorageService,
+    fileStorageService: FileStorageService,
   ) {
     this.dependencyManager = new FrontComponentDependencyManagerService(
       cacheLockService,
       cacheStorage,
+      fileStorageService,
     );
   }
 

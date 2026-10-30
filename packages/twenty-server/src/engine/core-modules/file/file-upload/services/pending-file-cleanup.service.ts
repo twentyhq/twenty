@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, LessThan, Like, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Like, Not, Raw, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -51,6 +51,15 @@ export class PendingFileCleanupService {
           createdAt: LessThan(exportThreshold),
           workspaceId: Not(IsNull()),
         },
+        {
+          status: FILE_STATUS.UPLOADED,
+          workspaceId: Not(IsNull()),
+          settings: Raw(
+            (alias) =>
+              `${alias} @> '{"isTemporaryFile":true}' AND ${alias}->>'expiresAt' <= :now`,
+            { now: new Date().toISOString() },
+          ),
+        },
       ],
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
@@ -60,13 +69,16 @@ export class PendingFileCleanupService {
     for (const file of staleFiles) {
       try {
         if (
-          file.path.startsWith(`${FileFolder.RecordExport}/`) &&
+          (file.path.startsWith(`${FileFolder.RecordExport}/`) ||
+            (file.status === FILE_STATUS.UPLOADED &&
+              file.settings?.isTemporaryFile &&
+              isDefined(file.settings.expiresAt))) &&
           isDefined(file.workspaceId)
         ) {
           await this.fileStorageService.deleteByFileId({
             fileId: file.id,
             workspaceId: file.workspaceId,
-            fileFolder: FileFolder.RecordExport,
+            fileFolder: file.path.split('/')[0] as FileFolder,
           });
           deletedCount++;
 

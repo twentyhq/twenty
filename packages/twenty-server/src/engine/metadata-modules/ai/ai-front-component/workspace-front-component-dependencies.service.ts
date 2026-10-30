@@ -61,6 +61,7 @@ export class WorkspaceFrontComponentDependenciesService {
     }
     return {
       applicationId: application.id,
+      applicationUniversalIdentifier: application.universalIdentifier,
       packageJson,
       yarnLock,
       revision: computeDependencyFileChecksum(
