@@ -1200,10 +1200,31 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 
 `getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
 
+### Embedded websites with media access
+
+To embed a phone or video tool, declare its HTTPS origin in your application's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), with microphone and camera access set separately. Installing the app grants these websites to the workspace. Twenty reads the granted websites when a tab loads, so tabs opened before the installation need a reload.
+
+Request the corresponding features on the iframe:
+
+```tsx
+<iframe
+  title="Aircall phone"
+  src="https://workspace.aircall.io?integration=generic"
+  allow="microphone"
+  width={376}
+  height={666}
+/>
+```
+
+For video, use `allow="microphone; camera"` and declare both for the origin. Twenty only delegates the media your app was granted for that origin. Members must select the embed's **Enable** control before it receives media access. Browser and operating system permissions still apply. `srcDoc` and embeds at Twenty's own origin cannot receive this delegation, and neither can `IFRAME` page layout widgets defined by an app: render media embeds from a front component instead.
+
+Enabled embeds appear in the same header indicator as native capture, with **Microphone access enabled** or **Camera access enabled** rather than a claim that recording is active. The indicator stays visible while access is enabled, even if the embed is hidden. **Disable** unloads the iframe and reloads it with media blocked. App capture through `getUserMedia()` continues to report actual capture and retains its own **Stop** control.
+
+Iframe content remains sandboxed. Approved external media embeds retain their own origin after the member enables access, allowing the website to use its session and request browser media permissions. Other front-component iframes retain an opaque sandbox origin.
+
 ### Other gaps
 
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
-- **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
 
 <PageBanner illustration="card-page-front-components" />

@@ -152,6 +152,49 @@ describe('useUpdateFrontComponentApolloCache', () => {
     });
   });
 
+  it('should keep the cached application iframe media permissions', () => {
+    const { result } = renderHook(() =>
+      useUpdateFrontComponentApolloCache({
+        frontComponentId: FRONT_COMPONENT_ID,
+      }),
+    );
+
+    const detail: MetadataOperationBrowserEventDetail<FrontComponent> = {
+      metadataName: 'frontComponent',
+      operation: {
+        type: 'update',
+        updatedRecord: buildFrontComponentRecord({
+          applicationGrantedIframeMediaPermissions: undefined,
+        }),
+      },
+    };
+
+    result.current.updateFrontComponentApolloCache(detail);
+
+    const updaterFn = mockUpdateQuery.mock.calls[0][1];
+    const applicationGrantedIframeMediaPermissions = [
+      {
+        __typename: 'IframeMediaPermission' as const,
+        origin: 'https://phone.example.com',
+        microphone: true,
+        camera: false,
+      },
+    ];
+
+    const updatedData = updaterFn({
+      frontComponent: {
+        id: FRONT_COMPONENT_ID,
+        name: 'Test Component',
+        applicationGrantedIframeMediaPermissions,
+        __typename: 'FrontComponent' as const,
+      },
+    });
+
+    expect(
+      updatedData.frontComponent.applicationGrantedIframeMediaPermissions,
+    ).toEqual(applicationGrantedIframeMediaPermissions);
+  });
+
   it('should return existing data when frontComponent is not in cache', () => {
     const { result } = renderHook(() =>
       useUpdateFrontComponentApolloCache({

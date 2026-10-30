@@ -14,6 +14,7 @@ import { MarketplaceAppDTO } from 'src/engine/core-modules/application/applicati
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -177,6 +178,9 @@ export class MarketplaceQueryService {
       ),
       requestedCapabilities: toApplicationCapabilities(
         manifest?.application?.requestedCapabilities,
+      ),
+      requestedIframeMediaPermissions: toIframeMediaPermissions(
+        manifest?.application?.requestedIframeMediaPermissions,
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
       manifest: registration.manifest ?? undefined,

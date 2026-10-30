@@ -12,8 +12,13 @@ import {
   RECURRING_CHARGE_UNITS,
   USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
+import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyArray,
+  normalizeIframeOrigin,
+} from 'twenty-shared/utils';
 
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { normalizeApplicationAssets } from '@/sdk/define/application/utils/normalize-application-assets';
@@ -164,6 +169,42 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
         `Server variable "${variableName}" is both required and deprecated. \`isDeprecated\` wins: the variable is excluded from the application configuration check.`,
       );
     }
+  }
+
+  const requestedIframeMediaPermissions =
+    config.requestedIframeMediaPermissions ?? [];
+
+  if (requestedIframeMediaPermissions.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+    errors.push(
+      `An application can request iframe media access for up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins`,
+    );
+  }
+
+  const requestedIframeMediaOrigins = new Set<string>();
+
+  for (const permission of requestedIframeMediaPermissions) {
+    if (
+      normalizeIframeOrigin(permission.origin, { isHttpsOnly: true }) !==
+      permission.origin
+    ) {
+      errors.push(
+        `Requested iframe media origin "${permission.origin}" must be an exact HTTPS origin, such as https://example.com`,
+      );
+    }
+
+    if (!permission.microphone && !permission.camera) {
+      errors.push(
+        `Requested iframe media origin "${permission.origin}" must allow the microphone, the camera, or both`,
+      );
+    }
+
+    if (requestedIframeMediaOrigins.has(permission.origin)) {
+      errors.push(
+        `Requested iframe media origin "${permission.origin}" is declared more than once`,
+      );
+    }
+
+    requestedIframeMediaOrigins.add(permission.origin);
   }
 
   if (config.defaultRoleUniversalIdentifier) {

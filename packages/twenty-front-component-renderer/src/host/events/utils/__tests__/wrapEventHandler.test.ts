@@ -1,3 +1,5 @@
+import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from '@/constants/FrontComponentHostUiClassName';
+
 import { wrapEventHandler } from '../wrapEventHandler';
 
 const createNestedWrappedHandlers = () => {
@@ -151,6 +153,38 @@ describe('wrapEventHandler', () => {
       type: 'change',
       value: 'ab',
     });
+  });
+
+  it('should not forward events whose target is inside host-owned UI', () => {
+    const remoteListener = jest.fn();
+    const hostUi = document.createElement('div');
+    const hostUiButton = document.createElement('button');
+
+    hostUi.className = FRONT_COMPONENT_HOST_UI_CLASS_NAME;
+    hostUi.append(hostUiButton);
+
+    wrapEventHandler({ remoteListener })({
+      type: 'click',
+      bubbles: true,
+      target: hostUiButton,
+    });
+
+    expect(remoteListener).not.toHaveBeenCalled();
+  });
+
+  it('should forward events whose target is a guest element', () => {
+    const remoteListener = jest.fn();
+    const guestButton = document.createElement('button');
+
+    wrapEventHandler({ remoteListener })({
+      type: 'click',
+      bubbles: true,
+      target: guestButton,
+    });
+
+    expect(remoteListener).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'click', bubbles: true }),
+    );
   });
 
   it('should forward the remote ids of the host target and related target', () => {

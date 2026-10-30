@@ -78,6 +78,27 @@ An installed app without the required grant pauses capture and shows an approval
 
 See [Media capture](/developers/extend/apps/layout/front-components#media-capture) for capture behavior and recording indicators.
 
+## Embedded website media access
+
+Set `requestedIframeMediaPermissions` when a front component embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately.
+
+```ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'Phone',
+  description: 'Call your contacts from Twenty',
+  requestedIframeMediaPermissions: [
+    { origin: 'https://workspace.aircall.io', microphone: true, camera: false },
+  ],
+});
+```
+
+Declared websites appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace, for the app's own front components only. Package updates do not automatically grant additional websites. Locally synced development apps receive the websites declared in their manifest. These grants do not replace browser or operating system permissions. Browser headers have a size limit, so if a workspace's websites exceed it, workspace-approved websites come first and the remaining websites do not receive media access.
+
+See [Embedded websites with media access](/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) for the iframe requirements.
+
 ## Variable types
 
 Both `applicationVariables` and `serverVariables` accept an optional `type` (and, for `SELECT` / `MULTI_SELECT`, an `options` list). Supported types: `TEXT` (default), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.

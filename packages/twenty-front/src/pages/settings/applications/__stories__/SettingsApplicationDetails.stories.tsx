@@ -130,6 +130,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     installCount: 12,
     defaultRoleUniversalIdentifier: null,
     requestedCapabilities: [],
+    requestedIframeMediaPermissions: [],
     billsCredits: false,
     objects: [],
     roles: [],

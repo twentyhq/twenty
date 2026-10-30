@@ -1,4 +1,5 @@
 import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT } from 'twenty-shared/application';
+import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { defineApplication } from '@/sdk/define';
@@ -467,6 +468,119 @@ describe('defineApplication', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
       '"recordMeeting" is declared both as a recurring charge and as a billable operation. Give them distinct names.',
+    );
+  });
+
+  it('should accept requested iframe media permissions for exact HTTPS origins', () => {
+    const config = {
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      requestedIframeMediaPermissions: [
+        {
+          origin: 'https://phone.example.com',
+          microphone: true,
+          camera: false,
+        },
+        { origin: 'https://video.example.com', microphone: true, camera: true },
+      ],
+    };
+
+    const result = defineApplication(config);
+
+    expect(result.success).toBe(true);
+    expect(result.config?.requestedIframeMediaPermissions).toEqual(
+      config.requestedIframeMediaPermissions,
+    );
+  });
+
+  it.each([
+    'http://phone.example.com',
+    'https://phone.example.com/',
+    'https://phone.example.com/calls',
+    'https://*.example.com',
+  ])(
+    'should return error when a requested iframe media origin is %p',
+    (origin) => {
+      const result = defineApplication({
+        universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+        displayName: 'My App',
+        description: 'My app description',
+        requestedIframeMediaPermissions: [
+          { origin, microphone: true, camera: false },
+        ],
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        `Requested iframe media origin "${origin}" must be an exact HTTPS origin, such as https://example.com`,
+      );
+    },
+  );
+
+  it('should return error when a requested iframe media permission allows no media', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      requestedIframeMediaPermissions: [
+        {
+          origin: 'https://phone.example.com',
+          microphone: false,
+          camera: false,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Requested iframe media origin "https://phone.example.com" must allow the microphone, the camera, or both',
+    );
+  });
+
+  it('should return error when a requested iframe media origin is declared twice', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      requestedIframeMediaPermissions: [
+        {
+          origin: 'https://phone.example.com',
+          microphone: true,
+          camera: false,
+        },
+        {
+          origin: 'https://phone.example.com',
+          microphone: false,
+          camera: true,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Requested iframe media origin "https://phone.example.com" is declared more than once',
+    );
+  });
+
+  it('should return error when an application requests too many iframe media origins', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      requestedIframeMediaPermissions: Array.from(
+        { length: MAX_ALLOWED_IFRAME_ORIGINS + 1 },
+        (_, index) => ({
+          origin: `https://phone-${index}.example.com`,
+          microphone: true,
+          camera: false,
+        }),
+      ),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      `An application can request iframe media access for up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins`,
     );
   });
 

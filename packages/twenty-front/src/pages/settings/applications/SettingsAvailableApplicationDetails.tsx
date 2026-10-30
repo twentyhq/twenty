@@ -271,6 +271,9 @@ export const SettingsAvailableApplicationDetails = () => {
         defaultRole={defaultRole}
         appObjects={detail?.objects ?? undefined}
         requestedCapabilities={detail?.requestedCapabilities}
+        requestedIframeMediaPermissions={
+          detail?.requestedIframeMediaPermissions
+        }
         billsCredits={detail?.billsCredits}
         isListed={detail?.isListed}
         onAuthorize={install}

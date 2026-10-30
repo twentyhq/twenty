@@ -14,7 +14,9 @@ import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modul
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
+import { resolveSyncedApplicationIframeMediaPermissions } from 'src/engine/core-modules/application/utils/resolve-synced-application-iframe-media-permissions.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -196,6 +198,9 @@ export class ApplicationSyncService {
       grantedCapabilities: toApplicationCapabilities(
         manifest.application.requestedCapabilities,
       ),
+      grantedIframeMediaPermissions: toIframeMediaPermissions(
+        manifest.application.requestedIframeMediaPermissions,
+      ),
       logicFunctionLayerId: null,
       defaultRoleId: null,
       defaultRole: null,
@@ -306,6 +311,14 @@ export class ApplicationSyncService {
           grantedCapabilities: application.grantedCapabilities,
           requestedCapabilities: manifest.application.requestedCapabilities,
         }),
+        grantedIframeMediaPermissions:
+          resolveSyncedApplicationIframeMediaPermissions({
+            sourceType: application.sourceType,
+            grantedIframeMediaPermissions:
+              application.grantedIframeMediaPermissions,
+            requestedIframeMediaPermissions:
+              manifest.application.requestedIframeMediaPermissions,
+          }),
         frontComponentSharedDependenciesChecksum,
         frontComponentSharedDependenciesBuiltPath,
         applicationRegistrationId: resolvedRegistrationId,

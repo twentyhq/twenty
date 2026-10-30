@@ -2674,6 +2674,7 @@ export type FormFieldConfiguration = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationGrantedCapabilities?: Maybe<Array<Scalars['String']['output']>>;
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use generateFrontComponentApplicationTokenPair */
@@ -3098,6 +3099,7 @@ export type MarketplaceAppDetail = {
   objects?: Maybe<Array<MarketplaceAppObject>>;
   pricingDescription?: Maybe<Scalars['String']['output']>;
   requestedCapabilities: Array<Scalars['String']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   roles?: Maybe<Array<MarketplaceAppRole>>;
   /** @deprecated Use galleryImages instead */
   screenshots: Array<Scalars['String']['output']>;

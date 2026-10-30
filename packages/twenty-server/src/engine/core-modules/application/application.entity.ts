@@ -4,6 +4,7 @@ import {
   type ApplicationBilling,
   type ApplicationCapability,
 } from 'twenty-shared/application';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -135,6 +136,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790088525621',
   })
   grantedCapabilities: ApplicationCapability[];
+
+  @Column({ type: 'jsonb', nullable: false, default: [] })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.55.0_AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand_1793371022994',
+  })
+  grantedIframeMediaPermissions: IframeMediaPermission[];
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
