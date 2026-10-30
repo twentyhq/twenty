@@ -1,38 +1,109 @@
 ---
-title: Server locale
-description: Connetti la CLI autonoma a un server Twenty locale.
+title: Ambiente locale
+description: Esegui l'ambiente di sviluppo completo di Twenty con la CLI.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-## Impostazione
+## Avvia Twenty in locale
 
-La CLI autonoma si connette a un server Twenty in esecuzione. Non avvia né gestisce container Docker.
+Installa e avvia Docker, quindi esegui:
 
-Usa la [guida all'hosting autonomo](/it/developers/self-host/self-host) per eseguire Twenty con Docker. In una copia locale del repository Twenty, funziona anche l'ambiente di sviluppo esistente:
+```bash
+twenty local start
+twenty auth login --url http://localhost:2020 --name local
+```
+
+`local start` esegue l'interfaccia web, l'API, il worker e i database. Funziona al di fuori di una cartella dell'app,
+attende che l'ambiente sia pronto e stampa il relativo URL. L'accesso è un
+passaggio separato. Per installare successivamente la tua app, esegui `twenty app apply --create --remote local` dalla relativa directory.
+
+Per una nuova istanza, specifica esplicitamente una versione oppure lascia che la CLI selezioni la versione
+pubblicata più recente corrispondente a `engines.twenty` della tua app. Al di fuori di un'app con questa
+impostazione, usa `latest`. Le istanze esistenti mantengono la propria versione e i dati.
+Per un'istanza esistente, la compatibilità con `engines.twenty` viene verificata utilizzando
+`APP_VERSION` dell'immagine, anche quando il relativo tag è `latest`. Una versione mancante, non valida
+o incompatibile genera un avviso e l'avvio continua.
+
+```bash
+twenty local start 2.53.1
+twenty local status
+twenty local logs
+twenty local logs --lines 100 --no-follow
+twenty local stop
+```
+
+Le nuove istanze restano in ascolto solo su loopback, sulla porta `2020`. Usa `--port \<port>` durante la
+creazione di un'istanza per scegliere un'altra porta. Usa un contesto socket Docker locale;
+i motori Docker remoti non sono supportati da questi comandi.
+
+## Aggiorna o reimposta
+
+```bash
+twenty local upgrade 2.53.1
+```
+
+L'aggiornamento scarica l'immagine richiesta prima di sostituire l'istanza. Mantiene
+le porte, il database e i volumi di file, nonché le sostituzioni dell'ambiente. Le nuove impostazioni predefinite della CLI
+si applicano alle istanze create di recente; gli aggiornamenti mantengono i valori dell'ambiente esistenti.
+Senza una versione, segue la stessa selezione della versione di un nuovo avvio. I layout di archiviazione
+personalizzati vengono rifiutati. I downgrade vengono rifiutati prima di sostituire il contenitore,
+incluso quando si usa un tag come `latest`. Entrambe le immagini devono dichiarare un valore valido di
+`APP_VERSION` affinché la CLI possa confrontare le loro versioni effettive.
+
+Passa `2.53` per avviare o aggiornare usando il tag dell'immagine mobile `v2.53`, oppure `2.53.1`
+per selezionare una versione patch specifica.
+
+Se la creazione del sostituto non riesce o viene annullata, la CLI
+ripristina il contenitore e le impostazioni precedenti. Una volta avviata la nuova versione,
+gli aggiornamenti non riusciti mantengono i volumi di dati ma non annullano le migrazioni del database.
+
+`stop` conserva tutti i dati. Per eliminare definitivamente l'istanza e i relativi dati, esegui:
+
+```bash
+twenty local reset
+twenty local start
+```
+
+Reset richiede una conferma. Gli script devono passare `--yes`. I remoti salvati e
+le credenziali non vengono rimossi.
+
+## Test di integrazione
+
+Usa l'istanza di test separata, porta predefinita `2021`:
+
+```bash
+twenty local start --test
+twenty local status --test
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+Imposta `TWENTY_API_KEY` su una chiave per quell'istanza. I test di integrazione installano e
+disinstallano un'app, quindi tienili separati dal tuo spazio di lavoro di sviluppo.
+Passa `--test` a logs, stop, upgrade o reset quando gestisci questa istanza.
+
+Il workflow CI generato effettua il provisioning di un'istanza isolata tramite
+`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` e installa separatamente la
+CLI standalone.
+
+## Altre configurazioni locali
+
+Per un checkout del codice sorgente di Twenty, funziona anche l'ambiente di sviluppo esistente:
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-```
-
-Quindi autentica l'accesso tramite l'URL del server per il tuo spazio di lavoro:
-
-```bash
 twenty auth login --url http://localhost:3000 --name local
-twenty app apply --create --remote local
 ```
 
-Usa l'URL e la porta effettivi del tuo server. Per gli spazi di lavoro con sottodominio, usa il nome host dello spazio di lavoro.
-
-## Test di integrazione
-
-Usa un server o uno spazio di lavoro separato e temporaneo. La configurazione dei test di integrazione installa un'app e la pulizia la disinstalla. Imposta `TWENTY_API_URL` e `TWENTY_API_KEY` su quell'istanza di test prima di eseguire `yarn test`.
-
-Il workflow CI generato esegue il provisioning di un'istanza isolata tramite `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` e installa separatamente la CLI autonoma.
+Usa l'URL e la porta effettivi del tuo server. Per gli spazi di lavoro con sottodomini, usa il
+nome host dello spazio di lavoro. Per la distribuzione in produzione, segui la
+[guida all'hosting autonomo](/it/developers/self-host/self-host).
 
 ## Dipendenze del progetto
 
-Installa `twenty-sdk` e `twenty-client-sdk` come dipendenze del progetto. Installa la CLI `twenty` globalmente, quindi esegui `twenty app typecheck`, `twenty app build` e `twenty app apply` dalla directory dell'app.
+Installa `twenty-sdk` e `twenty-client-sdk` come dipendenze del progetto. Installa globalmente la
+CLI `twenty`, quindi esegui `twenty app typecheck`, `twenty app build` e
+`twenty app apply` dalla directory dell'app.
 
 <PageBanner illustration="dev-self-host" />
