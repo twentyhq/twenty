@@ -499,6 +499,10 @@ export class AgentChatThreadService {
       ReturnType<AgentChatAssistantPolicyService['resolve']>
     >;
   }> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+
     const candidateWorkspaceMemberIds =
       await this.sharingService.findEligibleParticipantWorkspaceMemberIds({
         ...args,
@@ -517,7 +521,7 @@ export class AgentChatThreadService {
     });
     const isAssistantParticipant = resolveAgentChatAssistantParticipation({
       ...assistantPolicy,
-      isAssistantParticipant: thread.isAssistantParticipant ?? true,
+      isAssistantParticipant: thread.isAssistantParticipant,
       isAssistantMentioned,
       initialIsAssistantParticipant,
       isInitialMessage,
@@ -528,10 +532,7 @@ export class AgentChatThreadService {
       assistantPolicy,
     };
 
-    if (
-      thread.isAssistantParticipant === isAssistantParticipant ||
-      !(await this.sharingService.hasAssistantParticipation(args.workspaceId))
-    ) {
+    if (thread.isAssistantParticipant === isAssistantParticipant) {
       return result;
     }
 
