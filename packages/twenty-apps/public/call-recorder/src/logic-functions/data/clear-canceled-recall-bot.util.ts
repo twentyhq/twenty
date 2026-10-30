@@ -1,6 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { NON_TERMINAL_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/non-terminal-call-recording-statuses';
 
 export const clearCanceledRecallBot = async (
@@ -18,7 +17,6 @@ export const clearCanceledRecallBot = async (
       __args: {
         filter: {
           id: { eq: callRecordingId },
-          recordingRequestStatus: { eq: CallRecordingRequestStatus.CANCELED },
           status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
           externalBotId: { eq: externalBotId },
         },
