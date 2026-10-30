@@ -40,6 +40,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   healthCheckLogicFunctionId: null,
+  isUserHealthCheckEnabled: false,
   uninstallLogicFunctionId: null,
   uninstallHookCompletedForRequestedAt: null,
   canBeUninstalled: false,
