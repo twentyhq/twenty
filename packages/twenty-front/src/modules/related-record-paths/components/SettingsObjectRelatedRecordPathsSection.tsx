@@ -78,19 +78,18 @@ export const SettingsObjectRelatedRecordPathsSection = ({
             <TableHeader />
           </TableRow>
           <TableBody>
-            {relatedRecordPaths.length === 0 && !loading ? (
+            {relatedRecordPaths.length === 0 && !loading && (
               <StyledEmpty>{t`No related records follow this object yet`}</StyledEmpty>
-            ) : (
-              relatedRecordPaths.map((relatedRecordPath) => (
-                <SettingsObjectRelatedRecordPathTableRow
-                  key={relatedRecordPath.id}
-                  sourceObjectMetadataItem={objectMetadataItem}
-                  relatedRecordPath={relatedRecordPath}
-                  isReadOnly={isReadOnly}
-                  onDelete={deleteRelatedRecordPath}
-                />
-              ))
             )}
+            {relatedRecordPaths.map((relatedRecordPath) => (
+              <SettingsObjectRelatedRecordPathTableRow
+                key={relatedRecordPath.id}
+                sourceObjectMetadataItem={objectMetadataItem}
+                relatedRecordPath={relatedRecordPath}
+                isReadOnly={isReadOnly}
+                onDelete={deleteRelatedRecordPath}
+              />
+            ))}
           </TableBody>
         </Table>
       </StyledTableContainer>

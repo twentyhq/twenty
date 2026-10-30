@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsObjectRelatedRecordPathsSection } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathsSection';
@@ -13,18 +14,33 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const company = getMockObjectMetadataItemOrThrow('company');
 const noteTarget = getMockObjectMetadataItemOrThrow('noteTarget');
 
-const getFieldMetadataId = (
-  objectMetadataItem: typeof company,
-  fieldName: string,
-) =>
-  objectMetadataItem.fields.find((field) => field.name === fieldName)?.id ?? '';
+const getFieldMetadataId = ({
+  objectMetadataItem,
+  fieldName,
+}: {
+  objectMetadataItem: typeof company;
+  fieldName: string;
+}) => {
+  const field = objectMetadataItem.fields.find(
+    (candidate) => candidate.name === fieldName,
+  );
+
+  if (!isDefined(field)) {
+    throw new Error(`Field ${fieldName} not found`);
+  }
+
+  return field.id;
+};
 
 const RELATED_RECORD_PATHS = [
   {
     __typename: 'RelatedRecordPath',
     id: 'c6c3a4b1-0b0e-4c55-9c39-6f3f0f0c0a01',
     objectMetadataId: company.id,
-    firstFieldMetadataId: getFieldMetadataId(company, 'attachments'),
+    firstFieldMetadataId: getFieldMetadataId({
+      objectMetadataItem: company,
+      fieldName: 'attachments',
+    }),
     secondFieldMetadataId: null,
     thirdFieldMetadataId: null,
     isInherent: true,
@@ -33,8 +49,14 @@ const RELATED_RECORD_PATHS = [
     __typename: 'RelatedRecordPath',
     id: 'c6c3a4b1-0b0e-4c55-9c39-6f3f0f0c0a02',
     objectMetadataId: company.id,
-    firstFieldMetadataId: getFieldMetadataId(company, 'noteTargets'),
-    secondFieldMetadataId: getFieldMetadataId(noteTarget, 'note'),
+    firstFieldMetadataId: getFieldMetadataId({
+      objectMetadataItem: company,
+      fieldName: 'noteTargets',
+    }),
+    secondFieldMetadataId: getFieldMetadataId({
+      objectMetadataItem: noteTarget,
+      fieldName: 'note',
+    }),
     thirdFieldMetadataId: null,
     isInherent: false,
   },
@@ -148,8 +170,14 @@ export const AddPathThroughRelations: Story = {
     await waitFor(() =>
       expect(createRelatedRecordPath).toHaveBeenCalledWith({
         objectMetadataId: company.id,
-        firstFieldMetadataId: getFieldMetadataId(company, 'noteTargets'),
-        secondFieldMetadataId: getFieldMetadataId(noteTarget, 'note'),
+        firstFieldMetadataId: getFieldMetadataId({
+          objectMetadataItem: company,
+          fieldName: 'noteTargets',
+        }),
+        secondFieldMetadataId: getFieldMetadataId({
+          objectMetadataItem: noteTarget,
+          fieldName: 'note',
+        }),
         isInherent: false,
       }),
     );

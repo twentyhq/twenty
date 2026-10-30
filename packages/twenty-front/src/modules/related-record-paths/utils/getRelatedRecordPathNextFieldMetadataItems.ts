@@ -9,7 +9,7 @@ export const getRelatedRecordPathNextFieldMetadataItems = ({
   sourceObjectMetadataItem,
   steps,
 }: {
-  sourceObjectMetadataItem: EnrichedObjectMetadataItem;
+  sourceObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id' | 'fields'>;
   steps: RelatedRecordPathStep[];
 }): FieldMetadataItem[] => {
   const reachedObjectMetadataItem =
@@ -23,7 +23,7 @@ export const getRelatedRecordPathNextFieldMetadataItems = ({
   return reachedObjectMetadataItem.fields.filter(
     (field) =>
       field.type === FieldMetadataType.RELATION &&
-      field.isActive === true &&
+      field.isActive &&
       isDefined(field.relation) &&
       !visitedObjectMetadataIds.has(field.relation.targetObjectMetadata.id),
   );

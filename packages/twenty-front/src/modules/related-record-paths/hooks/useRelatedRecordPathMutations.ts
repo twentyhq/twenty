@@ -31,7 +31,13 @@ export const useRelatedRecordPathMutations = () => {
     REFETCH_OPTIONS,
   );
 
-  const handleError = (error: unknown, operationType: CrudOperationType) => {
+  const handleError = ({
+    error,
+    operationType,
+  }: {
+    error: unknown;
+    operationType: CrudOperationType;
+  }) => {
     if (CombinedGraphQLErrors.is(error)) {
       handleMetadataError(error, {
         primaryMetadataName: 'relatedRecordPath',
@@ -49,7 +55,7 @@ export const useRelatedRecordPathMutations = () => {
     try {
       await createMutation({ variables: { input } });
     } catch (error) {
-      handleError(error, CrudOperationType.CREATE);
+      handleError({ error, operationType: CrudOperationType.CREATE });
     }
   };
 
@@ -57,7 +63,7 @@ export const useRelatedRecordPathMutations = () => {
     try {
       await deleteMutation({ variables: { id } });
     } catch (error) {
-      handleError(error, CrudOperationType.DELETE);
+      handleError({ error, operationType: CrudOperationType.DELETE });
     }
   };
 
