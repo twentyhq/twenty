@@ -360,6 +360,13 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
+export enum MessageChannelType {
+  APP = 'APP',
+  EMAIL = 'EMAIL',
+  EMAIL_GROUP = 'EMAIL_GROUP',
+  SMS = 'SMS'
+}
+
 export enum MessageChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
@@ -838,6 +845,7 @@ export type TimelineCalendarEventsWithTotal = {
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
+  channel?: Maybe<TimelineThreadChannel>;
   firstParticipant: TimelineThreadParticipant;
   id: Scalars['UUID']['output'];
   lastMessageBody: Scalars['String']['output'];
@@ -849,6 +857,13 @@ export type TimelineThread = {
   read: Scalars['Boolean']['output'];
   subject: Scalars['String']['output'];
   visibility: MessageChannelVisibility;
+};
+
+export type TimelineThreadChannel = {
+  __typename?: 'TimelineThreadChannel';
+  applicationId?: Maybe<Scalars['UUID']['output']>;
+  provider: Scalars['String']['output'];
+  type: MessageChannelType;
 };
 
 export type TimelineThreadParticipant = {
