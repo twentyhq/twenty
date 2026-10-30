@@ -41,19 +41,20 @@ const editOrigin = (
       variables: { data: { operation, origin } },
     });
 
-const readOrigins = async () => {
+const readOrigins = async (): Promise<string[]> => {
   const response = await client
     .post('/metadata')
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({ query: '{ currentWorkspace { allowedEmbeddingOrigins } }' })
     .expect(200);
   expect(response.body.errors).toBeUndefined();
-  return response.body.data.currentWorkspace
-    .allowedEmbeddingOrigins as string[];
+  return response.body.data.currentWorkspace.allowedEmbeddingOrigins;
 };
 
 describe('Security permissions', () => {
-  let originalWorkspaceState: Record<string, unknown>;
+  let originalWorkspaceState: Record<string, unknown> & {
+    allowedEmbeddingOrigins?: string[];
+  };
 
   beforeAll(async () => {
     const query = gql`
@@ -97,8 +98,7 @@ describe('Security permissions', () => {
     await makeMetadataApiRequest({ query: restoreQuery });
     for (const origin of await readOrigins())
       await editOrigin('remove', origin);
-    for (const origin of (originalWorkspaceState.allowedEmbeddingOrigins ??
-      []) as string[])
+    for (const origin of originalWorkspaceState.allowedEmbeddingOrigins ?? [])
       await editOrigin('add', origin);
   });
 
