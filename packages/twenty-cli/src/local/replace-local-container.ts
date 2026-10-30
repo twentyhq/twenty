@@ -17,7 +17,7 @@ export const replaceLocalContainer = async ({
   signal,
 }: {
   environment: LocalEnvironment;
-  existing: LocalContainer;
+  existing: Pick<LocalContainer, 'id' | 'isRunning' | 'port' | 'containerPort'>;
   image: string;
   environmentVariables: string[];
   signal: AbortSignal;
