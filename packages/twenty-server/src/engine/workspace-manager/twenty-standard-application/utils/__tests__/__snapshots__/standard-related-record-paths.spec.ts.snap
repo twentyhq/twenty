@@ -27,6 +27,5 @@ exports[`Standard related record paths declares the standard paths and their inh
   "workflow.timelineActivities inherent",
   "workflowRun.timelineActivities inherent",
   "workflowVersion.timelineActivities inherent",
-  "workspaceMember.messageParticipants.message regular",
 ]
 `;

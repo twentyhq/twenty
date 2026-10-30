@@ -104,9 +104,4 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     fieldNames: ['taskTargets', 'task'],
     isInherent: false,
   },
-  {
-    objectName: 'workspaceMember',
-    fieldNames: ['messageParticipants', 'message'],
-    isInherent: false,
-  },
 ];
