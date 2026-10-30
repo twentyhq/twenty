@@ -84,7 +84,7 @@ export class GettingStartedWorkflowResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('step', { type: () => GettingStartedStep }) step: GettingStartedStep,
   ): Promise<GettingStartedWorkflowDTO> {
-    return this.gettingStartedWorkflowWorkspaceService.prepareWorkflow({
+    return this.gettingStartedWorkflowWorkspaceService.prepareWorkflowOrThrow({
       workspaceId: workspace.id,
       userWorkspaceId,
       step,

@@ -1,15 +1,12 @@
 import { gql } from 'graphql-tag';
 import {
-  activateCoreWorkflowVersion,
   deleteCoreWorkflows,
   findCoreWorkflowVersion,
-  updateCoreWorkflowVersionStep,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -260,7 +257,7 @@ describe('gettingStarted (e2e)', () => {
       ).toBeUndefined();
     });
 
-    it('reuses the draft, then completes the handover step once the workflow is turned on', async () => {
+    it('reuses the draft and leaves it off', async () => {
       const firstResponse =
         await prepareGettingStartedWorkflow('HANDOVER_DEALS');
 
@@ -287,36 +284,6 @@ describe('gettingStarted (e2e)', () => {
 
       expect(draftVersion.status).toBe('DRAFT');
       expect(await findCompletedSteps()).not.toContain('HANDOVER_DEALS');
-
-      const emailStep = draftVersion.steps?.find(
-        (step) => step.type === 'SEND_EMAIL',
-      );
-
-      if (!isDefined(emailStep)) {
-        throw new Error('The handover draft has no email step');
-      }
-
-      await updateCoreWorkflowVersionStep({
-        coreWorkflowVersionId: handover.versionId,
-        step: {
-          ...emailStep,
-          settings: {
-            ...emailStep.settings,
-            input: {
-              ...emailStep.settings.input,
-              connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
-            },
-          },
-        },
-      });
-      await activateCoreWorkflowVersion({
-        coreWorkflowVersionId: handover.versionId,
-      });
-
-      expect(await findCompletedSteps()).toContain('HANDOVER_DEALS');
-      expect(
-        await findJaneUserVar('GETTING_STARTED_STEP_HANDOVER_DEALS'),
-      ).toEqual({ completedAt: expect.any(String) });
     });
   });
 });

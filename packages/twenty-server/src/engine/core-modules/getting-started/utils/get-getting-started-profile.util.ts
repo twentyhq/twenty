@@ -10,7 +10,7 @@ export const getGettingStartedProfile = ({
   companyEnrichment,
 }: {
   userEmail: string;
-  companyEnrichment: WorkspaceCompanyEnrichment | null;
+  companyEnrichment: Pick<WorkspaceCompanyEnrichment, 'employeeCount'> | null;
 }): GettingStartedProfile => {
   if (!isWorkEmail(userEmail)) {
     return 'PERSONAL';

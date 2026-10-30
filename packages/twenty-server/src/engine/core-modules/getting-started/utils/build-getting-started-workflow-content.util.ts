@@ -17,9 +17,18 @@ export const buildGettingStartedWorkflowContent = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  gettingStartedWorkflow: GettingStartedWorkflow;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  gettingStartedWorkflow: Pick<
+    GettingStartedWorkflow,
+    'manifest' | 'triggerTitle'
+  >;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): { name: string; trigger: WorkflowTrigger; steps: WorkflowAction[] } => {
   const { name, version } = workflowManifestSchema.parse(manifest);
 

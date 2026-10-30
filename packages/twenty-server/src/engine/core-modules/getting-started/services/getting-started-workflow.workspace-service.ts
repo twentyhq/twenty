@@ -31,7 +31,7 @@ export class GettingStartedWorkflowWorkspaceService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  async prepareWorkflow({
+  async prepareWorkflowOrThrow({
     workspaceId,
     userWorkspaceId,
     step,

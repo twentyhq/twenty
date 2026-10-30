@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { EmailOperation } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -145,7 +145,7 @@ export class GettingStartedService {
       completedSteps,
       selectedStep: steps.find((step) => step === savedSelectedStep) ?? null,
       snoozedUntil: isNonEmptyString(snoozedUntil) ? snoozedUntil : null,
-      isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) === true,
+      isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) ?? false,
     };
   }
 
@@ -167,7 +167,7 @@ export class GettingStartedService {
       });
     }
 
-    if (input.snoozedUntil !== undefined) {
+    if (!isUndefined(input.snoozedUntil)) {
       await this.userVarsService.set({
         userId,
         workspaceId,
@@ -218,8 +218,7 @@ export class GettingStartedService {
     });
   }
 
-  // Enrichment can land after the first visit, so the profile is saved once
-  // it can no longer change and the step list stays stable.
+  // Saved once final so late enrichment does not reshuffle the step list.
   private async getProfile({
     userId,
     userEmail,
