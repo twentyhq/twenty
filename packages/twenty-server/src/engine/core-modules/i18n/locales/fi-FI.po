@@ -2806,7 +2806,7 @@ msgstr "Keskustelut"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Keskustelut eivät ole vielä käytettävissä. Yritä uudelleen muutaman minuutin kuluttua."
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8214,13 +8214,13 @@ msgstr "Jäsenet"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "Maininnat selvitetty ajankohtana"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "Jäsenen tähän ajankohtaan asti tehdyt maininnat on selvitetty"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -11980,7 +11980,7 @@ msgstr "Palvelinlogiikkafunktio edellyttää todennusta."
 #. js-lingui-id: VOUkzJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "Server routes can only be defined by an application."
-msgstr ""
+msgstr "Vain sovellus voi määrittää palvelinreitit."
 
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11990,7 +11990,7 @@ msgstr "Palvelintason tekeytyminen toiseksi käyttäjäksi ei ole käytössä t�
 #. js-lingui-id: y4fTj2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "serverRouteTriggerSettings can only be set by an installed application"
-msgstr ""
+msgstr "serverRouteTriggerSettings voidaan asettaa vain asennetulla sovelluksella"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12066,7 +12066,7 @@ msgstr "Asetusten valikkokohdan otsikko vaaditaan"
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
-msgstr ""
+msgstr "Useat sovellukset määrittävät tämän palvelinreitin. Käytä sen sijaan sovelluksen rekisteröinti-URL-osoitetta."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts

@@ -171,6 +171,7 @@ export class ConnectionProviderOAuthFlowService {
         accessToken: tokenResponse.accessToken,
         refreshToken: tokenResponse.refreshToken,
         scopes: tokenResponse.scopes ?? provider.oauthConfig.scopes,
+        accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
       },
       handle,
       identifiedAccount,

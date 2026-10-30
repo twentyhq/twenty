@@ -2806,7 +2806,7 @@ msgstr "Conversații"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Conversațiile nu sunt încă disponibile. Încercați din nou peste câteva minute."
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8214,13 +8214,13 @@ msgstr "Membri"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "Mențiuni rezolvate la"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "Mențiunile de până la această oră sunt rezolvate pentru membru"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -11980,7 +11980,7 @@ msgstr "Funcția de logică de server necesită autentificare."
 #. js-lingui-id: VOUkzJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "Server routes can only be defined by an application."
-msgstr ""
+msgstr "Rutele de server pot fi definite doar de o aplicație."
 
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -11990,7 +11990,7 @@ msgstr "Impersonarea la nivel de server nu este activată pentru acest utilizato
 #. js-lingui-id: y4fTj2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
 msgid "serverRouteTriggerSettings can only be set by an installed application"
-msgstr ""
+msgstr "serverRouteTriggerSettings poate fi setat doar de o aplicație instalată"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12066,7 +12066,7 @@ msgstr "Titlul elementului de meniu de setări este obligatoriu"
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "Several applications declare this server route. Use the application registration URL instead."
-msgstr ""
+msgstr "Mai multe aplicații declară această rută de server. Utilizați în schimb URL-ul de înregistrare al aplicației."
 
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts

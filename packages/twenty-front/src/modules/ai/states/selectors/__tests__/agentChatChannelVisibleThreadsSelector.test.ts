@@ -9,6 +9,7 @@ import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKe
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
@@ -16,6 +17,7 @@ const CHANNEL_VIEW = {
   channelId: 'channel',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
   assignment: AgentChatChannelAssignmentFilter.ANY,
+  filter: AgentChatChannelThreadFilter.ANY,
 };
 
 const buildThread = ({

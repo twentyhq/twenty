@@ -631,11 +631,6 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} ժամ} 
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Հաստատե՞լ # գործողությունը։} other {Հաստատե՞լ # գործողությունները։}})"
 
-#. js-lingui-id: AnO6CC
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr "{channelStatusLabel} · {assignmentLabel}"
-
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -3073,7 +3068,6 @@ msgstr "Հավասարեցում"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3924,7 +3918,7 @@ msgstr "Հավելվածների նախընտրանքներ"
 #. js-lingui-id: Nk6yc9
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
-msgstr ""
+msgstr "Հավելվածների նախընտրանքներ - Կարգավորումներ"
 
 #. js-lingui-id: aDW39c
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
@@ -4184,7 +4178,6 @@ msgid "Assignable to Workspace Members"
 msgstr "Կարող է նշանակվել աշխատատարածքի անդամներին"
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Նշանակված"
@@ -4199,6 +4192,11 @@ msgstr "Նշանակված {roleTargetDisplayName}"
 msgid "Assigned to"
 msgstr "Նշանակված է"
 
+#. js-lingui-id: iU3XRS
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+msgid "Assigned to me"
+msgstr ""
+
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
@@ -4210,7 +4208,6 @@ msgid "Assigned to you"
 msgstr "Ձեզ նշանակված"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Կատարող"
@@ -8950,6 +8947,11 @@ msgstr "Սահմանեք ձեր օբյեկտի անունը և նկարագրո�
 msgid "Define the name and instructions for this skill"
 msgstr "Սահմանեք այս հմտության անունը և հրահանգները"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "Սահմանեք այն կապերը, որոնց միջոցով գրառման թույլտվությունները տարածվում են կապված գրառումների վրա."
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -12825,11 +12827,11 @@ msgstr "Ֆիլտրել ըստ օբյեկտի տեսակի"
 msgid "Filter by record ID"
 msgstr "Ֆիլտրել գրառման ID-ով"
 
-#. js-lingui-id: jge9hE
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-msgid "Filter channel chats"
-msgstr "Զտել ալիքի զրույցները"
+#. js-lingui-id: /+U0Y/
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+msgid "Filter chats"
+msgstr ""
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -17335,12 +17337,6 @@ msgstr "Նվազագույն"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Նվազագույն միջակայք"
-
-#. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "Mine"
-msgstr "Իմը"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -22370,6 +22366,11 @@ msgstr "Մերժված"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "related record path"
 msgstr "կապված գրառման ուղի"
+
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "Կապված գրառումների ուղիներ"
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
@@ -28592,8 +28593,7 @@ msgid "Unanswered"
 msgstr "Անպատասխան"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Unassigned"
 msgstr "Չվերագրված"
 
@@ -30012,7 +30012,6 @@ msgid "view"
 msgstr "տեսք"
 
 #. js-lingui-id: jpctdh
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx

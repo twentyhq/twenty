@@ -9,6 +9,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-job-retry-options.constant';
 import { AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-snooze-end-recheck-minimum-delay-ms.constant';
+import { AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-has-unresolved-mention-predicate.constant';
 import { type AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
@@ -48,8 +49,6 @@ type BuildParticipantWriteQuery = (tables: {
 const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."updatedAt" + interval '1 millisecond')`;
 
 const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
-
-const HAS_UNRESOLVED_MENTION = `(participant."lastMentionedAt" IS NOT NULL AND (participant."mentionsResolvedAt" IS NULL OR participant."lastMentionedAt" > participant."mentionsResolvedAt"))`;
 
 const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
 
@@ -145,6 +144,10 @@ const EMPTY_OPEN_THREADS_SUMMARY: AgentChatOpenThreadsSummaryDTO = {
   openThreadCount: 0,
   unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
+  mentionThreadCount: 0,
+  assignedToMeThreadCount: 0,
+  assignedThreadCount: 0,
+  unassignedThreadCount: 0,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
@@ -579,7 +582,7 @@ export class AgentChatThreadParticipantService {
           >
         >(
           `WITH open_thread AS (
-             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${HAS_UNRESOLVED_MENTION} AS "hasUnresolvedMention",
+             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
@@ -591,6 +594,10 @@ export class AgentChatThreadParticipantService {
              COUNT(*)::int AS "openThreadCount",
              COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
+             COUNT(*) FILTER (WHERE "hasUnresolvedMention")::int AS "mentionThreadCount",
+             COUNT(*) FILTER (WHERE "assigneeId" = :summaryWorkspaceMemberId)::int AS "assignedToMeThreadCount",
+             COUNT("assigneeId")::int AS "assignedThreadCount",
+             COUNT(*) FILTER (WHERE "assigneeId" IS NULL)::int AS "unassignedThreadCount",
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
              COALESCE(BOOL_OR("isUnread" AND "hasUnresolvedMention"), false) AS "hasUnreadMentionThread",
              COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"

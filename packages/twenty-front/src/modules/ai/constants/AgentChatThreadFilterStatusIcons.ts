@@ -4,6 +4,8 @@ import {
   IconCheck,
   IconCircleDashed,
   IconHandClick,
+  IconUserCircle,
+  IconUserOff,
   IconUsers,
   IconZzz,
 } from 'twenty-ui/icon';
@@ -17,7 +19,9 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   active: IconCircleDashed,
   needsInput: IconHandClick,
   mentions: IconAt,
-  assigned: IconUsers,
+  assigned: IconUserCircle,
+  assignedToAnyone: IconUsers,
+  unassigned: IconUserOff,
   snoozed: IconZzz,
   done: IconCheck,
 };

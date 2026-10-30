@@ -7,6 +7,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
 import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
+import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
@@ -42,8 +43,10 @@ export const AiChatInboxListHeader = ({
     switchToNewChat();
   };
 
-  const channelViewDropdown = isDefined(agentChatShownChannelView) && (
+  const viewDropdown = isDefined(agentChatShownChannelView) ? (
     <AiChatInboxChannelViewDropdown channelView={agentChatShownChannelView} />
+  ) : (
+    <AiChatInboxPersonalViewDropdown />
   );
 
   return (
@@ -62,13 +65,13 @@ export const AiChatInboxListHeader = ({
                 <PinnedCommandMenuItemButtons />
               </AiChatInboxTriageCommandMenuItems>
             </CommandMenuContextProvider>
-            {channelViewDropdown}
+            {viewDropdown}
             <SidePanelToggleButton />
           </>
         ) : (
           <>
             {!isMobile && <AiChatInboxLayoutDropdown />}
-            {channelViewDropdown}
+            {viewDropdown}
             <Button
               size="sm"
               variant="solid"

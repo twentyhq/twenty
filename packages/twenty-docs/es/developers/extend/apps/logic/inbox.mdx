@@ -92,4 +92,34 @@ await sendInboxMessage({
 * Una mención sólo renderiza. No añade al miembro a la conversación o notificarlos, así que lista a todos los que deberían recibir el mensaje en `workspaceMemberIds`.
 * `INBOX_ASSISTANT_MENTION` es el texto que el compositor escribe cuando un miembro menciona al asistente (`@Ada`), así que tus mensajes lo llaman de la misma manera.
 
+## Asociar registros a una conversación
+
+`attachRecordToInboxThread()` vincula una conversación a un registro y `detachRecordFromInboxThread()` elimina el vínculo.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+* Ambos reciben el `threadId` de la conversación y el registro como `objectNameSingular` y `recordId`. Una conversación se puede vincular a personas, empresas, oportunidades y registros de objetos personalizados.
+* Ambos son idempotentes: asociar un registro dos veces mantiene un solo vínculo y desasociar un registro que no está asociado no cambia nada.
+* La llamada se ejecuta con el mismo acceso que [enviar un mensaje](#who-sends-the-message), lo que requiere el permiso `AI`. Un miembro debe poder editar la conversación, y tu aplicación puede actuar en una conversación que ella misma escribió o en una a la que se concedió su rol predeterminado; de lo contrario, la llamada falla con `THREAD_NOT_FOUND`.
+* El registro debe poder leerse con ese acceso; de lo contrario, la llamada falla con `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />
