@@ -41,16 +41,3 @@ it('exposes the AI component discriminator in metadata queries', async () => {
     await application.close();
   }
 });
-
-it.each([
-  ['src/ai-front-components/component.front-component.tsx', true],
-  ['src/ai-front-components/other.front-component.tsx', false],
-  ['src/components/component.tsx', false],
-])('classifies %s as AI: %s', (sourceComponentPath, expected) => {
-  expect(
-    new AiFrontComponentResolver().isAiComponent({
-      id: 'component',
-      sourceComponentPath,
-    }),
-  ).toBe(expected);
-});

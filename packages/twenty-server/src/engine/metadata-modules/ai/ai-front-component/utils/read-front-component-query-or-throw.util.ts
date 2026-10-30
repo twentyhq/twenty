@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import * as typescript from 'typescript';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,8 +42,11 @@ export const readFrontComponentQueryOrThrow = (
     !typescript.isObjectLiteralExpression(initializer)
   ) {
     throw new FrontComponentException(
-      'Component query must be a static object literal.',
+      doNotTranslate('Component query must be a static object literal.'),
       FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+      {
+        userFriendlyMessage: msg`Component query must be a static object literal.`,
+      },
     );
   }
 
@@ -53,8 +58,13 @@ export const readFrontComponentQueryOrThrow = (
           !typescript.isStringLiteral(property.name))
       ) {
         throw new FrontComponentException(
-          'Component query must contain only literal properties.',
+          doNotTranslate(
+            'Component query must contain only literal properties.',
+          ),
           FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          {
+            userFriendlyMessage: msg`Component query must contain only literal properties.`,
+          },
         );
       }
       const value = property.initializer;
@@ -71,8 +81,13 @@ export const readFrontComponentQueryOrThrow = (
           value.elements.map((element) => {
             if (!typescript.isStringLiteral(element)) {
               throw new FrontComponentException(
-                'Component query arrays must contain only strings.',
+                doNotTranslate(
+                  'Component query arrays must contain only strings.',
+                ),
                 FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+                {
+                  userFriendlyMessage: msg`Component query arrays must contain only strings.`,
+                },
               );
             }
             return element.text;
@@ -80,8 +95,11 @@ export const readFrontComponentQueryOrThrow = (
         ];
       }
       throw new FrontComponentException(
-        'Component query must contain only literal values.',
+        doNotTranslate('Component query must contain only literal values.'),
         FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        {
+          userFriendlyMessage: msg`Component query must contain only literal values.`,
+        },
       );
     }),
   );

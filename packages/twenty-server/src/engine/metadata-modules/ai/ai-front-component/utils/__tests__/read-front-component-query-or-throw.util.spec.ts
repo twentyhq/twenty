@@ -1,6 +1,8 @@
+import { setupI18n } from '@lingui/core';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
+import { FrontComponentException } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { readFrontComponentQueryOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query-or-throw.util';
 
 const QUERY = { objectName: 'company', select: ['name'], limit: 20 };
@@ -27,13 +29,44 @@ describe('readFrontComponentQueryOrThrow', () => {
   });
 
   it.each([
-    'getQuery()',
-    '{ objectName: "company", select: ["name"], limit: getLimit() }',
-    '{ objectName: "company", select: ["name"], limit: 101 }',
-    '{ ...otherQuery }',
-  ])('rejects dynamic or invalid query %s', (query) => {
+    ['getQuery()', 'Component query must be a static object literal.'],
+    [
+      '{ ...otherQuery }',
+      'Component query must contain only literal properties.',
+    ],
+    [
+      '{ objectName: "company", select: [fieldName], limit: 20 }',
+      'Component query arrays must contain only strings.',
+    ],
+    [
+      '{ objectName: "company", select: ["name"], limit: getLimit() }',
+      'Component query must contain only literal values.',
+    ],
+  ])('rejects dynamic query %s with a translatable error', (query, message) => {
+    let error: unknown;
+
+    try {
+      readFrontComponentQueryOrThrow(`export const componentQuery = ${query};`);
+    } catch (caughtError) {
+      error = caughtError;
+    }
+
+    expect(error).toBeInstanceOf(FrontComponentException);
+    if (!(error instanceof FrontComponentException)) {
+      throw error;
+    }
+    expect(
+      setupI18n({ locale: 'en', messages: { en: {} } })._(
+        error.userFriendlyMessage,
+      ),
+    ).toBe(message);
+  });
+
+  it('rejects query limits outside the allowed range', () => {
     expect(() =>
-      readFrontComponentQueryOrThrow(`export const componentQuery = ${query};`),
+      readFrontComponentQueryOrThrow(
+        'export const componentQuery = { objectName: "company", select: ["name"], limit: 101 };',
+      ),
     ).toThrow();
   });
 });
