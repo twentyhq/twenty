@@ -7,12 +7,13 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Overview
 
-Use the standalone CLI to generate an object, field, logic function, or front component:
+Use the standalone CLI to generate an object, field, validation rule, logic function, or front component:
 
 ```bash
 twenty app add
 twenty app add object --name invoice --name-plural invoices --no-input
 twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add validation-rule --name invoice-has-amount --object <object-uuid> --no-input
 twenty app add logic-function --name send-invoice --no-input
 twenty app add front-component --name invoice-panel --no-input
 ```
