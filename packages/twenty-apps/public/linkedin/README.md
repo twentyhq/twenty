@@ -6,7 +6,10 @@
 
 - **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
 - **Private by default**: teammates see who you talked to and when, never what was said
-- **Matched on the LinkedIn field**: a conversation links to the Person whose LinkedIn profile URL matches
+- **Your history too**: past conversations from the last 30 days, 90 days, year, or all of them are imported when you connect
+- **Matched on the LinkedIn field, then by name**: a conversation links to the Person whose LinkedIn profile URL matches, or to the only Person with the same name, whose LinkedIn field is then filled in
+- **People created for you**: people you message (or also those who message you) become People records, like with email
+- **You decide on namesakes**: when several People share a participant's name, the LinkedIn settings list them so you pick the right one
 - **One connection per member**: each teammate connects their own LinkedIn account in a few clicks
 
 ## 💳 Billing
@@ -21,7 +24,6 @@
 ## 📌 Heads up
 
 - **Read-only for now.** Messages are imported as they happen; reply from LinkedIn.
-- **New messages only.** Conversations from before you connected are not imported yet.
-- **No contacts created.** A sender with no matching Person is kept on the message but appears on no record until you add their LinkedIn URL to a Person.
+- **Settings are per member.** Import range, contact auto-creation and matching options live in **Settings → Applications → LinkedIn** and apply to your own connection.
 
 Self-hosting or developing the app? See [SETUP.md](./SETUP.md).

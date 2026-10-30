@@ -12,6 +12,8 @@ const mocks = vi.hoisted(() => ({
   kvSet: vi.fn(),
   getUnipileUser: vi.fn(),
   getUnipileChat: vi.fn(),
+  query: vi.fn(),
+  mutation: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -24,6 +26,13 @@ vi.mock('twenty-sdk/logic-function', () => ({
   ingestMessages: mocks.ingestMessages,
   reportConnectionAuthFailure: mocks.reportConnectionAuthFailure,
   kv: { get: mocks.kvGet, set: mocks.kvSet },
+}));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: class {
+    query = mocks.query;
+    mutation = mocks.mutation;
+  },
 }));
 
 vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
@@ -76,6 +85,8 @@ describe('linkedinHandleWebhookEventHandler', () => {
       { id: 'channel-id', handle: CHANNEL_HANDLE },
     ]);
     mocks.kvGet.mockResolvedValue(null);
+    mocks.query.mockResolvedValue({ people: { edges: [] } });
+    mocks.mutation.mockResolvedValue({ createPerson: { id: 'created-id' } });
     mocks.getUnipileUser.mockResolvedValue({
       ...DAPHNE,
       public_identifier: 'daphne-muller',
@@ -138,8 +149,22 @@ describe('linkedinHandleWebhookEventHandler', () => {
         role: 'TO',
         handle: 'https://www.linkedin.com/in/daphne-muller',
         displayName: 'Daphné Müller',
+        personId: 'created-id',
       },
     ]);
+    expect(mocks.mutation).toHaveBeenCalledExactlyOnceWith({
+      createPerson: {
+        __args: {
+          data: {
+            name: { firstName: 'Daphné', lastName: 'Müller' },
+            linkedinLink: {
+              primaryLinkUrl: 'https://www.linkedin.com/in/daphne-muller',
+            },
+          },
+        },
+        id: true,
+      },
+    });
   });
 
   it('ignores events of accounts no connection owns', async () => {

@@ -26,7 +26,7 @@ describe('removeLinkedinConnectionResources', () => {
     mocks.listMessageChannels.mockResolvedValue([{ id: 'channel-id' }]);
   });
 
-  it('deletes the channel, the Unipile account and the routing claim', async () => {
+  it('deletes the channel, the sync state, the Unipile account and the routing claim', async () => {
     await removeLinkedinConnectionResources({
       connectedAccountId: 'connection-id',
       unipileAccountId: 'acc_1',
@@ -38,13 +38,15 @@ describe('removeLinkedinConnectionResources', () => {
     expect(mocks.deleteUnipileAccountOrThrow).toHaveBeenCalledExactlyOnceWith(
       'acc_1',
     );
-    expect(mocks.kvDelete).toHaveBeenCalledExactlyOnceWith(
-      'unipile-account:acc_1',
-      { scope: 'SERVER' },
-    );
+    expect(mocks.kvDelete.mock.calls).toEqual([
+      ['linkedin-settings:connection-id'],
+      ['linkedin-person-reviews:connection-id'],
+      ['linkedin-history-import:connection-id'],
+      ['unipile-account:acc_1', { scope: 'SERVER' }],
+    ]);
   });
 
-  it('only deletes the channel when the Unipile account is unknown', async () => {
+  it('only deletes the channel and the sync state when the Unipile account is unknown', async () => {
     await removeLinkedinConnectionResources({
       connectedAccountId: 'connection-id',
       unipileAccountId: null,
@@ -54,6 +56,10 @@ describe('removeLinkedinConnectionResources', () => {
       'channel-id',
     );
     expect(mocks.deleteUnipileAccountOrThrow).not.toHaveBeenCalled();
-    expect(mocks.kvDelete).not.toHaveBeenCalled();
+    expect(mocks.kvDelete).toHaveBeenCalledTimes(3);
+    expect(mocks.kvDelete).not.toHaveBeenCalledWith(
+      'unipile-account:acc_1',
+      expect.anything(),
+    );
   });
 });

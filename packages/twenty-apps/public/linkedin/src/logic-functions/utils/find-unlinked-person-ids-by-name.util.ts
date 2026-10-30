@@ -1,0 +1,41 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
+import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
+
+// People that already have a LinkedIn link belong to someone else's profile, so they never match by name
+export const findUnlinkedPersonIdsByName = async ({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName: string;
+}): Promise<string[]> => {
+  if (!isNonEmptyString(firstName) || !isNonEmptyString(lastName)) {
+    return [];
+  }
+
+  const { people } = await new CoreApiClient().query({
+    people: {
+      __args: {
+        filter: {
+          name: {
+            firstName: { ilike: escapeSqlLikePattern(firstName) },
+            lastName: { ilike: escapeSqlLikePattern(lastName) },
+          },
+        },
+        first: 20,
+      },
+      edges: { node: { id: true, linkedinLink: { primaryLinkUrl: true } } },
+    },
+  });
+
+  return (people?.edges ?? [])
+    .map((edge: { node: LinkedinPersonRecord }) => edge.node)
+    .filter(
+      (person: LinkedinPersonRecord) =>
+        !isNonEmptyString(person.linkedinLink?.primaryLinkUrl),
+    )
+    .map((person: LinkedinPersonRecord) => person.id);
+};

@@ -1,6 +1,5 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
-  ingestMessages,
   listMessageChannels,
   reportConnectionAuthFailure,
 } from 'twenty-sdk/logic-function';
@@ -9,10 +8,11 @@ import { isDefined } from 'twenty-sdk/utils';
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-linkedin-connection-by-unipile-account-id.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
-import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
+import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
+import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
 import { withLinkedinPublicIdentifier } from 'src/logic-functions/utils/with-linkedin-public-identifier.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
-import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 
@@ -33,39 +33,44 @@ const ingestUnipileMessage = async ({
     return { handled: false, reason: 'Connection has no message channel' };
   }
 
-  const resolveUser = (user: UnipileUser) =>
-    withLinkedinPublicIdentifier({ unipileAccountId, user });
+  const settings = await getLinkedinSettings(connectedAccountId);
 
-  const counterparts = message.is_sender
-    ? await Promise.all(
-        getLinkedinChatCounterparts(
-          await getUnipileChat({
-            accountId: unipileAccountId,
-            chatId: message.chat_id,
-          }),
-        ).map(resolveUser),
-      )
-    : [];
+  const chat =
+    message.is_sender || settings.areGroupConversationsExcluded
+      ? await getUnipileChat({
+          accountId: unipileAccountId,
+          chatId: message.chat_id,
+        })
+      : undefined;
 
-  const sender =
-    !message.is_sender && isDefined(message.sender)
-      ? await resolveUser(message.sender)
-      : message.sender;
-
-  const ingestMessage = mapUnipileMessageToIngestMessage({
-    message: { ...message, sender },
-    channelHandle: channel.handle,
-    counterparts,
-  });
-
-  if (!isDefined(ingestMessage)) {
-    return { handled: false, reason: 'Message carries no content' };
+  if (
+    isDefined(chat) &&
+    settings.areGroupConversationsExcluded &&
+    isLinkedinGroupChat(chat)
+  ) {
+    return { handled: false, reason: 'Group conversations are excluded' };
   }
 
-  await ingestMessages({
-    messageChannelId: channel.id,
-    messages: [ingestMessage],
+  const counterparts =
+    message.is_sender && isDefined(chat)
+      ? getLinkedinChatCounterparts(chat)
+      : [message.sender].filter(isDefined);
+
+  const ingestedMessageCount = await ingestLinkedinMessages({
+    connectedAccountId,
+    channel,
+    settings,
+    counterparts: await Promise.all(
+      counterparts.map((user) =>
+        withLinkedinPublicIdentifier({ unipileAccountId, user }),
+      ),
+    ),
+    messages: [message],
   });
+
+  if (ingestedMessageCount === 0) {
+    return { handled: false, reason: 'Message carries no content' };
+  }
 
   return { handled: true };
 };

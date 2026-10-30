@@ -5,6 +5,7 @@ import {
   listMessageChannels,
 } from 'twenty-sdk/logic-function';
 
+import { getLinkedinConnectionKvKey } from 'src/logic-functions/utils/get-linkedin-connection-kv-key.util';
 import { deleteUnipileAccountOrThrow } from 'src/unipile/utils/delete-unipile-account-or-throw.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 
@@ -19,6 +20,12 @@ export const removeLinkedinConnectionResources = async ({
 
   await Promise.all(
     channels.map((channel) => deleteMessageChannel(channel.id)),
+  );
+
+  await Promise.all(
+    (['settings', 'person-reviews', 'history-import'] as const).map((kind) =>
+      kv.delete(getLinkedinConnectionKvKey({ kind, connectedAccountId })),
+    ),
   );
 
   if (isNonEmptyString(unipileAccountId)) {
