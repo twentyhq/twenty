@@ -105,7 +105,6 @@ const meta = {
       unassignedCount: 0,
       hasUnreadOpen: false,
       assignedToMeCount: 1,
-      hasUnreadAssignedToMe: false,
       snoozedCount: 0,
       doneCount: 0,
     },
@@ -293,7 +292,6 @@ export const Empty: Story = {
       unassignedCount: 0,
       hasUnreadOpen: false,
       assignedToMeCount: 0,
-      hasUnreadAssignedToMe: false,
       snoozedCount: 0,
       doneCount: 0,
     },
@@ -305,7 +303,6 @@ export const Unread: Story = {
     summary: {
       ...meta.args.summary,
       hasUnreadOpen: true,
-      hasUnreadAssignedToMe: true,
     },
   },
 };

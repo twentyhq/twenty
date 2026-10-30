@@ -9,7 +9,6 @@ export type AgentChatChannelSummary = Pick<
   | 'assignedToMeCount'
   | 'assignedCount'
   | 'unassignedCount'
-  | 'hasUnreadAssignedToMe'
   | 'snoozedCount'
   | 'doneCount'
 >;

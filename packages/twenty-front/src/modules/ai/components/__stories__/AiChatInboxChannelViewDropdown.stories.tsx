@@ -119,7 +119,6 @@ const meta = {
         assignedCount: 5,
         unassignedCount: 4,
         hasUnreadOpen: false,
-        hasUnreadAssignedToMe: false,
         snoozedCount: 0,
         doneCount: 0,
       },
