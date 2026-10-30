@@ -1,4 +1,4 @@
-import { isArray, isBoolean, isString } from '@sniptt/guards';
+import { isArray, isBoolean, isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { LOCAL_IMAGE_REPOSITORY } from '@/local/get-local-environment';
@@ -31,7 +31,7 @@ export const readLocalContainer = async ({
     })
   ).trim();
 
-  if (!id) {
+  if (!isNonEmptyString(id)) {
     return undefined;
   }
 
