@@ -14,6 +14,7 @@ import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
+import { type DragDropProviderBeforeDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderBeforeDragStartEvent';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -23,6 +24,7 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 type RecordDragDropContextProviderProps = {
+  canStartDrag?: () => boolean;
   getDroppableItemCount: (droppableId: string) => number;
   onRecordDrop: (result: RecordDragDropResult) => void;
   renderDragOverlay: (source: Draggable) => ReactNode;
@@ -30,6 +32,7 @@ type RecordDragDropContextProviderProps = {
 };
 
 export const RecordDragDropContextProvider = ({
+  canStartDrag,
   getDroppableItemCount,
   onRecordDrop,
   renderDragOverlay,
@@ -59,6 +62,14 @@ export const RecordDragDropContextProvider = ({
     endRecordDrag();
     setActiveDropTargetIndex(null);
     setActiveDroppableId(null);
+  };
+
+  const handleBeforeDragStart = (
+    event: DragDropProviderBeforeDragStartEvent<DragDropItemData>,
+  ) => {
+    if (isDefined(canStartDrag) && !canStartDrag()) {
+      event.preventDefault();
+    }
   };
 
   const handleDragStart = (
@@ -156,6 +167,7 @@ export const RecordDragDropContextProvider = ({
       <DragDropProvider<DragDropItemData>
         sensors={DND_KIT_SENSORS}
         plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onBeforeDragStart={handleBeforeDragStart}
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}

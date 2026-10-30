@@ -2,9 +2,7 @@ import { RecordBoardColumnHeader } from '@/object-record/record-board/record-boa
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordBoardColumnHeaderWrapperProps = {
@@ -18,11 +16,6 @@ export const RecordBoardColumnHeaderWrapper = ({
 }: RecordBoardColumnHeaderWrapperProps) => {
   const recordGroupDefinition = useAtomFamilyStateValue(
     recordGroupDefinitionFamilyState,
-    columnId,
-  );
-
-  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
-    recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );
 
@@ -41,7 +34,6 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: recordGroupDefinition,
-        recordIds: recordIndexRecordIdsByGroup,
         columnIndex,
       }}
     >

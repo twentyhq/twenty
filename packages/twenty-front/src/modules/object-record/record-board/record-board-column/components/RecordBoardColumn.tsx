@@ -7,9 +7,8 @@ import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/re
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDroppable } from '@dnd-kit/react';
 import { pointerIntersection } from '@dnd-kit/collision';
@@ -47,11 +46,6 @@ export const RecordBoardColumn = ({
     recordGroupDefinitionFamilyState,
     recordBoardColumnId,
   );
-  const recordIndexRecordIdsByGroup = useAtomComponentFamilyStateValue(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-    recordBoardColumnId,
-  );
-
   const shouldHide = useShouldHideRecordGroup(recordBoardColumnId);
 
   const { ref } = useDroppable({
@@ -62,23 +56,28 @@ export const RecordBoardColumn = ({
     accept: RECORD_BOARD_CARD_DND_TYPE,
   });
 
+  const columnContextValue = useMemo(
+    () =>
+      isDefined(recordGroupDefinition)
+        ? {
+            columnDefinition: recordGroupDefinition,
+            columnId: recordBoardColumnId,
+            columnIndex: recordBoardColumnIndex,
+          }
+        : null,
+    [recordGroupDefinition, recordBoardColumnId, recordBoardColumnIndex],
+  );
+
   if (shouldHide) {
     return null;
   }
 
-  if (!isDefined(recordGroupDefinition)) {
+  if (!isDefined(columnContextValue)) {
     return null;
   }
 
   return (
-    <RecordBoardColumnContext.Provider
-      value={{
-        columnDefinition: recordGroupDefinition,
-        columnId: recordBoardColumnId,
-        recordIds: recordIndexRecordIdsByGroup,
-        columnIndex: recordBoardColumnIndex,
-      }}
-    >
+    <RecordBoardColumnContext.Provider value={columnContextValue}>
       <StyledColumn ref={ref} data-record-board-column-id={recordBoardColumnId}>
         <RecordBoardColumnCardsContainer
           recordBoardColumnId={recordBoardColumnId}

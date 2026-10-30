@@ -1,18 +1,22 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { startTransition, useCallback } from 'react';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE } from '@/object-record/record-board/constants/RecordBoardFetchMoreThrottlingWaitTimeInMillisecondsToAvoidReactFreeze';
+import { RECORD_BOARD_FETCH_MORE_RETRY_BASE_DELAY_IN_MILLISECONDS } from '@/object-record/record-board/constants/RecordBoardFetchMoreRetryBaseDelayInMilliseconds';
+import { RECORD_BOARD_FETCH_MORE_RETRY_MAX_DELAY_IN_MILLISECONDS } from '@/object-record/record-board/constants/RecordBoardFetchMoreRetryMaxDelayInMilliseconds';
 import { RECORD_BOARD_QUERY_PAGE_SIZE } from '@/object-record/record-board/constants/RecordBoardQueryPageSize';
 
 import { recordBoardCurrentGroupByQueryOffsetComponentState } from '@/object-record/record-board/states/recordBoardCurrentGroupByQueryOffsetComponentState';
+import { recordBoardFetchMoreFailureCountComponentState } from '@/object-record/record-board/states/recordBoardFetchMoreFailureCountComponentState';
 import { recordBoardIsFetchingMoreComponentState } from '@/object-record/record-board/states/recordBoardIsFetchingMoreComponentState';
+import { recordBoardQueryGenerationComponentState } from '@/object-record/record-board/states/recordBoardQueryGenerationComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexGroupCommonQueryVariables } from '@/object-record/record-index/hooks/useRecordIndexGroupCommonQueryVariables';
 import { useRecordIndexGroupsRecordsLazyGroupBy } from '@/object-record/record-index/hooks/useRecordIndexGroupsRecordsLazyGroupBy';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { recordIndexRecordGroupsAreInInitialLoadingComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupsAreInInitialLoadingComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
@@ -24,7 +28,6 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { computeRecordGroupOptionsFilter } from '@/object-record/record-group/utils/computeRecordGroupOptionsFilter';
 import { sortByProperty } from '~/utils/array/sortByProperty';
-import { sleep } from '~/utils/sleep';
 
 export const useTriggerRecordBoardFetchMore = () => {
   const store = useStore();
@@ -52,6 +55,21 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordBoardCurrentGroupByQueryOffsetComponentState,
     );
 
+  const recordBoardQueryGenerationCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardQueryGenerationComponentState,
+    );
+
+  const recordBoardFetchMoreFailureCountCallbackState =
+    useAtomComponentStateCallbackState(
+      recordBoardFetchMoreFailureCountComponentState,
+    );
+
+  const recordIndexRecordGroupsAreInInitialLoadingCallbackState =
+    useAtomComponentStateCallbackState(
+      recordIndexRecordGroupsAreInInitialLoadingComponentState,
+    );
+
   const { executeRecordIndexGroupsRecordsLazyGroupBy } =
     useRecordIndexGroupsRecordsLazyGroupBy({
       groupByFieldMetadataItem: recordIndexGroupFieldMetadataItem,
@@ -67,149 +85,179 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordBoardIsFetchingMoreComponentState,
   );
 
+  // Ends early when an initial query starts, so a reset is never stuck behind a backoff
+  const waitForRetryDelayOrReset = useCallback(
+    (delayInMilliseconds: number) =>
+      new Promise<void>((resolve) => {
+        const finish = () => {
+          clearTimeout(timeout);
+          unsubscribe();
+          resolve();
+        };
+        const timeout = setTimeout(finish, delayInMilliseconds);
+        const unsubscribe = store.sub(
+          recordBoardQueryGenerationCallbackState,
+          finish,
+        );
+      }),
+    [store, recordBoardQueryGenerationCallbackState],
+  );
+
   const triggerRecordBoardFetchMore = useCallback(async () => {
-    const isAlreadyFetchingMore = store.get(recordBoardIsFetchingMore);
-
-    const cleanStateBeforeExit = () => {
-      store.set(recordBoardIsFetchingMore, false);
-    };
-
-    if (isAlreadyFetchingMore) {
+    if (
+      store.get(recordBoardIsFetchingMore) ||
+      store.get(recordIndexRecordGroupsAreInInitialLoadingCallbackState)
+    ) {
       return;
     }
 
     store.set(recordBoardIsFetchingMore, true);
 
-    const currentOffset = store.get(
-      recordBoardCurrentGroupByQueryOffsetCallbackState,
-    );
-
-    const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
-
-    const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
-      .filter((recordGroupDefinition) => {
-        return store.get(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-        );
-      })
-      .map((recordGroupDefinition) => recordGroupDefinition.value);
-
-    if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
-    const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
-      recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
-      recordGroupValues: recordGroupValuesThatShouldBeFetched,
-    });
-
-    const recordIndexGroupsRecordsGroupByLazyQueryResult =
-      await executeRecordIndexGroupsRecordsLazyGroupBy({
-        variables: {
-          offsetForRecords: newOffset,
-          filter: {
-            ...combinedFilters,
-            ...recordGroupOptionsFilter,
-          },
-        },
-      }).catch(() => null);
-
-    if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
-    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
-
-    const queryFieldName =
-      getGroupByQueryResultGqlFieldName(objectMetadataItem);
-
-    const groups =
-      recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
-
-    if (!isDefined(groups)) {
-      cleanStateBeforeExit();
-
-      return;
-    }
-
-    const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
-      sortByProperty('position'),
-    );
-
-    for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
-      const foundGroupInResult = groups.find(
-        (recordGroup: any) =>
-          (recordGroup.groupByDimensionValues[0] as string) ===
-          recordGroupDefinition.value,
+    try {
+      const currentOffset = store.get(
+        recordBoardCurrentGroupByQueryOffsetCallbackState,
       );
 
-      if (!isDefined(foundGroupInResult)) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
+      const newOffset = currentOffset + RECORD_BOARD_QUERY_PAGE_SIZE;
+
+      const recordGroupValuesThatShouldBeFetched = recordGroupDefinitions
+        .filter((recordGroupDefinition) => {
+          return store.get(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+          );
+        })
+        .map((recordGroupDefinition) => recordGroupDefinition.value);
+
+      if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
+        return;
       }
 
-      const newRecords = getRecordsFromRecordConnection({
-        recordConnection: foundGroupInResult,
+      const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
+        recordGroupFieldMetadata: recordIndexGroupFieldMetadataItem,
+        recordGroupValues: recordGroupValuesThatShouldBeFetched,
       });
 
-      if (!isNonEmptyArray(newRecords)) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          false,
-        );
-        continue;
+      const queryGenerationAtRequest = store.get(
+        recordBoardQueryGenerationCallbackState,
+      );
+
+      const recordIndexGroupsRecordsGroupByLazyQueryResult =
+        await executeRecordIndexGroupsRecordsLazyGroupBy({
+          variables: {
+            offsetForRecords: newOffset,
+            filter: {
+              ...combinedFilters,
+              ...recordGroupOptionsFilter,
+            },
+          },
+        }).catch(() => null);
+
+      if (
+        store.get(recordBoardQueryGenerationCallbackState) !==
+        queryGenerationAtRequest
+      ) {
+        return;
       }
 
-      const currentRecordIds = store.get(
-        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-      ) as string[];
+      if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
+        const failureCount =
+          store.get(recordBoardFetchMoreFailureCountCallbackState) + 1;
 
-      const newRecordIds = currentRecordIds.concat(
-        newRecords.map((record) => record.id),
-      );
+        store.set(recordBoardFetchMoreFailureCountCallbackState, failureCount);
 
-      store.set(
-        recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
-        newRecordIds,
-      );
-
-      upsertRecordsInStore({ partialRecords: newRecords });
-
-      if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
+        await waitForRetryDelayOrReset(
+          Math.min(
+            RECORD_BOARD_FETCH_MORE_RETRY_MAX_DELAY_IN_MILLISECONDS,
+            RECORD_BOARD_FETCH_MORE_RETRY_BASE_DELAY_IN_MILLISECONDS *
+              2 ** (failureCount - 1),
           ),
-          false,
         );
-      } else {
-        store.set(
-          recordBoardShouldFetchMoreInColumnFamilyCallbackState(
-            recordGroupDefinition.id,
-          ),
-          true,
-        );
+
+        return;
       }
 
-      await sleep(
-        RECORD_BOARD_FETCH_MORE_THROTTLING_WAIT_TIME_IN_MILLISECONDS_TO_AVOID_REACT_FREEZE,
+      store.set(recordBoardFetchMoreFailureCountCallbackState, 0);
+      store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
+
+      const queryFieldName =
+        getGroupByQueryResultGqlFieldName(objectMetadataItem);
+
+      const groups =
+        recordIndexGroupsRecordsGroupByLazyQueryResult.data?.[queryFieldName];
+
+      if (!isDefined(groups)) {
+        return;
+      }
+
+      const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
+        sortByProperty('position'),
       );
+
+      // One transition keeps the pointer responsive while every column mounts its new cards
+      startTransition(() => {
+        for (const recordGroupDefinition of sortedRecordGroupDefinitions) {
+          const foundGroupInResult = groups.find(
+            (recordGroup: any) =>
+              (recordGroup.groupByDimensionValues[0] as string) ===
+              recordGroupDefinition.value,
+          );
+
+          if (!isDefined(foundGroupInResult)) {
+            store.set(
+              recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+                recordGroupDefinition.id,
+              ),
+              false,
+            );
+            continue;
+          }
+
+          const newRecords = getRecordsFromRecordConnection({
+            recordConnection: foundGroupInResult,
+          });
+
+          if (!isNonEmptyArray(newRecords)) {
+            store.set(
+              recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+                recordGroupDefinition.id,
+              ),
+              false,
+            );
+            continue;
+          }
+
+          const currentRecordIds = store.get(
+            recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+          ) as string[];
+
+          // Offset pages re-rank server-side, so a card moved locally can come back on a later page
+          const newRecordIds = Array.from(
+            new Set([
+              ...currentRecordIds,
+              ...newRecords.map((record) => record.id),
+            ]),
+          );
+
+          store.set(
+            recordIndexRecordIdsByGroupCallbackState(recordGroupDefinition.id),
+            newRecordIds,
+          );
+
+          upsertRecordsInStore({ partialRecords: newRecords });
+
+          store.set(
+            recordBoardShouldFetchMoreInColumnFamilyCallbackState(
+              recordGroupDefinition.id,
+            ),
+            newRecords.length >= RECORD_BOARD_QUERY_PAGE_SIZE,
+          );
+        }
+      });
+    } finally {
+      store.set(recordBoardIsFetchingMore, false);
     }
-
-    cleanStateBeforeExit();
   }, [
     store,
     objectMetadataItem,
@@ -219,7 +267,11 @@ export const useTriggerRecordBoardFetchMore = () => {
     recordIndexRecordIdsByGroupCallbackState,
     recordBoardIsFetchingMore,
     recordBoardCurrentGroupByQueryOffsetCallbackState,
+    recordBoardQueryGenerationCallbackState,
+    recordBoardFetchMoreFailureCountCallbackState,
+    recordIndexRecordGroupsAreInInitialLoadingCallbackState,
     recordBoardShouldFetchMoreInColumnFamilyCallbackState,
+    waitForRetryDelayOrReset,
     combinedFilters,
     recordIndexGroupFieldMetadataItem,
   ]);
