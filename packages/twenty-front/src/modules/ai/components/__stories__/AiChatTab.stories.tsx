@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -139,6 +139,23 @@ export const FullPageNewChat: Story = {
   play: async ({ canvasElement }) => expectNewChatWelcome(canvasElement),
 };
 
+const focusRecipientRemoval = async ({
+  recipients,
+  label,
+}: {
+  recipients: HTMLElement;
+  label: string;
+}) => {
+  const recipientRemoval = within(recipients).getByRole('button', {
+    name: `Remove ${label}`,
+  });
+
+  recipientRemoval.focus();
+  await expect(recipientRemoval).toBeVisible();
+
+  return recipientRemoval;
+};
+
 export const InboxNewChat: Story = {
   ...FullPageNewChat,
   beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: true }),
@@ -152,12 +169,8 @@ export const InboxNewChat: Story = {
     const canvas = within(canvasElement);
     const recipients = canvas.getByRole('group', { name: 'Recipients' });
 
-    await userEvent.hover(within(recipients).getByText('Ada'));
-    await expect(
-      within(recipients).getByRole('button', { name: 'Remove Ada' }),
-    ).toBeVisible();
     await userEvent.click(
-      within(recipients).getByRole('button', { name: 'Remove Ada' }),
+      await focusRecipientRemoval({ recipients, label: 'Ada' }),
     );
     await expect(
       within(recipients).queryByRole('button', { name: 'Remove Ada' }),
@@ -183,7 +196,7 @@ export const InboxNewChat: Story = {
     await userEvent.click(within(popup).getByRole('button', { name: 'Ada' }));
     await expect(within(recipients).getByText('Ada')).toBeVisible();
     await userEvent.type(
-      within(popup).getByRole('textbox', { name: 'Search recipients' }),
+      within(popup).getByRole('searchbox', { name: 'Search recipients' }),
       'Jane',
     );
     await userEvent.click(
@@ -191,19 +204,16 @@ export const InboxNewChat: Story = {
     );
     await expect(within(recipients).getByText('Jane Doe')).toBeVisible();
     await userEvent.keyboard('{Escape}');
-    await userEvent.hover(within(recipients).getByText('Jane Doe'));
     await userEvent.click(
-      within(recipients).getByRole('button', { name: 'Remove Jane Doe' }),
+      await focusRecipientRemoval({ recipients, label: 'Jane Doe' }),
     );
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
-    const removeAda = within(recipients).getByRole('button', {
-      name: 'Remove Ada',
+    const removeAda = await focusRecipientRemoval({
+      recipients,
+      label: 'Ada',
     });
-
-    removeAda.focus();
-    await expect(removeAda).toBeVisible();
 
     await userEvent.click(
       within(recipients).getByRole('button', {
@@ -226,15 +236,16 @@ export const InboxNewChat: Story = {
       }),
     ).toBeDisabled();
     await expect(
-      within(pendingPopup).getByRole('textbox', { name: 'Search recipients' }),
+      within(pendingPopup).getByRole('searchbox', {
+        name: 'Search recipients',
+      }),
     ).toBeDisabled();
 
     for (const option of within(pendingPopup).getAllByRole('button')) {
       await expect(option).toBeDisabled();
     }
 
-    await userEvent.hover(within(recipients).getByText('Ada'));
-    await userEvent.click(removeAda);
+    fireEvent.click(removeAda);
     await expect(within(recipients).getByText('Ada')).toBeVisible();
     jotaiStore.set(isSendingMessageAtom, false);
     await waitFor(() => expect(removeAda).toBeEnabled());
