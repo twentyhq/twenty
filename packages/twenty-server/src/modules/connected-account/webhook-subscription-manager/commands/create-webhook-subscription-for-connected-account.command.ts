@@ -121,6 +121,8 @@ export class CreateWebhookSubscriptionForConnectedAccountCommand extends Provisi
         {
           delay: this.enqueueCursorMs,
           retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+          workspaceId,
+          isWorkspaceJob: true,
         },
       );
 

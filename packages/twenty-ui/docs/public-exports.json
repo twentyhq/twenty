@@ -1260,6 +1260,7 @@
   "utilities": {
     "reExports": [],
     "values": {
+      "getAvatarInitial": "utilities/utils/getAvatarInitial",
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
       "getSafeUrl": "utilities/utils/getSafeUrl",
