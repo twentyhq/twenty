@@ -1,13 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
-import { type RunApplicationHealthCheckMutation } from '~/generated-metadata/graphql';
-
-type ApplicationHealthCheckResult = NonNullable<
-  RunApplicationHealthCheckMutation['runApplicationHealthCheck']
->;
+import { type ApplicationHealthCheckResultFieldsFragment } from '~/generated-metadata/graphql';
 
 type ApplicationHealthBanner = {
-  status: ApplicationHealthCheckResult['status'];
+  status: ApplicationHealthCheckResultFieldsFragment['status'];
   title: string;
   description?: string;
   action?: { label: string; to: string };
@@ -17,7 +13,7 @@ export const getApplicationHealthBanner = ({
   healthCheckResult,
   fallbackLocation,
 }: {
-  healthCheckResult?: ApplicationHealthCheckResult | null;
+  healthCheckResult?: ApplicationHealthCheckResultFieldsFragment | null;
   fallbackLocation?: string;
 }): ApplicationHealthBanner | undefined => {
   if (!isDefined(healthCheckResult)) {

@@ -385,6 +385,7 @@ export const seedAccountGroupsStory = async () => {
         description: 'Records, transcribes and summarizes your meetings.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
+        runHealthCheckOnUserPreferences: false,
       },
       {
         id: GRANOLA_APPLICATION_ID,
@@ -393,6 +394,7 @@ export const seedAccountGroupsStory = async () => {
         description: 'Takes notes during your calls.',
         logoUrl: null,
         createdAt: '2024-01-01T00:00:00.000Z',
+        runHealthCheckOnUserPreferences: false,
       },
     ],
     featureFlags: [

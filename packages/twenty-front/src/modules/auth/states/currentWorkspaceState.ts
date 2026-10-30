@@ -62,6 +62,7 @@ export type CurrentWorkspace = Pick<
     | 'universalIdentifier'
     | 'logoUrl'
     | 'createdAt'
+    | 'runHealthCheckOnUserPreferences'
   >[];
 };
 
