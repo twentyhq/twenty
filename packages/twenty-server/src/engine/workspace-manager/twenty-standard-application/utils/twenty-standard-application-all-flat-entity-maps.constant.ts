@@ -19,6 +19,7 @@ import { buildStandardFlatPageLayoutWidgetMetadataMaps } from 'src/engine/worksp
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { computeStandardRecordFormFlatEntities } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util';
 import { buildStandardFlatPageLayoutMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/build-standard-flat-page-layout-metadata-maps.util';
+import { buildStandardFlatRelatedRecordPathMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/related-record-path/build-standard-flat-related-record-path-maps.util';
 import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/permission-flag/build-standard-flat-permission-flag-metadata-maps.util';
 import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
 import { buildStandardFlatSearchFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/build-standard-flat-search-field-metadata-maps.util';
@@ -277,6 +278,13 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
   });
 
+  const flatRelatedRecordPathMaps = buildStandardFlatRelatedRecordPathMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+  });
+
   const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,
     flatViewFieldGroupMaps,
@@ -298,6 +306,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatCommandMenuItemMaps,
     flatTimelineActivityTypeMaps,
     flatAgentChatChannelMaps,
+    flatRelatedRecordPathMaps,
   };
 
   const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =

@@ -130,6 +130,7 @@ export { getObjectPermissionUniversalIdentifier } from './deterministic-identifi
 export { getObjectUniversalIdentifier } from './deterministic-identifier/get-object-universal-identifier.util';
 export { getPageLayoutUniversalIdentifier } from './deterministic-identifier/get-page-layout-universal-identifier.util';
 export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
+export { getRelatedRecordPathUniversalIdentifier } from './deterministic-identifier/get-related-record-path-universal-identifier.util';
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
