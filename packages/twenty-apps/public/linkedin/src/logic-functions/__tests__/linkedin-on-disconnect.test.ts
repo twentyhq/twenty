@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  getConnection: vi.fn(),
+  listConnections: vi.fn(),
   removeLinkedinConnectionResources: vi.fn(),
 }));
 
@@ -10,7 +10,7 @@ vi.mock('twenty-sdk/define', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  getConnection: mocks.getConnection,
+  listConnections: mocks.listConnections,
 }));
 
 vi.mock(
@@ -32,17 +32,38 @@ const PAYLOAD = {
 describe('linkedinOnDisconnectHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
   it('removes the Unipile account of the connection', async () => {
-    mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
+    mocks.listConnections.mockResolvedValue([
+      { id: 'other-connection-id', externalAccountId: 'acc_2' },
+      { id: 'connection-id', externalAccountId: 'acc_1' },
+    ]);
 
     await linkedinOnDisconnectHandler(PAYLOAD);
 
-    expect(mocks.getConnection).toHaveBeenCalledExactlyOnceWith(
-      'connection-id',
-    );
+    expect(mocks.listConnections).toHaveBeenCalledExactlyOnceWith({
+      providerName: 'linkedin',
+    });
+    expect(
+      mocks.removeLinkedinConnectionResources,
+    ).toHaveBeenCalledExactlyOnceWith({
+      connectedAccountId: 'connection-id',
+      unipileAccountId: 'acc_1',
+    });
+  });
+
+  it('removes the Unipile account of a connection whose auth failed', async () => {
+    mocks.listConnections.mockResolvedValue([
+      {
+        id: 'connection-id',
+        externalAccountId: 'acc_1',
+        authFailedAt: '2026-10-30T09:00:00.000Z',
+      },
+    ]);
+
+    await linkedinOnDisconnectHandler(PAYLOAD);
+
     expect(
       mocks.removeLinkedinConnectionResources,
     ).toHaveBeenCalledExactlyOnceWith({
@@ -52,7 +73,7 @@ describe('linkedinOnDisconnectHandler', () => {
   });
 
   it('still removes the channel once the connection is gone', async () => {
-    mocks.getConnection.mockRejectedValue(new Error('Connection not found'));
+    mocks.listConnections.mockResolvedValue([]);
 
     await linkedinOnDisconnectHandler(PAYLOAD);
 
@@ -62,5 +83,14 @@ describe('linkedinOnDisconnectHandler', () => {
       connectedAccountId: 'connection-id',
       unipileAccountId: null,
     });
+  });
+
+  it('fails when the connections cannot be listed', async () => {
+    mocks.listConnections.mockRejectedValue(new Error('Network error'));
+
+    await expect(linkedinOnDisconnectHandler(PAYLOAD)).rejects.toThrow(
+      'Network error',
+    );
+    expect(mocks.removeLinkedinConnectionResources).not.toHaveBeenCalled();
   });
 });
