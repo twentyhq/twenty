@@ -6,7 +6,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { text } from 'stream/consumers';
 
-import { getAiFrontComponentSourcePath } from 'twenty-shared/application';
+import { getAiFrontComponentSourcePath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-ai-front-component-source-path.util';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';

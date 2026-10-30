@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -14,6 +13,7 @@ import { type FileResponse } from 'src/engine/core-modules/file/types/file-respo
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getFrontComponentSharedDependenciesPath } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/get-front-component-shared-dependencies-path.util';
+import { validateFrontComponentSharedDependenciesChecksumOrThrow } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/validate-front-component-shared-dependencies-checksum-or-throw.util';
 
 const SHARED_DEPENDENCIES_BUNDLE_MIME_TYPE = 'application/javascript';
 
@@ -99,7 +99,7 @@ export class FrontComponentSharedDependenciesService {
     };
   }
 
-  async saveBuiltSharedDependencies({
+  async saveBuiltSharedDependenciesOrThrow({
     applicationId,
     workspaceId,
     source,
@@ -110,12 +110,10 @@ export class FrontComponentSharedDependenciesService {
     source: string;
     checksum: string;
   }) {
-    if (createHash('sha256').update(source).digest('hex') !== checksum) {
-      throw new ApplicationException(
-        'Shared dependencies checksum mismatch',
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
+    validateFrontComponentSharedDependenciesChecksumOrThrow({
+      source,
+      checksum,
+    });
 
     const application =
       await this.applicationService.findOneApplicationWithRelationsOrThrow({

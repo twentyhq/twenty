@@ -9,6 +9,7 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { AiFrontComponentController } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
+import { AiFrontComponentResolver } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.resolver';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
     FrontComponentModule,
   ],
   controllers: [AiFrontComponentController],
-  providers: [AiFrontComponentService],
+  providers: [AiFrontComponentService, AiFrontComponentResolver],
 })
 export class AiFrontComponentModule {}

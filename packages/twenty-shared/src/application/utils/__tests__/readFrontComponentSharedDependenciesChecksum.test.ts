@@ -12,7 +12,12 @@ describe('readFrontComponentSharedDependenciesChecksum', () => {
     ).toBe(CHECKSUM);
   });
 
+  it('reads a banner without a trailing newline', () => {
+    expect(readFrontComponentSharedDependenciesChecksum(BANNER)).toBe(CHECKSUM);
+  });
+
   it.each([
+    '',
     'export default () => {};',
     '\n' + BANNER,
     BANNER + 'extra\n',

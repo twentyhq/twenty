@@ -2538,6 +2538,7 @@ type FrontComponent {
   description: String
   frontComponentSharedDependenciesChecksum: String
   id: UUID!
+  isAiComponent: Boolean!
   isHeadless: Boolean!
   name: String!
   sourceComponentPath: String!

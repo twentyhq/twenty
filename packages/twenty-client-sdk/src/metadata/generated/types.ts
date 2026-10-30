@@ -5262,6 +5262,9 @@ export default {
             "id": [
                 528
             ],
+            "isAiComponent": [
+                4
+            ],
             "isHeadless": [
                 4
             ],

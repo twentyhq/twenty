@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, http, HttpResponse } from 'msw';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { FrontComponentRenderer } from '@/front-components/components/FrontComponentRenderer';
 import { AiWorkspaceFrontComponent } from '@/front-components/components/AiWorkspaceFrontComponent';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -171,5 +172,41 @@ export const CorruptComponentSource: Story = {
     expect(
       within(canvasElement).queryByText('Visible records: 0'),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const FromMetadata: Story = {
+  ...ViewerData,
+  render: ({ frontComponentId }) => (
+    <FrontComponentRenderer frontComponentId={frontComponentId} />
+  ),
+  parameters: {
+    msw: {
+      handlers: {
+        ...ViewerData.parameters?.msw.handlers,
+        metadata: graphql.query('FindOneFrontComponent', ({ variables }) =>
+          HttpResponse.json({
+            data: {
+              frontComponent: {
+                __typename: 'FrontComponent',
+                id: variables.id,
+                name: 'AI component',
+                applicationId: APPLICATION_ID,
+                applicationName: 'Workspace',
+                applicationGrantedCapabilities: [],
+                builtComponentChecksum: COMPONENT_CHECKSUM,
+                sourceComponentPath: 'src/renamed-component.tsx',
+                isAiComponent: true,
+                isHeadless: false,
+                usesSdkClient: false,
+                frontComponentSharedDependenciesChecksum:
+                  SHARED_DEPENDENCIES_CHECKSUM,
+                applicationVariables: {},
+              },
+            },
+          }),
+        ),
+      },
+    },
   },
 };

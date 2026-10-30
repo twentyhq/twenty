@@ -10,6 +10,7 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       applicationGrantedCapabilities
       builtComponentChecksum
       sourceComponentPath
+      isAiComponent
       isHeadless
       usesSdkClient
       frontComponentSharedDependenciesChecksum
