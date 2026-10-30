@@ -1,6 +1,7 @@
 import { type AiModelTier } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { type AgentChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
@@ -23,15 +24,18 @@ export const useOpenAskAiPageWithPreprompt = () => {
     agentChatUserSelectedModelTierState,
   );
   const { chatTier } = useWorkspaceAiModelTiers();
+  const { uploadFiles } = useAiChatFileUpload();
 
-  const openAskAiPageWithPreprompt = ({
+  const openAskAiPageWithPreprompt = async ({
     serializedDocument,
     mode = 'PREFILL',
     model,
+    files,
   }: {
     serializedDocument: string;
     mode?: AgentChatPrepromptMode;
     model?: AgentChatModelPreselection;
+    files?: File[];
   }) => {
     switchToNewChat();
 
@@ -42,7 +46,18 @@ export const useOpenAskAiPageWithPreprompt = () => {
       setAgentChatUserSelectedModelTier(tier === chatTier ? null : tier);
     }
 
-    stageAiChatPreprompt({ serializedDocument, mode });
+    if (!isNonEmptyArray(files)) {
+      stageAiChatPreprompt({ serializedDocument, mode });
+
+      return;
+    }
+
+    const uploadedFiles = await uploadFiles(files);
+
+    stageAiChatPreprompt({
+      serializedDocument,
+      mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',
+    });
   };
 
   return { openAskAiPageWithPreprompt };

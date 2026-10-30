@@ -49,10 +49,7 @@ export const useOpenObjectRecordsSpreadsheetImportDialog = (
   });
 
   const openObjectRecordsSpreadsheetImportDialog = (
-    options?: Omit<
-      SpreadsheetImportDialogOptions,
-      'fields' | 'isOpen' | 'onClose'
-    >,
+    options?: Pick<SpreadsheetImportDialogOptions, 'uploadStepHook'>,
   ) => {
     const availableFieldMetadataItemsToImport =
       spreadsheetImportFilterAvailableFieldMetadataItems(

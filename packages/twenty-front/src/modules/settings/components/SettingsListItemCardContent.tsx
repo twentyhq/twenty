@@ -5,6 +5,7 @@ import { type ReactNode, useId } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -74,6 +75,7 @@ type SettingsListItemCardContentProps = {
   label: string;
   description?: string;
   divider?: boolean;
+  avatarUrl?: string | null;
   LeftIcon?: IconComponent;
   LeftIconColor?: string;
   onClick?: () => void;
@@ -85,6 +87,7 @@ export const SettingsListItemCardContent = ({
   label,
   description,
   divider,
+  avatarUrl,
   LeftIcon,
   LeftIconColor,
   onClick,
@@ -113,6 +116,15 @@ export const SettingsListItemCardContent = ({
             onClick={onClick}
           />
         )
+      )}
+      {avatarUrl !== undefined && (
+        <Avatar
+          src={avatarUrl}
+          name={label}
+          colorSeed={label}
+          size="md"
+          shape="square"
+        />
       )}
       {isDefined(LeftIcon) && (
         <LeftIcon

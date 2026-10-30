@@ -38,6 +38,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   items: ListItem[];
   getItemLabel: (item: ListItem) => string;
   getItemDescription?: (item: ListItem) => string;
+  getItemAvatarUrl?: (item: ListItem) => string | null;
   hasFooter?: boolean;
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
@@ -58,6 +59,7 @@ export const SettingsListCard = <
   items,
   getItemLabel,
   getItemDescription,
+  getItemAvatarUrl,
   hasFooter,
   isLoading,
   onRowClick,
@@ -78,6 +80,7 @@ export const SettingsListCard = <
       {items.map((item, index) => (
         <SettingsListItemCardContent
           key={item.id}
+          avatarUrl={getItemAvatarUrl?.(item)}
           LeftIcon={RowIconFn ? RowIconFn(item) : RowIcon}
           LeftIconColor={RowIconColor}
           label={getItemLabel(item)}
