@@ -2,10 +2,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
 
-const UNIPILE_CHAT_COUNT_PAGE_SIZE = 100;
+// Unipile's documented default; larger pages are not accepted by every provider
+const UNIPILE_CHAT_COUNT_PAGE_SIZE = 20;
 
 // Guards against a provider that keeps returning a cursor
-const UNIPILE_CHAT_COUNT_MAX_PAGES = 500;
+const UNIPILE_CHAT_COUNT_MAX_PAGES = 2500;
 
 const countUnipileInboxChats = async ({
   accountId,

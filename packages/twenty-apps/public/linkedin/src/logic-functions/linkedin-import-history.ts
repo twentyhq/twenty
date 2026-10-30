@@ -220,7 +220,7 @@ export const linkedinImportHistoryHandler = async (
       },
     });
 
-    throw error;
+    throw error instanceof Error ? error : new Error(importError.message);
   }
 };
 

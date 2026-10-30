@@ -236,7 +236,7 @@ describe('linkedinImportHistoryHandler', () => {
 
     await expect(
       linkedinImportHistoryHandler(PAYLOAD, { retryCount: 0, maxRetries: 3 }),
-    ).rejects.toEqual({ status: 422, title: 'Invalid cursor' });
+    ).rejects.toThrow('Invalid cursor');
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(
       expect.objectContaining({
         status: 'FAILED',

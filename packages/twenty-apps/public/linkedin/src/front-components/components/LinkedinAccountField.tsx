@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useId } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconBrandLinkedin } from 'twenty-ui/icon';
-import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
 
 const StyledContainer = styled.div`
   border-bottom: 1px solid ${() => themeCssVariables.border.color.light};
@@ -33,6 +33,12 @@ const StyledValue = styled.div`
   padding: 0 ${() => themeCssVariables.spacing[2]};
 `;
 
+const StyledLogo = styled.img`
+  flex-shrink: 0;
+  height: ${() => themeCssVariables.icon.size.md};
+  width: ${() => themeCssVariables.icon.size.md};
+`;
+
 const StyledText = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -60,10 +66,7 @@ export const LinkedinAccountField = ({
     <StyledContainer>
       <StyledLabel id={labelId}>{t('Account')}</StyledLabel>
       <StyledValue aria-labelledby={labelId}>
-        <IconBrandLinkedin
-          size={THEME_COMMON.icon.size.md}
-          stroke={THEME_COMMON.icon.stroke.md}
-        />
+        <StyledLogo src={getPublicAssetUrl('linkedin-logomark.svg')} alt="" />
         <StyledText>
           {name} <StyledHandle>· {handle}</StyledHandle>
         </StyledText>

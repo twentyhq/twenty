@@ -43,7 +43,7 @@ describe('countUnipileChats', () => {
       accountId: 'acc_1',
       inboxId: 'inbox-1',
       cursor: 'cursor-3',
-      limit: 100,
+      limit: 20,
     });
   });
 
