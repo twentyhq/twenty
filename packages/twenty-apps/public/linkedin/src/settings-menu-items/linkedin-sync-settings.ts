@@ -10,7 +10,7 @@ export default defineSettingsMenuItem({
   universalIdentifier: LINKEDIN_SETTINGS_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   frontComponentUniversalIdentifier:
     LINKEDIN_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  title: 'Messaging',
-  icon: 'IconMail',
+  title: 'Sync',
+  icon: 'IconRefresh',
   scope: 'USER',
 });
