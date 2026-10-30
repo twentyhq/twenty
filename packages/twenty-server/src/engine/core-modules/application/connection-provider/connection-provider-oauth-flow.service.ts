@@ -1,43 +1,43 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from "typeorm";
+import { IsNull, Repository } from 'typeorm';
 
-import { type IdentifiedAccount } from "twenty-shared/application";
-import { ConnectedAccountProvider } from "twenty-shared/types";
-import { isDefined } from "twenty-shared/utils";
+import { type IdentifiedAccount } from 'twenty-shared/application';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AppConnectionAccessService } from "src/engine/core-modules/application/connection-provider/app-connection-access.service";
-import { ConnectionProviderExceptionCode } from "src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum";
-import { ConnectionProviderLifecycleHookService } from "src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service";
-import { type ConnectionProviderEntity } from "src/engine/core-modules/application/connection-provider/connection-provider.entity";
-import { ConnectionProviderException } from "src/engine/core-modules/application/connection-provider/connection-provider.exception";
-import { ConnectionProviderService } from "src/engine/core-modules/application/connection-provider/connection-provider.service";
-import { type TokenExchangeResponse } from "src/engine/core-modules/application/connection-provider/types/token-exchange-response.type";
+import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
+import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import {
   assertOAuthProvider,
   type OAuthConnectionProvider,
-} from "src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util";
-import { buildAppOAuthCallbackUrl } from "src/engine/core-modules/application/connection-provider/utils/build-callback-url.util";
-import { computePkceChallenge } from "src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util";
-import { exchangeCodeForToken } from "src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util";
-import { extractEmailFromIdTokenClaims } from "src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util";
-import { generatePkceVerifier } from "src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util";
-import { isAcceptableExpiresInSeconds } from "src/engine/core-modules/application/connection-provider/utils/parse-token-response.util";
-import { type AppOAuthStateJwtPayload } from "src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type";
-import { JwtTokenTypeEnum } from "src/engine/core-modules/auth/types/jwt-token-type.enum";
-import { JwtWrapperService } from "src/engine/core-modules/jwt/services/jwt-wrapper.service";
-import { SecureHttpClientService } from "src/engine/core-modules/secure-http-client/secure-http-client.service";
-import { TwentyConfigService } from "src/engine/core-modules/twenty-config/twenty-config.service";
-import { UserEntity } from "src/engine/core-modules/user/user.entity";
+} from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
+import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
+import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
+import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
+import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
+import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
+import { isAcceptableExpiresInSeconds } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
+import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   ConnectedAccountEntity,
   type ConnectedAccountScope,
-} from "src/engine/metadata-modules/connected-account/entities/connected-account.entity";
-import { ConnectedAccountTokenEncryptionService } from "src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service";
-import { buildConnectedAccountUsableByCallerWhere } from "src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util";
+} from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 
-const STATE_JWT_EXPIRES_IN = "10m";
+const STATE_JWT_EXPIRES_IN = '10m';
 
 type AuthorizeArgs = {
   connectionProvider: ConnectionProviderEntity;
@@ -94,7 +94,9 @@ export class ConnectionProviderOAuthFlowService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async startAuthorizationFlow(args: AuthorizeArgs): Promise<{ authorizationUrl: string }> {
+  async startAuthorizationFlow(
+    args: AuthorizeArgs,
+  ): Promise<{ authorizationUrl: string }> {
     const { connectionProvider, workspaceId, userId, userWorkspaceId } = args;
 
     assertOAuthProvider(connectionProvider);
@@ -112,7 +114,8 @@ export class ConnectionProviderOAuthFlowService {
       scope: connectionProvider.scope,
     });
 
-    const { clientId } = await this.oauthProviderService.getClientCredentials(connectionProvider);
+    const { clientId } =
+      await this.oauthProviderService.getClientCredentials(connectionProvider);
 
     const { authorizationEndpoint, scopes, authorizationParams, usePkce } =
       connectionProvider.oauthConfig;
@@ -136,15 +139,18 @@ export class ConnectionProviderOAuthFlowService {
 
     const authorizationUrl = new URL(authorizationEndpoint);
 
-    authorizationUrl.searchParams.set("client_id", clientId);
-    authorizationUrl.searchParams.set("redirect_uri", callbackUrl);
-    authorizationUrl.searchParams.set("response_type", "code");
-    authorizationUrl.searchParams.set("scope", scopes.join(" "));
-    authorizationUrl.searchParams.set("state", state);
+    authorizationUrl.searchParams.set('client_id', clientId);
+    authorizationUrl.searchParams.set('redirect_uri', callbackUrl);
+    authorizationUrl.searchParams.set('response_type', 'code');
+    authorizationUrl.searchParams.set('scope', scopes.join(' '));
+    authorizationUrl.searchParams.set('state', state);
 
     if (codeVerifier) {
-      authorizationUrl.searchParams.set("code_challenge", computePkceChallenge(codeVerifier));
-      authorizationUrl.searchParams.set("code_challenge_method", "S256");
+      authorizationUrl.searchParams.set(
+        'code_challenge',
+        computePkceChallenge(codeVerifier),
+      );
+      authorizationUrl.searchParams.set('code_challenge_method', 'S256');
     }
 
     for (const [key, value] of Object.entries(authorizationParams ?? {})) {
@@ -168,7 +174,8 @@ export class ConnectionProviderOAuthFlowService {
       connectionProviderId: provider.id,
       workspaceId: statePayload.workspaceId,
       userWorkspaceId: statePayload.userWorkspaceId,
-      reconnectingConnectedAccountId: statePayload.reconnectingConnectedAccountId,
+      reconnectingConnectedAccountId:
+        statePayload.reconnectingConnectedAccountId,
     });
 
     await this.validateCallerCanManageConnection({
@@ -206,11 +213,12 @@ export class ConnectionProviderOAuthFlowService {
       );
     }
 
-    const identifiedAccount = await this.connectionProviderLifecycleHookService.runIdentifyAccount({
-      provider,
-      workspaceId: statePayload.workspaceId,
-      accessToken: tokenResponse.accessToken,
-    });
+    const identifiedAccount =
+      await this.connectionProviderLifecycleHookService.runIdentifyAccount({
+        provider,
+        workspaceId: statePayload.workspaceId,
+        accessToken: tokenResponse.accessToken,
+      });
 
     const connectedAccount = await this.persistConnectedAccount({
       provider,
@@ -220,7 +228,8 @@ export class ConnectionProviderOAuthFlowService {
       userId: statePayload.userId,
       userWorkspaceId: statePayload.userWorkspaceId,
       scope: statePayload.scope,
-      reconnectingConnectedAccountId: statePayload.reconnectingConnectedAccountId,
+      reconnectingConnectedAccountId:
+        statePayload.reconnectingConnectedAccountId,
     });
 
     await this.connectionProviderLifecycleHookService.dispatchOnConnect({
@@ -247,7 +256,7 @@ export class ConnectionProviderOAuthFlowService {
     scope: ConnectedAccountScope;
   }): Promise<void> {
     await this.appConnectionAccessService.validateCallerCanManageConnection({
-      isWorkspaceShared: scope === "WORKSPACE",
+      isWorkspaceShared: scope === 'WORKSPACE',
       workspaceId,
       userWorkspaceId,
     });
@@ -317,22 +326,24 @@ export class ConnectionProviderOAuthFlowService {
       )) as AppOAuthStateJwtPayload;
 
       if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
-        throw new Error("Wrong JWT type for OAuth state");
+        throw new Error('Wrong JWT type for OAuth state');
       }
 
       return verified;
     } catch (error) {
-      this.logger.warn(`Rejected OAuth state: ${(error as Error).message ?? "unknown reason"}`);
+      this.logger.warn(
+        `Rejected OAuth state: ${(error as Error).message ?? 'unknown reason'}`,
+      );
 
       throw new ConnectionProviderException(
-        "OAuth state signature invalid or expired",
+        'OAuth state signature invalid or expired',
         ConnectionProviderExceptionCode.INVALID_STATE,
       );
     }
   }
 
   private getServerUrl(): string {
-    return this.twentyConfigService.get("SERVER_URL");
+    return this.twentyConfigService.get('SERVER_URL');
   }
 
   private async resolveConnectedAccountHandle({
@@ -354,7 +365,7 @@ export class ConnectionProviderOAuthFlowService {
 
     if (!isDefined(user)) {
       throw new ConnectionProviderException(
-        "User not found",
+        'User not found',
         ConnectionProviderExceptionCode.INVALID_STATE,
       );
     }
@@ -384,7 +395,9 @@ export class ConnectionProviderOAuthFlowService {
     const { encryptedAccessToken, encryptedRefreshToken } =
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
         accessToken: tokenResponse.accessToken,
-        refreshToken: isDefined(tokenResponse.refreshToken) ? tokenResponse.refreshToken : null,
+        refreshToken: isDefined(tokenResponse.refreshToken)
+          ? tokenResponse.refreshToken
+          : null,
         workspaceId,
       });
 
@@ -411,7 +424,10 @@ export class ConnectionProviderOAuthFlowService {
       scope,
       handle,
       externalAccountId: identifiedAccount?.externalAccountId ?? null,
-      ...buildOidcTokenClaimsColumnUpdate(existingClaims, tokenResponse.expiresIn),
+      ...buildOidcTokenClaimsColumnUpdate(
+        existingClaims,
+        tokenResponse.expiresIn,
+      ),
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {

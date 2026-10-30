@@ -1,20 +1,20 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from "twenty-shared/utils";
+import { isDefined } from 'twenty-shared/utils';
 
-import { ConnectionProviderException } from "src/engine/core-modules/application/connection-provider/connection-provider.exception";
-import { ConnectionProviderService } from "src/engine/core-modules/application/connection-provider/connection-provider.service";
-import { assertOAuthProvider } from "src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util";
-import { exchangeRefreshTokenForToken } from "src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util";
-import { OAuthTokenEndpointError } from "src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util";
-import { type PlaintextString } from "src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type";
-import { SecureHttpClientService } from "src/engine/core-modules/secure-http-client/secure-http-client.service";
-import { type ConnectedAccountEntity } from "src/engine/metadata-modules/connected-account/entities/connected-account.entity";
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
+import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
+import { OAuthTokenEndpointError } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
-} from "src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception";
-import { type ConnectedAccountPlaintextTokens } from "src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service";
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
 export class AppOAuthRefreshAccessTokenService {
@@ -67,7 +67,8 @@ export class AppOAuthRefreshAccessTokenService {
 
       // Only 4xx token-endpoint responses (esp. invalid_grant) imply the
       // user must reconnect — 5xx and transport errors stay transient.
-      const isTransient = !(error instanceof OAuthTokenEndpointError) || error.status >= 500;
+      const isTransient =
+        !(error instanceof OAuthTokenEndpointError) || error.status >= 500;
 
       throw new ConnectedAccountRefreshAccessTokenException(
         `App OAuth refresh failed: ${(error as Error).message}`,
