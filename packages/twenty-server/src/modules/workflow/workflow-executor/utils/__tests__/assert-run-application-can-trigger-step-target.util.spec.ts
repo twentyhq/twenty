@@ -54,31 +54,33 @@ describe('assertRunApplicationCanTriggerStepTarget', () => {
     );
   });
 
-  it.each([
-    {
-      label: 'the workspace custom application',
-      application: {
-        id: WORKSPACE_CUSTOM_APPLICATION_ID,
-        name: 'Workspace',
-        universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ID,
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
-      },
-    },
-    {
-      label: 'the standard application',
-      application: {
-        id: 'twenty-standard-app-id',
-        name: 'Standard',
-        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
-      },
-    },
-  ])(
-    'lets a run of $label use the functions and agents of another application',
-    ({ application }) => {
-      expect(() =>
-        assertTarget({ application, targetApplicationId: 'installed-app-id' }),
-      ).not.toThrow();
-    },
-  );
+  it('lets a run of the workspace custom application use the functions and agents of another application', () => {
+    expect(() =>
+      assertTarget({
+        application: {
+          id: WORKSPACE_CUSTOM_APPLICATION_ID,
+          name: 'Workspace',
+          universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ID,
+          sourceType: ApplicationRegistrationSourceType.LOCAL,
+        },
+        targetApplicationId: 'installed-app-id',
+      }),
+    ).not.toThrow();
+  });
+
+  it('refuses a run of the standard application using the functions and agents of another application', () => {
+    expect(() =>
+      assertTarget({
+        application: {
+          id: 'twenty-standard-app-id',
+          name: 'Standard',
+          universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+          sourceType: ApplicationRegistrationSourceType.LOCAL,
+        },
+        targetApplicationId: 'installed-app-id',
+      }),
+    ).toThrow(
+      'Logic function "greet" belongs to another application than "Standard"',
+    );
+  });
 });

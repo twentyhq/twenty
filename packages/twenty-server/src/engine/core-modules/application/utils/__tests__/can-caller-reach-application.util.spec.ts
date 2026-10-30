@@ -63,24 +63,13 @@ describe('canCallerReachApplication', () => {
     });
   });
 
-  describe.each([
-    {
-      label: 'the workspace custom application',
-      callingApplication: {
-        id: WORKSPACE_CUSTOM_APPLICATION_ID,
-        universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ID,
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
-      },
-    },
-    {
-      label: 'the standard application',
-      callingApplication: {
-        id: STANDARD_APPLICATION_ID,
-        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        sourceType: ApplicationRegistrationSourceType.LOCAL,
-      },
-    },
-  ])('with $label as caller', ({ callingApplication }) => {
+  describe('with the workspace custom application as caller', () => {
+    const callingApplication = {
+      id: WORKSPACE_CUSTOM_APPLICATION_ID,
+      universalIdentifier: WORKSPACE_CUSTOM_APPLICATION_ID,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+    };
+
     it.each(['read', 'trigger'] as const)(
       'should %s another application',
       (access) => {
@@ -112,6 +101,34 @@ describe('canCallerReachApplication', () => {
       ).toBe(false);
     });
   });
+
+  it.each(['read', 'trigger'] as const)(
+    'should let the standard application %s its own application only',
+    (access) => {
+      const callingApplication = {
+        id: STANDARD_APPLICATION_ID,
+        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+      };
+
+      expect(
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: STANDARD_APPLICATION_ID,
+          access,
+          workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+        }),
+      ).toBe(true);
+      expect(
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: OTHER_APPLICATION_ID,
+          access,
+          workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+        }),
+      ).toBe(false);
+    },
+  );
 
   it("should confine the workspace custom application when the workspace's custom application is unknown", () => {
     expect(

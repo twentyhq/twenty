@@ -3,7 +3,6 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ApplicationCallerAccess } from 'src/engine/core-modules/application/types/application-caller-access.type';
 import { type ReachableApplications } from 'src/engine/core-modules/application/types/reachable-applications.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
-import { isTwentyStandardApplication } from 'src/engine/core-modules/application/utils/is-twenty-standard-application.util';
 import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
 
 // Sessions and API keys reach every application, behind their permission
@@ -28,17 +27,13 @@ export const getReachableApplications = ({
 
   switch (access) {
     case 'read':
-    case 'trigger': {
-      // The standard application shares this reach while automated workspace
-      // workflow runs and its built-in helper agent still act through it
-      const reachesEveryApplication =
-        isWorkspaceCustomApplication({
-          application: scopedCallingApplication,
-          workspaceCustomApplicationId,
-        }) || isTwentyStandardApplication(scopedCallingApplication);
-
-      return reachesEveryApplication ? { type: 'all' } : ownApplication;
-    }
+    case 'trigger':
+      return isWorkspaceCustomApplication({
+        application: scopedCallingApplication,
+        workspaceCustomApplicationId,
+      })
+        ? { type: 'all' }
+        : ownApplication;
     case 'manage':
       return ownApplication;
     default:
