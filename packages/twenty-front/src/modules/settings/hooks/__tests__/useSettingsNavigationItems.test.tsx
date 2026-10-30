@@ -80,7 +80,7 @@ const setPermissionFlags = (permissionFlags: PermissionFlagType[]) => {
   });
 };
 
-const getAccountsItem = () => {
+const getAccountsOrAppPreferencesItem = () => {
   const { result } = renderHook(() => useSettingsNavigationItems(), {
     wrapper: Wrapper,
   });
@@ -213,7 +213,7 @@ describe('useSettingsNavigationItems', () => {
   it('should show Accounts with Emails and Calendars when app preferences are off', () => {
     setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
 
-    const accountsItem = getAccountsItem();
+    const accountsItem = getAccountsOrAppPreferencesItem();
 
     expect(accountsItem?.label).toBe('Accounts');
     expect(accountsItem?.path).toBe(SettingsPath.Accounts);
@@ -233,7 +233,7 @@ describe('useSettingsNavigationItems', () => {
       ],
     });
 
-    const accountsItem = getAccountsItem();
+    const accountsItem = getAccountsOrAppPreferencesItem();
 
     expect(accountsItem?.label).toBe('Apps preferences');
     expect(accountsItem?.path).toBe(SettingsPath.AppPreferences);

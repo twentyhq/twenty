@@ -89,11 +89,19 @@ describe('SettingsLegacyAccountsRedirect with an OAuth error', () => {
   const originalRequest = globalThis.Request;
 
   beforeAll(() => {
-    globalThis.Request = TestRequest as unknown as typeof Request;
+    Object.defineProperty(globalThis, 'Request', {
+      value: TestRequest,
+      configurable: true,
+      writable: true,
+    });
   });
 
   afterAll(() => {
-    globalThis.Request = originalRequest;
+    Object.defineProperty(globalThis, 'Request', {
+      value: originalRequest,
+      configurable: true,
+      writable: true,
+    });
   });
 
   beforeEach(() => {
