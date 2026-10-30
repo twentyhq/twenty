@@ -170,7 +170,7 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
           namePlaceholder={t`Untitled`}
           onRename={handleRename}
           isReadOnly={isReadOnly}
-          icon={<CoreAgentIcon agentId={agent.id} size={24} />}
+          avatar={<CoreAgentIcon agentId={agent.id} size={24} />}
         />
         <SettingsPageContainer>
           {isShowingRuns ? (
