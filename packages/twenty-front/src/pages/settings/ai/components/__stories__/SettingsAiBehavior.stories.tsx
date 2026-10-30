@@ -44,6 +44,7 @@ export const IndependentSelection: Story = {
     await document.findByRole('listbox');
     await userEvent.keyboard('{Home}{ArrowDown}{Enter}');
     await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
+    expect(args.onInboxModeChange).toHaveBeenCalledOnce();
     expect(args.onInboxModeChange).toHaveBeenLastCalledWith('MENTION_ONLY');
     expect(directMessages).toHaveTextContent('Never');
     expect(inbox).toHaveFocus();
@@ -100,7 +101,7 @@ export const Loading: Story = {
 export const FailedChange: Story = {
   args: {
     errorMessage: 'Unable to save behavior settings. Try again.',
-    rejectChanges: true,
+    shouldRejectChanges: true,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -119,6 +120,7 @@ export const FailedChange: Story = {
     await userEvent.click(
       within(options).getByRole('option', { name: 'Never' }),
     );
+    expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
     expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
     await waitFor(() =>
       expect(directMessages).toHaveTextContent('Only when mentioned'),
@@ -130,4 +132,28 @@ export const FailedChange: Story = {
 
 export const Narrow: Story = {
   parameters: { container: { width: 320 } },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
+    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
+
+    expect(directMessages).toBeVisible();
+    expect(inbox).toBeVisible();
+    await userEvent.click(directMessages);
+    const options = await within(canvasElement.ownerDocument.body).findByRole(
+      'listbox',
+    );
+
+    await userEvent.click(
+      within(options).getByRole('option', { name: 'Never' }),
+    );
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+    expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
+    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
+    expect(args.onInboxModeChange).not.toHaveBeenCalled();
+    await waitFor(() => expect(directMessages).toHaveFocus());
+    await userEvent.tab();
+    expect(inbox).toHaveFocus();
+    expect(inbox).toHaveTextContent('Auto');
+  },
 };
