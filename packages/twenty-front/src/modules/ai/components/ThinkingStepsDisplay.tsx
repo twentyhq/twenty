@@ -5,15 +5,13 @@ import { Collapsible } from 'twenty-ui/primitives/layout';
 import { IconChevronRight, ThinkingOrbitLoaderIcon } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { getToolName } from 'ai';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { ThinkingReasoningStepRow } from '@/ai/components/ThinkingReasoningStepRow';
 import { ThinkingToolStepRow } from '@/ai/components/ThinkingToolStepRow';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
-import { getReasoningStepLabel } from '@/ai/utils/getReasoningStepLabel';
+import { getThinkingStepLabel } from '@/ai/utils/getThinkingStepLabel';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMessage';
 import { type ThinkingStepPart } from '@/ai/types/ThinkingStepPart';
 import { formatRoundedDuration } from '~/utils/format/formatRoundedDuration';
 
@@ -151,23 +149,9 @@ export const ThinkingStepsDisplay = ({
     isLastMessageStreaming &&
     (isDefined(activePart) || isTrailingWhileStreaming);
 
-  const getWorkingLabel = () => {
-    if (!isDefined(activePart)) {
-      return t`Thinking`;
-    }
-
-    if (activePart.type === 'reasoning') {
-      return getReasoningStepLabel({ text: activePart.text, isActive: true });
-    }
-
-    return getToolDisplayMessage({
-      input: activePart.input,
-      toolName: getToolName(activePart),
-      isFinished: false,
-      displayContext,
-      output: activePart.output,
-    });
-  };
+  const workingLabel = isDefined(activePart)
+    ? getThinkingStepLabel({ part: activePart, isActive: true, displayContext })
+    : t`Thinking`;
 
   const summaryLabel =
     isDefined(workDurationMs) && !isLastMessageStreaming
@@ -191,9 +175,7 @@ export const ThinkingStepsDisplay = ({
           </StyledChevronContainer>
         )}
         {isWorking ? (
-          <StyledShimmeringRowLabel>
-            {getWorkingLabel()}
-          </StyledShimmeringRowLabel>
+          <StyledShimmeringRowLabel>{workingLabel}</StyledShimmeringRowLabel>
         ) : (
           <StyledSummaryText>{summaryLabel}</StyledSummaryText>
         )}

@@ -11,9 +11,9 @@ import { type JsonValue } from 'type-fest';
 import { ThinkingStepRowLayout } from '@/ai/components/ThinkingStepRowLayout';
 import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
+import { getThinkingStepLabel } from '@/ai/utils/getThinkingStepLabel';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
-import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMessage';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
@@ -80,12 +80,10 @@ export const ThinkingToolStepRow = ({
 
   const displayContext = useToolDisplayContext();
   const ToolIcon = getToolIcon(toolName);
-  const displayMessage = getToolDisplayMessage({
-    input: part.input,
-    toolName: rawToolName,
-    isFinished: !isActive,
+  const displayMessage = getThinkingStepLabel({
+    part,
+    isActive,
     displayContext,
-    output: part.output,
   });
   const hasError = isDefined(part.errorText);
   const { message: recordsMessage, recordReferences } =
