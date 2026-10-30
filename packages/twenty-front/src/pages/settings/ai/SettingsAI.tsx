@@ -5,6 +5,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -14,6 +16,7 @@ import {
   IconBook,
   IconChartBar,
   IconCpu,
+  IconLayoutDashboard,
   IconPlus,
   IconSparkle2,
   IconSparkles,
@@ -29,6 +32,14 @@ import McpCoverDark from '@/settings/mcp/assets/mcp-cover-dark.png';
 import McpCoverLight from '@/settings/mcp/assets/mcp-cover-light.png';
 import { SettingsMcpSetup } from '@/settings/mcp/components/SettingsMcpSetup';
 import { useCreateTool } from '~/pages/settings/ai/hooks/useCreateTool';
+import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
+import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
+import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
 const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
@@ -37,8 +48,21 @@ const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
   const { handleCreateTool, isCreatingTool } = useCreateTool();
+  const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
 
   const tabs = [
+    ...(isInboxEnabled
+      ? [
+          {
+            id: SETTINGS_AI_TABS.TABS_IDS.OVERVIEW,
+            title: t`Overview`,
+            Icon: IconLayoutDashboard,
+          },
+        ]
+      : []),
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MCP,
       title: t`MCP`,
@@ -70,23 +94,45 @@ export const SettingsAI = () => {
     useSettingsActiveTabId(
       SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
       tabs.map((tab) => tab.id),
-    ) ?? SETTINGS_AI_TABS.TABS_IDS.MCP;
+    ) ??
+    (isInboxEnabled
+      ? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW
+      : SETTINGS_AI_TABS.TABS_IDS.MCP);
+  const isOverviewTab =
+    isInboxEnabled && resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isMcpTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MCP;
   const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
   const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
   const isToolsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
   const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
 
+  const secondaryBar = (
+    <SettingsTabBar
+      aria-label={t`AI settings`}
+      tabs={tabs}
+      componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
+    />
+  );
+
+  if (isOverviewTab) {
+    return (
+      <SettingsAiOverview
+        secondaryBar={secondaryBar}
+        mcpSection={<SettingsAiMcpSection />}
+        workspaceInstructionsSection={
+          <SettingsAiWorkspaceInstructionsSection />
+        }
+        systemPromptSection={
+          canReadSystemPrompts ? <SettingsAiSystemPromptsSection /> : null
+        }
+      />
+    );
+  }
+
   return (
     <SettingsPageLayout
       title={t`AI`}
-      secondaryBar={
-        <SettingsTabBar
-          aria-label={t`AI settings`}
-          tabs={tabs}
-          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
-        />
-      }
+      secondaryBar={secondaryBar}
       actionButton={
         isSkillsTab ? (
           <NavigationButton

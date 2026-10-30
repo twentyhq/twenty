@@ -20,12 +20,22 @@ import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 
 export const SettingsAiModelsTab = () => {
+  const isInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const aiModels = useAtomStateValue(aiModelsState);
   const tiers = useAiModelTiers();
@@ -126,8 +136,10 @@ export const SettingsAiModelsTab = () => {
       </Section.Root>
 
       <SettingsAiModelTiersPreview />
-      <SettingsAiWorkspaceInstructionsSection />
-      <SettingsAiSystemPromptsSection />
+      {!isInboxEnabled && <SettingsAiWorkspaceInstructionsSection />}
+      {!isInboxEnabled && canReadSystemPrompts && (
+        <SettingsAiSystemPromptsSection />
+      )}
     </>
   );
 };
