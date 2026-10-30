@@ -41,7 +41,8 @@ export const getApplicationsWithPreferences = ({
           !isDefined(application) ||
           (!isNonEmptyArray(settingsMenuItems) &&
             !isNonEmptyArray(displayedVariables) &&
-            !isNonEmptyArray(connectionProviders))
+            !isNonEmptyArray(connectionProviders) &&
+            !application.runHealthCheckOnUserPreferences)
         ) {
           return [];
         }

@@ -114,7 +114,7 @@ export class ApplicationDTO {
 
   @IsBoolean()
   @Field(() => Boolean)
-  runOnUserPreferences: boolean;
+  runHealthCheckOnUserPreferences: boolean;
 
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })

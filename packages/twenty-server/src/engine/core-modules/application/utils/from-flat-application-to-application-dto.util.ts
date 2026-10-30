@@ -39,6 +39,6 @@ export const fromFlatApplicationToApplicationDto = ({
     settingsCustomTabFrontComponentId:
       settingsCustomTabFrontComponentId ?? undefined,
     healthCheckLogicFunctionId: healthCheckLogicFunctionId ?? undefined,
-    runOnUserPreferences: isUserHealthCheckEnabled ?? false,
+    runHealthCheckOnUserPreferences: isUserHealthCheckEnabled ?? false,
   };
 };

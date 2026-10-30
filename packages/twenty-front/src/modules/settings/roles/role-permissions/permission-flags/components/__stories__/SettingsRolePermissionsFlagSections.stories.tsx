@@ -106,6 +106,7 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
           universalIdentifier: 'notification-app',
           logoUrl: null,
           createdAt: '2024-01-01T00:00:00.000Z',
+          runHealthCheckOnUserPreferences: false,
         },
         {
           id: 'standard-app',
@@ -113,6 +114,7 @@ const meta: Meta<typeof SettingsRolePermissionsFlagSections> = {
           universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           logoUrl: null,
           createdAt: '2024-01-01T00:00:00.000Z',
+          runHealthCheckOnUserPreferences: false,
         },
       ],
     });
