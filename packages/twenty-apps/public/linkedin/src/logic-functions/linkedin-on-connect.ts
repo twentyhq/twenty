@@ -11,7 +11,6 @@ import { PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/p
 import { LINKEDIN_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinConnectionHookPayload } from 'src/logic-functions/types/linkedin-connection-hook-payload.type';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
-import { getLinkedinUnipileAccountKey } from 'src/logic-functions/utils/get-linkedin-unipile-account-key.util';
 import { getUnipileAccountClaimKey } from 'src/unipile/utils/get-unipile-account-claim-key.util';
 import { getUnipileUser } from 'src/unipile/utils/get-unipile-user.util';
 
@@ -47,7 +46,6 @@ export const linkedinOnConnectHandler = async ({
       });
     })());
 
-  await kv.set(getLinkedinUnipileAccountKey(connectedAccountId), unipileAccountId);
   await kv.set(getUnipileAccountClaimKey(unipileAccountId), undefined, {
     scope: 'SERVER',
   });

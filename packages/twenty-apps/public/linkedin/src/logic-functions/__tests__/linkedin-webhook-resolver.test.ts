@@ -1,5 +1,6 @@
 import { createHmac } from 'node:crypto';
 
+import { type RoutePayload } from 'twenty-sdk/define';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -35,7 +36,7 @@ const buildRoutePayload = ({
 }: {
   event: UnipileWebhookEvent;
   secret?: string;
-}) => {
+}): RoutePayload<UnipileWebhookEvent> => {
   const rawBody = JSON.stringify(event);
   const timestamp = Math.floor(Date.now() / 1000);
   const signature = createHmac('sha256', secret)
@@ -51,7 +52,7 @@ const buildRoutePayload = ({
     isBase64Encoded: false,
     requestContext: { http: { method: 'POST', path: '/' } },
     userWorkspaceId: null,
-  } as Parameters<typeof linkedinWebhookResolverHandler>[0];
+  };
 };
 
 const LINKEDIN_EVENT: UnipileWebhookEvent = {
@@ -82,9 +83,12 @@ describe('linkedinWebhookResolverHandler', () => {
         LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER,
       payload: LINKEDIN_EVENT,
     });
-    expect(mocks.kvGet).toHaveBeenCalledWith('unipile-account:acc_1', {
-      scope: 'SERVER',
-    });
+    expect(mocks.kvGet).toHaveBeenCalledExactlyOnceWith(
+      'unipile-account:acc_1',
+      {
+        scope: 'SERVER',
+      },
+    );
   });
 
   it('rejects a delivery with an invalid signature', async () => {

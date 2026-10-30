@@ -7,7 +7,6 @@ import { removeLinkedinConnectionResources } from 'src/logic-functions/utils/rem
 
 export const linkedinUninstallHandler = async (): Promise<{
   removedConnectionCount: number;
-  failedConnectionIds: string[];
 }> => {
   const connections = await listConnections({
     providerName: LINKEDIN_PROVIDER_NAME,
@@ -28,10 +27,13 @@ export const linkedinUninstallHandler = async (): Promise<{
     }
   }
 
-  return {
-    removedConnectionCount: connections.length - failedConnectionIds.length,
-    failedConnectionIds,
-  };
+  if (failedConnectionIds.length > 0) {
+    throw new Error(
+      `LinkedIn cleanup failed for connections ${failedConnectionIds.join(', ')}`,
+    );
+  }
+
+  return { removedConnectionCount: connections.length };
 };
 
 export default defineUninstallLogicFunction({

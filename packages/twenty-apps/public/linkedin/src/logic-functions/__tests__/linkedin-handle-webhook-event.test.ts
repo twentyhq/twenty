@@ -91,7 +91,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
       ),
     ).resolves.toEqual({ handled: true });
 
-    expect(mocks.ingestMessages).toHaveBeenCalledWith({
+    expect(mocks.ingestMessages).toHaveBeenCalledExactlyOnceWith({
       messageChannelId: 'channel-id',
       messages: [
         expect.objectContaining({
@@ -123,20 +123,21 @@ describe('linkedinHandleWebhookEventHandler', () => {
       buildMessageEvent({ sender_id: 'ACoMARTIN', is_sender: true }),
     );
 
-    expect(mocks.getUnipileChat).toHaveBeenCalledWith({
+    expect(mocks.ingestMessages).toHaveBeenCalledTimes(1);
+    expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'chat-1',
     });
-    expect(mocks.ingestMessages.mock.calls[0][0].messages[0].participants).toEqual(
-      [
-        { role: 'FROM', handle: CHANNEL_HANDLE },
-        {
-          role: 'TO',
-          handle: 'https://www.linkedin.com/in/daphne-muller',
-          displayName: 'Daphné Müller',
-        },
-      ],
-    );
+    expect(
+      mocks.ingestMessages.mock.calls[0][0].messages[0].participants,
+    ).toEqual([
+      { role: 'FROM', handle: CHANNEL_HANDLE },
+      {
+        role: 'TO',
+        handle: 'https://www.linkedin.com/in/daphne-muller',
+        displayName: 'Daphné Müller',
+      },
+    ]);
   });
 
   it('ignores events of accounts no connection owns', async () => {

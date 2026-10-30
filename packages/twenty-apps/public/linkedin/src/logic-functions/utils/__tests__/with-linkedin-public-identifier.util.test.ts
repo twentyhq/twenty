@@ -46,7 +46,7 @@ describe('withLinkedinPublicIdentifier', () => {
     await expect(
       withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),
     ).resolves.toEqual({ ...DAPHNE, public_identifier: 'daphne-muller' });
-    expect(mocks.kvGet).toHaveBeenCalledWith(
+    expect(mocks.kvGet).toHaveBeenCalledExactlyOnceWith(
       'linkedin-public-identifier:ACoDAPHNE',
     );
     expect(mocks.getUnipileUser).not.toHaveBeenCalled();
@@ -61,11 +61,11 @@ describe('withLinkedinPublicIdentifier', () => {
     await expect(
       withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),
     ).resolves.toEqual({ ...DAPHNE, public_identifier: 'daphne-muller' });
-    expect(mocks.getUnipileUser).toHaveBeenCalledWith({
+    expect(mocks.getUnipileUser).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       userId: 'ACoDAPHNE',
     });
-    expect(mocks.kvSet).toHaveBeenCalledWith(
+    expect(mocks.kvSet).toHaveBeenCalledExactlyOnceWith(
       'linkedin-public-identifier:ACoDAPHNE',
       'daphne-muller',
     );

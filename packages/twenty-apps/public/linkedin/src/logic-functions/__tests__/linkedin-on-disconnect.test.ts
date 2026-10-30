@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  kvGet: vi.fn(),
   getConnection: vi.fn(),
   removeLinkedinConnectionResources: vi.fn(),
 }));
@@ -11,7 +10,6 @@ vi.mock('twenty-sdk/define', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
-  kv: { get: mocks.kvGet },
   getConnection: mocks.getConnection,
 }));
 
@@ -34,39 +32,33 @@ const PAYLOAD = {
 describe('linkedinOnDisconnectHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
-  it('removes the Unipile account recorded on connect', async () => {
-    mocks.kvGet.mockResolvedValue('acc_1');
+  it('removes the Unipile account of the connection', async () => {
+    mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_1' });
 
     await linkedinOnDisconnectHandler(PAYLOAD);
 
-    expect(mocks.getConnection).not.toHaveBeenCalled();
-    expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledWith({
+    expect(mocks.getConnection).toHaveBeenCalledExactlyOnceWith(
+      'connection-id',
+    );
+    expect(
+      mocks.removeLinkedinConnectionResources,
+    ).toHaveBeenCalledExactlyOnceWith({
       connectedAccountId: 'connection-id',
       unipileAccountId: 'acc_1',
     });
   });
 
-  it('falls back to the connection account when connect never completed', async () => {
-    mocks.kvGet.mockResolvedValue(null);
-    mocks.getConnection.mockResolvedValue({ externalAccountId: 'acc_2' });
-
-    await linkedinOnDisconnectHandler(PAYLOAD);
-
-    expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledWith({
-      connectedAccountId: 'connection-id',
-      unipileAccountId: 'acc_2',
-    });
-  });
-
-  it('still cleans up the channel once the connection is gone', async () => {
-    mocks.kvGet.mockResolvedValue(null);
+  it('still removes the channel once the connection is gone', async () => {
     mocks.getConnection.mockRejectedValue(new Error('Connection not found'));
 
     await linkedinOnDisconnectHandler(PAYLOAD);
 
-    expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledWith({
+    expect(
+      mocks.removeLinkedinConnectionResources,
+    ).toHaveBeenCalledExactlyOnceWith({
       connectedAccountId: 'connection-id',
       unipileAccountId: null,
     });

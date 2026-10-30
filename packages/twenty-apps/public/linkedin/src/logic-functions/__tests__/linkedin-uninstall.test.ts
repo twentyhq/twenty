@@ -37,9 +37,8 @@ describe('linkedinUninstallHandler', () => {
 
     await expect(linkedinUninstallHandler()).resolves.toEqual({
       removedConnectionCount: 2,
-      failedConnectionIds: [],
     });
-    expect(mocks.listConnections).toHaveBeenCalledWith({
+    expect(mocks.listConnections).toHaveBeenCalledExactlyOnceWith({
       providerName: 'linkedin',
     });
     expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledWith({
@@ -50,9 +49,10 @@ describe('linkedinUninstallHandler', () => {
       connectedAccountId: 'connection-2',
       unipileAccountId: 'acc_2',
     });
+    expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledTimes(2);
   });
 
-  it('keeps cleaning up the other connections when one fails', async () => {
+  it('cleans up the other connections, then fails so the uninstall is retried', async () => {
     mocks.listConnections.mockResolvedValue([
       { id: 'connection-1', externalAccountId: 'acc_1' },
       { id: 'connection-2', externalAccountId: 'acc_2' },
@@ -61,10 +61,9 @@ describe('linkedinUninstallHandler', () => {
       new Error('Unipile is down'),
     );
 
-    await expect(linkedinUninstallHandler()).resolves.toEqual({
-      removedConnectionCount: 1,
-      failedConnectionIds: ['connection-1'],
-    });
+    await expect(linkedinUninstallHandler()).rejects.toThrow(
+      'LinkedIn cleanup failed for connections connection-1',
+    );
     expect(mocks.removeLinkedinConnectionResources).toHaveBeenCalledTimes(2);
   });
 });

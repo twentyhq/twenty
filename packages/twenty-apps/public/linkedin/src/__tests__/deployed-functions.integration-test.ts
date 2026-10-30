@@ -25,7 +25,6 @@ describe('LinkedIn app deployed functions', () => {
     expect(execution.status).toBe('SUCCESS');
     expect(execution.data).toEqual({
       removedConnectionCount: 0,
-      failedConnectionIds: [],
     });
   });
 });

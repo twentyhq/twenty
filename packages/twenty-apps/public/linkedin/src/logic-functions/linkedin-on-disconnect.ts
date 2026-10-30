@@ -1,25 +1,20 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection, kv } from 'twenty-sdk/logic-function';
+import { getConnection } from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_ON_DISCONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinConnectionHookPayload } from 'src/logic-functions/types/linkedin-connection-hook-payload.type';
-import { getLinkedinUnipileAccountKey } from 'src/logic-functions/utils/get-linkedin-unipile-account-key.util';
 import { removeLinkedinConnectionResources } from 'src/logic-functions/utils/remove-linkedin-connection-resources.util';
 
 const findUnipileAccountId = async (
   connectedAccountId: string,
 ): Promise<string | null> => {
-  const cachedUnipileAccountId = await kv.get<string>(
-    getLinkedinUnipileAccountKey(connectedAccountId),
-  );
-
-  if (cachedUnipileAccountId !== null) {
-    return cachedUnipileAccountId;
-  }
-
   try {
     return (await getConnection(connectedAccountId)).externalAccountId;
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[linkedin] connection ${connectedAccountId} is already gone, only its channel is removed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+
     return null;
   }
 };

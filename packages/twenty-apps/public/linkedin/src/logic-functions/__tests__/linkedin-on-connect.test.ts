@@ -56,7 +56,7 @@ describe('linkedinOnConnectHandler', () => {
       messageChannelId: 'channel-id',
     });
 
-    expect(mocks.createMessageChannel).toHaveBeenCalledWith({
+    expect(mocks.createMessageChannel).toHaveBeenCalledExactlyOnceWith({
       connectedAccountId: 'connected-account-id',
       handle: 'https://www.linkedin.com/in/ada-lovelace',
       displayName: 'Ada Lovelace',
@@ -64,17 +64,17 @@ describe('linkedinOnConnectHandler', () => {
       participantHandleFieldUniversalIdentifier:
         PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER,
     });
-    expect(mocks.kvSet).toHaveBeenCalledWith(
-      'linkedin-unipile-account:connected-account-id',
-      'acc_1',
+    expect(mocks.kvSet).toHaveBeenCalledExactlyOnceWith(
+      'unipile-account:acc_1',
+      undefined,
+      { scope: 'SERVER' },
     );
-    expect(mocks.kvSet).toHaveBeenCalledWith('unipile-account:acc_1', undefined, {
-      scope: 'SERVER',
-    });
   });
 
   it('reuses the channel of a reconnected account', async () => {
-    mocks.listMessageChannels.mockResolvedValue([{ id: 'existing-channel-id' }]);
+    mocks.listMessageChannels.mockResolvedValue([
+      { id: 'existing-channel-id' },
+    ]);
 
     await expect(linkedinOnConnectHandler(PAYLOAD)).resolves.toEqual({
       messageChannelId: 'existing-channel-id',

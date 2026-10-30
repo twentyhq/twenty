@@ -32,13 +32,13 @@ describe('removeLinkedinConnectionResources', () => {
       unipileAccountId: 'acc_1',
     });
 
-    expect(mocks.deleteMessageChannel).toHaveBeenCalledWith('channel-id');
-    expect(mocks.deleteUnipileAccount).toHaveBeenCalledWith('acc_1');
-    expect(mocks.kvDelete).toHaveBeenCalledWith('unipile-account:acc_1', {
-      scope: 'SERVER',
-    });
-    expect(mocks.kvDelete).toHaveBeenCalledWith(
-      'linkedin-unipile-account:connection-id',
+    expect(mocks.deleteMessageChannel).toHaveBeenCalledExactlyOnceWith(
+      'channel-id',
+    );
+    expect(mocks.deleteUnipileAccount).toHaveBeenCalledExactlyOnceWith('acc_1');
+    expect(mocks.kvDelete).toHaveBeenCalledExactlyOnceWith(
+      'unipile-account:acc_1',
+      { scope: 'SERVER' },
     );
   });
 
@@ -48,8 +48,10 @@ describe('removeLinkedinConnectionResources', () => {
       unipileAccountId: null,
     });
 
-    expect(mocks.deleteMessageChannel).toHaveBeenCalledWith('channel-id');
+    expect(mocks.deleteMessageChannel).toHaveBeenCalledExactlyOnceWith(
+      'channel-id',
+    );
     expect(mocks.deleteUnipileAccount).not.toHaveBeenCalled();
-    expect(mocks.kvDelete).toHaveBeenCalledTimes(1);
+    expect(mocks.kvDelete).not.toHaveBeenCalled();
   });
 });

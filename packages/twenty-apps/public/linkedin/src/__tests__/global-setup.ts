@@ -1,10 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { runTwenty } from './run-twenty';
 
 function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
   const apiKey = process.env.TWENTY_API_KEY;
 
-  if (!apiUrl || !apiKey) {
+  if (!isNonEmptyString(apiUrl) || !isNonEmptyString(apiKey)) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
         'Or set them in vitest env config.',

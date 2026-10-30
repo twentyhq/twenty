@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { UNIPILE_WEBHOOK_SIGNATURE_TOLERANCE_SECONDS } from 'src/unipile/constants/unipile-webhook-signature-tolerance-seconds.constant';
 
@@ -32,7 +33,7 @@ export const verifyUnipileWebhookSignature = ({
   secret: string;
   nowInSeconds?: number;
 }): boolean => {
-  if (!isNonEmptyString(signatureHeader) || rawBody === undefined) {
+  if (!isNonEmptyString(signatureHeader) || !isDefined(rawBody)) {
     return false;
   }
 
