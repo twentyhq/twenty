@@ -449,6 +449,7 @@ type Application {
   objects: [Object!]!
   packageJsonChecksum: String
   packageJsonFileId: UUID
+  runOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
   universalIdentifier: String!
@@ -663,6 +664,7 @@ type ApplicationMonitoringVersion {
 type ApplicationPreferences {
   applicationId: UUID!
   connectionProviders: [ApplicationConnectionProvider!]!
+  hasUserHealthCheck: Boolean!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }
@@ -3424,6 +3426,7 @@ type Mutation {
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
+  runMyApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
   sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
