@@ -22,7 +22,9 @@ type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
   areGroupChatsImported: boolean;
   historyImport: LinkedinHistoryImportState | null;
+  syncProgress: number | undefined;
   isSyncStarting: boolean;
+  isSyncCancelling: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onSync: () => void;
@@ -33,7 +35,9 @@ export const LinkedinImportSection = ({
   importPolicy,
   areGroupChatsImported,
   historyImport,
+  syncProgress,
   isSyncStarting,
+  isSyncCancelling,
   onChange,
   onGroupChatsImportChange,
   onSync,
@@ -78,7 +82,9 @@ export const LinkedinImportSection = ({
       </StyledSettingsCard>
       <LinkedinSyncButton
         historyImport={historyImport}
+        progress={syncProgress}
         isStarting={isSyncStarting}
+        isCancelling={isSyncCancelling}
         onSync={onSync}
         onCancel={onCancelSync}
       />

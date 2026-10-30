@@ -24,6 +24,7 @@ import { LinkedinReadStatusSection } from 'src/front-components/components/Linke
 import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
+import { getNextLinkedinSyncProgress } from 'src/front-components/utils/get-next-linkedin-sync-progress.util';
 import { notifyLinkedinHistoryImportEnd } from 'src/front-components/utils/notify-linkedin-history-import-end.util';
 import { postLinkedinSettingsRouteOrThrow } from 'src/front-components/utils/post-linkedin-settings-route-or-throw.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
@@ -61,6 +62,11 @@ export const LinkedinSettings = () => {
   const [pollCount, setPollCount] = useState(0);
 
   const [isSyncStarting, setIsSyncStarting] = useState(false);
+  const [isSyncCancelling, setIsSyncCancelling] = useState(false);
+  const [syncProgress, setSyncProgress] = useState<{
+    runId: string;
+    progress: number;
+  } | null>(null);
   const lastHistoryImportRef = useRef<LinkedinHistoryImportState | null>(null);
 
   const showView = (view: LinkedinSettingsView) => {
@@ -71,6 +77,9 @@ export const LinkedinSettings = () => {
       next: historyImport,
     });
     lastHistoryImportRef.current = historyImport;
+    setSyncProgress((current) =>
+      getNextLinkedinSyncProgress({ current, historyImport }),
+    );
     setState({ step: 'ready', view });
   };
 
@@ -141,6 +150,8 @@ export const LinkedinSettings = () => {
   };
 
   const handleCancelSync = async () => {
+    setIsSyncCancelling(true);
+
     try {
       showView(
         await postLinkedinSettingsRouteOrThrow({
@@ -152,6 +163,8 @@ export const LinkedinSettings = () => {
         message: t('Could not cancel the LinkedIn sync. Try again.'),
         variant: 'error',
       });
+    } finally {
+      setIsSyncCancelling(false);
     }
   };
 
@@ -208,7 +221,13 @@ export const LinkedinSettings = () => {
               importPolicy={view.settings.importPolicy}
               areGroupChatsImported={view.settings.areGroupChatsImported}
               historyImport={view.historyImport}
+              syncProgress={
+                syncProgress?.runId === view.historyImport?.runId
+                  ? syncProgress?.progress
+                  : undefined
+              }
               isSyncStarting={isSyncStarting}
+              isSyncCancelling={isSyncCancelling}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }

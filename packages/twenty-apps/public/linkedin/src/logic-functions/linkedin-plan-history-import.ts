@@ -5,6 +5,7 @@ import {
   getConnection,
   type LogicFunctionExecutionContext,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { ENQUEUE_JOBS_MAX_BATCH_SIZE } from 'src/constants/enqueue-jobs-max-batch-size.constant';
 import { LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB } from 'src/constants/linkedin-history-import-chats-per-job.constant';
@@ -23,6 +24,7 @@ import {
 } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
+import { sortUnipileChatsByLastMessage } from 'src/unipile/utils/sort-unipile-chats-by-last-message.util';
 import { listUnipileInboxIds } from 'src/unipile/utils/list-unipile-inbox-ids.util';
 
 const LINKEDIN_IMPORT_HISTORY_RETRY_LIMIT = 3;
@@ -42,11 +44,6 @@ type LinkedinImportHistoryJob = {
   jobId: string;
   payload: LinkedinImportHistoryJobPayload;
 };
-
-const isRunActive = async (
-  payload: LinkedinPlanHistoryImportJobPayload,
-): Promise<boolean> =>
-  (await getActiveLinkedinHistoryImportState(payload)) !== null;
 
 const enqueueImportHistoryJobs = async (
   jobs: LinkedinImportHistoryJob[],
@@ -142,15 +139,37 @@ const planHistoryImport = async (
   let cursor = payload.cursor;
   let chunkCount = payload.plannedChunkCount ?? 0;
   let conversationCount = payload.plannedConversationCount ?? 0;
+  let reportedConversationCount = payload.reportedConversationCount;
   let pendingJobs: LinkedinImportHistoryJob[] = [];
 
   const flushPendingJobs = async (): Promise<boolean> => {
-    if (!(await isRunActive(payload))) {
+    const state = await getActiveLinkedinHistoryImportState(payload);
+
+    if (state === null) {
       return false;
     }
 
     await enqueueImportHistoryJobs(pendingJobs);
+
+    if (pendingJobs.length > 0) {
+      console.log(
+        `[linkedin] history run ${runId}: queued chunks ${pendingJobs[0].payload.chunkIndex} to ${chunkCount - 1}, ${conversationCount} conversations listed${isDefined(reportedConversationCount) ? ` of ${reportedConversationCount}` : ''}`,
+      );
+    }
+
     pendingJobs = [];
+
+    await saveLinkedinHistoryImportState({
+      connectedAccountId,
+      state: {
+        ...state,
+        plannedChunkCount: chunkCount,
+        plannedConversationCount: conversationCount,
+        ...(isDefined(reportedConversationCount)
+          ? { totalConversationCount: reportedConversationCount }
+          : {}),
+      },
+    });
 
     return true;
   };
@@ -172,6 +191,7 @@ const planHistoryImport = async (
         cursor,
         plannedChunkCount: chunkCount,
         plannedConversationCount: conversationCount,
+        reportedConversationCount,
       });
     }
 
@@ -182,18 +202,32 @@ const planHistoryImport = async (
       limit: LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
     });
 
-    if (page.items.length > 0) {
+    if (
+      inboxIds.length === 1 &&
+      !isDefined(cursor) &&
+      isDefined(page.totalCount)
+    ) {
+      reportedConversationCount = page.totalCount;
+    }
+
+    const chats = sortUnipileChatsByLastMessage(page.items);
+
+    console.log(
+      `[linkedin] history run ${runId}: inbox ${inboxIndex + 1} of ${inboxIds.length}, ${chats.length} chats listed (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'})${isDefined(page.totalCount) ? `, ${page.totalCount} in inbox` : ''}`,
+    );
+
+    if (chats.length > 0) {
       pendingJobs.push({
         jobId: getLinkedinImportHistoryJobId({ runId, chunkIndex: chunkCount }),
         payload: {
           connectedAccountId,
           runId,
           chunkIndex: chunkCount,
-          chatIds: page.items.map((chat) => chat.id),
+          chatIds: chats.map((chat) => chat.id),
         },
       });
       chunkCount += 1;
-      conversationCount += page.items.length;
+      conversationCount += chats.length;
     }
 
     if (
@@ -208,7 +242,9 @@ const planHistoryImport = async (
     }
 
     if (
-      pendingJobs.length >= LINKEDIN_PLAN_HISTORY_IMPORT_FLUSH_CHUNK_COUNT &&
+      (chunkCount === 1 ||
+        pendingJobs.length >= LINKEDIN_PLAN_HISTORY_IMPORT_FLUSH_CHUNK_COUNT) &&
+      pendingJobs.length > 0 &&
       !(await flushPendingJobs())
     ) {
       return { status: 'CANCELLED' };

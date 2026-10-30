@@ -43,7 +43,7 @@ const ingestUnipileMessage = async ({
     ? getLinkedinChatCounterparts(chat)
     : [message.sender].filter(isDefined);
 
-  const ingestedMessageCount = await ingestLinkedinMessages({
+  const { ingestedMessageCount } = await ingestLinkedinMessages({
     channel,
     settings,
     chat,

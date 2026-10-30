@@ -50,7 +50,19 @@ export const linkedinImportHistoryHandler = async (
   }
 
   const { connectedAccountId } = payload;
+  const startedAt = Date.now();
   let importedConversationCount = 0;
+  const totals = {
+    messageCount: 0,
+    matchedPersonCount: 0,
+    createdPersonCount: 0,
+  };
+  const skippedChatCounts = {
+    GROUP_CHATS_OFF: 0,
+    NO_MESSAGES: 0,
+    NO_CONTACT: 0,
+  };
+  const lastMessageTimestamps: string[] = [];
 
   try {
     const connection = await getConnection(connectedAccountId);
@@ -71,7 +83,11 @@ export const linkedinImportHistoryHandler = async (
         chatId,
       });
 
-      const ingestedMessageCount = await ingestLinkedinMessages({
+      if (isNonEmptyString(chat.last_message_timestamp)) {
+        lastMessageTimestamps.push(chat.last_message_timestamp);
+      }
+
+      const ingestResult = await ingestLinkedinMessages({
         channel,
         settings,
         chat,
@@ -86,7 +102,15 @@ export const linkedinImportHistoryHandler = async (
         }),
       });
 
-      if (ingestedMessageCount > 0) {
+      totals.messageCount += ingestResult.ingestedMessageCount;
+      totals.matchedPersonCount += ingestResult.matchedPersonCount;
+      totals.createdPersonCount += ingestResult.createdPersonCount;
+
+      if (isDefined(ingestResult.skippedReason)) {
+        skippedChatCounts[ingestResult.skippedReason] += 1;
+      }
+
+      if (ingestResult.ingestedMessageCount > 0) {
         importedConversationCount += 1;
       }
     }
@@ -103,6 +127,17 @@ export const linkedinImportHistoryHandler = async (
   }
 
   await saveChunkResult({ payload, result: { importedConversationCount } });
+
+  const sortedTimestamps = [...lastMessageTimestamps].sort();
+
+  console.log(
+    `[linkedin] history run ${payload.runId} chunk ${payload.chunkIndex}: ` +
+      `${payload.chatIds.length} chats (last messages ${sortedTimestamps[sortedTimestamps.length - 1] ?? '-'} to ${sortedTimestamps[0] ?? '-'}), ` +
+      `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
+      `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ` +
+      `skipped ${skippedChatCounts.NO_CONTACT} without contact, ${skippedChatCounts.GROUP_CHATS_OFF} group chats, ${skippedChatCounts.NO_MESSAGES} without messages, ` +
+      `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
+  );
 
   return { status: 'COMPLETED', importedConversationCount };
 };

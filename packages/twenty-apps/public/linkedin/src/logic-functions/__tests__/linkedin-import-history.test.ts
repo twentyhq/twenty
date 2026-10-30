@@ -79,11 +79,21 @@ describe('linkedinImportHistoryHandler', () => {
     }));
     mocks.listUnipileChatMessages.mockResolvedValue([{ id: 'message' }]);
     mocks.ingestLinkedinMessages
-      .mockResolvedValueOnce(1)
-      .mockResolvedValueOnce(0);
+      .mockResolvedValueOnce({
+        ingestedMessageCount: 12,
+        matchedPersonCount: 1,
+        createdPersonCount: 1,
+      })
+      .mockResolvedValueOnce({
+        ingestedMessageCount: 0,
+        matchedPersonCount: 0,
+        createdPersonCount: 0,
+        skippedReason: 'NO_CONTACT',
+      });
   });
 
   it('imports the chats of its chunk and stores how many were imported', async () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     const result = await linkedinImportHistoryHandler(PAYLOAD);
 
     expect(mocks.ingestLinkedinMessages).toHaveBeenCalledTimes(2);
@@ -94,6 +104,11 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.kvStore.get(CHUNK_KEY)).toEqual({
       importedConversationCount: 1,
     });
+    expect(log).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, skipped 1 without contact/,
+      ),
+    );
   });
 
   it.each([

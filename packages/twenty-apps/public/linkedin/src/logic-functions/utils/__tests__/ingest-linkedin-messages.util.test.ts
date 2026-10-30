@@ -93,7 +93,7 @@ describe('ingestLinkedinMessages', () => {
   it('attaches the matched person to the participant', async () => {
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue('priya-id');
 
-    await expect(ingest()).resolves.toBe(1);
+    await expect(ingest()).resolves.toMatchObject({ ingestedMessageCount: 1 });
     expect(ingestedParticipantPersonIds()).toEqual([undefined, 'priya-id']);
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
@@ -109,14 +109,18 @@ describe('ingestLinkedinMessages', () => {
   it('imports a group chat with a known member under its name', async () => {
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue('priya-id');
 
-    await expect(ingest({ chat: GROUP_CHAT })).resolves.toBe(1);
+    await expect(ingest({ chat: GROUP_CHAT })).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+    });
     expect(mocks.ingestMessages.mock.calls[0][0].messages[0].subject).toBe(
       'Q4 hiring',
     );
   });
 
   it('skips a group chat where nobody is in Twenty, even with All chats', async () => {
-    await expect(ingest({ chat: GROUP_CHAT })).resolves.toBe(0);
+    await expect(ingest({ chat: GROUP_CHAT })).resolves.toMatchObject({
+      ingestedMessageCount: 0,
+    });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
 
@@ -131,7 +135,7 @@ describe('ingestLinkedinMessages', () => {
           areGroupChatsImported: false,
         },
       }),
-    ).resolves.toBe(0);
+    ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.matchLinkedinParticipantPersonId).not.toHaveBeenCalled();
   });
 
@@ -161,7 +165,7 @@ describe('ingestLinkedinMessages', () => {
           importPolicy: 'CONTACTS_ONLY',
         },
       }),
-    ).resolves.toBe(0);
+    ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
   });

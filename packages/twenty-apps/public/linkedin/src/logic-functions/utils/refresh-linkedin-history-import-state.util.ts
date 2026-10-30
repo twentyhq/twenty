@@ -52,20 +52,20 @@ const finishHistoryImport = async ({
   return state;
 };
 
-const refreshPlanningHistoryImport = async ({
+const failStalledPlanning = async ({
   connectedAccountId,
   state,
 }: {
   connectedAccountId: string;
   state: LinkedinHistoryImportState;
-}): Promise<LinkedinHistoryImportState> => {
+}): Promise<LinkedinHistoryImportState | null> => {
   const planJobId =
     state.planJobId ??
     getLinkedinPlanHistoryImportJobId({ runId: state.runId });
   const planJob = (await getJobStatusesById([planJobId])).get(planJobId);
 
   if (isDefined(planJob) && planJob.state !== 'FAILED') {
-    return state;
+    return null;
   }
 
   const latestState = await getLinkedinHistoryImportState(connectedAccountId);
@@ -81,7 +81,7 @@ const refreshPlanningHistoryImport = async ({
   return finishHistoryImport({
     connectedAccountId,
     state: {
-      ...state,
+      ...latestState,
       status: 'FAILED',
       finishedAt: new Date().toISOString(),
       error: isDefined(planJob)
@@ -100,13 +100,24 @@ export const refreshLinkedinHistoryImportState = async (
     return state;
   }
 
-  const { chunkCount, totalConversationCount } = state;
+  const isPlanning = !isDefined(state.chunkCount);
 
-  if (!isDefined(chunkCount) || !isDefined(totalConversationCount)) {
-    return refreshPlanningHistoryImport({ connectedAccountId, state });
+  if (isPlanning) {
+    const stalledState = await failStalledPlanning({
+      connectedAccountId,
+      state,
+    });
+
+    if (isDefined(stalledState)) {
+      return stalledState;
+    }
   }
 
-  const chunkJobIds = Array.from({ length: chunkCount }, (_, chunkIndex) =>
+  const knownChunkCount = state.chunkCount ?? state.plannedChunkCount ?? 0;
+  const knownConversationCount = isPlanning
+    ? (state.plannedConversationCount ?? 0)
+    : (state.totalConversationCount ?? 0);
+  const chunkJobIds = Array.from({ length: knownChunkCount }, (_, chunkIndex) =>
     getLinkedinImportHistoryJobId({ runId: state.runId, chunkIndex }),
   );
   const statusesById = await getJobStatusesById(chunkJobIds);
@@ -115,15 +126,23 @@ export const refreshLinkedinHistoryImportState = async (
     .filter(({ jobId }) => isJobFinished(statusesById.get(jobId)))
     .map(({ chunkIndex }) => chunkIndex);
   const processedConversationCount = Math.min(
-    totalConversationCount,
+    knownConversationCount,
     finishedChunkIndexes.length * LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
   );
   const failedJob = chunkJobIds
     .map((jobId) => statusesById.get(jobId))
     .find((status) => status?.state === 'FAILED');
 
-  if (!isDefined(failedJob) && finishedChunkIndexes.length < chunkCount) {
-    return { ...state, processedConversationCount };
+  if (
+    !isDefined(failedJob) &&
+    (isPlanning || finishedChunkIndexes.length < knownChunkCount)
+  ) {
+    return {
+      ...state,
+      processedConversationCount,
+      totalConversationCount:
+        state.totalConversationCount ?? state.plannedConversationCount,
+    };
   }
 
   const chunkResults = await Promise.all(
@@ -151,6 +170,7 @@ export const refreshLinkedinHistoryImportState = async (
     connectedAccountId,
     state: {
       ...state,
+      chunkCount: knownChunkCount,
       status: isDefined(error) ? 'FAILED' : 'COMPLETED',
       importedConversationCount,
       processedConversationCount,

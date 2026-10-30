@@ -7,7 +7,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { formatLinkedinSyncProgressLabel } from 'src/front-components/utils/format-linkedin-sync-progress-label.util';
 import { getLinkedinHistoryImportErrorReason } from 'src/front-components/utils/get-linkedin-history-import-error-reason.util';
-import { getLinkedinSyncProgress } from 'src/front-components/utils/get-linkedin-sync-progress.util';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 
 const StyledRow = styled.div`
@@ -31,22 +30,23 @@ const StyledErrorTitle = styled.span`
 
 type LinkedinSyncButtonProps = {
   historyImport: LinkedinHistoryImportState | null;
+  progress: number | undefined;
   isStarting: boolean;
+  isCancelling: boolean;
   onSync: () => void;
   onCancel: () => void;
 };
 
 export const LinkedinSyncButton = ({
   historyImport,
+  progress,
   isStarting,
+  isCancelling,
   onSync,
   onCancel,
 }: LinkedinSyncButtonProps) => {
   const isRunning = historyImport?.status === 'IMPORTING';
   const hasFailed = historyImport?.status === 'FAILED';
-  const progress = isRunning
-    ? getLinkedinSyncProgress(historyImport)
-    : undefined;
 
   const label = isRunning
     ? isDefined(progress)
@@ -69,7 +69,13 @@ export const LinkedinSyncButton = ({
         </StyledError>
       )}
       {isRunning && (
-        <Button variant="outline" size="md" onClick={onCancel}>
+        <Button
+          variant="outline"
+          size="md"
+          onClick={onCancel}
+          loading={isCancelling}
+          disabled={isCancelling}
+        >
           {t('Cancel')}
         </Button>
       )}

@@ -6,4 +6,5 @@ export type LinkedinPlanHistoryImportJobPayload = {
   cursor?: string;
   plannedChunkCount?: number;
   plannedConversationCount?: number;
+  reportedConversationCount?: number;
 };

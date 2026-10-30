@@ -57,7 +57,12 @@ const buildChatIds = (count: number, offset = 0) =>
 const mockChatPages = (pageSizes: number[]) => {
   pageSizes.forEach((pageSize, pageIndex) =>
     mocks.listUnipileChats.mockResolvedValueOnce({
-      items: buildChatIds(pageSize, pageIndex * 20).map((id) => ({ id })),
+      items: buildChatIds(pageSize, pageIndex * 20).map((id, index) => ({
+        id,
+        last_message_timestamp: new Date(
+          Date.UTC(2026, 0, 1) - (pageIndex * 20 + index) * 60_000,
+        ).toISOString(),
+      })),
       nextCursor:
         pageIndex < pageSizes.length - 1
           ? `cursor-${pageIndex + 1}`
@@ -75,6 +80,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useRealTimers();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     mocks.listUnipileChats.mockReset();
     mocks.kvStore.clear();
     mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
@@ -101,19 +107,60 @@ describe('linkedinPlanHistoryImportHandler', () => {
     expect(jobs[2].payload.chatIds).toEqual(buildChatIds(5, 40));
     expect(mocks.kvStore.get(STATE_KEY)).toEqual({
       ...RUNNING_STATE,
+      plannedChunkCount: 3,
+      plannedConversationCount: 45,
       totalConversationCount: 45,
       chunkCount: 3,
     });
   });
 
-  it('adds the jobs in bulk every 10 chunks', async () => {
+  it('sorts each page by the date of its last message', async () => {
+    mocks.listUnipileChats.mockResolvedValueOnce({
+      items: [
+        { id: 'older', last_message_timestamp: '2026-01-01T00:00:00.000Z' },
+        { id: 'newer', last_message_timestamp: '2026-02-01T00:00:00.000Z' },
+      ],
+      nextCursor: undefined,
+    });
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(getEnqueuedJobs()[0].payload.chatIds).toEqual(['newer', 'older']);
+  });
+
+  it('shows the total LinkedIn reports while still listing', async () => {
+    let stateWhileListing: unknown;
+
+    mocks.listUnipileChats
+      .mockResolvedValueOnce({
+        items: [{ id: 'chat-0' }],
+        nextCursor: 'cursor-1',
+        totalCount: 340,
+      })
+      .mockImplementationOnce(async () => {
+        stateWhileListing = mocks.kvStore.get(STATE_KEY);
+
+        return { items: [{ id: 'chat-1' }], nextCursor: undefined };
+      });
+
+    await linkedinPlanHistoryImportHandler(PAYLOAD);
+
+    expect(stateWhileListing).toEqual({
+      ...RUNNING_STATE,
+      plannedChunkCount: 1,
+      plannedConversationCount: 1,
+      totalConversationCount: 340,
+    });
+  });
+
+  it('queues the most recent page alone, then the next ones in bulk every 10', async () => {
     mockChatPages(Array.from({ length: 25 }, () => 20));
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
     expect(
       mocks.enqueueJobs.mock.calls.map(([input]) => input.jobs.length),
-    ).toEqual([10, 10, 5]);
+    ).toEqual([1, 10, 10, 4]);
   });
 
   it('hands over to a new planning job when its time runs out', async () => {
@@ -147,6 +194,8 @@ describe('linkedinPlanHistoryImportHandler', () => {
     });
     expect(mocks.kvStore.get(STATE_KEY)).toEqual({
       ...RUNNING_STATE,
+      plannedChunkCount: 3,
+      plannedConversationCount: 60,
       planJobId: 'linkedin-history-plan-run-1-1',
     });
   });

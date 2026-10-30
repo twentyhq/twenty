@@ -127,6 +127,31 @@ describe('refreshLinkedinHistoryImportState', () => {
     ).resolves.toEqual(planningState);
   });
 
+  it('shows progress on the chunks queued so far while still listing', async () => {
+    mocks.kvStore.set(STATE_KEY, {
+      ...PLANNED_STATE,
+      totalConversationCount: undefined,
+      chunkCount: undefined,
+      plannedChunkCount: 2,
+      plannedConversationCount: 40,
+    });
+    mockJobStates({
+      'linkedin-history-plan-run-1-0': 'ACTIVE',
+      'linkedin-history-chunk-run-1-0': 'COMPLETED',
+      'linkedin-history-chunk-run-1-1': 'ACTIVE',
+    });
+
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        processedConversationCount: 20,
+        totalConversationCount: 40,
+      }),
+    );
+  });
+
   it('fails a run whose planning job is gone', async () => {
     mocks.kvStore.set(STATE_KEY, {
       ...PLANNED_STATE,

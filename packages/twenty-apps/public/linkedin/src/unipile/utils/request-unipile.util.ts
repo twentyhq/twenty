@@ -70,6 +70,10 @@ export const requestUnipile = async <TResult>(
         throw requestError;
       }
 
+      console.log(
+        `[linkedin] Unipile ${requestName} rate limited, retrying in ${waitSeconds}s`,
+      );
+
       await wait(waitSeconds * 1000);
     }
   }

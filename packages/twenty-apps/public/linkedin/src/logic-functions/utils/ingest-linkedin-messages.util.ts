@@ -14,6 +14,7 @@ import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
 import { matchLinkedinParticipantPersonId } from 'src/logic-functions/utils/match-linkedin-participant-person-id.util';
 import { splitLinkedinUserName } from 'src/logic-functions/utils/split-linkedin-user-name.util';
+import { type LinkedinIngestResult } from 'src/logic-functions/types/linkedin-ingest-result.type';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
@@ -29,7 +30,14 @@ const resolvePersonIdByHandle = async ({
   counterparts: UnipileUser[];
   hasUserSentMessage: boolean;
   isGroupChat: boolean;
-}): Promise<Map<string, string> | undefined> => {
+}): Promise<
+  | {
+      personIdByHandle: Map<string, string>;
+      matchedPersonCount: number;
+      createdPersonCount: number;
+    }
+  | undefined
+> => {
   const personIdByHandle = new Map<string, string>();
   const unmatchedCounterparts: UnipileUser[] = [];
 
@@ -53,13 +61,15 @@ const resolvePersonIdByHandle = async ({
     return undefined;
   }
 
+  const matchedPersonCount = personIdByHandle.size;
+
   if (
     !isLinkedinContactCreationAllowed({
       policy: settings.contactAutoCreationPolicy,
       hasUserSentMessage,
     })
   ) {
-    return personIdByHandle;
+    return { personIdByHandle, matchedPersonCount, createdPersonCount: 0 };
   }
 
   for (const counterpart of unmatchedCounterparts) {
@@ -75,7 +85,11 @@ const resolvePersonIdByHandle = async ({
     }
   }
 
-  return personIdByHandle;
+  return {
+    personIdByHandle,
+    matchedPersonCount,
+    createdPersonCount: personIdByHandle.size - matchedPersonCount,
+  };
 };
 
 export const ingestLinkedinMessages = async ({
@@ -90,11 +104,17 @@ export const ingestLinkedinMessages = async ({
   chat: UnipileChat;
   counterparts: UnipileUser[];
   messages: UnipileMessage[];
-}): Promise<number> => {
+}): Promise<LinkedinIngestResult> => {
   const isGroupChat = isLinkedinGroupChat(chat);
 
+  const emptyResult = {
+    ingestedMessageCount: 0,
+    matchedPersonCount: 0,
+    createdPersonCount: 0,
+  };
+
   if (isGroupChat && !settings.areGroupChatsImported) {
-    return 0;
+    return { ...emptyResult, skippedReason: 'GROUP_CHATS_OFF' };
   }
 
   const ingestableMessages = messages.filter(
@@ -102,19 +122,22 @@ export const ingestLinkedinMessages = async ({
   );
 
   if (ingestableMessages.length === 0) {
-    return 0;
+    return { ...emptyResult, skippedReason: 'NO_MESSAGES' };
   }
 
-  const personIdByHandle = await resolvePersonIdByHandle({
+  const resolvedPersons = await resolvePersonIdByHandle({
     settings,
     counterparts,
     hasUserSentMessage: ingestableMessages.some((message) => message.is_sender),
     isGroupChat,
   });
 
-  if (!isDefined(personIdByHandle)) {
-    return 0;
+  if (!isDefined(resolvedPersons)) {
+    return { ...emptyResult, skippedReason: 'NO_CONTACT' };
   }
+
+  const { personIdByHandle, matchedPersonCount, createdPersonCount } =
+    resolvedPersons;
 
   const subject = buildLinkedinChatSubject(chat);
   const ingestMessagesInput = ingestableMessages
@@ -157,5 +180,9 @@ export const ingestLinkedinMessages = async ({
     });
   }
 
-  return ingestMessagesInput.length;
+  return {
+    ingestedMessageCount: ingestMessagesInput.length,
+    matchedPersonCount,
+    createdPersonCount,
+  };
 };
