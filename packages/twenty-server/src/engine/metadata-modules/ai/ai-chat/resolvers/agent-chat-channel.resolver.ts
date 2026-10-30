@@ -41,6 +41,20 @@ import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: true },
+  }),
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
@@ -79,7 +93,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async agentChatChannelThreadIds(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
@@ -122,7 +135,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async agentChatChannelSummaries(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
@@ -135,20 +147,6 @@ export class AgentChatChannelResolver {
   }
 
   @Query(() => [AgentChatChannelDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: true },
-    }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
-  )
   async agentChatChannels(
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
@@ -177,21 +175,7 @@ export class AgentChatChannelResolver {
   }
 
   @Query(() => [AgentChatChannelRoleDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: true },
-    }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async agentChatChannelRoles(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatChannelRoleDTO[]> {
@@ -199,21 +183,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => AgentChatChannelDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: true },
-    }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createAgentChatChannel(
     @Args('input', { type: () => CreateAgentChatChannelInput })
     input: CreateAgentChatChannelInput,
@@ -233,21 +203,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => AgentChatChannelDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: true },
-    }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('input', { type: () => UpdateAgentChatChannelInput })
@@ -276,21 +232,7 @@ export class AgentChatChannelResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: true },
-    }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
-    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteAgentChatChannel(
     @Args('channelId', { type: () => UUIDScalarType }) channelId: string,
     @Args('destinationChannelId', {
@@ -330,7 +272,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async moveAgentChatThreadToChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
@@ -362,7 +303,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async markAgentChatThreadAsDoneInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
@@ -392,7 +332,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async snoozeAgentChatThreadInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
@@ -423,7 +362,6 @@ export class AgentChatChannelResolver {
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),
-    SettingsPermissionGuard(PermissionFlagType.AI),
   )
   async reopenAgentChatThreadInChannel(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
