@@ -13,6 +13,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { AiActionsModule } from 'src/engine/metadata-modules/ai/ai-actions/ai-actions.module';
+import { AiTasksModule } from 'src/engine/metadata-modules/ai/ai-tasks/ai-tasks.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -51,6 +53,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    AiActionsModule,
+    AiTasksModule,
     RecordShareModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,

@@ -34,6 +34,8 @@ import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { AiActionsModule } from 'src/engine/metadata-modules/ai/ai-actions/ai-actions.module';
+import { AiTasksModule } from 'src/engine/metadata-modules/ai/ai-tasks/ai-tasks.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
@@ -108,6 +110,8 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeModule,
     SecretEncryptionRotationModule,
     UserSessionModule,
+    AiActionsModule,
+    AiTasksModule,
     EmailingDomainModule,
   ],
   providers: [

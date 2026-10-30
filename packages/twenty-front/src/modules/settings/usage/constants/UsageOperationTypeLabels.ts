@@ -12,6 +12,7 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.ALL]: msg`All operations`,
   [UsageOperationType.AI_CHAT_TOKEN]: msg`Chats`,
   [UsageOperationType.AI_WORKFLOW_TOKEN]: msg`Agents`,
+  [UsageOperationType.AI_RESEARCH_TOKEN]: msg`Research`,
   [UsageOperationType.WORKFLOW_EXECUTION]: msg`Workflow Execution`,
   [UsageOperationType.CODE_EXECUTION]: msg`Code Execution`,
   [UsageOperationType.WEB_SEARCH]: msg`Web Search`,

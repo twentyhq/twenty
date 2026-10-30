@@ -1,0 +1,1 @@
+export const AI_ACTION_STATE_POLL_INTERVAL_MS = 5000;

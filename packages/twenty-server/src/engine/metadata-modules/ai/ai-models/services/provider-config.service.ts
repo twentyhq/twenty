@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CHATGPT_PLAN_DEV_PROVIDER_NAME } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/chatgpt-plan-dev-provider.const';
+import { buildChatGptPlanDevProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/build-chatgpt-plan-dev-provider-config.util';
+import { isChatGptPlanDevProviderEnabled } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/is-chatgpt-plan-dev-provider-enabled.util';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
@@ -17,15 +20,13 @@ export class ProviderConfigService {
   ) {}
 
   getCatalogProviderNames(): Set<string> {
-    return new Set(
-      Object.keys(this.defaultAiCatalogService.getDefaultAiCatalog()),
-    );
+    return new Set(Object.keys(this.getCatalog()));
   }
 
   getResolvedProviders({
     includeCustomProviders = true,
   }: { includeCustomProviders?: boolean } = {}): AiProvidersConfig {
-    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
+    const rawCatalog = this.getCatalog();
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
     const catalog = this.resolveTemplates(rawCatalog);
@@ -40,6 +41,22 @@ export class ProviderConfigService {
       catalog,
       custom: this.twentyConfigService.get('AI_PROVIDERS'),
     });
+  }
+
+  // The local-development plan provider is part of the built-in catalog
+  // rather than a custom AI_PROVIDERS entry; it never exists outside
+  // NODE_ENV=development.
+  private getCatalog(): AiProvidersConfig {
+    const catalog = this.defaultAiCatalogService.getDefaultAiCatalog();
+
+    if (!isChatGptPlanDevProviderEnabled()) {
+      return catalog;
+    }
+
+    return {
+      [CHATGPT_PLAN_DEV_PROVIDER_NAME]: buildChatGptPlanDevProviderConfig(),
+      ...catalog,
+    };
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {

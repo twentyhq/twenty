@@ -14,6 +14,9 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: true,
   [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: false,
   [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true,
+  [FeatureFlagKey.IS_SETU_CHAT_FIRST_ENABLED]: true,
+  [FeatureFlagKey.IS_SETU_AI_ACTIONS_ENABLED]: true,
+  [FeatureFlagKey.IS_SETU_AI_TASKS_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

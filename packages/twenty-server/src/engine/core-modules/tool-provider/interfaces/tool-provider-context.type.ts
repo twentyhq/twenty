@@ -4,6 +4,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
+import { type SetuAiActionPolicy } from 'src/engine/core-modules/tool-provider/types/setu-ai-action-policy.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export type ToolProviderContext = {
@@ -19,5 +20,6 @@ export type ToolProviderContext = {
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  aiActionPolicy?: SetuAiActionPolicy;
   requireExplicitObjectGrants?: boolean;
 };

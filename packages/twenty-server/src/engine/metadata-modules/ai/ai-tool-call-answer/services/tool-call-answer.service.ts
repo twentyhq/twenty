@@ -2,11 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { generateId } from 'ai';
-import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
+import {
+  ASK_QUESTIONS_TOOL_NAME,
+  PROPOSE_EMAIL_TOOL_NAME,
+  REQUEST_FORM_TOOL_NAME,
+  type RequestFormToolInput,
+} from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -17,6 +24,7 @@ import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-age
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AiFormAnswerValidationService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/ai-form-answer-validation.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
@@ -83,6 +91,8 @@ export class ToolCallAnswerService {
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
     private readonly agentHistoryWorkspaceStorageService: AgentHistoryWorkspaceStorageService,
+    private readonly aiFormAnswerValidationService: AiFormAnswerValidationService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
@@ -140,6 +150,49 @@ export class ToolCallAnswerService {
         validation.errorMessage,
         AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
       );
+    }
+
+    // With reviewed actions on, the durable ledger is the only path to a send:
+    // an email approval issued before the switch must be prepared again as a
+    // reviewed action rather than sent from the legacy pending call.
+    if (
+      toolPart.toolName === PROPOSE_EMAIL_TOOL_NAME &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_SETU_AI_ACTIONS_ENABLED,
+        workspaceId,
+      ))
+    ) {
+      throw new AiException(
+        'Legacy email approvals must be reissued as a reviewed action',
+        AiExceptionCode.TOOL_CALL_NOT_PENDING,
+        {
+          userFriendlyMessage: msg`This email was drafted before reviewed actions were turned on. Ask the assistant to prepare it again.`,
+        },
+      );
+    }
+
+    // Forms an agent asked for in chat get full answer validation; forms a
+    // workflow step issued keep the rules their workflows were built with.
+    if (
+      toolPart.toolName === REQUEST_FORM_TOOL_NAME &&
+      !isDefined(workflowRunId)
+    ) {
+      const formErrors = await this.aiFormAnswerValidationService.validate({
+        fields: (toolPart.toolInput as RequestFormToolInput).fields,
+        values: validation.output,
+      });
+
+      if (formErrors.length > 0) {
+        const formErrorText = formErrors.join(' ');
+
+        throw new AiException(
+          formErrorText,
+          AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+          {
+            userFriendlyMessage: msg`Some answers need changes: ${formErrorText}`,
+          },
+        );
+      }
     }
 
     await this.agentChatStreamingService.reapDeadStream({

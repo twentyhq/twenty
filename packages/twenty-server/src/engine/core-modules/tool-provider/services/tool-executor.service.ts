@@ -26,6 +26,7 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { classifySetuAiToolCall } from 'src/engine/core-modules/tool-provider/utils/classify-setu-ai-tool-call.util';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -62,8 +63,25 @@ export class ToolExecutorService {
     descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
+    options?: { toolCallId?: string },
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
+
+    // Preloaded tools and execute_tool both arrive here, so the reviewed
+    // actions policy cannot be bypassed by discovering a tool at runtime.
+    if (isDefined(context.aiActionPolicy)) {
+      const policyOutput = await this.applySetuAiActionPolicy({
+        descriptor,
+        args: safeArgs,
+        context,
+        toolCallId: options?.toolCallId,
+      });
+
+      if (isDefined(policyOutput)) {
+        return policyOutput;
+      }
+    }
+
     const executionContext = await (context.resolveExecutionContext?.() ??
       context);
 
@@ -77,6 +95,46 @@ export class ToolExecutorService {
       (contextWithAuth) =>
         this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
     );
+  }
+
+  private async applySetuAiActionPolicy({
+    descriptor,
+    args,
+    context,
+    toolCallId,
+  }: {
+    descriptor: ToolIndexEntry | ToolDescriptor;
+    args: Record<string, unknown>;
+    context: ToolProviderContext;
+    toolCallId?: string;
+  }): Promise<ToolOutput | undefined> {
+    const decision = classifySetuAiToolCall(descriptor);
+
+    switch (decision.type) {
+      case 'allow':
+        return undefined;
+      case 'propose_send_email':
+        return context.aiActionPolicy!.proposeAction({
+          kind: 'send_email',
+          toolName: descriptor.name,
+          toolCallId,
+          arguments: args,
+        });
+      case 'propose_record_update':
+        return context.aiActionPolicy!.proposeAction({
+          kind: 'update_record_fields',
+          objectNameSingular: decision.objectNameSingular,
+          toolName: descriptor.name,
+          toolCallId,
+          arguments: args,
+        });
+      case 'deny':
+        return {
+          success: false,
+          message: `Tool "${descriptor.name}" is not available in reviewed chat`,
+          error: `Tool "${descriptor.name}" cannot run from this chat. Tell the user this must be done directly in the CRM; do not retry it.`,
+        };
+    }
   }
 
   private async dispatchByExecutionRef(

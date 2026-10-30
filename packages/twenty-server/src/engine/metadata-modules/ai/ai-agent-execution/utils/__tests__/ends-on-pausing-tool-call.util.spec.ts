@@ -21,6 +21,14 @@ describe('endsOnPausingToolCall', () => {
     ).toBe(false);
   });
 
+  it('does not pause on a pausing tool call the SDK rejected as invalid', () => {
+    expect(
+      endsOnPausingToolCall({
+        steps: [{ toolCalls: [{ toolName: 'request_form', invalid: true }] }],
+      }),
+    ).toBe(false);
+  });
+
   it('does not pause on a tool that is not declared as pausing', () => {
     expect(endsOnPausingToolCall({ steps: [stepCalling('search')] })).toBe(
       false,

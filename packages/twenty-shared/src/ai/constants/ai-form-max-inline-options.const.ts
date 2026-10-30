@@ -1,0 +1,1 @@
+export const AI_FORM_MAX_INLINE_OPTIONS = 20;

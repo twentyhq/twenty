@@ -54,7 +54,10 @@ export const createExecuteToolTool = (
   description:
     'Execute a tool by name with arguments. Call learn_tools first to discover the required input schema.',
   inputSchema: executeToolInputSchema,
-  execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
+  execute: async (
+    parameters: ExecuteToolInput,
+    executionOptions?: { toolCallId?: string },
+  ): Promise<ToolOutput> => {
     const { toolName, arguments: args = {} } = parameters;
 
     if (options?.isToolAllowed?.(toolName) === false) {
@@ -68,6 +71,7 @@ export const createExecuteToolTool = (
     return toolRegistry.resolveAndExecute(toolName, args, context, {
       compactOutput: options?.compactOutput,
       spillLargeOutput: options?.spillLargeOutput,
+      toolCallId: executionOptions?.toolCallId,
     });
   },
 });

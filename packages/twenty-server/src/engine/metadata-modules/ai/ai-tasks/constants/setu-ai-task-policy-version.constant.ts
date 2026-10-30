@@ -1,0 +1,1 @@
+export const SETU_AI_TASK_POLICY_VERSION = 1;

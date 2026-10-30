@@ -165,7 +165,6 @@ type SeedChatMessagesArgs = {
 };
 
 export type ChatReferenceIds = {
-  applicationId: string;
   objectMetadataId: string;
   roleId: string;
   viewId: string;
@@ -246,7 +245,7 @@ const seedChatMessages = async ({
         messageId: messageIds[1],
         orderIndex: 0,
         type: 'text',
-        textContent: `Here are linked examples: [[record:company:${COMPANY_DATA_SEED_IDS.ID_1}:Google]] is one record. Browse [[records:${chatReferenceIds.objectMetadataId}:Company records]], open the specific [[view:${chatReferenceIds.viewId}:All Companies]] view, configure the [[object:company:Companies]] data model, inspect [[field:company:domainName:Domain name]], review [[role:${chatReferenceIds.roleId}:Admin]], or manage [[app:${chatReferenceIds.applicationId}:Twenty]].`,
+        textContent: `Here are linked examples: [[record:company:${COMPANY_DATA_SEED_IDS.ID_1}:Google]] is one record. Browse [[records:${chatReferenceIds.objectMetadataId}:Company records]], open the specific [[view:${chatReferenceIds.viewId}:All Companies]] view, configure the [[object:company:Companies]] data model, inspect [[field:company:domainName:Domain name]], or review [[role:${chatReferenceIds.roleId}:Admin]].`,
         createdAt: new Date(baseTime.getTime() + 5 * 60 * 1000),
       },
     ];

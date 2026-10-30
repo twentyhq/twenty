@@ -1,0 +1,1 @@
+export const AI_FORM_MAX_LABEL_LENGTH = 200;

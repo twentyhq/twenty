@@ -51,6 +51,8 @@ import { WorkspaceDeletionApplicationUninstallJob } from 'src/engine/core-module
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
+import { AiActionsModule } from 'src/engine/metadata-modules/ai/ai-actions/ai-actions.module';
+import { AiTasksModule } from 'src/engine/metadata-modules/ai/ai-tasks/ai-tasks.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { LogicFunctionPrebuiltWarmUpModule } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.module';
 import { WarmUpApplicationLogicFunctionsJob } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/jobs/warm-up-application-logic-functions.job';
@@ -109,6 +111,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     EventLogIngestionModule,
     AiAgentMonitorModule,
     AiChatModule,
+    AiActionsModule,
+    AiTasksModule,
     LogicFunctionModule,
     LogicFunctionPrebuiltWarmUpModule,
     EnterpriseModule,

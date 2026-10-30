@@ -1,0 +1,2 @@
+export const ADD_SETU_AI_ACTION_TABLES_UPGRADE_COMMAND_NAME =
+  '2.44.0_AddSetuAiActionTablesFastInstanceCommand_1793351365262';

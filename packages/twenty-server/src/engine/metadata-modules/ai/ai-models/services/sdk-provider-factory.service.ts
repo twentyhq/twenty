@@ -20,6 +20,14 @@ import { type AiSdkPackage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  CHATGPT_PLAN_DEV_API_KEY_PLACEHOLDER,
+  CHATGPT_PLAN_DEV_PROVIDER_NAME,
+} from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/chatgpt-plan-dev-provider.const';
+import { getChatGptPlanAccessToken } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/chatgpt-plan-access-token.util';
+import { chatGptPlanStoreDisabledMiddleware } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/chatgpt-plan-store-disabled.middleware';
+import { createChatGptPlanFetch } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/create-chatgpt-plan-fetch.util';
+import { isChatGptPlanDevProviderEnabled } from 'src/engine/metadata-modules/ai/ai-models/chatgpt-plan-dev/is-chatgpt-plan-dev-provider-enabled.util';
+import {
   AI_SDK_ANTHROPIC,
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
@@ -63,7 +71,11 @@ export class SdkProviderFactoryService {
       return cached;
     }
 
-    const instance = this.buildProviderInstance(config);
+    const instance =
+      providerName === CHATGPT_PLAN_DEV_PROVIDER_NAME &&
+      isChatGptPlanDevProviderEnabled()
+        ? this.buildChatGptPlanDevProvider()
+        : this.buildProviderInstance(config);
 
     this.providerInstances.set(providerName, instance);
 
@@ -165,6 +177,24 @@ export class SdkProviderFactoryService {
         ? wrapLanguageModel({ model, middleware: options.middleware })
         : model;
     });
+  }
+
+  private buildChatGptPlanDevProvider(): AiSdkProviderInstance {
+    // The SDK insists on a key; the adapter fetch replaces the Authorization
+    // header with the signed-in plan token on every request.
+    const provider = createOpenAI({
+      apiKey: CHATGPT_PLAN_DEV_API_KEY_PLACEHOLDER,
+      fetch: createChatGptPlanFetch({
+        getAccessToken: getChatGptPlanAccessToken,
+      }),
+    });
+
+    return this.toProviderInstance(provider, AI_SDK_OPENAI, (modelId: string) =>
+      wrapLanguageModel({
+        model: provider(modelId),
+        middleware: chatGptPlanStoreDisabledMiddleware,
+      }),
+    );
   }
 
   private buildXaiProvider(config: AiProviderConfig): AiSdkProviderInstance {

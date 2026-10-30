@@ -31,6 +31,7 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
     SdkProviderFactoryService,
     ModelsDevCatalogService,
     NativeToolBinderService,
+    ProviderConfigService,
   ],
 })
 export class AiModelsModule {}
