@@ -7,7 +7,6 @@ import { useRef, useState } from 'react';
 import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import {
   THEME_DARK,
   THEME_LIGHT,
@@ -20,6 +19,7 @@ import { LinkedinAccountField } from 'src/front-components/components/LinkedinAc
 import { LinkedinContactAutoCreationSection } from 'src/front-components/components/LinkedinContactAutoCreationSection';
 import { LinkedinImportSection } from 'src/front-components/components/LinkedinImportSection';
 import { LinkedinPeopleMatchingSection } from 'src/front-components/components/LinkedinPeopleMatchingSection';
+import { LinkedinSettingsSkeleton } from 'src/front-components/components/LinkedinSettingsSkeleton';
 import { LinkedinReadStatusSection } from 'src/front-components/components/LinkedinReadStatusSection';
 import { LinkedinVisibilitySection } from 'src/front-components/components/LinkedinVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
@@ -159,7 +159,7 @@ export const LinkedinSettings = () => {
             onTimeout={loadSettings}
           />
         )}
-        {state.step === 'loading' && <Loader />}
+        {state.step === 'loading' && <LinkedinSettingsSkeleton />}
         {state.step === 'unavailable' && (
           <InlineBanner
             layout="compact"
