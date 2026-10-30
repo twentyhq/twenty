@@ -8,11 +8,15 @@ import { getLocalEnvironment } from '@/local/get-local-environment';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
-export const readLocalInteger = (
-  value: string | undefined,
-  name: string,
-  maximum: number,
-) => {
+export const readLocalInteger = ({
+  value,
+  name,
+  maximum,
+}: {
+  value: string | undefined;
+  name: string;
+  maximum: number;
+}) => {
   if (!isDefined(value)) {
     return undefined;
   }
@@ -28,5 +32,9 @@ export const readLocalInteger = (
 
 export const readLocalOptions = (options: Record<string, unknown>) => ({
   environment: getLocalEnvironment(readBooleanOption(options, 'test')),
-  port: readLocalInteger(readStringOption(options, 'port'), '--port', 65535),
+  port: readLocalInteger({
+    value: readStringOption(options, 'port'),
+    name: '--port',
+    maximum: 65535,
+  }),
 });

@@ -6,11 +6,14 @@ export const createLocalContainer = async ({
   image,
   port,
   containerPort = port,
-  environmentVariables = [],
+  environmentVariables = environment.environmentVariables,
   shouldStart = true,
   signal,
 }: {
-  environment: LocalEnvironment;
+  environment: Pick<
+    LocalEnvironment,
+    'name' | 'volumes' | 'environmentVariables'
+  >;
   image: string;
   port: number;
   containerPort?: number;

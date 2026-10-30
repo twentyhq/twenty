@@ -11,8 +11,8 @@ export const runLocalStatusCommand: CommandRun<CommandContext> = async ({
 }) => {
   const { environment } = readLocalOptions(options);
   await checkLocalRuntime(signal);
-  const container = await readLocalContainer(environment, signal);
-  const data = await getLocalStatus(environment, container, signal);
+  const container = await readLocalContainer({ environment, signal });
+  const data = await getLocalStatus({ environment, container, signal });
 
   return {
     data,

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   parseSingleJsonLine,
@@ -19,30 +20,33 @@ vi.mock('@/local/check-local-health', () => ({
 }));
 
 const environment = getLocalEnvironment(true);
-const makeContainer = (running = true) => ({
-  Id: 'test-container',
-  Image: 'old-image',
-  Config: {
-    Image: 'twentycrm/twenty-app-dev:v2.53.0',
-    Env: [
-      'APP_VERSION=2.53.0',
-      'NODE_PORT=2021',
-      'SERVER_URL=http://localhost:12021',
-      'CUSTOM_SETTING=enabled',
-    ],
-  },
-  State: { Running: running },
-  HostConfig: {
-    PortBindings: {
-      ['2021/tcp' as string]: [{ HostIp: '127.0.0.1', HostPort: '12021' }],
+const makeContainer = (isRunning = true) => {
+  const portBindings: Record<string, { HostIp: string; HostPort: string }[]> = {
+    '2021/tcp': [{ HostIp: '127.0.0.1', HostPort: '12021' }],
+  };
+  return {
+    Id: 'test-container',
+    Image: 'old-image',
+    Config: {
+      Image: 'twentycrm/twenty-app-dev:v2.53.0',
+      Env: [
+        'APP_VERSION=2.53.0',
+        'NODE_PORT=2021',
+        'SERVER_URL=http://localhost:12021',
+        'CUSTOM_SETTING=enabled',
+      ],
     },
-  },
-  Mounts: Object.entries(environment.volumes).map(([Destination, Name]) => ({
-    Type: 'volume',
-    Destination,
-    Name,
-  })),
-});
+    State: { Running: isRunning },
+    HostConfig: {
+      PortBindings: portBindings,
+    },
+    Mounts: Object.entries(environment.volumes).map(([Destination, Name]) => ({
+      Type: 'volume',
+      Destination,
+      Name,
+    })),
+  };
+};
 let container: ReturnType<typeof makeContainer> | undefined;
 let previousContainer: ReturnType<typeof makeContainer> | undefined;
 let failure: string | undefined;
@@ -119,10 +123,10 @@ describe('local commands', () => {
         }
         const target =
           args.at(-1) === previousContainer?.Id ? previousContainer : container;
-        if (args[0] === 'start' && target) {
+        if (args[0] === 'start' && isDefined(target)) {
           target.State.Running = true;
         }
-        if (args[0] === 'stop' && target) {
+        if (args[0] === 'stop' && isDefined(target)) {
           target.State.Running = false;
         }
         if (args[0] === 'rm') {
@@ -184,6 +188,9 @@ describe('local commands', () => {
     });
     const run = mutations().find(([command]) => command === 'run')!;
     expect(run).toContain('127.0.0.1:12021:12021');
+    expect(run).toContain('API_RATE_LIMITING_SHORT_LIMIT=100000');
+    expect(run).toContain('API_RATE_LIMITING_LONG_LIMIT=100000');
+    expect(run).toContain('MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false');
     expect(run).toContain('twentycrm/twenty-app-dev:v2.54.0');
     expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
     expect(run).not.toContain('twenty-app-dev-data:/data/postgres');
@@ -393,6 +400,12 @@ describe('local commands', () => {
   it('does not report reset success when Docker cannot delete a volume', async () => {
     failure = 'volume rm';
     expect((await runJson(['reset', '--yes'])).exitCode).toBe(1);
+  });
+
+  it('rejects malformed port bindings before changing the container', async () => {
+    container!.HostConfig.PortBindings = {};
+    expect((await runJson(['start'])).envelope.error.code).toBe('CONFLICT');
+    expect(mutations()).toEqual([]);
   });
 
   it('streams logs as NDJSON and emits a terminal result', async () => {

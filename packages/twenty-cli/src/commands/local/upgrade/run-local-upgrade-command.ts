@@ -24,7 +24,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
 }) => {
   const { environment } = readLocalOptions(options);
   await checkLocalRuntime(signal);
-  const existing = await readLocalContainer(environment, signal);
+  const existing = await readLocalContainer({ environment, signal });
   if (!isDefined(existing)) {
     throw new CliError({
       code: 'NOT_FOUND',
@@ -48,7 +48,7 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
   if (existing.imageId === nextImageId) {
     return {
       data: {
-        ...(await getLocalStatus(environment, existing, signal)),
+        ...(await getLocalStatus({ environment, container: existing, signal })),
         upgraded: false,
       },
       human: `Already using ${image}.`,
@@ -68,11 +68,11 @@ export const runLocalUpgradeCommand: CommandRun<CommandContext> = async ({
     environmentVariables,
     signal,
   });
-  const data = await waitForLocalEnvironment(
+  const data = await waitForLocalEnvironment({
     environment,
-    existing.port,
+    port: existing.port,
     signal,
-  );
+  });
   return {
     data: { ...data, upgraded: true, dataPreserved: true },
     human: `Local environment upgraded to ${image} at ${data.url}. Data volumes preserved.`,

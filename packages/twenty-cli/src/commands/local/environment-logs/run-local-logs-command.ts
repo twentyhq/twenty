@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { once } from 'node:events';
 
 import { readStringOption } from '@/catalog/read-command-values';
@@ -17,12 +18,15 @@ export const runLocalLogsCommand: CommandRun<CommandContext> = async ({
 }) => {
   const { environment } = readLocalOptions(options);
   const lines =
-    readLocalInteger(readStringOption(options, 'lines'), '--lines', 10000) ??
-    50;
+    readLocalInteger({
+      value: readStringOption(options, 'lines'),
+      name: '--lines',
+      maximum: 10000,
+    }) ?? 50;
   const follow = options.follow !== false;
   await checkLocalRuntime(signal);
-  const container = await readLocalContainer(environment, signal);
-  if (!container) {
+  const container = await readLocalContainer({ environment, signal });
+  if (!isDefined(container)) {
     throw new CliError({
       code: 'NOT_FOUND',
       message: 'No local environment has been created.',

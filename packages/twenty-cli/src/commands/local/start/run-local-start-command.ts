@@ -31,7 +31,7 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     : undefined;
 
   await checkLocalRuntime(signal);
-  const existing = await readLocalContainer(environment, signal);
+  const existing = await readLocalContainer({ environment, signal });
   const port = existing?.port ?? requestedPort ?? environment.port;
 
   if (
@@ -51,14 +51,14 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     const existingVersion = valid(existing.image.split(':').at(-1));
     if (
       isDefined(range) &&
-      (!existingVersion || !satisfies(existingVersion, range))
+      (!isDefined(existingVersion) || !satisfies(existingVersion, range))
     ) {
       output.warn({
         code: 'LOCAL_VERSION_MISMATCH',
         message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}. Use twenty local upgrade to change version.`,
       });
     }
-    if (!existing.running) {
+    if (!existing.isRunning) {
       output.progress({ message: 'Starting the existing local environment…' });
       await runDocker({ args: ['start', existing.id], signal });
     }
@@ -76,7 +76,7 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
   output.progress({
     message: 'Waiting for the local environment to be ready…',
   });
-  const data = await waitForLocalEnvironment(environment, port, signal);
+  const data = await waitForLocalEnvironment({ environment, port, signal });
 
   return {
     data,

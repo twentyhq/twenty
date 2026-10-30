@@ -9,10 +9,13 @@ import {
 } from '@/local/types/local-environment.type';
 import { CliError } from '@/output/cli-error';
 
-export const readLocalContainer = async (
-  environment: LocalEnvironment,
-  signal: AbortSignal,
-): Promise<LocalContainer | undefined> => {
+export const readLocalContainer = async ({
+  environment,
+  signal,
+}: {
+  environment: Pick<LocalEnvironment, 'name'>;
+  signal: AbortSignal;
+}): Promise<LocalContainer | undefined> => {
   const id = (
     await runDocker({
       args: [
@@ -124,7 +127,7 @@ export const readLocalContainer = async (
     image,
     imageId: value.Image,
     environmentVariables: value.Config.Env,
-    running: value.State.Running,
+    isRunning: value.State.Running,
     port,
     containerPort,
     mounts,

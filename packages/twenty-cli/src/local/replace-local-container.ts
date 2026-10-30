@@ -25,7 +25,7 @@ export const replaceLocalContainer = async ({
   const previousName = `${environment.name}-previous`;
   try {
     await runDocker({ args: ['rename', existing.id, previousName], signal });
-    if (existing.running) {
+    if (existing.isRunning) {
       await runDocker({ args: ['stop', '--time', '30', existing.id], signal });
     }
     await createLocalContainer({
@@ -40,7 +40,10 @@ export const replaceLocalContainer = async ({
   } catch (error) {
     const recoverySignal = AbortSignal.timeout(60_000);
     try {
-      const current = await readLocalContainer(environment, recoverySignal);
+      const current = await readLocalContainer({
+        environment,
+        signal: recoverySignal,
+      });
       if (isDefined(current) && current.id !== existing.id) {
         await runDocker({ args: ['rm', current.id], signal: recoverySignal });
       }
@@ -50,7 +53,7 @@ export const replaceLocalContainer = async ({
           signal: recoverySignal,
         });
       }
-      if (existing.running) {
+      if (existing.isRunning) {
         await runDocker({
           args: ['start', existing.id],
           signal: recoverySignal,

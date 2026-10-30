@@ -3,6 +3,7 @@ export type LocalEnvironment = {
   port: number;
   volumes: Record<string, string>;
   requiredVolumeDestinations: string[];
+  environmentVariables: string[];
 };
 
 export type LocalContainer = {
@@ -10,7 +11,7 @@ export type LocalContainer = {
   image: string;
   imageId: string;
   environmentVariables: string[];
-  running: boolean;
+  isRunning: boolean;
   port: number;
   containerPort: number;
   mounts: { Type: string; Name?: string; Destination: string }[];
