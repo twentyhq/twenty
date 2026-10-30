@@ -37,7 +37,12 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isEmptyObject,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -121,10 +126,9 @@ export const SettingsObjectFieldEdit = () => {
     validationRules,
     fieldName: fieldMetadataItem?.name ?? '',
   });
-  const validationRulesWarning =
-    validationRulesReadingField.length > 0
-      ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
-      : undefined;
+  const validationRulesWarning = isNonEmptyArray(validationRulesReadingField)
+    ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
+    : undefined;
 
   const isReverseJunctionRelation =
     resolveJunctionConfig({
@@ -281,7 +285,7 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    if (validationRulesReadingField.length > 0) {
+    if (isNonEmptyArray(validationRulesReadingField)) {
       openDialog(DEACTIVATE_FIELD_MODAL_ID);
 
       return;

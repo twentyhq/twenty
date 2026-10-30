@@ -47,11 +47,11 @@ const buildValidationRuleManifest = (
 
 const buildManifest = ({
   fieldName = 'reference',
-  withReferenceField = true,
+  hasReferenceField = true,
   validationRules = [buildValidationRuleManifest()],
 }: {
   fieldName?: string;
-  withReferenceField?: boolean;
+  hasReferenceField?: boolean;
   validationRules?: ValidationRuleManifest[];
 } = {}) =>
   buildBaseManifest({
@@ -59,7 +59,7 @@ const buildManifest = ({
     roleId: TEST_ROLE_ID,
     overrides: {
       objects: [TEST_OBJECT],
-      fields: withReferenceField
+      fields: hasReferenceField
         ? [
             {
               universalIdentifier: REFERENCE_FIELD_ID,
@@ -212,7 +212,7 @@ describe('Validation rules declared in an application manifest', () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({
         fieldName: 'code',
-        withReferenceField: false,
+        hasReferenceField: false,
         validationRules: [
           buildValidationRuleManifest({
             expression: 'isNonEmptyString(code)',

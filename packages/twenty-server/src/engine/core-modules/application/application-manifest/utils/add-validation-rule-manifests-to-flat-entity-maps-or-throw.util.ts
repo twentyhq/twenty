@@ -68,7 +68,6 @@ const groupFieldsByObjectUniversalIdentifier = (
   return fieldsByObjectUniversalIdentifier;
 };
 
-// Rules compile against the fields the workspace will have once this sync lands
 const computeFieldsAfterSync = ({
   ownerFlatApplication,
   inferDeletionFromMissingEntities,
@@ -315,6 +314,72 @@ const buildUnavailableFieldMessage = ({
   }
 };
 
+const resolveCompilationOutcome = ({
+  compilationResult,
+  validationRuleManifest,
+  existingFlatValidationRule,
+  ...fieldLookups
+}: Pick<
+  Parameters<typeof findUnavailableField>[0],
+  | 'ownerFlatApplication'
+  | 'existingFieldsByObjectUniversalIdentifier'
+  | 'fieldsAfterSyncByObjectUniversalIdentifier'
+  | 'existingAllFlatEntityMaps'
+> & {
+  compilationResult: ReturnType<typeof compileValidationRuleExpression>;
+  validationRuleManifest: Pick<
+    ValidationRuleManifest,
+    'name' | 'objectUniversalIdentifier' | 'expression'
+  >;
+  existingFlatValidationRule:
+    | Pick<UniversalFlatValidationRule, 'expression' | 'bindings' | 'isActive'>
+    | undefined;
+}): {
+  bindings: ValidationRuleBindings;
+  isActive: boolean;
+  warning?: string;
+} => {
+  if (compilationResult.isValid) {
+    return {
+      bindings: compilationResult.bindings,
+      isActive: existingFlatValidationRule?.isActive ?? true,
+    };
+  }
+
+  const unavailableField = findUnavailableField({
+    validationRuleManifest,
+    existingFlatValidationRule,
+    errorCode: compilationResult.errorCode,
+    errorParams: compilationResult.errorParams,
+    ...fieldLookups,
+  });
+
+  if (!isDefined(unavailableField)) {
+    throw new ApplicationException(
+      `Validation rule "${validationRuleManifest.name}" has an invalid expression: ${compilationResult.errorMessage}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
+  const message = buildUnavailableFieldMessage({
+    validationRuleName: validationRuleManifest.name,
+    unavailableField,
+  });
+
+  if (unavailableField.state === 'removedFromApplication') {
+    throw new ApplicationException(
+      message,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
+  return {
+    bindings: existingFlatValidationRule?.bindings ?? {},
+    isActive: false,
+    warning: message,
+  };
+};
+
 export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
   validationRules,
   ownerFlatApplication,
@@ -396,46 +461,18 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       }),
     });
 
-    let bindings: ValidationRuleBindings;
-    let isActive: boolean;
+    const { bindings, isActive, warning } = resolveCompilationOutcome({
+      compilationResult,
+      validationRuleManifest,
+      existingFlatValidationRule,
+      ownerFlatApplication,
+      existingFieldsByObjectUniversalIdentifier,
+      fieldsAfterSyncByObjectUniversalIdentifier,
+      existingAllFlatEntityMaps,
+    });
 
-    if (compilationResult.isValid) {
-      bindings = compilationResult.bindings;
-      isActive = existingFlatValidationRule?.isActive ?? true;
-    } else {
-      const unavailableField = findUnavailableField({
-        validationRuleManifest,
-        existingFlatValidationRule,
-        errorCode: compilationResult.errorCode,
-        errorParams: compilationResult.errorParams,
-        ownerFlatApplication,
-        existingFieldsByObjectUniversalIdentifier,
-        fieldsAfterSyncByObjectUniversalIdentifier,
-        existingAllFlatEntityMaps,
-      });
-
-      if (!isDefined(unavailableField)) {
-        throw new ApplicationException(
-          `Validation rule "${validationRuleManifest.name}" has an invalid expression: ${compilationResult.errorMessage}`,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      const message = buildUnavailableFieldMessage({
-        validationRuleName: validationRuleManifest.name,
-        unavailableField,
-      });
-
-      if (unavailableField.state === 'removedFromApplication') {
-        throw new ApplicationException(
-          message,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
-
-      warnings.push(message);
-      bindings = existingFlatValidationRule?.bindings ?? {};
-      isActive = false;
+    if (isDefined(warning)) {
+      warnings.push(warning);
     }
 
     const isErrorFieldDetached = isErrorFieldDetachedByWorkspace({
