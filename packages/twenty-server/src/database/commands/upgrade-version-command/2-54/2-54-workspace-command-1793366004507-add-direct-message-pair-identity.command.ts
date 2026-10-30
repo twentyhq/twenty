@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common';
 import { Command } from 'nest-commander';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -24,6 +24,9 @@ const DIRECT_MESSAGE_PAIR_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.directMessageSecondWorkspaceMemberId
     .universalIdentifier,
 ];
+const DIRECT_MESSAGE_PAIR_INDEX_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
+    .universalIdentifier;
 
 @RegisteredWorkspaceCommand('2.54.0', 1793366004507)
 @Command({
@@ -64,8 +67,23 @@ export class AddDirectMessagePairIdentityCommand extends ProvisionedWorkspaceCom
         flatObjectMetadataMaps.byUniversalIdentifier[
           STANDARD_OBJECTS.agentChatThread.universalIdentifier
         ],
+      ) ||
+      isDefined(
+        flatIndexMaps.byUniversalIdentifier[
+          DIRECT_MESSAGE_PAIR_INDEX_UNIVERSAL_IDENTIFIER
+        ],
       )
     ) {
+      return;
+    }
+
+    if (options.dryRun) {
+      this.logger.log(
+        doNotTranslate(
+          `[DRY RUN] Would add direct message pair identity for workspace ${workspaceId}`,
+        ),
+      );
+
       return;
     }
 
@@ -89,25 +107,8 @@ export class AddDirectMessagePairIdentityCommand extends ProvisionedWorkspaceCom
       getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
         standardFlatEntityMaps: allFlatEntityMaps.flatIndexMaps,
         existingFlatEntityMaps: flatIndexMaps,
-        universalIdentifiers: [
-          STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
-            .universalIdentifier,
-        ],
+        universalIdentifiers: [DIRECT_MESSAGE_PAIR_INDEX_UNIVERSAL_IDENTIFIER],
       });
-
-    if (!isNonEmptyArray(fieldsToCreate) && !isNonEmptyArray(indexesToCreate)) {
-      return;
-    }
-
-    if (options.dryRun) {
-      this.logger.log(
-        doNotTranslate(
-          `[DRY RUN] Would add direct message pair identity for workspace ${workspaceId}`,
-        ),
-      );
-
-      return;
-    }
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
