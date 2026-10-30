@@ -1,6 +1,5 @@
 .root {
   --tw-list-item-color: var(--t-font-color-secondary);
-  --tw-list-item-description-color: var(--t-font-color-secondary);
   --tw-list-item-background: transparent;
   --tw-list-item-hover-background: var(--t-background-transparent-light);
 
@@ -53,7 +52,6 @@
 
   &[data-disabled] {
     --tw-list-item-color: var(--t-font-color-tertiary);
-    --tw-list-item-description-color: var(--t-font-color-light);
     --tw-list-item-hover-background: transparent;
 
     cursor: default;
@@ -103,7 +101,7 @@
 }
 
 .description {
-  color: var(--tw-list-item-description-color);
+  color: var(--t-font-color-light);
   min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
