@@ -39,8 +39,3 @@ export const requestWithSyncWarnings = async <TResult>(
     return request({});
   }
 };
-
-export const readSyncWarnings = (value: unknown): string[] =>
-  isPlainObject(value) && isArray(value.warnings)
-    ? value.warnings.filter(isString)
-    : [];

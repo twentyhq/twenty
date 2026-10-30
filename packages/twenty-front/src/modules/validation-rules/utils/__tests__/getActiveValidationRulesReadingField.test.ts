@@ -1,11 +1,12 @@
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 import { getActiveValidationRulesReadingField } from '@/validation-rules/utils/getActiveValidationRulesReadingField';
 
-const buildRule = (
-  name: string,
-  expression: string,
+const buildRule = ({
+  name,
+  expression,
   isActive = true,
-): ValidationRule => ({
+}: Pick<ValidationRule, 'name' | 'expression'> &
+  Partial<Pick<ValidationRule, 'isActive'>>): ValidationRule => ({
   id: name,
   objectMetadataId: 'object-metadata-id',
   name,
@@ -19,10 +20,10 @@ const buildRule = (
 
 describe('getActiveValidationRulesReadingField', () => {
   const validationRules = [
-    buildRule('Amount', 'amount.amountMicros > 0'),
-    buildRule('Stage', 'stage == "amount"'),
-    buildRule('Off', 'amount > 0', false),
-    buildRule('Function', 'isDefined(amount)'),
+    buildRule({ name: 'Amount', expression: 'amount.amountMicros > 0' }),
+    buildRule({ name: 'Stage', expression: 'stage == "amount"' }),
+    buildRule({ name: 'Off', expression: 'amount > 0', isActive: false }),
+    buildRule({ name: 'Function', expression: 'isDefined(amount)' }),
   ];
 
   it('should find active rules reading the field or one of its subfields, but not a text with its name', () => {

@@ -2,7 +2,8 @@ import {
   getFieldUniversalIdentifier,
   type Manifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { RESERVED_SYSTEM_FIELD_TYPE_BY_NAME } from 'twenty-shared/metadata';
+import { RelationType } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -17,17 +18,6 @@ import {
 type ValidationRuleFields = Parameters<
   typeof compileValidationRuleExpression
 >[0]['fields'];
-
-// Twenty provisions these on every object, so an app reads them without declaring them
-const GENERATED_FIELD_TYPE_BY_NAME = {
-  id: FieldMetadataType.UUID,
-  createdAt: FieldMetadataType.DATE_TIME,
-  updatedAt: FieldMetadataType.DATE_TIME,
-  deletedAt: FieldMetadataType.DATE_TIME,
-  createdBy: FieldMetadataType.ACTOR,
-  updatedBy: FieldMetadataType.ACTOR,
-  position: FieldMetadataType.POSITION,
-};
 
 const toFieldDescriptor = (
   field: Pick<ManifestField, 'name' | 'type' | 'universalIdentifier'>,
@@ -60,7 +50,7 @@ export const validateValidationRules = (
     ]),
   );
   const buildGeneratedFields = (objectUniversalIdentifier: string) =>
-    Object.entries(GENERATED_FIELD_TYPE_BY_NAME).map(([name, type]) => ({
+    Object.entries(RESERVED_SYSTEM_FIELD_TYPE_BY_NAME).map(([name, type]) => ({
       name,
       type,
       universalIdentifier: getFieldUniversalIdentifier({

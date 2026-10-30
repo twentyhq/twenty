@@ -1,3 +1,4 @@
+import { RESERVED_SYSTEM_FIELD_TYPE_BY_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -15,7 +16,7 @@ type PartialSystemFlatFieldMetadata<
 >;
 
 const PARTIAL_ID_FIELD = {
-  type: FieldMetadataType.UUID,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.id,
   name: 'id',
   label: 'ID',
   icon: 'Icon123',
@@ -50,7 +51,7 @@ const PARTIAL_ID_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.UUID>;
 
 const PARTIAL_CREATED_AT_FIELD = {
-  type: FieldMetadataType.DATE_TIME,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.createdAt,
   name: 'createdAt',
   label: 'Creation date',
   icon: 'IconCalendar',
@@ -85,7 +86,7 @@ const PARTIAL_CREATED_AT_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
 const PARTIAL_UPDATED_AT_FIELD = {
-  type: FieldMetadataType.DATE_TIME,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.updatedAt,
   name: 'updatedAt',
   label: 'Last update',
   icon: 'IconCalendarClock',
@@ -120,7 +121,7 @@ const PARTIAL_UPDATED_AT_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
 const PARTIAL_DELETED_AT_FIELD = {
-  type: FieldMetadataType.DATE_TIME,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.deletedAt,
   name: 'deletedAt',
   label: 'Deleted at',
   icon: 'IconCalendarClock',
@@ -155,7 +156,7 @@ const PARTIAL_DELETED_AT_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
 const PARTIAL_CREATED_BY_FIELD = {
-  type: FieldMetadataType.ACTOR,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.createdBy,
   name: 'createdBy',
   label: 'Created by',
   icon: 'IconCreativeCommonsSa',
@@ -190,7 +191,7 @@ const PARTIAL_CREATED_BY_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.ACTOR>;
 
 const PARTIAL_UPDATED_BY_FIELD = {
-  type: FieldMetadataType.ACTOR,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.updatedBy,
   name: 'updatedBy',
   label: 'Updated by',
   icon: 'IconUserCircle',
@@ -225,7 +226,7 @@ const PARTIAL_UPDATED_BY_FIELD = {
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.ACTOR>;
 
 const PARTIAL_POSITION_FIELD = {
-  type: FieldMetadataType.POSITION,
+  type: RESERVED_SYSTEM_FIELD_TYPE_BY_NAME.position,
   name: 'position',
   label: 'Position',
   icon: 'IconHierarchy2',

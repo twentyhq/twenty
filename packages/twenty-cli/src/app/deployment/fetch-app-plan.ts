@@ -2,10 +2,8 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
-import {
-  readSyncWarnings,
-  requestWithSyncWarnings,
-} from '@/app/deployment/request-with-sync-warnings';
+import { readSyncWarnings } from '@/app/deployment/read-sync-warnings';
+import { requestWithSyncWarnings } from '@/app/deployment/request-with-sync-warnings';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
