@@ -13,9 +13,9 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
-@RegisteredWorkspaceCommand('2.54.0', 1793360021965)
+@RegisteredWorkspaceCommand('2.55.0', 1793369399691)
 @Command({
-  name: 'upgrade:2-54:backfill-webhook-admin-role',
+  name: 'upgrade:2-55:backfill-webhook-admin-role',
   description: 'Attach the Admin role to every webhook that has no role yet',
 })
 export class BackfillWebhookAdminRoleCommand extends ProvisionedWorkspaceCommandRunner {

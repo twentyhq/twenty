@@ -271,7 +271,7 @@ import { AddGeolocationToUserSessionFastInstanceCommand } from 'src/database/com
 import { AddWorkspaceChatAssistantModesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793280483473-add-workspace-chat-assistant-modes';
 import { AddRelatedRecordPathTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793291361887-add-related-record-path-table';
 import { AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793357800472-add-access-token-expires-at-to-connected-account';
-import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793360021964-add-webhook-id-to-role-target';
+import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793369399690-add-webhook-id-to-role-target';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
