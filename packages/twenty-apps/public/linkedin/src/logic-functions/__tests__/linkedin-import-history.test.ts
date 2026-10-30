@@ -104,6 +104,11 @@ describe('linkedinImportHistoryHandler', () => {
     expect(mocks.kvStore.get(CHUNK_KEY)).toEqual({
       importedConversationCount: 1,
     });
+    expect(
+      mocks.kvStore.get(
+        'linkedin-history-import-chunk-progress:connection-id:run-1:2',
+      ),
+    ).toBe(2);
     expect(log).toHaveBeenCalledWith(
       expect.stringMatching(
         /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, skipped 1 without contact/,

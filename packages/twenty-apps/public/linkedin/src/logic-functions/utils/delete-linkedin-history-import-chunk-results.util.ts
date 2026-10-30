@@ -11,19 +11,24 @@ export const deleteLinkedinHistoryImportChunkResults = async ({
   connectedAccountId: string;
   state: LinkedinHistoryImportState;
 }): Promise<void> => {
-  if (!isDefined(state.chunkCount)) {
+  const chunkCount = state.chunkCount ?? state.plannedChunkCount;
+
+  if (!isDefined(chunkCount)) {
     return;
   }
 
   await Promise.all(
-    Array.from({ length: state.chunkCount }, (_, chunkIndex) =>
-      kv.delete(
-        getLinkedinHistoryImportChunkKvKey({
-          connectedAccountId,
-          runId: state.runId,
-          chunkIndex,
-        }),
+    Array.from({ length: chunkCount }, (_, chunkIndex) =>
+      (['result', 'progress'] as const).map((kind) =>
+        kv.delete(
+          getLinkedinHistoryImportChunkKvKey({
+            connectedAccountId,
+            runId: state.runId,
+            chunkIndex,
+            kind,
+          }),
+        ),
       ),
-    ),
+    ).flat(),
   );
 };

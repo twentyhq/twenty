@@ -4,6 +4,8 @@ import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-
 import { getLinkedinProfileSlug } from 'src/logic-functions/utils/get-linkedin-profile-slug.util';
 import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
 
+const coreApiClient = new CoreApiClient({ runAs: 'application' });
+
 const getStoredSlugForms = (slug: string): string[] => [
   ...new Set([
     slug,
@@ -22,7 +24,7 @@ export const findPersonIdsByLinkedinHandle = async (
     return [];
   }
 
-  const { people } = await new CoreApiClient().query({
+  const { people } = await coreApiClient.query({
     people: {
       __args: {
         filter: {

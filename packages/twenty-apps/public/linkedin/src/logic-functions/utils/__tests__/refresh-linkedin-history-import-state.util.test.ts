@@ -127,18 +127,27 @@ describe('refreshLinkedinHistoryImportState', () => {
     ).resolves.toEqual(planningState);
   });
 
-  it('shows progress on the chunks queued so far while still listing', async () => {
+  it('counts finished chunks and the chats running chunks already processed', async () => {
     mocks.kvStore.set(STATE_KEY, {
       ...PLANNED_STATE,
       totalConversationCount: undefined,
       chunkCount: undefined,
-      plannedChunkCount: 2,
-      plannedConversationCount: 40,
+      plannedChunkCount: 3,
+      plannedConversationCount: 60,
     });
+    mocks.kvStore.set(
+      'linkedin-history-import-chunk-progress:connection-id:run-1:1',
+      7,
+    );
+    mocks.kvStore.set(
+      'linkedin-history-import-chunk-progress:connection-id:run-1:2',
+      5,
+    );
     mockJobStates({
       'linkedin-history-plan-run-1-0': 'ACTIVE',
       'linkedin-history-chunk-run-1-0': 'COMPLETED',
       'linkedin-history-chunk-run-1-1': 'ACTIVE',
+      'linkedin-history-chunk-run-1-2': 'PRIORITIZED',
     });
 
     await expect(
@@ -146,8 +155,8 @@ describe('refreshLinkedinHistoryImportState', () => {
     ).resolves.toEqual(
       expect.objectContaining({
         status: 'IMPORTING',
-        processedConversationCount: 20,
-        totalConversationCount: 40,
+        processedConversationCount: 27,
+        totalConversationCount: undefined,
       }),
     );
   });

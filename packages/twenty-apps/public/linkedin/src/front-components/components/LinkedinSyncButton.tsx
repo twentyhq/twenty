@@ -48,15 +48,24 @@ export const LinkedinSyncButton = ({
   const isRunning = historyImport?.status === 'IMPORTING';
   const hasFailed = historyImport?.status === 'FAILED';
 
-  const label = isRunning
-    ? isDefined(progress)
-      ? t('Syncing {progress}', {
-          progress: formatLinkedinSyncProgressLabel(progress),
-        })
-      : t('Syncing…')
-    : hasFailed
-      ? t('Retry')
-      : t('Sync now');
+  const isListing =
+    isRunning &&
+    !isDefined(historyImport.chunkCount) &&
+    !isDefined(historyImport.totalConversationCount);
+
+  const label = isListing
+    ? t('Listing conversations ({count})', {
+        count: historyImport.plannedConversationCount ?? 0,
+      })
+    : isRunning
+      ? isDefined(progress)
+        ? t('Syncing {progress}', {
+            progress: formatLinkedinSyncProgressLabel(progress),
+          })
+        : t('Syncing…')
+      : hasFailed
+        ? t('Retry')
+        : t('Sync now');
 
   return (
     <StyledRow>

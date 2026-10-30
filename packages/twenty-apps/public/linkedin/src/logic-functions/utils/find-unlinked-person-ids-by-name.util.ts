@@ -4,6 +4,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
 import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
 
+const coreApiClient = new CoreApiClient({ runAs: 'application' });
+
 export const findUnlinkedPersonIdsByName = async ({
   firstName,
   lastName,
@@ -15,7 +17,7 @@ export const findUnlinkedPersonIdsByName = async ({
     return [];
   }
 
-  const { people } = await new CoreApiClient().query({
+  const { people } = await coreApiClient.query({
     people: {
       __args: {
         filter: {

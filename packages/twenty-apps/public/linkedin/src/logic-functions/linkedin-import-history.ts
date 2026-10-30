@@ -52,6 +52,7 @@ export const linkedinImportHistoryHandler = async (
   const { connectedAccountId } = payload;
   const startedAt = Date.now();
   let importedConversationCount = 0;
+  let processedChatCount = 0;
   const totals = {
     messageCount: 0,
     matchedPersonCount: 0,
@@ -113,6 +114,13 @@ export const linkedinImportHistoryHandler = async (
       if (ingestResult.ingestedMessageCount > 0) {
         importedConversationCount += 1;
       }
+
+      processedChatCount += 1;
+
+      await kv.set(
+        getLinkedinHistoryImportChunkKvKey({ ...payload, kind: 'progress' }),
+        processedChatCount,
+      );
     }
   } catch (error) {
     return failLinkedinHistoryImportJob({

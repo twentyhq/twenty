@@ -125,9 +125,28 @@ export const refreshLinkedinHistoryImportState = async (
     .map((jobId, chunkIndex) => ({ jobId, chunkIndex }))
     .filter(({ jobId }) => isJobFinished(statusesById.get(jobId)))
     .map(({ chunkIndex }) => chunkIndex);
+  const runningChatCounts = await Promise.all(
+    chunkJobIds
+      .map((jobId, chunkIndex) => ({ jobId, chunkIndex }))
+      .filter(({ jobId }) => statusesById.get(jobId)?.state === 'ACTIVE')
+      .map(({ chunkIndex }) =>
+        kv.get<number>(
+          getLinkedinHistoryImportChunkKvKey({
+            connectedAccountId,
+            runId: state.runId,
+            chunkIndex,
+            kind: 'progress',
+          }),
+        ),
+      ),
+  );
   const processedConversationCount = Math.min(
     knownConversationCount,
-    finishedChunkIndexes.length * LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB,
+    finishedChunkIndexes.length * LINKEDIN_HISTORY_IMPORT_CHATS_PER_JOB +
+      runningChatCounts.reduce<number>(
+        (total, chatCount) => total + (chatCount ?? 0),
+        0,
+      ),
   );
   const failedJob = chunkJobIds
     .map((jobId) => statusesById.get(jobId))
@@ -137,12 +156,7 @@ export const refreshLinkedinHistoryImportState = async (
     !isDefined(failedJob) &&
     (isPlanning || finishedChunkIndexes.length < knownChunkCount)
   ) {
-    return {
-      ...state,
-      processedConversationCount,
-      totalConversationCount:
-        state.totalConversationCount ?? state.plannedConversationCount,
-    };
+    return { ...state, processedConversationCount };
   }
 
   const chunkResults = await Promise.all(

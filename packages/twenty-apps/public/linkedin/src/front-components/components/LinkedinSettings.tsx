@@ -35,7 +35,7 @@ type LinkedinSettingsValues = Extract<
   { isConnected: true }
 >['settings'];
 
-const HISTORY_IMPORT_POLL_MILLISECONDS = 5000;
+const HISTORY_IMPORT_POLL_MILLISECONDS = 2000;
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
