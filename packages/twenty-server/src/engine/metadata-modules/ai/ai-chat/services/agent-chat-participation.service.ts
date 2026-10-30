@@ -87,7 +87,10 @@ export class AgentChatParticipationService {
         );
 
         const recipientParticipantWorkspaceMemberIds =
-          await this.completeMessage(participationArgs);
+          await this.completeMessage({
+            ...participationArgs,
+            isAssistantParticipationApplied: true,
+          });
 
         return { ...sentMessage, recipientParticipantWorkspaceMemberIds };
       },
@@ -96,7 +99,9 @@ export class AgentChatParticipationService {
 
   // The message may already be saved, so a participation failure must not fail the send
   async completeMessage(
-    args: AgentChatMessageParticipationArgs,
+    args: AgentChatMessageParticipationArgs & {
+      isAssistantParticipationApplied?: boolean;
+    },
   ): Promise<string[]> {
     try {
       return await this.applyMessageParticipation(args);
@@ -116,8 +121,11 @@ export class AgentChatParticipationService {
     isAssistantMentioned,
     recipientWorkspaceMemberIds,
     mentionedWorkspaceMemberIds,
+    isAssistantParticipationApplied = false,
     ...args
-  }: AgentChatMessageParticipationArgs): Promise<string[]> {
+  }: AgentChatMessageParticipationArgs & {
+    isAssistantParticipationApplied?: boolean;
+  }): Promise<string[]> {
     const isMessageSaved = await this.chatService.hasMessage({
       workspaceId: args.workspaceId,
       threadId: args.threadId,
@@ -134,7 +142,7 @@ export class AgentChatParticipationService {
       messageId,
     });
 
-    if (isAssistantMentioned) {
+    if (isAssistantMentioned && !isAssistantParticipationApplied) {
       await this.threadService.addAssistantParticipant({
         ...args,
         messageId,

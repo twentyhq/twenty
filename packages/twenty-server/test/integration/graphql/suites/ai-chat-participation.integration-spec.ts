@@ -21,6 +21,7 @@ describe('Chat participation through the authenticated API', () => {
   afterEach(async () => {
     await context.cleanup();
     models.restore();
+    jest.restoreAllMocks();
   });
 
   it('defaults a new direct chat to Ada and starts a reply', async () => {
@@ -55,6 +56,24 @@ describe('Chat participation through the authenticated API', () => {
 
     return threadId;
   };
+
+  it('applies a mention once when the send succeeds', async () => {
+    const threadId = await createDirectMessage();
+    const addAssistantParticipant = jest.spyOn(
+      context.threadService,
+      'addAssistantParticipant',
+    );
+    const response = await sendChatParticipationMessage({
+      threadId,
+      isAssistantMentioned: true,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      true,
+    );
+    expect(addAssistantParticipant).not.toHaveBeenCalled();
+  });
 
   it('keeps a canonical DM mention-only after Ada first joins', async () => {
     const threadId = await createDirectMessage();
