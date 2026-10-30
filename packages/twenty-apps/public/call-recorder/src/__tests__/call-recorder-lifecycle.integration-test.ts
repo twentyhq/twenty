@@ -18,6 +18,7 @@ import {
 
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
+  APPLY_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   CANCEL_SCHEDULED_RECALL_BOTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -51,7 +52,7 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
 import { cancelScheduledRecallBotsHandler } from 'src/logic-functions/cancel-scheduled-recall-bots';
 import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-scheduled-recall-bots.util';
-import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
+import { applyCalendarBotSchedulingHandler } from 'src/logic-functions/apply-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
 // Lifecycle tests use the real Twenty API/database with simulated Recall responses
@@ -336,6 +337,7 @@ class FakeRecallApi {
   calendarEventSweepRequests: object[] = [];
   followUps: ArmedFollowUp[] = [];
   cancellationCleanupRequests: object[] = [];
+  calendarBotSchedulingApplyRetryRequests: object[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -513,6 +515,9 @@ class FakeRecallApi {
             return jsonResponse(503, {});
           }
           this.cancellationCleanupRequests.push(...payloads);
+          break;
+        case APPLY_CALENDAR_BOT_SCHEDULING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
+          this.calendarBotSchedulingApplyRetryRequests.push(...payloads);
           break;
         case IMPORT_CALL_RECORDING_ARTIFACTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER:
           this.artifactImportRequests.push(...payloads);
@@ -4173,7 +4178,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       turnRecordingOff();
 
-      const result = await syncCalendarBotSchedulingHandler();
+      const result = await applyCalendarBotSchedulingHandler({});
 
       expect(result).toEqual(
         expect.objectContaining({ outcome: 'scheduled-bots-canceled' }),
@@ -4202,7 +4207,7 @@ describe('call recorder app lifecycle (integration)', () => {
         turnRecordingOff();
         recall.failFollowUpEnqueue = true;
 
-        await expect(syncCalendarBotSchedulingHandler()).rejects.toThrow();
+        await expect(applyCalendarBotSchedulingHandler({})).rejects.toThrow();
         expect(
           (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
         ).toBe('CANCELED');
@@ -4210,7 +4215,7 @@ describe('call recorder app lifecycle (integration)', () => {
         expect(recall.cancellationCleanupRequests).toHaveLength(1);
 
         recall.failFollowUpEnqueue = false;
-        await syncCalendarBotSchedulingHandler();
+        await applyCalendarBotSchedulingHandler({});
         expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
       },
     );
@@ -4222,13 +4227,16 @@ describe('call recorder app lifecycle (integration)', () => {
       recall.followUps = [];
       recall.failCancellationCleanupEnqueue = true;
 
-      await expect(syncCalendarBotSchedulingHandler()).rejects.toThrow();
+      await expect(applyCalendarBotSchedulingHandler({})).rejects.toThrow();
 
       expect(await fetchCallRecording(callRecordingId)).toMatchObject({
         recordingRequestStatus: 'CANCELED',
         externalBotId: botId,
       });
       expect(followUpsArmedFor(callRecordingId)).toHaveLength(1);
+      expect(recall.calendarBotSchedulingApplyRetryRequests).toEqual([
+        { attempt: 1, applyJobId: expect.any(String) },
+      ]);
     });
 
     it('stops the cancellation chain when Recall is down, leaving the bot to its follow-up', async () => {
@@ -4236,7 +4244,7 @@ describe('call recorder app lifecycle (integration)', () => {
         await scheduleRecordingThroughCalendarReconciliation();
 
       turnRecordingOff();
-      await syncCalendarBotSchedulingHandler();
+      await applyCalendarBotSchedulingHandler({});
 
       recall.failRecallRemovals = true;
 
@@ -4299,7 +4307,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
 
       turnRecordingOff();
-      await syncCalendarBotSchedulingHandler();
+      await applyCalendarBotSchedulingHandler({});
       await reconcileCallRecorderForCalendarEventIds({
         client,
         calendarEventIds: [calendarEventId],
@@ -4313,7 +4321,7 @@ describe('call recorder app lifecycle (integration)', () => {
         await scheduleRecordingThroughCalendarReconciliation();
 
       turnRecordingOff();
-      await syncCalendarBotSchedulingHandler();
+      await applyCalendarBotSchedulingHandler({});
       await reconcileCallRecorderForCalendarEventIds({
         client,
         calendarEventIds: [calendarEventId],
@@ -4355,7 +4363,7 @@ describe('call recorder app lifecycle (integration)', () => {
         'true',
       );
 
-      await expect(syncCalendarBotSchedulingHandler()).resolves.toEqual({
+      await expect(applyCalendarBotSchedulingHandler({})).resolves.toEqual({
         outcome: 'sweep-enqueued',
       });
     });
