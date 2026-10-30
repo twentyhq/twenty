@@ -233,6 +233,8 @@ export interface AggregateChartConfiguration {
 
 export type AggregateOperations = 'AVG' | 'COUNT' | 'COUNT_EMPTY' | 'COUNT_FALSE' | 'COUNT_NOT_EMPTY' | 'COUNT_TRUE' | 'COUNT_UNIQUE_VALUES' | 'MAX' | 'MIN' | 'PERCENTAGE_EMPTY' | 'PERCENTAGE_NOT_EMPTY' | 'SUM'
 
+export type AiChatAssistantMode = 'AUTOMATIC' | 'MENTION_ONLY' | 'NEVER'
+
 export interface AiChatUsage {
     consumedValue?: Scalars['BigInt']
     kind: Scalars['String']
@@ -4067,6 +4069,8 @@ export interface Workspace {
     activationStatus: WorkspaceActivationStatus
     aiAdditionalInstructions?: Scalars['String']
     aiAgentModelTier: AiModelTier
+    aiChatDirectMessageAssistantMode: AiChatAssistantMode
+    aiChatInboxAssistantMode: AiChatAssistantMode
     aiChatModelTier: AiModelTier
     aiEvaluationModelId?: Scalars['String']
     aiModelIdByTier: Scalars['JSON']
@@ -8445,7 +8449,7 @@ export interface UpdateWebhookInputUpdates {description?: (Scalars['String'] | n
 
 export interface UpdateWorkspaceAllowedIframeOriginsInput {operation: Scalars['String'],origin: Scalars['String']}
 
-export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
+export interface UpdateWorkspaceInput {aiAdditionalInstructions?: (Scalars['String'] | null),aiAgentModelTier?: (AiModelTier | null),aiChatDirectMessageAssistantMode?: (AiChatAssistantMode | null),aiChatInboxAssistantMode?: (AiChatAssistantMode | null),aiChatModelTier?: (AiModelTier | null),aiEvaluationModelId?: (Scalars['String'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),allowImpersonation?: (Scalars['Boolean'] | null),customDomain?: (Scalars['String'] | null),defaultRoleId?: (Scalars['UUID'] | null),displayName?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),eventLogRetentionDays?: (Scalars['Float'] | null),inviteHash?: (Scalars['String'] | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),isCampaignOpenTrackingEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),logo?: (Scalars['String'] | null),subdomain?: (Scalars['String'] | null),trashRetentionDays?: (Scalars['Float'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {update: Scalars['JSON'],workspaceMemberId: Scalars['UUID']}
 
@@ -8987,6 +8991,8 @@ export interface WorkspaceGenqlSelection{
     activationStatus?: boolean | number
     aiAdditionalInstructions?: boolean | number
     aiAgentModelTier?: boolean | number
+    aiChatDirectMessageAssistantMode?: boolean | number
+    aiChatInboxAssistantMode?: boolean | number
     aiChatModelTier?: boolean | number
     aiEvaluationModelId?: boolean | number
     aiModelIdByTier?: boolean | number
@@ -11993,6 +11999,12 @@ export const enumAggregateOperations = {
    PERCENTAGE_EMPTY: 'PERCENTAGE_EMPTY' as const,
    PERCENTAGE_NOT_EMPTY: 'PERCENTAGE_NOT_EMPTY' as const,
    SUM: 'SUM' as const
+}
+
+export const enumAiChatAssistantMode = {
+   AUTOMATIC: 'AUTOMATIC' as const,
+   MENTION_ONLY: 'MENTION_ONLY' as const,
+   NEVER: 'NEVER' as const
 }
 
 export const enumAiModelTier = {
