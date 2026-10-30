@@ -4,7 +4,7 @@ import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/Settin
 type SettingsAiBehaviorExampleProps = ComponentProps<
   typeof SettingsAiBehaviorSection
 > & {
-  rejectChanges?: boolean;
+  shouldRejectChanges?: boolean;
 };
 
 export const SettingsAiBehaviorExample = ({
@@ -15,7 +15,7 @@ export const SettingsAiBehaviorExample = ({
   isLoading,
   disabled,
   errorMessage,
-  rejectChanges = false,
+  shouldRejectChanges = false,
 }: SettingsAiBehaviorExampleProps) => {
   const [currentDirectMessageMode, setDirectMessageMode] =
     useState(directMessageMode);
@@ -28,14 +28,14 @@ export const SettingsAiBehaviorExample = ({
       onDirectMessageModeChange={(value) => {
         onDirectMessageModeChange(value);
 
-        if (!rejectChanges) {
+        if (!shouldRejectChanges) {
           setDirectMessageMode(value);
         }
       }}
       onInboxModeChange={(value) => {
         onInboxModeChange(value);
 
-        if (!rejectChanges) {
+        if (!shouldRejectChanges) {
           setInboxMode(value);
         }
       }}
