@@ -16048,7 +16048,7 @@ msgstr "사용자가 개별 레코드를 제한하고 공유할 수 있도록 �
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
-msgstr ""
+msgstr "레코드 수준 권한 규칙이 관련 레코드의 필드를 비교하도록 허용합니다."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -22179,7 +22179,7 @@ msgstr "레코드 페이지"
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
-msgstr ""
+msgstr "관계를 통한 레코드 규칙"
 
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx

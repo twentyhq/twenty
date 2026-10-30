@@ -16048,7 +16048,7 @@ msgstr "Personen erlauben, einzelne Datensätze einzuschränken und zu teilen."
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
-msgstr ""
+msgstr "Zulassen, dass Berechtigungsregeln auf Datensatzebene ein Feld eines verknüpften Datensatzes vergleichen."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -22179,7 +22179,7 @@ msgstr "Datensatzseite"
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
-msgstr ""
+msgstr "Datensatzregeln über Beziehungen"
 
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
