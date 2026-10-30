@@ -42,7 +42,7 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     throw new CliError({
       code: 'CONFLICT',
       message: `${environment.name} already uses ${existing.image} on port ${existing.port}.`,
-      hint: 'Omit the version and --port options to reuse this instance.',
+      hint: 'Omit --port to reuse this instance. Use twenty local upgrade to change its version.',
     });
   }
 
@@ -55,7 +55,7 @@ export const runLocalStartCommand: CommandRun<CommandContext> = async ({
     ) {
       output.warn({
         code: 'LOCAL_VERSION_MISMATCH',
-        message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}.`,
+        message: `The existing image ${existing.image} does not establish compatibility with engines.twenty ${range}. Use twenty local upgrade to change version.`,
       });
     }
     if (!existing.running) {

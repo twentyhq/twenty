@@ -35,7 +35,27 @@ New instances listen only on loopback, on port `2020`. Use `--port <port>` when
 creating an instance to choose another port. Use a local Docker socket context;
 remote Docker engines are not supported by these commands.
 
-`stop` keeps the container and all data.
+## Upgrade or reset
+
+```bash
+twenty local upgrade 2.53.1
+```
+
+Upgrade pulls the requested image before replacing the instance. It preserves
+its ports, database and file volumes, and environment overrides. Without a
+version, it follows the same version selection as a new start. Custom storage
+layouts are rejected. Failed upgrades retain data volumes, but do not roll
+back database migrations.
+
+`stop` keeps all data. To permanently delete the instance and its data, run:
+
+```bash
+twenty local reset
+twenty local start
+```
+
+Reset asks for confirmation. Scripts must pass `--yes`. Saved remotes and
+credentials are not removed.
 
 ## Integration tests
 
@@ -49,7 +69,7 @@ TWENTY_API_URL=http://localhost:2021 yarn test
 
 Set `TWENTY_API_KEY` to a key for that instance. Integration tests install and
 uninstall an app, so keep them separate from your development workspace.
-Pass `--test` to logs or stop when managing this instance.
+Pass `--test` to logs, stop, upgrade or reset when managing this instance.
 
 The generated CI workflow provisions an isolated instance through
 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` and installs the

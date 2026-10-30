@@ -170,9 +170,12 @@ No app directory or saved remote is required. Login remains separate:
 Use `local status`, `local logs` and `local stop` to inspect and stop it.
 `start [version]` preserves existing instances. New instances use the explicit
 version, the highest published match for `engines.twenty`, or `latest` when no
-range exists.
+range exists. `local upgrade [version]` replaces the image while preserving
+ports, data volumes and environment overrides.
 
 Use `--test` consistently for the separate test instance on port `2021`.
+`local reset` deletes that selected instance and its data, and requires explicit
+approval; do not supply `--yes` without the user's authorization to delete it.
 Stopping an instance preserves data. None of these commands changes remotes.
 
 ## CI/CD

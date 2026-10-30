@@ -1,5 +1,5 @@
 import { isArray, isBoolean, isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { LOCAL_IMAGE_REPOSITORY } from '@/local/get-local-environment';
 import { runDocker } from '@/local/run-docker';
@@ -42,12 +42,16 @@ export const readLocalContainer = async (
   if (
     !isPlainObject(value) ||
     !isString(value.Id) ||
+    !isString(value.Image) ||
     !isPlainObject(value.Config) ||
     !isString(value.Config.Image) ||
+    !isArray(value.Config.Env) ||
+    !value.Config.Env.every(isString) ||
     !isPlainObject(value.State) ||
     !isBoolean(value.State.Running) ||
     !isPlainObject(value.HostConfig) ||
-    !isPlainObject(value.HostConfig.PortBindings)
+    !isPlainObject(value.HostConfig.PortBindings) ||
+    !isArray(value.Mounts)
   ) {
     throw new CliError({
       code: 'INVALID_RESPONSE',
@@ -88,18 +92,52 @@ export const readLocalContainer = async (
     port > 65535 ||
     !Number.isInteger(containerPort) ||
     containerPort < 1 ||
-    containerPort > 65535
+    containerPort > 65535 ||
+    value.Mounts.some(
+      (mount: unknown) =>
+        !isPlainObject(mount) ||
+        !isString(mount.Type) ||
+        !isString(mount.Destination) ||
+        (isDefined(mount.Name) && !isString(mount.Name)),
+    )
   ) {
     throw new CliError({
       code: 'CONFLICT',
-      message: `${environment.name} has an unsupported port configuration.`,
+      message: `${environment.name} has an unsupported port or storage configuration.`,
     });
   }
 
   return {
     id: value.Id,
     image,
+    imageId: value.Image,
+    environmentVariables: value.Config.Env as string[],
     running: value.State.Running,
     port,
+    containerPort,
+    mounts: value.Mounts as LocalContainer['mounts'],
   };
+};
+
+export const assertLocalStorage = (
+  environment: LocalEnvironment,
+  container: LocalContainer,
+) => {
+  if (
+    !['/data/postgres', '/app/packages/twenty-server/.local-storage'].every(
+      (destination) =>
+        container.mounts.some((mount) => mount.Destination === destination),
+    ) ||
+    container.mounts.some(
+      (mount) =>
+        mount.Type !== 'volume' ||
+        environment.volumes[mount.Destination] !== mount.Name,
+    )
+  ) {
+    throw new CliError({
+      code: 'CONFLICT',
+      message: `${environment.name} uses custom storage.`,
+      hint: 'Manage this container directly with Docker to preserve its storage configuration.',
+    });
+  }
 };
