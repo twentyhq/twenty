@@ -107,6 +107,13 @@ Order the `fields` array the way Postgres should use it — leftmost column firs
 
 ## Related record paths (optional)
 
+<Warning>
+  Related record paths are in preview: they sync with your app, but record
+  permissions don't use them yet. Once enforced, they require the
+  **Organization plan or above**, like
+  [row-level security](/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
 A related record path starts on an object and follows up to three relation fields, each on the object the previous one reached. Record permissions use these paths to extend access from a record to its related records.
 
 - An **inherent** path (`isInherent: true`) applies whenever the starting record is readable, however that access was granted. Use it for records that belong to their parent, such as a post card's attachments.
