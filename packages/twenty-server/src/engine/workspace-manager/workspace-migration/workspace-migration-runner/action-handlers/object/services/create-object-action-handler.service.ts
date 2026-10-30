@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { buildAccessGroupSchemaDefinitions } from 'src/engine/metadata-modules/access-group/utils/build-access-group-schema-definitions.util';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -173,11 +174,27 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
 
+    const accessGroupSchemaDefinitions = buildAccessGroupSchemaDefinitions({
+      objectMetadata: flatObjectMetadata,
+    });
+
     await this.workspaceSchemaManagerService.tableManager.createTable({
       queryRunner,
       schemaName,
       tableName,
-      columnDefinitions,
+      columnDefinitions: [
+        ...columnDefinitions,
+        ...accessGroupSchemaDefinitions.columnDefinitions,
+      ],
     });
+
+    for (const index of accessGroupSchemaDefinitions.indexDefinitions) {
+      await this.workspaceSchemaManagerService.indexManager.createIndex({
+        queryRunner,
+        schemaName,
+        tableName,
+        index,
+      });
+    }
   }
 }
