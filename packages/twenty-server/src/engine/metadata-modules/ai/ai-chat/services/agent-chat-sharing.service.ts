@@ -19,14 +19,14 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
-import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-workspace-member-row-access-policy-subject.util';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
-import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
+import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
+import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
+import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
+import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/permissions/principal/utils/build-workspace-member-row-access-policy-subject.util';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
@@ -45,13 +45,13 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
   type RowAccessPolicy,
   type RowAccessPolicySubject,
-} from 'src/engine/twenty-orm/types/row-access-policy.type';
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
