@@ -54,36 +54,35 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
         queryRunner,
         schemaName,
       });
-      const chatTableExpressions = Object.values(
+      const chatTables = Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
         .filter(isPrivateByDefaultObject)
-        .map(
-          (flatObjectMetadata) =>
-            getWorkspaceSchemaContextForMigration({
-              workspaceId,
-              objectMetadata: flatObjectMetadata,
-            }).tableName,
-        )
-        .filter((tableName) => tableNamesWithColumn.has(tableName))
-        .map(
-          (tableName) =>
-            `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
-        );
+        .map((flatObjectMetadata) => ({
+          objectMetadataId: flatObjectMetadata.id,
+          tableName: getWorkspaceSchemaContextForMigration({
+            workspaceId,
+            objectMetadata: flatObjectMetadata,
+          }).tableName,
+        }))
+        .filter(({ tableName }) => tableNamesWithColumn.has(tableName));
 
-      if (!isNonEmptyArray(chatTableExpressions)) {
+      if (!isNonEmptyArray(chatTables)) {
         return;
       }
+
+      const buildTableExpression = (tableName: string) =>
+        `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
 
       const isPrivateColumn = escapeIdentifier(IS_PRIVATE_COLUMN_NAME);
 
       if (options.dryRun) {
         const [{ count }] = await queryRunner.query(
-          `SELECT ${chatTableExpressions
+          `SELECT ${chatTables
             .map(
-              (tableExpression) =>
-                `(SELECT COUNT(*) FROM ${tableExpression} WHERE NOT ${isPrivateColumn})`,
+              ({ tableName }) =>
+                `(SELECT COUNT(*) FROM ${buildTableExpression(tableName)} WHERE NOT ${isPrivateColumn})`,
             )
             .join(' + ')} AS count`,
         );
@@ -95,11 +94,17 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
         return;
       }
 
-      for (const tableExpression of chatTableExpressions) {
+      for (const { tableName } of chatTables) {
         await queryRunner.query(
-          `UPDATE ${tableExpression} SET ${isPrivateColumn} = true WHERE NOT ${isPrivateColumn}`,
+          `UPDATE ${buildTableExpression(tableName)} SET ${isPrivateColumn} = true WHERE NOT ${isPrivateColumn}`,
         );
       }
+
+      await queryRunner.query(
+        `DELETE FROM ${buildTableExpression('recordShare')}
+           WHERE "objectMetadataId" = ANY($1::uuid[]) AND "principalType" = 'EVERYONE' AND "rowCause" = 'MANUAL'`,
+        [chatTables.map(({ objectMetadataId }) => objectMetadataId)],
+      );
     } finally {
       if (isQueryRunnerConnected) {
         await queryRunner.release();

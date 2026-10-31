@@ -88,12 +88,12 @@ describe('2-55 workspace command - make chat threads private records (integratio
     expect(await countEveryoneShares()).toBe(2);
   });
 
-  it('makes every chat thread private and leaves its share rows', async () => {
+  it('makes every chat thread private and drops its everyone shares', async () => {
     await runOnWorkspace();
 
     expect((await findPrivateThreadIds()).sort()).toEqual(
       [privateThreadId, sharedThreadId].sort(),
     );
-    expect(await countEveryoneShares()).toBe(2);
+    expect(await countEveryoneShares()).toBe(0);
   });
 });

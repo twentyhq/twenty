@@ -268,6 +268,7 @@ export class RecordSharingService {
     sharingObject: {
       flatObjectMetadata,
       isShareRequired,
+      isPrivateByDefault,
       defaultGeneralAccessLevel,
     },
     creatorWorkspaceMemberId,
@@ -313,20 +314,35 @@ export class RecordSharingService {
 
     // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
-      await this.recordShareStorageService.deleteMatching({
-        workspaceId,
-        transactionScope,
-        criteria: [
-          {
-            objectMetadataId: args.objectMetadataId,
-            recordId: args.recordId,
-            rowCause: RecordShareRowCause.OWNER,
-          },
-        ],
-      });
+      if (!isPrivateByDefault) {
+        await this.recordShareStorageService.deleteMatching({
+          workspaceId,
+          transactionScope,
+          criteria: [
+            {
+              objectMetadataId: args.objectMetadataId,
+              recordId: args.recordId,
+              rowCause: RecordShareRowCause.OWNER,
+            },
+          ],
+        });
+      }
 
       return;
     }
+
+    await this.recordShareStorageService.deleteMatching({
+      workspaceId,
+      transactionScope,
+      criteria: [
+        {
+          objectMetadataId: args.objectMetadataId,
+          recordId: args.recordId,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          rowCause: RecordShareRowCause.MANUAL,
+        },
+      ],
+    });
 
     if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
       return;
