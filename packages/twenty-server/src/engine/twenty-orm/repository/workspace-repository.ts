@@ -25,12 +25,12 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
-} from 'src/engine/twenty-orm/repository/permissions.utils';
+} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
 import {

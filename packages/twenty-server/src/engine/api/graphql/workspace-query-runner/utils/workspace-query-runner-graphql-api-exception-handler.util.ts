@@ -18,8 +18,8 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { throttlerToGraphqlApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-graphql-api-exception-handler.util';
 import { UsageLimitException } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-graphql-api-exception-handler.util';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/permissions/utils/permission-graphql-api-exception-handler.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';

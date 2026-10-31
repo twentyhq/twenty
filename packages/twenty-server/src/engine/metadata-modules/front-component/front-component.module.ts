@@ -9,7 +9,7 @@ import { FrontComponentController } from 'src/engine/metadata-modules/front-comp
 import { FrontComponentRestApiExceptionFilter } from 'src/engine/metadata-modules/front-component/filters/front-component-rest-api-exception.filter';
 import { FrontComponentResolver } from 'src/engine/metadata-modules/front-component/front-component.resolver';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';

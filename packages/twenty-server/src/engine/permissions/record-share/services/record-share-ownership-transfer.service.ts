@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isRecordShareExceptionObject } from 'src/engine/permissions/record-share/utils/is-record-share-exception-object.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()

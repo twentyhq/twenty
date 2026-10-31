@@ -12,7 +12,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/twenty-orm/constants/unsatisfiable-record-filter.constant';
+import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/rls/constants/unsatisfiable-record-filter.constant';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/build-row-level-permission-record-filter.util';
 
 const OBJECT_ID = 'object-1';

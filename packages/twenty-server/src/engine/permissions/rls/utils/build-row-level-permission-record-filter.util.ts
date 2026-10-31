@@ -24,11 +24,11 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/twenty-orm/constants/unsatisfiable-record-filter.constant';
+import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/rls/constants/unsatisfiable-record-filter.constant';
 import { resolveUnsatisfiableRecordFilterGroupIds } from 'src/engine/permissions/rls/utils/resolve-unsatisfiable-record-filter-group-ids.util';
 import { resolveWorkspaceMemberPredicateValue } from 'src/engine/permissions/rls/utils/resolve-workspace-member-predicate-value.util';
 import { validatePredicateValueCompatibility } from 'src/engine/permissions/rls/utils/validate-predicate-value-compatibility.util';

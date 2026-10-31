@@ -8,7 +8,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { isRecordShareExceptionObject } from 'src/engine/permissions/record-share/utils/is-record-share-exception-object.util';
 import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 // A record shared by name reaches people whose role cannot otherwise access
 // its object, but only to view or edit it: deleting it, creating siblings or

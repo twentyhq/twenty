@@ -20,7 +20,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
+import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type TestContext = {

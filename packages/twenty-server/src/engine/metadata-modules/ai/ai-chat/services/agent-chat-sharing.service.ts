@@ -45,8 +45,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
   type RowAccessPolicy,
