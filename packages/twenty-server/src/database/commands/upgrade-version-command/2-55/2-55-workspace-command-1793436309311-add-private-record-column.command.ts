@@ -28,7 +28,7 @@ const isRestrictableObject = (
 @Command({
   name: 'upgrade:2-55:add-private-record-column',
   description:
-    'Add the isPrivate column to every object table except recordShare and accessGroup, then turn records restricted to the people with access into private records',
+    'Add the _isPrivate column to every object table except recordShare and accessGroup, then turn records restricted to the people with access into private records',
 })
 export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -65,7 +65,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      const columnTypesByTableName = await this.findIsPrivateColumnTypes({
+      const tableNamesWithColumn = await this.findTableNamesWithColumn({
         queryRunner,
         schemaName,
       });
@@ -90,18 +90,10 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           continue;
         }
 
-        const columnType = columnTypesByTableName.get(tableName);
-
-        if (isDefined(columnType) && columnType !== 'bool') {
-          this.logger.error(
-            `Skipping ${tableName} in workspace ${workspaceId}: column ${IS_PRIVATE_COLUMN_NAME} already exists with type ${columnType}`,
-          );
-
-          continue;
-        }
+        const hasColumn = tableNamesWithColumn.has(tableName);
 
         if (options.dryRun) {
-          dryRunColumnCount += isDefined(columnType) ? 0 : 1;
+          dryRunColumnCount += hasColumn ? 0 : 1;
           dryRunPrivateRecordCount += isRestrictableObject(flatObjectMetadata)
             ? await this.countRestrictedRecords({
                 queryRunner,
@@ -113,7 +105,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           continue;
         }
 
-        if (!isDefined(columnType)) {
+        if (!hasColumn) {
           await this.addColumnWithLockTimeout({
             queryRunner,
             schemaName,
@@ -158,22 +150,20 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     return new Set(tables.map(({ tableName }) => tableName));
   }
 
-  private async findIsPrivateColumnTypes({
+  private async findTableNamesWithColumn({
     queryRunner,
     schemaName,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-  }): Promise<Map<string, string>> {
-    const columns: { tableName: string; udtName: string }[] =
-      await queryRunner.query(
-        `SELECT table_name AS "tableName", udt_name AS "udtName"
-           FROM information_schema.columns
-           WHERE table_schema = $1 AND column_name = $2`,
-        [schemaName, IS_PRIVATE_COLUMN_NAME],
-      );
+  }): Promise<Set<string>> {
+    const columns: { tableName: string }[] = await queryRunner.query(
+      `SELECT table_name AS "tableName" FROM information_schema.columns
+         WHERE table_schema = $1 AND column_name = $2`,
+      [schemaName, IS_PRIVATE_COLUMN_NAME],
+    );
 
-    return new Map(columns.map(({ tableName, udtName }) => [tableName, udtName]));
+    return new Set(columns.map(({ tableName }) => tableName));
   }
 
   // Metadata-only, but the exclusive lock must not queue every query on the table

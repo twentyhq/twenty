@@ -32,20 +32,18 @@ export type RowAccessExpression =
       // Compiled as a grant list read once, so it can be ORed with an indexed filter
       isUncorrelated?: boolean;
     } & RecordShareExpressionTarget)
-  | ({ kind: 'recordPrivacy'; isPrivate: boolean } & PrivateRecordTarget)
+  | ({ kind: 'recordPrivacy'; isPrivate: boolean } & RecordExpressionTarget)
   | ({
       kind: 'recordCreatedBy';
       workspaceMemberId: string;
-    } & PrivateRecordTarget);
+    } & RecordExpressionTarget);
 
-export type PrivateRecordTarget = {
+export type RecordExpressionTarget = {
   tableAlias: string;
   objectMetadataId: string;
 };
 
-export type RecordShareExpressionTarget = {
-  tableAlias: string;
-  objectMetadataId: string;
+export type RecordShareExpressionTarget = RecordExpressionTarget & {
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
 };

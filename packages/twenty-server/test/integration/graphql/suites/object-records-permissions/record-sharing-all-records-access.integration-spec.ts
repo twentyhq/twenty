@@ -158,7 +158,7 @@ describe('Access to all records and ownership transfer', () => {
   // Private records are out of reach of the admin who cleans up
   const makeRecordsPublic = () =>
     global.testDataSource.query(
-      `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."_${OBJECT_NAME}" SET "isPrivate" = false`,
+      `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."_${OBJECT_NAME}" SET "_isPrivate" = false`,
     );
 
   beforeEach(async () => {

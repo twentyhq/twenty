@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/metadata-modules/access-group/constants/access-group-column-names.constant';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -70,15 +69,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
       message: `Name "${name}" is reserved composite field name`,
-      value: name,
-      userFriendlyMessage: msg`Name "${name}" is not available`,
-    });
-  }
-
-  if (name === IS_PRIVATE_COLUMN_NAME) {
-    errors.push({
-      code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
-      message: `Name "${name}" is reserved for private records`,
       value: name,
       userFriendlyMessage: msg`Name "${name}" is not available`,
     });

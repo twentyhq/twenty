@@ -2,12 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  FeatureFlagKey,
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
@@ -59,51 +54,16 @@ export class RecordShareOwnershipTransferService {
     });
 
     if (isDefined(toWorkspaceMemberId)) {
-      await this.grantCreatedPrivateRecordsToCustodian({
+      // Nobody passes the creator check of a removed member's private records, admins included
+      await this.privateRecordStorageService.grantPrivateRecordsCreatedBy({
         workspaceId,
-        transferableObjects,
-        fromWorkspaceMemberId: removedWorkspaceMemberId,
-        toWorkspaceMemberId,
+        flatObjectMetadatas: transferableObjects,
+        creatorWorkspaceMemberId: removedWorkspaceMemberId,
+        granteeWorkspaceMemberId: toWorkspaceMemberId,
       });
     }
   }
 
-  // Nobody passes the creator check of a removed member's private records, admins included
-  private async grantCreatedPrivateRecordsToCustodian({
-    workspaceId,
-    transferableObjects,
-    fromWorkspaceMemberId,
-    toWorkspaceMemberId,
-  }: {
-    workspaceId: string;
-    transferableObjects: FlatObjectMetadata[];
-    fromWorkspaceMemberId: string;
-    toWorkspaceMemberId: string;
-  }): Promise<void> {
-    for (const flatObjectMetadata of transferableObjects) {
-      const recordIds =
-        await this.privateRecordStorageService.findPrivateRecordIdsCreatedBy({
-          workspaceId,
-          flatObjectMetadata,
-          workspaceMemberId: fromWorkspaceMemberId,
-        });
-
-      await this.recordShareStorageService.insertMany({
-        workspaceId,
-        recordShares: recordIds.map((recordId) => ({
-          objectMetadataId: flatObjectMetadata.id,
-          recordId,
-          principalId: toWorkspaceMemberId,
-          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.OWNER,
-          sourceId: recordId,
-        })),
-      });
-    }
-  }
-
-  // Private objects such as chats and workflow runs stay with their creator
   private async findTransferableObjects(
     workspaceId: string,
   ): Promise<FlatObjectMetadata[]> {

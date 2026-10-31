@@ -21,6 +21,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+const RECORD_SHARE_OBJECT_METADATA_NAME = 'recordShare';
+
 @Injectable()
 export class PrivateRecordStorageService {
   constructor(
@@ -74,34 +76,61 @@ export class PrivateRecordStorageService {
     );
   }
 
-  async findPrivateRecordIdsCreatedBy({
+  // One statement across every object, so no record id is loaded or bound
+  async grantPrivateRecordsCreatedBy({
     workspaceId,
-    flatObjectMetadata,
-    workspaceMemberId,
+    flatObjectMetadatas,
+    creatorWorkspaceMemberId,
+    granteeWorkspaceMemberId,
   }: {
     workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    workspaceMemberId: string;
-  }): Promise<string[]> {
+    flatObjectMetadatas: FlatObjectMetadata[];
+    creatorWorkspaceMemberId: string;
+    granteeWorkspaceMemberId: string;
+  }): Promise<void> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
-
-    if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
-      return [];
-    }
-
-    const rows = await this.withRepository(
-      { workspaceId, flatObjectMetadata },
-      (repository) =>
-        repository.executeRaw<{ id: string }>(
-          `SELECT "id" FROM ${buildTableExpression({ workspaceId, flatObjectMetadata })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :workspaceMemberId`,
-          { workspaceMemberId },
-        ),
+    const objectsWithCreator = flatObjectMetadatas.filter(
+      (flatObjectMetadata) =>
+        hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
     );
 
-    return rows.map(({ id }) => id);
+    if (objectsWithCreator.length === 0) {
+      return;
+    }
+
+    const privateRecordSelects = objectsWithCreator.map(
+      (flatObjectMetadata, index) =>
+        `SELECT CAST(:objectMetadataId${index} AS uuid) AS "objectMetadataId", "id" AS "recordId" FROM ${buildTableExpression({ workspaceId, flatObjectMetadata })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :creatorWorkspaceMemberId`,
+    );
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepository(RECORD_SHARE_OBJECT_METADATA_NAME, {
+            shouldBypassPermissionChecks: true,
+          })
+          .executeRaw(
+            `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."recordShare"
+               ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+             SELECT private_record."objectMetadataId", private_record."recordId", :granteeWorkspaceMemberId, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', private_record."recordId"
+             FROM (${privateRecordSelects.join(' UNION ALL ')}) AS private_record
+             ON CONFLICT DO NOTHING`,
+            {
+              creatorWorkspaceMemberId,
+              granteeWorkspaceMemberId,
+              ...Object.fromEntries(
+                objectsWithCreator.map(({ id }, index) => [
+                  `objectMetadataId${index}`,
+                  id,
+                ]),
+              ),
+            },
+          ),
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   // Must share the caller's transaction so the records and their privacy change together
@@ -173,6 +202,6 @@ const buildTableExpression = ({
   flatObjectMetadata,
 }: {
   workspaceId: string;
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: Parameters<typeof computeObjectTargetTable>[0];
 }): string =>
   `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))}`;

@@ -62,19 +62,18 @@ export const resolveObjectSharing = ({
   // Private records are only reached through their shares, whatever the flag
   const isShareRequired =
     flatObjectMetadata.readability === MetadataReadability.PRIVATE;
+  const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;
   // Records of other shareable objects follow their roles unless made private one by one
-  const isShareable =
-    isShareRequired || (isRecordSharingEnabled && !flatObjectMetadata.isSystem);
+  const isShareable = isShareRequired || canBeShared;
 
-  const operationTypesGrantedBeyondRole =
-    isRecordSharingEnabled && !flatObjectMetadata.isSystem
-      ? OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
-          ({ objectPermissionAction }) =>
-            !flatObjectMetadata.disabledObjectPermissionActions?.includes(
-              objectPermissionAction,
-            ),
-        ).map(({ operationType }) => operationType)
-      : [];
+  const operationTypesGrantedBeyondRole = canBeShared
+    ? OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+        ({ objectPermissionAction }) =>
+          !flatObjectMetadata.disabledObjectPermissionActions?.includes(
+            objectPermissionAction,
+          ),
+      ).map(({ operationType }) => operationType)
+    : [];
 
   return {
     isShareable,

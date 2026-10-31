@@ -154,7 +154,7 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.kind).toBe('gated');
     if (policy.kind !== 'gated') throw new Error('Expected a privacy gate');
     expect(policy.condition.sql).toContain(
-      '("company"."isPrivate" = FALSE) OR',
+      '("company"."_isPrivate" = FALSE) OR',
     );
     expect(policy.condition.sql).toContain('"workspace"."recordShare"');
   });
@@ -268,7 +268,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."title" = :restricted\) AND \(\(\("company"."isPrivate" = FALSE\) OR .*\)\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
+        /^\(\(\("company"."title" = :restricted\) AND \(\(\("company"."_isPrivate" = FALSE\) OR .*\)\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
     });
   });
@@ -463,7 +463,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a privacy gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."isPrivate" = FALSE\) OR \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\) OR \(EXISTS/,
+        /^\(\(\("company"."_isPrivate" = FALSE\) OR \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\) OR \(EXISTS/,
       );
       expect(Object.values(policy.condition.parameters)).toContain('member-1');
     });
@@ -477,7 +477,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toContain(
-        '("company"."isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
+        '("company"."_isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
       );
     });
   });

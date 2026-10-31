@@ -35,7 +35,7 @@ describe('2-55 workspace command - add private record column (integration)', () 
       `SELECT table_name AS "tableName", udt_name AS "dataType",
               is_nullable AS "isNullable", column_default AS "columnDefault"
        FROM information_schema.columns
-       WHERE table_schema = $1 AND column_name = 'isPrivate'
+       WHERE table_schema = $1 AND column_name = '_isPrivate'
        ORDER BY table_name`,
       [SCHEMA],
     );
@@ -57,7 +57,7 @@ describe('2-55 workspace command - add private record column (integration)', () 
   const findPrivatePersonIds = async (): Promise<string[]> =>
     (
       await global.testDataSource.query(
-        `SELECT id FROM "${SCHEMA}"."person" WHERE "isPrivate"`,
+        `SELECT id FROM "${SCHEMA}"."person" WHERE "_isPrivate"`,
       )
     ).map(({ id }: { id: string }) => id);
 
@@ -88,7 +88,7 @@ describe('2-55 workspace command - add private record column (integration)', () 
 
   afterAll(async () => {
     await global.testDataSource.query(
-      `UPDATE "${SCHEMA}"."person" SET "isPrivate" = false WHERE id = ANY($1)`,
+      `UPDATE "${SCHEMA}"."person" SET "_isPrivate" = false WHERE id = ANY($1)`,
       [[restrictedPersonId, viewOnlyPersonId]],
     );
   });
@@ -113,7 +113,7 @@ describe('2-55 workspace command - add private record column (integration)', () 
 
   it('adds a missing column back, but not on a dry run', async () => {
     await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."_pet" DROP COLUMN "isPrivate"`,
+      `ALTER TABLE "${SCHEMA}"."_pet" DROP COLUMN "_isPrivate"`,
     );
 
     await runOnWorkspace({ dryRun: true });

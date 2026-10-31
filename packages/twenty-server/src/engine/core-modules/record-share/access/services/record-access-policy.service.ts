@@ -88,7 +88,6 @@ export class RecordAccessPolicyService {
       return recordSharesPerRecord.flat();
     };
 
-    // Every operand of the batch asks about the same records of the same object
     let privateRecordStates:
       | Promise<Map<string, PrivateRecordState>>
       | undefined;
