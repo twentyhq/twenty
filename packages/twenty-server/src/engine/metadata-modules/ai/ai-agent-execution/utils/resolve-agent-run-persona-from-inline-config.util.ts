@@ -7,7 +7,6 @@ export const resolveAgentRunPersonaFromInlineConfig = (
   inlineConfig: AgentRunInlineConfig,
 ): ResolvedAgentRunPersona => ({
   agentId: null,
-  isSystemAgent: false,
   applicationId: inlineConfig.applicationId,
   instructions: tipTapDocumentToMarkdown(inlineConfig.instructions),
   modelId: inlineConfig.modelId,
