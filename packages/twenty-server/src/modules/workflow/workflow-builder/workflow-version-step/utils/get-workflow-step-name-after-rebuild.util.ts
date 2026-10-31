@@ -14,10 +14,13 @@ export const getWorkflowStepNameAfterRebuild = ({
   previousAgentLabel,
 }: {
   existingStep: Pick<WorkflowAction, 'type' | 'name'>;
-  builtStep: Pick<WorkflowAction, 'name'>;
+  builtStep: Pick<WorkflowAction, 'type' | 'name'>;
   previousAgentLabel: string | undefined;
 }): string => {
-  if (existingStep.type !== WorkflowActionType.AI_AGENT) {
+  if (
+    existingStep.type !== WorkflowActionType.AI_AGENT ||
+    builtStep.type !== WorkflowActionType.AI_AGENT
+  ) {
     return builtStep.name;
   }
 
