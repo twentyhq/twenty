@@ -1,3 +1,4 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
@@ -25,6 +26,7 @@ import { parse } from 'graphql';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -176,6 +178,17 @@ const shareThread = ({
         token,
       );
 };
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
 
 describe('Conversation sharing through the authenticated API', () => {
   it.each(['member', 'role'])(

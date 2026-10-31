@@ -1,3 +1,4 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
@@ -26,6 +27,17 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
 
 describe('Shared conversation API boundaries', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
