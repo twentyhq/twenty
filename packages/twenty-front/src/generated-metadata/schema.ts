@@ -246,7 +246,7 @@ export type AgentRun = {
   reply?: Maybe<Scalars['String']['output']>;
   startedAt?: Maybe<Scalars['DateTime']['output']>;
   status: AgentTurnStatus;
-  threadId: Scalars['UUID']['output'];
+  threadId?: Maybe<Scalars['UUID']['output']>;
   threadTitle?: Maybe<Scalars['String']['output']>;
   toolNames: Array<Scalars['String']['output']>;
 };
