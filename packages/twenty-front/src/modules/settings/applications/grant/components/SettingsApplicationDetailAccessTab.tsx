@@ -1,4 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SettingsApplicationGrantPermissionFlags } from '@/settings/applications/grant/components/SettingsApplicationGrantPermissionFlags';
 import { SettingsApplicationGrantPendingCard } from '@/settings/applications/grant/components/SettingsApplicationGrantPendingCard';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -6,7 +7,6 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
-import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
@@ -14,7 +14,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useQuery } from '@apollo/client/react';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -26,10 +26,12 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetApplicationGrantDocument,
   type GetApplicationGrantQuery,
+  GetRolesDocument,
 } from '~/generated-metadata/graphql';
 
 type SettingsApplicationDetailAccessTabProps = {
   applicationId: string;
+  applicationName: string;
 };
 
 const StyledContainer = styled.div`
@@ -52,10 +54,12 @@ type ApplicationGrant = GetApplicationGrantQuery['applicationGrant'];
 
 const SettingsApplicationGrantEditor = ({
   applicationId,
+  applicationName,
   applicationGrant,
   grantRoleId,
 }: {
   applicationId: string;
+  applicationName: string;
   applicationGrant: ApplicationGrant;
   grantRoleId: string;
 }) => {
@@ -74,6 +78,11 @@ const SettingsApplicationGrantEditor = ({
     settingsPersistedRoleFamilyState,
     grantRoleId,
   );
+  const setSettingsPersistedRole = useSetAtomFamilyState(
+    settingsPersistedRoleFamilyState,
+    grantRoleId,
+  );
+  const apolloClient = useApolloClient();
 
   const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
     roleId: grantRoleId,
@@ -95,13 +104,14 @@ const SettingsApplicationGrantEditor = ({
   const editorContextValue = useMemo(
     () => ({
       applicationId,
+      applicationName,
       lockedObjectMetadataIds: new Set(
         applicationGrant.lockedObjectPermissions.map(
           (lockedObjectPermission) => lockedObjectPermission.objectMetadataId,
         ),
       ),
     }),
-    [applicationId, applicationGrant.lockedObjectPermissions],
+    [applicationId, applicationName, applicationGrant.lockedObjectPermissions],
   );
 
   const handleSave = async () => {
@@ -109,6 +119,19 @@ const SettingsApplicationGrantEditor = ({
 
     try {
       await saveDraftRoleToDB();
+
+      // The server normalizes what it stores, so the draft is reset from the saved role
+      const { data } = await apolloClient.query({
+        query: GetRolesDocument,
+        fetchPolicy: 'network-only',
+      });
+      const savedRole = data?.getRoles.find((role) => role.id === grantRoleId);
+
+      if (isDefined(savedRole)) {
+        setSettingsPersistedRole(savedRole);
+        setSettingsDraftRole(savedRole);
+      }
+
       enqueueToast({ status: 'success', children: t`Access saved` });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -146,16 +169,14 @@ const SettingsApplicationGrantEditor = ({
         roleId={grantRoleId}
         isEditable
       />
-      <SettingsRolePermissionsSettingsSection
-        roleId={grantRoleId}
-        isEditable={false}
-      />
+      <SettingsApplicationGrantPermissionFlags grantRoleId={grantRoleId} />
     </ApplicationGrantEditorContext.Provider>
   );
 };
 
 export const SettingsApplicationDetailAccessTab = ({
   applicationId,
+  applicationName,
 }: SettingsApplicationDetailAccessTabProps) => {
   const { data, loading } = useQuery(GetApplicationGrantDocument, {
     variables: { applicationId },
@@ -193,6 +214,7 @@ export const SettingsApplicationDetailAccessTab = ({
       {isDefined(settingsPersistedRole) ? (
         <SettingsApplicationGrantEditor
           applicationId={applicationId}
+          applicationName={applicationName}
           applicationGrant={applicationGrant}
           grantRoleId={grantRoleId}
         />

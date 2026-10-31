@@ -530,6 +530,7 @@ export class ApplicationInstallService {
           persistVersion: false,
           shouldDeferActions: params.shouldDeferActions,
           grantObjectScopes: params.grantObjectScopes,
+          version: newVersion,
         });
 
       await progressReporter.reportStepCompleted('APPLY_MANIFEST');

@@ -1,3 +1,4 @@
+import { SettingsApplicationRequiredAccessCard } from '@/marketplace/components/SettingsApplicationRequiredAccessCard';
 import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { getCustomApplicationDescription } from '@/applications/utils/getCustomApplicationDescription';
@@ -210,6 +211,16 @@ export const SettingsAvailableApplicationDetails = () => {
           sourcePackageUrl,
         }}
         onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
+        requiredAccess={
+          <SettingsApplicationRequiredAccessCard
+            appDisplayName={displayName}
+            defaultRole={defaultRole}
+            appObjects={detail.objects ?? undefined}
+            requestedCapabilities={detail.requestedCapabilities}
+            billsCredits={detail.billsCredits}
+            showAllObjectsRequest
+          />
+        }
       />
     );
   };

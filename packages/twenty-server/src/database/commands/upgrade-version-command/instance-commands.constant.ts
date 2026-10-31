@@ -277,6 +277,7 @@ import { RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanc
 import { AddRelatedRecordPathIsInherentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793375358574-add-related-record-path-is-inherent';
 import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793381326752-add-relation-field-metadata-id-to-row-level-permission-predicate';
 import { AddApplicationGrantedRolesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793433867335-add-application-granted-roles';
+import { AddApplicationRequestedRoleVersionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793445019576-add-application-requested-role-version';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -556,4 +557,5 @@ export const INSTANCE_COMMANDS = [
   AddRelatedRecordPathIsInherentFastInstanceCommand,
   AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand,
   AddApplicationGrantedRolesFastInstanceCommand,
+  AddApplicationRequestedRoleVersionFastInstanceCommand,
 ];

@@ -1,3 +1,7 @@
+import {
+  APPLICATION_ACCESS_ADD_OBJECT_ROUTE_PATH,
+  APPLICATION_ACCESS_OBJECT_ROUTE_PATH,
+} from '@/settings/applications/grant/utils/getApplicationAccessPath';
 import { lazy, Suspense } from 'react';
 import {
   createRoutesFromElements,
@@ -298,6 +302,22 @@ const SettingsApplications = lazy(() =>
   import('~/pages/settings/applications/SettingsApplications').then(
     (module) => ({
       default: module.SettingsApplications,
+    }),
+  ),
+);
+
+const SettingsApplicationAccessObject = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationAccessObject').then(
+    (module) => ({
+      default: module.SettingsApplicationAccessObject,
+    }),
+  ),
+);
+
+const SettingsApplicationAccessAddObject = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationAccessAddObject').then(
+    (module) => ({
+      default: module.SettingsApplicationAccessAddObject,
     }),
   ),
 );
@@ -1211,6 +1231,14 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ApplicationDetail}
         element={<SettingsApplicationDetails />}
+      />
+      <Route
+        path={APPLICATION_ACCESS_OBJECT_ROUTE_PATH}
+        element={<SettingsApplicationAccessObject />}
+      />
+      <Route
+        path={APPLICATION_ACCESS_ADD_OBJECT_ROUTE_PATH}
+        element={<SettingsApplicationAccessAddObject />}
       />
       <Route
         path={SettingsPath.ApplicationConnectionDetail}

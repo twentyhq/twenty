@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
@@ -92,12 +92,16 @@ export const SettingsRolesTableRow = ({
         </TableCell>
         <TableCell align="right">
           <StyledAssignedToCell>
-            <WorkspaceMemberAvatarStack
-              defaultAvatarName={t`Workspace member`}
-              maxVisible={MAX_VISIBLE_ROLE_MEMBER_AVATARS}
-              totalWorkspaceMembersCount={role.workspaceMembers.length}
-              workspaceMembers={enrichedWorkspaceMembers}
-            />
+            {isDefined(role.grantedToApplicationId) ? (
+              <AppChip applicationId={role.grantedToApplicationId} size="md" />
+            ) : (
+              <WorkspaceMemberAvatarStack
+                defaultAvatarName={t`Workspace member`}
+                maxVisible={MAX_VISIBLE_ROLE_MEMBER_AVATARS}
+                totalWorkspaceMembersCount={role.workspaceMembers.length}
+                workspaceMembers={enrichedWorkspaceMembers}
+              />
+            )}
           </StyledAssignedToCell>
         </TableCell>
         <TableCell align="right" color={theme.font.color.tertiary}>

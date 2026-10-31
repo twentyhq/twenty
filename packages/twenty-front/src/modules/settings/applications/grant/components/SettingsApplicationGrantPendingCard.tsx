@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   ApproveApplicationGrantPendingPermissionsDocument,
+  GetApplicationGrantDocument,
   type GetApplicationGrantQuery,
 } from '~/generated-metadata/graphql';
 import { getOperationName } from '~/utils/getOperationName';
@@ -75,7 +76,10 @@ export const SettingsApplicationGrantPendingCard = ({
     try {
       await approvePendingPermissions({
         variables: { applicationId },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+        refetchQueries: [
+          getOperationName(GET_ROLES) ?? '',
+          getOperationName(GetApplicationGrantDocument) ?? '',
+        ],
         awaitRefetchQueries: true,
       });
       enqueueToast({ status: 'success', children: t`Permissions approved` });

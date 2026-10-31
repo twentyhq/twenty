@@ -20,6 +20,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_APPLICATION_REQUESTED_ROLE_VERSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-application-requested-role-version-upgrade-command-name.constant';
 import { ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-application-granted-roles-upgrade-command-name.constant';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -152,6 +153,14 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   @Column({ type: 'jsonb', nullable: true })
   approvedRoleRequest: RoleManifest | null;
+
+  // Written when the requested role is synced, before `version`, which is only set once the install completes
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_REQUESTED_ROLE_VERSION_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'varchar', nullable: true })
+  requestedRoleVersion: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;

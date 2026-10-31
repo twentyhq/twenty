@@ -189,7 +189,8 @@ export class ApplicationGrantService {
       applicationId,
       grantRoleId: state.grantFlatRole?.id ?? null,
       requestedRoleId: state.requestedFlatRole?.id ?? null,
-      applicationVersion: state.application.version,
+      applicationVersion:
+        state.application.requestedRoleVersion ?? state.application.version,
       requestedAllObjectsActions: OBJECT_PERMISSION_ACTIONS.filter(
         (action) =>
           state.approvedRoleManifest[
@@ -257,12 +258,21 @@ export class ApplicationGrantService {
     applicationId,
     manifest,
     objectScopeInputs,
+    requestVersion,
   }: {
     workspaceId: string;
     applicationId: string;
     manifest: Manifest;
     objectScopeInputs?: ApplicationGrantObjectScopeInput[];
+    requestVersion?: string;
   }): Promise<void> {
+    if (isDefined(requestVersion)) {
+      await this.applicationService.update(applicationId, {
+        workspaceId,
+        requestedRoleVersion: requestVersion,
+      });
+    }
+
     const state = await this.loadGrantState({ workspaceId, applicationId });
 
     if (

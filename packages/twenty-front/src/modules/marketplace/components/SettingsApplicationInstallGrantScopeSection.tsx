@@ -1,3 +1,4 @@
+import { IconLock } from 'twenty-ui/icon';
 import { type GrantObjectScope } from '@/marketplace/types/GrantObjectScope';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
@@ -9,6 +10,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsApplicationInstallGrantScopeSectionProps = {
   appObjectUniversalIdentifiers: Set<string>;
+  requiredObjectUniversalIdentifiersByAction: Partial<
+    Record<ObjectPermissionAction, Set<string>>
+  >;
   scopes: GrantObjectScope[];
   onScopesChange: (scopes: GrantObjectScope[]) => void;
 };
@@ -43,6 +47,10 @@ const StyledObjectRow = styled.label`
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[1]} 0;
+
+  &[data-disabled='true'] {
+    cursor: default;
+  }
 `;
 
 const getActionLabel = (action: ObjectPermissionAction) => {
@@ -60,6 +68,7 @@ const getActionLabel = (action: ObjectPermissionAction) => {
 
 export const SettingsApplicationInstallGrantScopeSection = ({
   appObjectUniversalIdentifiers,
+  requiredObjectUniversalIdentifiersByAction,
   scopes,
   onScopesChange,
 }: SettingsApplicationInstallGrantScopeSectionProps) => {
@@ -101,6 +110,7 @@ export const SettingsApplicationInstallGrantScopeSection = ({
             dropdownId={`grant-scope-${scope.action}`}
             label={getActionLabel(scope.action)}
             fullWidth
+            dropdownWidthAuto
             value={scope.allObjects ? 'all' : 'some'}
             options={[
               { value: 'all', label: t`All objects (including future ones)` },
@@ -112,19 +122,40 @@ export const SettingsApplicationInstallGrantScopeSection = ({
           />
           {!scope.allObjects && (
             <StyledObjectList>
-              {selectableObjectMetadataItems.map((objectMetadataItem) => (
-                <StyledObjectRow key={objectMetadataItem.id}>
-                  <Checkbox
-                    checked={scope.objectMetadataIds.includes(
-                      objectMetadataItem.id,
+              {selectableObjectMetadataItems.map((objectMetadataItem) => {
+                // Already granted: the app requires this action on the object
+                const isRequired =
+                  requiredObjectUniversalIdentifiersByAction[scope.action]?.has(
+                    objectMetadataItem.universalIdentifier,
+                  ) ?? false;
+
+                return (
+                  <StyledObjectRow
+                    key={objectMetadataItem.id}
+                    data-disabled={isRequired}
+                    title={isRequired ? t`Required by the app` : undefined}
+                  >
+                    <Checkbox
+                      checked={
+                        isRequired ||
+                        scope.objectMetadataIds.includes(objectMetadataItem.id)
+                      }
+                      disabled={isRequired}
+                      onCheckedChange={() =>
+                        toggleObject(scope, objectMetadataItem.id)
+                      }
+                    />
+                    {objectMetadataItem.labelPlural}
+                    {isRequired && (
+                      <IconLock
+                        size={14}
+                        color={themeCssVariables.font.color.tertiary}
+                        aria-label={t`Required by the app`}
+                      />
                     )}
-                    onCheckedChange={() =>
-                      toggleObject(scope, objectMetadataItem.id)
-                    }
-                  />
-                  {objectMetadataItem.labelPlural}
-                </StyledObjectRow>
-              ))}
+                  </StyledObjectRow>
+                );
+              })}
             </StyledObjectList>
           )}
         </StyledScope>

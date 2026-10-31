@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { isRolePermissionsEditable } from '@/settings/roles/utils/isRolePermissionsEditable';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader';
@@ -64,11 +66,17 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
     ];
 
+  const isApplicationGrant = useContext(ApplicationGrantEditorContext) !== null;
+
   return (
     <Section.Root>
       <Section.Header
         title={t`Object-Level`}
-        description={t`Actions users can perform on this object`}
+        description={
+          isApplicationGrant
+            ? t`Actions the app can perform on this object`
+            : t`Actions users can perform on this object`
+        }
       />
       <StyledTable>
         <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader />

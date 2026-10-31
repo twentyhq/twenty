@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { useContext } from 'react';
+import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/components/layout';
@@ -40,13 +42,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   const navigateSettings = useNavigateSettings();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const recordLevelDescription =
+    useContext(ApplicationGrantEditorContext) !== null
+      ? t`Ability to filter the records the app can interact with`
+      : t`Ability to filter the records a user can interact with`;
 
   if (!hasOrganizationPlan) {
     return (
       <Section.Root>
         <Section.Header
           title={t`Record-level`}
-          description={t`Ability to filter the records a user can interact with`}
+          description={recordLevelDescription}
           actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
@@ -81,7 +87,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
     <Section.Root>
       <Section.Header
         title={t`Record-level`}
-        description={t`Ability to filter the records a user can interact with.`}
+        description={recordLevelDescription}
       />
       <StyledContent>
         <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder

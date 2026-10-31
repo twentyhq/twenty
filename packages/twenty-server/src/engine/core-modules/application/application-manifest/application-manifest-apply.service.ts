@@ -33,6 +33,7 @@ export class ApplicationManifestApplyService {
     persistVersion,
     shouldDeferActions,
     grantObjectScopes,
+    version,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -49,6 +50,8 @@ export class ApplicationManifestApplyService {
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
     grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+    // Version of the package being applied, labels the permissions it may leave pending
+    version?: string;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -73,6 +76,7 @@ export class ApplicationManifestApplyService {
       applicationId: application.id,
       manifest,
       objectScopeInputs: grantObjectScopes,
+      requestVersion: version,
     });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {

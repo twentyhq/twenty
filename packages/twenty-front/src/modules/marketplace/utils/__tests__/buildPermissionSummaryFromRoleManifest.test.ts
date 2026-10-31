@@ -100,7 +100,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read all records', 'Write 1 object', 'Delete 1 object']);
+      ).toEqual(['Read all records', 'Write Person', 'Delete Task']);
     });
 
     it('does not repeat object-level grants already covered by the all-record access', () => {
@@ -153,7 +153,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Read and write 2 objects', 'Read 1 object']);
+      ).toEqual(['Read and write 2 objects', 'Read Task']);
     });
 
     it('counts objects whose label is unknown too', () => {
@@ -288,11 +288,8 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       );
 
       expect(otherItems).toEqual([]);
-      expect(item.label).toBe('Read 1 object');
-      expect(item.details).toEqual({
-        title: 'Read 1 object record:',
-        items: ['Person'],
-      });
+      expect(item.label).toBe('Read Person');
+      expect(item.details).toBeUndefined();
     });
 
     it('requests nothing when the role only grants access to its own objects', () => {
@@ -360,7 +357,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
           },
           { objectLabelsByUniversalIdentifier },
         ),
-      ).toEqual(['Delete 1 object']);
+      ).toEqual(['Delete Task']);
     });
   });
 

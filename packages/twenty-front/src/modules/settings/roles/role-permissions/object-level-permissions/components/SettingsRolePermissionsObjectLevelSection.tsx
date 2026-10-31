@@ -1,3 +1,5 @@
+import { getApplicationAccessAddObjectPath } from '@/settings/applications/grant/utils/getApplicationAccessPath';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { isRolePermissionsEditable } from '@/settings/roles/utils/isRolePermissionsEditable';
@@ -37,6 +39,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   isEditable,
 }: SettingsRolePermissionsObjectLevelSectionProps) => {
   const navigateSettings = useNavigateSettings();
+  const navigate = useNavigate();
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -63,14 +66,17 @@ export const SettingsRolePermissionsObjectLevelSection = ({
   const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
 
   const handleAddRule = () => {
+    if (isDefined(applicationGrantEditor)) {
+      navigate(
+        getApplicationAccessAddObjectPath(applicationGrantEditor.applicationId),
+      );
+      return;
+    }
+
     navigateSettings(
       SettingsPath.RoleAddObjectLevel,
       { roleId },
-      isDefined(applicationGrantEditor)
-        ? { fromApplication: applicationGrantEditor.applicationId }
-        : fromAgentId
-          ? { fromAgent: fromAgentId }
-          : undefined,
+      fromAgentId ? { fromAgent: fromAgentId } : undefined,
     );
   };
 
