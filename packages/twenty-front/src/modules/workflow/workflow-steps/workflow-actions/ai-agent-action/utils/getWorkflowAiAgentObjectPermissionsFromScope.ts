@@ -1,6 +1,7 @@
 import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type WorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentCrudObjectPermission';
 import { getWorkflowAiAgentEffectiveObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentEffectiveObjectPermission';
 
@@ -9,7 +10,10 @@ export const getWorkflowAiAgentObjectPermissionsFromScope = ({
   objectMetadataItems,
 }: {
   scope: AiRunScope | undefined;
-  objectMetadataItems: { id: string; universalIdentifier: string }[];
+  objectMetadataItems: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'universalIdentifier'
+  >[];
 }): WorkflowAiAgentCrudObjectPermission[] =>
   (scope?.objectPermissions ?? []).flatMap((objectPermission) => {
     const objectMetadataItem = objectMetadataItems.find(
