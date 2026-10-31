@@ -5,9 +5,7 @@ type ObjectPermissionValues = Partial<
 >;
 
 // changing records needs reading them, so granting a change grants reading and refusing reading refuses every change
-export const applyObjectPermissionChange = <
-  TObjectPermission extends ObjectPermissionValues,
->({
+export const applyObjectPermissionChange = <TObjectPermission extends object>({
   objectPermission,
   permissionKey,
   value,
@@ -15,7 +13,7 @@ export const applyObjectPermissionChange = <
   objectPermission: TObjectPermission;
   permissionKey: SettingsRoleObjectPermissionKey;
   value: boolean | null;
-}): TObjectPermission => {
+}): TObjectPermission & ObjectPermissionValues => {
   const isChangePermission = permissionKey !== 'canReadObjectRecords';
 
   return {
