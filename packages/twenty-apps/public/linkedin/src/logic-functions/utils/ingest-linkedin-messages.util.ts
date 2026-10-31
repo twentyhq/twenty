@@ -9,6 +9,7 @@ import { INGEST_MESSAGES_MAX_BATCH_SIZE } from 'src/constants/ingest-messages-ma
 import { buildLinkedinChatSubject } from 'src/logic-functions/utils/build-linkedin-chat-subject.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
 import { createLinkedinPerson } from 'src/logic-functions/utils/create-linkedin-person.util';
+import { importLinkedinMessageAttachments } from 'src/logic-functions/utils/import-linkedin-message-attachments.util';
 import { isLinkedinContactCreationAllowed } from 'src/logic-functions/utils/is-linkedin-contact-creation-allowed.util';
 import { isLinkedinGroupChat } from 'src/logic-functions/utils/is-linkedin-group-chat.util';
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
@@ -96,12 +97,14 @@ const resolvePersonIdByHandle = async ({
 };
 
 export const ingestLinkedinMessages = async ({
+  unipileAccountId,
   channel,
   settings,
   chat,
   counterparts,
   messages,
 }: {
+  unipileAccountId: string;
   channel: Pick<AppMessageChannel, 'id' | 'handle'>;
   settings: LinkedinSettings;
   chat: UnipileChat;
@@ -114,6 +117,7 @@ export const ingestLinkedinMessages = async ({
     ingestedMessageCount: 0,
     matchedPersonCount: 0,
     createdPersonCount: 0,
+    importedAttachmentCount: 0,
   };
 
   if (isGroupChat && !settings.areGroupChatsImported) {
@@ -183,9 +187,22 @@ export const ingestLinkedinMessages = async ({
     });
   }
 
+  // Twenty has no message attachment input yet, so the imported files are not stored
+  const attachmentFiles = await importLinkedinMessageAttachments({
+    unipileAccountId,
+    messages: ingestableMessages,
+  });
+
+  if (attachmentFiles.length > 0) {
+    console.log(
+      `[linkedin] chat ${chat.id}: imported ${attachmentFiles.length} attachments (${attachmentFiles.map(({ type, mimeType, content }) => `${type} ${mimeType} ${content.byteLength}B`).join(', ')}), not stored yet`,
+    );
+  }
+
   return {
     ingestedMessageCount: ingestMessagesInput.length,
     matchedPersonCount,
     createdPersonCount,
+    importedAttachmentCount: attachmentFiles.length,
   };
 };

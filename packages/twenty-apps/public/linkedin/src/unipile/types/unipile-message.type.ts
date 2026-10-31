@@ -1,3 +1,4 @@
+import { type UnipileMessageAttachment } from 'src/unipile/types/unipile-message-attachment.type';
 import { type UnipileProvider } from 'src/unipile/types/unipile-provider.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
@@ -12,4 +13,5 @@ export type UnipileMessage = {
   is_deleted: boolean;
   is_event: boolean;
   provider: UnipileProvider;
+  attachments?: UnipileMessageAttachment[];
 };

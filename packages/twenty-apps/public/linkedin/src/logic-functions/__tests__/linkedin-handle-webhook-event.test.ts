@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   kvSet: vi.fn(),
   getUnipileUser: vi.fn(),
   getUnipileChat: vi.fn(),
+  downloadUnipileMessageAttachment: vi.fn(),
   query: vi.fn(),
   mutation: vi.fn(),
 }));
@@ -41,6 +42,10 @@ vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
 
 vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
   getUnipileChat: mocks.getUnipileChat,
+}));
+
+vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
+  downloadUnipileMessageAttachment: mocks.downloadUnipileMessageAttachment,
 }));
 
 const { linkedinHandleWebhookEventHandler } =
@@ -127,6 +132,36 @@ describe('linkedinHandleWebhookEventHandler', () => {
           ],
         }),
       ],
+    });
+  });
+
+  it('imports the image of a received message', async () => {
+    mocks.downloadUnipileMessageAttachment.mockResolvedValue(
+      Buffer.from('png'),
+    );
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+          text: '',
+          attachments: [
+            { id: 'attachment-1', type: 'img', mimetype: 'image/png' },
+          ],
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+
+    expect(
+      mocks.downloadUnipileMessageAttachment,
+    ).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+      messageId: 'message-1',
+      attachmentId: 'attachment-1',
     });
   });
 
