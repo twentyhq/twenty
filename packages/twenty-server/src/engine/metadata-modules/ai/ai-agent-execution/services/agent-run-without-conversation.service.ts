@@ -10,6 +10,8 @@ import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
+import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
+import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -18,7 +20,7 @@ import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 
-const NO_USAGE = {
+const NO_USAGE: AgentTurnUsage = {
   inputTokens: 0,
   outputTokens: 0,
   cacheReadTokens: 0,
@@ -66,6 +68,8 @@ export class AgentRunWithoutConversationService {
     }
 
     let turnId: string | null = null;
+    // usage is read as each step ends, so a run that fails midway still records what it spent
+    let usage: AgentTurnUsage = NO_USAGE;
     let outcome: AgentRunCallerOutcome;
     let summary = null;
 
@@ -106,10 +110,17 @@ export class AgentRunWithoutConversationService {
         () =>
           withDedicatedAiTrace(async () => {
             const started = await this.agentRunTurnService.startTurn(turnInput);
+            const { modelConfig } = started.source;
             const reader = started.source.parts.getReader();
 
-            while (!(await reader.read()).done) {
-              // the parts only matter to a conversation; reading them runs the loop to its end
+            for (
+              let read = await reader.read();
+              !read.done;
+              read = await reader.read()
+            ) {
+              if (read.value.type === 'finish-step') {
+                usage = addStepToAgentTurnUsage(modelConfig, usage, read.value);
+              }
             }
 
             const streamError = started.source.getStreamError?.();
@@ -123,20 +134,11 @@ export class AgentRunWithoutConversationService {
               started,
             });
 
-            await this.turnRecorderService.recordUsage({
-              workspaceId,
-              turnId: runTurnId,
-              threadId: null,
-              usage: completed.steps.reduce(
-                (usage, step) =>
-                  addStepToAgentTurnUsage(
-                    started.source.modelConfig,
-                    usage,
-                    step,
-                  ),
-                NO_USAGE,
-              ),
-            });
+            usage = completed.structuredOutputSteps.reduce(
+              (turnUsage, step) =>
+                addStepToAgentTurnUsage(modelConfig, turnUsage, step),
+              usage,
+            );
 
             return completed;
           }),
@@ -149,7 +151,7 @@ export class AgentRunWithoutConversationService {
       outcome = isDefined(execution.stopReason)
         ? {
             status: 'FAILED',
-            error: 'Agent stopped: no more available credits.',
+            error: AGENT_RUN_OUT_OF_CREDITS_ERROR,
           }
         : { status: 'COMPLETED', result: execution.result };
 
@@ -188,6 +190,17 @@ export class AgentRunWithoutConversationService {
             ),
           );
       }
+    }
+
+    if (isDefined(turnId)) {
+      await this.turnRecorderService
+        .recordUsage({ workspaceId, turnId, threadId: null, usage })
+        .catch((recordError: unknown) =>
+          this.logger.error(
+            `Could not record the usage of turn ${turnId}`,
+            recordError instanceof Error ? recordError.stack : recordError,
+          ),
+        );
     }
 
     await this.agentRunSuspensionService.deliverOutcome({

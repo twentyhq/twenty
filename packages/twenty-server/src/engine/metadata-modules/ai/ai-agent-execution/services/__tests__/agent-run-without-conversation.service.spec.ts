@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
 import { AgentRunWithoutConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-without-conversation.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -32,10 +33,18 @@ const buildStarted = (streamError?: unknown) => ({
     parts: new ReadableStream({
       start(controller) {
         controller.enqueue({ type: 'text-delta', text: 'Qualified' });
+        controller.enqueue({
+          type: 'finish-step',
+          usage: { inputTokens: 1_000, outputTokens: 100 },
+        });
         controller.close();
       },
     }),
-    modelConfig: {},
+    modelConfig: {
+      modelId: 'model-id',
+      inputCostPerMillionTokens: 3,
+      outputCostPerMillionTokens: 15,
+    },
     getStreamError: () => streamError,
   },
 });
@@ -139,6 +148,7 @@ describe('AgentRunWithoutConversationService', () => {
 
     await run(service);
 
+    expect(conversationWriterService.insertTurn).toHaveBeenCalledTimes(1);
     expect(conversationWriterService.insertTurn).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: null,
@@ -149,15 +159,25 @@ describe('AgentRunWithoutConversationService', () => {
     expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
       expect.not.objectContaining({ pausingTools: expect.anything() }),
     );
+    expect(turnRecorderService.recordUsage).toHaveBeenCalledTimes(1);
     expect(turnRecorderService.recordUsage).toHaveBeenCalledWith(
-      expect.objectContaining({ turnId: TURN_ID, threadId: null }),
+      expect.objectContaining({
+        turnId: TURN_ID,
+        threadId: null,
+        usage: expect.objectContaining({
+          inputTokens: 1_000,
+          outputTokens: 100,
+        }),
+      }),
     );
+    expect(turnRecorderService.finish).toHaveBeenCalledTimes(1);
     expect(turnRecorderService.finish).toHaveBeenCalledWith(
       expect.objectContaining({
         turnId: TURN_ID,
         status: AgentTurnStatus.COMPLETED,
       }),
     );
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledTimes(1);
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: null,
@@ -166,15 +186,23 @@ describe('AgentRunWithoutConversationService', () => {
     );
   });
 
-  it('fails the turn and the outcome when the stream errors', async () => {
+  it('fails the turn and the outcome when the stream errors, keeping the usage spent', async () => {
     const { service, agentRunSuspensionService, turnRecorderService } =
       buildService({ streamError: new Error('provider down') });
 
     await run(service);
 
+    expect(turnRecorderService.finish).toHaveBeenCalledTimes(1);
     expect(turnRecorderService.finish).toHaveBeenCalledWith(
       expect.objectContaining({ status: AgentTurnStatus.FAILED }),
     );
+    expect(turnRecorderService.recordUsage).toHaveBeenCalledTimes(1);
+    expect(turnRecorderService.recordUsage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        usage: expect.objectContaining({ inputTokens: 1_000 }),
+      }),
+    );
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledTimes(1);
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'provider down' },
@@ -193,7 +221,7 @@ describe('AgentRunWithoutConversationService', () => {
       expect.objectContaining({
         outcome: {
           status: 'FAILED',
-          error: 'Agent stopped: no more available credits.',
+          error: AGENT_RUN_OUT_OF_CREDITS_ERROR,
         },
       }),
     );
@@ -221,6 +249,8 @@ describe('AgentRunWithoutConversationService', () => {
 
     expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
     expect(turnRecorderService.finish).not.toHaveBeenCalled();
+    expect(turnRecorderService.recordUsage).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledTimes(1);
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'Agent is archived' },
