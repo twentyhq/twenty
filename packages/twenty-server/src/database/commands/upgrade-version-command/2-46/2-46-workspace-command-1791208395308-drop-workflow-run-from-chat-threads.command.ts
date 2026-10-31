@@ -99,11 +99,8 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
       [workspaceId, threadObject.id],
     );
     const isPrivate =
-      !isDefined(legacyThreadAccess) ||
-      (legacyThreadAccess.readability === 'PRIVATE' &&
-        !isDefined(
-          legacyThreadAccess.readabilityParentFieldUniversalIdentifiers,
-        ));
+      legacyThreadAccess?.readability === 'PRIVATE' &&
+      !isDefined(legacyThreadAccess.readabilityParentFieldUniversalIdentifiers);
 
     if (
       isPrivate &&

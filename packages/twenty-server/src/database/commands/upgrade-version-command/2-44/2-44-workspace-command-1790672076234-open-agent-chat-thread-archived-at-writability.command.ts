@@ -2,6 +2,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataWritability } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -29,17 +30,17 @@ export class OpenAgentChatThreadArchivedAtWritabilityCommand extends Provisioned
   }
 
   async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setWritability(args, 'OPEN');
+    await this.setWritability(args, MetadataWritability.OPEN);
   }
 
   async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.setWritability(args, 'SYSTEM');
+    await this.setWritability(args, MetadataWritability.SYSTEM);
   }
 
   // The legacy column is the marker the chat record model move checks before moving archived chats
   private async setWritability(
     { workspaceId, options }: RunOnWorkspaceArgs,
-    writability: 'OPEN' | 'SYSTEM',
+    writability: MetadataWritability,
   ): Promise<void> {
     this.logger.log(
       `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: setting agentChatThread.archivedAt writability to ${writability}`,

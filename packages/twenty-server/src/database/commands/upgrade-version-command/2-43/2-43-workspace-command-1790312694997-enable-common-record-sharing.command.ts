@@ -117,8 +117,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
     ]);
-    // Nothing reads these legacy columns at runtime, but later upgrades still
-    // turn SYSTEM into disabled actions, which would lock existing chats away
+    // Later upgrades turn legacy SYSTEM access into disabled actions, which would lock existing chats away
     await this.dataSource.query(
       `UPDATE core."objectMetadata" SET readability = 'PRIVATE', writability = 'OPEN'
         WHERE "workspaceId" = $1 AND id = $2`,
