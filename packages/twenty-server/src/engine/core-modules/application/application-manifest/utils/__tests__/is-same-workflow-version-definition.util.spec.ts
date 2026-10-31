@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type StoredWorkflowNode,
   type StoredWorkflowVersionDefinition,
@@ -89,36 +87,6 @@ describe('isSameWorkflowVersionDefinition', () => {
       }),
     ).toBe(true);
   });
-
-  it.each(['SEND_EMAIL', 'DRAFT_EMAIL'])(
-    'treats a %s step without files as one with no files',
-    (type) => {
-      const emailStep = (files?: unknown[]): Partial<StoredWorkflowNode> => ({
-        type,
-        settings: {
-          outputSchema: {},
-          input: {
-            connectedAccountId: '{{trigger.connectedAccountId}}',
-            recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
-            ...(isDefined(files) ? { files } : {}),
-          },
-        },
-      });
-
-      expect(
-        isSameWorkflowVersionDefinition({
-          left: buildDefinition({ step: emailStep([]) }),
-          right: buildDefinition({ step: emailStep() }),
-        }),
-      ).toBe(true);
-      expect(
-        isSameWorkflowVersionDefinition({
-          left: buildDefinition({ step: emailStep(['{{trigger.files}}']) }),
-          right: buildDefinition({ step: emailStep() }),
-        }),
-      ).toBe(false);
-    },
-  );
 
   it('treats a null position as a missing one', () => {
     expect(

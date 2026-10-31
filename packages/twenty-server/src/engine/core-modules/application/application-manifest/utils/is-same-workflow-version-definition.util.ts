@@ -1,13 +1,11 @@
 import isEqual from 'lodash.isequal';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   type StoredWorkflowNode,
   type StoredWorkflowVersionDefinition,
 } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
-
-const EMAIL_STEP_TYPES = ['SEND_EMAIL', 'DRAFT_EMAIL'];
 
 // Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
@@ -17,10 +15,6 @@ const normalizeSettings = ({
   Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
   ...rest,
   ...(type === 'MANUAL' ? {} : { objectType }),
-  // Email steps parse a missing files list as an empty one
-  ...(EMAIL_STEP_TYPES.includes(type) && isPlainObject(rest.input)
-    ? { input: { files: [], ...rest.input } }
-    : {}),
   ...(isDefined(errorHandlingOptions)
     ? {
         errorHandlingOptions:
