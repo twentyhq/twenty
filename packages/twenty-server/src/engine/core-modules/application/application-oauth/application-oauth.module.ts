@@ -12,7 +12,7 @@ import { OAuthDiscoveryController } from 'src/engine/core-modules/application/ap
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
-import { ClientIdMetadataDocumentModule } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/client-id-metadata-document.module';
+import { OAuthClientRegistrationModule } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -31,7 +31,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ]),
     ApplicationRegistrationModule,
     ApplicationAuthorizationModule,
-    ClientIdMetadataDocumentModule,
+    OAuthClientRegistrationModule,
     ApplicationCoreModule,
     ApplicationInstallModule,
     TokenModule,

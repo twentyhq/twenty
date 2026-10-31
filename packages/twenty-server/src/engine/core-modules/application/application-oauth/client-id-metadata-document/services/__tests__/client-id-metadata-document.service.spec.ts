@@ -63,16 +63,44 @@ describe('ClientIdMetadataDocumentService', () => {
     expect(httpGet).toHaveBeenCalledTimes(1);
   });
 
-  it('returns nothing for an unreachable or invalid document, and does not cache it', async () => {
+  it('keeps serving the last document while its host is unreachable', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    cache.set(DOCUMENT_URL, {
+      ...(cache.get(DOCUMENT_URL) as object),
+      fetchedAt: 0,
+    });
     httpGet.mockRejectedValueOnce(new Error('ECONNREFUSED'));
 
-    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+      clientName: 'Claude',
+    });
+    await service.findDocument(DOCUMENT_URL);
+    expect(httpGet).toHaveBeenCalledTimes(2);
+  });
 
-    httpGet.mockResolvedValueOnce({
+  it('remembers a document that cannot be used, without fetching it again right away', async () => {
+    httpGet.mockResolvedValue({
       data: { ...RAW_DOCUMENT, client_id: 'https://example.com/x' },
     });
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
-    expect(cache.size).toBe(0);
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+    expect(httpGet).toHaveBeenCalledTimes(1);
+  });
+
+  it('drops a document its host withdrew', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    cache.set(DOCUMENT_URL, {
+      ...(cache.get(DOCUMENT_URL) as object),
+      fetchedAt: 0,
+    });
+    httpGet.mockRejectedValueOnce(
+      Object.assign(new Error('Not found'), {
+        isAxiosError: true,
+        response: { status: 404 },
+      }),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
   });
 });

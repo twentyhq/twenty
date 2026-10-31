@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
-import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
@@ -76,7 +76,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(registration);
 
     await expect(
-      service.resolveByClientId('3f1c2a9e-6f1b-4f0e-9d7e-2b3c4d5e6f70'),
+      service.findByClientId('3f1c2a9e-6f1b-4f0e-9d7e-2b3c4d5e6f70'),
     ).resolves.toBe(registration);
     expect(findDocument).not.toHaveBeenCalled();
   });
@@ -93,11 +93,27 @@ describe('OAuthClientRegistrationResolverService', () => {
     findOrCreateRegistration.mockResolvedValue(seededRegistration);
 
     await expect(
-      service.resolveByClientId('https://chatgpt.com/oauth/client.json'),
+      service.findByClientId('https://chatgpt.com/oauth/client.json'),
     ).resolves.toBe(seededRegistration);
     expect(findOrCreateRegistration).toHaveBeenCalledWith(
       expect.objectContaining({ client: WellKnownOAuthClient.CHATGPT }),
     );
+    expect(insertedValues).not.toHaveBeenCalled();
+  });
+
+  it('only registers a document client once a user authorizes it', async () => {
+    findDocument.mockResolvedValue(CLAUDE_CODE_DOCUMENT);
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.findByClientId(CLAUDE_CODE_DOCUMENT.clientId),
+    ).resolves.toBeNull();
+    await expect(
+      service.resolveClient(CLAUDE_CODE_DOCUMENT.clientId),
+    ).resolves.toEqual({
+      registration: null,
+      clientIdMetadataDocument: CLAUDE_CODE_DOCUMENT,
+    });
     expect(insertedValues).not.toHaveBeenCalled();
   });
 
@@ -110,10 +126,11 @@ describe('OAuthClientRegistrationResolverService', () => {
       .mockResolvedValueOnce(createdRegistration);
 
     await expect(
-      service.resolveByClientId(CLAUDE_CODE_DOCUMENT.clientId),
+      service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
     ).resolves.toBe(createdRegistration);
     expect(insertedValues).toHaveBeenCalledWith(
       expect.objectContaining({
+        id: expect.any(String),
         name: 'Claude Code',
         oAuthClientId: CLAUDE_CODE_DOCUMENT.clientId,
         oAuthClientSecretHash: null,
@@ -136,7 +153,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     });
 
     await expect(
-      service.resolveByClientId(CLAUDE_CODE_DOCUMENT.clientId),
+      service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
     ).resolves.toMatchObject({ name: 'Claude Code (renamed)' });
     expect(applicationRegistrationRepository.update).toHaveBeenCalledWith(
       'claude-code-registration',
@@ -153,7 +170,7 @@ describe('OAuthClientRegistrationResolverService', () => {
       oAuthRedirectUris: CLAUDE_CODE_DOCUMENT.redirectUris,
     });
 
-    await service.resolveByClientId(CLAUDE_CODE_DOCUMENT.clientId);
+    await service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId);
 
     expect(applicationRegistrationRepository.update).not.toHaveBeenCalled();
   });
@@ -162,7 +179,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     findDocument.mockResolvedValue(null);
 
     await expect(
-      service.resolveByClientId(CLAUDE_CODE_DOCUMENT.clientId),
+      service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
     ).resolves.toBeNull();
   });
 });

@@ -17,7 +17,7 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
@@ -555,7 +555,7 @@ export class AuthService {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
-      await this.oAuthClientRegistrationResolverService.resolveByClientId(
+      await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
         clientId,
       );
 

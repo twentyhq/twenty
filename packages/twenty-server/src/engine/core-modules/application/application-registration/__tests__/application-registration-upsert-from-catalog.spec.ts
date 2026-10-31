@@ -10,7 +10,6 @@ import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/appli
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
@@ -78,7 +77,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
           },
         },
         ApplicationRegistrationLookupService,
-        { provide: OAuthClientRegistrationResolverService, useValue: {} },
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
           useValue: applicationRegistrationRepository,

@@ -4,18 +4,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
+import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/resolved-oauth-client.type';
+import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
 
-// Resolves the client_id of an authorize or token request: a registered client id, or the URL of a
+// Resolves the client_id of an authorize, token or consent-screen request: a registered client id, or the URL of a
 // Client ID Metadata Document, which stands for one registration per URL instead of one per connection
 @Injectable()
 export class OAuthClientRegistrationResolverService {
@@ -26,13 +27,40 @@ export class OAuthClientRegistrationResolverService {
     private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
   ) {}
 
-  async resolveByClientId(
+  async findByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
+    return (await this.resolveClient(clientId))?.registration ?? null;
+  }
+
+  // Only called once a signed-in user authorizes the client: the token and consent-screen endpoints are public,
+  // and would otherwise store a registration for any document URL a caller hosts
+  async findOrRegisterByClientId(
+    clientId: string,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    const resolvedClient = await this.resolveClient(clientId);
+
+    if (!isDefined(resolvedClient)) {
+      return null;
+    }
+
+    if (!isDefined(resolvedClient.clientIdMetadataDocument)) {
+      return resolvedClient.registration;
+    }
+
+    return this.upsertClientIdMetadataDocumentRegistration({
+      clientIdMetadataDocument: resolvedClient.clientIdMetadataDocument,
+      existingRegistration: resolvedClient.registration,
+    });
+  }
+
+  async resolveClient(clientId: string): Promise<ResolvedOAuthClient | null> {
     if (!isClientIdMetadataDocumentUrl(clientId)) {
-      return this.applicationRegistrationRepository.findOne({
-        where: { oAuthClientId: clientId },
-      });
+      const registration = await this.findRegistrationByOAuthClientId(clientId);
+
+      return isDefined(registration)
+        ? { registration, clientIdMetadataDocument: null }
+        : null;
     }
 
     const clientIdMetadataDocument =
@@ -48,31 +76,36 @@ export class OAuthClientRegistrationResolverService {
       );
 
     if (isDefined(wellKnownOAuthClient)) {
-      return this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
-        wellKnownOAuthClient,
-      );
+      return {
+        registration:
+          await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
+            wellKnownOAuthClient,
+          ),
+        clientIdMetadataDocument: null,
+      };
     }
 
-    return this.upsertClientIdMetadataDocumentRegistration(
+    return {
+      registration: await this.findRegistrationByOAuthClientId(clientId),
       clientIdMetadataDocument,
-    );
+    };
   }
 
-  private async upsertClientIdMetadataDocumentRegistration(
-    clientIdMetadataDocument: ClientIdMetadataDocument,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    const documentFields = {
-      name:
-        clientIdMetadataDocument.clientName ??
-        new URL(clientIdMetadataDocument.clientId).hostname,
-      logo: clientIdMetadataDocument.logoUri,
-      oAuthRedirectUris: clientIdMetadataDocument.redirectUris,
-    };
+  private findRegistrationByOAuthClientId(oAuthClientId: string) {
+    return this.applicationRegistrationRepository.findOne({
+      where: { oAuthClientId },
+    });
+  }
 
-    const existingRegistration =
-      await this.applicationRegistrationRepository.findOne({
-        where: { oAuthClientId: clientIdMetadataDocument.clientId },
-      });
+  private async upsertClientIdMetadataDocumentRegistration({
+    clientIdMetadataDocument,
+    existingRegistration,
+  }: {
+    clientIdMetadataDocument: ClientIdMetadataDocument;
+    existingRegistration: ApplicationRegistrationEntity | null;
+  }): Promise<ApplicationRegistrationEntity | null> {
+    const { id, ...documentFields } =
+      toClientIdMetadataDocumentRegistrationFields(clientIdMetadataDocument);
 
     if (isDefined(existingRegistration)) {
       const hasDocumentChanged =
@@ -101,7 +134,8 @@ export class OAuthClientRegistrationResolverService {
       .into(ApplicationRegistrationEntity)
       .values({
         ...documentFields,
-        universalIdentifier: v4(),
+        id,
+        universalIdentifier: id,
         oAuthClientId: clientIdMetadataDocument.clientId,
         oAuthClientSecretHash: null,
         oAuthScopes: [...ALL_OAUTH_SCOPES],
@@ -112,8 +146,8 @@ export class OAuthClientRegistrationResolverService {
       .orIgnore()
       .execute();
 
-    return this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientIdMetadataDocument.clientId },
-    });
+    return this.findRegistrationByOAuthClientId(
+      clientIdMetadataDocument.clientId,
+    );
   }
 }

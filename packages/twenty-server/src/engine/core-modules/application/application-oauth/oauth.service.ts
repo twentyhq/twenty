@@ -15,7 +15,7 @@ import {
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -619,7 +619,7 @@ export class OAuthService {
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
     const applicationRegistration =
-      await this.oAuthClientRegistrationResolverService.resolveByClientId(
+      await this.oAuthClientRegistrationResolverService.findByClientId(
         clientId,
       );
 

@@ -53,7 +53,6 @@ import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/ap
 import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
-import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
@@ -87,9 +86,7 @@ import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credi
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
 import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
-import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -150,7 +147,6 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
-    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -455,30 +451,6 @@ export class ApplicationRegistrationService {
     }
 
     return registration;
-  }
-
-  async findPublicByClientId(
-    clientId: string,
-  ): Promise<PublicApplicationRegistrationDTO | null> {
-    const registration =
-      await this.oAuthClientRegistrationResolverService.resolveByClientId(
-        clientId,
-      );
-
-    if (!registration) {
-      return null;
-    }
-
-    return {
-      id: registration.id,
-      name: registration.name,
-      logoUrl:
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
-      websiteUrl: registration.websiteUrl,
-      oAuthScopes: registration.oAuthScopes,
-      wellKnownOAuthClient:
-        getWellKnownOAuthClientOfRegistration(registration)?.client ?? null,
-    };
   }
 
   async createWithClientSecret({
