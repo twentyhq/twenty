@@ -112,4 +112,26 @@ describe('2-55 workspace command - add private record column (integration)', () 
     expect(petIndex?.isValid).toBe(true);
     expect(petIndex?.definition).toContain('WHERE "_isPrivate"');
   });
+
+  it('rebuilds an index left invalid by an interrupted build', async () => {
+    const indexName = `IDX_PRIVATE_RECORD_${petObjectMetadataId.replace(/-/g, '')}`;
+
+    await global.testDataSource.query(
+      `DROP INDEX "${SCHEMA}"."${indexName}";
+       CREATE INDEX "${indexName}" ON "${SCHEMA}"."_pet" ("createdAt");
+       UPDATE pg_index SET indisvalid = false
+       WHERE indexrelid = '"${SCHEMA}"."${indexName}"'::regclass`,
+    );
+
+    expect((await findPrivateRecordIndex(petObjectMetadataId))?.isValid).toBe(
+      false,
+    );
+
+    await runOnWorkspace();
+
+    const petIndex = await findPrivateRecordIndex(petObjectMetadataId);
+
+    expect(petIndex?.isValid).toBe(true);
+    expect(petIndex?.definition).toContain('WHERE "_isPrivate"');
+  });
 });
