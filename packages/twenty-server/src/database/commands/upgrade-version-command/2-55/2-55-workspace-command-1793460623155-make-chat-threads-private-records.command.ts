@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
@@ -22,7 +21,7 @@ const EVERYONE_MANUAL_SHARE_CONDITION = `"principalType" = 'EVERYONE' AND "rowCa
 @Command({
   name: 'upgrade:2-55:make-chat-threads-private-records',
   description:
-    'Make chat threads and their participants private records, except those shared with everyone, and create them private from now on',
+    'Make chat threads and their participants private records, except those shared with everyone',
 })
 export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -43,16 +42,10 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
       return;
     }
 
-    const { flatObjectMetadataMaps, featureFlagsMap } =
+    const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
-        'featureFlagsMap',
       ]);
-
-    // A rerun must not make private again a chat someone shared with everyone since
-    if (featureFlagsMap[FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED]) {
-      return;
-    }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const queryRunner = dataSource.createQueryRunner('master');
@@ -91,21 +84,13 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
         return;
       }
 
-      await this.convertChatTables({
-        queryRunner,
-        schemaName,
-        workspaceId,
-        chatTables,
-      });
+      await this.convertChatTables({ queryRunner, schemaName, chatTables });
     } finally {
       if (isQueryRunnerConnected) {
         await queryRunner.release();
       }
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'featureFlagsMap',
-    ]);
   }
 
   private async findTableNamesWithColumn({
@@ -160,29 +145,22 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
     )`;
   }
 
-  // One transaction, so the flag only turns on once every chat table is converted
+  // One transaction, so no chat reads as shared with everyone while its share rows are being dropped
   private async convertChatTables({
     queryRunner,
     schemaName,
-    workspaceId,
     chatTables,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-    workspaceId: string;
     chatTables: ChatTable[];
   }): Promise<void> {
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
-
       for (const { tableName, objectMetadataId } of chatTables) {
         const table = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
 
-        await queryRunner.query(
-          `ALTER TABLE ${table} ALTER COLUMN ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} SET DEFAULT true`,
-        );
         await queryRunner.query(
           `UPDATE ${table} AS chat_record
              SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = NOT ${this.buildSharedWithEveryoneCondition(schemaName)}`,
@@ -195,18 +173,6 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
         );
       }
 
-      await queryRunner.query(
-        `INSERT INTO core."featureFlag" ("workspaceId", key, value)
-           SELECT $1, key, true FROM unnest($2::text[]) AS key
-           ON CONFLICT ("workspaceId", key) DO UPDATE SET value = true`,
-        [
-          workspaceId,
-          [
-            FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED,
-            FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED,
-          ],
-        ],
-      );
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();

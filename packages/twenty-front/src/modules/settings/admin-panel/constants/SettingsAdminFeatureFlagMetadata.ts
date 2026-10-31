@@ -44,10 +44,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
-  [FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED]: {
-    label: msg`Private chats`,
-    description: msg`Make chats private records that follow the roles once shared.`,
-  },
   [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: {
     label: msg`Private records`,
     description: msg`Let people make a record visible only to its creator and the people it is shared with.`,

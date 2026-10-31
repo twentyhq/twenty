@@ -27,7 +27,7 @@ const CHAT_THREAD = {
   universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
 };
 const PRIVATE_CHAT_THREAD = {
-  [FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED]: true,
+  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
 };
 const RECORD_SHARING = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
@@ -96,7 +96,7 @@ describe('resolveObjectSharing', () => {
     });
   });
 
-  it('should reach chat threads through their shares until the workspace converts them', () => {
+  it('should reach chat threads through their shares until private records are enabled', () => {
     expect(
       resolveObjectSharing({
         flatObjectMetadata: CHAT_THREAD,
@@ -112,7 +112,7 @@ describe('resolveObjectSharing', () => {
     });
   });
 
-  it('should make chat threads shareable private records once converted, whatever the sharing flag', () => {
+  it('should make chat threads shareable private records once private records are enabled, whatever the sharing flag', () => {
     expect(
       resolveObjectSharing({
         flatObjectMetadata: CHAT_THREAD,

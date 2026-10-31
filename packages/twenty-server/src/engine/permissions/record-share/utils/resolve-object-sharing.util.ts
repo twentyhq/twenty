@@ -5,6 +5,7 @@ import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
@@ -68,10 +69,9 @@ export const resolveObjectSharing = ({
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
   const isPrivateByDefault = isPrivateByDefaultObject(flatObjectMetadata);
-  // TODO(@charlesBochet): remove once 2.55 leaves the cross-upgrade window; until its chats are converted, a workspace reaches them through shares only
+  // Until private records are enabled, the chats of a workspace are only reached through their shares
   const isShareRequired =
-    isPrivateByDefault &&
-    featureFlagsMap[FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED] !== true;
+    isPrivateByDefault && !isPrivateRecordEnabled(featureFlagsMap);
   const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;
   const isShareable = isPrivateByDefault || canBeShared;
 
