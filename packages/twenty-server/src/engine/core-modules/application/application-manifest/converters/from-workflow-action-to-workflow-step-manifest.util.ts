@@ -1,4 +1,5 @@
 import isEqual from 'lodash.isequal';
+import { type AiRunScope } from 'twenty-shared/ai';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
 import {
@@ -176,29 +177,22 @@ const checkAiRunScopeReferences = ({
   scope,
   resolvers,
 }: {
-  scope: unknown;
-  resolvers: WorkflowManifestInverseReferenceResolvers;
+  scope: AiRunScope | null | undefined;
+  resolvers: Pick<
+    WorkflowManifestInverseReferenceResolvers,
+    'exportedObjectUniversalIdentifier' | 'exportedFieldUniversalIdentifier'
+  >;
 }): void => {
-  if (!isPlainObject(scope)) {
-    return;
+  for (const { objectUniversalIdentifier } of scope?.objectPermissions ?? []) {
+    resolvers.exportedObjectUniversalIdentifier(objectUniversalIdentifier);
   }
 
-  for (const objectPermission of toArray(scope.objectPermissions)) {
-    resolvers.exportedObjectUniversalIdentifier(
-      String(toRecord(objectPermission).objectUniversalIdentifier),
-    );
-  }
-
-  for (const fieldPermission of toArray(scope.fieldPermissions)) {
-    const { objectUniversalIdentifier, fieldUniversalIdentifier } =
-      toRecord(fieldPermission);
-
-    resolvers.exportedObjectUniversalIdentifier(
-      String(objectUniversalIdentifier),
-    );
-    resolvers.exportedFieldUniversalIdentifier(
-      String(fieldUniversalIdentifier),
-    );
+  for (const {
+    objectUniversalIdentifier,
+    fieldUniversalIdentifier,
+  } of scope?.fieldPermissions ?? []) {
+    resolvers.exportedObjectUniversalIdentifier(objectUniversalIdentifier);
+    resolvers.exportedFieldUniversalIdentifier(fieldUniversalIdentifier);
   }
 };
 
@@ -217,7 +211,10 @@ const fromActionInput = ({
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
 
-      checkAiRunScopeReferences({ scope: rest.scope, resolvers });
+      checkAiRunScopeReferences({
+        scope: action.settings.input.scope,
+        resolvers,
+      });
 
       if (
         !isDefined(agentId) &&
