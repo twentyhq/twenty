@@ -41,12 +41,20 @@ flatFieldMetadataMaps.universalIdentifierById[EMAIL_FIELD_ID] = 'email';
 
 const resolve = (
   scope: Parameters<typeof resolveAiRunPermissionScope>[0]['scope'],
-) =>
-  resolveAiRunPermissionScope({
+) => {
+  const { objectsPermissions, permissionFlags } = resolveAiRunPermissionScope({
     scope,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
+
+  return {
+    objectsPermissions,
+    grantedPermissionFlags: Object.values(PermissionFlagType).filter(
+      (permissionFlag) => permissionFlags[permissionFlag],
+    ),
+  };
+};
 
 describe('resolveAiRunPermissionScope', () => {
   it('denies everything an empty scope leaves out', () => {

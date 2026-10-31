@@ -111,6 +111,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
+    AgentRunPersonaService,
     AgentRunSuspensionService,
     AgentRunnerService,
     AgentTurnService,

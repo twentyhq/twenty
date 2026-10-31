@@ -8,6 +8,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
@@ -16,38 +20,31 @@ const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];
 
-export type RoleObjectPermissionOverride = {
-  objectMetadataId: string;
-  canReadObjectRecords?: boolean | null;
-  canUpdateObjectRecords?: boolean | null;
-  canSoftDeleteObjectRecords?: boolean | null;
-  canDestroyObjectRecords?: boolean | null;
-};
-
-export type RoleFieldPermissionOverride = {
-  objectMetadataId: string;
-  fieldMetadataId: string;
-  canReadFieldValue?: boolean | null;
-  canUpdateFieldValue?: boolean | null;
-};
-
-export type RoleDefinitionForObjectsPermissions = {
-  canReadAllObjectRecords: boolean;
-  canUpdateAllObjectRecords: boolean;
-  canSoftDeleteAllObjectRecords: boolean;
-  canDestroyAllObjectRecords: boolean;
+type RoleDefinitionForObjectsPermissions = Pick<
+  FlatRole,
+  | 'canReadAllObjectRecords'
+  | 'canUpdateAllObjectRecords'
+  | 'canSoftDeleteAllObjectRecords'
+  | 'canDestroyAllObjectRecords'
+> & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
-  objectPermissions: RoleObjectPermissionOverride[];
-  fieldPermissions: RoleFieldPermissionOverride[];
+  objectPermissions: Pick<
+    ObjectPermissionEntity,
+    | 'objectMetadataId'
+    | 'canReadObjectRecords'
+    | 'canUpdateObjectRecords'
+    | 'canSoftDeleteObjectRecords'
+    | 'canDestroyObjectRecords'
+  >[];
+  fieldPermissions: Pick<
+    FieldPermissionEntity,
+    | 'objectMetadataId'
+    | 'fieldMetadataId'
+    | 'canReadFieldValue'
+    | 'canUpdateFieldValue'
+  >[];
   rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
   rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
-};
-
-export type ObjectMetadataForObjectsPermissions = {
-  id: string;
-  isSystem: boolean;
-  universalIdentifier: string;
-  labelIdentifierFieldMetadataId: string | null;
 };
 
 export const computeObjectsPermissionsForRoleDefinition = ({
@@ -56,7 +53,10 @@ export const computeObjectsPermissionsForRoleDefinition = ({
   resolveMorphRelationPermissionFieldIds,
 }: {
   roleDefinition: RoleDefinitionForObjectsPermissions;
-  objectMetadataCollection: ObjectMetadataForObjectsPermissions[];
+  objectMetadataCollection: Pick<
+    ObjectMetadataEntity,
+    'id' | 'isSystem' | 'universalIdentifier' | 'labelIdentifierFieldMetadataId'
+  >[];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
 }): ObjectsPermissions => {
   const {

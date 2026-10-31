@@ -18,23 +18,19 @@ const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
 ]);
 
 describe('buildExplicitObjectPermissionByObjectId', () => {
-  it('lets an object denied by the scope override its all-objects grant', () => {
+  it('lets an object denied on its own override its all-objects grant', () => {
     const permissionByObjectId = buildExplicitObjectPermissionByObjectId({
       explicitObjectGrants: {
-        type: 'scope',
-        scope: {
-          canReadAllObjectRecords: true,
-          canUpdateAllObjectRecords: true,
-          objectPermissions: [
-            {
-              objectUniversalIdentifier: 'person',
-              canReadObjectRecords: false,
-              canUpdateObjectRecords: false,
-            },
-          ],
-        },
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: 'person',
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+          },
+        ],
       },
-      flatObjectPermissionMaps: { byUniversalIdentifier: {} },
       flatObjectMetadataMaps,
     });
 
@@ -47,20 +43,16 @@ describe('buildExplicitObjectPermissionByObjectId', () => {
     expect(permissionByObjectId.has('person-id')).toBe(false);
   });
 
-  it('grants an object the scope names on its own', () => {
+  it('grants an object named on its own', () => {
     const permissionByObjectId = buildExplicitObjectPermissionByObjectId({
       explicitObjectGrants: {
-        type: 'scope',
-        scope: {
-          objectPermissions: [
-            {
-              objectUniversalIdentifier: 'company',
-              canReadObjectRecords: true,
-            },
-          ],
-        },
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: 'company',
+            canReadObjectRecords: true,
+          },
+        ],
       },
-      flatObjectPermissionMaps: { byUniversalIdentifier: {} },
       flatObjectMetadataMaps,
     });
 
