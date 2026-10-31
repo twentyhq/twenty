@@ -160,6 +160,13 @@ const APPLICATIONS_FOR_STATUS = [
       }),
     ],
   },
+  ...[CLAUDE_OAUTH_APPLICATION, ZAPIER_APPLICATION, BRIDGE_APPLICATION].map(
+    ({ id }) => ({
+      __typename: 'Application',
+      id,
+      applicationVariables: [],
+    }),
+  ),
 ];
 
 const findManyApplicationsForStatus = fn();
@@ -319,9 +326,12 @@ export const HidesClaudeOAuthAppsBehindTheBuiltInClaudeRow: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const acmeRow = await canvas.findByRole('link', { name: /Acme Sync/ });
+    const recorderRow = await canvas.findByRole('link', { name: /Recorder/ });
 
-    expect(await within(acmeRow).findByText('Update')).toBeVisible();
+    // The status query also writes Query.findManyApplications, so check the rows once it has landed
+    expect(
+      await within(recorderRow).findByText('Setup incomplete'),
+    ).toBeVisible();
 
     const rowLinks = getSettingsApplicationsTableRowLinks(canvasElement);
 
