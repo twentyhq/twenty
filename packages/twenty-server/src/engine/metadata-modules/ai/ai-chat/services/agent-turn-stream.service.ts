@@ -49,6 +49,7 @@ import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -86,6 +87,33 @@ export type AgentTurnCompletion = {
   stopReason: StepDebitResult['stopReason'];
   isWaiting?: boolean;
   usage?: AgentTurnStreamUsage;
+};
+
+export type AgentTurnStreamInput<
+  TStarted extends { source: AgentTurnStreamSource },
+  TCompletion extends AgentTurnCompletion,
+> = {
+  workspaceId: string;
+  // null for a turn without a conversation
+  claim: AgentChatStreamClaim | null;
+  turnId: string;
+  abortSignal?: AbortSignal;
+  startTurn: (
+    writer: UIMessageStreamWriter<ExtendedUIMessage>,
+  ) => Promise<TStarted>;
+  completeTurn: (
+    streamed: AgentTurnStreamResult & { started: TStarted },
+  ) => Promise<TCompletion>;
+  isBackgroundRun?: boolean;
+};
+
+export type AgentTurnStreamOutput<
+  TStarted extends { source: AgentTurnStreamSource },
+  TCompletion extends AgentTurnCompletion,
+> = {
+  streamed: AgentTurnStreamResult & { started: TStarted };
+  completion: TCompletion;
+  finish: AgentTurnFinish | null;
 };
 
 export type AgentTurnFinish = {
@@ -198,35 +226,52 @@ export class AgentTurnStreamService {
     }
   }
 
-  // a turn whose completion fails still records the usage it streamed, as billing does
+  // A turn without a claim streams to no one: it keeps no reply and has no thread to report to.
+  // A turn whose completion fails still records the usage it streamed, as billing does
   async streamTurn<
     TStarted extends { source: AgentTurnStreamSource },
     TCompletion extends AgentTurnCompletion,
+  >(
+    input: AgentTurnStreamInput<TStarted, TCompletion>,
+  ): Promise<AgentTurnStreamOutput<TStarted, TCompletion>> {
+    const { workspaceId, claim, turnId } = input;
+
+    return this.streamAndFinishTurn(input).catch(async (error: unknown) => {
+      // a claimed turn's failure is recorded when its claim is released
+      if (!isDefined(claim)) {
+        await this.turnRecorderService.finish({
+          workspaceId,
+          turnId,
+          status: AgentTurnStatus.FAILED,
+          error: mapErrorToStreamError(error),
+        });
+      }
+
+      throw error;
+    });
+  }
+
+  private async streamAndFinishTurn<
+    TStarted extends { source: AgentTurnStreamSource },
+    TCompletion extends AgentTurnCompletion,
   >({
+    workspaceId,
     claim,
     turnId,
     abortSignal,
     startTurn,
     completeTurn,
     isBackgroundRun = false,
-  }: {
-    claim: AgentChatStreamClaim;
-    turnId: string;
-    abortSignal: AbortSignal;
-    startTurn: (
-      writer: UIMessageStreamWriter<ExtendedUIMessage>,
-    ) => Promise<TStarted>;
-    completeTurn: (
-      streamed: AgentTurnStreamResult & { started: TStarted },
-    ) => Promise<TCompletion>;
-    isBackgroundRun?: boolean;
-  }): Promise<{
-    streamed: AgentTurnStreamResult & { started: TStarted };
-    completion: TCompletion;
-    finish: AgentTurnFinish | null;
-  }> {
-    const { workspaceId, threadId } = claim;
-    const streamed = await this.stream({ claim, turnId, startTurn });
+  }: AgentTurnStreamInput<TStarted, TCompletion>): Promise<
+    AgentTurnStreamOutput<TStarted, TCompletion>
+  > {
+    const threadId = claim?.threadId ?? null;
+    const streamed = await this.stream({
+      workspaceId,
+      claim,
+      turnId,
+      startTurn,
+    });
     const completion = await completeTurn(streamed).catch(
       async (error: unknown) => {
         await this.turnRecorderService.recordUsage({
@@ -241,6 +286,7 @@ export class AgentTurnStreamService {
     );
 
     const finish = await this.finishTurn({
+      workspaceId,
       claim,
       turnId,
       result: { ...streamed, usage: completion.usage ?? streamed.usage },
@@ -251,7 +297,7 @@ export class AgentTurnStreamService {
     });
 
     // a worker shutting down interrupted the turn, which fails rather than ends as stopped
-    if (abortSignal.reason instanceof AiException) {
+    if (abortSignal?.reason instanceof AiException) {
       throw abortSignal.reason;
     }
 
@@ -259,9 +305,13 @@ export class AgentTurnStreamService {
       throw streamed.streamError;
     }
 
+    if (!isDefined(claim)) {
+      return { streamed, completion, finish };
+    }
+
     // the end event follows every chunk, so a subscriber that sees it has the whole reply
     await this.eventPublisherService.publish({
-      threadId,
+      threadId: claim.threadId,
       workspaceId,
       event:
         completion.stopReason === 'workspaceAllowance'
@@ -276,18 +326,19 @@ export class AgentTurnStreamService {
   }
 
   private async stream<TStarted extends { source: AgentTurnStreamSource }>({
+    workspaceId,
     claim,
     turnId,
     startTurn,
-  }: {
-    claim: AgentChatStreamClaim;
-    turnId: string;
-    startTurn: (
-      writer: UIMessageStreamWriter<ExtendedUIMessage>,
-    ) => Promise<TStarted>;
-  }): Promise<AgentTurnStreamResult & { started: TStarted }> {
-    const { workspaceId, threadId, streamId } = claim;
-    const assistantMessageId = uuidv5(streamId, ASSISTANT_MESSAGE_ID_NAMESPACE);
+  }: Pick<
+    AgentTurnStreamInput<TStarted, AgentTurnCompletion>,
+    'workspaceId' | 'claim' | 'turnId' | 'startTurn'
+  >): Promise<AgentTurnStreamResult & { started: TStarted }> {
+    // a turn without a claim keeps no reply, so its id only has to be its own
+    const assistantMessageId = uuidv5(
+      claim?.streamId ?? turnId,
+      ASSISTANT_MESSAGE_ID_NAMESPACE,
+    );
     const usage: AgentTurnStreamUsage = {
       inputTokens: 0,
       outputTokens: 0,
@@ -361,59 +412,65 @@ export class AgentTurnStreamService {
       },
     });
 
-    const [publishStream, checkpointStream] = uiStream.tee();
+    let publishStream = uiStream;
 
-    void (async () => {
-      try {
-        for await (const message of readUIMessageStream<ExtendedUIMessage>({
-          stream: checkpointStream,
-          terminateOnError: false,
-        })) {
-          const now = Date.now();
+    if (isDefined(claim)) {
+      const [claimedPublishStream, checkpointStream] = uiStream.tee();
 
-          if (
-            isFinalizing ||
-            message.parts.length === 0 ||
-            now - lastCheckpointAt < AGENT_CHAT_CHECKPOINT_INTERVAL_MS
-          ) {
-            continue;
-          }
+      publishStream = claimedPublishStream;
 
-          lastCheckpointAt = now;
-          const parts = message.parts;
+      void (async () => {
+        try {
+          for await (const message of readUIMessageStream<ExtendedUIMessage>({
+            stream: checkpointStream,
+            terminateOnError: false,
+          })) {
+            const now = Date.now();
 
-          checkpoints = checkpoints
-            .then(async () => {
-              if (isFinalizing) {
-                return;
-              }
+            if (
+              isFinalizing ||
+              message.parts.length === 0 ||
+              now - lastCheckpointAt < AGENT_CHAT_CHECKPOINT_INTERVAL_MS
+            ) {
+              continue;
+            }
 
-              await this.conversationWriterService.upsertAssistantMessage({
-                workspaceId,
-                id: assistantMessageId,
-                threadId,
-                turnId,
-                parts,
+            lastCheckpointAt = now;
+            const parts = message.parts;
+
+            checkpoints = checkpoints
+              .then(async () => {
+                if (isFinalizing) {
+                  return;
+                }
+
+                await this.conversationWriterService.upsertAssistantMessage({
+                  workspaceId,
+                  id: assistantMessageId,
+                  threadId: claim.threadId,
+                  turnId,
+                  parts,
+                });
+              })
+              .catch((error) => {
+                this.logger.warn(
+                  `Failed to checkpoint assistant message for stream ${claim.streamId}: ${formatErrorWithCause(error)}`,
+                );
               });
-            })
-            .catch((error) => {
-              this.logger.warn(
-                `Failed to checkpoint assistant message for stream ${streamId}: ${formatErrorWithCause(error)}`,
-              );
-            });
+          }
+        } catch {
+          // best-effort; the reply is saved whole once the turn ends
         }
-      } catch {
-        // best-effort; the reply is saved whole once the turn ends
-      }
-    })();
+      })();
+    }
 
     for await (const chunk of publishStream) {
-      if ((chunk as { type?: string }).type === 'error') {
+      if (!isDefined(claim) || (chunk as { type?: string }).type === 'error') {
         continue;
       }
 
       await this.eventPublisherService.publish({
-        threadId,
+        threadId: claim.threadId,
         workspaceId,
         event: {
           type: 'stream-chunk',
@@ -434,8 +491,9 @@ export class AgentTurnStreamService {
 
   // Saves the reply and ends the turn, unless another stream took the thread over meanwhile. A turn that
   // waits on a person or an event is recorded as waiting rather than done. A turn whose stream failed
-  // only records its usage: its failure is recorded with the stream's claim
+  // only records its usage: its failure is recorded with the stream's claim, or by streamTurn without one
   private async finishTurn({
+    workspaceId,
     claim,
     turnId,
     result,
@@ -443,9 +501,13 @@ export class AgentTurnStreamService {
     stopReason,
     isWaiting = false,
     isBackgroundRun = false,
-  }: {
-    claim: AgentChatStreamClaim;
-    turnId: string;
+  }: Pick<
+    AgentTurnStreamInput<
+      { source: AgentTurnStreamSource },
+      AgentTurnCompletion
+    >,
+    'workspaceId' | 'claim' | 'turnId'
+  > & {
     result: AgentTurnStreamResult;
     modelId: string;
     stopReason: StepDebitResult['stopReason'];
@@ -454,7 +516,7 @@ export class AgentTurnStreamService {
     // stands in for a written reply
     isBackgroundRun?: boolean;
   }): Promise<AgentTurnFinish | null> {
-    const { workspaceId, threadId, streamId } = claim;
+    const threadId = claim?.threadId ?? null;
     const { replyParts, assistantMessageId } = result;
     // a turn that only waits on the member still needs a preview in chat lists
     const replyText =
@@ -477,7 +539,8 @@ export class AgentTurnStreamService {
 
     if (!isBackgroundRun) {
       this.logTurnWithoutText({
-        claim,
+        workspaceId,
+        threadId,
         result,
         modelId,
         stopReason,
@@ -493,7 +556,7 @@ export class AgentTurnStreamService {
         turnId,
         ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
         modelId,
-        streamClaim: { threadId, streamId },
+        streamClaim: claim ?? undefined,
       });
 
     await this.turnRecorderService.recordUsage({
@@ -507,14 +570,14 @@ export class AgentTurnStreamService {
       return null;
     }
 
-    if (replyParts.length === 0) {
+    if (replyParts.length === 0 || !isDefined(claim)) {
       await finishTurn();
 
       return { outcome, isAwaitingAnswer, threadBefore: null };
     }
 
     const threadBefore = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
+      where: { id: claim.threadId },
     });
 
     if (!isDefined(threadBefore) || isDefined(threadBefore.deletedAt)) {
@@ -528,7 +591,7 @@ export class AgentTurnStreamService {
     await this.conversationWriterService.upsertAssistantMessage({
       workspaceId,
       id: assistantMessageId,
-      threadId,
+      threadId: claim.threadId,
       turnId,
       parts: replyParts,
     });
@@ -536,8 +599,8 @@ export class AgentTurnStreamService {
     const totalsUpdate = await updateAgentChatThreadUsage({
       repository: this.threadRepository,
       workspaceId,
-      threadId,
-      streamId,
+      threadId: claim.threadId,
+      streamId: claim.streamId,
       lastMessageText: replyText,
       shouldRecordActivity: !isSilent && (!isBackgroundRun || isAwaitingAnswer),
       usage: {
@@ -552,10 +615,14 @@ export class AgentTurnStreamService {
       // best-effort so it never turns the saved reply into an error
       if (!isSilent && !isBackgroundRun) {
         await this.threadService
-          .recordThreadActivity({ workspaceId, threadId, text: replyText })
+          .recordThreadActivity({
+            workspaceId,
+            threadId: claim.threadId,
+            text: replyText,
+          })
           .catch((error: unknown) =>
             this.logger.warn(
-              `Could not record reply activity on thread ${threadId}: ${formatErrorWithCause(error)}`,
+              `Could not record reply activity on thread ${claim.threadId}: ${formatErrorWithCause(error)}`,
             ),
           );
       }
@@ -580,7 +647,8 @@ export class AgentTurnStreamService {
   }
 
   private logTurnWithoutText({
-    claim: { threadId, workspaceId },
+    workspaceId,
+    threadId,
     result: { replyParts, isAborted, streamError, usage },
     modelId,
     stopReason,
@@ -588,7 +656,8 @@ export class AgentTurnStreamService {
     isSilent,
     hasAwaitingCall,
   }: {
-    claim: Pick<AgentChatStreamClaim, 'threadId' | 'workspaceId'>;
+    workspaceId: string;
+    threadId: string | null;
     result: Pick<
       AgentTurnStreamResult,
       'replyParts' | 'isAborted' | 'streamError' | 'usage'
