@@ -40,12 +40,11 @@ const INPUT = {
   componentId: 'component-id',
   name: 'Sales "this week"',
   source: SOURCE,
-  query: { objectName: 'company', select: ['name'], limit: 20 },
   pageLayoutType: PageLayoutType.DASHBOARD as const,
 };
 
 describe('buildFrontComponentSharedDependencies', () => {
-  it('loads real twenty-ui controls, icons and theme from one pinned shared bundle', async () => {
+  it('loads real twenty-ui controls, icons and theme from the app shared bundle', async () => {
     const { compiledSource, sharedDependencies } = await buildFrontComponent({
       ...INPUT,
       source: `import { Button } from 'twenty-ui/primitives/input';
@@ -60,13 +59,6 @@ export function Component() {
     expect(compiledSource).toContain('Filter companies');
     expect(compiledSource).toContain(
       FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-    );
-    expect(compiledSource).toMatch(
-      new RegExp(
-        '^// twenty-ai-shared-dependencies: ' +
-          sharedDependencies.checksum +
-          '\\n',
-      ),
     );
     expect(
       sharedDependencies.exportNamesBySpecifier.get('react-dom')?.namedExports,

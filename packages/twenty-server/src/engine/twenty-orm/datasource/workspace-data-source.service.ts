@@ -122,7 +122,6 @@ export class WorkspaceDataSourceService
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-      roleIdsWithAllRecordsAccess: workspaceContext.roleIdsWithAllRecordsAccess,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps: workspaceContext.flatRoleTargetByAgentIdMaps,
       flatApplicationMaps: workspaceContext.flatApplicationMaps,
