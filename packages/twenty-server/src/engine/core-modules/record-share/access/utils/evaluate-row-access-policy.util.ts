@@ -28,10 +28,10 @@ export type RowAccessEvaluationContext = {
   }) => Promise<Map<string, PrivateRecordState>>;
 };
 
-// A record the lookup cannot find, such as a destroyed one, is treated as
-// private with no known creator, so only its shares still admit it
+// A destroyed record is gone by the time its events are delivered, and its
+// snapshot has no privacy: it follows its roles, like most records
 const UNKNOWN_PRIVATE_RECORD_STATE: PrivateRecordState = {
-  isPrivate: true,
+  isPrivate: false,
   createdByWorkspaceMemberId: null,
 };
 

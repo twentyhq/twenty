@@ -149,21 +149,21 @@ describe('evaluateRowAccessPolicy', () => {
     );
   });
 
-  it('reads privacy, treating a record it cannot find as private', async () => {
+  it('reads privacy, treating a record it cannot find as public', async () => {
     expect(
       await evaluate({
         kind: 'recordPrivacy',
         isPrivate: false,
         ...privateTarget,
       }),
-    ).toEqual(new Set(['active-shared']));
+    ).toEqual(new Set(['active-shared', 'archived-shared']));
     expect(
       await evaluate({
         kind: 'recordPrivacy',
         isPrivate: true,
         ...privateTarget,
       }),
-    ).toEqual(new Set(['active-private', 'archived-shared']));
+    ).toEqual(new Set(['active-private']));
   });
 
   it('admits records created by the member', async () => {
