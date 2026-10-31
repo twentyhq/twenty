@@ -34,7 +34,7 @@ export const SettingsApplicationGrantPermissionFlags = ({
     settingsPersistedRoleFamilyState,
     grantRoleId,
   );
-  const permissionFlagDefinitions = useAtomStateValue(
+  const settingsPermissionFlagDefinitions = useAtomStateValue(
     settingsPermissionFlagDefinitionsState,
   );
 
@@ -43,8 +43,8 @@ export const SettingsApplicationGrantPermissionFlags = ({
     ...(settingsPersistedRole?.canAccessAllTools ? [t`All tools`] : []),
     ...(settingsPersistedRole?.permissionFlags ?? []).map(
       ({ flag }) =>
-        permissionFlagDefinitions.find(({ key }) => key === flag)?.label ??
-        flag,
+        settingsPermissionFlagDefinitions.find(({ key }) => key === flag)
+          ?.label ?? flag,
     ),
   ];
 

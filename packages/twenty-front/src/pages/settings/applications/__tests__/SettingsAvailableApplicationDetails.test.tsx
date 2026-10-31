@@ -80,6 +80,13 @@ jest.mock('@/applications/components/AppChip', () => ({
   AppChip: () => null,
 }));
 
+jest.mock(
+  '@/marketplace/components/SettingsApplicationRequiredAccessCard',
+  () => ({
+    SettingsApplicationRequiredAccessCard: () => null,
+  }),
+);
+
 jest.mock('@/settings/components/SettingsPageContainer', () => ({
   SettingsPageContainer: ({ children }: { children: ReactNode }) => (
     <>{children}</>

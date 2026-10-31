@@ -2,7 +2,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { getApplicationAccessObjectPath } from '@/settings/applications/grant/utils/getApplicationAccessPath';
-import { useContext } from 'react';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -11,7 +10,7 @@ import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/ro
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';

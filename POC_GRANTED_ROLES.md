@@ -2,7 +2,18 @@
 
 Proof of concept for the "requested role / granted role" design (core-team-issues#3139). A confined (marketplace) app keeps declaring a role with `defineApplicationRole()`, but that role is now only a request. At install the workspace builds a **grant**, a role owned by the workspace custom app, from the request plus the admin's choices. The app and its agents run with the grant alone.
 
-Screenshots are in `poc-screenshots/`.
+Screenshots are in `poc-screenshots/`. Numbers `01` to `11` are referenced below.
+
+## Known regression: OAuth-only apps get no access
+
+`twenty auth login` (browser OAuth) now returns a token with no access. Every call fails with "Entity performing the request does not have permission", including `app publish` and `getRoles`.
+
+- The "Twenty CLI" application has `sourceType` oauth-only, `defaultRoleId` null and no `approvedRoleRequest`.
+- It is neither `twenty-standard` nor the workspace custom app, so `isApplicationExemptFromGrant` returns false, its runtime role is null, and the token gets no access.
+- On main, an app without a role adds no restriction, so the token keeps the user's permissions.
+- The same likely applies to any third-party OAuth-only app.
+
+This is not fixed in the POC on purpose: no ad-hoc exemption (for example by `sourceType`) was added. Which applications are "confined", and what an OAuth client acting for a user should run with, is an open design question (question 11 below). To work with the CLI meanwhile, log in with an API key (see "How to try it").
 
 ## What works
 
@@ -41,15 +52,20 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - `triggerInstallApplication(input: { grantObjectScopes })`.
   - `Role.canBeAssignedToApplications` and `Role.grantedToApplicationId`.
 - **Front**
-  - **Install dialog**: the required items are listed as before (own objects, named objects, flags, capabilities, billing). A new "Access to your data" section offers "All objects (including future ones)" or "Only these objects" for each requested switch, with an object checklist, plus a hint about the Access tab (`01`).
+  - **Pre-install app page**: shows the same "requires" summary as the dialog, including the "all objects" request (`09`).
+  - **Install dialog** (`01`):
+    - The required items are listed as before (own objects, named objects, flags, capabilities, billing). A single object is named ("Read Companies"); several show their names on hover.
+    - A new "Access to your data" section offers "All objects (including future ones)" or "Only these objects" for each requested switch, with an object checklist. Objects the app requires are checked, disabled and locked.
+    - A hint points to the Access tab.
   - **Access tab** on the installed app page:
     - It reuses the role editor (all-objects switches, object-level table, field permissions, plan-gated record rules) on the grant's draft (`02` to `05`).
     - Required rows show a lock icon and cannot be removed.
-    - "Add rule" and the per-object pages come back to the Access tab.
+    - "Add rule" and the per-object pages live under the app (Workspace / Apps / Grant demo / Access / …), keep Apps highlighted in the nav, and say "the app" instead of "users" (`03`, `10`).
+    - Save and Cancel disappear once the save succeeds.
     - A warning shows when fields or records are hidden.
-    - Permission flags are shown read-only.
-  - **Pending card**: "Version X asks for: …" with Approve (`06`). `07` shows the tab after v3 narrowed the grant.
-  - **Roles list**: requested roles are hidden. The "Application roles" filter shows grants, which open the app's Access tab (`08`).
+    - Permission flags are listed read-only, or not shown when none are granted (`11`).
+  - **Pending card**: "Version X asks for: …" with Approve (`06`). The card goes away as soon as the approval succeeds. `07` shows the tab after v3 narrowed the grant.
+  - **Roles list**: requested roles are hidden. The "Application roles" filter shows grants, with the app they are granted to under "Assigned to", and opens the app's Access tab (`08`).
 - **Runtime checks done** (logic function `list-records`, called by the user through its HTTP route, all against `/rest`):
   - The app's own object, the required Companies row and the scoped People row could be read.
   - Opportunities and Pets were denied, even though the request asks to read all objects, because the admin scoped it.
@@ -66,8 +82,13 @@ Tests:
 ## How to try it
 
 1. Run `bash packages/twenty-utils/setup-dev-env.sh`, then `npx nx database:reset twenty-server`. Start the server (`npx nx start twenty-server`), then the worker once the server is up: `cd packages/twenty-server && NODE_ENV=development node dist/queue-worker/queue-worker`. Start the front (`npx nx start twenty-front`). Starting the server and the worker together races on `rimraf dist`.
-2. Build the CLI: `npx nx build twenty-cli`. Create an API key for an Admin role in Settings › APIs, then `cd packages/twenty-apps/examples/grant-demo && yarn install`, and run `printf '%s' "$KEY" | node ../../../twenty-cli/dist/cli.cjs auth login --with-token --url http://localhost:3000 --name dev --use`.
-3. Publish v1 as a private tarball app: `node ../../../twenty-cli/dist/cli.cjs app publish --private`.
+2. Build the CLI: `npx nx build twenty-cli` (it also rebuilds `twenty-ui/dist`, so reload a running front afterwards). Browser sign-in does not work for now (see the known regression above), so log in with the seeded API key from the repo root, under a dedicated remote, without `--use` so your default remote stays as it is:
+   ```
+   node -e 'process.stdout.write(require("./packages/twenty-server/test/integration/constants/test-tokens.json").API_KEY_ACCESS_TOKEN)' \
+     | node packages/twenty-cli/dist/cli.cjs auth login --with-token --url http://localhost:3000 --name grant-demo-local
+   ```
+   Then `cd packages/twenty-apps/examples/grant-demo && yarn install`.
+3. Publish v1 as a private tarball app: `node ../../../twenty-cli/dist/cli.cjs app publish --private -r grant-demo-local`. Pass `-r grant-demo-local` on every CLI call below.
 4. In the UI, open Settings › Apps and find "Grant demo" (or open `/settings/applications/available/7f1b2c4e-5a6d-4e8f-9a0b-1c2d3e4f5a61`), then click Install. Under "Read records of", choose "Only these objects", pick People, and Authorize.
 5. Open the installed app's **Access** tab. Add a rule (for example Pets, with read), open People and hide Job Title, then Save.
 6. Call the function with a user token:
@@ -76,8 +97,8 @@ Tests:
      -H 'Content-Type: application/json' -d '{"objectUniversalIdentifier":"<object universal id>"}'
    ```
    Useful ids: company `20202020-b374-4779-a561-80086cb2e17f`, person `20202020-e674-48e5-a542-72570eee7213`, opportunity `20202020-9549-49dd-b2b2-883999db8938`, demo note `7f1b2c4e-5a6d-4e8f-9a0b-1c2d3e4f5a63`. In the seed, pet is a custom object; read its universal id from metadata.
-7. Upgrade: run `yarn use-version 2 1.1.0`, then `app publish --private`, then upgrade with the `upgradeApplication(appRegistrationId, targetVersion: "1.1.0")` mutation. There is no "Update" button for tarball apps in the UI. The pending card shows on the Access tab; click Approve.
-8. Narrow: run `yarn use-version 3 1.2.0`, publish and upgrade. "Update Companies" disappears from the grant at once.
+7. Upgrade: turn on **Auto-upgrade** in the app's General tab once. Then run `yarn use-version 2 1.1.0` and `app publish --private -r grant-demo-local`; the installed app upgrades on its own, so the `upgradeApplication` mutation isn't needed. The pending card shows on the Access tab ("Version 1.1.0 asks for: …"); click Approve.
+8. Narrow: run `yarn use-version 3 1.2.0` and publish. After the auto-upgrade, "update Companies" is gone from the grant.
 
 ## Shortcuts and hacks
 
@@ -86,7 +107,9 @@ Tests:
 - **The runtime role is a computed field on `FlatApplication`.** It is set by the flat application cache, which now also reads `roleTarget` rows and the workspace's custom app id. The cache is invalidated whenever role targets change. An application read from the database instead of the cache falls back to "exempt if it has no approved request".
 - **Provenance is not stored per row.** The grant stores only the approved request snapshot. "From the request" means covered by that snapshot; anything else in the grant is treated as the admin's. The pending, narrowing and lock logic reuses `getRoleManifestGrantsNotCoveredBy` from twenty-shared.
 - **Tarball registrations now store the full manifest.** Before, they stored only `application`, so the install dialog could not show the requested role until after the first install (`application-tarball.service.ts`).
-- **The front reuses the role editor.** `useSaveDraftRoleToDB` takes `grantedApplicationId` and routes saves to the grant mutations. The per-object pages use a `fromApplication` query parameter, like the existing `fromAgent`, to return to the Access tab.
+- **The front reuses the role editor.** `useSaveDraftRoleToDB` takes `grantedApplicationId` and routes saves to the grant mutations. The per-object pages are mounted under the app (`/settings/applications/:id/access/add-object` and `/access/object/:objectMetadataId`) and render the role editor's components. An `ApplicationGrantEditorContext` tells those components to link, label and word things for the app. After a save, the Access tab reloads the saved role and resets the draft to it, because the server normalizes what it stores.
+- **Request version.** `application.requestedRoleVersion` (one more generated instance command) records the version whose request was last synced. `application.version` is only written when an install or upgrade completes. Pending computation starts at manifest sync, about ten seconds earlier, so labelling pending permissions with `version` showed the previous version in that window. `approvedRoleRequest` is written in the same reconcile step as the grant, so it has no such window.
+- **Per-object page header.** It reads "2. Set People permissions" on an existing row too. Main's regular role editor does the same on existing rows, so the grant pages match it.
 - **Requested field permissions are not copied into the grant.** Requested row-level rules cannot exist.
 - **Pending labels are plain English strings** built on the server, not translated.
 - **Example app versions** are switched by `scripts/use-version.mjs`, which rewrites a constant and `package.json`. The logic function lists objects through the metadata GraphQL API, because `/rest/metadata/objects` needs the `DATA_MODEL` flag.
@@ -109,5 +132,7 @@ Tests:
 5. **Take-it-or-leave-it switches on upgrade.** `canAccessAllAgentChatChannels` is outside `getRoleManifestGrantsNotCoveredBy`. The POC copies it from the approved request, so a new request for it is never shown as pending.
 6. **The custom app as owner.** The custom app owns the grant's rows. Exporting the custom app skips the grant (non-editable roles are not exported), so a grant is never reproduced in another workspace. Is that the desired behavior for "workspace as code"?
 7. **Requested role visibility.** The requested role is hidden from the roles list but still reachable by URL. It is read-only only because it belongs to another app; its `isEditable` stays true. Should it be marked non-editable, or shown inside the Access tab as "what the app asks for"?
-8. **Tarball upgrades in the UI.** There is no "update" affordance for private tarball apps, so the pending flow was triggered through the API.
+8. **Tarball upgrades in the UI.** There is no "update" button for private tarball apps; the POC relies on Auto-upgrade (General tab) to pick up a newly published version. Should admins be able to upgrade a tarball app manually, and should an upgrade that leaves permissions pending warn before or after it runs?
 9. **Agents without a role.** An agent that declares no role gets no target, and so no grant. Should every agent of a confined app run with the grant by default?
+10. **Narrowing is silent.** When a new version asks for less, the removed access is taken from the grant during the upgrade, and nothing tells the admin (in the example, v3 removes "update Companies" with no notice). Should the Access tab or the app's General tab show what the last upgrade removed?
+11. **Which apps are confined, and what OAuth clients run with.** Today only `twenty-standard` and the workspace custom app are exempt, which breaks OAuth-only clients such as the Twenty CLI (see the known regression above). An OAuth client acting for a user could run with the user's role, with a grant made at authorization time, or with the intersection of the two. This needs a decision before the regression can be fixed.

@@ -1,19 +1,11 @@
-import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { SettingsApplicationRequiredAccessCard } from '@/marketplace/components/SettingsApplicationRequiredAccessCard';
 import { SettingsApplicationInstallGrantScopeSection } from '@/marketplace/components/SettingsApplicationInstallGrantScopeSection';
 import { type GrantObjectScope } from '@/marketplace/types/GrantObjectScope';
-import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
-import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
-import {
-  buildPermissionSummaryFromRoleManifest,
-  type PermissionSummaryItem,
-} from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -27,7 +19,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
-import { IconAlertTriangle, IconBox, IconChevronLeft } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type MarketplaceAppObject = {
