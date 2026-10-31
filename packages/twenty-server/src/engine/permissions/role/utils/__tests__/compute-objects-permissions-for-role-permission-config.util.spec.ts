@@ -1,4 +1,9 @@
-import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectPermissions,
+  type RowLevelPermissionPredicate,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -237,18 +242,18 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
   });
 
   describe('with a scope', () => {
-    const USER_PREDICATE = {
+    const USER_PREDICATE: RowLevelPermissionPredicate = {
       id: 'predicate-id',
       fieldMetadataId: AMOUNT_FIELD_ID,
       objectMetadataId: INVOICE_ID,
-      operand: 'is',
+      operand: RowLevelPermissionPredicateOperand.IS,
       value: 'mine',
       subFieldName: null,
       rowLevelPermissionPredicateGroupId: null,
       workspaceMemberFieldMetadataId: null,
       workspaceMemberSubFieldName: null,
       roleId: 'user-role-id',
-    } as unknown as ObjectPermissions['rowLevelPermissionPredicates'][number];
+    };
 
     const rolesPermissionsWithPredicate = {
       ...rolesPermissions,
