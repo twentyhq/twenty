@@ -159,27 +159,39 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
         'workflow step on a logic function that is not a workflow action of this application',
     });
 
-  const exportedObjectUniversalIdentifier = (
-    universalIdentifier: string,
-  ): string =>
+  const exportedUniversalIdentifier = ({
+    universalIdentifier,
+    exportedByUniversalIdentifier,
+    reason,
+  }: {
+    universalIdentifier: string;
+    exportedByUniversalIdentifier: ReadonlyMap<string, unknown> | undefined;
+    reason: string;
+  }): string =>
     resolveOrMarkUnsupported({
-      universalIdentifier: references.objectByUniversalIdentifier?.has(
+      universalIdentifier: exportedByUniversalIdentifier?.has(
         universalIdentifier,
       )
         ? universalIdentifier
         : undefined,
+      reason,
+    });
+
+  const exportedObjectUniversalIdentifier = (
+    universalIdentifier: string,
+  ): string =>
+    exportedUniversalIdentifier({
+      universalIdentifier,
+      exportedByUniversalIdentifier: references.objectByUniversalIdentifier,
       reason: 'workflow referencing an object that is not exported',
     });
 
   const exportedFieldUniversalIdentifier = (
     universalIdentifier: string,
   ): string =>
-    resolveOrMarkUnsupported({
-      universalIdentifier: references.fieldByUniversalIdentifier?.has(
-        universalIdentifier,
-      )
-        ? universalIdentifier
-        : undefined,
+    exportedUniversalIdentifier({
+      universalIdentifier,
+      exportedByUniversalIdentifier: references.fieldByUniversalIdentifier,
       reason: 'workflow referencing a field that is not exported',
     });
 
