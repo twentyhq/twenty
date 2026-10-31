@@ -253,6 +253,7 @@ const reconstruct = ({
     }),
     exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
     resolvableFieldUniversalIdentifiers: new Set(),
+    exportedAgentUniversalIdentifiers: new Set(),
     isWorkspaceCustomApplication,
     connectedAccounts: [],
   });
@@ -417,6 +418,7 @@ describe('reconstructWorkflowsManifest', () => {
         allFlatEntityMaps: mapsWithWorkflow,
         exportedObjectUniversalIdentifiers: new Set([TICKET_UID]),
         resolvableFieldUniversalIdentifiers: new Set(),
+        exportedAgentUniversalIdentifiers: new Set(),
         isWorkspaceCustomApplication: false,
         connectedAccounts: [],
       }).coverage,

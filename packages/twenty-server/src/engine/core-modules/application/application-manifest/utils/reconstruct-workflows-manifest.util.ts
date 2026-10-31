@@ -88,6 +88,7 @@ export const reconstructWorkflowsManifest = ({
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
+  exportedAgentUniversalIdentifiers,
   isWorkspaceCustomApplication,
   connectedAccounts,
 }: {
@@ -95,6 +96,7 @@ export const reconstructWorkflowsManifest = ({
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
+  exportedAgentUniversalIdentifiers: ReadonlySet<string>;
   isWorkspaceCustomApplication: boolean;
   connectedAccounts: readonly ConnectedAccountForWorkflowStepResolution[];
 }): {
@@ -109,6 +111,7 @@ export const reconstructWorkflowsManifest = ({
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
       resolvableFieldUniversalIdentifiers,
+      exportedAgentUniversalIdentifiers,
       canReferenceOtherApplicationsWorkflowActions:
         isWorkspaceCustomApplication,
     }),
