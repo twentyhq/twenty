@@ -4672,6 +4672,7 @@ type SettingsMenuItem {
   id: UUID!
   position: Float!
   scope: SettingsMenuItemScope!
+  slug: String
   title: String!
   universalIdentifier: UUID!
   updatedAt: DateTime!

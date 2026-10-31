@@ -3422,6 +3422,7 @@ export interface SettingsMenuItem {
     id: Scalars['UUID']
     position: Scalars['Float']
     scope: SettingsMenuItemScope
+    slug?: Scalars['String']
     title: Scalars['String']
     universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
@@ -8049,6 +8050,7 @@ export interface SettingsMenuItemGenqlSelection{
     id?: boolean | number
     position?: boolean | number
     scope?: boolean | number
+    slug?: boolean | number
     title?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number

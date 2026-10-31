@@ -25,6 +25,7 @@ type PersistedSettingsMenuItem = {
   icon: string | null;
   position: number;
   scope: string;
+  slug: string | null;
   frontComponentUniversalIdentifier: string;
 };
 
@@ -77,6 +78,7 @@ const findAppSettingsMenuItems = async (): Promise<
             "settingsMenuItem"."icon" AS "icon",
             "settingsMenuItem"."position" AS "position",
             "settingsMenuItem"."scope" AS "scope",
+            "settingsMenuItem"."slug" AS "slug",
             "frontComponent"."universalIdentifier" AS "frontComponentUniversalIdentifier"
      FROM core."settingsMenuItem" "settingsMenuItem"
      INNER JOIN core."application" "application"
@@ -175,7 +177,36 @@ describe('Manifest sync - settings menu items', () => {
       icon: null,
       position: 0,
       scope: 'WORKSPACE',
+      slug: null,
     });
+  }, 60000);
+
+  it('persists the slug and lets two items swap their slugs in one sync', async () => {
+    await syncApplication({
+      manifest: buildManifest([
+        { ...SYNC_SETTINGS_MENU_ITEM, slug: 'sync' },
+        { ...BILLING_SETTINGS_MENU_ITEM, slug: 'billing' },
+      ]),
+      expectToFail: false,
+    });
+
+    expect((await findAppSettingsMenuItems()).map(({ slug }) => slug)).toEqual([
+      'sync',
+      'billing',
+    ]);
+
+    await syncApplication({
+      manifest: buildManifest([
+        { ...SYNC_SETTINGS_MENU_ITEM, slug: 'billing' },
+        { ...BILLING_SETTINGS_MENU_ITEM, slug: 'sync' },
+      ]),
+      expectToFail: false,
+    });
+
+    expect((await findAppSettingsMenuItems()).map(({ slug }) => slug)).toEqual([
+      'billing',
+      'sync',
+    ]);
   }, 60000);
 
   it('updates an item in place rather than replacing it', async () => {
@@ -349,6 +380,7 @@ describe('Manifest sync - settings menu items', () => {
           icon
           position
           scope
+          slug
         }
       `,
     });

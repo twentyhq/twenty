@@ -297,9 +297,17 @@ export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionS
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
+  RESERVED_SETTINGS_MENU_ITEM_SLUGS,
+  isReservedSettingsMenuItemSlug,
+} from './utils/isReservedSettingsMenuItemSlug';
+export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export {
+  SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH,
+  isValidSettingsMenuItemSlug,
+} from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export type {
   ViewManifestFilterValue,

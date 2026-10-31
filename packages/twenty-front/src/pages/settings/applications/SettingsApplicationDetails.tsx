@@ -7,6 +7,8 @@ import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applicatio
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
+import { getSettingsMenuItemLegacyTabIdRedirect } from '@/settings/applications/utils/getSettingsMenuItemLegacyTabIdRedirect';
+import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
@@ -14,7 +16,12 @@ import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -65,6 +72,7 @@ export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
   const builtInAccountApp = useInstalledBuiltInAccountApp(applicationId);
+  const { search, hash } = useLocation();
 
   const {
     data,
@@ -202,7 +210,7 @@ export const SettingsApplicationDetails = () => {
         ]
       : []),
     ...workspaceSettingsMenuItems.map((settingsMenuItem) => ({
-      id: settingsMenuItem.universalIdentifier,
+      id: getSettingsMenuItemTabId(settingsMenuItem),
       title: getSettingsMenuItemDisplayTitle({
         applicationUniversalIdentifier: application?.universalIdentifier ?? '',
         frontComponents: application?.frontComponents ?? [],
@@ -310,7 +318,7 @@ export const SettingsApplicationDetails = () => {
       default: {
         const activeSettingsMenuItem = workspaceSettingsMenuItems.find(
           (settingsMenuItem) =>
-            settingsMenuItem.universalIdentifier === activeTabId,
+            getSettingsMenuItemTabId(settingsMenuItem) === activeTabId,
         );
 
         if (!isDefined(activeSettingsMenuItem)) {
@@ -325,6 +333,17 @@ export const SettingsApplicationDetails = () => {
       }
     }
   };
+
+  const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
+    settingsMenuItems: workspaceSettingsMenuItems,
+    hashTabId: hash.replace('#', ''),
+  });
+
+  if (isDefined(legacyTabIdRedirect)) {
+    return (
+      <Navigate to={{ search, hash: `#${legacyTabIdRedirect}` }} replace />
+    );
+  }
 
   if (isDefined(builtInAccountApp)) {
     return (

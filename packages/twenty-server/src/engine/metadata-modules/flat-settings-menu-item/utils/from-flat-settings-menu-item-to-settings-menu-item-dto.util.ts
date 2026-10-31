@@ -10,6 +10,7 @@ export const fromFlatSettingsMenuItemToSettingsMenuItemDto = (
   icon: flatSettingsMenuItem.icon,
   position: flatSettingsMenuItem.position,
   scope: flatSettingsMenuItem.scope,
+  slug: flatSettingsMenuItem.slug,
   universalIdentifier: flatSettingsMenuItem.universalIdentifier,
   applicationId: flatSettingsMenuItem.applicationId,
   workspaceId: flatSettingsMenuItem.workspaceId,

@@ -6,13 +6,15 @@ import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settin
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
+import { getSettingsMenuItemLegacyTabIdRedirect } from '@/settings/applications/utils/getSettingsMenuItemLegacyTabIdRedirect';
+import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -56,6 +58,7 @@ export const SettingsApplicationPreferencesDetail = ({
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const navigate = useNavigate();
+  const { search, hash } = useLocation();
 
   const [updateMyUserApplicationVariable] = useMutation(
     UpdateMyUserApplicationVariableDocument,
@@ -104,7 +107,7 @@ export const SettingsApplicationPreferencesDetail = ({
         ]
       : []),
     ...settingsMenuItems.map((settingsMenuItem) => ({
-      id: settingsMenuItem.universalIdentifier,
+      id: getSettingsMenuItemTabId(settingsMenuItem),
       title: settingsMenuItem.title,
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
@@ -128,8 +131,20 @@ export const SettingsApplicationPreferencesDetail = ({
   });
 
   const activeSettingsMenuItem = settingsMenuItems.find(
-    (settingsMenuItem) => settingsMenuItem.universalIdentifier === activeTabId,
+    (settingsMenuItem) =>
+      getSettingsMenuItemTabId(settingsMenuItem) === activeTabId,
   );
+
+  const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
+    settingsMenuItems,
+    hashTabId: hash.replace('#', ''),
+  });
+
+  if (isDefined(legacyTabIdRedirect)) {
+    return (
+      <Navigate to={{ search, hash: `#${legacyTabIdRedirect}` }} replace />
+    );
+  }
 
   return (
     <SettingsApplicationDetailPageLayout
@@ -188,6 +203,7 @@ export const SettingsApplicationPreferencesDetail = ({
           application={application}
           displayName={appName}
           connectionProviders={connectionProviders}
+          settingsMenuItems={settingsMenuItems}
         />
       )}
       {activeTabId === APPLICATION_VARIABLES_TAB_ID && (

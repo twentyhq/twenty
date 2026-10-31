@@ -98,4 +98,35 @@ describe('defineSettingsMenuItem', () => {
     expect(result.success).toBe(false);
     expect(result.errors[0]).toContain('SettingsMenuItem scope must be one of');
   });
+
+  it('should accept a kebab-case slug', () => {
+    const result = defineSettingsMenuItem({ ...VALID_CONFIG, slug: 'sync' });
+
+    expect(result.success).toBe(true);
+    expect(result.config.slug).toBe('sync');
+  });
+
+  it.each(['Sync', 'sync settings', 'sync_settings', '-sync', 'a'.repeat(65)])(
+    'should reject the malformed slug "%s"',
+    (slug) => {
+      const result = defineSettingsMenuItem({ ...VALID_CONFIG, slug });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        `SettingsMenuItem slug "${slug}" must be lowercase kebab-case (letters, digits and single hyphens) and at most 64 characters`,
+      );
+    },
+  );
+
+  it.each(['general', 'variables', '7d48ab00-8e9c-408b-b7ea-8e752c59ee7a'])(
+    'should reject the reserved slug "%s"',
+    (slug) => {
+      const result = defineSettingsMenuItem({ ...VALID_CONFIG, slug });
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        `SettingsMenuItem slug "${slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
+      );
+    },
+  );
 });
