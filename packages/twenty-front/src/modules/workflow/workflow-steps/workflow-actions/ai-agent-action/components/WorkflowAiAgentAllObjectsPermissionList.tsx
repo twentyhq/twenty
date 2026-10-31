@@ -26,7 +26,7 @@ export const WorkflowAiAgentAllObjectsPermissionList = ({
       (permission) =>
         scope?.[
           WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS[permission.key]
-        ] === true,
+        ] ?? false,
     ).map((permission) => ({
       key: permission.key,
       label: permission.label(allObjectsLabel),

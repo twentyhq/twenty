@@ -141,12 +141,16 @@ export const WorkflowAiAgentPermissionsTab = ({
     ? (role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ??
       [])
     : getWorkflowAiAgentPermissionFlagKeysFromScope(scope);
+  const hasListedPermissions =
+    objectPermissions.length > 0 || permissionFlagKeys.length > 0;
+  const hasRolePermissions =
+    isDefined(workflowAiAgentActionAgent?.roleId) && hasListedPermissions;
+  const hasScopePermissions =
+    hasListedPermissions ||
+    hasWorkflowAiAgentAllObjectsPermissionInScope(scope);
   const hasPermissions = isAgentBacked
-    ? isDefined(workflowAiAgentActionAgent?.roleId) &&
-      (objectPermissions.length > 0 || permissionFlagKeys.length > 0)
-    : objectPermissions.length > 0 ||
-      permissionFlagKeys.length > 0 ||
-      hasWorkflowAiAgentAllObjectsPermissionInScope(scope);
+    ? hasRolePermissions
+    : hasScopePermissions;
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
@@ -195,7 +199,6 @@ export const WorkflowAiAgentPermissionsTab = ({
   const scopePermissionActions = useWorkflowAiAgentScopePermissionActions({
     scope,
     readonly,
-    objectPermissions: scopeObjectPermissions,
     permissionFlagKeys,
     onScopeChange,
   });

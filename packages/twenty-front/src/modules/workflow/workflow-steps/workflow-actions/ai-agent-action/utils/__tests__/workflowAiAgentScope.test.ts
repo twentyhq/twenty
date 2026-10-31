@@ -7,7 +7,8 @@ import { getWorkflowAiAgentObjectPermissionsFromScope } from '@/workflow/workflo
 import { getWorkflowAiAgentPermissionFlagKeysFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentPermissionFlagKeysFromScope';
 import { grantWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermission';
 import { revokeWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermission';
-import { setWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentObjectPermissionInScope';
+import { grantWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermissionInScope';
+import { revokeWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermissionInScope';
 import { revokeWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentAllObjectsPermissionInScope';
 import { setWorkflowAiAgentPermissionFlagKeysInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentPermissionFlagKeysInScope';
 
@@ -72,42 +73,64 @@ describe('workflow AI agent scope', () => {
     });
   });
 
-  it('writes an object permission by universal identifier and drops it once empty', () => {
-    const scope = setWorkflowAiAgentObjectPermissionInScope({
+  it('writes a granted action by universal identifier and drops the entry once empty', () => {
+    const scope = grantWorkflowAiAgentObjectPermissionInScope({
       scope: undefined,
       objectUniversalIdentifier: 'person',
-      objectPermission: {
-        objectMetadataId: 'person-id',
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      },
+      permissionKey: 'canReadObjectRecords',
     });
 
     expect(scope.objectPermissions).toEqual([
-      {
-        objectUniversalIdentifier: 'person',
-        canReadObjectRecords: true,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      },
+      { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
     ]);
 
     expect(
-      setWorkflowAiAgentObjectPermissionInScope({
+      revokeWorkflowAiAgentObjectPermissionInScope({
         scope,
         objectUniversalIdentifier: 'person',
-        objectPermission: {
-          objectMetadataId: 'person-id',
-          canReadObjectRecords: false,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-        },
+        permissionKey: 'canReadObjectRecords',
       }).objectPermissions,
     ).toEqual([]);
+  });
+
+  it('grants reading along with editing, so editing never goes without it', () => {
+    expect(
+      grantWorkflowAiAgentObjectPermissionInScope({
+        scope: undefined,
+        objectUniversalIdentifier: 'person',
+        permissionKey: 'canUpdateObjectRecords',
+      }).objectPermissions,
+    ).toEqual([
+      {
+        objectUniversalIdentifier: 'person',
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+      },
+    ]);
+  });
+
+  it('keeps an all-objects grant effective on an object when another action is granted on it', () => {
+    const scope = grantWorkflowAiAgentObjectPermissionInScope({
+      scope: { canUpdateAllObjectRecords: true },
+      objectUniversalIdentifier: 'person',
+      permissionKey: 'canReadObjectRecords',
+    });
+
+    expect(scope.objectPermissions).toEqual([
+      { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+    ]);
+    expect(
+      getWorkflowAiAgentObjectPermissionsFromScope({
+        scope,
+        objectMetadataItems,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        objectMetadataId: 'person-id',
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+      }),
+    ]);
   });
 
   it('stores permission flags by universal identifier', () => {
@@ -124,31 +147,42 @@ describe('workflow AI agent scope', () => {
     ]);
   });
 
-  it('keeps a denial while an all-objects grant would otherwise apply', () => {
+  it('stores an explicit denial for a removed action an all-objects grant would otherwise cover', () => {
     expect(
-      setWorkflowAiAgentObjectPermissionInScope({
+      revokeWorkflowAiAgentObjectPermissionInScope({
         scope: {
           canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
           objectPermissions: [
-            { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+            {
+              objectUniversalIdentifier: 'person',
+              canUpdateObjectRecords: true,
+            },
           ],
         },
         objectUniversalIdentifier: 'person',
-        objectPermission: {
-          objectMetadataId: 'person-id',
-          canReadObjectRecords: false,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
+        permissionKey: 'canUpdateObjectRecords',
+      }).objectPermissions,
+    ).toEqual([
+      { objectUniversalIdentifier: 'person', canUpdateObjectRecords: false },
+    ]);
+  });
+
+  it('denies every covered action when reading is removed under all-objects grants', () => {
+    expect(
+      revokeWorkflowAiAgentObjectPermissionInScope({
+        scope: {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
         },
+        objectUniversalIdentifier: 'person',
+        permissionKey: 'canReadObjectRecords',
       }).objectPermissions,
     ).toEqual([
       {
-        objectUniversalIdentifier: 'person',
         canReadObjectRecords: false,
         canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
+        objectUniversalIdentifier: 'person',
       },
     ]);
   });

@@ -5,11 +5,9 @@ import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/wo
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
-import { type WorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentCrudObjectPermission';
-import { grantWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermission';
+import { grantWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermissionInScope';
+import { revokeWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermissionInScope';
 import { revokeWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentAllObjectsPermissionInScope';
-import { revokeWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermission';
-import { setWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentObjectPermissionInScope';
 import { setWorkflowAiAgentPermissionFlagKeysInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentPermissionFlagKeysInScope';
 import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 type UseWorkflowAiAgentScopePermissionActionsParams = {
   scope: AiRunScope | undefined;
   readonly: boolean;
-  objectPermissions: WorkflowAiAgentCrudObjectPermission[];
   permissionFlagKeys: string[];
   onScopeChange: (scope: AiRunScope) => void;
 };
@@ -26,7 +23,6 @@ type UseWorkflowAiAgentScopePermissionActionsParams = {
 export const useWorkflowAiAgentScopePermissionActions = ({
   scope,
   readonly,
-  objectPermissions,
   permissionFlagKeys,
   onScopeChange,
 }: UseWorkflowAiAgentScopePermissionActionsParams) => {
@@ -47,44 +43,25 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     setWorkflowAiAgentPermissionsIsSystemObjectsListOpen(false);
   };
 
-  const setObjectPermission = (
-    objectPermission: WorkflowAiAgentCrudObjectPermission,
-  ) => {
-    const objectMetadataItem = objectMetadataItems.find(
-      (item) => item.id === objectPermission.objectMetadataId,
-    );
-
-    if (!isDefined(objectMetadataItem)) {
-      return;
-    }
-
-    onScopeChange(
-      setWorkflowAiAgentObjectPermissionInScope({
-        scope,
-        objectUniversalIdentifier: objectMetadataItem.universalIdentifier,
-        objectPermission,
-      }),
-    );
-  };
-
-  const findObjectPermission = (objectMetadataId: string) =>
-    objectPermissions.find(
-      (objectPermission) =>
-        objectPermission.objectMetadataId === objectMetadataId,
-    );
+  const findObjectUniversalIdentifier = (objectMetadataId: string) =>
+    objectMetadataItems.find((item) => item.id === objectMetadataId)
+      ?.universalIdentifier;
 
   const handleAddPermission = ({
     objectMetadataId,
     permissionKey,
   }: WorkflowAiAgentObjectPermissionChange) => {
-    if (readonly) {
+    const objectUniversalIdentifier =
+      findObjectUniversalIdentifier(objectMetadataId);
+
+    if (readonly || !isDefined(objectUniversalIdentifier)) {
       return;
     }
 
-    setObjectPermission(
-      grantWorkflowAiAgentObjectPermission({
-        objectMetadataId,
-        objectPermission: findObjectPermission(objectMetadataId),
+    onScopeChange(
+      grantWorkflowAiAgentObjectPermissionInScope({
+        scope,
+        objectUniversalIdentifier,
         permissionKey,
       }),
     );
@@ -95,16 +72,17 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     objectMetadataId,
     permissionKey,
   }: WorkflowAiAgentObjectPermissionChange) => {
-    const objectPermission = findObjectPermission(objectMetadataId);
+    const objectUniversalIdentifier =
+      findObjectUniversalIdentifier(objectMetadataId);
 
-    if (readonly || !isDefined(objectPermission)) {
+    if (readonly || !isDefined(objectUniversalIdentifier)) {
       return;
     }
 
-    setObjectPermission(
-      revokeWorkflowAiAgentObjectPermission({
-        objectMetadataId,
-        objectPermission,
+    onScopeChange(
+      revokeWorkflowAiAgentObjectPermissionInScope({
+        scope,
+        objectUniversalIdentifier,
         permissionKey,
       }),
     );

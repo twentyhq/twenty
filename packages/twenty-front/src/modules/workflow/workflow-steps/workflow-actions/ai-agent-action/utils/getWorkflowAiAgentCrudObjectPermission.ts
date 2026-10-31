@@ -4,7 +4,15 @@ import { type WorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-st
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export const getWorkflowAiAgentCrudObjectPermission = (
-  objectPermission: ObjectPermission | undefined,
+  objectPermission:
+    | Pick<
+        ObjectPermission,
+        | 'canReadObjectRecords'
+        | 'canUpdateObjectRecords'
+        | 'canSoftDeleteObjectRecords'
+        | 'canDestroyObjectRecords'
+      >
+    | undefined,
 ):
   | Partial<Omit<WorkflowAiAgentCrudObjectPermission, 'objectMetadataId'>>
   | undefined =>

@@ -2,6 +2,7 @@ import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentCrudObjectPermission';
+import { getWorkflowAiAgentEffectiveObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentEffectiveObjectPermission';
 
 export const getWorkflowAiAgentObjectPermissionsFromScope = ({
   scope,
@@ -20,16 +21,24 @@ export const getWorkflowAiAgentObjectPermissionsFromScope = ({
       return [];
     }
 
+    const isGranted = (
+      permissionKey: Parameters<
+        typeof getWorkflowAiAgentEffectiveObjectPermission
+      >[0]['permissionKey'],
+    ) =>
+      getWorkflowAiAgentEffectiveObjectPermission({
+        scope,
+        objectPermission,
+        permissionKey,
+      });
+
     return [
       {
         objectMetadataId: objectMetadataItem.id,
-        canReadObjectRecords: objectPermission.canReadObjectRecords ?? false,
-        canUpdateObjectRecords:
-          objectPermission.canUpdateObjectRecords ?? false,
-        canSoftDeleteObjectRecords:
-          objectPermission.canSoftDeleteObjectRecords ?? false,
-        canDestroyObjectRecords:
-          objectPermission.canDestroyObjectRecords ?? false,
+        canReadObjectRecords: isGranted('canReadObjectRecords'),
+        canUpdateObjectRecords: isGranted('canUpdateObjectRecords'),
+        canSoftDeleteObjectRecords: isGranted('canSoftDeleteObjectRecords'),
+        canDestroyObjectRecords: isGranted('canDestroyObjectRecords'),
       },
     ];
   });
