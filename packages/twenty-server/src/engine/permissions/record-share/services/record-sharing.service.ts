@@ -268,6 +268,7 @@ export class RecordSharingService {
     sharingObject: {
       flatObjectMetadata,
       isShareRequired,
+      isPrivateByDefault,
       defaultGeneralAccessLevel,
     },
     creatorWorkspaceMemberId,
@@ -293,7 +294,10 @@ export class RecordSharingService {
       return;
     }
 
-    if (args.accessLevel === RecordShareAccessLevel.READ) {
+    if (
+      args.accessLevel === RecordShareAccessLevel.READ ||
+      (isPrivateByDefault && args.accessLevel !== RecordShareAccessLevel.NONE)
+    ) {
       throw new RecordShareException(
         'A record is either private or follows the roles of its object',
         RecordShareExceptionCode.INVALID_SHARE_WITH,
@@ -327,6 +331,19 @@ export class RecordSharingService {
 
       return;
     }
+
+    await this.recordShareStorageService.deleteMatching({
+      workspaceId,
+      transactionScope,
+      criteria: [
+        {
+          objectMetadataId: args.objectMetadataId,
+          recordId: args.recordId,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          rowCause: RecordShareRowCause.MANUAL,
+        },
+      ],
+    });
 
     if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
       return;
