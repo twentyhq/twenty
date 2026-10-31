@@ -9,6 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -300,6 +301,10 @@ export const Authorize = () => {
           <StyledOAuthTitle level={2} size="lg">
             <Trans>Connect {appName} to your account</Trans>
           </StyledOAuthTitle>
+          <AuthorizeClientIdentityNotice
+            appName={appName}
+            wellKnownOAuthClient={applicationRegistration.wellKnownOAuthClient}
+          />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
