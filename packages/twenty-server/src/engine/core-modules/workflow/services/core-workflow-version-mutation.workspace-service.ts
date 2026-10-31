@@ -222,6 +222,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
     const isStepTypeChanged = existingStep.type !== step.type;
 
+    if (!isStepTypeChanged) {
+      await this.workflowVersionStepOperationsWorkspaceService.assertUpdatedStepAgentRunnableOrThrow(
+        { existingStep, updatedStep: step, workspaceId },
+      );
+    }
+
     const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
       ? await this.rebuildStepForTypeChange({
           existingStep,

@@ -39,19 +39,17 @@ const buildTool = () => {
   const agentService = {
     findOneAgentById: jest.fn(),
   };
+  const deps: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
+    coreWorkflowMutationService,
+    coreWorkflowLifecycleService,
+    agentService,
+  };
 
-  const tool = createCreateCompleteWorkflowTool(
-    {
-      coreWorkflowMutationService,
-      coreWorkflowLifecycleService,
-      agentService,
-    } as never,
-    {
-      workspaceId: 'workspace-id',
-      userWorkspaceId: 'user-workspace-id',
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
-    },
-  );
+  const tool = createCreateCompleteWorkflowTool(deps, {
+    workspaceId: 'workspace-id',
+    userWorkspaceId: 'user-workspace-id',
+    rolePermissionConfig: { shouldBypassPermissionChecks: true },
+  });
 
   return {
     tool,

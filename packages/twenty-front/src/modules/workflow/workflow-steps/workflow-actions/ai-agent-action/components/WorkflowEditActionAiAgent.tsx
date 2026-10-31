@@ -29,7 +29,7 @@ import {
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
-import { IconLock, IconSparkles } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconLock, IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -56,6 +56,18 @@ type WorkflowEditActionAiAgentProps = {
 const StyledTabListContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   padding-left: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledMissingAgentState = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[3]};
+  text-align: center;
 `;
 
 export const WorkflowEditActionAiAgent = ({
@@ -272,6 +284,18 @@ export const WorkflowEditActionAiAgent = ({
       />,
     ];
   };
+
+  if (isAgentBacked && !agentLoading && !isDefined(agentData?.findOneAgent)) {
+    return (
+      <>
+        <StyledMissingAgentState>
+          <IconAlertTriangle size={20} />
+          <div>{t`The agent this step runs could not be loaded. It may have been deleted.`}</div>
+        </StyledMissingAgentState>
+        {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
+      </>
+    );
+  }
 
   return isAgentBacked && (agentLoading || !isCurrentAgentLoaded) ? (
     <SidePanelSkeletonLoader />

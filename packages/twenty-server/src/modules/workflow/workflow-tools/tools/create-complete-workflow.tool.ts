@@ -18,7 +18,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
-import { assertAgentRunnableByNewStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-runnable-by-new-step.util';
+import { assertAgentRunnableByNewStepOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-runnable-by-new-step-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
@@ -57,12 +57,20 @@ const createCompleteWorkflowSchema = z.object({
     .describe('Whether to activate the workflow immediately (default: false)'),
 });
 
-type CreateCompleteWorkflowToolDeps = Pick<
-  WorkflowToolDependencies,
-  | 'coreWorkflowMutationService'
-  | 'coreWorkflowLifecycleService'
-  | 'agentService'
->;
+type CreateCompleteWorkflowToolDeps = {
+  coreWorkflowMutationService: Pick<
+    WorkflowToolDependencies['coreWorkflowMutationService'],
+    'createWorkflowWithContent'
+  >;
+  coreWorkflowLifecycleService: Pick<
+    WorkflowToolDependencies['coreWorkflowLifecycleService'],
+    'activateCoreWorkflowVersion'
+  >;
+  agentService: Pick<
+    WorkflowToolDependencies['agentService'],
+    'findOneAgentById'
+  >;
+};
 
 type CreateCompleteWorkflowFailure = {
   success: false;
@@ -259,7 +267,7 @@ const assertAiAgentStepsRunReusableAgents = async ({
   workspaceId,
   steps,
 }: {
-  deps: Pick<WorkflowToolDependencies, 'agentService'>;
+  deps: Pick<CreateCompleteWorkflowToolDeps, 'agentService'>;
   workspaceId: string;
   steps: WorkflowAction[];
 }): Promise<void> => {
@@ -290,7 +298,7 @@ const assertAiAgentStepsRunReusableAgents = async ({
           throw error;
         });
 
-      assertAgentRunnableByNewStep(agent);
+      assertAgentRunnableByNewStepOrThrow(agent);
     }),
   );
 };

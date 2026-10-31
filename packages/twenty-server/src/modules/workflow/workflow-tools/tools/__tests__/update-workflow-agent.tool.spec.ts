@@ -299,6 +299,40 @@ describe('createUpdateWorkflowAgentTool', () => {
     );
   });
 
+  it('should set the response format only on the step passed by id, not on other steps running its agent', async () => {
+    const editedStep = buildAiAgentStep(AGENT_ID, 'edited-step');
+    const otherStep = buildAiAgentStep(AGENT_ID, 'other-step');
+    const { tool, coreWorkflowVersionMutationService } = buildTool({
+      draftCoreVersions: [
+        { id: 'core-version-1', steps: [editedStep] },
+        { id: 'core-version-2', steps: [otherStep] },
+      ],
+      isStepOwnedAgent: false,
+    });
+
+    const result = (await tool.execute({
+      stepId: 'edited-step',
+      responseFormat: { type: 'text' },
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
+      coreWorkflowVersionId: 'core-version-1',
+      step: {
+        ...editedStep,
+        settings: {
+          ...editedStep.settings,
+          input: { agentId: AGENT_ID, responseFormat: { type: 'text' } },
+        },
+      },
+    });
+  });
+
   it('should report a step it cannot find', async () => {
     const { tool, coreWorkflowVersionMutationService } = buildTool();
 

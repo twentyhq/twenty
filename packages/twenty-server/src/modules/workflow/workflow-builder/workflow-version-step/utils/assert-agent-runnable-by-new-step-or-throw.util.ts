@@ -5,7 +5,7 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 
 // deleting or duplicating a step takes its hidden agent along, so no new step may share one
-export const assertAgentRunnableByNewStep = (
+export const assertAgentRunnableByNewStepOrThrow = (
   agent: Pick<FlatAgentWithRoleId, 'label' | 'isSystem'>,
 ): void => {
   if (agent.isSystem) {

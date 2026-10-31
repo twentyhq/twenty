@@ -19,9 +19,7 @@ const updateAgentSchema = z.object({
   stepId: z
     .string()
     .optional()
-    .describe(
-      'The id of the draft AI_AGENT step to configure. Use this for a step without settings.input.agentId.',
-    ),
+    .describe('The id of the draft AI_AGENT step to configure.'),
   agentId: z
     .string()
     .uuid()
@@ -73,7 +71,7 @@ const findDraftAiAgentSteps = async (
   );
 };
 
-const updateInlineAiAgentStep = async (
+const updateAiAgentStepInput = async (
   deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   {
     workspaceId,
@@ -163,7 +161,7 @@ export const createUpdateWorkflowAgentTool = (
   name: 'update_workflow_agent' as const,
   description: `Configure a workflow AI_AGENT step: its system prompt, the model it uses, and the format of its output.
 
-Pass stepId for a draft step that runs no agent (no settings.input.agentId): the step itself holds this config. Pass agentId for a step that runs an agent: the response format goes to the draft steps using it. A reusable agent's prompt and model cannot be changed here; they are edited on the agent itself.
+Pass stepId to configure one draft step: a step that runs no agent (no settings.input.agentId) holds this config itself, and a step that runs an agent gets the response format on that step only. Passing agentId alone sets the response format on every draft step using that agent. A reusable agent's prompt and model cannot be changed here; they are edited on the agent itself.
 
 - prompt: the system prompt (role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
@@ -180,6 +178,9 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
       const { stepId, prompt, modelId, responseFormat } = parameters;
       const { workspaceId } = context;
       let agentId = parameters.agentId;
+      let stepToConfigure:
+        | { coreWorkflowVersionId: string; step: WorkflowAiAgentAction }
+        | undefined;
 
       if (isNonEmptyString(stepId)) {
         const [draftStep] = await findDraftAiAgentSteps(deps, {
@@ -196,7 +197,7 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
         }
 
         if (!isNonEmptyString(draftStep.step.settings.input.agentId)) {
-          await updateInlineAiAgentStep(deps, {
+          await updateAiAgentStepInput(deps, {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
             coreWorkflowVersionId: draftStep.coreWorkflowVersionId,
@@ -214,6 +215,7 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
         }
 
         agentId = draftStep.step.settings.input.agentId;
+        stepToConfigure = draftStep;
       }
 
       if (!isNonEmptyString(agentId)) {
@@ -259,6 +261,23 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
         return {
           success: true,
           message: `Successfully updated agent ${agentId}`,
+          agentId,
+        };
+      }
+
+      if (isDefined(stepToConfigure)) {
+        await updateAiAgentStepInput(deps, {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId: stepToConfigure.coreWorkflowVersionId,
+          step: stepToConfigure.step,
+          responseFormat,
+        });
+
+        return {
+          success: true,
+          message: `Successfully updated step ${stepId}`,
+          stepId,
           agentId,
         };
       }
