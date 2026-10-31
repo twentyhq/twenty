@@ -130,6 +130,55 @@ describe('linkedinHandleWebhookEventHandler', () => {
     });
   });
 
+  it('imports a group message from a stranger when another member is a contact', async () => {
+    const ada = {
+      id: 'ACoADA',
+      display_name: 'Ada Lovelace',
+      public_identifier: 'ada',
+    };
+
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Founders',
+      is_group: true,
+      is_1to1: false,
+      participants: [
+        { is_self: false, user: ada },
+        { is_self: false, user: DAPHNE },
+      ],
+    });
+    mocks.query.mockImplementation(async (query: unknown) =>
+      JSON.stringify(query).includes('in/ada')
+        ? {
+            people: {
+              edges: [
+                {
+                  node: {
+                    id: 'ada-id',
+                    linkedinLink: {
+                      primaryLinkUrl: 'https://www.linkedin.com/in/ada',
+                    },
+                  },
+                },
+              ],
+            },
+          }
+        : { people: { edges: [] } },
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+
+    expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+  });
+
   it('ingests a sent message to the chat counterpart public profile URL', async () => {
     mocks.getUnipileChat.mockResolvedValue({
       id: 'chat-1',

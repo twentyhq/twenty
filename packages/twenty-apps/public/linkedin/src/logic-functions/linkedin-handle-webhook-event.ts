@@ -39,9 +39,13 @@ const ingestUnipileMessage = async ({
     chatId: message.chat_id,
   });
 
-  const counterparts = message.is_sender
-    ? getLinkedinChatCounterparts(chat)
-    : [message.sender].filter(isDefined);
+  const chatCounterparts = getLinkedinChatCounterparts(chat);
+  const counterparts =
+    message.is_sender ||
+    !isDefined(message.sender) ||
+    chatCounterparts.some((user) => user.id === message.sender?.id)
+      ? chatCounterparts
+      : [...chatCounterparts, message.sender];
 
   const { ingestedMessageCount } = await ingestLinkedinMessages({
     channel,
