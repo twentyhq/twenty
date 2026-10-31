@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Недостаје обавезно поље. Унесите све обавезне вредности и покушајте поново."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Улога са овом ознаком већ постоји."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "Администраторски панел"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Администраторска улога није пронађена."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "Конфигурација улоге за API кључ није пронађена."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "Улога API кључа није пронађена."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Аутентификација није омогућена са овим провајдером."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Потребна је аутентификација да би се приступило овој функцији. Молимо пријавите се и покушајте поново."
 
@@ -1728,7 +1728,7 @@ msgstr "За извршавање ове радње потребна је аут
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Аутентификација је обавезна."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Не може се активирати верзија која није у нацрту или није последња објављена верзија"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Није могуће додати дозволе поља на системске објекте."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Није могуће додати дозволе на системске објекте."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "Није могуће обрисати стандардну вештину"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Није могуће обрисати последњег администратора."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Није могуће избрисати, прво ажурирајте поље за идентификатор етикете"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Није могуће дати дозволу за писање на нечитљивим објектима."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Није могуће дати дозволу за писање без дозволе за читање."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Није могуће изменити предикат да би се његова улога променила са {existingRoleIdentifier} на {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Није могуће уклонити последњег администратора из радног простора."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Није могуће изабрати улогу која је у власништву друге апликације"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr ""
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "Напиши е-поруку"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Композитни тип није пронађен."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Прилагођеном објекту недостаје поље идентификатора ознаке."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Прилагођене улоге су део плана Organization."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "Подразумевани распоред особе"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Подразумевана улога није пронађена."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "Емоџи којим је члан реаговао"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Празне дозволе поља нису дозвољене."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Није успело поновно покретање задатака. Покушајте поново касније."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Није успело ажурирање дозволе поља."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "Метаподаци поља нису пронађени"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "Дозвола поља није пронађена"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Дозвола поља није пронађена."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Поље референцирано у индексу не постоји"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Ограничења поља важе само за читљиве објекте."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "Неважећа дефиниција тока рада апликације."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Дат је неважећи аргумент."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Неважећи тип дозволе за ознаку дозволе."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Неважеће подешавање дозвола."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "Назив радног места"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Назив спојне колоне је обавезан."
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Нема подешених дозвола за ову улогу на селектованом објекту. Молимо најпре подесите дозволе објекта."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "У извору података нису пронађене дозволе."
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "Ниједан запис није погођен."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Овој апликацији није додељена улога."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Није пронађена улога за овог корисника у радном простору."
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "Није дат тип покретача"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Није пронађен важећи аутентификациони контекст."
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "Метаподаци објекта нису пронађени"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "Дозвола објекта није пронађена"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Дозвола објекта није пронађена."
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "Једина грешка"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Дозвољена су само ограничења поља."
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "Ознака дозволе за ажурирање није пронађена"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Дозвола није пронађена."
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Достигнуто је ограничење брзине. Покушајте поново касније."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Сирови SQL упити нису дозвољени."
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "Улога се не може уређивати"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Улога мора имати најмање један циљ."
 
@@ -11531,10 +11531,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Улога није пронађена."
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Неке од одабраних дозвола нису валидне. Молимо покушајте поново са важећим поставкама дозвола."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Агент којег тражите није пронађен. Могуће је да је избрисан или можда немате приступ њему."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API кључ нема додељену важећу улогу. Молимо проверите вашу конфигурацију API кључа."
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Изворни канал апликације не одговара очекиваном типу."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Апликација нема додељену важећу улогу. Молимо проверите конфигурацију ваше апликације."
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Задана улога не може бити избрисана јер је неопходна за исправно функционисање радне површине."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Подразумевану улогу није могуће обрисати."
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Параметри MCP захтева су неважећи."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Улогу члана није могуће обрисати."
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "Овај канал за поруке не може да шаље поруке."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Овај метод није дозвољен."
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Ову улогу није могуће доделити API кључевима."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Ову улогу није могуће доделити корисницима."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Ову улогу није могуће уређивати."
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "Да се уради"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Пронађено је превише кандидата за администратора."
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Непознат тип ставке навигационог менија {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Непозната операција."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Захтева се непозната дозвола."
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "Датум и време ажурирања"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Ограничења ажурирања поља важе само за објекте који се могу ажурирати."
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "Корисник већ постоји"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Кориснику је већ додељена улога."
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "Корисник нема приступ овом радном простору"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Корисник нема дозволе."
 
@@ -15838,7 +15838,7 @@ msgstr "Корисник није креиран путем е-поште/лоз
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Радни простор корисника није пронађен."
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "Радни простор не постоји."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Неподударање ID-ја радног простора и улоге."
 
@@ -17195,7 +17195,7 @@ msgstr "Име члана простора за рад"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Члан радног простора није пронађен."
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Не можете генерисати кôд за опоравак за себе. Уместо тога, ресетујте двофакторску аутентификацију из свог профила."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Не можете променити сопствену улогу. Молимо тражите од другог администратора да ажурира вашу улогу."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Не можете обрисати улогу која вам је додељена. Замолите другог администратора да је обрише."
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Не можете дати дозволе за измене без да прво дате дозволе за читање. Молимо најпре омогућите приступ читању."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Не можете уклонити приступ подешавањима са сопствене улоге. Замолите другог администратора да изврши ову измену."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Не можете уклонити администраторску улогу од последњег администратора. Молимо најпре доделите другу улогу."
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Не можете поставити дозволе поља на системске објекте јер их управља платформа."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Не можете ажурирати сопствену улогу."
 
@@ -17577,7 +17577,7 @@ msgstr "Немате дозволу да управљате листом бло�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Немате дозволу да извршите ову радњу."
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ваша улога не може да избрише неке од ових записа, па се не могу спојити."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ваша улога у овој радној околини није пронађена. Молимо контактирајте администратора ваше радне површине."
 

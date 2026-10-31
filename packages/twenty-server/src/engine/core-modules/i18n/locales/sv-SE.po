@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Ett obligatoriskt fält saknas. Ange alla obligatoriska värden och försök igen."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "En roll med denna etikett finns redan."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "Administratörspanel"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Administratörsroll hittades inte."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "Konfiguration för API-nyckelns roll hittades inte."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API-nyckelns roll hittades inte."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Autentisering är inte aktiverad med denna leverantör."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Autentisering krävs för att komma åt den här funktionen. Logga in och försök igen."
 
@@ -1728,7 +1728,7 @@ msgstr "Autentisering krävs för att utföra den här åtgärden"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Autentisering krävs."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Kan inte aktivera icke-utkast eller icke-senaste publicerade versionen"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Det går inte att lägga till fältbehörigheter på systemobjekt."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Det går inte att lägga till behörigheter på systemobjekt."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "Kan inte ta bort standardfärdigheten"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Det går inte att ta bort den sista administratören."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan inte ta bort, uppdatera etikettidentifieringsfältet först"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Det går inte att ge skrivbehörighet på objekt som inte är läsbara."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Det går inte att ge skrivbehörighet utan läsbehörighet."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Det går inte att ändra predikatets roll från {existingRoleIdentifier} till {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Det går inte att ta bort den sista administratören från arbetsytan."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Det går inte att välja en roll som ägs av en annan applikation"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr ""
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "Skriv e-post"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Sammansatt typ hittades inte."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Anpassat objekt saknar ett etikettidentifieringsfält."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Anpassade roller ingår i Organization Plan."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "Standardlayout för person"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Standardroll hittades inte."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji som medlemmen reagerade med"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Tomma fältbehörigheter är inte tillåtna."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Misslyckades med att försöka igen med jobb. Vänligen försök igen senare."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Det gick inte att uppdatera fältbehörighet."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "Fältmetadata hittades inte"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "Fältbehörighet hittades inte"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Fältbehörighet hittades inte."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Fältet som refereras i indexet existerar inte"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Fältbegränsningar gäller endast läsbara objekt."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "Ogiltig definition av applikationsarbetsflöde."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Ogiltigt argument angavs."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Ogiltig behörighetstyp för behörighetsflagga."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Ogiltig behörighetsinställning."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "Befattning"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Namn på join-kolumn krävs."
 
@@ -9099,7 +9099,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Inga behörigheter är inställda för den här rollen på det valda objektet. Ställ först in objektbehörigheter."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Inga behörigheter hittades i datakällan."
 
@@ -9119,12 +9119,12 @@ msgid "No records were affected."
 msgstr "Inga poster påverkades."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Ingen roll har tilldelats applikationen."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Ingen roll hittades för denna användare i arbetsytan."
 
@@ -9154,7 +9154,7 @@ msgid "No trigger type provided"
 msgstr "Ingen utlösartyp angiven"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Ingen giltig autentiseringskontext hittades."
 
@@ -9468,9 +9468,9 @@ msgid "Object metadata not found"
 msgstr "Objektmetadata hittades inte"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9510,7 +9510,7 @@ msgid "Object permission not found"
 msgstr "Objektbehörighet hittades inte"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Objektbehörighet hittades inte."
 
@@ -9655,7 +9655,7 @@ msgid "Only error"
 msgstr "Enda felet"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Endast fältbegränsningar är tillåtna."
 
@@ -10347,7 +10347,7 @@ msgid "Permission flag to update not found"
 msgstr "Den behörighetsflagga som ska uppdateras hittades inte"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Behörighet hittades inte."
 
@@ -10807,7 +10807,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Gräns för antal förfrågningar har nåtts. Försök igen senare."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Råa SQL-frågor är inte tillåtna."
 
@@ -11489,7 +11489,7 @@ msgid "Role is not editable"
 msgstr "Rollen kan inte redigeras"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rollen måste ha minst ett mål."
 
@@ -11533,10 +11533,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Roll hittades inte."
 
@@ -12390,7 +12390,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Vissa av de valda behörigheterna är ogiltiga. Vänligen försök igen med giltiga behörighetsinställningar."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13200,7 +13200,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Agenten du letar efter kunde inte hittas. Den kan ha raderats eller så har du kanske inte åtkomst till den."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API-nyckeln har ingen giltig roll tilldelad. Vänligen kontrollera din API-nyckelkonfiguration."
 
@@ -13216,7 +13216,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Applikationens källkanal stämmer inte överens med den förväntade typen."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Applikationen har ingen giltig roll tilldelad. Vänligen kontrollera din applikationskonfiguration."
 
@@ -13368,7 +13368,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Standardrollen kan inte raderas eftersom den behövs för att arbetsytan ska fungera korrekt."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Standardrollen kan inte raderas."
 
@@ -13558,7 +13558,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Parametrarna för MCP-begäran är ogiltiga."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Medlemsrollen kan inte raderas."
@@ -14393,7 +14393,7 @@ msgid "This message channel cannot send messages."
 msgstr "Denna meddelandekanal kan inte skicka meddelanden."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Denna metod är inte tillåten."
 
@@ -14579,12 +14579,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Denna roll kan inte tilldelas API-nycklar."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Denna roll kan inte tilldelas användare."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Denna roll kan inte redigeras."
 
@@ -15050,7 +15050,7 @@ msgid "To do"
 msgstr "Att göra"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "För många administratörskandidater hittades."
 
@@ -15387,12 +15387,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Okänd typ av navigationsmenyalternativ {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Okänd åtgärd."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Okänd behörighet krävs."
 
@@ -15529,7 +15529,7 @@ msgid "Update DateTime"
 msgstr "Uppdateringsdatum och -tid"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Begränsningar för uppdatering av fält gäller endast objekt som kan uppdateras."
 
@@ -15772,7 +15772,7 @@ msgid "User already exists"
 msgstr "Användaren finns redan"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Användaren har redan en tilldelad roll."
 
@@ -15787,7 +15787,7 @@ msgid "User does not have access to this workspace"
 msgstr "Användare har inte åtkomst till detta arbetsutrymme"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Användaren har inte behörighet."
 
@@ -15844,7 +15844,7 @@ msgstr "Användare skapades inte med e-post/lösenord"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Användarens arbetsyta hittades inte."
 
@@ -17109,7 +17109,7 @@ msgid "Workspace does not exist."
 msgstr "Arbetsytan finns inte."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Arbetsyte-ID och roll stämmer inte överens."
 
@@ -17201,7 +17201,7 @@ msgstr "Arbetsytamedlems namn"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Medlem i arbetsytan hittades inte."
 
@@ -17448,12 +17448,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Du kan inte generera en återställningskod åt dig själv. Återställ i stället tvåfaktorsautentisering från din profil."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Du kan inte ändra din egen roll. Be en annan administratör att uppdatera din roll."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Du kan inte ta bort en roll som du är tilldelad. Be en annan administratör ta bort den."
 
@@ -17464,12 +17464,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Du kan inte ge redigeringsbehörigheter utan att också ge läsbehörigheter. Vänligen aktivera läsacces först."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Du kan inte ta bort åtkomst till inställningar från din egen roll. Be en annan administratör göra den här ändringen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Du kan inte ta bort administratörsrollen från den sista administratören. Tilldela först en annan administratör."
 
@@ -17494,7 +17494,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Du kan inte ställa in fältbehörigheter på systemobjekt eftersom de hanteras av plattformen."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Du kan inte uppdatera din egen roll."
 
@@ -17583,7 +17583,7 @@ msgstr "Du har inte behörighet att hantera arbetsytans blocklista."
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Du har inte behörighet att utföra denna åtgärd."
 
@@ -17711,8 +17711,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Din roll kan inte ta bort vissa av dessa poster, så de kan inte sammanfogas."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din roll i den här arbetsytan kunde inte hittas. Vänligen kontakta din arbetsytsadministratör."
 

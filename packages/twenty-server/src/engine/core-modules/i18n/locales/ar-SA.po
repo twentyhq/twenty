@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "حقل مطلوب مفقود. يرجى تقديم جميع القيم المطلوبة والمحاولة مرة أخرى."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "يوجد بالفعل دور يحمل هذا الاسم."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "اللوحة الإدارية"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "دور المسؤول غير موجود."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "إعداد دور مفتاح API غير موجود."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "دور مفتاح API غير موجود."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "لم يتم تمكين المصادقة مع هذا الموفر."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "يتطلب الوصول إلى هذه الميزة تسجيل الدخول. يُرجى تسجيل الدخول والمحاولة مرة أخرى."
 
@@ -1728,7 +1728,7 @@ msgstr "المصادقة مطلوبة لتنفيذ هذا الإجراء"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "المصادقة مطلوبة."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "لا يمكن تنشيط الإصدارات غير المسودة أو غير المنشورة الأخيرة"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "لا يمكن إضافة أذونات الحقول على الكائنات النظامية."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "لا يمكن إضافة الأذونات على الكائنات النظامية."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "لا يمكن حذف المهارة القياسية"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "لا يمكن حذف آخر مستخدم مسؤول."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العلامة أولاً"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "لا يمكن منح إذن الكتابة على كائنات غير قابلة للقراءة."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "لا يمكن منح إذن الكتابة بدون إذن القراءة."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "لا يمكن تعديل الشرط لتغيير دوره من {existingRoleIdentifier} إلى {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "لا يمكن إزالة آخر مسؤول من مساحة العمل."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "لا يمكن استهداف دور مملوك لتطبيق آخر"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "لا يمكن استهداف دور مملوك لتطبيق آخر."
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "إنشاء بريد إلكتروني"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "النوع المركّب غير موجود."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "يفتقد الكائن المخصص إلى حقل مُعرِّف التسمية."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "الأدوار المخصصة جزء من خطة المؤسسة."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "تخطيط الشخص الافتراضي"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "الدور الافتراضي غير موجود."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "الرمز التعبيري الذي تفاعل به العضو"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "لا يُسمح بأذونات الحقول الفارغة."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "فشل في إعادة محاولة الوظائف. يرجى المحاولة مرة أخرى لاحقًا."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "فشل تحديث إذن الحقل."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "البيانات الوصفية للحقل غير موجودة"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "صلاحية الحقل غير موجودة"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "صلاحية الحقل غير موجودة."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "الحقل المشار إليه في الفهرس غير موجود"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "قيود الحقول تنطبق فقط على الكائنات القابلة للقراءة."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "تعريف مهمة سير عمل التطبيق غير صالح."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "تم توفير وسيطة غير صالحة."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "نوع علامة الإذن غير صالح."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "إعداد إذن غير صالح."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "المسمى الوظيفي"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "اسم عمود الربط مطلوب."
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "لا توجد أذونات مُعيّنة لهذا الدور على الكائن المحدد. يُرجى تعيين أذونات الكائن أولاً."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "لا توجد أذونات في مصدر البيانات."
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "لم تتأثر أي سجلات."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "لم يتم تعيين أي دور للتطبيق."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "لا يوجد دور لهذا المستخدم في مساحة العمل."
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "لم يتم تقديم نوع المشغل"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "لم يتم العثور على سياق مصادقة صالح."
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "البيانات الوصفية للكيان غير موجودة"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "إذن الكائن غير موجود"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "إذن الكائن غير موجود."
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "الأخطاء فقط"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "يُسمح فقط بقيود الحقول."
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "علم الإذن للتحديث غير موجود"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "الإذن غير موجود."
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "تم بلوغ حد المعدل. يُرجى المحاولة لاحقاً."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "لا يُسمح باستعلامات SQL الخام."
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "لا يمكن تحرير الدور"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "يجب أن يحتوي الدور على هدف واحد على الأقل."
 
@@ -11531,10 +11531,10 @@ msgstr "الدور غير موجود"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "الدور غير موجود."
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "بعض الأذونات التي اخترتها غير صالحة. يرجى المحاولة مرة أخرى بإعدادات أذونات صالحة."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "تعذر العثور على بعض عضويات مساحة العمل. قد لا يملكون حق الوصول إلى مساحة العمل هذه بعد الآن."
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "لم يتم العثور على الوكيل الذي تبحث عنه. ربما تم حذفه أو قد لا تكون لديك صلاحية الوصول إليه."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "مفتاح API لا يحتوي على دور صالح معين. يُرجى التحقق من إعدادات مفتاح API."
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "قناة مصدر التطبيق لا تطابق النوع المتوقع."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "لا يحتوي التطبيق على دور صالح معين. يُرجى التحقق من إعدادات التطبيق."
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "لا يمكن حذف الدور الافتراضي لأنه مطلوب لوظيفة مساحة العمل بشكل صحيح."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "لا يمكن حذف الدور الافتراضي."
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "معلمات طلب MCP غير صالحة."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "لا يمكن حذف دور العضو."
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "لا يمكن لقناة الرسائل هذه إرسال رسائل."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "هذه الطريقة غير مسموح بها."
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "لا يمكن تعيين هذا الدور لمفاتيح API."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "لا يمكن تعيين هذا الدور للمستخدمين."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "لا يمكن تحرير هذا الدور."
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "للتنفيذ"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "تم العثور على عدد كبير جداً من المرشحين لمنصب المسؤول."
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "نوع عنصر قائمة التنقل غير معروف {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "عملية غير معروفة."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "مطلوب إذن غير معروف."
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "تاريخ ووقت التحديث"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "قيود تحديث الحقول تنطبق فقط على الكائنات القابلة للتحديث."
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "المستخدم موجود بالفعل"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "لدى المستخدم دور مُعيَّن بالفعل."
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "المستخدم ليس لديه صلاحية الدخول إلى مساحة العمل هذه"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "المستخدم ليس لديه الأذونات."
 
@@ -15838,7 +15838,7 @@ msgstr "لم يتم إنشاء المستخدم بالبريد الإلكترو�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "مساحة عمل المستخدم غير موجودة."
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "مساحة العمل غير موجودة."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "عدم تطابق بين معرّف مساحة العمل والدور."
 
@@ -17195,7 +17195,7 @@ msgstr "اسم عضو مساحة العمل"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "عضو مساحة العمل غير موجود."
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "لا يمكنك إنشاء رمز استرداد لنفسك. أعد تعيين المصادقة الثنائية من ملفك الشخصي بدلًا من ذلك."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "لا يمكنك تغيير دورك الخاص. يُرجى طلب من مسؤول آخر تحديث دورك."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "لا يمكنك حذف دور تم تعيينه لك. اطلب من مسؤول آخر حذفه."
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "لا يمكنك منح أذونات التحرير بدون منح أذونات القراءة. يُرجى تفعيل إذن القراءة أولاً."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "لا يمكنك إزالة صلاحية الوصول إلى الإعدادات من دورك أنت. اطلب من مسؤول آخر إجراء هذا التغيير."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "لا يمكنك إزالة دور المسؤول من المسؤول الأخير. يُرجى تعيين مسؤول آخر أولاً."
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "لا يمكنك تعيين أذونات الحقل على الكائنات النظامية لأنها تُدار بواسطة المنصة."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "لا يمكنك تحديث دورك الخاص."
 
@@ -17577,7 +17577,7 @@ msgstr "ليس لديك إذن لإدارة قائمة الحظر الخاصة �
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "ليس لديك إذن لتنفيذ هذا الإجراء."
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "لا يمكن لدورك حذف بعض هذه السجلات، لذا لا يمكن دمجها."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "لم يتم العثور على دورك في مساحة العمل هذه. يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 

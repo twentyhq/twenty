@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "필수 필드가 누락되었습니다. 모든 필수 값을 입력한 후 다시 시도하세요."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "이 레이블을 가진 역할이 이미 존재합니다."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "관리자 패널"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "관리자 역할을 찾을 수 없음."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "API 키 역할 구성을 찾을 수 없음."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API 키 역할을 찾을 수 없음."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "이 공급자로 인증이 활성화되지 않았습니다."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "이 기능에 접근하려면 인증이 필요합니다. 로그인 후 다시 시도해 주세요."
 
@@ -1728,7 +1728,7 @@ msgstr "이 작업을 수행하려면 인증이 필요합니다"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "인증이 필요합니다."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "초안 또는 마지막으로 게시된 버전이 아닌 버전을 활성화할 수 없습니다."
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "시스템 객체에 필드 권한을 추가할 수 없습니다."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "시스템 객체에 권한을 추가할 수 없습니다."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "표준 스킬은 삭제할 수 없습니다"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "마지막 관리자 사용자는 삭제할 수 없습니다."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "삭제할 수 없습니다. 먼저 레이블 식별자 필드를 업데이트하십시오"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "읽기 불가능한 객체에는 쓰기 권한을 부여할 수 없습니다."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "읽기 권한 없이 쓰기 권한을 부여할 수 없습니다."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "역할을 {existingRoleIdentifier}에서 {updatedRoleIdentifier}(으)로 변경하도록 프레디케이트를 수정할 수 없습니다."
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "워크스페이스에서 마지막 관리자를 제거할 수 없습니다."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "다른 애플리케이션이 소유한 역할은 대상으로 지정할 수 없습니다"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "다른 애플리케이션이 소유한 역할은 대상으로 지정할 수 없습니다."
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "이메일 작성하기"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "복합 타입을 찾을 수 없음."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "커스텀 객체에 레이블 식별자 필드가 없습니다."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "사용자 지정 역할은 Organization 요금제에 포함되어 있습니다."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "기본 사람 레이아웃"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "기본 역할을 찾을 수 없음."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "멤버가 반응에 사용한 이모지"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "빈 필드 권한은 허용되지 않습니다."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "작업 재시도에 실패했습니다. 나중에 다시 시도해주세요."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "필드 권한 업데이트 실패."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "필드 메타데이터를 찾을 수 없음"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "필드 권한을 찾을 수 없음"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "필드 권한을 찾을 수 없음."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "색인에서 참조된 필드가 존재하지 않습니다"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "필드 제한은 읽기 가능한 객체에만 적용됩니다."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "애플리케이션 워크플로 정의가 유효하지 않습니다."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "잘못된 인수가 제공되었습니다."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "잘못된 권한 플래그 권한 유형입니다."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "잘못된 권한 설정입니다."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "직책"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "조인 열 이름이 필요합니다."
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "선택된 개체에 대한 이 역할의 권한이 설정되지 않았습니다. 먼저 개체 권한을 설정하십시오."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "데이터 소스에서 권한을 찾을 수 없음."
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "영향을 받은 레코드가 없습니다."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "애플리케이션에 역할이 할당되지 않았습니다."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "워크스페이스에서 이 사용자의 역할을 찾을 수 없음."
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "트리거 유형이 제공되지 않았습니다"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "유효한 인증 컨텍스트를 찾을 수 없습니다."
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "객체 메타데이터를 찾을 수 없음"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "객체 권한을 찾을 수 없음"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "객체 권한을 찾을 수 없음."
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "유일한 오류"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "필드 제한만 허용됩니다."
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "업데이트할 권한 플래그를 찾을 수 없습니다."
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "권한을 찾을 수 없음."
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "요청 한도에 도달했습니다. 나중에 다시 시도해 주세요."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "원시 SQL 쿼리는 허용되지 않습니다."
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "역할은 편집할 수 없습니다."
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "역할에는 최소 하나의 대상이 있어야 합니다."
 
@@ -11531,10 +11531,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "역할을 찾을 수 없음."
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "선택한 권한 중 일부가 유효하지 않습니다. 유효한 권한 설정으로 다시 시도하십시오."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "일부 작업 공간 멤버십을 찾을 수 없습니다. 이 작업 공간에 대한 접근 권한이 더 이상 없을 수 있습니다."
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "찾고 있는 에이전트를 찾을 수 없습니다. 삭제되었거나 접근 권한이 없을 수 있습니다."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API 키에 할당된 유효한 역할이 없습니다. API 키 구성을 확인하십시오."
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "앱 소스 채널이 예상된 유형과 일치하지 않습니다."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "애플리케이션에 할당된 유효한 역할이 없습니다. 애플리케이션 구성을 확인하십시오."
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "기본 역할은 작업 공간이 제대로 작동하는 데 필요하기 때문에 삭제할 수 없습니다."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "기본 역할은 삭제할 수 없습니다."
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "MCP 요청 매개변수가 유효하지 않습니다."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Member 역할은 삭제할 수 없습니다."
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "이 메시지 채널은 메시지를 보낼 수 없습니다."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "이 메서드는 허용되지 않습니다."
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "이 역할은 API 키에 할당할 수 없습니다."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "이 역할은 사용자에게 할당할 수 없습니다."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "이 역할은 편집할 수 없습니다."
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "할 일"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "관리자 후보가 너무 많이 발견되었습니다."
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "알 수 없는 내비게이션 메뉴 항목 유형 {type}입니다."
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "알 수 없는 작업."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "알 수 없는 권한이 필요합니다."
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "업데이트 날짜/시간"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "업데이트 필드 제한은 업데이트 가능한 객체에만 적용됩니다."
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "사용자가 이미 존재합니다"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "사용자에게 이미 역할이 할당되어 있습니다."
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "사용자는 이 작업 공간에 접근할 수 없습니다"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "사용자에게 권한이 없습니다."
 
@@ -15838,7 +15838,7 @@ msgstr "사용자는 이메일/비밀번호로 생성되지 않았습니다"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "사용자 워크스페이스를 찾을 수 없음."
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "워크스페이스가 존재하지 않습니다."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "워크스페이스 ID와 역할이 일치하지 않습니다."
 
@@ -17195,7 +17195,7 @@ msgstr "워크스페이스 멤버 이름"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "워크스페이스 멤버를 찾을 수 없음."
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "자신에 대한 복구 코드는 생성할 수 없습니다. 대신 프로필에서 이중 인증을 재설정하세요."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "자신의 역할을 변경할 수 없습니다. 다른 관리자에게 역할 업데이트를 요청하십시오."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "현재 할당된 역할은 삭제할 수 없습니다. 다른 관리자에게 삭제를 요청하세요."
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "읽기 권한을 부여하지 않고 편집 권한을 부여할 수 없습니다. 먼저 읽기 접근을 활성화하십시오."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "본인 역할에서 설정에 대한 접근 권한을 제거할 수 없습니다. 이 변경을 다른 관리자에게 요청하세요."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "마지막 관리자로부터 관리자 역할을 제거할 수 없습니다. 먼저 다른 관리자를 지정하십시오."
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "시스템 객체에 대한 필드 권한을 설정할 수 없습니다. 이들은 플랫폼에 의해 관리됩니다."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "자신의 역할은 업데이트할 수 없습니다."
 
@@ -17577,7 +17577,7 @@ msgstr "워크스페이스 차단 목록을 관리할 권한이 없습니다."
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "이 작업을 수행할 권한이 없습니다."
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "현재 역할로는 이러한 레코드 중 일부를 삭제할 수 없으므로 병합할 수 없습니다."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "이 작업 공간에서 귀하의 역할을 찾을 수 없습니다. 작업 공간 관리자에게 문의하십시오."
 

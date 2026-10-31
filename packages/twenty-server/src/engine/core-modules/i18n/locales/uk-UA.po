@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Не заповнено обов'язкове поле. Укажіть усі обов'язкові значення та спробуйте ще раз."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Роль з цим ярликом уже існує."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "Панель адміністратора"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Роль адміністратора не знайдено."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "Конфігурацію ролі для ключа API не знайдено."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "Роль для ключа API не знайдено."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Аутентифікація не ввімкнена з цим постачальником."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Для доступу до цієї функції потрібна автентифікація. Будь ласка, увійдіть і спробуйте знову."
 
@@ -1728,7 +1728,7 @@ msgstr "Для виконання цієї дії потрібна автент�
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Потрібна автентифікація."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Не вдається активувати нечернеткову або останню опубліковану версію"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Не можна додавати дозволи на поля для системних об'єктів."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Не можна додавати дозволи для системних об'єктів."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "Неможливо видалити стандартну навичку"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Не можна видалити останнього адміністратора."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Неможливо видалити, спочатку оновіть поле ідентифікатора мітки"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Не можна надавати дозвіл на запис для об'єктів, які не читаються."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Не можна надавати дозвіл на запис без дозволу на читання."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Не можна змінювати предикат, щоб змінити його роль з {existingRoleIdentifier} на {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Не можна прибрати останнього адміністратора з робочого простору."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Неможливо вибрати роль, яка належить іншому застосунку"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Неможливо вибрати роль, яка належить іншому застосунку."
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "Створити електронний лист"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Складений тип не знайдено."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "У користувацького об'єкта відсутнє поле ідентифікатора мітки."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Користувацькі ролі є частиною плану Organization."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "Типовий макет особи"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Роль за замовчуванням не знайдено."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "Емодзі, яким відреагував учасник"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Порожні дозволи на поля не допускаються."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Не вдалося повторити завдання. Спробуйте ще раз пізніше."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Не вдалося оновити дозвіл на поле."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "Метадані поля не знайдено"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "Дозвіл на поле не знайдено"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Дозвіл на поле не знайдено."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Поле, на яке посилається індекс, не існує"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Обмеження для полів застосовуються лише до об'єктів, доступних для читання."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "Недійсне визначення робочого процесу застосунку."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Надано недійсний аргумент."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Некоректний тип дозволу для прапора дозволу."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Некоректне налаштування дозволів."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "Посада"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Потрібна назва стовпця приєднання."
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Для цієї ролі на вибраному об'єкті не налаштовані дозволи. Спочатку налаштуйте дозволи об'єкта."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "У джерелі даних не знайдено дозволів."
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "Жодного запису не було змінено."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Цьому застосунку не призначено жодної ролі."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Для цього користувача в робочому просторі не знайдено ролі."
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "Тип тригера не надано"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Не знайдено дійсного контексту автентифікації."
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "Метадані об'єкта не знайдено"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "Дозвіл на об'єкт не знайдено"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Дозвіл на об'єкт не знайдено."
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "Єдина помилка"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Дозволені лише обмеження для полів."
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "Прапор дозволу для оновлення не знайдено"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Дозвіл не знайдено."
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Досягнуто ліміту запитів. Будь ласка, спробуйте пізніше."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Сирі SQL-запити не дозволені."
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "Роль не можна редагувати"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Роль повинна мати принаймні одну ціль."
 
@@ -11531,10 +11531,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Роль не знайдено."
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Деякі з вибраних вами дозволів недійсні. Спробуйте знову з дійсними налаштуваннями дозволів."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Шуканого агента не знайдено. Його могли видалити або у вас немає до нього доступу."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Ключ API не має відповідної ролі. Перевірте налаштування вашого ключа API."
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Канал джерела застосунку не відповідає очікуваному типу."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Застосунок не має відповідної ролі. Перевірте налаштування вашого застосунку."
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Роль за замовчуванням не може бути видалена, бо необхідна для правильного функціонування робочого простору."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Роль за замовчуванням не можна видалити."
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Параметри запиту MCP недійсні."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Роль «Учасник» не можна видалити."
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "Цей канал повідомлень не може надсилати повідомлення."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Цей метод не дозволений."
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Цю роль не можна призначати ключам API."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Цю роль не можна призначати користувачам."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Цю роль не можна редагувати."
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "До виконання"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Знайдено занадто багато кандидатів у адміністратори."
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Невідомий тип пункту навігаційного меню {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Невідома операція."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Вимагається невідомий дозвіл."
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "Дата й час оновлення"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Обмеження на оновлення полів застосовуються лише до об'єктів, які можна оновлювати."
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "Користувач вже існує"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Користувачу вже призначено роль."
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "Користувач не має доступу до цього робочого простору"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Користувач не має дозволу."
 
@@ -15838,7 +15838,7 @@ msgstr "Користувача не було створено з викорис�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Робочий простір користувача не знайдено."
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "Робочий простір не існує."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Невідповідність між ідентифікатором робочого простору та роллю."
 
@@ -17195,7 +17195,7 @@ msgstr "Ім'я члена робочого простору"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Учасника робочого простору не знайдено."
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Ви не можете згенерувати код відновлення для себе. Натомість скиньте двофакторну автентифікацію у своєму профілі."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Ви не можете змінити власну роль. Попросіть іншого адміністратора оновити вашу роль."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Ви не можете видалити роль, до якої вас призначено. Попросіть іншого адміністратора видалити її."
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Ви не можете надати дозволи на редагування без також надання дозволів на читання. Спочатку увімкніть доступ для читання."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Ви не можете забрати доступ до налаштувань у власної ролі. Попросіть іншого адміністратора внести цю зміну."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Ви не можете видалити адміністративну роль у останнього адміністратора. Спочатку призначте іншого адміністратора."
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Ви не можете встановити дозволи на поле у системних об'єктах, оскільки вони керуються платформою."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Ви не можете оновлювати власну роль."
 
@@ -17577,7 +17577,7 @@ msgstr "У вас немає дозволу на керування списко
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "У вас немає дозволу виконувати цю дію."
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ваша роль не може видалити деякі з цих записів, тому їх не можна об’єднати."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Вашу роль у цьому робочому просторі не знайдено. Зверніться до адміністратора робочого простору."
 

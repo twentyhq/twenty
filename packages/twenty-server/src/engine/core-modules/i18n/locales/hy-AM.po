@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Պարտադիր դաշտերից մեկը բացակայում է։ Խնդրում ենք տրամադրել բոլոր պարտադիր արժեքները և փորձել կրկին։"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Այդ պիտակով դեր արդեն գոյություն ունի։"
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "Ադմին վահանակ"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Ադմինիստրատորի դեր չի գտնվել։"
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "API բանալու դերերի կազմաձևումը չի գտնվել։"
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API բանալու դերը չի գտնվել։"
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Այդ մատակարարի միջոցով նույնീകരումն ակտիվացված չէ։"
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Այս հնարավորությանը հասնելու համար պահանջվում է նույնականացում։ Խնդրում ենք մուտք գործել և կրկին փորձել։"
 
@@ -1728,7 +1728,7 @@ msgstr "Այս գործողությունը կատարելու համար պահ
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Պահանջվում է նույնականացում։"
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Չի կարելի ակտիվացնել ոչ սևագիր կամ ոչ վերջին հրապարակված տարբերակը"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Հնարավոր չէ ավելացնել դաշտերի թույլտվություններ համակարգային օբյեկտների համար։"
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Հնարավոր չէ ավելացնել թույլտվություններ համակարգային օբյեկտների համար։"
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "Չի կարելի ջնջել ստանդարտ հմտությունը"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Հնարավոր չէ ջնջել վերջին ադմինիստրատոր օգտվողին։"
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Չի կարելի ջնջել, նախ թարմացրեք պիտակի նույնացուցիչ դաշտը"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Հնարավոր չէ տալ գրելու իրավունք այն օբյեկտների համար, որոնք ընթեռնելի չեն։"
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Հնարավոր չէ տալ գրելու իրավունք առանց կարդալու իրավունքի։"
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Չի կարող փոփոխվել պրեդիկատը՝ նրա դերը {existingRoleIdentifier}-ից փոխելու համար {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Հնարավոր չէ աշխատանքային տարածքից հեռացնել վերջին ադմինին։"
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Հնարավոր չէ թիրախավորել այլ հավելվածին պատկանող դեր"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Հնարավոր չէ թիրախավորել այլ հավելվածին պատկանող դեր։"
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "Կազմել էլ․ փոստ"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Կոմպոզիտ տիպը չի գտնվել։"
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Հարմարեցված օբյեկտը չունի պիտակի նույնացուցիչ դաշտ։"
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Անհատական դերերը Organization պլանի մաս են կազմում։"
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "Անձի լռելյայն դասավորություն"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Լռելյայն դերը չի գտնվել։"
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "Էմոջին, որով անդամն արձագանքել է"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Դատարկ դաշտային թույլտվությունները թույլատրելի չեն։"
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Չհաջողվեց կրկին գործարկել առաջադրանքները։ Խնդրում ենք փորձել ավելի ուշ։"
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Չհաջողվեց թարմացնել դաշտի թույլտվությունը։"
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "Դաշտի մետատվյալները չեն գտնվել"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "Դաշտային թույլտվությունը չի գտնվել"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Դաշտային թույլտվությունը չի գտնվել։"
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Ինդեքսում հղված դաշտը գոյություն չունի"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Դաշտի սահմանափակումները կիրառվում են միայն կարդացվող օբյեկտների համար։"
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "Հավելվածի աշխատանքային հոսքի սահմանումն անվավեր է։"
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Նշված արգումենտը անվավեր է։"
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Թույլտվության դրոշի թույլտվության տեսակը սխալ է։"
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Թույլտվության կարգավորումը անվավեր է։"
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "Պաշտոն"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Միացման սյան անվանումը պարտադիր է։"
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Այս դերի համար ընտրված օբյեկտի վրա սահմանված թույլտվություններ չկան։ Նախ սահմանեք օբյեկտի թույլտվությունները։"
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Տվյալների աղբյուրում թույլտվություններ չեն գտնվել։"
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "Ոչ մի գրառում չի փոփոխվել։"
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Դեր չի տրվել հավելվածին։"
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Այս workspace-ում այս օգտագործողի համար դեր չի գտնվել։"
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "Trigger-ի տեսակը տրված չէ"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Չի գտնվել վավեր նույնականացման համատեքստ։"
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "Օբյեկտի մետատվյալները չեն գտնվել"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "Օբյեկտի արտոնությունը չի գտնվել"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Օբյեկտի թույլտվությունը չի գտնվել։"
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "Միակ սխալը"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Թույլատրվում են միայն դաշտի սահմանափակումները։"
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "Թարմացման ենթակա արտոնության դրոշը չի գտնվել"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Թույլտվությունը չի գտնվել։"
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Անցել եք հարցումների սահմանաչափը։ Խնդրում ենք կրկին փորձել ավելի ուշ։"
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Մաքուր SQL հարցումները թույլատրելի չեն։"
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "Դերը խմբագրվող չէ"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Դերը պետք է ունենա առնվազն մեկ թիրախ։"
 
@@ -11531,10 +11531,10 @@ msgstr "Դերը չի գտնվել"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Դերը չի գտնվել։"
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Ձեր ընտրած որոշ թույլտվություններ անվավեր են։ Խնդրում ենք փորձել կրկին՝ օգտագործելով վավեր թույլտվությունների կարգավորումներ։"
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Աշխատանքային տարածքի որոշ անդամակցություններ չեն գտնվել։ Հնարավոր է՝ նրանք այլևս այս աշխատանքային տարածքին հասանելիություն չունեն։"
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Ձեր որոնած գործակալը չի գտնվել։ Այն կարող է ջնջված լինել կամ դուք կարող եք չունենալ նրան հասանելիություն։"
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API key-ը չունի նշանակված վավեր դեր։ Խնդրում ենք ստուգել ձեր API key-ի կարգավորումները։"
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Հավելվածի սկզբնաղբյուրի ալիքը չի համապատասխանում սպասվող տիպին։"
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Հավելվածին տրված չէ վավեր դեր։ Խնդրում ենք ստուգել ձեր հավելվածի կարգավորումները։"
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Լռելյայն դերը չի կարող ջնջվել, քանի որ այն անհրաժեշտ է աշխատատարածքի ճիշտ աշխատանքի համար։"
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Լռելյայն դերը չի կարող ջնջվել։"
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "MCP հարցման պարամետրերն անվավեր են։"
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "«Անդամ» դերը չի կարող ջնջվել։"
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "Հաղորդագրությունների այս ալիքը չի կարող հաղորդագրություններ ուղարկել։"
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Այս մեթոդը թույլատրելի չէ։"
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Այս դերը չի կարող վերագրվել API բանալիներին։"
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Այս դերը չի կարող վերագրվել օգտվողներին։"
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Այս դերը չի կարող խմբագրվել։"
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "Անելիք"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Գտնվել են չափազանց շատ ադմինիստրատորի թեկնածուներ։"
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Նավիգացիոն մենյուի տարրի անհայտ տեսակը {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Անհայտ գործողություն։"
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Պահանջվում է անհայտ թույլտվություն։"
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "Թարմացման օր և ժամ"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Թարմացման դաշտերի սահմանափակումները վերաբերում են միայն թարմացվող օբյեկտներին։"
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "Օգտատերը արդեն գոյություն ունի"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Օգտվողն արդեն ունի վերագրված դեր։"
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "Օգտատերը մուտքի իրավունք չունի այս աշխատավայրին"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Օգտատերը թույլտվություն չունի։"
 
@@ -15838,7 +15838,7 @@ msgstr "Օգտատերը ստեղծված չէ email/գաղտնաբառ զուգ
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Օգտվողի workspace-ը չի գտնվել։"
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "Workspace-ը գոյություն չունի։"
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Workspace-ի ID-ն և դերը չեն համապատասխանում։"
 
@@ -17195,7 +17195,7 @@ msgstr "Աշխատանքային տարածքի անդամի անունը"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Workspace-ի անդամը չի գտնվել։"
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Դուք չեք կարող վերականգնման կոդ ստեղծել ինքներդ ձեզ համար։ Փոխարենը վերակայեք երկգործոն նույնականացումը ձեր պրոֆիլից։"
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Դուք չեք կարող փոխել ձեր սեփական դերային կարգավիճակը։ Խնդրում ենք դիմել մեկ այլ ադմինիստրատորի, որպեսզի նա փոխի ձեր դերային կարգավիճակը։"
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Դուք չեք կարող ջնջել այն դերը, որին նշանակված եք։ Խնդրեք մեկ այլ ադմինիստրատորի այն ջնջել։"
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Դուք չեք կարող տրամադրել խմբագրման իրավունքներ՝ առանց ընթերցման իրավունքներ տրամադրելու։ Նախ միացրեք ընթերցման հասանելիությունը։"
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Դուք չեք կարող ձեր սեփական դերից հեռացնել կարգավորումներին մուտքի իրավունքը։ Խնդրեք մեկ այլ ադմինիստրատորի կատարել այս փոփոխությունը։"
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Դուք չեք կարող հեռացնել ադմինիստրատորի դերը վերջին ադմինիստրատորից։ Նախ նշանակեք մեկ այլ ադմինիստրատոր։"
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Դուք չեք կարող սահմանել դաշտի թույլտվություններ համակարգային օբյեկտների վրա, քանի որ դրանք կառավարվում են հարթակի կողմից։"
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Դուք չեք կարող թարմացնել ձեր սեփական դերը։"
 
@@ -17577,7 +17577,7 @@ msgstr "Դուք չունեք աշխատանքային տարածքի արգել
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Դուք իրավունք չունեք կատարել այս գործողությունը։"
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ձեր դերը չի կարող ջնջել այս գրառումներից մի քանիսը, ուստի դրանք չեն կարող միավորվել։"
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ձեր դերը այս workspace-ում չի գտնվել։ Խնդրում ենք կապվել workspace-ի ադմինիստրատորի հետ։"
 

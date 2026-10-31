@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Λείπει ένα απαιτούμενο πεδίο. Παρακαλούμε δώστε όλες τις απαιτούμενες τιμές και προσπαθήστε ξανά."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Η ετικέτα αυτή ήδη υπάρχει σε κάποιον ρόλο."
@@ -796,7 +796,7 @@ msgid "Admin Panel"
 msgstr "Πίνακας Διαχείρισης"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Ο ρόλος διαχειριστή δεν βρέθηκε."
 
@@ -1282,7 +1282,7 @@ msgid "API key role configuration not found."
 msgstr "Δεν βρέθηκε ρύθμιση ρόλου για το κλειδί API."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "Ο ρόλος για το κλειδί API δεν βρέθηκε."
 
@@ -1717,7 +1717,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Η ταυτοποίηση δεν είναι ενεργοποιημένη με αυτόν τον πάροχο."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Απαιτείται έλεγχος ταυτότητας για να αποκτήσετε πρόσβαση σε αυτή τη λειτουργία. Παρακαλώ συνδεθείτε και δοκιμάστε ξανά."
 
@@ -1728,7 +1728,7 @@ msgstr "Απαιτείται έλεγχος ταυτότητας για την �
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Απαιτείται ταυτοποίηση."
 
@@ -2463,12 +2463,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Δεν είναι δυνατή η ενεργοποίηση μη πρόχειρης ή μη τελευταίας δημοσιευμένης έκδοσης"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Δεν είναι δυνατή η προσθήκη δικαιωμάτων πεδίου σε αντικείμενα συστήματος."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Δεν είναι δυνατή η προσθήκη δικαιωμάτων σε αντικείμενα συστήματος."
 
@@ -2501,7 +2501,7 @@ msgid "Cannot delete standard skill"
 msgstr "Δεν είναι δυνατή η διαγραφή τυπικής δεξιότητας"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Δεν είναι δυνατή η διαγραφή του τελευταίου χρήστη διαχειριστή."
 
@@ -2517,12 +2517,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Δεν είναι δυνατή η διαγραφή, παρακαλώ ενημερώστε πρώτα το πεδίο αναγνωριστικού ετικέτας"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Δεν είναι δυνατή η χορήγηση δικαιώματος εγγραφής σε μη αναγνώσιμα αντικείμενα."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Δεν είναι δυνατή η χορήγηση δικαιώματος εγγραφής χωρίς δικαίωμα ανάγνωσης."
 
@@ -2597,7 +2597,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Δεν είναι δυνατή η τροποποίηση της συνθήκης ώστε να αλλάξει τον ρόλο της από {existingRoleIdentifier} σε {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Δεν είναι δυνατή η αφαίρεση του τελευταίου διαχειριστή από τον χώρο εργασίας."
 
@@ -2614,7 +2614,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Δεν είναι δυνατή η επιλογή ενός ρόλου που ανήκει σε άλλη εφαρμογή"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Δεν είναι δυνατή η επιλογή ενός ρόλου που ανήκει σε άλλη εφαρμογή."
@@ -3087,7 +3087,7 @@ msgid "Compose Email"
 msgstr "Σύνταξη email"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Ο σύνθετος τύπος δεν βρέθηκε."
 
@@ -3854,8 +3854,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Στο προσαρμοσμένο αντικείμενο λείπει πεδίο αναγνωριστικού ετικέτας."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Οι προσαρμοσμένοι ρόλοι αποτελούν μέρος του Πλάνου Οργανισμού."
@@ -4178,7 +4178,7 @@ msgid "Default Person Layout"
 msgstr "Προεπιλεγμένη Διάταξη Προσώπου"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Ο προεπιλεγμένος ρόλος δεν βρέθηκε."
 
@@ -4857,7 +4857,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji με το οποίο αντέδρασε το μέλος"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Κενά δικαιώματα πεδίου δεν επιτρέπονται."
 
@@ -5291,7 +5291,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Αποτυχία επανάληψης εργασιών. Παρακαλώ δοκιμάστε ξανά αργότερα."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Αποτυχία ενημέρωσης δικαιώματος πεδίου."
 
@@ -5410,8 +5410,8 @@ msgid "Field metadata not found"
 msgstr "Δεν βρέθηκαν μεταδεδομένα πεδίου"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5461,7 @@ msgid "Field permission not found"
 msgstr "Το δικαίωμα πεδίου δεν βρέθηκε"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Το δικαίωμα πεδίου δεν βρέθηκε."
 
@@ -5492,7 +5492,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Το πεδίο που αναφέρεται στο ευρετήριο δεν υπάρχει"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Οι περιορισμοί πεδίων ισχύουν μόνο για αναγνώσιμα αντικείμενα."
 
@@ -6577,7 +6577,7 @@ msgid "Invalid application workflow definition."
 msgstr "Μη έγκυρος ορισμός ροής εργασίας εφαρμογής."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Δόθηκε μη έγκυρο όρισμα."
 
@@ -7080,7 +7080,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Μη έγκυρος τύπος δικαιώματος για τη σημαία δικαιώματος."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Μη έγκυρη ρύθμιση δικαιώματος."
 
@@ -7545,7 +7545,7 @@ msgid "Job Title"
 msgstr "Τίτλος θέσης"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Απαιτείται όνομα στήλης σύνδεσης (join)."
 
@@ -9097,7 +9097,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Δεν έχουν οριστεί άδειες για αυτόν το ρόλο στο επιλεγμένο αντικείμενο. Παρακαλώ ορίστε πρώτα τις άδειες αντικειμένου."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Δεν βρέθηκαν δικαιώματα στην πηγή δεδομένων."
 
@@ -9117,12 +9117,12 @@ msgid "No records were affected."
 msgstr "Δεν επηρεάστηκε καμία εγγραφή."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Δεν έχει ανατεθεί ρόλος στην εφαρμογή."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Δεν βρέθηκε ρόλος για αυτόν τον χρήστη στον χώρο εργασίας."
 
@@ -9152,7 +9152,7 @@ msgid "No trigger type provided"
 msgstr "Δεν παρέχεται τύπος ερεθίσματος"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Δεν βρέθηκε έγκυρο πλαίσιο ελέγχου ταυτότητας."
 
@@ -9466,9 +9466,9 @@ msgid "Object metadata not found"
 msgstr "Δεν βρέθηκαν μεταδεδομένα αντικειμένου"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9508,7 @@ msgid "Object permission not found"
 msgstr "Το δικαίωμα αντικειμένου δεν βρέθηκε"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Το δικαίωμα αντικειμένου δεν βρέθηκε."
 
@@ -9653,7 +9653,7 @@ msgid "Only error"
 msgstr "Μοναδικό σφάλμα"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Επιτρέπονται μόνο περιορισμοί πεδίων."
 
@@ -10345,7 +10345,7 @@ msgid "Permission flag to update not found"
 msgstr "Η σημαία δικαιώματος για ενημέρωση δεν βρέθηκε"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Το δικαίωμα δεν βρέθηκε."
 
@@ -10805,7 +10805,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Έχει επιτευχθεί το όριο ρυθμού αιτημάτων. Δοκιμάστε ξανά αργότερα."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Ακατέργαστα ερωτήματα SQL δεν επιτρέπονται."
 
@@ -11487,7 +11487,7 @@ msgid "Role is not editable"
 msgstr "Ο ρόλος δεν είναι επεξεργάσιμος"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Ο ρόλος πρέπει να έχει τουλάχιστον έναν στόχο."
 
@@ -11531,10 +11531,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Ο ρόλος δεν βρέθηκε."
 
@@ -12386,7 +12386,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Μερικές από τις άδειες που επιλέξατε δεν είναι έγκυρες. Παρακαλώ δοκιμάστε ξανά με έγκυρες ρυθμίσεις άδειας."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
 
@@ -13194,7 +13194,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Ο πράκτορας που αναζητάτε δεν βρέθηκε. Μπορεί να έχει διαγραφεί ή μπορεί να μην έχετε πρόσβαση σε αυτόν."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Το κλειδί API δεν έχει ανατεθεί με έγκυρο ρόλο. Παρακαλώ ελέγξτε τη διαμόρφωση του κλειδιού API σας."
 
@@ -13210,7 +13210,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Το κανάλι προέλευσης της εφαρμογής δεν αντιστοιχεί στον αναμενόμενο τύπο."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Δεν έχει ανατεθεί έγκυρος ρόλος στην εφαρμογή. Παρακαλώ ελέγξτε τη διαμόρφωση της εφαρμογής σας."
 
@@ -13362,7 +13362,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Ο προεπιλεγμένος ρόλος δεν μπορεί να διαγραφεί καθώς είναι απαραίτητος για την ορθή λειτουργία του workspace."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Ο προεπιλεγμένος ρόλος δεν μπορεί να διαγραφεί."
 
@@ -13552,7 +13552,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Οι παράμετροι αιτήματος MCP δεν είναι έγκυρες."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Ο ρόλος Μέλους δεν μπορεί να διαγραφεί."
@@ -14387,7 +14387,7 @@ msgid "This message channel cannot send messages."
 msgstr "Αυτό το κανάλι μηνυμάτων δεν μπορεί να στείλει μηνύματα."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Αυτή η μέθοδος δεν επιτρέπεται."
 
@@ -14573,12 +14573,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Αυτός ο ρόλος δεν μπορεί να ανατεθεί σε κλειδιά API."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Αυτός ο ρόλος δεν μπορεί να ανατεθεί σε χρήστες."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Αυτός ο ρόλος δεν μπορεί να επεξεργαστεί."
 
@@ -15044,7 +15044,7 @@ msgid "To do"
 msgstr "Να γίνει"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Βρέθηκαν υπερβολικά πολλοί υποψήφιοι διαχειριστές."
 
@@ -15381,12 +15381,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Άγνωστος τύπος στοιχείου μενού πλοήγησης {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Άγνωστη λειτουργία."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Απαιτείται άγνωστο δικαίωμα."
 
@@ -15523,7 +15523,7 @@ msgid "Update DateTime"
 msgstr "Χρονοσφραγίδα Ενημέρωσης"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Οι περιορισμοί πεδίων ενημέρωσης ισχύουν μόνο για αντικείμενα που μπορούν να ενημερωθούν."
 
@@ -15766,7 +15766,7 @@ msgid "User already exists"
 msgstr "Ο χρήστης ήδη υπάρχει"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Στον χρήστη έχει ήδη ανατεθεί ρόλος."
 
@@ -15781,7 +15781,7 @@ msgid "User does not have access to this workspace"
 msgstr "Ο χρήστης δεν έχει πρόσβαση σε αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Ο χρήστης δεν έχει άδεια."
 
@@ -15838,7 +15838,7 @@ msgstr "Ο χρήστης δεν δημιουργήθηκε με email/κωδι�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Ο χώρος εργασίας χρήστη δεν βρέθηκε."
 
@@ -17103,7 +17103,7 @@ msgid "Workspace does not exist."
 msgstr "Ο χώρος εργασίας δεν υπάρχει."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Ασυμφωνία αναγνωριστικού χώρου εργασίας και ρόλου."
 
@@ -17195,7 +17195,7 @@ msgstr "Όνομα μέλους χώρου εργασίας"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Το μέλος χώρου εργασίας δεν βρέθηκε."
 
@@ -17442,12 +17442,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Δεν μπορείτε να δημιουργήσετε κωδικό ανάκτησης για τον εαυτό σας. Αντ' αυτού, επαναφέρετε τον έλεγχο ταυτότητας δύο παραγόντων από το προφίλ σας."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Δεν μπορείτε να αλλάξετε το δικό σας ρόλο. Παρακαλώ ζητήστε από άλλον διαχειριστή να ενημερώσει το ρόλο σας."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Δεν μπορείτε να διαγράψετε έναν ρόλο στον οποίο ανήκετε. Ζητήστε από έναν άλλο διαχειριστή να τον διαγράψει."
 
@@ -17458,12 +17458,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Δεν μπορείτε να παραχωρηθείτε δικαιώματα επεξεργασίας χωρίς επίσης να παραχωρήσετε δικαιώματα ανάγνωσης. Παρακαλώ ενεργοποιήστε πρώτα την πρόσβαση ανάγνωσης."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Δεν μπορείτε να αφαιρέσετε την πρόσβαση στις ρυθμίσεις από τον δικό σας ρόλο. Ζητήστε από έναν άλλο διαχειριστή να κάνει αυτή την αλλαγή."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Δεν μπορείτε να αφαιρέσετε τον ρόλο διαχειριστή από τον τελευταίο διαχειριστή. Παρακαλώ αναθέστε έναν άλλο διαχειριστή πρώτα."
 
@@ -17488,7 +17488,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Δεν μπορείτε να ορίσετε άδειες πεδίων σε αντικείμενα συστήματος καθώς διαχειρίζονται από την πλατφόρμα."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Δεν μπορείτε να ενημερώσετε τον δικό σας ρόλο."
 
@@ -17577,7 +17577,7 @@ msgstr "Δεν έχετε δικαίωμα να διαχειριστείτε τ�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Δεν έχετε δικαίωμα να εκτελέσετε αυτήν την ενέργεια."
 
@@ -17705,8 +17705,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ο ρόλος σας δεν μπορεί να διαγράψει ορισμένες από αυτές τις εγγραφές, επομένως δεν μπορούν να συγχωνευτούν."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ο ρόλος σας σε αυτό το workspace δεν μπορεί να βρεθεί. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας."
 
