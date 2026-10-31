@@ -419,6 +419,8 @@ describe('Shared conversation API boundaries', () => {
   it('does not let ownership bypass a revoked update permission', async () => {
     const threadId = context.registerThread();
 
+    await setRecordSharingEnabled(false);
+
     await context.threadService.createThread({
       id: threadId,
       workspaceId: context.workspaceId,
@@ -443,7 +445,7 @@ describe('Shared conversation API boundaries', () => {
           }),
         ).toBe(false);
       },
-    });
+    }).finally(() => setRecordSharingEnabled(true));
   });
 
   it('cannot take over a chat ID that another member creates concurrently', async () => {
