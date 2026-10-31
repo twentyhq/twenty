@@ -160,9 +160,9 @@ export class AgentRunTurnService {
       toolset: {
         registryAccess,
         nativeToolOptions: {
-          webSearch: persona.modelConfiguration?.webSearch?.enabled === true,
+          webSearch: persona.modelConfiguration?.webSearch?.enabled ?? false,
           twitterSearch:
-            persona.modelConfiguration?.twitterSearch?.enabled === true,
+            persona.modelConfiguration?.twitterSearch?.enabled ?? false,
         },
         canAskHumans,
         waitTools: pausingTools,

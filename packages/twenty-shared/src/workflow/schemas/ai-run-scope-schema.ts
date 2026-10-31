@@ -19,7 +19,7 @@ const aiRunScopeFieldPermissionSchema = z
   })
   .strict();
 
-// a role manifest's permissions without identity or row-level predicates; anything left out is denied
+// a role minus identity and row predicates: ungranted is denied, but members and system objects stay readable
 export const aiRunScopeSchema = z
   .object({
     canReadAllObjectRecords: z.boolean().optional(),

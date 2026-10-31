@@ -14,15 +14,20 @@ import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata
 import { computeObjectsPermissionsForRoleDefinition } from 'src/engine/metadata-modules/role/utils/compute-objects-permissions-for-role-definition.util';
 import { type PermissionScope } from 'src/engine/twenty-orm/types/permission-scope.type';
 
-// an entry naming an object or field the workspace does not have grants nothing
 export const resolveAiRunPermissionScope = ({
   scope,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   scope: AiRunScope;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): PermissionScope => {
   const findObjectMetadataId = (objectUniversalIdentifier: string) =>
     flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]?.id;

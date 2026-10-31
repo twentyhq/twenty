@@ -1,7 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  hasWorkflowAiAgentConversationConfig,
   hasWorkflowAiAgentInlineConfig,
+  isWorkflowAiAgentGenerateStep,
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
 
@@ -14,11 +16,9 @@ export const validateWorkflowAiAgentStep = (
 
   const input = step.settings?.input;
   const stepLabel = step.name ?? step.id;
+  const isGenerateStep = isWorkflowAiAgentGenerateStep(input ?? {});
 
-  if (
-    isNonEmptyString(input?.agentId) &&
-    hasWorkflowAiAgentInlineConfig(input)
-  ) {
+  if (!isGenerateStep && hasWorkflowAiAgentInlineConfig(input)) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_CONFLICTING_CONFIG',
@@ -27,11 +27,16 @@ export const validateWorkflowAiAgentStep = (
     });
   }
 
-  // the prompt is the run's only message, and a model call needs one
-  if (
-    !isNonEmptyString(input?.agentId) &&
-    !isNonEmptyString(input?.prompt?.trim())
-  ) {
+  if (isGenerateStep && hasWorkflowAiAgentConversationConfig(input ?? {})) {
+    issues.push({
+      severity: 'error',
+      code: 'AI_AGENT_CONFLICTING_CONFIG',
+      message: `Agent step "${stepLabel}" has no agent, so it cannot ask humans or keep a conversation. Use an agent for this step, or remove its human input instructions and conversation setting.`,
+      stepId: step.id,
+    });
+  }
+
+  if (isGenerateStep && !isNonEmptyString(input?.prompt?.trim())) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_MISSING_PROMPT',

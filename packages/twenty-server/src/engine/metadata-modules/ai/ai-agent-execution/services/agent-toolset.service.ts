@@ -46,7 +46,6 @@ export type AgentRegistryAccess =
       categories: readonly ToolCategory[];
       excludedToolNames: readonly string[];
     }
-  // a run limited to the objects it was granted, whose few tools are sent with the turn
   | {
       type: 'granted';
       toolContext: ToolContext;
