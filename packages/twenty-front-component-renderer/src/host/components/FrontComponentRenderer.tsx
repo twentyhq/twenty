@@ -22,6 +22,7 @@ import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-co
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { type RemoteReceiver } from '@remote-dom/react/host';
@@ -48,6 +49,7 @@ type FrontComponentRendererProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
@@ -69,6 +71,7 @@ export const FrontComponentRenderer = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sdkClientSources,
   sharedDependenciesUrl,
   applicationVariables,
   storageNamespace,
@@ -126,6 +129,7 @@ export const FrontComponentRenderer = ({
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientUrls}
+          sdkClientSources={sdkClientSources}
           sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}

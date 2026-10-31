@@ -54,6 +54,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -91,6 +94,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
               accessLevel: RecordShareAccessLevel.READ_WRITE,
             },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         expect.objectContaining({ rowCause: RecordShareRowCause.OWNER }),
@@ -115,7 +121,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should write only the shareWith rows on a record open by default', () => {
+    it('should write only the shareWith rows on a public record', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
@@ -125,7 +131,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
           ],
-          isOpenByDefault: true,
+          isShareRequired: false,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -140,36 +148,42 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should keep the creator in charge of a record open by default restricted on creation', () => {
+    it('should rely on createdBy for a member who creates a private record', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: userAuthContext,
           apiKeyRoleMap,
-          shareWith: [
-            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
-          ],
-          isOpenByDefault: true,
+          shareWith: [],
+          isShareRequired: false,
+          isPrivateByDefault: false,
+          isPrivate: true,
+        }),
+      ).toEqual([]);
+    });
+
+    it('should keep a private record an api key creates with its role, which has no createdBy member', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: apiKeyAuthContext,
+          apiKeyRoleMap,
+          shareWith: [],
+          isShareRequired: false,
+          isPrivateByDefault: false,
+          isPrivate: true,
         }),
       ).toEqual([
         {
           recordId: 'record-1',
           objectMetadataId: OBJECT_METADATA_ID,
-          principalId: WORKSPACE_MEMBER_ID,
-          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          principalId: API_KEY_ROLE_ID,
+          principalType: RecordSharePrincipalType.ROLE,
           accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.OWNER,
-          sourceId: 'record-1',
-        },
-        {
-          recordId: 'record-1',
-          objectMetadataId: OBJECT_METADATA_ID,
-          principalId: EVERYONE_PRINCIPAL_ID,
-          principalType: RecordSharePrincipalType.EVERYONE,
-          accessLevel: RecordShareAccessLevel.READ,
           rowCause: RecordShareRowCause.MANUAL,
-          sourceId: WORKSPACE_MEMBER_ID,
+          sourceId: 'record-1',
         },
       ]);
     });
@@ -184,6 +198,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -217,6 +234,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         expect.objectContaining({
@@ -236,6 +256,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -272,6 +295,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
               accessLevel: RecordShareAccessLevel.READ,
             },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -299,6 +325,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([expect.objectContaining({ principalId: ROLE_ID })]);
     });
@@ -313,6 +342,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         {
@@ -337,6 +369,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: userAuthContext,
           apiKeyRoleMap,
           shareWith: null,
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         expect.objectContaining({
@@ -353,6 +388,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         expect.objectContaining({
@@ -376,6 +414,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: systemAuthContext,
           apiKeyRoleMap,
           shareWith: [],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([]);
     });
@@ -393,6 +434,9 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
               accessLevel: RecordShareAccessLevel.READ,
             },
           ],
+          isShareRequired: true,
+          isPrivateByDefault: false,
+          isPrivate: false,
         }),
       ).toEqual([
         expect.objectContaining({

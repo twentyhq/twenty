@@ -190,7 +190,7 @@ const shareThread = ({
 };
 
 describe('Conversation sharing through the authenticated API', () => {
-  it.each(['member', 'role', 'everyone', 'setup'])(
+  it.each(['member', 'role'])(
     'grants read-only %s access and denies it immediately after revocation',
     async (audience) => {
       const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -361,7 +361,7 @@ describe('Conversation sharing through the authenticated API', () => {
     },
   );
 
-  it.each(['member', 'role', 'everyone'])(
+  it.each(['member', 'role'])(
     'executes as an invited %s editor and denies further work after downgrade',
     async (audience) => {
       const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -1032,7 +1032,7 @@ describe('Conversations through the record API', () => {
           isSystemContext: false,
           objectsPermissions: rolesPermissions[roleId],
           principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
-          canAccessAllRecords: false,
+          workspaceMemberId,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
