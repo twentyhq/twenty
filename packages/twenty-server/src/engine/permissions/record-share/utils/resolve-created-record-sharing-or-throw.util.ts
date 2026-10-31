@@ -18,20 +18,12 @@ export type CreatedRecordSharing = {
 
 // shareWith also reaches records created through nested relations, whose objects may not be shareable
 export const resolveCreatedRecordSharingOrThrow = ({
-  objectSharing: {
-    isShareable,
-    isShareRequired,
-    isPrivateByDefault,
-    defaultGeneralAccessLevel,
-  },
+  objectSharing: { isShareable, isShareRequired, isPrivateByDefault },
   shareWith,
 }: {
   objectSharing: Pick<
     ObjectSharing,
-    | 'isShareable'
-    | 'isShareRequired'
-    | 'isPrivateByDefault'
-    | 'defaultGeneralAccessLevel'
+    'isShareable' | 'isShareRequired' | 'isPrivateByDefault'
   >;
   shareWith?: ShareWithInput[] | null;
 }): CreatedRecordSharing | null => {
@@ -41,12 +33,23 @@ export const resolveCreatedRecordSharingOrThrow = ({
 
   const entries = shareWith ?? [];
 
+  if (
+    (isShareRequired || isPrivateByDefault) &&
+    entries.some(
+      (entry) =>
+        entry.everyone && entry.accessLevel !== RecordShareAccessLevel.NONE,
+    )
+  ) {
+    throw new RecordShareException(
+      'Records of this object are always private',
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
+      { userFriendlyMessage: msg`This record can only be private.` },
+    );
+  }
+
   if (isShareRequired) {
     return {
-      shareWith: entries.filter(
-        (entry) =>
-          !entry.everyone || entry.accessLevel !== defaultGeneralAccessLevel,
-      ),
+      shareWith: entries.filter((entry) => !entry.everyone),
       isPrivate: false,
     };
   }

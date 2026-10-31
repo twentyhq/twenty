@@ -44,13 +44,13 @@ const ROLE_ONLY_OBJECT = {
 };
 
 describe('resolveCreatedRecordSharingOrThrow', () => {
-  it('should write every entry, and the creator rows, on an object whose records need a share', () => {
+  it('should write every named entry, and the creator rows, on an object whose records need a share', () => {
     expect(
       resolveCreatedRecordSharingOrThrow({
         objectSharing: SHARE_REQUIRED_OBJECT,
-        shareWith: [ROLE_GRANT, EVERYONE_GRANT],
+        shareWith: [ROLE_GRANT, EVERYONE_NONE],
       }),
-    ).toEqual({ shareWith: [ROLE_GRANT, EVERYONE_GRANT], isPrivate: false });
+    ).toEqual({ shareWith: [ROLE_GRANT], isPrivate: false });
     expect(
       resolveCreatedRecordSharingOrThrow({
         objectSharing: SHARE_REQUIRED_OBJECT,
@@ -131,11 +131,19 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
         shareWith: [ROLE_GRANT],
       }),
     ).toEqual({ shareWith: [ROLE_GRANT], isPrivate: true });
-    expect(
-      resolveCreatedRecordSharingOrThrow({
-        objectSharing: PRIVATE_BY_DEFAULT_OBJECT,
-        shareWith: [EVERYONE_AT_DEFAULT],
-      }),
-    ).toEqual({ shareWith: [], isPrivate: true });
+  });
+
+  it.each([
+    ['records that need a share', SHARE_REQUIRED_OBJECT],
+    ['private-by-default records', PRIVATE_BY_DEFAULT_OBJECT],
+  ])('should refuse sharing %s with everyone', (_, objectSharing) => {
+    for (const everyoneGrant of [EVERYONE_GRANT, EVERYONE_AT_DEFAULT]) {
+      expect(() =>
+        resolveCreatedRecordSharingOrThrow({
+          objectSharing,
+          shareWith: [everyoneGrant],
+        }),
+      ).toThrow('Records of this object are always private');
+    }
   });
 });

@@ -1,10 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 
-import {
-  RecordShareAccessLevel,
-  type RecordSharingFieldsFragment,
-} from '~/generated-metadata/graphql';
+import { type RecordSharingFieldsFragment } from '~/generated-metadata/graphql';
 
 export const getRecordSharingGeneralAccess = ({
   sharing,
@@ -13,14 +9,13 @@ export const getRecordSharingGeneralAccess = ({
   sharing:
     | Pick<
         RecordSharingFieldsFragment,
-        'generalAccessLevel' | 'hasManagedGeneralAccess'
+        'isShareable' | 'isPrivate' | 'hasManagedGeneralAccess'
       >
     | undefined;
   objectLabelPlural: string;
 }) => ({
   hasGeneralAccess:
     (sharing?.hasManagedGeneralAccess ?? false) ||
-    (isDefined(sharing?.generalAccessLevel) &&
-      sharing.generalAccessLevel !== RecordShareAccessLevel.NONE),
+    ((sharing?.isShareable ?? false) && !sharing?.isPrivate),
   label: msg`Everyone with access to ${objectLabelPlural}`,
 });
