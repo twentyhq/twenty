@@ -146,16 +146,18 @@ const buildObjectPermissionOperations = ({
       objectPermissionManifest.objectUniversalIdentifier,
     );
 
-    const desired = fromObjectPermissionManifestToUniversalFlatObjectPermission({
-      objectPermissionManifest: {
-        ...objectPermissionManifest,
-        universalIdentifier: undefined,
+    const desired = fromObjectPermissionManifestToUniversalFlatObjectPermission(
+      {
+        objectPermissionManifest: {
+          ...objectPermissionManifest,
+          universalIdentifier: undefined,
+        },
+        roleUniversalIdentifier: grantRoleUniversalIdentifier,
+        applicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        now,
       },
-      roleUniversalIdentifier: grantRoleUniversalIdentifier,
-      applicationUniversalIdentifier:
-        workspaceCustomApplicationUniversalIdentifier,
-      now,
-    });
+    );
 
     const existing = existingByObjectUniversalIdentifier.get(
       objectPermissionManifest.objectUniversalIdentifier,
@@ -326,7 +328,10 @@ const buildRoleTargetOperations = ({
 
     if (!isDefined(existing)) {
       operations.flatEntityToCreate.push(
-        buildRoleTarget({ agentUniversalIdentifier, targetApplicationId: null }),
+        buildRoleTarget({
+          agentUniversalIdentifier,
+          targetApplicationId: null,
+        }),
       );
       continue;
     }

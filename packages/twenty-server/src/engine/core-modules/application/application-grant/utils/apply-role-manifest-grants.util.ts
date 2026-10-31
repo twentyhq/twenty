@@ -55,7 +55,9 @@ const applyRoleManifestGrant = ({
   }
 };
 
-const dropEmptyObjectPermissions = (roleManifest: RoleManifest): RoleManifest => ({
+const dropEmptyObjectPermissions = (
+  roleManifest: RoleManifest,
+): RoleManifest => ({
   ...roleManifest,
   objectPermissions: (roleManifest.objectPermissions ?? []).filter(
     (objectPermission) =>

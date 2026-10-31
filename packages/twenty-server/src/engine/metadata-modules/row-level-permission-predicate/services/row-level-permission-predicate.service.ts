@@ -86,9 +86,11 @@ export class RowLevelPermissionPredicateService {
   async upsertRowLevelPermissionPredicates({
     input,
     workspaceId,
+    isSystemBuild = false,
   }: {
     input: UpsertRowLevelPermissionPredicatesInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<{
     predicates: RowLevelPermissionPredicateDTO[];
     predicateGroups: RowLevelPermissionPredicateGroupDTO[];
@@ -193,6 +195,7 @@ export class RowLevelPermissionPredicateService {
 
     await this.runUpsertMigration({
       workspaceId,
+      isSystemBuild,
       predicatesToCreate,
       predicatesToUpdate,
       predicatesToDelete,
@@ -433,6 +436,7 @@ export class RowLevelPermissionPredicateService {
 
   private async runUpsertMigration({
     workspaceId,
+    isSystemBuild,
     predicatesToCreate,
     predicatesToUpdate,
     predicatesToDelete,
@@ -441,6 +445,7 @@ export class RowLevelPermissionPredicateService {
     groupsToDelete,
   }: {
     workspaceId: string;
+    isSystemBuild: boolean;
     predicatesToCreate: FlatRowLevelPermissionPredicate[];
     predicatesToUpdate: FlatRowLevelPermissionPredicate[];
     predicatesToDelete: FlatRowLevelPermissionPredicate[];
@@ -469,7 +474,7 @@ export class RowLevelPermissionPredicateService {
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

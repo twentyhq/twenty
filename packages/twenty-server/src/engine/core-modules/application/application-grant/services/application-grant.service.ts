@@ -10,6 +10,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { fromRoleManifestGrantToApplicationGrantPermissionDto } from 'src/engine/core-modules/application/application-grant/utils/from-role-manifest-grant-to-application-grant-permission-dto.util';
+import { type ApplicationGrantDTO } from 'src/engine/core-modules/application/application-grant/dtos/application-grant.dto';
 import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { type ApplicationGrantObjectScope } from 'src/engine/core-modules/application/application-grant/types/application-grant-object-scope.type';
 import {
@@ -18,7 +20,10 @@ import {
 } from 'src/engine/core-modules/application/application-grant/utils/apply-role-manifest-grants.util';
 import { buildGrantFlatEntityOperations } from 'src/engine/core-modules/application/application-grant/utils/build-grant-flat-entity-operations.util';
 import { buildInitialGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-initial-grant-role-manifest.util';
-import { computeGrantMissingLockedPermissions } from 'src/engine/core-modules/application/application-grant/utils/compute-grant-locked-requirement.util';
+import {
+  computeGrantLockedRequirement,
+  computeGrantMissingLockedPermissions,
+} from 'src/engine/core-modules/application/application-grant/utils/compute-grant-locked-requirement.util';
 import {
   computeGrantNarrowedPermissions,
   computeGrantPendingPermissions,
@@ -129,7 +134,10 @@ export class ApplicationGrantService {
 
     const requestedFlatRole = findFlatRoleById(application.defaultRoleId);
     const requestedRoleManifest = isDefined(requestedFlatRole)
-      ? fromFlatRoleToGrantRoleManifest({ flatRole: requestedFlatRole, ...flatMaps })
+      ? fromFlatRoleToGrantRoleManifest({
+          flatRole: requestedFlatRole,
+          ...flatMaps,
+        })
       : EMPTY_REQUESTED_ROLE_MANIFEST;
 
     const grantRoleTarget = Object.values(
@@ -139,7 +147,10 @@ export class ApplicationGrantService {
     );
     const grantFlatRole = findFlatRoleById(grantRoleTarget?.roleId);
     const grantRoleManifest = isDefined(grantFlatRole)
-      ? fromFlatRoleToGrantRoleManifest({ flatRole: grantFlatRole, ...flatMaps })
+      ? fromFlatRoleToGrantRoleManifest({
+          flatRole: grantFlatRole,
+          ...flatMaps,
+        })
       : undefined;
 
     const approvedRoleManifest =
@@ -162,6 +173,81 @@ export class ApplicationGrantService {
           })
         : [],
     };
+  }
+
+  async getGrant({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<ApplicationGrantDTO> {
+    const state = await this.loadGrantState({ workspaceId, applicationId });
+    const { flatObjectMetadataMaps, flatPermissionFlagMaps } = state.flatMaps;
+
+    return {
+      applicationId,
+      grantRoleId: state.grantFlatRole?.id ?? null,
+      requestedRoleId: state.requestedFlatRole?.id ?? null,
+      applicationVersion: state.application.version,
+      requestedAllObjectsActions: OBJECT_PERMISSION_ACTIONS.filter(
+        (action) =>
+          state.approvedRoleManifest[
+            ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]
+          ] === true,
+      ),
+      lockedObjectPermissions: (
+        computeGrantLockedRequirement(state.approvedRoleManifest)
+          .objectPermissions ?? []
+      ).flatMap((objectPermission) => {
+        const objectMetadataId =
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            objectPermission.objectUniversalIdentifier
+          ]?.id;
+
+        return isDefined(objectMetadataId)
+          ? [
+              {
+                objectMetadataId,
+                canReadObjectRecords:
+                  objectPermission.canReadObjectRecords ?? false,
+                canUpdateObjectRecords:
+                  objectPermission.canUpdateObjectRecords ?? false,
+                canSoftDeleteObjectRecords:
+                  objectPermission.canSoftDeleteObjectRecords ?? false,
+                canDestroyObjectRecords:
+                  objectPermission.canDestroyObjectRecords ?? false,
+              },
+            ]
+          : [];
+      }),
+      pendingPermissions: state.pendingPermissions.map((grant) =>
+        fromRoleManifestGrantToApplicationGrantPermissionDto({
+          grant,
+          flatObjectMetadataMaps,
+          flatPermissionFlagMaps,
+        }),
+      ),
+    };
+  }
+
+  async getGrantRoleIdOrThrow({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<string> {
+    const state = await this.loadGrantState({ workspaceId, applicationId });
+
+    if (!isDefined(state.grantFlatRole)) {
+      throw new ApplicationException(
+        `Application ${applicationId} has no granted role`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    return state.grantFlatRole.id;
   }
 
   // Runs after each manifest sync of a confined application: creates the grant on first install,
@@ -364,7 +450,10 @@ export class ApplicationGrantService {
     flatObjectMetadataMaps,
   }: {
     objectScopeInputs: ApplicationGrantObjectScopeInput[];
-  } & Pick<GrantFlatMaps, 'flatObjectMetadataMaps'>): ApplicationGrantObjectScope[] {
+  } & Pick<
+    GrantFlatMaps,
+    'flatObjectMetadataMaps'
+  >): ApplicationGrantObjectScope[] {
     return objectScopeInputs.map((objectScopeInput) => ({
       action: objectScopeInput.action,
       objectUniversalIdentifiers: objectScopeInput.allObjects
@@ -444,9 +533,12 @@ export class ApplicationGrantService {
       return [];
     }
 
-    const grantRoleUniversalIdentifier = state.grantFlatRole.universalIdentifier;
+    const grantRoleUniversalIdentifier =
+      state.grantFlatRole.universalIdentifier;
 
-    return Object.values(state.flatMaps.flatRoleTargetMaps.byUniversalIdentifier)
+    return Object.values(
+      state.flatMaps.flatRoleTargetMaps.byUniversalIdentifier,
+    )
       .filter(
         (flatRoleTarget) =>
           flatRoleTarget?.roleUniversalIdentifier ===
@@ -561,7 +653,8 @@ export class ApplicationGrantService {
       return;
     }
 
-    const grantRoleUniversalIdentifier = state.grantFlatRole.universalIdentifier;
+    const grantRoleUniversalIdentifier =
+      state.grantFlatRole.universalIdentifier;
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
