@@ -7,7 +7,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// a null object targets all objects, which the scope holds as role-level flags
 export const applyWorkflowAiAgentScopeObjectPermissionChange = ({
   scope,
   objectUniversalIdentifier,

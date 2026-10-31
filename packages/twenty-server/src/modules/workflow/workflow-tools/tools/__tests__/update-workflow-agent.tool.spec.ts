@@ -16,11 +16,11 @@ const buildTool = ({
         isStepOwnedAgent ? { id: AGENT_ID, label: 'Lead qualifier' } : null,
       ),
   };
-  const deps: Parameters<typeof createUpdateWorkflowAgentTool>[0] = {
+  const dependencies: Parameters<typeof createUpdateWorkflowAgentTool>[0] = {
     agentService,
     workflowAiAgentStepAgentService,
   };
-  const tool = createUpdateWorkflowAgentTool(deps, {
+  const tool = createUpdateWorkflowAgentTool(dependencies, {
     workspaceId: WORKSPACE_ID,
     rolePermissionConfig: { shouldBypassPermissionChecks: true },
   });

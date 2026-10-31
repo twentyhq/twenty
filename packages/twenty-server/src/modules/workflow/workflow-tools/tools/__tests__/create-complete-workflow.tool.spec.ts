@@ -49,13 +49,13 @@ const buildTool = () => {
   const workflowAiAgentStepAgentService = {
     findAgentRunnableByNewStepOrThrow: jest.fn(),
   };
-  const deps: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
+  const dependencies: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
     coreWorkflowMutationService,
     coreWorkflowLifecycleService,
     workflowAiAgentStepAgentService,
   };
 
-  const tool = createCreateCompleteWorkflowTool(deps, {
+  const tool = createCreateCompleteWorkflowTool(dependencies, {
     workspaceId: 'workspace-id',
     userWorkspaceId: 'user-workspace-id',
     rolePermissionConfig: { shouldBypassPermissionChecks: true },
