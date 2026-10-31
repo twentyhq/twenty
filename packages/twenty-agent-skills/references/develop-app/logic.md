@@ -80,6 +80,26 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
+### Following An Agent Conversation
+
+`runAgent` (from `twenty-sdk/logic-function`) returns `{ threadId, runId, status, result, error, success }`; `runId` is the turn the call opens, which its messages carry as `turnId`. An app follows a conversation it holds with its agent through the chat's own API, named by the agent and the `thread` key it passes to `runAgent`:
+
+```ts
+import { listConversationMessages, streamConversation } from 'twenty-sdk/logic-function';
+
+const conversation = { agentUniversalIdentifier, threadKey: 'deal-42' };
+const { messages, streamCatchup } = await listConversationMessages(conversation);
+
+for await (const event of streamConversation({ ...conversation, signal })) {
+  if (event.type === 'stream-chunk') console.log(event.chunk, event.seq);
+}
+```
+
+- Events are the chat's `AgentChatSubscriptionEvent`s: `stream-chunk` (an AI SDK `UIMessageChunk` with a `seq`), notifications such as `message-persisted`, `queue-updated` and `stream-error`, and a periodic `keepalive`. Pipe chunks into `readUIMessageStream()` from `ai` to build messages as the chat does.
+- Messages come as the chat reads them, parts as stored. `streamCatchup` holds the chunks of a reply still streaming; skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
+- The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; read the history and stream again to resume. It can start before the first run reaches the conversation.
+- Both need an application token and reach only the app's own conversations. Turns run as a member show only their text.
+
 ## AI Generate
 
 `ai.generate` calls a model with no agent and no conversation. Import it from `twenty-sdk/logic-function`.

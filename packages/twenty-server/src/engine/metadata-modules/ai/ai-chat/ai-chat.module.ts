@@ -34,6 +34,7 @@ import { AgentChatChannelResolver } from 'src/engine/metadata-modules/ai/ai-chat
 import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatMessageReactionResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-message-reaction.resolver';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
+import { AgentChatHistoryResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-history.resolver';
 import { AgentChatSubscriptionResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-subscription.resolver';
 import { AgentInboxResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox.resolver';
 import { WorkspaceSetupChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/workspace-setup-chat.resolver';
@@ -77,6 +78,7 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatResolver,
+    AgentChatHistoryResolver,
     AgentChatChannelResolver,
     AgentChatThreadParticipantResolver,
     AgentChatMessageReactionResolver,

@@ -240,6 +240,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         conversationWriter,
         chatThreadService,
         { resolveMentionInTransaction: jest.fn() } as never,
+        {} as never,
       );
 
     const createQueueService = (messageRepository: typeof messages) =>

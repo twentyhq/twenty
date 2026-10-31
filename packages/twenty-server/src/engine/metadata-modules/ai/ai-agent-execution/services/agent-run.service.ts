@@ -316,11 +316,12 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         messages,
         senderUserWorkspaceId: memberUserWorkspaceId,
         senderApplicationId: callerApplication?.id ?? null,
+        turnId: runId,
       },
     });
 
     if (input.waitForCompletion === false) {
-      return this.buildRunAgentResult({ threadId, status: 'RUNNING' });
+      return this.buildRunAgentResult({ threadId, runId, status: 'RUNNING' });
     }
 
     const settledRun = await this.agentRunSettlementService.waitFor({
@@ -330,7 +331,46 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     return this.buildRunAgentResult({
       threadId,
+      runId,
       ...(settledRun ?? { status: 'RUNNING' }),
+    });
+  }
+
+  // the id is keyed by the caller as run() keys it, so an application only ever names its own conversations
+  async resolveConversationThreadIdOrThrow({
+    workspace,
+    callerApplication,
+    agentUniversalIdentifier,
+    threadKey,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+    callerApplication: FlatApplication;
+    agentUniversalIdentifier: string;
+    threadKey: string;
+  }): Promise<string> {
+    const agent = await this.agentRepository.findOne(workspace.id, {
+      where: { universalIdentifier: agentUniversalIdentifier },
+    });
+
+    if (
+      !isDefined(agent) ||
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: agent.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      })
+    ) {
+      throw new AiException(
+        `Agent ${agentUniversalIdentifier} not found`,
+        AiExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    return buildAgentRunThreadId({
+      applicationId: callerApplication.id,
+      agentId: agent.id,
+      threadKey,
     });
   }
 
@@ -420,13 +460,15 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
   private buildRunAgentResult({
     threadId,
+    runId,
     status,
     result = null,
     error = null,
-  }: Pick<RunAgentResult, 'threadId' | 'status'> &
+  }: Pick<RunAgentResult, 'threadId' | 'runId' | 'status'> &
     Partial<Pick<RunAgentResult, 'result' | 'error'>>): RunAgentResult {
     return {
       threadId,
+      runId,
       status,
       result,
       error,

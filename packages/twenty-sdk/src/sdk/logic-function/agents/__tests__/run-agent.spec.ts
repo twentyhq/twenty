@@ -28,6 +28,7 @@ describe('runAgent', () => {
   it('POSTs the runAgent mutation to /metadata and returns the result', async () => {
     const payload = {
       threadId: 'thread-id',
+      runId: 'run-id',
       status: 'COMPLETED',
       result: { response: 'done' },
       error: null,
@@ -62,6 +63,7 @@ describe('runAgent', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain('runAgent(input: $input)');
+    expect(sentBody.query).toContain('runId');
     expect(sentBody.variables).toEqual({
       input: {
         agentUniversalIdentifier: 'agent-uid',

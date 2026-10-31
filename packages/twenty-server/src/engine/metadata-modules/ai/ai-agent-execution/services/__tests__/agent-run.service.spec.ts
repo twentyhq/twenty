@@ -2,6 +2,7 @@ import { type AgentResponseFormat } from 'twenty-shared/ai';
 
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import {
   AiException,
   AiExceptionCode,
@@ -74,7 +75,7 @@ const buildService = (overrides: Record<string, unknown>) => {
     agentRepository as never,
   );
 
-  return { service, agentRunnerService };
+  return { service, agentRunnerService, agentRepository };
 };
 
 const runAgent = (service: AgentRunService) =>
@@ -110,6 +111,18 @@ describe('AgentRunService', () => {
       );
     });
 
+    it('returns the id of the turn the run opens', async () => {
+      const { service, agentRunnerService } = buildService({});
+
+      const { runId } = await runAgent(service);
+
+      expect(agentRunnerService.start).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prompt: expect.objectContaining({ turnId: runId }),
+        }),
+      );
+    });
+
     it('rejects an overridden response format without output fields', async () => {
       const { service, agentRunnerService } = buildService({
         responseFormat: { type: 'json', schema: { type: 'object' } },
@@ -130,6 +143,52 @@ describe('AgentRunService', () => {
       await expect(runAgent(service)).rejects.toMatchObject({
         code: AiExceptionCode.AGENT_IS_INACTIVE,
       });
+    });
+  });
+
+  describe('resolveConversationThreadIdOrThrow', () => {
+    const resolveConversation = (
+      service: AgentRunService,
+      callerApplication: { id: string },
+    ) =>
+      service.resolveConversationThreadIdOrThrow({
+        workspace: {
+          id: WORKSPACE_ID,
+          workspaceCustomApplicationId: 'workspace-custom-application-id',
+        },
+        callerApplication: callerApplication as never,
+        agentUniversalIdentifier: AGENT_UNIVERSAL_IDENTIFIER,
+        threadKey: 'deal-42',
+      });
+
+    it('names the thread runAgent keys for the calling application', async () => {
+      const { service } = buildService({});
+
+      await expect(resolveConversation(service, APPLICATION)).resolves.toBe(
+        buildAgentRunThreadId({
+          applicationId: APPLICATION_ID,
+          agentId: AGENT_ID,
+          threadKey: 'deal-42',
+        }),
+      );
+    });
+
+    it('refuses the agent of another application', async () => {
+      const { service } = buildService({});
+
+      await expect(
+        resolveConversation(service, { id: 'other-application-id' }),
+      ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_NOT_FOUND });
+    });
+
+    it('refuses an unknown agent', async () => {
+      const { service, agentRepository } = buildService({});
+
+      agentRepository.findOne.mockResolvedValue(null);
+
+      await expect(resolveConversation(service, APPLICATION)).rejects.toThrow(
+        AiException,
+      );
     });
   });
 });
