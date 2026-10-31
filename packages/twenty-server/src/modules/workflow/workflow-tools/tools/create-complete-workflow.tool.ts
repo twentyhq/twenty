@@ -1,6 +1,6 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_ACTION_FEATURE_FLAGS,
   workflowActionSchema,
   WorkflowActionType,
@@ -10,15 +10,11 @@ import { z } from 'zod';
 
 import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
-import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
-import { assertAgentRunnableByNewStepOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-runnable-by-new-step-or-throw.util';
+import { findAgentRunnableByNewStepOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-agent-runnable-by-new-step-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
@@ -107,7 +103,7 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
-- Giving an AI_AGENT step an agentId it was not given: an AI_AGENT step carries its own settings.input.instructions (system prompt), prompt, modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers). Set agentId only to run an existing agent, and then leave the instructions, model and scope to that agent.
+- Setting an AI_AGENT step's agentId without being asked to run that agent: a step without agentId carries its own settings.input.instructions (system prompt), prompt (the message sent on each run), modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers; no data access when unset). A step with agentId runs that existing agent and sets only its prompt: the agent supplies the instructions, model, permissions and response format.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -218,7 +214,11 @@ const createWorkflowOrBuildFailure = async ({
 > => {
   try {
     assertStepTypesAreSupported(steps);
-    await assertAiAgentStepsRunReusableAgents({ deps, workspaceId, steps });
+    await assertAiAgentStepsRunReusableAgentsOrThrow({
+      deps,
+      workspaceId,
+      steps,
+    });
 
     return {
       createdWorkflow:
@@ -262,7 +262,7 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
   }
 };
 
-const assertAiAgentStepsRunReusableAgents = async ({
+const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
   deps,
   workspaceId,
   steps,
@@ -274,31 +274,20 @@ const assertAiAgentStepsRunReusableAgents = async ({
   const agentIds = new Set(
     steps.flatMap((step) =>
       step.type === WorkflowActionType.AI_AGENT &&
-      isNonEmptyString(step.settings.input.agentId)
+      !isWorkflowAiAgentGenerateStep(step.settings.input) &&
+      isDefined(step.settings.input.agentId)
         ? [step.settings.input.agentId]
         : [],
     ),
   );
 
   await Promise.all(
-    [...agentIds].map(async (agentId) => {
-      const agent = await deps.agentService
-        .findOneAgentById({ id: agentId, workspaceId })
-        .catch((error) => {
-          if (
-            error instanceof AiException &&
-            error.code === AiExceptionCode.AGENT_NOT_FOUND
-          ) {
-            throw new WorkflowVersionStepException(
-              `Agent "${agentId}" not found. Run an existing reusable agent, or give the step its own instructions.`,
-              WorkflowVersionStepExceptionCode.NOT_FOUND,
-            );
-          }
-
-          throw error;
-        });
-
-      assertAgentRunnableByNewStepOrThrow(agent);
-    }),
+    [...agentIds].map((agentId) =>
+      findAgentRunnableByNewStepOrThrow({
+        agentService: deps.agentService,
+        agentId,
+        workspaceId,
+      }),
+    ),
   );
 };

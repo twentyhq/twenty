@@ -1,35 +1,25 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  agentResponseFormatSchema,
-  WorkflowActionType,
-} from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { findStepOwnedAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-step-owned-agent.util';
-import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { findWorkflowAiAgentStepAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-workflow-ai-agent-step-agent.util';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const updateAgentSchema = z.object({
-  stepId: z
-    .string()
-    .optional()
-    .describe('The id of the draft AI_AGENT step to configure.'),
   agentId: z
     .string()
     .uuid()
-    .optional()
-    .describe('The ID of the agent a step runs (its settings.input.agentId)'),
+    .describe(
+      "The ID of the step's hidden agent (from the AI_AGENT step's settings.input.agentId)",
+    ),
   prompt: z
     .string()
     .optional()
     .describe(
-      "The system prompt describing the role, behavior and the task to accomplish. Stored as the step's instructions when it runs no agent.",
+      "The agent's system prompt describing its role, behavior and the task it must accomplish.",
     ),
   modelId: z
     .string()
@@ -37,272 +27,57 @@ const updateAgentSchema = z.object({
     .describe(
       'Optional model id to use for the agent. Leave empty to keep the auto-selected model.',
     ),
-  responseFormat: agentResponseFormatSchema
-    .optional()
-    .describe(
-      'Optional response format. Use { type: "text" } for free-form text output, or { type: "json", schema: { type: "object", properties: { fieldName: { type: "string" } } } } for structured output. Downstream steps can reference structured fields via {{stepId.fieldName}} (or {{stepId.response}} for text format).',
-    ),
 });
 
-const findDraftAiAgentSteps = async (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionListService'>,
-  {
-    workspaceId,
-    isMatchingStep,
-  }: {
-    workspaceId: string;
-    isMatchingStep: (step: WorkflowAiAgentAction) => boolean;
-  },
-): Promise<
-  { coreWorkflowVersionId: string; step: WorkflowAiAgentAction }[]
-> => {
-  const draftCoreVersions =
-    await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions({
-      workspaceId,
-    });
-
-  return draftCoreVersions.flatMap((draftCoreVersion) =>
-    (draftCoreVersion.steps ?? [])
-      .filter(
-        (step): step is WorkflowAiAgentAction =>
-          step.type === WorkflowActionType.AI_AGENT && isMatchingStep(step),
-      )
-      .map((step) => ({ coreWorkflowVersionId: draftCoreVersion.id, step })),
-  );
-};
-
-const updateAiAgentStepInput = async (
-  deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
-  {
-    workspaceId,
-    userWorkspaceId,
-    coreWorkflowVersionId,
-    step,
-    prompt,
-    modelId,
-    responseFormat,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    coreWorkflowVersionId: string;
-    step: WorkflowAiAgentAction;
-    prompt?: string;
-    modelId?: string;
-    responseFormat?: AgentResponseFormat;
-  },
-) =>
-  deps.coreWorkflowVersionMutationService.updateStep({
-    workspaceId,
-    userWorkspaceId,
-    coreWorkflowVersionId,
-    step: {
-      ...step,
-      settings: {
-        ...step.settings,
-        input: {
-          ...step.settings.input,
-          ...(isDefined(prompt) ? { instructions: prompt } : {}),
-          ...(isDefined(modelId) ? { modelId } : {}),
-          ...(isDefined(responseFormat) ? { responseFormat } : {}),
-        },
-      },
-    },
-  });
-
-const setAiAgentStepsResponseFormat = async (
-  deps: Pick<
-    WorkflowToolDependencies,
-    'coreWorkflowVersionListService' | 'coreWorkflowVersionMutationService'
-  >,
-  {
-    workspaceId,
-    userWorkspaceId,
-    agentId,
-    responseFormat,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    agentId: string;
-    responseFormat: AgentResponseFormat;
-  },
-): Promise<number> => {
-  const matchingSteps = await findDraftAiAgentSteps(deps, {
-    workspaceId,
-    isMatchingStep: (step) => step.settings.input.agentId === agentId,
-  });
-
-  for (const { coreWorkflowVersionId, step } of matchingSteps) {
-    await deps.coreWorkflowVersionMutationService.updateStep({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowVersionId,
-      step: {
-        ...step,
-        settings: {
-          ...step.settings,
-          input: { ...step.settings.input, responseFormat },
-        },
-      },
-    });
-  }
-
-  return matchingSteps.length;
-};
-
 export const createUpdateWorkflowAgentTool = (
-  deps: Pick<
-    WorkflowToolDependencies,
-    | 'agentService'
-    | 'coreWorkflowVersionListService'
-    | 'coreWorkflowVersionMutationService'
-  >,
+  deps: Pick<WorkflowToolDependencies, 'agentService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_agent' as const,
-  description: `Configure a workflow AI_AGENT step: its system prompt, the model it uses, and the format of its output.
+  description: `Update the hidden agent of an AI_AGENT step created before steps held their own configuration: set its system prompt and the model it uses.
 
-Pass stepId to configure one draft step: a step that runs no agent (no settings.input.agentId) holds this config itself, and a step that runs an agent gets the response format on that step only. Passing agentId alone sets the response format on every draft step using that agent. A reusable agent's prompt and model cannot be changed here; they are edited on the agent itself.
-
-- prompt: the system prompt (role, behavior and task).
+- prompt: the agent's system prompt (its role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
-- responseFormat: { type: "text" } for free-form text (referenced as {{stepId.response}}), or { type: "json", schema: { ... } } for structured output whose fields can be referenced as {{stepId.fieldName}}.`,
+
+Any other AI_AGENT step is configured with update_workflow_version_step: a step without settings.input.agentId holds its own instructions, prompt, modelId, responseFormat and scope, and a step running a reusable agent sets only its prompt, the agent being edited on its own. The response format of a step running a hidden agent is also set with update_workflow_version_step, on settings.input.responseFormat.`,
   inputSchema: updateAgentSchema,
   execute: async (parameters: {
-    stepId?: string;
-    agentId?: string;
+    agentId: string;
     prompt?: string;
     modelId?: string;
-    responseFormat?: AgentResponseFormat;
   }) => {
     try {
-      const { stepId, prompt, modelId, responseFormat } = parameters;
+      const { agentId, prompt, modelId } = parameters;
       const { workspaceId } = context;
-      let agentId = parameters.agentId;
-      let stepToConfigure:
-        | { coreWorkflowVersionId: string; step: WorkflowAiAgentAction }
-        | undefined;
 
-      if (isNonEmptyString(stepId)) {
-        const [draftStep] = await findDraftAiAgentSteps(deps, {
-          workspaceId,
-          isMatchingStep: (step) => step.id === stepId,
-        });
-
-        if (!isDefined(draftStep)) {
-          return {
-            success: false,
-            error: 'No draft AI_AGENT step has this id',
-            message: `No draft AI_AGENT step has id ${stepId}. Create a draft version first.`,
-          };
-        }
-
-        if (!isNonEmptyString(draftStep.step.settings.input.agentId)) {
-          await updateAiAgentStepInput(deps, {
-            workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
-            coreWorkflowVersionId: draftStep.coreWorkflowVersionId,
-            step: draftStep.step,
-            prompt,
-            modelId,
-            responseFormat,
-          });
-
-          return {
-            success: true,
-            message: `Successfully updated step ${stepId}`,
-            stepId,
-          };
-        }
-
-        agentId = draftStep.step.settings.input.agentId;
-        stepToConfigure = draftStep;
-      }
-
-      if (!isNonEmptyString(agentId)) {
-        return {
-          success: false,
-          error: 'Missing stepId or agentId',
-          message: 'Pass the stepId of the AI_AGENT step to configure.',
-        };
-      }
-
-      if (isDefined(prompt) || isDefined(modelId)) {
-        const stepOwnedAgent = await findStepOwnedAgent({
-          agentService: deps.agentService,
-          agentId,
-          workspaceId,
-        });
-
-        if (!isDefined(stepOwnedAgent)) {
-          const reusableAgent = await deps.agentService.findOneAgentById({
-            id: agentId,
-            workspaceId,
-          });
-
-          return {
-            success: false,
-            error: 'The step runs a reusable agent',
-            message: `The instructions and model belong to agent "${reusableAgent.label}", which other workflows may use. They must be edited on the agent, not on the step.`,
-            agentId,
-          };
-        }
-
-        await deps.agentService.updateOneAgent({
-          input: {
-            id: agentId,
-            ...(isDefined(prompt) ? { prompt } : {}),
-            ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
-          },
-          workspaceId,
-        });
-      }
-
-      if (!isDefined(responseFormat)) {
-        return {
-          success: true,
-          message: `Successfully updated agent ${agentId}`,
-          agentId,
-        };
-      }
-
-      if (isDefined(stepToConfigure)) {
-        await updateAiAgentStepInput(deps, {
-          workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId: stepToConfigure.coreWorkflowVersionId,
-          step: stepToConfigure.step,
-          responseFormat,
-        });
-
-        return {
-          success: true,
-          message: `Successfully updated step ${stepId}`,
-          stepId,
-          agentId,
-        };
-      }
-
-      const updatedStepCount = await setAiAgentStepsResponseFormat(deps, {
+      const { stepKind } = await findWorkflowAiAgentStepAgent({
+        agentService: deps.agentService,
+        input: { agentId },
         workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        agentId,
-        responseFormat,
       });
 
-      if (updatedStepCount === 0) {
+      if (stepKind !== 'stepOwnedAgent') {
         return {
           success: false,
-          error: 'No draft AI_AGENT step uses this agent',
-          message: `The response format was not applied: no draft AI_AGENT step uses agent ${agentId}. Create a draft version first.`,
+          error: 'Not the hidden agent of a workflow step',
+          message: `Agent ${agentId} does not belong to a workflow step. Configure a step without an agent with update_workflow_version_step, and edit a reusable agent on its own.`,
           agentId,
         };
       }
+
+      await deps.agentService.updateOneAgent({
+        input: {
+          id: agentId,
+          ...(isDefined(prompt) ? { prompt } : {}),
+          ...(isDefined(modelId) ? { modelId: modelId as ModelId } : {}),
+        },
+        workspaceId,
+      });
 
       return {
         success: true,
-        message: `Successfully updated agent ${agentId} and the response format of ${updatedStepCount} draft step(s)`,
+        message: `Successfully updated agent ${agentId}`,
         agentId,
-        updatedStepCount,
       };
     } catch (error) {
       return {

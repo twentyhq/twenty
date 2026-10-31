@@ -4,7 +4,6 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
-  isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -15,6 +14,7 @@ import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import {
   AiException,
@@ -24,6 +24,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { findWorkflowAiAgentStepAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-workflow-ai-agent-step-agent.util';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -49,6 +50,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
+    private readonly agentService: AgentService,
   ) {}
 
   async execute({
@@ -97,8 +99,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
+    const { stepKind } = await findWorkflowAiAgentStepAgent({
+      agentService: this.agentService,
+      input: step.settings.input,
+      workspaceId,
+    });
     const [configIssue] = getWorkflowAiAgentStepConfigIssues({
-      hasAgent: !isWorkflowAiAgentGenerateStep(step.settings.input),
+      stepKind,
       input: step.settings.input,
     });
 

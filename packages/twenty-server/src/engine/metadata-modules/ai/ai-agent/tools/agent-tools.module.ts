@@ -7,10 +7,9 @@ import { DeleteAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/d
 import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/manageable-agent.service';
 import { ListAgentsTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/list-agents.tool';
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
-import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [AiAgentModule, ApplicationModule, WorkspaceCacheModule],
+  imports: [AiAgentModule, ApplicationModule],
   providers: [
     ManageableAgentService,
     ListAgentsTool,
