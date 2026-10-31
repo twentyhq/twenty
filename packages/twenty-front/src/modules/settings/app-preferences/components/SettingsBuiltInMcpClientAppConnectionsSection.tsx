@@ -1,6 +1,6 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
 import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionRowDropdownMenu';
-import { SettingsBuiltInMcpClientAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsCell';
+import { SettingsApplicationAuthorizationPermissionsCell } from '@/settings/applications/components/SettingsApplicationAuthorizationPermissionsCell';
 import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
 import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
@@ -131,7 +131,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                   <Status color="green" weight="medium">{t`Connected`}</Status>
                 }
                 details={
-                  <SettingsBuiltInMcpClientAppPermissionsCell
+                  <SettingsApplicationAuthorizationPermissionsCell
                     authorization={authorization}
                   />
                 }

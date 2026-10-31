@@ -1,14 +1,11 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
-import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
+import { toApplicationAuthorizationDto } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,9 +47,7 @@ export class ApplicationAuthorizationResolver {
         { userId: user.id, workspaceId: workspace.id },
       );
 
-    return authorizations.map((authorization) =>
-      this.toApplicationAuthorizationDTO(authorization),
-    );
+    return authorizations.map(toApplicationAuthorizationDto);
   }
 
   @Mutation(() => Boolean)
@@ -69,29 +64,5 @@ export class ApplicationAuthorizationResolver {
         workspaceId: workspace.id,
       },
     );
-  }
-
-  private toApplicationAuthorizationDTO(
-    authorization: ApplicationAuthorizationEntity,
-  ): ApplicationAuthorizationDTO {
-    return {
-      id: authorization.id,
-      applicationId: authorization.applicationId,
-      workspaceId: authorization.workspaceId,
-      applicationName: authorization.application.name,
-      applicationUniversalIdentifier:
-        authorization.application.universalIdentifier,
-      scopes: authorization.scopes,
-      wellKnownOAuthClient: isDefined(
-        authorization.application.applicationRegistration,
-      )
-        ? (getWellKnownOAuthClientOfRegistration(
-            authorization.application.applicationRegistration,
-          )?.client ?? null)
-        : null,
-      lastAuthorizedAt: authorization.lastAuthorizedAt,
-      lastUsedAt: authorization.lastUsedAt,
-      createdAt: authorization.createdAt,
-    };
   }
 }

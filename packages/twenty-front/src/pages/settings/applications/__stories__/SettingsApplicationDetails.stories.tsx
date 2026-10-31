@@ -8,8 +8,14 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -21,6 +27,8 @@ import {
   ApplicationRegistrationSourceType,
   FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
+  PermissionFlagType,
+  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
@@ -138,9 +146,11 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
 const buildApplicationHandlers = ({
   settingsMenuItems,
   marketplaceAppDetail,
+  applicationRegistration = null,
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
   marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
+  applicationRegistration?: Record<string, unknown> | null;
 }) => [
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
@@ -154,7 +164,7 @@ const buildApplicationHandlers = ({
           version: '1.0.0',
           universalIdentifier: APPLICATION_ID,
           applicationRegistrationId: null,
-          applicationRegistration: null,
+          applicationRegistration,
           canBeUninstalled: true,
           isUninstallBlockedByOtherWorkspaceInstallations: false,
           autoUpgrade: false,
@@ -420,5 +430,93 @@ export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
+  },
+};
+
+const CLAUDE_MEMBER_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000d1';
+
+const revokeWorkspaceApplicationAuthorization = fn();
+
+export const OAuthOnlyAppListsItsConnectedMembers: Story = {
+  beforeEach: () => {
+    revokeWorkspaceApplicationAuthorization.mockClear();
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true });
+    jotaiStore.set(currentWorkspaceMembersState.atom, [
+      mockedWorkspaceMemberData,
+    ]);
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.APPLICATIONS],
+    });
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('WorkspaceApplicationAuthorizations', () =>
+          HttpResponse.json({
+            data: {
+              workspaceApplicationAuthorizations: [
+                {
+                  __typename: 'ApplicationAuthorization',
+                  id: CLAUDE_MEMBER_AUTHORIZATION_ID,
+                  userId: mockedWorkspaceMemberData.userId,
+                  applicationId: APPLICATION_ID,
+                  scopes: ['api', 'profile'],
+                  lastUsedAt: new Date().toISOString(),
+                },
+              ],
+            },
+          }),
+        ),
+        graphql.mutation(
+          'RevokeWorkspaceApplicationAuthorization',
+          ({ variables }) => {
+            revokeWorkspaceApplicationAuthorization(variables);
+
+            return HttpResponse.json({
+              data: { revokeWorkspaceApplicationAuthorization: true },
+            });
+          },
+        ),
+        ...buildApplicationHandlers({
+          settingsMenuItems: [],
+          applicationRegistration: {
+            __typename: 'ApplicationRegistrationSummary',
+            id: 'claude-registration-id',
+            latestAvailableVersion: null,
+            sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+            logoUrl: null,
+            wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+          },
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Connected members', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(await canvas.findByText('Charles Test')).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
+    await userEvent.click(
+      await within(document.body).findByText('Revoke access'),
+    );
+
+    const dialog = await within(document.body).findByRole('dialog');
+
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Revoke access' }),
+    );
+
+    await waitFor(() =>
+      expect(revokeWorkspaceApplicationAuthorization).toHaveBeenCalledWith({
+        applicationAuthorizationId: CLAUDE_MEMBER_AUTHORIZATION_ID,
+      }),
+    );
   },
 };

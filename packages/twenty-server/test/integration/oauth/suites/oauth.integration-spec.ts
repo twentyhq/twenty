@@ -1245,5 +1245,109 @@ describe('OAuth (integration)', () => {
       );
       expect((await findAuthorization()).revokedAt).toBeNull();
     });
+
+    const listWorkspaceAuthorizations = (token: string) =>
+      makeMetadataApiRequest(
+        {
+          query: gql`
+            query WorkspaceApplicationAuthorizations($applicationId: UUID!) {
+              workspaceApplicationAuthorizations(
+                applicationId: $applicationId
+              ) {
+                id
+                userId
+                applicationId
+                scopes
+              }
+            }
+          `,
+          variables: { applicationId: testApplication.id },
+        },
+        token,
+      );
+
+    const revokeWorkspaceAuthorization = (
+      applicationAuthorizationId: string,
+      token: string,
+    ) =>
+      makeMetadataApiRequest(
+        {
+          query: gql`
+            mutation RevokeWorkspaceApplicationAuthorization(
+              $applicationAuthorizationId: UUID!
+            ) {
+              revokeWorkspaceApplicationAuthorization(
+                applicationAuthorizationId: $applicationAuthorizationId
+              )
+            }
+          `,
+          variables: { applicationAuthorizationId },
+        },
+        token,
+      );
+
+    it('should list each member who authorized the application to an admin', async () => {
+      await exchangeForTokens('read');
+
+      const res = await listWorkspaceAuthorizations(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(res.body.errors).toBeUndefined();
+      expect(res.body.data.workspaceApplicationAuthorizations).toEqual([
+        expect.objectContaining({
+          userId: TEST_USER_ID,
+          applicationId: testApplication.id,
+          scopes: ['read'],
+        }),
+      ]);
+    });
+
+    it('should let an admin revoke a member authorization', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      const listResponse = await listWorkspaceAuthorizations(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+      const [{ id }] =
+        listResponse.body.data.workspaceApplicationAuthorizations;
+
+      const revokeResponse = await revokeWorkspaceAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(
+        revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
+      ).toBe(true);
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+    });
+
+    it('should keep member authorizations from members without the Applications permission', async () => {
+      await exchangeForTokens();
+
+      const listResponse = await listWorkspaceAuthorizations(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(listResponse.body.errors).toBeDefined();
+
+      const { id } = await findListedAuthorization();
+      const revokeResponse = await revokeWorkspaceAuthorization(
+        id,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeDefined();
+      expect((await findAuthorization()).revokedAt).toBeNull();
+    });
   });
 });

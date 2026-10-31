@@ -1,16 +1,16 @@
 import { OAUTH_SCOPE_LABELS } from '@/auth/constants/OAuthScopeLabels';
-import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { type ApplicationAuthorization } from '~/generated-metadata/graphql';
 
-type SettingsBuiltInMcpClientAppPermissionsCellProps = {
-  authorization: Pick<BuiltInMcpClientAppAuthorization, 'scopes'>;
+type SettingsApplicationAuthorizationPermissionsCellProps = {
+  authorization: Pick<ApplicationAuthorization, 'scopes'>;
 };
 
-export const SettingsBuiltInMcpClientAppPermissionsCell = ({
+export const SettingsApplicationAuthorizationPermissionsCell = ({
   authorization,
-}: SettingsBuiltInMcpClientAppPermissionsCellProps) => {
+}: SettingsApplicationAuthorizationPermissionsCellProps) => {
   const { t } = useLingui();
 
   const permissionLabels = (authorization.scopes ?? []).map((scope) => {

@@ -5,12 +5,26 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+const getWellKnownOAuthClientOfApplication = (
+  application: Pick<ApplicationEntity, 'applicationRegistration'>,
+) =>
+  isDefined(application.applicationRegistration)
+    ? getWellKnownOAuthClientOfRegistration(application.applicationRegistration)
+        ?.client
+    : undefined;
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
   async recordAuthorization({
@@ -114,6 +128,54 @@ export class ApplicationAuthorizationService {
       .getMany();
   }
 
+  // Connections made before a well-known client had its seeded registration installed their own copies,
+  // so the client's members are gathered across every install the server attributes to it
+  async findActiveAuthorizationsForWorkspaceApplication({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<ApplicationAuthorizationEntity[]> {
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
+      relations: ['applicationRegistration'],
+    });
+
+    if (!isDefined(application)) {
+      return [];
+    }
+
+    const wellKnownOAuthClient =
+      getWellKnownOAuthClientOfApplication(application);
+
+    const workspaceAuthorizations =
+      await this.applicationAuthorizationRepository
+        .createQueryBuilder('applicationAuthorization')
+        .innerJoinAndSelect(
+          'applicationAuthorization.application',
+          'application',
+        )
+        .leftJoinAndSelect(
+          'application.applicationRegistration',
+          'applicationRegistration',
+        )
+        .where('applicationAuthorization.workspaceId = :workspaceId', {
+          workspaceId,
+        })
+        .andWhere('applicationAuthorization.revokedAt IS NULL')
+        .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
+        .getMany();
+
+    return workspaceAuthorizations.filter(
+      (authorization) =>
+        authorization.applicationId === applicationId ||
+        (isDefined(wellKnownOAuthClient) &&
+          getWellKnownOAuthClientOfApplication(authorization.application) ===
+            wellKnownOAuthClient),
+    );
+  }
+
   async touchLastUsedAt(authorizationId: string): Promise<void> {
     await this.applicationAuthorizationRepository.update(
       { id: authorizationId },
@@ -138,6 +200,16 @@ export class ApplicationAuthorizationService {
     });
   }
 
+  async revokeAuthorizationByIdForWorkspace({
+    authorizationId,
+    workspaceId,
+  }: {
+    authorizationId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    return await this.revokeMatching({ id: authorizationId, workspaceId });
+  }
+
   async revokeAuthorizationForApplication({
     userId,
     applicationId,
@@ -152,6 +224,7 @@ export class ApplicationAuthorizationService {
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }
+      | { id: string; workspaceId: string }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(

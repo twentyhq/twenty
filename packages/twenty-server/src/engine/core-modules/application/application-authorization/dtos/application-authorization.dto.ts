@@ -14,6 +14,9 @@ export class ApplicationAuthorizationDTO {
   @Field(() => UUIDScalarType)
   workspaceId: string;
 
+  @Field(() => UUIDScalarType)
+  userId: string;
+
   @Field(() => String)
   applicationName: string;
 
