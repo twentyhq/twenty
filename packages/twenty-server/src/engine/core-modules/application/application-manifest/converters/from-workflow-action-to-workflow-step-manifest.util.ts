@@ -1,7 +1,12 @@
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  getWorkflowAiAgentStepConfigIssues,
+  getWorkflowAiAgentStepKind,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
@@ -182,11 +187,29 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
+      const stepKind = getWorkflowAiAgentStepKind({
+        input: action.settings.input,
+      });
 
-      return {
-        ...rest,
-        agentUniversalIdentifier: resolvers.agentUniversalIdentifier(agentId),
-      };
+      // defineWorkflow refuses these, so the export would not apply
+      for (const issueCode of getWorkflowAiAgentStepConfigIssues({
+        stepKind,
+        input: action.settings.input,
+      })) {
+        resolvers.markUnsupported(
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
+        );
+      }
+
+      resolvers.checkAiRunScopeReferences(action.settings.input.scope);
+
+      return stepKind === 'generate'
+        ? rest
+        : {
+            ...rest,
+            agentUniversalIdentifier:
+              resolvers.agentUniversalIdentifier(agentId),
+          };
     }
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
