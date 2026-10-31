@@ -41,7 +41,11 @@ export class OAuthDiscoveryController {
       issuer,
       authorization_endpoint: authorizationEndpoint,
       token_endpoint: `${issuer}/${ApiPath.OAuth}/token`,
-      registration_endpoint: `${issuer}/${ApiPath.OAuth}/register`,
+      ...(this.twentyConfigService.get(
+        'IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED',
+      )
+        ? { registration_endpoint: `${issuer}/${ApiPath.OAuth}/register` }
+        : {}),
       revocation_endpoint: `${issuer}/${ApiPath.OAuth}/revoke`,
       introspection_endpoint: `${issuer}/${ApiPath.OAuth}/introspect`,
       scopes_supported: ALL_OAUTH_SCOPES,
