@@ -8,6 +8,8 @@ const mocks = vi.hoisted(() => ({
   listMessageChannels: vi.fn(),
   createMessageChannel: vi.fn(),
   kvSet: vi.fn(),
+  kvGet: vi.fn(),
+  enqueueJobs: vi.fn(),
   getUnipileUser: vi.fn(),
 }));
 
@@ -15,7 +17,8 @@ vi.mock('twenty-sdk/logic-function', () => ({
   getConnection: mocks.getConnection,
   listMessageChannels: mocks.listMessageChannels,
   createMessageChannel: mocks.createMessageChannel,
-  kv: { set: mocks.kvSet },
+  enqueueJobs: mocks.enqueueJobs,
+  kv: { get: mocks.kvGet, set: mocks.kvSet },
 }));
 
 vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
@@ -42,6 +45,7 @@ describe('linkedinOnConnectHandler', () => {
       public_identifier: 'ada-lovelace',
     });
     mocks.createMessageChannel.mockResolvedValue({ id: 'channel-id' });
+    mocks.kvGet.mockResolvedValue(null);
   });
 
   it('keeps a flat copy of the person LinkedIn field id, since deployed functions stub nested SDK constants', () => {
@@ -51,7 +55,7 @@ describe('linkedinOnConnectHandler', () => {
     );
   });
 
-  it('creates a private channel on the member profile and claims the account', async () => {
+  it('creates a private channel on the member profile, claims the account and leaves importing to the Sync button', async () => {
     await expect(linkedinOnConnectHandler(PAYLOAD)).resolves.toEqual({
       messageChannelId: 'channel-id',
     });
@@ -64,11 +68,12 @@ describe('linkedinOnConnectHandler', () => {
       participantHandleFieldUniversalIdentifier:
         PERSON_LINKEDIN_LINK_FIELD_UNIVERSAL_IDENTIFIER,
     });
-    expect(mocks.kvSet).toHaveBeenCalledExactlyOnceWith(
+    expect(mocks.kvSet).toHaveBeenCalledWith(
       'unipile-account:acc_1',
       undefined,
       { scope: 'SERVER' },
     );
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('reuses the channel of a reconnected account', async () => {
@@ -80,5 +85,6 @@ describe('linkedinOnConnectHandler', () => {
       messageChannelId: 'existing-channel-id',
     });
     expect(mocks.createMessageChannel).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 });
