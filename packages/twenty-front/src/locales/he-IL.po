@@ -2926,7 +2926,7 @@ msgstr "צ'אט בינה מלאכותית"
 #. js-lingui-id: IuEC4q
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat component builder"
-msgstr ""
+msgstr "בונה רכיבי צ'אט מבוסס בינה מלאכותית"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7835,7 +7835,7 @@ msgstr "צור וקבע תצורה של סוכני AI"
 #. js-lingui-id: PRUHBf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
-msgstr ""
+msgstr "צרו תצוגה מקדימה של רכיבי ממשק משתמש בצ'אט מבוסס בינה מלאכותית לפני הוספתם לאפליקציית סביבת העבודה."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx

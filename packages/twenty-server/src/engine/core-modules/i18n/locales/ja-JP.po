@@ -407,7 +407,7 @@ msgstr "シークレット変数にはデフォルト値を設定できません
 #. js-lingui-id: KQFDmH
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "A signed-in chat is required."
-msgstr ""
+msgstr "ログイン済みのチャットが必要です。"
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -1034,7 +1034,7 @@ msgstr "ワークスペースメンバーが所有するAIチャットスレッ�
 #. js-lingui-id: 1ahMBt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "AI component builder is disabled."
-msgstr ""
+msgstr "AIコンポーネントビルダーは無効です。"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3091,7 +3091,7 @@ msgstr "コンポーネントのビルドが{maximumOutputMegabytes} MBの出力
 #. js-lingui-id: C1+ewF
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Component draft not found or expired."
-msgstr ""
+msgstr "コンポーネントの下書きが見つからないか、有効期限が切れています。"
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5376,7 +5376,7 @@ msgstr "フィールド \"{workspaceMemberFieldName}\" は workspaceMember オ�
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
-msgstr ""
+msgstr "フィールド {0}.{fieldName} は利用できません。アクセス可能なトップレベルのフィールドを選択してください。"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6657,7 +6657,7 @@ msgstr "無効なコマンドメニュー項目の入力です。"
 #. js-lingui-id: 5OY08H
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Invalid component draft input."
-msgstr ""
+msgstr "無効なコンポーネント下書き入力です。"
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7146,7 +7146,7 @@ msgstr "無効な電話番号です。"
 #. js-lingui-id: weTo0R
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
 msgid "Invalid preview error message."
-msgstr ""
+msgstr "無効なプレビューエラーメッセージです。"
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8157,7 +8157,7 @@ msgstr "ワークフローを非公開にする"
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Managing applications is required."
-msgstr ""
+msgstr "アプリケーションの管理が必要です。"
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -11792,12 +11792,12 @@ msgstr "実行回数"
 #. js-lingui-id: y0kFMY
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records exceed 100 KB."
-msgstr ""
+msgstr "サンプルレコードが 100 KB を超えています。"
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
-msgstr ""
+msgstr "サンプルレコードには、選択したフィールドと id のみを含める必要があります。"
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14290,12 +14290,12 @@ msgstr "このドメインはすでに使用されています。"
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
-msgstr ""
+msgstr "この下書きは更新中です。もう一度お試しください。"
 
 #. js-lingui-id: HJFKCt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "この下書きは置き換えられたか、別のチャットに属しています。新しい下書きを開始してください。"
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts

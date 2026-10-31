@@ -407,7 +407,7 @@ msgstr "Una variable secreta no pot tenir un valor per defecte."
 #. js-lingui-id: KQFDmH
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "A signed-in chat is required."
-msgstr ""
+msgstr "Cal un xat amb la sessió iniciada."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -1034,7 +1034,7 @@ msgstr "Fils de xat d'IA propietat del membre de l'espai de treball"
 #. js-lingui-id: 1ahMBt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "AI component builder is disabled."
-msgstr ""
+msgstr "El creador de components d'IA està desactivat."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3091,7 +3091,7 @@ msgstr "La compilació del component supera el límit de sortida de {maximumOutp
 #. js-lingui-id: C1+ewF
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Component draft not found or expired."
-msgstr ""
+msgstr "No s'ha trobat l'esborrany del component o ha caducat."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5376,7 +5376,7 @@ msgstr "El camp \"{workspaceMemberFieldName}\" no és un camp de l'objecte works
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
-msgstr ""
+msgstr "El camp {0}.{fieldName} no està disponible. Seleccioneu camps de nivell superior accessibles."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6657,7 +6657,7 @@ msgstr "Entrada de l'element del menú de comandes invàlida."
 #. js-lingui-id: 5OY08H
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Invalid component draft input."
-msgstr ""
+msgstr "Entrada d'esborrany de component no vàlida."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7146,7 +7146,7 @@ msgstr "Número de telèfon no vàlid."
 #. js-lingui-id: weTo0R
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
 msgid "Invalid preview error message."
-msgstr ""
+msgstr "Missatge d'error de previsualització no vàlid."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8157,7 +8157,7 @@ msgstr "Fes que el flux de treball sigui privat"
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Managing applications is required."
-msgstr ""
+msgstr "Cal gestionar aplicacions."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -11792,12 +11792,12 @@ msgstr "Execucions"
 #. js-lingui-id: y0kFMY
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records exceed 100 KB."
-msgstr ""
+msgstr "Els registres de mostra superen els 100 KB."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
-msgstr ""
+msgstr "Els registres de mostra només han de contenir els camps seleccionats i l'identificador."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14290,12 +14290,12 @@ msgstr "Aquest domini ja està ocupat."
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
-msgstr ""
+msgstr "Aquest esborrany s'està actualitzant. Torneu-ho a provar."
 
 #. js-lingui-id: HJFKCt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Aquest esborrany ha estat substituït o pertany a un altre xat. Inicieu un esborrany nou."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts

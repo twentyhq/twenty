@@ -407,7 +407,7 @@ msgstr "لا يمكن أن يحتوي المتغير السري على قيمة 
 #. js-lingui-id: KQFDmH
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "A signed-in chat is required."
-msgstr ""
+msgstr "يلزم تسجيل الدخول إلى دردشة."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -1034,7 +1034,7 @@ msgstr "سلاسل دردشة الذكاء الاصطناعي المملوكة �
 #. js-lingui-id: 1ahMBt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "AI component builder is disabled."
-msgstr ""
+msgstr "منشئ مكونات الذكاء الاصطناعي معطل."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3091,7 +3091,7 @@ msgstr "يتجاوز إنشاء المكوّن حد الإخراج البالغ 
 #. js-lingui-id: C1+ewF
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Component draft not found or expired."
-msgstr ""
+msgstr "لم يتم العثور على مسودة المكون أو انتهت صلاحيتها."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5376,7 +5376,7 @@ msgstr "الحقل \"{workspaceMemberFieldName}\" ليس حقلًا في كائ�
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
-msgstr ""
+msgstr "الحقل {0}.{fieldName} غير متاح. اختر الحقول المتاحة من المستوى الأعلى."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6657,7 +6657,7 @@ msgstr "إدخال عنصر قائمة الأوامر غير صالح."
 #. js-lingui-id: 5OY08H
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Invalid component draft input."
-msgstr ""
+msgstr "إدخال مسودة المكون غير صالح."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7146,7 +7146,7 @@ msgstr "رقم هاتف غير صالح."
 #. js-lingui-id: weTo0R
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
 msgid "Invalid preview error message."
-msgstr ""
+msgstr "رسالة خطأ المعاينة غير صالحة."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8157,7 +8157,7 @@ msgstr "جعل سير العمل خاصًا"
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Managing applications is required."
-msgstr ""
+msgstr "يلزم امتلاك صلاحية إدارة التطبيقات."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -11792,12 +11792,12 @@ msgstr "عمليات التشغيل"
 #. js-lingui-id: y0kFMY
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records exceed 100 KB."
-msgstr ""
+msgstr "تتجاوز السجلات النموذجية 100 كيلوبايت."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
-msgstr ""
+msgstr "يجب أن تحتوي السجلات النموذجية على الحقول المحددة وid فقط."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14290,12 +14290,12 @@ msgstr "هذا النطاق مستخدم بالفعل."
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
-msgstr ""
+msgstr "يجري تحديث هذه المسودة. حاول مرة أخرى."
 
 #. js-lingui-id: HJFKCt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "تم استبدال هذه المسودة أو أنها تخص دردشة أخرى. ابدأ مسودة جديدة."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts

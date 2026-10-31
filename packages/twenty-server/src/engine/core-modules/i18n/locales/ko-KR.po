@@ -407,7 +407,7 @@ msgstr "비밀 변수는 기본값을 가질 수 없습니다."
 #. js-lingui-id: KQFDmH
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "A signed-in chat is required."
-msgstr ""
+msgstr "로그인한 채팅이 필요합니다."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -1034,7 +1034,7 @@ msgstr "워크스페이스 멤버가 소유한 AI 채팅 스레드"
 #. js-lingui-id: 1ahMBt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "AI component builder is disabled."
-msgstr ""
+msgstr "AI 컴포넌트 빌더가 비활성화되어 있습니다."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3091,7 +3091,7 @@ msgstr "컴포넌트 빌드가 {maximumOutputMegabytes} MB 출력 제한을 초�
 #. js-lingui-id: C1+ewF
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Component draft not found or expired."
-msgstr ""
+msgstr "컴포넌트 초안을 찾을 수 없거나 만료되었습니다."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5376,7 +5376,7 @@ msgstr "필드 \"{workspaceMemberFieldName}\"은(는) workspaceMember 객체의 
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
-msgstr ""
+msgstr "필드 {0}.{fieldName}을 사용할 수 없습니다. 액세스 가능한 최상위 필드를 선택하세요."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6657,7 +6657,7 @@ msgstr ""
 #. js-lingui-id: 5OY08H
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Invalid component draft input."
-msgstr ""
+msgstr "잘못된 컴포넌트 초안 입력입니다."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7146,7 +7146,7 @@ msgstr "잘못된 전화번호입니다."
 #. js-lingui-id: weTo0R
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
 msgid "Invalid preview error message."
-msgstr ""
+msgstr "잘못된 미리보기 오류 메시지입니다."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8157,7 +8157,7 @@ msgstr "워크플로를 비공개로 전환"
 #. js-lingui-id: Ff72+G
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Managing applications is required."
-msgstr ""
+msgstr "애플리케이션 관리 권한이 필요합니다."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -11792,12 +11792,12 @@ msgstr "실행"
 #. js-lingui-id: y0kFMY
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records exceed 100 KB."
-msgstr ""
+msgstr "샘플 레코드가 100KB를 초과합니다."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
-msgstr ""
+msgstr "샘플 레코드에는 선택한 필드와 id만 포함되어야 합니다."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14290,12 +14290,12 @@ msgstr "이 도메인은 이미 사용 중입니다."
 #. js-lingui-id: Ukfndw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft is being updated. Try again."
-msgstr ""
+msgstr "이 초안은 업데이트 중입니다. 다시 시도하세요."
 
 #. js-lingui-id: HJFKCt
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "이 초안은 대체되었거나 다른 채팅에 속해 있습니다. 새 초안을 시작하세요."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts

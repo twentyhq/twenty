@@ -2926,7 +2926,7 @@ msgstr "AI զրույց"
 #. js-lingui-id: IuEC4q
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat component builder"
-msgstr ""
+msgstr "AI չատի բաղադրիչների ստեղծող"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7835,7 +7835,7 @@ msgstr "Ստեղծել և կարգավորել AI գործակալներ"
 #. js-lingui-id: PRUHBf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
-msgstr ""
+msgstr "Ստեղծեք և նախադիտեք ճակատային մասի բաղադրիչները AI չատում՝ նախքան դրանք Workspace հավելվածին ավելացնելը։"
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx

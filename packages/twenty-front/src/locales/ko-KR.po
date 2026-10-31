@@ -2926,7 +2926,7 @@ msgstr "AI 채팅"
 #. js-lingui-id: IuEC4q
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat component builder"
-msgstr ""
+msgstr "AI 채팅 컴포넌트 빌더"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7835,7 +7835,7 @@ msgstr "AI 에이전트 생성 및 구성"
 #. js-lingui-id: PRUHBf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
-msgstr ""
+msgstr "Workspace 앱에 추가하기 전에 AI 채팅에서 프런트엔드 컴포넌트를 만들고 미리 볼 수 있습니다."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx

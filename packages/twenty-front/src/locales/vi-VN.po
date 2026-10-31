@@ -2926,7 +2926,7 @@ msgstr "Trò chuyện AI"
 #. js-lingui-id: IuEC4q
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat component builder"
-msgstr ""
+msgstr "Trình tạo thành phần trò chuyện AI"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7835,7 +7835,7 @@ msgstr "Tạo và cấu hình tác nhân AI"
 #. js-lingui-id: PRUHBf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
-msgstr ""
+msgstr "Tạo và xem trước các thành phần giao diện người dùng trong trò chuyện AI trước khi thêm chúng vào ứng dụng Workspace."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx

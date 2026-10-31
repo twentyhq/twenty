@@ -2926,7 +2926,7 @@ msgstr "AI 聊天"
 #. js-lingui-id: IuEC4q
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat component builder"
-msgstr ""
+msgstr "AI 聊天组件构建器"
 
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -7835,7 +7835,7 @@ msgstr "创建和配置 AI 代理"
 #. js-lingui-id: PRUHBf
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
-msgstr ""
+msgstr "在将前端组件添加到工作区应用之前，可在 AI 聊天中创建并预览这些组件。"
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
