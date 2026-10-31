@@ -15,6 +15,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -26,13 +27,12 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const RECORD_SHARE_OBJECT_METADATA_NAME = 'recordShare';
-
 @Injectable()
 export class PrivateRecordStorageService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
   async findStates({
@@ -52,10 +52,6 @@ export class PrivateRecordStorageService {
         'featureFlagsMap',
       ]);
 
-    if (!isPrivateRecordEnabled(featureFlagsMap)) {
-      return new Map();
-    }
-
     return this.withRepository({
       workspaceId,
       flatObjectMetadata,
@@ -70,6 +66,7 @@ export class PrivateRecordStorageService {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           recordIds,
+          isPrivateRecordEnabled: isPrivateRecordEnabled(featureFlagsMap),
         }),
     });
   }
@@ -104,49 +101,16 @@ export class PrivateRecordStorageService {
       return;
     }
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.insertCustodianGrants({
-          recordShareRepository: this.workspaceOrmManager.getRepository(
-            RECORD_SHARE_OBJECT_METADATA_NAME,
-            { shouldBypassPermissionChecks: true },
-          ),
-          workspaceId,
-          objectsWithCreator,
-          creatorWorkspaceMemberId,
-          granteeWorkspaceMemberId,
-        }),
-      buildSystemAuthContext(workspaceId),
-    );
-  }
-
-  private async insertCustodianGrants({
-    recordShareRepository,
-    workspaceId,
-    objectsWithCreator,
-    creatorWorkspaceMemberId,
-    granteeWorkspaceMemberId,
-  }: {
-    recordShareRepository: WorkspaceRepository;
-    workspaceId: string;
-    objectsWithCreator: FlatObjectMetadata[];
-    creatorWorkspaceMemberId: string;
-    granteeWorkspaceMemberId: string;
-  }): Promise<void> {
     const privateRecordSelects = objectsWithCreator.map(
       (flatObjectMetadata, index) =>
         `SELECT CAST(:objectMetadataId${index} AS uuid) AS "objectMetadataId", "id" AS "recordId" FROM ${buildTableExpression({ workspaceId, flatObjectMetadata })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :creatorWorkspaceMemberId`,
     );
 
-    await recordShareRepository.executeRaw(
-      `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."recordShare"
-               ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-             SELECT private_record."objectMetadataId", private_record."recordId", :granteeWorkspaceMemberId, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', private_record."recordId"
-             FROM (${privateRecordSelects.join(' UNION ALL ')}) AS private_record
-             ON CONFLICT DO NOTHING`,
-      {
+    await this.recordShareStorageService.insertOwnerGrantsFromSelect({
+      workspaceId,
+      recordSelect: privateRecordSelects.join(' UNION ALL '),
+      parameters: {
         creatorWorkspaceMemberId,
-        granteeWorkspaceMemberId,
         ...Object.fromEntries(
           objectsWithCreator.map(({ id }, index) => [
             `objectMetadataId${index}`,
@@ -154,7 +118,8 @@ export class PrivateRecordStorageService {
           ]),
         ),
       },
-    );
+      granteeWorkspaceMemberId,
+    });
   }
 
   async setPrivate({

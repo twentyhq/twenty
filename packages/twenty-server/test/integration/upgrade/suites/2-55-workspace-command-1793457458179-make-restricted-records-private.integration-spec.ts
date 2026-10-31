@@ -57,21 +57,26 @@ describe('2-55 workspace command - make restricted records private (integration)
     return Number(count);
   };
 
-  const setPrivateRecordFlag = (value: boolean | undefined) =>
-    value === undefined
-      ? global.testDataSource.query(
-          `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-          [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
-        )
-      : global.testDataSource.query(
-          `INSERT INTO core."featureFlag" ("workspaceId", key, value) VALUES ($1, $2, $3)
-             ON CONFLICT ("workspaceId", key) DO UPDATE SET value = $3`,
-          [
-            SEED_APPLE_WORKSPACE_ID,
-            FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED,
-            value,
-          ],
-        );
+  const setPrivateRecordFlag = async (value: boolean | undefined) => {
+    if (value === undefined) {
+      await global.testDataSource.query(
+        `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
+        [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
+      );
+
+      return;
+    }
+
+    await global.testDataSource.query(
+      `INSERT INTO core."featureFlag" ("workspaceId", key, value) VALUES ($1, $2, $3)
+         ON CONFLICT ("workspaceId", key) DO UPDATE SET value = $3`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED,
+        value,
+      ],
+    );
+  };
 
   const findPrivateRecordFlag = async (): Promise<boolean | undefined> => {
     const [flag] = await global.testDataSource.query(

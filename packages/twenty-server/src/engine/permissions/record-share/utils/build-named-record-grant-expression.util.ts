@@ -3,10 +3,8 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { buildPrivateRecordCreatorExpression } from 'src/engine/permissions/private-record/utils/build-private-record-creator-expression.util';
-import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { buildPrivateRecordCreatorGrant } from 'src/engine/permissions/private-record/utils/build-private-record-creator-grant.util';
 import { resolveNamedPrincipalIds } from 'src/engine/permissions/principal/utils/resolve-named-principal-ids.util';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type RowAccessExpression,
@@ -47,48 +45,6 @@ const buildNamedRecordShareGrant = ({
     objectMetadataId: flatObjectMetadata.id,
     principalIds,
     accessLevels,
-  };
-};
-
-const buildPrivateRecordCreatorGrant = ({
-  subject,
-  environment,
-  tableAlias,
-  flatObjectMetadata,
-}: Omit<NamedRecordGrantContext, 'operationType'>):
-  | RowAccessExpression
-  | undefined => {
-  const { isShareRequired } = resolveObjectSharing({
-    flatObjectMetadata,
-    featureFlagsMap: environment.featureFlagsMap,
-  });
-
-  if (isShareRequired || !isPrivateRecordEnabled(environment.featureFlagsMap)) {
-    return undefined;
-  }
-
-  const creator = buildPrivateRecordCreatorExpression({
-    workspaceMemberId: subject.workspaceMemberId,
-    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
-    tableAlias,
-    flatObjectMetadata,
-  });
-
-  if (!isDefined(creator)) {
-    return undefined;
-  }
-
-  return {
-    kind: 'and',
-    operands: [
-      {
-        kind: 'recordPrivacy',
-        isPrivate: true,
-        tableAlias,
-        objectMetadataId: flatObjectMetadata.id,
-      },
-      creator,
-    ],
   };
 };
 

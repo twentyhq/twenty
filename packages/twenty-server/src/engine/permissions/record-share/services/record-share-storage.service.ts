@@ -256,6 +256,30 @@ export class RecordShareStorageService {
     );
   }
 
+  // The select returns the "objectMetadataId" and "recordId" of the records to grant
+  async insertOwnerGrantsFromSelect({
+    workspaceId,
+    recordSelect,
+    parameters,
+    granteeWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    recordSelect: string;
+    parameters: Record<string, unknown>;
+    granteeWorkspaceMemberId: string;
+  }): Promise<void> {
+    await this.withRepository({ workspaceId }, (repository) =>
+      repository.executeRaw(
+        `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)}
+           ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+         SELECT granted_record."objectMetadataId", granted_record."recordId", :granteeWorkspaceMemberId, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', granted_record."recordId"
+         FROM (${recordSelect}) AS granted_record
+         ON CONFLICT DO NOTHING`,
+        { ...parameters, granteeWorkspaceMemberId },
+      ),
+    );
+  }
+
   async findByRecordIds({
     workspaceId,
     objectMetadataId,

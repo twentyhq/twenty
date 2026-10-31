@@ -20,12 +20,14 @@ export const findPrivateRecordStates = async <
   flatObjectMetadata,
   flatFieldMetadataMaps,
   recordIds,
+  isPrivateRecordEnabled,
 }: {
   repository: Pick<WorkspaceRepository, 'executeRaw'>;
   tableExpression: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<TFlatFieldMetadata>;
   recordIds: string[];
+  isPrivateRecordEnabled: boolean;
 }): Promise<Map<string, PrivateRecordState>> => {
   if (!isNonEmptyArray(recordIds)) {
     return new Map();
@@ -39,7 +41,7 @@ export const findPrivateRecordStates = async <
     : 'NULL';
 
   const rows = await repository.executeRaw<{ id: string } & PrivateRecordState>(
-    `SELECT "id", ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AS "isPrivate", ${createdBy} AS "createdByWorkspaceMemberId" FROM ${tableExpression} WHERE "id" = ANY(:recordIds)`,
+    `SELECT "id", ${isPrivateRecordEnabled ? escapeIdentifier(IS_PRIVATE_COLUMN_NAME) : 'FALSE'} AS "isPrivate", ${createdBy} AS "createdByWorkspaceMemberId" FROM ${tableExpression} WHERE "id" = ANY(:recordIds)`,
     { recordIds },
   );
 
