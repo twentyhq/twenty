@@ -7,6 +7,8 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export enum WorkspaceExceptionCode {
   IFRAME_ORIGIN_LIMIT_EXCEEDED = 'IFRAME_ORIGIN_LIMIT_EXCEEDED',
+  IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID = 'IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID',
+  IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE = 'IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE',
   SUBDOMAIN_NOT_FOUND = 'SUBDOMAIN_NOT_FOUND',
   SUBDOMAIN_ALREADY_TAKEN = 'SUBDOMAIN_ALREADY_TAKEN',
   SUBDOMAIN_NOT_VALID = 'SUBDOMAIN_NOT_VALID',
@@ -26,6 +28,10 @@ const getWorkspaceExceptionUserFriendlyMessage = (
   switch (code) {
     case WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED:
       return msg`You can allow up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins.`;
+    case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID:
+      return msg`Enter an HTTPS origin without a path or wildcard`;
+    case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE:
+      return msg`These origins are too long to allow together. Remove one and try again.`;
     case WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND:
       return msg`Subdomain not found.`;
     case WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN:

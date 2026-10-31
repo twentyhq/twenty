@@ -24,6 +24,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
   AgentChatInboxAction,
   type AgentChatThreadParticipantFieldsFragment,
@@ -67,6 +68,7 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: ACTIVITY_AT,
 };
 
@@ -240,6 +242,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
           channelId: CHANNEL_ID,
           channelStatus: AgentChatChannelThreadStatus.OPEN,
           assignment: AgentChatChannelAssignmentFilter.ANY,
+          filter: AgentChatChannelThreadFilter.ANY,
         }
       : null,
   );

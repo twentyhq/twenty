@@ -1029,6 +1029,32 @@ describe('buildPullEntities', () => {
     expect(pathOf('skill')).toBe('src/skills/grooming-tips.skill.ts');
   });
 
+  it('should write related record paths into src/related-record-paths verbatim, named after their universal identifier', () => {
+    const relatedRecordPath = {
+      universalIdentifier: '81818181-8181-4181-8181-818181818181',
+      objectUniversalIdentifier: '82828282-8282-4282-8282-828282828282',
+      firstFieldMetadataUniversalIdentifier:
+        '83838383-8383-4383-8383-838383838383',
+      isInherent: true,
+    };
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ relatedRecordPaths: [relatedRecordPath] }),
+    });
+    const entity = entities.find(
+      (candidate) => candidate.kind === 'relatedRecordPath',
+    );
+
+    expect(skipped).toEqual([]);
+    expect(entity).toMatchObject({
+      definer: 'defineRelatedRecordPath',
+      config: relatedRecordPath,
+      parentName: null,
+    });
+    expect(
+      `${entity?.defaultFolder}/${entity?.fileBaseName}${entity?.fileSuffix}`,
+    ).toBe('src/related-record-paths/81818181.related-record-path.ts');
+  });
+
   it('should build a manifest that has no views, view fields, page layouts and page layout tabs properties without producing their entities', () => {
     const {
       views: _views,

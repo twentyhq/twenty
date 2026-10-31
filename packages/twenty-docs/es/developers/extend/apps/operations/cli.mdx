@@ -33,6 +33,7 @@ Los ejemplos siguientes usan `twenty`. Anteponles `npx twenty@latest` si no la i
 | `api`           | Envía solicitudes REST o GraphQL sin procesar                                                   |
 | `open`          | Abre el espacio de trabajo en tu navegador                                                      |
 | `aplicación`    | Crea, compila, sincroniza, depura y desinstala aplicaciones                                     |
+| `local`         | Comienza, inspecciona, para, actualiza y reinicia un entorno de desarrollo local                |
 | `doctor`        | Diagnostica la CLI, el SDK de aplicaciones y la conexión del espacio de trabajo                 |
 
 Cada comando que se comunica con un espacio de trabajo acepta `--remote \<name>` para dirigirse a una conexión guardada distinta de la predeterminada y `--json` para obtener una salida estructurada.
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Usa la dirección de tu espacio de trabajo o la dirección del servidor para una configuración local: `http://localhost:2020` para el [servidor Docker local](/es/developers/extend/apps/getting-started/local-server), `http://localhost:3000` para una extracción del código fuente. Puedes copiar el comando exacto desde **Configuración > Desarrolladores > CLI**. El inicio de sesión en el navegador requiere Twenty 2.42 o una versión posterior.
+Usa la dirección de tu espacio de trabajo o la dirección del servidor para una configuración local: `http://localhost:2020` para el [entorno de desarrollo local](/es/developers/extend/apps/getting-started/local-server), `http://localhost:3000` para una copia del código fuente. Puedes copiar el comando exacto desde **Configuración > Desarrolladores > CLI**. El inicio de sesión en el navegador requiere Twenty 2.42 o una versión posterior.
 
 Mantén varias conexiones asignándoles nombres:
 
@@ -103,18 +104,18 @@ npx twenty@latest app dev
 
 Otros comandos de la aplicación:
 
-| Comando                       | Qué hace                                                                             |
-| ----------------------------- | ------------------------------------------------------------------------------------ |
-| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad           |
-| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                             |
-| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación     |
-| `app apply`                   | Compila, carga y sincroniza la aplicación                                            |
-| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                    |
-| `app pull`                    | Escribe los metadatos de la aplicación instalada de vuelta en el código fuente local |
-| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                               |
-| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                      |
-| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo              |
-| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                     |
+| Comando                       | Qué hace                                                                         |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad       |
+| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                         |
+| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación |
+| `app apply`                   | Compila, carga y sincroniza la aplicación                                        |
+| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                |
+| `app pull`                    | Restaurar metadatos, traducciones y dependencias almacenadas                     |
+| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                           |
+| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                  |
+| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo          |
+| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                 |
 
 Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-prune` para conservarlos. La aplicación personalizada del espacio de trabajo los conserva a menos que pases `--prune`. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
 

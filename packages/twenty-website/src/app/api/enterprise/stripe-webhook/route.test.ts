@@ -9,6 +9,10 @@ const SUBSCRIPTION_ID = 'sub_new';
 const constructEventAsync = jest.fn();
 const recordTrialCard = jest.fn();
 
+jest.mock('@/platform/enterprise/forward-to-twenty-connect', () => ({
+  forwardToTwentyConnect: async () => null,
+}));
+
 jest.mock('@/platform/enterprise', () => ({
   ...jest.requireActual('@/platform/enterprise'),
   getStripeClient: () => ({ webhooks: { constructEventAsync } }),

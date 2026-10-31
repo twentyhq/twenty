@@ -1,0 +1,2 @@
+export const ADD_WEBHOOK_ID_TO_ROLE_TARGET_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddWebhookIdToRoleTargetFastInstanceCommand_1793369399690';

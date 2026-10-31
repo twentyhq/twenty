@@ -1,23 +1,22 @@
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
 import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
-import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
 export const getAgentChatChannelViewLabel = (
-  channelView: Pick<AgentChatChannelView, 'channelStatus' | 'assignment'>,
+  channelView: Pick<
+    AgentChatChannelView,
+    'channelStatus' | 'assignment' | 'filter'
+  >,
 ) => {
-  const navigationItem = getAgentChatChannelNavigationItemOrThrow(channelView);
-  const channelStatusLabel = t(navigationItem.label);
+  const openViewItem = findAgentChatChannelOpenViewItem(channelView);
 
-  if (channelView.assignment === navigationItem.assignment) {
-    return channelStatusLabel;
+  if (isDefined(openViewItem)) {
+    return t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[openViewItem.filterStatus]);
   }
 
-  const assignmentLabel =
-    channelView.assignment === AgentChatChannelAssignmentFilter.UNASSIGNED
-      ? t`Unassigned`
-      : t`Mine`;
-
-  return t`${channelStatusLabel} · ${assignmentLabel}`;
+  return t(getAgentChatChannelNavigationItemOrThrow(channelView).label);
 };

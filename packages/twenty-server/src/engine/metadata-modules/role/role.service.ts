@@ -364,11 +364,16 @@ export class RoleService {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ?? workspaceCustomFlatApplication;
 
-    const { flatRoleMaps, flatRoleTargetMaps, flatAgentMaps } =
+    const { flatRoleMaps, flatRoleTargetMaps, flatAgentMaps, flatWebhookMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleMaps', 'flatRoleTargetMaps', 'flatAgentMaps'],
+          flatMapsKeys: [
+            'flatRoleMaps',
+            'flatRoleTargetMaps',
+            'flatAgentMaps',
+            'flatWebhookMaps',
+          ],
         },
       );
 
@@ -425,6 +430,7 @@ export class RoleService {
         flatRoleTargetMaps,
         flatRoleMaps,
         flatAgentMaps,
+        flatWebhookMaps,
       });
 
     const validateAndBuildResult =
@@ -604,6 +610,7 @@ export class RoleService {
     flatRoleTargetMaps,
     flatRoleMaps,
     flatAgentMaps,
+    flatWebhookMaps,
   }: {
     roleIds: string[];
     defaultRoleId: string;
@@ -611,7 +618,7 @@ export class RoleService {
     workspaceCustomFlatApplication: FlatApplication;
   } & Pick<
     AllFlatEntityMaps,
-    'flatRoleTargetMaps' | 'flatRoleMaps' | 'flatAgentMaps'
+    'flatRoleTargetMaps' | 'flatRoleMaps' | 'flatAgentMaps' | 'flatWebhookMaps'
   >): Promise<{
     flatRoleTargetsToCreate: FlatRoleTarget[];
     flatRoleTargetsToDelete: FlatRoleTarget[];
@@ -656,6 +663,7 @@ export class RoleService {
                 flatRoleTargetMaps,
                 flatRoleMaps,
                 flatAgentMaps,
+                flatWebhookMaps,
                 flatApplication: workspaceCustomFlatApplication,
               }).flatRoleTargetToCreate,
             ];

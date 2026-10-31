@@ -68,7 +68,7 @@ export default defineWorkflow({
 
 Punti chiave:
 
-* Il workflow, il relativo trigger e ogni passaggio necessitano del proprio `universalIdentifier`. Mantienili stabili tra le release: è così che Twenty trova una corrispondenza con il workflow installato all'installazione successiva.
+* Il flusso di lavoro e ogni passaggio necessitano del proprio `universalIdentifier`, e il trigger può averne uno. Mantienili stabili tra le release: è così che Twenty trova una corrispondenza con il workflow installato all'installazione successiva.
 * `nextStepIds` collega il grafo. Il trigger punta ai primi passaggi e ogni passaggio punta ai passaggi eseguiti dopo di esso.
 * Un passaggio legge l'output precedente con `{{trigger.\<path>}}` o `{{\<step universalIdentifier>.\<path>}}`.
 * La build convalida l'intera definizione: tipi di trigger o passaggio non supportati, collegamenti tra passaggi non validi e riferimenti a passaggi sconosciuti causano l'errore.
@@ -94,6 +94,8 @@ Un riferimento che Twenty non riesce a risolvere causa l'errore di installazione
 | `WEBHOOK`        | Una richiesta HTTP raggiunge l'URL del workflow | `httpMethod` (`GET` o `POST`) ed `expectedBody` per `POST`.                                                                                                                                     |
 
 Un workflow manuale senza `availability` non ottiene alcuna voce nel menu dei comandi.
+
+Ogni trigger accetta anche `name`, `position` e `outputSchema` facoltativi, che definiscono solo l'aspetto del flusso di lavoro nel builder. Senza di essi, Twenty usa un nome come `Manual trigger`, posiziona il trigger nella parte superiore dell'area di lavoro e calcola lo schema di output dalle impostazioni.
 
 Un workflow webhook resta in ascolto su `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, dove `workflowId` è l'id del workflow installato. Il corpo della richiesta è disponibile come `{{trigger.\<path>}}`.
 
@@ -126,7 +128,8 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
 
 L'applicazione Custom dell'area di lavoro possiede i workflow creati nel workflow builder e il codice ha per essi la stessa autorevolezza del builder:
 
-* `twenty app pull` scrive ciascuno dalla relativa versione attiva, quella pubblicata per ultima dal builder. Un workflow la cui versione attiva utilizza impostazioni che un file `defineWorkflow()` non può esprimere, come un passaggio Code o un trigger rinominato dal builder, viene segnalato e lasciato al suo posto.
+* `twenty app pull` scrive ciascuno dalla relativa versione attiva, quella pubblicata per ultima dal builder. Un flusso di lavoro la cui versione attiva usa impostazioni che un file `defineWorkflow()` non può esprimere, come un passaggio Code, viene segnalato e lasciato invariato.
+* Un flusso di lavoro recuperato mantiene ciò che il builder ha memorizzato: un trigger senza `universalIdentifier`, il nome del trigger nel builder, una `position` pari a `null` per un nodo che il builder non ha mai posizionato e un `outputSchema` diverso da quello calcolato. Questi campi richiedono twenty-sdk 2.53.0 o versioni successive, applicati a un server con 2.53.0 o versioni successive: le versioni precedenti li rifiutano come chiavi sconosciute.
 * `twenty app apply` pubblica come il builder. Un workflow la cui definizione corrisponde alla sua versione attiva non viene modificato. Altrimenti, la versione attiva viene archiviata e la definizione diventa una nuova versione attiva, così le esecuzioni precedenti mantengono la versione con cui sono state eseguite.
 * Gli utenti continuano a modificare questi workflow nel builder e il pull successivo recupera le loro modifiche.
 

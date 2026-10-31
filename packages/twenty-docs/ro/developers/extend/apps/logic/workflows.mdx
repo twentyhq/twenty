@@ -68,7 +68,7 @@ export default defineWorkflow({
 
 Puncte cheie:
 
-* Fluxul de lucru, declanșatorul său și fiecare pas au nevoie de propriul `universalIdentifier`. Păstrați-le stabile între versiuni: astfel Twenty identifică fluxul de lucru instalat la următoarea instalare.
+* Fluxul de lucru și fiecare pas au nevoie de propriul `universalIdentifier`, iar declanșatorul poate avea unul. Păstrați-le stabile între versiuni: astfel Twenty identifică fluxul de lucru instalat la următoarea instalare.
 * `nextStepIds` conectează graful. Declanșatorul indică spre primii pași, iar fiecare pas indică spre pașii care se execută după acesta.
 * Un pas citește rezultatul anterior cu `{{trigger.\<path>}}` sau `{{\<step universalIdentifier>.\<path>}}`.
 * Compilarea validează întreaga definiție: tipurile de declanșatoare sau pași neacceptate, legăturile de pași defecte și referințele la pași necunoscuți o fac să eșueze.
@@ -94,6 +94,8 @@ O referință pe care Twenty nu o poate rezolva face instalarea să eșueze.
 | `WEBHOOK`        | O cerere HTTP ajunge la URL-ul fluxului de lucru | `httpMethod` (`GET` sau `POST`) și `expectedBody` pentru `POST`.                                                                                                                         |
 
 Un flux de lucru manual fără `availability` nu primește nicio intrare în meniul de comenzi.
+
+Fiecare declanșator acceptă, de asemenea, opțional `name`, `position` și `outputSchema`, care doar determină cum arată fluxul de lucru în editor. Fără acestea, Twenty folosește un nume precum `Manual trigger`, plasează declanșatorul în partea de sus a pânzei și calculează schema de ieșire din setări.
 
 Un flux de lucru webhook ascultă la `https://\<your-twenty-domain>/webhooks/workflows/\<workspaceId>/\<workflowId>`, unde `workflowId` este id-ul fluxului de lucru instalat. Corpul cererii este disponibil ca `{{trigger.\<path>}}`.
 
@@ -126,7 +128,8 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 
 Aplicația personalizată a spațiului de lucru deține fluxurile de lucru create în constructorul de fluxuri de lucru, iar codul este la fel de autoritar pentru acestea ca și constructorul:
 
-* `twenty app pull` scrie fiecare dintre acestea din versiunea sa activă, cea publicată ultima dată de constructor. Un flux de lucru a cărui versiune activă utilizează setări pe care un fișier `defineWorkflow()` nu le poate exprima, precum un pas Code sau un declanșator redenumit de constructor, este semnalat și lăsat pe loc.
+* `twenty app pull` scrie fiecare dintre acestea din versiunea sa activă, cea publicată ultima dată de constructor. Un flux de lucru a cărui versiune activă folosește setări pe care un fișier `defineWorkflow()` nu le poate exprima, precum un pas Code, este raportat și lăsat pe loc.
+* Un flux de lucru preluat păstrează ce a stocat editorul: un declanșator fără `universalIdentifier`, numele declanșatorului din editor, o `position` de `null` pentru un nod pe care editorul nu l-a plasat niciodată și un `outputSchema` care diferă de cel calculat. Aceste câmpuri necesită twenty-sdk 2.53.0 sau o versiune ulterioară, aplicate pe un server cu 2.53.0 sau o versiune ulterioară: versiunile mai vechi le resping ca chei necunoscute.
 * `twenty app apply` publică la fel ca constructorul. Un flux de lucru a cărui definiție corespunde versiunii sale active este lăsat neschimbat. În caz contrar, versiunea activă este arhivată, iar definiția devine o nouă versiune activă, astfel încât rulările anterioare păstrează versiunea pe care au rulat.
 * Utilizatorii continuă să editeze aceste fluxuri de lucru în editor, iar următorul pull readuce modificările lor.
 

@@ -15,6 +15,7 @@ import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modu
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
+import { reconstructRelatedRecordPathsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-related-record-paths-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
@@ -185,6 +186,8 @@ export class ApplicationManifestExportService {
     const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
       applicationAllFlatEntityMaps,
     });
+    const { relatedRecordPaths, coverage: relatedRecordPathsCoverage } =
+      reconstructRelatedRecordPathsManifest({ applicationAllFlatEntityMaps });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -219,6 +222,7 @@ export class ApplicationManifestExportService {
       commandMenuItems: [],
       timelineActivityTypes: [],
       settingsMenuItems: [],
+      relatedRecordPaths,
       workflows,
       ...(isDefined(translations) ? { translations } : {}),
     };
@@ -243,6 +247,7 @@ export class ApplicationManifestExportService {
           ...workflowsCoverage,
           ...agentsCoverage,
           ...skillsCoverage,
+          ...relatedRecordPathsCoverage,
         ],
       }),
       files: shouldIncludeDependencies

@@ -15,13 +15,21 @@ const ARCHIVED_PARTICIPANT = {
   archivedAt: '2026-10-01T11:00:00.000Z',
   snoozedUntil: null,
   isSubscribed: true,
-  lastMentionedAt: null,
+  lastMentionedAt: LAST_ACTIVITY_AT,
+  mentionsResolvedAt: null,
   id: 'participant-id',
   updatedAt: '2026-10-01T11:00:00.000Z',
 };
 
+const renderRestoreHook = (store: ReturnType<typeof createStore>) =>
+  renderHook(() => useOptimisticallyRestoreOnSend(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Provider store={store}>{children}</Provider>
+    ),
+  });
+
 describe('useOptimisticallyRestoreOnSend', () => {
-  it('moves a thread the member writes in back to their inbox, and undoes it if sending fails', () => {
+  it('resolves the mention and restores the inbox on send, and undoes both if sending fails', async () => {
     const store = createStore();
 
     store.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
@@ -33,20 +41,14 @@ describe('useOptimisticallyRestoreOnSend', () => {
       [THREAD_ID]: ARCHIVED_PARTICIPANT,
     });
 
-    const { result } = renderHook(() => useOptimisticallyRestoreOnSend(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <Provider store={store}>{children}</Provider>
-      ),
-    });
+    const { result } = renderRestoreHook(store);
     const sentAt = '2026-10-01T12:00:00.000Z';
-    let rollback: () => void = () => undefined;
-
-    act(() => {
-      rollback = result.current.applyOptimisticRestore({
+    const rollback = await act(() =>
+      result.current.applyOptimisticRestore({
         threadId: THREAD_ID,
         optimisticUpdatedAt: sentAt,
-      });
-    });
+      }),
+    );
 
     expect(
       store.get(recordStoreFamilyState.atomFamily(THREAD_ID)),
@@ -60,7 +62,8 @@ describe('useOptimisticallyRestoreOnSend', () => {
       archivedAt: null,
       snoozedUntil: null,
       isSubscribed: true,
-      lastMentionedAt: null,
+      lastMentionedAt: LAST_ACTIVITY_AT,
+      mentionsResolvedAt: LAST_ACTIVITY_AT,
       id: 'participant-id',
       updatedAt: ARCHIVED_PARTICIPANT.updatedAt,
     });
@@ -73,5 +76,37 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
     ).toEqual(ARCHIVED_PARTICIPANT);
+  });
+
+  it('preserves a newer participant event when sending fails', async () => {
+    const store = createStore();
+
+    store.set(agentChatThreadParticipantsState.atom, {
+      [THREAD_ID]: ARCHIVED_PARTICIPANT,
+    });
+
+    const { result } = renderRestoreHook(store);
+    const rollback = await act(() =>
+      result.current.applyOptimisticRestore({
+        threadId: THREAD_ID,
+        optimisticUpdatedAt: '2026-10-01T12:00:00.000Z',
+      }),
+    );
+
+    const mentionedAgainParticipant = {
+      ...ARCHIVED_PARTICIPANT,
+      lastMentionedAt: '2026-10-01T12:01:00.000Z',
+      updatedAt: '2026-10-01T12:01:00.000Z',
+    };
+
+    store.set(agentChatThreadParticipantsState.atom, {
+      [THREAD_ID]: mentionedAgainParticipant,
+    });
+
+    act(() => rollback());
+
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
+    ).toEqual(mentionedAgainParticipant);
   });
 });

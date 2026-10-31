@@ -5,7 +5,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useUpdateStreamingPartsWithDiff = () => {
   const agentChatUISessionStartTime = useAtomStateValue(
@@ -52,10 +51,7 @@ export const useUpdateStreamingPartsWithDiff = () => {
       const lastSeenMessage = lastSeenMessages[index];
 
       // a stream flush keeps the unchanged messages, a refetch rebuilds them all
-      if (
-        lastSeenMessage === incomingMessage ||
-        isDeeplyEqual(lastSeenMessage, incomingMessage)
-      ) {
+      if (lastSeenMessage === incomingMessage) {
         continue;
       }
 

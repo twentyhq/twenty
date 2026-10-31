@@ -1,6 +1,7 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentRemoteRootRenderer } from '@/host/components/FrontComponentRemoteRootRenderer';
 import { FrontComponentPointerCaptureControllerContext } from '@/host/events/contexts/FrontComponentPointerCaptureControllerContext';
+import { createHostOutsidePressController } from '@/host/events/utils/createHostOutsidePressController';
 import { createHostPointerCaptureController } from '@/host/events/utils/createHostPointerCaptureController';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
@@ -15,6 +16,7 @@ import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/Fr
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentPointerCaptureEffect } from '@/host/effect-components/FrontComponentPointerCaptureEffect';
+import { FrontComponentOutsidePressEffect } from '@/host/effect-components/FrontComponentOutsidePressEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
@@ -38,6 +40,10 @@ const fallbackComponentRegistry =
 
 type FrontComponentRendererProps = {
   componentUrl: string;
+  componentSource?: string;
+  componentProps?: Record<string, unknown>;
+  sharedDependenciesSource?: string;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
@@ -55,6 +61,10 @@ type FrontComponentRendererProps = {
 
 export const FrontComponentRenderer = ({
   componentUrl,
+  componentSource,
+  componentProps,
+  sharedDependenciesSource,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
@@ -84,15 +94,34 @@ export const FrontComponentRenderer = ({
   const [pointerCaptureController] = useState(() =>
     createHostPointerCaptureController({ geometryTracker }),
   );
+  const [outsidePressController] = useState(() =>
+    createHostOutsidePressController({
+      geometryTracker,
+      pointerCaptureController,
+    }),
+  );
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
   return (
     <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
-      <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
+      <div
+        ref={geometryTracker.setRoot}
+        style={ROOT_CONTAINER_STYLE}
+        onPointerDown={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerUp={outsidePressController.forwardUnhandledOwnedPress}
+        onPointerCancel={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseDown={outsidePressController.forwardUnhandledOwnedPress}
+        onMouseUp={outsidePressController.forwardUnhandledOwnedPress}
+        onClick={outsidePressController.forwardUnhandledOwnedPress}
+      >
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
+          componentSource={componentSource}
+          componentProps={componentProps}
+          sharedDependenciesSource={sharedDependenciesSource}
+          onReady={onReady}
           applicationAccessToken={applicationAccessToken}
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
@@ -104,6 +133,7 @@ export const FrontComponentRenderer = ({
           geometryTracker={geometryTracker}
           hostFocusController={hostFocusController}
           hostScrollController={hostScrollController}
+          outsidePressController={outsidePressController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
@@ -139,6 +169,10 @@ export const FrontComponentRenderer = ({
             <FrontComponentPointerCaptureEffect
               thread={thread}
               pointerCaptureController={pointerCaptureController}
+            />
+            <FrontComponentOutsidePressEffect
+              thread={thread}
+              outsidePressController={outsidePressController}
             />
             {isDefined(mediaSessionHost) && (
               <FrontComponentMediaSessionEffect

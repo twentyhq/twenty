@@ -33,6 +33,7 @@ Exemplele de mai jos folosesc `twenty`. Prefixați-le cu `npx twenty@latest` dac
 | `api`           | Trimiteți cereri REST sau GraphQL brute                                                |
 | `open`          | Deschideți spațiul de lucru în browser                                                 |
 | `aplicație`     | Creați, compilați, sincronizați, depanați și dezinstalați aplicații                    |
+| `local`         | Începeți, inspectați, opriți, actualizați și resetați mediul de dezvoltare locală      |
 | `doctor`        | Diagnosticați CLI-ul, SDK-ul aplicației și conexiunea la spațiul de lucru              |
 
 Fiecare comandă care comunică cu un spațiu de lucru acceptă `--remote \<name>` pentru a viza o conexiune salvată alta decât cea implicită și `--json` pentru ieșire structurată.
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Utilizați adresa spațiului de lucru sau adresa serverului pentru o configurare locală: `http://localhost:2020` pentru [serverul Docker local](/ro/developers/extend/apps/getting-started/local-server), `http://localhost:3000` pentru o copie locală a sursei. Puteți copia comanda exactă din **Settings > Developers > CLI**. Autentificarea prin browser necesită Twenty 2.42 sau o versiune ulterioară.
+Utilizați adresa spațiului dvs. de lucru sau adresa serverului pentru o configurare locală: `http://localhost:2020` pentru [mediul de dezvoltare local](/ro/developers/extend/apps/getting-started/local-server), `http://localhost:3000` pentru o copie locală a codului sursă. Puteți copia comanda exactă din **Settings > Developers > CLI**. Autentificarea prin browser necesită Twenty 2.42 sau o versiune ulterioară.
 
 Păstrați mai multe conexiuni denumindu-le:
 
@@ -110,7 +111,7 @@ Alte comenzi pentru aplicații:
 | `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare   |
 | `app apply`                   | Compilați, încărcați și sincronizați aplicația                          |
 | `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                       |
-| `app pull`                    | Scrieți metadatele aplicației instalate înapoi în sursa locală          |
+| `app pull`                    | Restaurează metadatele, traducerile și dependențele stocate             |
 | `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`              |
 | `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty           |
 | `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat   |

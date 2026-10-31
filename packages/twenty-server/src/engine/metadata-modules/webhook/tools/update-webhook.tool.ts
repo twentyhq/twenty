@@ -23,12 +23,19 @@ const updateWebhookInputSchema = z.object({
     .describe('Replaces the operations list. Leave unset to keep current.'),
   description: z.string().optional(),
   secret: z.string().optional(),
+  roleId: z
+    .uuid()
+    .optional()
+    .describe('Id of the new role. Leave unset to keep the current role.'),
 });
 
 @DefineTool({
   name: 'update_webhook',
   category: ToolCategory.WEBHOOK,
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  requiredPermissionFlags: [
+    PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+    PermissionFlagType.ROLES,
+  ],
   description: `Update an existing webhook. Only the fields you pass are modified; everything else is preserved.`,
 })
 export class UpdateWebhookTool extends BaseTool<
@@ -42,13 +49,14 @@ export class UpdateWebhookTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId },
+    context,
   }: ToolExecuteArgs<typeof updateWebhookInputSchema>): Promise<ToolOutput> {
     const update: {
       targetUrl?: string;
       operations?: string[];
       description?: string;
       secret?: string;
+      roleId?: string;
     } = {};
 
     if (isDefined(input.targetUrl)) {
@@ -63,11 +71,14 @@ export class UpdateWebhookTool extends BaseTool<
     if (isDefined(input.secret)) {
       update.secret = input.secret;
     }
+    if (isDefined(input.roleId)) {
+      update.roleId = input.roleId;
+    }
 
-    const webhook = await this.webhookService.update(
-      { id: input.id, update },
-      workspaceId,
-    );
+    const webhook = await this.webhookService.update({
+      input: { id: input.id, update },
+      workspaceId: context.workspaceId,
+    });
 
     return {
       success: true,
