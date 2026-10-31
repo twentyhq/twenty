@@ -208,12 +208,13 @@ export class ApplicationInstallResolver {
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: false,
     })
-    { universalIdentifier }: TriggerInstallApplicationInput,
+    { universalIdentifier, grantObjectScopes }: TriggerInstallApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerInstallApplicationResultDTO> {
     return this.applicationLifecycleJobService.triggerInstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,
+      grantObjectScopes,
     });
   }
 

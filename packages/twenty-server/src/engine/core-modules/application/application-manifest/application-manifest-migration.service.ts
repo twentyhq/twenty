@@ -4,6 +4,8 @@ import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isApplicationExemptFromGrant } from 'src/engine/core-modules/application/application-grant/utils/is-application-exempt-from-grant.util';
+import { normalizeConfinedApplicationManifest } from 'src/engine/core-modules/application/application-grant/utils/normalize-confined-application-manifest.util';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -170,7 +172,7 @@ export class ApplicationManifestMigrationService {
   }
 
   async syncMetadataFromManifest({
-    manifest,
+    manifest: rawManifest,
     workspaceId,
     ownerFlatApplication,
     dryRun = false,
@@ -188,6 +190,13 @@ export class ApplicationManifestMigrationService {
     hasSchemaMetadataChanged: boolean;
   }> {
     const now = new Date().toISOString();
+
+    const manifest = (await this.isConfinedApplication({
+      ownerFlatApplication,
+      workspaceId,
+    }))
+      ? normalizeConfinedApplicationManifest(rawManifest)
+      : rawManifest;
 
     const recomputeStart = performance.now();
     const existingAllFlatEntityMaps =
@@ -348,6 +357,31 @@ export class ApplicationManifestMigrationService {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
+  }
+
+  private async isConfinedApplication({
+    ownerFlatApplication,
+    workspaceId,
+  }: {
+    ownerFlatApplication: FlatApplication;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (
+      ownerFlatApplication.universalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier
+    ) {
+      return false;
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return !isApplicationExemptFromGrant({
+      application: ownerFlatApplication,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+    });
   }
 
   private async validateBuildAndRunOrThrow(

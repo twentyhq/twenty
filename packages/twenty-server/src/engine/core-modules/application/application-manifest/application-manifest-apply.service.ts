@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
+import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -18,6 +20,7 @@ export class ApplicationManifestApplyService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationGrantService: ApplicationGrantService,
   ) {}
 
   async applyManifestToWorkspace({
@@ -29,6 +32,7 @@ export class ApplicationManifestApplyService {
     inferDeletionFromMissingEntities = true,
     persistVersion,
     shouldDeferActions,
+    grantObjectScopes,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -44,6 +48,7 @@ export class ApplicationManifestApplyService {
     forceSdkClientGeneration?: boolean;
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
+    grantObjectScopes?: ApplicationGrantObjectScopeInput[];
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -62,6 +67,13 @@ export class ApplicationManifestApplyService {
         persistVersion,
         shouldDeferActions,
       });
+
+    await this.applicationGrantService.reconcileGrantAfterManifestSync({
+      workspaceId,
+      applicationId: application.id,
+      manifest,
+      objectScopeInputs: grantObjectScopes,
+    });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({

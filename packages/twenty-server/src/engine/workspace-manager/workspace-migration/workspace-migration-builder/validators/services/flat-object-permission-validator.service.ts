@@ -13,6 +13,13 @@ import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/
 import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
+const validateObjectPermissionGrantsNoDisabledActionUnlessSystemBuild = ({
+  isSystemBuild,
+  ...args
+}: Parameters<typeof validateObjectPermissionGrantsNoDisabledAction>[0] & {
+  isSystemBuild: boolean;
+}) => (isSystemBuild ? [] : validateObjectPermissionGrantsNoDisabledAction(args));
+
 @Injectable()
 export class FlatObjectPermissionValidatorService {
   validateFlatObjectPermissionCreation({
@@ -95,7 +102,9 @@ export class FlatObjectPermissionValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateObjectPermissionGrantsNoDisabledAction({
+      // System builds include application grants, whose owner rights are enforced at runtime
+      ...validateObjectPermissionGrantsNoDisabledActionUnlessSystemBuild({
+        isSystemBuild: buildOptions.isSystemBuild,
         flatObjectPermission: flatObjectPermissionToValidate,
         flatObjectMetadata: referencedObjectMetadata,
         flatRole: referencedRole,
@@ -213,7 +222,9 @@ export class FlatObjectPermissionValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateObjectPermissionGrantsNoDisabledAction({
+      // System builds include application grants, whose owner rights are enforced at runtime
+      ...validateObjectPermissionGrantsNoDisabledActionUnlessSystemBuild({
+        isSystemBuild: buildOptions.isSystemBuild,
         flatObjectPermission: updatedFlatObjectPermission,
         flatObjectMetadata: findFlatEntityByUniversalIdentifier({
           universalIdentifier:

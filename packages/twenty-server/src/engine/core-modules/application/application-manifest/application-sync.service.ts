@@ -10,6 +10,7 @@ import {
   APPLICATION_UNINSTALL_STEPS,
   type ApplicationUninstallStep,
 } from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
+import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -62,6 +63,7 @@ export class ApplicationSyncService {
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly applicationGrantService: ApplicationGrantService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -422,6 +424,12 @@ export class ApplicationSyncService {
     }
 
     await progressReporter.reportStepCompleted('UNINSTALL_HOOK');
+
+    // The grant belongs to the workspace custom application, so the application's own deletions miss it
+    await this.applicationGrantService.deleteGrant({
+      workspaceId,
+      applicationId: application.id,
+    });
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,
