@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddApplicationGrantedRolesFastInstanceCommand_1793433867335';

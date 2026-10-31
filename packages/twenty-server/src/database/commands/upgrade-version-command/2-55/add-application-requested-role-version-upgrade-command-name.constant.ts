@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_REQUESTED_ROLE_VERSION_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddApplicationRequestedRoleVersionFastInstanceCommand_1793445019576';

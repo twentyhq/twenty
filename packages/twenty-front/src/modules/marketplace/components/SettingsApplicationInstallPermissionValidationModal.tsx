@@ -1,20 +1,21 @@
-import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
-import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
-import {
-  buildPermissionSummaryFromRoleManifest,
-  type PermissionSummaryItem,
-} from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { SettingsApplicationRequiredAccessCard } from '@/marketplace/components/SettingsApplicationRequiredAccessCard';
+import { SettingsApplicationInstallGrantScopeSection } from '@/marketplace/components/SettingsApplicationInstallGrantScopeSection';
+import { type GrantObjectScope } from '@/marketplace/types/GrantObjectScope';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-import { type RoleManifest } from 'twenty-shared/application';
+import { useMemo, useState } from 'react';
+import {
+  getEffectiveObjectPermissionsFromRoleManifest,
+  OBJECT_PERMISSION_ACTIONS,
+  type ObjectPermissionAction,
+  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
@@ -34,7 +35,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   requestedCapabilities?: string[];
   billsCredits?: boolean;
   isListed?: boolean;
-  onAuthorize: () => void;
+  onAuthorize: (grantObjectScopes: GrantObjectScope[]) => void;
   isInstalling?: boolean;
 };
 
@@ -97,37 +98,10 @@ const StyledPermissionsTitle = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPermissionRow = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]} 0;
-`;
-
-const StyledPermissionIcon = styled.div`
-  color: ${themeCssVariables.color.blue9};
-  display: flex;
-`;
-
-const StyledPermissionLabel = styled.span`
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: default;
-
-  &:focus-visible {
-    outline: 1px solid ${themeCssVariables.color.blue9};
-  }
-`;
-
-const StyledObjectListTitle = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledObjectList = styled.ul`
-  list-style: disc;
-  margin: 0;
-  padding-left: ${themeCssVariables.spacing[4]};
+const StyledAccessHint = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsApplicationInstallPermissionValidationModal = ({
@@ -144,19 +118,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { closeDialog } = useDialog();
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const objectLabelsByUniversalIdentifier = useMemo(
-    (): Record<string, string> =>
-      Object.fromEntries(
-        objectMetadataItems.map(({ universalIdentifier, labelSingular }) => [
-          universalIdentifier,
-          labelSingular,
-        ]),
-      ),
-    [objectMetadataItems],
-  );
-
   const appObjectUniversalIdentifiers = useMemo(
     () =>
       new Set(
@@ -167,30 +128,50 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     [appObjects],
   );
 
-  const permissionItems: PermissionSummaryItem[] = useMemo(() => {
-    const rolePermissionItems = defaultRole
-      ? buildPermissionSummaryFromRoleManifest(defaultRole, {
-          objectLabelsByUniversalIdentifier,
-          appObjectUniversalIdentifiers,
-        })
-      : [];
+  const [grantObjectScopeOverrides, setGrantObjectScopeOverrides] = useState<
+    Partial<Record<ObjectPermissionAction, GrantObjectScope>>
+  >({});
 
-    return [
-      ...rolePermissionItems,
-      ...buildApplicationCapabilitySummary(requestedCapabilities),
-      ...buildApplicationBillingSummary(billsCredits),
-    ];
-  }, [
-    requestedCapabilities,
-    defaultRole,
-    objectLabelsByUniversalIdentifier,
-    appObjectUniversalIdentifiers,
-    billsCredits,
-  ]);
+  const grantObjectScopes: GrantObjectScope[] =
+    OBJECT_PERMISSION_ACTIONS.filter(
+      (action) =>
+        defaultRole?.[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]] ===
+        true,
+    ).map(
+      (action) =>
+        grantObjectScopeOverrides[action] ?? {
+          action,
+          allObjects: true,
+          objectMetadataIds: [],
+        },
+    );
+
+  const requiredObjectUniversalIdentifiersByAction = Object.fromEntries(
+    OBJECT_PERMISSION_ACTIONS.map((action) => [
+      action,
+      new Set(
+        (defaultRole?.objectPermissions ?? [])
+          .filter(
+            ({ objectUniversalIdentifier }) =>
+              isDefined(defaultRole) &&
+              getEffectiveObjectPermissionsFromRoleManifest({
+                role: defaultRole,
+                objectUniversalIdentifier,
+              })[action],
+          )
+          .map(({ objectUniversalIdentifier }) => objectUniversalIdentifier),
+      ),
+    ]),
+  );
+
+  const handleGrantObjectScopesChange = (scopes: GrantObjectScope[]) =>
+    setGrantObjectScopeOverrides(
+      Object.fromEntries(scopes.map((scope) => [scope.action, scope])),
+    );
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);
-    onAuthorize();
+    onAuthorize(grantObjectScopes);
   };
 
   const handleClose = () => {
@@ -238,46 +219,35 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                 </StyledNotListedBannerContainer>
               )}
 
-              {permissionItems.length > 0 && (
+              <SettingsApplicationRequiredAccessCard
+                appDisplayName={appDisplayName}
+                defaultRole={defaultRole}
+                appObjects={appObjects}
+                requestedCapabilities={requestedCapabilities}
+                billsCredits={billsCredits}
+              />
+
+              {grantObjectScopes.length > 0 && (
                 <StyledPermissionsCard>
                   <StyledPermissionsTitle>
-                    {t`${appDisplayName} would like to:`}
+                    {t`Access to your data`}
                   </StyledPermissionsTitle>
-                  {permissionItems.map((item) => (
-                    <StyledPermissionRow key={item.label}>
-                      <StyledPermissionIcon>
-                        <item.Icon size={16} aria-hidden />
-                      </StyledPermissionIcon>
-                      {isDefined(item.details) ? (
-                        <Tooltip
-                          content={
-                            <>
-                              <StyledObjectListTitle>
-                                {item.details.title}
-                              </StyledObjectListTitle>
-                              <StyledObjectList>
-                                {item.details.items.map((detailItem) => (
-                                  <li key={detailItem}>{detailItem}</li>
-                                ))}
-                              </StyledObjectList>
-                            </>
-                          }
-                          arrow
-                          side="top"
-                          delay={TooltipDelay.shortDelay}
-                          positionMethod="fixed"
-                        >
-                          <StyledPermissionLabel tabIndex={0}>
-                            {item.label}
-                          </StyledPermissionLabel>
-                        </Tooltip>
-                      ) : (
-                        item.label
-                      )}
-                    </StyledPermissionRow>
-                  ))}
+                  <SettingsApplicationInstallGrantScopeSection
+                    appObjectUniversalIdentifiers={
+                      appObjectUniversalIdentifiers
+                    }
+                    requiredObjectUniversalIdentifiersByAction={
+                      requiredObjectUniversalIdentifiersByAction
+                    }
+                    scopes={grantObjectScopes}
+                    onScopesChange={handleGrantObjectScopesChange}
+                  />
                 </StyledPermissionsCard>
               )}
+
+              <StyledAccessHint>
+                {t`After install, admins can add objects, hide fields and filter records in the app's Access tab.`}
+              </StyledAccessHint>
 
               <AuthorizeActionButtons
                 onCancel={handleClose}

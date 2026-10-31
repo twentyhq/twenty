@@ -96,6 +96,10 @@ export class WorkspaceMigrationRunnerService {
         ...(hasApplicationVariablesChanged
           ? ['userApplicationVariableValueMaps' as const]
           : []),
+        // Applications cache their runtime role, resolved from application role targets
+        ...(allFlatEntityMapsKeys.includes('flatRoleTargetMaps')
+          ? ['flatApplicationMaps' as const]
+          : []),
       ]),
     ];
 

@@ -15,6 +15,7 @@ import {
   TriggerUninstallApplicationJob,
   type TriggerUninstallApplicationJobData,
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
+import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import {
   TriggerUpgradeApplicationJob,
@@ -88,7 +89,10 @@ export class ApplicationLifecycleJobService {
   async triggerInstallApplication({
     universalIdentifier,
     workspaceId,
-  }: LifecycleJobTarget): Promise<{ jobId: string }> {
+    grantObjectScopes,
+  }: LifecycleJobTarget & {
+    grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+  }): Promise<{ jobId: string }> {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
@@ -97,7 +101,11 @@ export class ApplicationLifecycleJobService {
     return this.triggerLifecycleJob<TriggerInstallApplicationJobData>({
       operation: 'install',
       jobName: TriggerInstallApplicationJob.name,
-      data: { applicationRegistrationId: registration.id, workspaceId },
+      data: {
+        applicationRegistrationId: registration.id,
+        workspaceId,
+        grantObjectScopes,
+      },
       universalIdentifier,
       workspaceId,
     });

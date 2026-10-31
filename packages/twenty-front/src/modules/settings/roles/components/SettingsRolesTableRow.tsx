@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
@@ -40,11 +40,15 @@ const StyledTableRowContainer = styled.div`
 
 type SettingsRolesTableRowProps = {
   role: RoleWithPartialMembers;
+  to?: string;
 };
 
 const MAX_VISIBLE_ROLE_MEMBER_AVATARS = 5;
 
-export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
+export const SettingsRolesTableRow = ({
+  role,
+  to,
+}: SettingsRolesTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
@@ -66,7 +70,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
         key={role.id}
         gridAutoColumns="332px 3fr 3fr 1fr"
         mobileGridAutoColumns="3fr 2fr 2fr 35px"
-        to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
+        to={to ?? getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
       >
         <TableCell>
           <StyledNameCell>
@@ -88,12 +92,16 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
         </TableCell>
         <TableCell align="right">
           <StyledAssignedToCell>
-            <WorkspaceMemberAvatarStack
-              defaultAvatarName={t`Workspace member`}
-              maxVisible={MAX_VISIBLE_ROLE_MEMBER_AVATARS}
-              totalWorkspaceMembersCount={role.workspaceMembers.length}
-              workspaceMembers={enrichedWorkspaceMembers}
-            />
+            {isDefined(role.grantedToApplicationId) ? (
+              <AppChip applicationId={role.grantedToApplicationId} size="md" />
+            ) : (
+              <WorkspaceMemberAvatarStack
+                defaultAvatarName={t`Workspace member`}
+                maxVisible={MAX_VISIBLE_ROLE_MEMBER_AVATARS}
+                totalWorkspaceMembersCount={role.workspaceMembers.length}
+                workspaceMembers={enrichedWorkspaceMembers}
+              />
+            )}
           </StyledAssignedToCell>
         </TableCell>
         <TableCell align="right" color={theme.font.color.tertiary}>

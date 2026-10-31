@@ -515,7 +515,8 @@ export class ApplicationTarballService {
 
     return {
       contentDir,
-      manifest: { application: manifest.application },
+      // POC: keep the whole manifest so the install dialog can show the requested role before install
+      manifest: { ...manifest, application: manifest.application },
       packageJson,
     };
   }

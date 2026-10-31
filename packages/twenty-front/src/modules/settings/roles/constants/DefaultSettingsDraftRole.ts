@@ -22,6 +22,7 @@ export const DEFAULT_SETTINGS_DRAFT_ROLE: RoleWithPartialMembers = {
   rowLevelPermissionPredicateGroups: [],
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,
+  canBeAssignedToApplications: false,
   canBeAssignedToUsers: false,
   applicationId: '',
   agents: [],

@@ -905,6 +905,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    canBeAssignedToApplications: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isEditable: {
       toCompare: false,
       toStringify: false,
@@ -941,6 +946,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'webhookUniversalIdentifier',
+    },
+    targetApplicationId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     agentId: {
       toCompare: true,

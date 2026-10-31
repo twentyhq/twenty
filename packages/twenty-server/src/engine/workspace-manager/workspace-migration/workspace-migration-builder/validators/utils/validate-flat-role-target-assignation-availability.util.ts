@@ -5,14 +5,17 @@ import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/except
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 type ValidateFlatRoleTargetAssignationAvailabilityArgs = {
   flatRole: UniversalFlatRole;
   flatRoleTarget: UniversalFlatRoleTarget;
+  buildOptions: WorkspaceMigrationValidationBuildOptions;
 };
 export const validateFlatRoleTargetAssignationAvailability = ({
   flatRole,
   flatRoleTarget,
+  buildOptions,
 }: ValidateFlatRoleTargetAssignationAvailabilityArgs): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
 
@@ -48,6 +51,30 @@ export const validateFlatRoleTargetAssignationAvailability = ({
         code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
         message: t`Role "${roleLabel}" cannot be assigned to webhooks`,
         userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to webhooks`,
+      });
+    }
+  } else if (isDefined(flatRoleTarget.targetApplicationId)) {
+    if (!flatRole.canBeAssignedToApplications) {
+      errors.push({
+        code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+        message: t`Role "${roleLabel}" cannot be assigned to applications`,
+        userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to applications`,
+      });
+    }
+
+    const isOwnedByWorkspaceCustomApplication =
+      buildOptions.applicationUniversalIdentifier ===
+        buildOptions.workspaceCustomApplicationUniversalIdentifier &&
+      flatRoleTarget.applicationUniversalIdentifier ===
+        buildOptions.workspaceCustomApplicationUniversalIdentifier &&
+      flatRole.applicationUniversalIdentifier ===
+        buildOptions.workspaceCustomApplicationUniversalIdentifier;
+
+    if (!isOwnedByWorkspaceCustomApplication) {
+      errors.push({
+        code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+        message: t`Only the workspace custom application can assign its own roles to applications`,
+        userFriendlyMessage: msg`Only the workspace can assign a role to an application`,
       });
     }
   }

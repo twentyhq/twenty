@@ -21,6 +21,7 @@ const BASE_ROLE_MOCK: Role = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  canBeAssignedToApplications: false,
   applicationId: 'application-id',
   id: '1',
   isEditable: true,

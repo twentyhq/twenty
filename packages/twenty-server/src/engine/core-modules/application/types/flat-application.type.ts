@@ -4,4 +4,8 @@ import { type ApplicationEntityRelationProperties } from 'src/engine/core-module
 export type FlatApplication = Omit<
   ApplicationEntity,
   ApplicationEntityRelationProperties
->;
+> & {
+  // Computed by the flat application cache, read them through getApplicationRuntimeRoleId
+  runtimeRoleId?: string | null;
+  isGrantExempt?: boolean;
+};

@@ -1,3 +1,7 @@
+import {
+  type ApplicationWithRuntimeRole,
+  getApplicationRuntimeRoleId,
+} from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -64,6 +68,11 @@ type TriggerEvaluationArgs = {
   eventListener: DatabaseEventTriggerListener;
   action: DatabaseEventAction;
 };
+
+const getRuntimeRoleIdOfActiveApplication = (
+  application: ApplicationWithRuntimeRole | undefined,
+): string | null =>
+  isDefined(application) ? getApplicationRuntimeRoleId(application) : null;
 
 @Injectable()
 export class WorkflowDatabaseEventTriggerListener {
@@ -533,9 +542,9 @@ export class WorkflowDatabaseEventTriggerListener {
     ]);
 
     return resolveEventsReadableByRole({
-      roleId:
-        findActiveFlatApplicationById(flatApplicationMaps, applicationId)
-          ?.defaultRoleId ?? null,
+      roleId: getRuntimeRoleIdOfActiveApplication(
+        findActiveFlatApplicationById(flatApplicationMaps, applicationId),
+      ),
       owningApplicationId: applicationId,
       workspaceEventBatch: payload,
       eventRecordAccessGate:

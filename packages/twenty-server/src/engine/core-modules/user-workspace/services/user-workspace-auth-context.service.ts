@@ -1,3 +1,4 @@
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -144,7 +145,10 @@ export class UserWorkspaceAuthContextService {
           'flatApplicationMaps',
         ]);
       application = flatApplicationMaps.byId[applicationId];
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
+      if (
+        !isDefined(application) ||
+        !isDefined(getApplicationRuntimeRoleId(application))
+      ) {
         throw new AuthException(
           'Application no longer has access',
           AuthExceptionCode.UNAUTHENTICATED,

@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import {
   type DeveloperLinks,
@@ -26,6 +27,7 @@ type SettingsApplicationDetailAboutProps = {
   category?: string;
   developerLinks?: DeveloperLinks;
   onShare?: () => void;
+  requiredAccess?: ReactNode;
 };
 
 const SIDEBAR_COLUMN_MIN_WIDTH_PX = 160;
@@ -141,6 +143,7 @@ export const SettingsApplicationDetailAbout = ({
   category,
   developerLinks,
   onShare,
+  requiredAccess,
 }: SettingsApplicationDetailAboutProps) => {
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
@@ -186,6 +189,7 @@ export const SettingsApplicationDetailAbout = ({
       </StyledSidebarColumn>
 
       <StyledMainColumn>
+        {requiredAccess}
         {hasScreenshots && (
           <SettingsApplicationScreenshotGallery
             screenshots={screenshots}

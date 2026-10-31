@@ -1,6 +1,8 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
@@ -48,7 +50,9 @@ export const resolveAutomationAdmittedRecordIds = async ({
     .resolveAdmittedRecordIds(
       buildRoleRowAccessPolicySubject({
         roleId:
-          standardApplication?.defaultRoleId ??
+          (isDefined(standardApplication)
+            ? getApplicationRuntimeRoleId(standardApplication)
+            : null) ??
           findFlatEntityByUniversalIdentifier({
             flatEntityMaps: flatRoleMaps,
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,

@@ -1,3 +1,4 @@
+import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { toApplicationLifecycleJobError } from 'src/engine/core-modules/application/application-install/utils/to-application-lifecycle-job-error.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -8,6 +9,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type TriggerInstallApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
+  grantObjectScopes?: ApplicationGrantObjectScopeInput[];
 };
 
 @Processor(MessageQueue.workspaceQueue)
@@ -26,6 +28,7 @@ export class TriggerInstallApplicationJob {
         appRegistrationId: data.applicationRegistrationId,
         workspaceId: data.workspaceId,
         hasUserApprovedCapabilities: true,
+        grantObjectScopes: data.grantObjectScopes,
         updateProgress,
       });
     } catch (error) {

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ProposeToolCallToolInput } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -52,7 +53,7 @@ export class AgentInboxProposalService {
 
     if (
       !isDefined(rolePermissionConfig) ||
-      !isDefined(application.defaultRoleId)
+      !isDefined(getApplicationRuntimeRoleId(application))
     ) {
       return {
         error: `The application needs a default role to propose "${input.toolName}".`,

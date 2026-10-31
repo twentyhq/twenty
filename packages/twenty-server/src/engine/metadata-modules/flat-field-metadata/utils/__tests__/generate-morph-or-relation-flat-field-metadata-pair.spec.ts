@@ -37,6 +37,8 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   grantedCapabilities: [],
   logicFunctionLayerId: null,
   defaultRoleId: null,
+  approvedRoleRequest: null,
+  requestedRoleVersion: null,
   defaultRole: null,
   settingsCustomTabFrontComponentId: null,
   healthCheckLogicFunctionId: null,

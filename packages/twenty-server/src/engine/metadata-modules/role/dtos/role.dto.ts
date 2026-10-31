@@ -59,6 +59,12 @@ export class RoleDTO {
   @Field({ nullable: false })
   canBeAssignedToApiKeys: boolean;
 
+  @Field({ nullable: false })
+  canBeAssignedToApplications: boolean;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  grantedToApplicationId?: string | null;
+
   @HideField()
   roleTargets?: Relation<RoleTargetEntity[]>;
 

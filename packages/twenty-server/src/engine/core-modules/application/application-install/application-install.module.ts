@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationGrantResolver } from 'src/engine/core-modules/application/application-grant/application-grant.resolver';
+import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -45,9 +48,12 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
     PermissionsModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
+    ObjectPermissionModule,
+    RowLevelPermissionModule,
   ],
   providers: [
     ApplicationCapabilityResolver,
+    ApplicationGrantResolver,
     ApplicationInstallResolver,
     ApplicationInstallService,
     ApplicationLifecycleJobService,

@@ -630,6 +630,49 @@ export type ApplicationFileUploadTarget = {
   uploadUrl: Scalars['String']['output'];
 };
 
+export type ApplicationGrant = {
+  __typename?: 'ApplicationGrant';
+  applicationId: Scalars['UUID']['output'];
+  applicationVersion?: Maybe<Scalars['String']['output']>;
+  grantRoleId?: Maybe<Scalars['UUID']['output']>;
+  lockedObjectPermissions: Array<ApplicationGrantLockedObjectPermission>;
+  pendingPermissions: Array<ApplicationGrantPermission>;
+  requestedAllObjectsActions: Array<Scalars['String']['output']>;
+  requestedRoleId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type ApplicationGrantLockedObjectPermission = {
+  __typename?: 'ApplicationGrantLockedObjectPermission';
+  canDestroyObjectRecords: Scalars['Boolean']['output'];
+  canReadObjectRecords: Scalars['Boolean']['output'];
+  canSoftDeleteObjectRecords: Scalars['Boolean']['output'];
+  canUpdateObjectRecords: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
+export type ApplicationGrantObjectPermissionInput = {
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  objectMetadataId: Scalars['UUID']['input'];
+};
+
+export type ApplicationGrantObjectScopeInput = {
+  action: Scalars['String']['input'];
+  allObjects: Scalars['Boolean']['input'];
+  objectMetadataIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+};
+
+export type ApplicationGrantPermission = {
+  __typename?: 'ApplicationGrantPermission';
+  action?: Maybe<Scalars['String']['output']>;
+  label: Scalars['String']['output'];
+  objectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  permissionFlagUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+};
+
 export type ApplicationHealthCheckAction = {
   __typename?: 'ApplicationHealthCheckAction';
   label: Scalars['String']['output'];
@@ -3421,6 +3464,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
+  approveApplicationGrantPendingPermissions: ApplicationGrant;
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3648,6 +3692,7 @@ export type Mutation = {
   updateApiKey?: Maybe<ApiKey>;
   updateAppMessageChannel: MessageChannel;
   updateApplication: Application;
+  updateApplicationGrantObjectAccess: ApplicationGrant;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
   updateCalendarChannel: CalendarChannel;
@@ -3708,6 +3753,8 @@ export type Mutation = {
   uploadWorkspaceLogo: FileWithSignedUrl;
   /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
   uploadWorkspaceMemberProfilePicture: FileWithSignedUrl;
+  upsertApplicationGrantFieldPermissions: Array<FieldPermission>;
+  upsertApplicationGrantRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
@@ -3740,6 +3787,11 @@ export type MutationAddAgentChatMessageReactionArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
+};
+
+
+export type MutationApproveApplicationGrantPendingPermissionsArgs = {
+  applicationId: Scalars['UUID']['input'];
 };
 
 
@@ -4861,6 +4913,11 @@ export type MutationUpdateApplicationArgs = {
 };
 
 
+export type MutationUpdateApplicationGrantObjectAccessArgs = {
+  input: UpdateApplicationGrantObjectAccessInput;
+};
+
+
 export type MutationUpdateApplicationRegistrationArgs = {
   input: UpdateApplicationRegistrationInput;
 };
@@ -5147,6 +5204,18 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUploadWorkspaceMemberProfilePictureArgs = {
   file: Scalars['Upload']['input'];
+};
+
+
+export type MutationUpsertApplicationGrantFieldPermissionsArgs = {
+  applicationId: Scalars['UUID']['input'];
+  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
+};
+
+
+export type MutationUpsertApplicationGrantRowLevelPermissionPredicatesArgs = {
+  applicationId: Scalars['UUID']['input'];
+  input: UpsertRowLevelPermissionPredicatesInput;
 };
 
 
@@ -5779,6 +5848,7 @@ export type Query = {
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationCoreGraphqlSchema: Scalars['String']['output'];
+  applicationGrant: ApplicationGrant;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
@@ -5976,6 +6046,11 @@ export type QueryApplicationConnectionProvidersArgs = {
 
 export type QueryApplicationCoreGraphqlSchemaArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
+};
+
+
+export type QueryApplicationGrantArgs = {
+  applicationId: Scalars['UUID']['input'];
 };
 
 
@@ -6627,6 +6702,7 @@ export type Role = {
   canAccessAllTools: Scalars['Boolean']['output'];
   canBeAssignedToAgents: Scalars['Boolean']['output'];
   canBeAssignedToApiKeys: Scalars['Boolean']['output'];
+  canBeAssignedToApplications: Scalars['Boolean']['output'];
   canBeAssignedToUsers: Scalars['Boolean']['output'];
   canDestroyAllObjectRecords: Scalars['Boolean']['output'];
   canReadAllObjectRecords: Scalars['Boolean']['output'];
@@ -6635,6 +6711,7 @@ export type Role = {
   canUpdateAllSettings: Scalars['Boolean']['output'];
   description?: Maybe<Scalars['String']['output']>;
   fieldPermissions?: Maybe<Array<FieldPermission>>;
+  grantedToApplicationId?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
   isEditable: Scalars['Boolean']['output'];
@@ -7162,6 +7239,7 @@ export type TriggerAddPeopleToMessageListJobResult = {
 };
 
 export type TriggerInstallApplicationInput = {
+  grantObjectScopes?: InputMaybe<Array<ApplicationGrantObjectScopeInput>>;
   universalIdentifier: Scalars['String']['input'];
 };
 
@@ -7307,6 +7385,15 @@ export type UpdateAppMessageChannelInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   messagingProviderUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   visibility?: InputMaybe<MessageChannelVisibility>;
+};
+
+export type UpdateApplicationGrantObjectAccessInput = {
+  applicationId: Scalars['UUID']['input'];
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  objectPermissions: Array<ApplicationGrantObjectPermissionInput>;
 };
 
 export type UpdateApplicationInput = {

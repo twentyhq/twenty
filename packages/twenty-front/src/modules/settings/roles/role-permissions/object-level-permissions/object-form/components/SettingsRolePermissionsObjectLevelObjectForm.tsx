@@ -1,3 +1,9 @@
+import { useContext } from 'react';
+import {
+  getApplicationAccessAddObjectPath,
+  getApplicationAccessTabPath,
+} from '@/settings/applications/grant/utils/getApplicationAccessPath';
+import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -41,6 +47,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
+  const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -71,8 +78,31 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const agent = agentData?.findOneAgent;
 
-  const breadcrumbLinks =
-    fromAgentId && isDefined(agent)
+  const breadcrumbLinks = isDefined(applicationGrantEditor)
+    ? [
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.General),
+        },
+        {
+          children: t`Apps`,
+          href: getSettingsPath(SettingsPath.Applications),
+        },
+        {
+          children: applicationGrantEditor.applicationName,
+          href: getSettingsPath(SettingsPath.ApplicationDetail, {
+            applicationId: applicationGrantEditor.applicationId,
+          }),
+        },
+        {
+          children: t`Access`,
+          href: getApplicationAccessTabPath(
+            applicationGrantEditor.applicationId,
+          ),
+        },
+        { children: objectLabelPlural },
+      ]
+    : fromAgentId && isDefined(agent)
       ? getCoreAgentBreadcrumbLinks([
           { children: agent.label, href: getCoreAgentLink(agent.id) },
           { children: t`Permissions · ${objectLabelSingular}` },
@@ -101,17 +131,23 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           },
         ];
 
-  const finishButtonPath =
-    fromAgentId && isDefined(agent)
+  const finishButtonPath = isDefined(applicationGrantEditor)
+    ? getApplicationAccessTabPath(applicationGrantEditor.applicationId)
+    : fromAgentId && isDefined(agent)
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
-  const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
-    roleId,
-  })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
+  const previousStepPath = isDefined(applicationGrantEditor)
+    ? getApplicationAccessAddObjectPath(applicationGrantEditor.applicationId)
+    : `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
+        roleId,
+      })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
 
-  const headerTitle =
-    fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
+  const headerTitle = isDefined(applicationGrantEditor)
+    ? applicationGrantEditor.applicationName
+    : fromAgentId && isDefined(agent)
+      ? agent.label
+      : settingsDraftRole.label;
 
   const objectPredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(

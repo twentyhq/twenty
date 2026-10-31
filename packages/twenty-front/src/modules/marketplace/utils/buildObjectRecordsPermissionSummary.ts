@@ -108,6 +108,15 @@ export const buildObjectRecordsPermissionSummary = ({
         return [{ Icon: IconAddressBook, label }];
       }
 
+      if (objectUniversalIdentifiers.length === 1) {
+        const namedLabel = getRecordAccessLabel({
+          access,
+          target: resolvedLabels[0],
+        });
+
+        return [{ Icon: IconAddressBook, label: namedLabel ?? label }];
+      }
+
       const unresolvedCount =
         objectUniversalIdentifiers.length - resolvedLabels.length;
 

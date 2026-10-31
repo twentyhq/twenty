@@ -1,34 +1,93 @@
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 
+const APPROVED_ROLE_REQUEST = {
+  universalIdentifier: 'requested-role-universal-identifier',
+  label: 'Requested role',
+};
+
 describe('resolveApplicationRoleId', () => {
   it.each([true, false])(
-    'restricts to the application role (missing role tolerated: %s)',
+    'restricts a confined application to its grant (missing role tolerated: %s)',
     (isMissingApplicationRoleTolerated) => {
       expect(
         resolveApplicationRoleId({
-          application: { defaultRoleId: 'application-role-id' },
+          application: {
+            defaultRoleId: 'requested-role-id',
+            runtimeRoleId: 'grant-role-id',
+            isGrantExempt: false,
+            approvedRoleRequest: APPROVED_ROLE_REQUEST,
+          },
           isMissingApplicationRoleTolerated,
         }),
-      ).toEqual({ applicationRoleId: 'application-role-id' });
+      ).toEqual({ applicationRoleId: 'grant-role-id' });
     },
   );
 
-  it('denies an application without a role when a missing role is not tolerated', () => {
+  it('never uses the requested role of a confined application', () => {
     expect(
       resolveApplicationRoleId({
-        application: { defaultRoleId: null },
-        isMissingApplicationRoleTolerated: false,
+        application: {
+          defaultRoleId: 'requested-role-id',
+          approvedRoleRequest: APPROVED_ROLE_REQUEST,
+        },
+        isMissingApplicationRoleTolerated: true,
       }),
     ).toEqual({ applicationRoleId: null });
   });
 
-  it('adds no restriction for an application without a role when a missing role is tolerated', () => {
+  it('denies a confined application without a grant even when a missing role is tolerated', () => {
     expect(
       resolveApplicationRoleId({
-        application: { defaultRoleId: null },
+        application: {
+          defaultRoleId: 'requested-role-id',
+          runtimeRoleId: null,
+          isGrantExempt: false,
+          approvedRoleRequest: null,
+        },
+        isMissingApplicationRoleTolerated: true,
+      }),
+    ).toEqual({ applicationRoleId: null });
+  });
+
+  it('restricts an exempt application to its own role', () => {
+    expect(
+      resolveApplicationRoleId({
+        application: {
+          defaultRoleId: 'own-role-id',
+          runtimeRoleId: 'own-role-id',
+          isGrantExempt: true,
+          approvedRoleRequest: null,
+        },
+        isMissingApplicationRoleTolerated: false,
+      }),
+    ).toEqual({ applicationRoleId: 'own-role-id' });
+  });
+
+  it('adds no restriction for an exempt application without a role when a missing role is tolerated', () => {
+    expect(
+      resolveApplicationRoleId({
+        application: {
+          defaultRoleId: null,
+          runtimeRoleId: null,
+          isGrantExempt: true,
+          approvedRoleRequest: null,
+        },
         isMissingApplicationRoleTolerated: true,
       }),
     ).toEqual({});
+  });
+
+  it('denies an exempt application without a role when a missing role is not tolerated', () => {
+    expect(
+      resolveApplicationRoleId({
+        application: {
+          defaultRoleId: null,
+          isGrantExempt: true,
+          approvedRoleRequest: null,
+        },
+        isMissingApplicationRoleTolerated: false,
+      }),
+    ).toEqual({ applicationRoleId: null });
   });
 
   it('adds no restriction without an application', () => {

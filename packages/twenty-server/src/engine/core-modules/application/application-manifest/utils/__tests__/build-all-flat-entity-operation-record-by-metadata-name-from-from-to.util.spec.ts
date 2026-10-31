@@ -59,6 +59,7 @@ const ROLE_TARGET: FlatRoleTarget = {
   apiKeyId: null,
   webhookId: null,
   webhookUniversalIdentifier: null,
+  targetApplicationId: null,
 };
 
 const WEBHOOK: FlatWebhook = {

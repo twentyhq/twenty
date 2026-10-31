@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  type ApplicationWithRuntimeRole,
+  getApplicationRuntimeRoleId,
+} from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -8,10 +12,8 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
 export const resolveWorkflowRunApplicationOrThrow = <
-  TApplication extends Pick<
-    FlatApplication,
-    'name' | 'deletedAt' | 'defaultRoleId'
-  >,
+  TApplication extends Pick<FlatApplication, 'name' | 'deletedAt'> &
+    ApplicationWithRuntimeRole,
 >({
   workflowRun,
   applicationsById,
@@ -34,7 +36,7 @@ export const resolveWorkflowRunApplicationOrThrow = <
     );
   }
 
-  if (!isDefined(application.defaultRoleId)) {
+  if (!isDefined(getApplicationRuntimeRoleId(application))) {
     throw new WorkflowStepExecutorException(
       `Application "${application.name}" has no role, so its workflow steps cannot run`,
       WorkflowStepExecutorExceptionCode.FORBIDDEN,
