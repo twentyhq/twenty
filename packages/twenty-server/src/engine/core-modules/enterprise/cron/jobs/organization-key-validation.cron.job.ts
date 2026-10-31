@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
 
-import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { ENTERPRISE_KEY_VALIDATION_CRON_PATTERN } from 'src/engine/core-modules/enterprise/constants/organization-key-validation-cron-pattern.constant';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { getOrganizationKeyValidationCronPattern } from 'src/engine/core-modules/enterprise/utils/get-organization-key-validation-cron-pattern.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -17,11 +17,25 @@ export class EnterpriseKeyValidationCronJob {
   constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
   @Process(EnterpriseKeyValidationCronJob.name)
-  @SentryCronMonitor(
-    EnterpriseKeyValidationCronJob.name,
-    ENTERPRISE_KEY_VALIDATION_CRON_PATTERN,
-  )
   async handle(): Promise<void> {
+    const serverId = await this.enterprisePlanService.getOrCreateServerId();
+
+    return Sentry.withMonitor(
+      EnterpriseKeyValidationCronJob.name,
+      () => this.refreshValidityAndReportSeats(),
+      {
+        schedule: {
+          type: 'crontab',
+          value: getOrganizationKeyValidationCronPattern(serverId),
+        },
+        checkinMargin: 1,
+        maxRuntime: 5,
+        timezone: 'UTC',
+      },
+    );
+  }
+
+  private async refreshValidityAndReportSeats(): Promise<void> {
     this.logger.log(
       'Starting enterprise validity token refresh and seat report...',
     );
