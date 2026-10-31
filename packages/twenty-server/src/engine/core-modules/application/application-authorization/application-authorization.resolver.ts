@@ -8,7 +8,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
-import { getRedirectUriHostnames } from 'src/engine/core-modules/application/application-registration/utils/get-redirect-uri-hostnames.util';
 import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -83,10 +82,6 @@ export class ApplicationAuthorizationResolver {
       applicationUniversalIdentifier:
         authorization.application.universalIdentifier,
       scopes: authorization.scopes,
-      redirectUriHostnames: getRedirectUriHostnames(
-        authorization.application.applicationRegistration?.oAuthRedirectUris ??
-          [],
-      ),
       wellKnownOAuthClient: isDefined(
         authorization.application.applicationRegistration,
       )

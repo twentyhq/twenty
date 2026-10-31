@@ -7,7 +7,7 @@ export const filterOutBuiltInMcpClientApplications = <
   TApplication extends {
     applicationRegistration?: Pick<
       ApplicationRegistrationSummary,
-      'sourceType' | 'redirectUriHostnames'
+      'wellKnownOAuthClient'
     > | null;
   },
 >({
@@ -15,7 +15,7 @@ export const filterOutBuiltInMcpClientApplications = <
   builtInMcpClientApps,
 }: {
   applications: TApplication[];
-  builtInMcpClientApps: Pick<BuiltInMcpClientApp, 'redirectUriHostnames'>[];
+  builtInMcpClientApps: Pick<BuiltInMcpClientApp, 'wellKnownOAuthClient'>[];
 }): TApplication[] =>
   applications.filter(
     (application) =>

@@ -24,9 +24,6 @@ export class ApplicationRegistrationSummaryDTO {
   @Field(() => String, { nullable: true })
   logoUrl?: string | null;
 
-  @Field(() => [String])
-  redirectUriHostnames: string[];
-
   @Field(() => WellKnownOAuthClient, { nullable: true })
   wellKnownOAuthClient: WellKnownOAuthClient | null;
 }

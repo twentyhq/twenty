@@ -373,8 +373,8 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
-    redirectUriHostnames: Scalars['String'][]
     scopes?: Scalars['String'][]
+    wellKnownOAuthClient?: WellKnownOAuthClient
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -618,8 +618,8 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
-    redirectUriHostnames: Scalars['String'][]
     sourceType: ApplicationRegistrationSourceType
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -2908,6 +2908,7 @@ export interface PublicApplicationRegistration {
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
     websiteUrl?: Scalars['String']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'PublicApplicationRegistration'
 }
 
@@ -4055,6 +4056,8 @@ export interface Webhook {
     __typename: 'Webhook'
 }
 
+export type WellKnownOAuthClient = 'CHATGPT' | 'CLAUDE'
+
 export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
@@ -4626,8 +4629,8 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
-    redirectUriHostnames?: boolean | number
     scopes?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4891,8 +4894,8 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
-    redirectUriHostnames?: boolean | number
     sourceType?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7468,6 +7471,7 @@ export interface PublicApplicationRegistrationGenqlSelection{
     name?: boolean | number
     oAuthScopes?: boolean | number
     websiteUrl?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12895,6 +12899,11 @@ export const enumViewType = {
 export const enumViewVisibility = {
    UNLISTED: 'UNLISTED' as const,
    WORKSPACE: 'WORKSPACE' as const
+}
+
+export const enumWellKnownOAuthClient = {
+   CHATGPT: 'CHATGPT' as const,
+   CLAUDE: 'CLAUDE' as const
 }
 
 export const enumWidgetConfigurationType = {

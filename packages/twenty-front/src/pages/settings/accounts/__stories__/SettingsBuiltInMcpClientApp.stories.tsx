@@ -12,6 +12,7 @@ import { MCP_SETUP } from '@/settings/mcp/constants/McpSetup';
 import { SettingsAppPreferencesApp } from '~/pages/settings/accounts/SettingsAppPreferencesApp';
 import { SettingsBuiltInMcpClientApp } from '~/pages/settings/accounts/SettingsBuiltInMcpClientApp';
 import { removeConnectedAccountsPermission } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import { WellKnownOAuthClient } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c1';
@@ -26,7 +27,7 @@ const buildClaudeAuthorization = ({
   applicationId: '20202020-6a7b-4c3d-8e4f-0000000000a1',
   applicationName: 'Claude',
   scopes: ['api', 'profile'],
-  redirectUriHostnames: ['claude.ai'],
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   lastAuthorizedAt: '2026-10-12T09:00:00.000Z',
   lastUsedAt: new Date(
     Date.now() - lastUsedHoursAgo * 60 * 60 * 1000,

@@ -23,6 +23,7 @@ import {
   ApplicationRegistrationSourceType,
   FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
+  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
@@ -428,11 +429,11 @@ export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
 const buildOAuthOnlyApplication = ({
   id,
   name,
-  redirectUriHostnames,
+  wellKnownOAuthClient,
 }: {
   id: string;
   name: string;
-  redirectUriHostnames: string[];
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 }) => ({
   __typename: 'Application',
   id,
@@ -447,7 +448,7 @@ const buildOAuthOnlyApplication = ({
     id: `${id}-registration-id`,
     latestAvailableVersion: null,
     sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    redirectUriHostnames,
+    wellKnownOAuthClient,
   },
   defaultRoleId: null,
 });
@@ -456,22 +457,22 @@ const OAUTH_ONLY_APPLICATIONS = [
   buildOAuthOnlyApplication({
     id: 'claude-ai-application-id',
     name: 'Claude',
-    redirectUriHostnames: ['claude.ai'],
+    wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   }),
   buildOAuthOnlyApplication({
     id: 'claude-com-application-id',
     name: 'Claude',
-    redirectUriHostnames: ['claude.com'],
+    wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   }),
   buildOAuthOnlyApplication({
     id: 'chatgpt-application-id',
     name: 'ChatGPT',
-    redirectUriHostnames: ['chatgpt.com'],
+    wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
   }),
   buildOAuthOnlyApplication({
     id: 'zapier-application-id',
     name: 'Zapier',
-    redirectUriHostnames: ['zapier.com'],
+    wellKnownOAuthClient: null,
   }),
 ];
 

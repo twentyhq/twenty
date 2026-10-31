@@ -6,7 +6,10 @@ import { type ReactNode } from 'react';
 
 import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
-import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
+import {
+  CurrentUserApplicationAuthorizationsDocument,
+  WellKnownOAuthClient,
+} from '~/generated-metadata/graphql';
 
 const CLAUDE_APP = BUILT_IN_MCP_CLIENT_APPS[1];
 
@@ -16,10 +19,24 @@ const CLAUDE_AUTHORIZATION = {
   applicationId: 'claude-application-id',
   applicationName: 'Claude',
   scopes: ['api', 'profile'],
-  redirectUriHostnames: ['claude.ai'],
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   lastAuthorizedAt: '2026-10-12T09:00:00.000Z',
   lastUsedAt: '2026-10-12T09:00:00.000Z',
   createdAt: '2026-10-12T09:00:00.000Z',
+};
+
+const CHATGPT_AUTHORIZATION = {
+  ...CLAUDE_AUTHORIZATION,
+  id: 'chatgpt-authorization-id',
+  applicationName: 'ChatGPT',
+  wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
+};
+
+// A client may call itself Claude, only the server says whether it is
+const SELF_NAMED_CLAUDE_AUTHORIZATION = {
+  ...CLAUDE_AUTHORIZATION,
+  id: 'self-named-claude-authorization-id',
+  wellKnownOAuthClient: null,
 };
 
 const renderUseBuiltInMcpClientAppAuthorizations = (
@@ -41,9 +58,15 @@ const renderUseBuiltInMcpClientAppAuthorizations = (
   });
 
 describe('useBuiltInMcpClientAppAuthorizations', () => {
-  it('returns the connections of the app once loaded', async () => {
+  it('returns only the connections the server attributes to the app once loaded', async () => {
     const { result } = renderUseBuiltInMcpClientAppAuthorizations({
-      data: { currentUserApplicationAuthorizations: [CLAUDE_AUTHORIZATION] },
+      data: {
+        currentUserApplicationAuthorizations: [
+          CLAUDE_AUTHORIZATION,
+          CHATGPT_AUTHORIZATION,
+          SELF_NAMED_CLAUDE_AUTHORIZATION,
+        ],
+      },
     });
 
     await waitFor(() => expect(result.current.loading).toBe(false));

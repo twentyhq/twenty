@@ -509,8 +509,8 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
-  redirectUriHostnames: Array<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -779,8 +779,8 @@ export type ApplicationRegistrationSummary = {
   id: Scalars['UUID']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
-  redirectUriHostnames: Array<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type ApplicationRegistrationVariable = {
@@ -5703,6 +5703,7 @@ export type PublicApplicationRegistration = {
   name: Scalars['String']['output'];
   oAuthScopes: Array<Scalars['String']['output']>;
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type PublicConnectionParametersOutput = {
@@ -8441,6 +8442,11 @@ export type Webhook = {
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum WellKnownOAuthClient {
+  CHATGPT = 'CHATGPT',
+  CLAUDE = 'CLAUDE'
+}
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 

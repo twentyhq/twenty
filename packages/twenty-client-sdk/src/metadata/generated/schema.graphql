@@ -465,8 +465,8 @@ type ApplicationAuthorization {
   id: UUID!
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
-  redirectUriHostnames: [String!]!
   scopes: [String!]
+  wellKnownOAuthClient: WellKnownOAuthClient
   workspaceId: UUID!
 }
 
@@ -709,8 +709,8 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   logoUrl: String
-  redirectUriHostnames: [String!]!
   sourceType: ApplicationRegistrationSourceType!
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type ApplicationRegistrationVariable {
@@ -3999,6 +3999,7 @@ type PublicApplicationRegistration {
   name: String!
   oAuthScopes: [String!]!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type PublicConnectionParametersOutput {
@@ -6135,6 +6136,11 @@ type Webhook {
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
+}
+
+enum WellKnownOAuthClient {
+  CHATGPT
+  CLAUDE
 }
 
 union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration

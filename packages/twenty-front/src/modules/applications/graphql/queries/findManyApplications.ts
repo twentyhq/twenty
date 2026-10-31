@@ -14,7 +14,7 @@ export const FIND_MANY_APPLICATIONS = gql`
         id
         latestAvailableVersion
         sourceType
-        redirectUriHostnames
+        wellKnownOAuthClient
       }
       defaultRoleId
     }

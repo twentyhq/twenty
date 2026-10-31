@@ -11,6 +11,7 @@ import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
   FeatureFlagKey,
+  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
@@ -43,14 +44,14 @@ const buildApplication = ({
   description,
   latestAvailableVersion,
   sourceType = ApplicationRegistrationSourceType.NPM,
-  redirectUriHostnames = [],
+  wellKnownOAuthClient = null,
 }: {
   id: string;
   name: string;
   description: string;
   latestAvailableVersion: string;
   sourceType?: ApplicationRegistrationSourceType;
-  redirectUriHostnames?: string[];
+  wellKnownOAuthClient?: WellKnownOAuthClient | null;
 }) => ({
   __typename: 'Application',
   id,
@@ -65,7 +66,7 @@ const buildApplication = ({
     id: `${id}-registration-id`,
     latestAvailableVersion,
     sourceType,
-    redirectUriHostnames,
+    wellKnownOAuthClient,
   },
   defaultRoleId: null,
 });
@@ -97,7 +98,7 @@ const CLAUDE_OAUTH_APPLICATION = buildApplication({
   description: 'OAuth application registered as Claude',
   latestAvailableVersion: '1.0.0',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-  redirectUriHostnames: ['claude.ai'],
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
 });
 
 const ZAPIER_APPLICATION = buildApplication({
@@ -106,7 +107,6 @@ const ZAPIER_APPLICATION = buildApplication({
   description: 'OAuth application registered as Zapier',
   latestAvailableVersion: '1.0.0',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-  redirectUriHostnames: ['zapier.com'],
 });
 
 const BRIDGE_APPLICATION = buildApplication({
@@ -115,7 +115,6 @@ const BRIDGE_APPLICATION = buildApplication({
   description: 'OAuth application registered as Bridge',
   latestAvailableVersion: '1.0.0',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-  redirectUriHostnames: ['claude.ai', 'bridge.example'],
 });
 
 const APPLICATIONS = [

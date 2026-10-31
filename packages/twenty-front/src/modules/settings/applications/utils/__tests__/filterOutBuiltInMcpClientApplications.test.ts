@@ -1,49 +1,39 @@
 import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { filterOutBuiltInMcpClientApplications } from '@/settings/applications/utils/filterOutBuiltInMcpClientApplications';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import { WellKnownOAuthClient } from '~/generated-metadata/graphql';
 
 const buildApplication = ({
   id,
-  redirectUriHostnames,
-  sourceType = ApplicationRegistrationSourceType.OAUTH_ONLY,
+  wellKnownOAuthClient,
 }: {
   id: string;
-  redirectUriHostnames: string[];
-  sourceType?: ApplicationRegistrationSourceType;
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 }) => ({
   id,
-  applicationRegistration: { sourceType, redirectUriHostnames },
+  applicationRegistration: { wellKnownOAuthClient },
 });
 
 const APPLICATIONS = [
-  buildApplication({ id: 'claude', redirectUriHostnames: ['claude.ai'] }),
-  buildApplication({ id: 'chatgpt', redirectUriHostnames: ['chatgpt.com'] }),
-  buildApplication({ id: 'zapier', redirectUriHostnames: ['zapier.com'] }),
   buildApplication({
-    id: 'claims-claude',
-    redirectUriHostnames: ['claude.ai', 'third-party.example'],
+    id: 'claude',
+    wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
   }),
   buildApplication({
-    id: 'npm-with-claude-callback',
-    redirectUriHostnames: ['claude.ai'],
-    sourceType: ApplicationRegistrationSourceType.NPM,
+    id: 'chatgpt',
+    wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
   }),
+  buildApplication({ id: 'zapier', wellKnownOAuthClient: null }),
   { id: 'standard', applicationRegistration: null },
 ];
 
 describe('filterOutBuiltInMcpClientApplications', () => {
-  it('hides the OAuth apps whose callback hosts all belong to a built-in MCP client app', () => {
+  it('hides the apps the server identifies as a built-in MCP client app', () => {
     expect(
       filterOutBuiltInMcpClientApplications({
         applications: APPLICATIONS,
         builtInMcpClientApps: BUILT_IN_MCP_CLIENT_APPS,
       }).map(({ id }) => id),
-    ).toEqual([
-      'zapier',
-      'claims-claude',
-      'npm-with-claude-callback',
-      'standard',
-    ]);
+    ).toEqual(['zapier', 'standard']);
   });
 
   it('hides nothing without built-in MCP client apps', () => {

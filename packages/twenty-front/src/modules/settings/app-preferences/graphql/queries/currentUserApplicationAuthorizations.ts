@@ -7,7 +7,7 @@ export const CURRENT_USER_APPLICATION_AUTHORIZATIONS = gql`
       applicationId
       applicationName
       scopes
-      redirectUriHostnames
+      wellKnownOAuthClient
       lastAuthorizedAt
       lastUsedAt
       createdAt

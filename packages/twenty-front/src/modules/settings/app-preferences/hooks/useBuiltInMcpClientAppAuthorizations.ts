@@ -1,5 +1,4 @@
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
-import { getBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/utils/getBuiltInMcpClientAppAuthorizations';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
@@ -13,10 +12,10 @@ export const useBuiltInMcpClientAppAuthorizations = (
   );
 
   return {
-    authorizations: getBuiltInMcpClientAppAuthorizations({
-      authorizations: data?.currentUserApplicationAuthorizations ?? [],
-      builtInMcpClientApp,
-    }),
+    authorizations: (data?.currentUserApplicationAuthorizations ?? []).filter(
+      ({ wellKnownOAuthClient }) =>
+        wellKnownOAuthClient === builtInMcpClientApp.wellKnownOAuthClient,
+    ),
     loading: loading && !isDefined(data),
     hasLoadError: isDefined(error) && !isDefined(data),
     refetch,
