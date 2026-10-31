@@ -288,7 +288,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
     await setShare({ principal: { roleId: memberRoleId } });
-    await setGeneralAccess(RecordShareAccessLevel.READ);
+    await setGeneralAccess(RecordShareAccessLevel.NONE);
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
@@ -299,7 +299,7 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(sharing.body.errors).toBeUndefined();
     expect(sharing.body.data.recordSharing.generalAccessLevel).toBe(
-      RecordShareAccessLevel.READ,
+      RecordShareAccessLevel.NONE,
     );
     expect(sharing.body.data.recordSharing.shares).toEqual(
       expect.arrayContaining([
@@ -458,7 +458,7 @@ describe('Records shared beyond the role that can access their object', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRoleId,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

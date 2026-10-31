@@ -841,51 +841,23 @@ describe('createShareWithObjectRecordsPermissions', () => {
       ]);
     });
 
-    it('should restrict general access on creation and keep the creator in charge', async () => {
+    it('should refuse a view-only general access on creation, which private records replace', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlApiRequest(
         createOneOperation({
-          data: { id: recordId, name: 'restricted on creation' },
+          data: { id: recordId, name: 'view only on creation' },
           shareWith: [
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
         }),
       );
 
-      expect(response.body.errors).toBeUndefined();
-
-      const recordShares = await findRecordShares(recordId);
-
-      expect(recordShares).toHaveLength(2);
-      expect(recordShares).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining(
-            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
-          ),
-          expect.objectContaining({
-            recordId,
-            principalId: EVERYONE_PRINCIPAL_ID,
-            principalType: RecordSharePrincipalType.EVERYONE,
-            accessLevel: RecordShareAccessLevel.READ,
-            rowCause: RecordShareRowCause.MANUAL,
-          }),
-        ]),
-      );
-
-      const renamedByJony = await makeGraphqlApiRequestWithMemberRole(
-        updateOneOperationFactory({
-          objectMetadataSingularName: OBJECT_SINGULAR,
-          gqlFields: 'id',
-          recordId,
-          data: { name: 'renamed by jony' },
-        }),
-      );
-
-      expect(renamedByJony.body.errors).toBeDefined();
+      expect(response.body.errors).toBeDefined();
+      expect(await findRecordShares(recordId)).toEqual([]);
     });
 
-    it('should create a record restricted to its creator', async () => {
+    it('should create a private record only its creator reads', async () => {
       const recordId = trackRecordId();
 
       const response = await makeGraphqlApiRequest(
@@ -898,18 +870,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(await findRecordShares(recordId)).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining(
-            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
-          ),
-          expect.objectContaining({
-            principalId: EVERYONE_PRINCIPAL_ID,
-            accessLevel: RecordShareAccessLevel.NONE,
-            rowCause: RecordShareRowCause.MANUAL,
-          }),
-        ]),
-      );
+      expect(await findRecordShares(recordId)).toEqual([]);
 
       const jonyRead = await makeGraphqlApiRequestWithMemberRole(
         findManyOperation(recordId),

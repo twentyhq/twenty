@@ -2,10 +2,12 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { buildPrivateRecordCreatorExpression } from 'src/engine/permissions/private-record/utils/build-private-record-creator-expression.util';
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
+  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -22,24 +24,16 @@ export const buildRecordShareGate = ({
     RowAccessPolicyTarget,
     'tableAlias' | 'flatObjectMetadata' | 'operationType'
   >): RowAccessPolicy => {
-  const { sharingMode } = resolveObjectSharing({
+  const { isShareable, isShareRequired } = resolveObjectSharing({
     flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
   });
 
-  const isPrivate =
-    sharingMode === RecordSharingMode.PRIVATE &&
-    !subject.isOwningApplication(flatObjectMetadata);
-
   if (
-    !isPrivate &&
-    (sharingMode !== RecordSharingMode.OPEN_BY_DEFAULT ||
-      subject.canAccessAllRecords)
+    !isShareable ||
+    (isShareRequired && subject.isOwningApplication(flatObjectMetadata)) ||
+    !isDefined(subject.principalIds)
   ) {
-    return { kind: 'open' };
-  }
-
-  if (!isDefined(subject.principalIds)) {
     return { kind: 'open' };
   }
 
@@ -49,14 +43,43 @@ export const buildRecordShareGate = ({
     return { kind: 'open' };
   }
 
+  const recordShared: RowAccessExpression = {
+    kind: 'recordShared',
+    tableAlias,
+    objectMetadataId: flatObjectMetadata.id,
+    principalIds: subject.principalIds,
+    accessLevels,
+  };
+
+  if (isShareRequired) {
+    return { kind: 'gated', expression: recordShared };
+  }
+
+  if (!isPrivateRecordEnabled(environment.featureFlagsMap)) {
+    return { kind: 'open' };
+  }
+
+  const creator = buildPrivateRecordCreatorExpression({
+    workspaceMemberId: subject.workspaceMemberId,
+    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+    tableAlias,
+    flatObjectMetadata,
+  });
+
   return {
     kind: 'gated',
     expression: {
-      kind: isPrivate ? 'recordShared' : 'recordNotRestricted',
-      tableAlias,
-      objectMetadataId: flatObjectMetadata.id,
-      principalIds: subject.principalIds,
-      accessLevels,
+      kind: 'or',
+      operands: [
+        {
+          kind: 'recordPrivacy',
+          isPrivate: false,
+          tableAlias,
+          objectMetadataId: flatObjectMetadata.id,
+        },
+        ...(isDefined(creator) ? [creator] : []),
+        recordShared,
+      ],
     },
   };
 };
