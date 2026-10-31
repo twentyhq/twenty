@@ -22,7 +22,6 @@ export const resolveEventsReadableByRole = async <
   workspaceEventBatch,
   eventRecordAccessGate,
   rolesPermissions,
-  roleIdsWithAllRecordsAccess,
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
@@ -33,7 +32,6 @@ export const resolveEventsReadableByRole = async <
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  roleIdsWithAllRecordsAccess: string[];
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -60,7 +58,6 @@ export const resolveEventsReadableByRole = async <
         roleId,
         owningApplicationId,
         rolesPermissions: { [roleId]: objectsPermissions },
-        roleIdsWithAllRecordsAccess,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
         flatFieldMetadataMaps,

@@ -1,9 +1,9 @@
 export const resolveObjectPermissionValue = ({
   objectValue,
-  allObjectsValue,
+  hasAllObjectsPermission,
   isSystemObject,
 }: {
   objectValue: boolean | null | undefined;
-  allObjectsValue: boolean;
+  hasAllObjectsPermission: boolean;
   isSystemObject: boolean;
-}): boolean => objectValue ?? (isSystemObject || allObjectsValue);
+}): boolean => objectValue ?? (isSystemObject || hasAllObjectsPermission);

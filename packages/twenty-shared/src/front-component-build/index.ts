@@ -13,6 +13,8 @@ export {
   cssInjectionPlugin,
 } from './css-injection-plugin';
 export { enumerateSharedDependenciesExportNames } from './enumerate-shared-dependencies-export-names';
+export { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from './front-component-required-shared-dependencies';
+export { FRONT_COMPONENT_UI_IMPORTS } from './front-component-ui-imports';
 export { getCommonFrontComponentBuildOptions } from './get-common-front-component-build-options';
 export { getSharedDependenciesBuildManifestPath } from './get-shared-dependencies-build-manifest-path';
 export { getSharedDependenciesEntrySource } from './get-shared-dependencies-entry-source';

@@ -107,14 +107,12 @@ export class RecordSharePrincipalService {
     });
     const {
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
@@ -166,7 +164,6 @@ export class RecordSharePrincipalService {
           roleId,
           owningApplicationId: undefined,
           rolesPermissions,
-          roleIdsWithAllRecordsAccess,
           flatRowLevelPermissionPredicateMaps,
           flatRowLevelPermissionPredicateGroupMaps,
           flatFieldMetadataMaps,

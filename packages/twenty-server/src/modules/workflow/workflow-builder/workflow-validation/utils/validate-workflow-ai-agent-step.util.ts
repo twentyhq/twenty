@@ -13,7 +13,9 @@ export const validateWorkflowAiAgentStep = ({
   step,
   stepKind,
 }: {
-  step: WorkflowAiAgentAction;
+  step: Pick<WorkflowAiAgentAction, 'id' | 'name'> & {
+    settings: Pick<WorkflowAiAgentAction['settings'], 'input' | 'outputSchema'>;
+  };
   stepKind: WorkflowAiAgentStepKind;
 }): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
