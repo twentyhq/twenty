@@ -72,7 +72,7 @@ export class RecordShareOwnershipTransferService {
     }
   }
 
-  // Remove once 2.55 leaves the cross-upgrade window: before that command a workspace has no private records
+  // TODO(@charlesBochet): remove once 2.55 leaves the cross-upgrade window; before that command a workspace has no private records
   private async hasRunPrivateRecordColumnUpgrade(
     workspaceId: string,
   ): Promise<boolean> {
