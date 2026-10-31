@@ -101,7 +101,7 @@ export default defineWorkflow({
 
 ## Шаги
 
-Рабочие процессы приложения поддерживают следующие типы шагов: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` и `EMPTY`.
+Рабочие процессы приложения поддерживают следующие типы шагов: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` и `EMPTY`.
 
 Их входные данные соответствуют шагам [конструктора рабочих процессов](/ru/user-guide/workflows/capabilities/workflow-actions), но вместо имён используются универсальные идентификаторы:
 
@@ -117,6 +117,7 @@ export default defineWorkflow({
   * `connectedAccountId`: переменная, например `{{trigger.properties.after.connectedAccountId}}`. Шаги электронной почты также принимают идентификатор участника рабочего пространства, например `{{trigger.properties.after.assigneeId}}`, который разрешается в первую учетную запись этого участника, способную отправлять сообщения.
 
   Задайте ровно один из двух.
+* `SEND_CHAT_MESSAGE` отправляет сообщение во входящие участника рабочего пространства, заданного с помощью `workspaceMemberId`. Идентификаторы участников также локальны для каждого рабочего пространства, поэтому приложение передаёт переменную, например `{{trigger.properties.after.assigneeId}}`.
 
 ## После установки
 

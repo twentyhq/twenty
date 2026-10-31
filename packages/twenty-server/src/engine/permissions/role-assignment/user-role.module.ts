@@ -1,0 +1,26 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
+import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([RoleTargetEntity]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
+    WorkspaceCacheModule,
+    RoleTargetModule,
+    RoleAssignmentValidationModule,
+  ],
+  providers: [
+    UserRoleService,
+    provideWorkspaceScopedRepository(RoleTargetEntity),
+  ],
+  exports: [UserRoleService],
+})
+export class UserRoleModule {}

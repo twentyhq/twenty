@@ -5,6 +5,7 @@ import { BackfillWebhookAdminRoleCommand } from 'src/database/commands/upgrade-v
 import { AddStandardRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793375369182-add-standard-related-record-paths.command';
 import { SyncAccessGroupObjectCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793384492383-sync-access-group-object.command';
 import { AddAccessGroupStorageColumnsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793391296027-add-access-group-storage-columns.command';
+import { AddPrivateRecordColumnCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793436309311-add-private-record-column.command';
 import { MakeAgentTurnThreadOptionalCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793446881927-make-agent-turn-thread-optional.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -26,6 +27,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddStandardRelatedRecordPathsCommand,
     SyncAccessGroupObjectCommand,
     AddAccessGroupStorageColumnsCommand,
+    AddPrivateRecordColumnCommand,
     MakeAgentTurnThreadOptionalCommand,
   ],
 })
