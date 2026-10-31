@@ -21,7 +21,7 @@ export const SettingsBuiltInMcpClientApp = () => {
   const app = BUILT_IN_MCP_CLIENT_APPS.find(
     (builtInMcpClientApp) => builtInMcpClientApp.id === applicationId,
   );
-  const { authorizations, loading, refetch } =
+  const { authorizations, loading, hasLoadError, refetch } =
     useBuiltInMcpClientAppAuthorizations(app);
 
   if (!isDefined(app)) {
@@ -73,6 +73,7 @@ export const SettingsBuiltInMcpClientApp = () => {
           connectLink={connectLink}
           authorizations={authorizations}
           loading={loading}
+          hasLoadError={hasLoadError}
           refetch={refetch}
         />
       </SettingsPageContainer>

@@ -7,7 +7,7 @@ import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metada
 export const useBuiltInMcpClientAppAuthorizations = (
   builtInMcpClientApp: BuiltInMcpClientApp | undefined,
 ) => {
-  const { data, loading, refetch } = useQuery(
+  const { data, loading, error, refetch } = useQuery(
     CurrentUserApplicationAuthorizationsDocument,
     {
       fetchPolicy: 'cache-and-network',
@@ -23,6 +23,7 @@ export const useBuiltInMcpClientAppAuthorizations = (
         })
       : [],
     loading: loading && !isDefined(data),
+    hasLoadError: isDefined(error) && !isDefined(data),
     refetch,
   };
 };

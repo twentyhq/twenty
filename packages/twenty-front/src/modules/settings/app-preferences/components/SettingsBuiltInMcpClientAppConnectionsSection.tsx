@@ -3,6 +3,7 @@ import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings
 import { SettingsBuiltInMcpClientAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsCell';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
 import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -43,6 +44,7 @@ type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
   connectLink: string | undefined;
   authorizations: BuiltInMcpClientAppAuthorization[];
   loading: boolean;
+  hasLoadError: boolean;
   refetch: () => Promise<unknown>;
 };
 
@@ -51,6 +53,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   connectLink,
   authorizations,
   loading,
+  hasLoadError,
   refetch,
 }: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
   const { t } = useLingui();
@@ -62,6 +65,15 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const renderContent = () => {
     if (loading) {
       return <SettingsSectionSkeletonLoader />;
+    }
+
+    if (hasLoadError) {
+      return (
+        <SettingsApplicationLoadErrorBanner
+          message={t`Your connections could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      );
     }
 
     if (authorizations.length === 0) {
