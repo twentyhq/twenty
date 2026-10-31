@@ -11,7 +11,7 @@ export type WellKnownOAuthClientDefinition = {
   author: string;
   category: ApplicationCategory;
   websiteUrl: string;
-  // File name under this module's assets folder
+  // File name under this module's assets folder; it is stored once per name, so a new logo needs a new name
   logo: string;
   // Strings match exactly and are stored on the registration; patterns cover per-connection callbacks
   allowedRedirectUris: (string | RegExp)[];

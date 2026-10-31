@@ -18,7 +18,7 @@ export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
     author: 'OpenAI',
     category: 'Productivity',
     websiteUrl: 'https://chatgpt.com',
-    logo: 'chatgpt.svg',
+    logo: 'chatgpt-on-white.svg',
     allowedRedirectUris: [
       'https://chatgpt.com/connector_platform_oauth_redirect',
       /^https:\/\/chatgpt\.com\/connector\/oauth\/[A-Za-z0-9_-]+$/,
