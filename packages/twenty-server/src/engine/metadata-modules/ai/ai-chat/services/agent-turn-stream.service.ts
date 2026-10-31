@@ -247,7 +247,7 @@ export class AgentTurnStreamService {
           })
           .catch((finishError: unknown) =>
             this.logger.warn(
-              `Could not record the failure of turn ${turnId}: ${formatErrorWithCause(finishError)}`,
+              `Could not record the failure of turn ${turnId} in workspace ${workspaceId}: ${formatErrorWithCause(finishError)}`,
             ),
           );
       }
@@ -417,13 +417,11 @@ export class AgentTurnStreamService {
       },
     });
 
-    let publishStream = uiStream;
+    const [publishStream, checkpointStream] = isDefined(claim)
+      ? uiStream.tee()
+      : [uiStream, null];
 
-    if (isDefined(claim)) {
-      const [claimedPublishStream, checkpointStream] = uiStream.tee();
-
-      publishStream = claimedPublishStream;
-
+    if (isDefined(claim) && isDefined(checkpointStream)) {
       void (async () => {
         try {
           for await (const message of readUIMessageStream<ExtendedUIMessage>({
