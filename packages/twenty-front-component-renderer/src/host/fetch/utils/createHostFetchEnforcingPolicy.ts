@@ -1,8 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  FRONT_COMPONENT_HOST_FETCH_HEADER_NAME,
-  SESSION_COOKIE_OPT_IN_HEADER_NAME,
-} from 'twenty-shared/constants';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { CustomError, getUrlSafely, isDefined } from 'twenty-shared/utils';
 
 import { isPageCookieEligiblePath } from '@/host/fetch/utils/isPageCookieEligiblePath';
@@ -41,20 +38,13 @@ export const createHostFetchEnforcingPolicy = (
       fileStorageRedirectableUrlSet,
     );
 
-    // Cookies let auth proxies (Cloudflare Access, IAP, oauth2-proxy) through; the marker denies them the session.
-    // Not on followed redirects: the marker would trigger a CORS preflight the storage bucket rejects.
+    // Cookies let auth proxies (Cloudflare Access, IAP, oauth2-proxy) through; without the opt-in header the server gives them no session.
     const shouldSendPageCookies =
       requestUrl.origin === window.location.origin &&
-      isPageCookieEligiblePath(requestUrl.pathname) &&
-      redirectMode !== 'follow';
+      isPageCookieEligiblePath(requestUrl.pathname);
     const headers = new Headers(input.headers);
 
     headers.delete(SESSION_COOKIE_OPT_IN_HEADER_NAME);
-    headers.delete(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME);
-
-    if (shouldSendPageCookies) {
-      headers.set(FRONT_COMPONENT_HOST_FETCH_HEADER_NAME, '1');
-    }
 
     const response = await fetch(input.url, {
       method: requestMethod,

@@ -218,6 +218,16 @@ const STEP_INPUTS = {
     recipients: { to: 'jane@example.com', cc: '', bcc: '' },
     files: [],
   },
+  SEND_CHAT_MESSAGE: {
+    workspaceMemberId: WORKSPACE_MEMBER_ID,
+    title: 'Approve the ticket',
+    text: '{{trigger.properties.after.summary}}',
+    toolCall: {
+      toolName: 'update_one_ticket',
+      arguments: { id: '{{trigger.recordId}}', status: 'APPROVED' },
+    },
+    conversation: { key: 'ticket:{{trigger.recordId}}', scope: 'KEY' },
+  },
   CREATE_CALENDAR_EVENT: {
     connectedAccountHandle: SALES_HANDLE,
     title: 'Kick-off',
@@ -628,19 +638,16 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it.each([WorkflowActionType.CODE, WorkflowActionType.SEND_CHAT_MESSAGE])(
-      'reports a %s step',
-      (type) => {
-        const synced = syncWorkflow(buildWorkflow({}));
-        const [step] = synced.flatWorkflowVersion.steps ?? [];
+    it('reports a CODE step', () => {
+      const synced = syncWorkflow(buildWorkflow({}));
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-        Object.assign(step, { type });
+      Object.assign(step, { type: WorkflowActionType.CODE });
 
-        expect(exportWorkflow(synced)).toEqual({
-          reason: `${type} steps are not supported in application workflows`,
-        });
-      },
-    );
+      expect(exportWorkflow(synced)).toEqual({
+        reason: 'CODE steps are not supported in application workflows',
+      });
+    });
 
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
@@ -1090,6 +1097,41 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step).toMatchObject({ type: 'DRAFT_EMAIL', input });
+  });
+
+  it('exports a chat message step that waits for an approval', () => {
+    const input = {
+      text: '{{trigger.properties.after.summary}}',
+      title: 'Approve the ticket',
+      toolCall: {
+        toolName: 'update_one_ticket',
+        arguments: { id: '{{trigger.properties.after.id}}' },
+      },
+      conversation: {
+        key: 'ticket:{{trigger.properties.after.id}}',
+        scope: 'KEY',
+      },
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Send to Inbox',
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: true },
+            },
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
   });
 
   it('exports a step without a position as null', () => {

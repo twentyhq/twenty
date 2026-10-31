@@ -26,6 +26,11 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
 - `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
 
+## Send to Inbox Steps
+
+- `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
+- Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
+
 ## Manual Record Trigger
 
 - Trigger type: manual record selection.
