@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK } from 'src/engine/permissions/private-record/__mocks__/public-private-record-storage-service.mock';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
@@ -22,6 +24,10 @@ describe('webhook mandatory visibility', () => {
     const module = await Test.createTestingModule({
       providers: [
         CallWebhookJobsJob,
+        {
+          provide: PrivateRecordStorageService,
+          useValue: PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK,
+        },
         RecordAccessPolicyService,
         {
           provide: getQueueToken(MessageQueue.webhookQueue),
