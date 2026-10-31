@@ -14,8 +14,7 @@ import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata
 import { computeObjectsPermissionsForRoleDefinition } from 'src/engine/metadata-modules/role/utils/compute-objects-permissions-for-role-definition.util';
 import { type PermissionScope } from 'src/engine/twenty-orm/types/permission-scope.type';
 
-// A scope reads like a role, so it resolves through the same computation; an entry naming an
-// object or field the workspace does not have grants nothing
+// an entry naming an object or field the workspace does not have grants nothing
 export const resolveAiRunPermissionScope = ({
   scope,
   flatObjectMetadataMaps,

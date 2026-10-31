@@ -260,10 +260,13 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       },
     };
 
-    const compute = (
-      intersectionOf: RoleIdsBySource,
-      scopeObjectPermissions: ObjectPermissions | undefined,
-    ) =>
+    const compute = ({
+      intersectionOf,
+      scopeObjectPermissions,
+    }: {
+      intersectionOf: RoleIdsBySource;
+      scopeObjectPermissions?: ObjectPermissions;
+    }) =>
       computeObjectsPermissionsForRolePermissionConfig({
         intersectionOf,
         scope: {
@@ -279,40 +282,41 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       })[INVOICE_ID];
 
     it('narrows the roles to what the scope allows', () => {
-      const invoicePermissions = compute(
-        { userWorkspaceRoleId: 'user-role-id' },
-        { ...FULL_ACCESS, canUpdateObjectRecords: false },
-      );
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: {
+          ...FULL_ACCESS,
+          canUpdateObjectRecords: false,
+        },
+      });
 
       expect(invoicePermissions?.canReadObjectRecords).toBe(true);
       expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
     });
 
     it('never grants what the roles deny', () => {
-      const invoicePermissions = compute(
-        { userWorkspaceRoleId: 'user-role-id' },
-        FULL_ACCESS,
-      );
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: FULL_ACCESS,
+      });
 
-      // the user role cannot destroy an object its application disables it on
       expect(invoicePermissions?.canDestroyObjectRecords).toBe(false);
     });
 
     it('denies an object the scope leaves out', () => {
-      const invoicePermissions = compute(
-        { userWorkspaceRoleId: 'user-role-id' },
-        undefined,
-      );
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      });
 
       expect(invoicePermissions?.canReadObjectRecords).toBe(false);
       expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
     });
 
     it("keeps the roles' row-level predicates", () => {
-      const invoicePermissions = compute(
-        { userWorkspaceRoleId: 'user-role-id' },
-        FULL_ACCESS,
-      );
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: FULL_ACCESS,
+      });
 
       expect(invoicePermissions?.rowLevelPermissionPredicates).toEqual([
         USER_PREDICATE,
@@ -320,15 +324,15 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
     });
 
     it('adds the field restrictions of the scope', () => {
-      const invoicePermissions = compute(
-        { userWorkspaceRoleId: 'user-role-id' },
-        {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: {
           ...FULL_ACCESS,
           restrictedFields: {
             [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
           },
         },
-      );
+      });
 
       expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
         canRead: false,
@@ -337,7 +341,9 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
     });
 
     it('grants nothing without a role', () => {
-      expect(compute({}, FULL_ACCESS)).toBeUndefined();
+      expect(
+        compute({ intersectionOf: {}, scopeObjectPermissions: FULL_ACCESS }),
+      ).toBeUndefined();
     });
   });
 });

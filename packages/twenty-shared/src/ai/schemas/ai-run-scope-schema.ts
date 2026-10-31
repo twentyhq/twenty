@@ -19,8 +19,7 @@ const aiRunScopeFieldPermissionSchema = z
   })
   .strict();
 
-// A role manifest without identity or row-level predicates: what an AI run may reach on top of
-// its caller's own permissions. Anything left out is denied
+// a role manifest's permissions without identity or row-level predicates; anything left out is denied
 export const aiRunScopeSchema = z
   .object({
     canReadAllObjectRecords: z.boolean().optional(),

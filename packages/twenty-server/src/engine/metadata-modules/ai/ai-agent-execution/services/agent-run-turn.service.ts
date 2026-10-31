@@ -412,7 +412,7 @@ export class AgentRunTurnService {
     workspaceId,
     agentRunRoleIds,
   }: {
-    persona: ResolvedAgentRunPersona;
+    persona: Pick<ResolvedAgentRunPersona, 'permissions'>;
     workspaceId: string;
     agentRunRoleIds: AgentRunExecutionContext['agentRunRoleIds'];
   }): Promise<{
@@ -425,15 +425,17 @@ export class AgentRunTurnService {
         agentId: permissions.agentId,
       });
 
-      return isDefined(agentRoleId)
-        ? {
-            rolePermissionConfig: buildAgentRolePermissionConfig({
-              agentRoleId,
-              agentRunRoleIds,
-            }),
-            explicitObjectGrants: { type: 'role', roleId: agentRoleId },
-          }
-        : null;
+      if (!isDefined(agentRoleId)) {
+        return null;
+      }
+
+      return {
+        rolePermissionConfig: buildAgentRolePermissionConfig({
+          agentRoleId,
+          agentRunRoleIds,
+        }),
+        explicitObjectGrants: { type: 'role', roleId: agentRoleId },
+      };
     }
 
     const { scope } = permissions;
