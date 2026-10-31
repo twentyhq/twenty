@@ -168,6 +168,37 @@ const fromFormInput = ({
     };
   });
 
+// The scope already names objects and fields by universal identifier, but only exported ones can be applied
+const checkAiRunScopeReferences = ({
+  scope,
+  resolvers,
+}: {
+  scope: unknown;
+  resolvers: WorkflowManifestInverseReferenceResolvers;
+}): void => {
+  if (!isPlainObject(scope)) {
+    return;
+  }
+
+  for (const objectPermission of toArray(scope.objectPermissions)) {
+    resolvers.exportedObjectUniversalIdentifier(
+      String(toRecord(objectPermission).objectUniversalIdentifier),
+    );
+  }
+
+  for (const fieldPermission of toArray(scope.fieldPermissions)) {
+    const { objectUniversalIdentifier, fieldUniversalIdentifier } =
+      toRecord(fieldPermission);
+
+    resolvers.exportedObjectUniversalIdentifier(
+      String(objectUniversalIdentifier),
+    );
+    resolvers.exportedFieldUniversalIdentifier(
+      String(fieldUniversalIdentifier),
+    );
+  }
+};
+
 const fromActionInput = ({
   action,
   resolvers,
@@ -182,6 +213,8 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
+
+      checkAiRunScopeReferences({ scope: rest.scope, resolvers });
 
       return isDefined(agentId)
         ? {

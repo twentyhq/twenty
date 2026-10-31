@@ -141,22 +141,26 @@ describe('defineWorkflow', () => {
     expect(result.errors).toEqual([error]);
   });
 
-  const withAiAgentStep = (input: Record<string, unknown>) =>
-    ({
-      ...workflow,
-      version: {
-        ...workflow.version,
-        steps: [
-          {
-            universalIdentifier: STEP_ID,
-            name: 'Qualify',
-            type: 'AI_AGENT',
-            input,
-            nextStepIds: [],
-          },
-        ],
-      },
-    }) as WorkflowManifest;
+  const withAiAgentStep = (
+    input: Extract<
+      WorkflowManifest['version']['steps'][number],
+      { type: 'AI_AGENT' }
+    >['input'],
+  ): WorkflowManifest => ({
+    ...workflow,
+    version: {
+      ...workflow.version,
+      steps: [
+        {
+          universalIdentifier: STEP_ID,
+          name: 'Qualify',
+          type: 'AI_AGENT',
+          input,
+          nextStepIds: [],
+        },
+      ],
+    },
+  });
 
   it('accepts an AI agent step that carries its own config', () => {
     expect(

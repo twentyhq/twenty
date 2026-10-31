@@ -43,7 +43,6 @@ export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-na
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
-export { aiRunScopeSchema } from './schemas/ai-run-scope-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';

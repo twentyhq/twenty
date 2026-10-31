@@ -248,7 +248,6 @@ const workflowStepManifestOptions = [
       .extend(connectedAccountReferenceShape)
       .superRefine(refineConnectedAccountReference),
   ),
-  // a step either runs a reusable agent or carries its own instructions, model and scope
   stepSchema(
     'AI_AGENT',
     workflowAiAgentActionSettingsSchema.shape.input

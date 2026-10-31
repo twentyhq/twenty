@@ -693,6 +693,55 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           'workflow step on a logic function that is not a workflow action of this application',
       },
       {
+        description: 'an agent scope naming an object that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                objectPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    canReadObjectRecords: true,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          objectByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing an object that is not exported',
+      },
+      {
+        description: 'an agent scope naming a field that is not exported',
+        step: buildStep({
+          type: 'AI_AGENT',
+          overrides: {
+            input: {
+              prompt: 'Summarize {{trigger.text}}',
+              scope: {
+                fieldPermissions: [
+                  {
+                    objectUniversalIdentifier: OBJECT_ID,
+                    fieldUniversalIdentifier: STATUS_FIELD_ID,
+                    canReadFieldValue: false,
+                  },
+                ],
+              },
+            },
+          },
+        }),
+        exportReferences: {
+          ...references,
+          fieldByUniversalIdentifier: new Map(),
+        },
+        reason: 'workflow referencing a field that is not exported',
+      },
+      {
         description: 'an agent the application does not export',
         step: buildStep({ type: 'AI_AGENT' }),
         exportReferences: {

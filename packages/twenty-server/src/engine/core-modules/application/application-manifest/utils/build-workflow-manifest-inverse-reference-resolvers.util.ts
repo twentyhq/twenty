@@ -159,6 +159,30 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
         'workflow step on a logic function that is not a workflow action of this application',
     });
 
+  const exportedObjectUniversalIdentifier = (
+    universalIdentifier: string,
+  ): string =>
+    resolveOrMarkUnsupported({
+      universalIdentifier: references.objectByUniversalIdentifier?.has(
+        universalIdentifier,
+      )
+        ? universalIdentifier
+        : undefined,
+      reason: 'workflow referencing an object that is not exported',
+    });
+
+  const exportedFieldUniversalIdentifier = (
+    universalIdentifier: string,
+  ): string =>
+    resolveOrMarkUnsupported({
+      universalIdentifier: references.fieldByUniversalIdentifier?.has(
+        universalIdentifier,
+      )
+        ? universalIdentifier
+        : undefined,
+      reason: 'workflow referencing a field that is not exported',
+    });
+
   const agentUniversalIdentifier = (agentId: unknown): string =>
     resolveOrMarkUnsupported({
       universalIdentifier:
@@ -240,6 +264,8 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
     watchedFieldUniversalIdentifier,
     logicFunctionUniversalIdentifier,
     agentUniversalIdentifier,
+    exportedObjectUniversalIdentifier,
+    exportedFieldUniversalIdentifier,
     connectedAccountReference,
     markUnsupported,
     getUnsupportedReason: (): string | undefined => unsupportedReasons[0],
