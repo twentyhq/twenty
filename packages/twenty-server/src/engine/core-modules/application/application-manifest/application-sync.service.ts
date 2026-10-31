@@ -198,6 +198,7 @@ export class ApplicationSyncService {
       ),
       logicFunctionLayerId: null,
       defaultRoleId: null,
+      approvedRoleRequest: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
       uninstallLogicFunctionId: null,

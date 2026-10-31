@@ -5,4 +5,5 @@ export const ROLE_TARGET_FOREIGN_KEY_PROPERTIES = [
   'apiKeyId',
   'agentId',
   'webhookId',
+  'targetApplicationId',
 ] as const satisfies MetadataEntityPropertyName<'roleTarget'>[];

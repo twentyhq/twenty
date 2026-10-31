@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-application-granted-roles-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
@@ -76,6 +77,12 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
 
   @Column({ nullable: false, default: true })
   canBeAssignedToApiKeys: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  canBeAssignedToApplications: boolean;
 
   @OneToMany(
     () => RoleTargetEntity,

@@ -1,3 +1,5 @@
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
+
 import { SystemPermissionFlag, defineApplicationRole } from '@/sdk/define';
 
 describe('defineApplicationRole', () => {
@@ -81,6 +83,25 @@ describe('defineApplicationRole', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
       'Object permission must have an objectUniversalIdentifier',
+    );
+  });
+  it('should reject row-level permission rules', () => {
+    const result = defineApplicationRole({
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '6c9a4f0e-3f0f-4a43-a8a2-0c8f3e1c2b11',
+          objectUniversalIdentifier: 'object-universal-identifier',
+          fieldUniversalIdentifier: 'field-universal-identifier',
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: 'x',
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Application roles cannot declare row-level permission rules: workspace admins add them on the granted role',
     );
   });
 });

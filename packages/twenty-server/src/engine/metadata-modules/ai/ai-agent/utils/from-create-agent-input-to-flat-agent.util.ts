@@ -85,6 +85,7 @@ export const fromCreateAgentInputToFlatAgent = ({
       apiKeyId: null,
       webhookId: null,
       webhookUniversalIdentifier: null,
+      targetApplicationId: null,
       createdAt,
       updatedAt: createdAt,
       universalIdentifier: v4(),

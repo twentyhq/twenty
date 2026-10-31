@@ -70,6 +70,7 @@ export class FlatRoleTargetValidatorService {
         ...validateFlatRoleTargetAssignationAvailability({
           flatRole: referencedRole,
           flatRoleTarget: flatRoleTargetToValidate,
+          buildOptions,
         }),
       );
 
@@ -187,6 +188,7 @@ export class FlatRoleTargetValidatorService {
       ...validateFlatRoleTargetAssignationAvailability({
         flatRole: referencedRole,
         flatRoleTarget: updatedFlatRoleTarget,
+        buildOptions,
       }),
     );
 

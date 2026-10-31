@@ -80,6 +80,7 @@ export class RoleService {
       flatPermissionFlagMaps,
       flatObjectPermissionMaps,
       flatFieldPermissionMaps,
+      flatRoleTargetMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -89,12 +90,25 @@ export class RoleService {
             'flatPermissionFlagMaps',
             'flatObjectPermissionMaps',
             'flatFieldPermissionMaps',
+            'flatRoleTargetMaps',
           ],
         },
       );
 
+    const grantedApplicationIdByRoleId = new Map(
+      Object.values(flatRoleTargetMaps.byUniversalIdentifier).flatMap(
+        (flatRoleTarget) =>
+          isDefined(flatRoleTarget?.targetApplicationId)
+            ? [[flatRoleTarget.roleId, flatRoleTarget.targetApplicationId]]
+            : [],
+      ),
+    );
+
     return flatRoles.map((flatRole) => {
       const roleDto = fromFlatRoleToRoleDto(flatRole);
+
+      roleDto.grantedToApplicationId =
+        grantedApplicationIdByRoleId.get(flatRole.id) ?? null;
 
       roleDto.permissionFlags = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatRole.rolePermissionFlagIds,

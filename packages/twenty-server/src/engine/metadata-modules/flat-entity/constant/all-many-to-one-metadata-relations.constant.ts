@@ -334,6 +334,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'webhookUniversalIdentifier',
     },
+    targetApplication: null,
     workspace: null,
     application: null,
   },

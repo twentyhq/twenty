@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   type ApplicationBilling,
   type ApplicationCapability,
+  type RoleManifest,
 } from 'twenty-shared/application';
 import {
   Column,
@@ -19,6 +20,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-application-granted-roles-upgrade-command-name.constant';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
@@ -144,6 +146,12 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_APPLICATION_GRANTED_ROLES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  approvedRoleRequest: RoleManifest | null;
 
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
