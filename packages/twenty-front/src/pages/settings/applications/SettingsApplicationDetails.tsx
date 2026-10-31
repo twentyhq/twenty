@@ -1,7 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
-import { useInstalledBuiltInApp } from '@/settings/applications/hooks/useInstalledBuiltInApp';
+import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
@@ -41,7 +41,7 @@ import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/c
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
-import { SettingsBuiltInAppDetails } from '~/pages/settings/applications/SettingsBuiltInAppDetails';
+import { SettingsBuiltInAccountAppDetails } from '~/pages/settings/applications/SettingsBuiltInAccountAppDetails';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
@@ -64,7 +64,7 @@ const GENERAL_TAB_ID = 'general';
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
   const { getIcon } = useIcons();
-  const builtInApp = useInstalledBuiltInApp(applicationId);
+  const builtInAccountApp = useInstalledBuiltInAccountApp(applicationId);
 
   const {
     data,
@@ -326,8 +326,10 @@ export const SettingsApplicationDetails = () => {
     }
   };
 
-  if (isDefined(builtInApp)) {
-    return <SettingsBuiltInAppDetails builtInApp={builtInApp} />;
+  if (isDefined(builtInAccountApp)) {
+    return (
+      <SettingsBuiltInAccountAppDetails builtInAccountApp={builtInAccountApp} />
+    );
   }
 
   return (

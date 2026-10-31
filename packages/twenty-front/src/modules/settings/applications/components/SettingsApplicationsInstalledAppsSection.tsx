@@ -1,10 +1,9 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
-import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
-import { useInstalledBuiltInApps } from '@/settings/applications/hooks/useInstalledBuiltInApps';
+import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
-import { filterOutBuiltInMcpClientApplications } from '@/settings/applications/utils/filterOutBuiltInMcpClientApplications';
+import { collapseWellKnownOAuthClientApplications } from '@/settings/applications/utils/collapseWellKnownOAuthClientApplications';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -19,16 +18,13 @@ const StyledToolbar = styled.div`
 export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
-  const installedBuiltInApps = useInstalledBuiltInApps();
+  const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
-  const displayedApplications = filterOutBuiltInMcpClientApplications({
-    applications: installedApplications,
-    builtInMcpClientApps: BUILT_IN_MCP_CLIENT_APPS.filter(({ id }) =>
-      installedBuiltInApps.some((builtInApp) => builtInApp.id === id),
-    ),
-  });
+  const displayedApplications = isAppPreferencesEnabled
+    ? collapseWellKnownOAuthClientApplications(installedApplications)
+    : installedApplications;
   const {
     statusesById,
     error: statusError,
@@ -58,7 +54,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
         ) : undefined
       }
       applications={displayedApplications}
-      builtInApps={installedBuiltInApps}
+      builtInApps={installedBuiltInAccountApps}
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}
       statusesById={statusesById}

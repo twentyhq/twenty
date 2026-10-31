@@ -7,6 +7,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
@@ -45,6 +46,7 @@ const buildApplication = ({
   latestAvailableVersion,
   sourceType = ApplicationRegistrationSourceType.NPM,
   wellKnownOAuthClient = null,
+  universalIdentifier = `${id}-universal-identifier`,
 }: {
   id: string;
   name: string;
@@ -52,6 +54,7 @@ const buildApplication = ({
   latestAvailableVersion: string;
   sourceType?: ApplicationRegistrationSourceType;
   wellKnownOAuthClient?: WellKnownOAuthClient | null;
+  universalIdentifier?: string;
 }) => ({
   __typename: 'Application',
   id,
@@ -59,7 +62,7 @@ const buildApplication = ({
   description,
   logoUrl: null,
   version: '1.0.0',
-  universalIdentifier: `${id}-universal-identifier`,
+  universalIdentifier,
   applicationRegistrationId: `${id}-registration-id`,
   applicationRegistration: {
     __typename: 'ApplicationRegistrationSummary',
@@ -92,13 +95,25 @@ const NOTES_APPLICATION = buildApplication({
   latestAvailableVersion: '1.0.0',
 });
 
-const CLAUDE_OAUTH_APPLICATION = buildApplication({
-  id: 'claude-oauth-application-id',
+// Installed by a Claude connection made before the server seeded the Claude registration
+const EARLIER_CLAUDE_CONNECTION_APPLICATION = buildApplication({
+  id: 'earlier-claude-connection-application-id',
   name: 'Claude',
   description: 'OAuth application registered as Claude',
   latestAvailableVersion: '1.0.0',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
   wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+});
+
+const CLAUDE_APPLICATION = buildApplication({
+  id: 'claude-application-id',
+  name: 'Claude',
+  description:
+    'Work with your Twenty workspace from Claude through the Twenty connector.',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+  universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
 });
 
 const ZAPIER_APPLICATION = buildApplication({
@@ -121,7 +136,8 @@ const APPLICATIONS = [
   RECORDER_APPLICATION,
   ACME_APPLICATION,
   NOTES_APPLICATION,
-  CLAUDE_OAUTH_APPLICATION,
+  EARLIER_CLAUDE_CONNECTION_APPLICATION,
+  CLAUDE_APPLICATION,
   ZAPIER_APPLICATION,
   BRIDGE_APPLICATION,
 ];
@@ -159,13 +175,16 @@ const APPLICATIONS_FOR_STATUS = [
       }),
     ],
   },
-  ...[CLAUDE_OAUTH_APPLICATION, ZAPIER_APPLICATION, BRIDGE_APPLICATION].map(
-    ({ id }) => ({
-      __typename: 'Application',
-      id,
-      applicationVariables: [],
-    }),
-  ),
+  ...[
+    EARLIER_CLAUDE_CONNECTION_APPLICATION,
+    CLAUDE_APPLICATION,
+    ZAPIER_APPLICATION,
+    BRIDGE_APPLICATION,
+  ].map(({ id }) => ({
+    __typename: 'Application',
+    id,
+    applicationVariables: [],
+  })),
 ];
 
 const findManyApplicationsForStatus = fn();
@@ -281,7 +300,8 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
     expect(findManyApplicationsForStatus).not.toHaveBeenCalled();
     expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual(
       expect.arrayContaining([
-        `/settings/applications/${CLAUDE_OAUTH_APPLICATION.id}`,
+        `/settings/applications/${EARLIER_CLAUDE_CONNECTION_APPLICATION.id}`,
+        `/settings/applications/${CLAUDE_APPLICATION.id}`,
         `/settings/applications/${ZAPIER_APPLICATION.id}`,
         `/settings/applications/${BRIDGE_APPLICATION.id}`,
       ]),
@@ -320,7 +340,7 @@ export const ShowsStatusWithAppPreferences: Story = {
   },
 };
 
-export const HidesClaudeOAuthAppsBehindTheBuiltInClaudeRow: Story = {
+export const ShowsOneClaudeRowForEveryClaudeConnection: Story = {
   beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -334,10 +354,13 @@ export const HidesClaudeOAuthAppsBehindTheBuiltInClaudeRow: Story = {
 
     const rowLinks = getSettingsApplicationsTableRowLinks(canvasElement);
 
-    expect(rowLinks).toContain('/settings/applications/claude');
-    expect(rowLinks).not.toContain(
-      `/settings/applications/${CLAUDE_OAUTH_APPLICATION.id}`,
+    expect(rowLinks).toContain(
+      `/settings/applications/${CLAUDE_APPLICATION.id}`,
     );
+    expect(rowLinks).not.toContain(
+      `/settings/applications/${EARLIER_CLAUDE_CONNECTION_APPLICATION.id}`,
+    );
+    expect(canvas.getAllByRole('link', { name: /Claude/ })).toHaveLength(1);
     expect(rowLinks).toEqual(
       expect.arrayContaining([
         `/settings/applications/${ZAPIER_APPLICATION.id}`,

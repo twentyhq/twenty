@@ -25,7 +25,7 @@ const meta: Meta<typeof SettingsApplicationsTable> = {
       NPM_APPLICATION,
       STANDARD_APPLICATION,
     ],
-    builtInApps: [...BUILT_IN_ACCOUNT_APPS, ...BUILT_IN_MCP_CLIENT_APPS],
+    builtInApps: BUILT_IN_ACCOUNT_APPS,
     linkTarget: 'applicationDetail',
     middleColumn: 'type',
   },
@@ -35,7 +35,7 @@ export default meta;
 
 type Story = StoryObj<typeof SettingsApplicationsTable>;
 
-export const BuiltInAppsListedAfterStandardApp: Story = {
+export const BuiltInAccountAppsListedAfterStandardApp: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -45,17 +45,12 @@ export const BuiltInAppsListedAfterStandardApp: Story = {
       '/settings/applications/google',
       '/settings/applications/outlook',
       '/settings/applications/imap',
-      '/settings/applications/chatgpt',
-      '/settings/applications/claude',
       '/settings/applications/npm-application-id',
       '/settings/applications/oauth-application-id',
     ]);
     expect(
       canvas.getByRole('link', { name: /Gmail and Calendar/ }),
     ).toHaveTextContent('Built-in');
-    expect(canvas.getByRole('link', { name: /Claude/ })).toHaveTextContent(
-      'Built-in',
-    );
   },
 };
 
@@ -210,6 +205,7 @@ export const MemberRowsLinkToTheirPreferences: Story = {
     description:
       'Choose your preferences for the apps installed on your workspace by the admin',
     applications: [OAUTH_ONLY_APPLICATION, NPM_APPLICATION],
+    builtInApps: [...BUILT_IN_ACCOUNT_APPS, ...BUILT_IN_MCP_CLIENT_APPS],
     linkTarget: 'applicationPreferences',
     middleColumn: 'status',
     statusesById: {
