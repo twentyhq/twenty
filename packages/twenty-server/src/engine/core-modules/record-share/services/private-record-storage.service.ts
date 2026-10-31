@@ -93,44 +93,78 @@ export class PrivateRecordStorageService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
-    const objectsWithCreator = flatObjectMetadatas.filter(
-      (flatObjectMetadata) =>
-        hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
-    );
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    if (objectsWithCreator.length === 0) {
-      return;
-    }
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const recordShareRepository = this.workspaceOrmManager.getRepository(
+        RECORD_SHARE_OBJECT_METADATA_NAME,
+        { shouldBypassPermissionChecks: true },
+      );
+      // A member can be removed between the deploy and the upgrade that adds the column
+      const tablesWithColumn = await recordShareRepository.executeRaw<{
+        tableName: string;
+      }>(
+        `SELECT table_name AS "tableName" FROM information_schema.columns WHERE table_schema = :schemaName AND column_name = :columnName`,
+        { schemaName, columnName: IS_PRIVATE_COLUMN_NAME },
+      );
+      const tableNamesWithColumn = new Set(
+        tablesWithColumn.map(({ tableName }) => tableName),
+      );
+      const objectsWithCreator = flatObjectMetadatas.filter(
+        (flatObjectMetadata) =>
+          tableNamesWithColumn.has(
+            computeObjectTargetTable(flatObjectMetadata),
+          ) && hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
+      );
 
+      if (objectsWithCreator.length === 0) {
+        return;
+      }
+
+      await this.insertCustodianGrants({
+        recordShareRepository,
+        workspaceId,
+        objectsWithCreator,
+        creatorWorkspaceMemberId,
+        granteeWorkspaceMemberId,
+      });
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async insertCustodianGrants({
+    recordShareRepository,
+    workspaceId,
+    objectsWithCreator,
+    creatorWorkspaceMemberId,
+    granteeWorkspaceMemberId,
+  }: {
+    recordShareRepository: WorkspaceRepository;
+    workspaceId: string;
+    objectsWithCreator: FlatObjectMetadata[];
+    creatorWorkspaceMemberId: string;
+    granteeWorkspaceMemberId: string;
+  }): Promise<void> {
     const privateRecordSelects = objectsWithCreator.map(
       (flatObjectMetadata, index) =>
         `SELECT CAST(:objectMetadataId${index} AS uuid) AS "objectMetadataId", "id" AS "recordId" FROM ${buildTableExpression({ workspaceId, flatObjectMetadata })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :creatorWorkspaceMemberId`,
     );
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepository(RECORD_SHARE_OBJECT_METADATA_NAME, {
-            shouldBypassPermissionChecks: true,
-          })
-          .executeRaw(
-            `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."recordShare"
+    await recordShareRepository.executeRaw(
+      `INSERT INTO ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."recordShare"
                ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
              SELECT private_record."objectMetadataId", private_record."recordId", :granteeWorkspaceMemberId, 'WORKSPACE_MEMBER', 'FULL', 'OWNER', private_record."recordId"
              FROM (${privateRecordSelects.join(' UNION ALL ')}) AS private_record
              ON CONFLICT DO NOTHING`,
-            {
-              creatorWorkspaceMemberId,
-              granteeWorkspaceMemberId,
-              ...Object.fromEntries(
-                objectsWithCreator.map(({ id }, index) => [
-                  `objectMetadataId${index}`,
-                  id,
-                ]),
-              ),
-            },
-          ),
-      buildSystemAuthContext(workspaceId),
+      {
+        creatorWorkspaceMemberId,
+        granteeWorkspaceMemberId,
+        ...Object.fromEntries(
+          objectsWithCreator.map(({ id }, index) => [
+            `objectMetadataId${index}`,
+            id,
+          ]),
+        ),
+      },
     );
   }
 
