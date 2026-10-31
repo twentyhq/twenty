@@ -50,4 +50,41 @@ describe('validateWorkflowAiAgentStep', () => {
       ['AI_AGENT_CONFLICTING_CONFIG'],
     );
   });
+
+  it('refuses a step without an agent that asks humans for input', () => {
+    expect(
+      errorCodesFor({
+        prompt: 'Qualify {{trigger.name}}',
+        humanInputInstructions: 'Ask before choosing a plan.',
+      }),
+    ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
+  });
+
+  it('refuses a step without an agent that keeps a conversation', () => {
+    expect(
+      errorCodesFor({
+        prompt: 'Qualify {{trigger.name}}',
+        conversation: { scope: 'RUN' },
+      }),
+    ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
+  });
+
+  it('ignores blank human input instructions on a step without an agent', () => {
+    expect(
+      errorCodesFor({
+        prompt: 'Qualify {{trigger.name}}',
+        humanInputInstructions: '  ',
+      }),
+    ).toEqual([]);
+  });
+
+  it('accepts human input instructions and a conversation on a step running an agent', () => {
+    expect(
+      errorCodesFor({
+        agentId: 'agent-id',
+        humanInputInstructions: 'Ask before choosing a plan.',
+        conversation: { scope: 'KEY', key: 'lead' },
+      }),
+    ).toEqual([]);
+  });
 });

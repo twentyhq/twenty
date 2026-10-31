@@ -45,7 +45,6 @@ export const buildExplicitObjectPermissionByObjectId = ({
 
   const { scope } = explicitObjectGrants;
 
-  // a scope granting an action on all objects names every object for it
   return new Map(
     Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
