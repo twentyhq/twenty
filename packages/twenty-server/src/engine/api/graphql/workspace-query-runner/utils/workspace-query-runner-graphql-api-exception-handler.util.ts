@@ -20,8 +20,8 @@ import { UsageLimitException } from 'src/engine/core-modules/usage-limit/excepti
 import { usageLimitToGraphqlApiExceptionHandler } from 'src/engine/core-modules/usage-limit/utils/usage-limit-to-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
-import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
+import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { recordShareGraphqlApiExceptionHandler } from 'src/engine/permissions/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { RecordValidationRuleException } from 'src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception';
 import { recordValidationRuleGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/validation-rule/utils/record-validation-rule-graphql-api-exception-handler.util';
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
