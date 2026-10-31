@@ -60,7 +60,12 @@ describe('ApplicationRegistrationSeedingService', () => {
   });
 
   it('returns the existing registration without inserting one', async () => {
-    const existingRegistration = { id: 'existing-id' };
+    const existingRegistration = {
+      id: 'existing-id',
+      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      ownerWorkspaceId: null,
+      oAuthClientSecretHash: null,
+    };
 
     findOneByUniversalIdentifierGlobal.mockResolvedValue(existingRegistration);
 
@@ -68,6 +73,19 @@ describe('ApplicationRegistrationSeedingService', () => {
       service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
     ).resolves.toBe(existingRegistration);
     expect(insertedValues).not.toHaveBeenCalled();
+  });
+
+  it('refuses a row someone else created under the reserved identifier', async () => {
+    findOneByUniversalIdentifierGlobal.mockResolvedValue({
+      id: 'squatted-id',
+      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      ownerWorkspaceId: 'attacker-workspace-id',
+      oAuthClientSecretHash: 'hash',
+    });
+
+    await expect(
+      service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
+    ).rejects.toThrow('taken by another owner');
   });
 
   it('inserts a public OAuth-only registration and refreshes the marketplace catalog', async () => {

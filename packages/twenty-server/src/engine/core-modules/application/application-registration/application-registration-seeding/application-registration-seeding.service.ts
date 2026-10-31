@@ -45,6 +45,19 @@ export class ApplicationRegistrationSeedingService {
       );
 
     if (isDefined(existingRegistration)) {
+      // A row created by someone else under this identifier must not be served as the server's own
+      if (
+        existingRegistration.sourceType !==
+          ApplicationRegistrationSourceType.OAUTH_ONLY ||
+        isDefined(existingRegistration.ownerWorkspaceId) ||
+        isDefined(existingRegistration.oAuthClientSecretHash)
+      ) {
+        throw new ApplicationException(
+          `The ${values.name} application registration is taken by another owner`,
+          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+        );
+      }
+
       return existingRegistration;
     }
 

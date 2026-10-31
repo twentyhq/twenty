@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import {
   type ApplicationBilling,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type Manifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -34,6 +33,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { isReservedApplicationRegistrationUniversalIdentifier } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/utils/is-reserved-application-registration-universal-identifier.util';
 import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -488,8 +488,9 @@ export class ApplicationRegistrationService {
 
     if (
       isDefined(existingByUid) ||
-      fields.universalIdentifier.toLowerCase() ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+      isReservedApplicationRegistrationUniversalIdentifier(
+        fields.universalIdentifier,
+      )
     ) {
       throw new ApplicationRegistrationException(
         `Universal identifier ${fields.universalIdentifier} is already claimed`,
@@ -1393,7 +1394,12 @@ export class ApplicationRegistrationService {
       params.applicationRegistrationId,
     );
 
-    if (isDefined(registration.ownerWorkspaceId)) {
+    if (
+      isDefined(registration.ownerWorkspaceId) ||
+      isReservedApplicationRegistrationUniversalIdentifier(
+        registration.universalIdentifier,
+      )
+    ) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,

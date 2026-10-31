@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
@@ -20,6 +21,7 @@ const UP_TO_DATE_CLAUDE_REGISTRATION = {
   category: CLAUDE.category,
   websiteUrl: CLAUDE.websiteUrl,
   logo: CLAUDE.logo,
+  oAuthScopes: [...ALL_OAUTH_SCOPES],
   isListed: true,
 };
 
@@ -74,6 +76,20 @@ describe('WellKnownOAuthClientRegistrationService', () => {
     expect(update).toHaveBeenCalledWith(
       'claude-registration-id',
       expect.objectContaining({ description: CLAUDE.description }),
+    );
+  });
+
+  it('grants the seeded row scopes added since it was created', async () => {
+    findOrCreateOAuthOnlyRegistration.mockResolvedValue({
+      ...UP_TO_DATE_CLAUDE_REGISTRATION,
+      oAuthScopes: ['api'],
+    });
+
+    await service.syncRegistration(CLAUDE);
+
+    expect(update).toHaveBeenCalledWith(
+      'claude-registration-id',
+      expect.objectContaining({ oAuthScopes: [...ALL_OAUTH_SCOPES] }),
     );
   });
 
