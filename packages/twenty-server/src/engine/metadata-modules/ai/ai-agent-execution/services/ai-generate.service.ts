@@ -123,33 +123,41 @@ export class AiGenerateService {
         }
       : null;
 
+    const buildFailure = (error: string): GenerateResult => ({
+      success: false,
+      text: null,
+      object: null,
+      error,
+      turnId,
+      usage,
+    });
+
     if (outcome.status === 'FAILED') {
-      return {
-        success: false,
-        text: null,
-        object: null,
-        error: outcome.error,
-        turnId,
-        usage,
-      };
+      return buildFailure(outcome.error);
     }
 
-    const result = isPlainObject(outcome.result) ? outcome.result : {};
+    if (!isPlainObject(outcome.result)) {
+      return buildFailure('The run returned no result');
+    }
 
     if (isJsonResponse) {
       return {
         success: true,
         text: null,
-        object: result,
+        object: outcome.result,
         error: null,
         turnId,
         usage,
       };
     }
 
+    if (!isString(outcome.result.response)) {
+      return buildFailure('The run returned no text');
+    }
+
     return {
       success: true,
-      text: isString(result.response) ? result.response : '',
+      text: outcome.result.response,
       object: null,
       error: null,
       turnId,

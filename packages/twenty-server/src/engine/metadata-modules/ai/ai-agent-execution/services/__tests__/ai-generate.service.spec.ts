@@ -235,6 +235,51 @@ describe('AiGenerateService', () => {
     ).resolves.toMatchObject({ success: false, turnId: null });
   });
 
+  it('fails a completed run whose result is unusable instead of returning a fallback', async () => {
+    const { service: textService } = buildService({
+      outcome: { status: 'COMPLETED', result: { response: 42 } },
+    });
+    const { service: jsonService } = buildService({
+      outcome: { status: 'COMPLETED', result: 'not an object' },
+    });
+
+    await expect(
+      textService.generate({
+        workspace: WORKSPACE,
+        requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
+        callerApplication: APPLICATION,
+        input: { input: MESSAGES },
+      }),
+    ).resolves.toMatchObject({
+      success: false,
+      text: null,
+      error: 'The run returned no text',
+    });
+    await expect(
+      jsonService.generate({
+        workspace: WORKSPACE,
+        requestUserWorkspaceId: null,
+        requestWorkspaceMemberId: null,
+        callerApplication: APPLICATION,
+        input: {
+          input: MESSAGES,
+          responseFormat: {
+            type: 'json',
+            schema: {
+              type: 'object',
+              properties: { fit: { type: 'boolean' } },
+            },
+          },
+        },
+      }),
+    ).resolves.toMatchObject({
+      success: false,
+      object: null,
+      error: 'The run returned no result',
+    });
+  });
+
   it('reports a failed run', async () => {
     const { service } = buildService({
       outcome: { status: 'FAILED', error: 'provider down' },

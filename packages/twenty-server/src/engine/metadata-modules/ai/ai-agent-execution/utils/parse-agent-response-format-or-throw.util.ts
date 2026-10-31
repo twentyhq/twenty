@@ -7,7 +7,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-// GraphQL takes the format as JSON, so it is checked here before it reaches the model
 export const parseAgentResponseFormatOrThrow = (
   responseFormat: unknown,
 ): AgentResponseFormat | undefined => {

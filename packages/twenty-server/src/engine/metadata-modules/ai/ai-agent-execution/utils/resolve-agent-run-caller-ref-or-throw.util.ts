@@ -8,7 +8,6 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-// An AI call acts as the member who made it, else the calling application, else an API key
 export const resolveAgentRunCallerRefOrThrow = ({
   callerApplication,
   callerApiKey,
@@ -16,7 +15,7 @@ export const resolveAgentRunCallerRefOrThrow = ({
   requestWorkspaceMemberId,
 }: {
   callerApplication?: FlatApplication;
-  callerApiKey?: FlatApiKey;
+  callerApiKey?: Pick<FlatApiKey, 'id'>;
   requestUserWorkspaceId: string | null;
   requestWorkspaceMemberId: string | null;
 }): AgentRunCallerRef => {
