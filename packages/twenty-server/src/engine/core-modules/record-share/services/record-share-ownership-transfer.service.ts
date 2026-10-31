@@ -8,6 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { ADD_PRIVATE_RECORD_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-private-record-column-upgrade-command-name.constant';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -19,6 +22,8 @@ export class RecordShareOwnershipTransferService {
     private readonly userRoleService: UserRoleService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -53,7 +58,10 @@ export class RecordShareOwnershipTransferService {
       toWorkspaceMemberId,
     });
 
-    if (isDefined(toWorkspaceMemberId)) {
+    if (
+      isDefined(toWorkspaceMemberId) &&
+      (await this.hasRunPrivateRecordColumnUpgrade(workspaceId))
+    ) {
       // Nobody passes the creator check of a removed member's private records, admins included
       await this.privateRecordStorageService.grantPrivateRecordsCreatedBy({
         workspaceId,
@@ -62,6 +70,37 @@ export class RecordShareOwnershipTransferService {
         granteeWorkspaceMemberId: toWorkspaceMemberId,
       });
     }
+  }
+
+  // Remove once 2.55 leaves the cross-upgrade window: before that command a workspace has no private records
+  private async hasRunPrivateRecordColumnUpgrade(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+    const commandIndex = sequence.findIndex(
+      ({ name }) => name === ADD_PRIVATE_RECORD_COLUMN_UPGRADE_COMMAND_NAME,
+    );
+
+    if (commandIndex === -1) {
+      return true;
+    }
+
+    const cursor = (
+      await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandName([
+        workspaceId,
+      ])
+    ).get(workspaceId);
+
+    if (!isDefined(cursor)) {
+      return false;
+    }
+
+    const cursorIndex = sequence.findIndex(({ name }) => name === cursor.name);
+
+    return (
+      cursorIndex > commandIndex ||
+      (cursorIndex === commandIndex && cursor.status === 'completed')
+    );
   }
 
   private async findTransferableObjects(

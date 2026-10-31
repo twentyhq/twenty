@@ -1,0 +1,2 @@
+export const ADD_PRIVATE_RECORD_COLUMN_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddPrivateRecordColumnCommand_1793436309311';

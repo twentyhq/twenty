@@ -79,42 +79,29 @@ export class PrivateRecordStorageService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
-    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const objectsWithCreator = flatObjectMetadatas.filter(
+      (flatObjectMetadata) =>
+        hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
+    );
 
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const recordShareRepository = this.workspaceOrmManager.getRepository(
-        RECORD_SHARE_OBJECT_METADATA_NAME,
-        { shouldBypassPermissionChecks: true },
-      );
-      // A member can be removed between the deploy and the upgrade that adds the column
-      const tablesWithColumn = await recordShareRepository.executeRaw<{
-        tableName: string;
-      }>(
-        `SELECT table_name AS "tableName" FROM information_schema.columns WHERE table_schema = :schemaName AND column_name = :columnName`,
-        { schemaName, columnName: IS_PRIVATE_COLUMN_NAME },
-      );
-      const tableNamesWithColumn = new Set(
-        tablesWithColumn.map(({ tableName }) => tableName),
-      );
-      const objectsWithCreator = flatObjectMetadatas.filter(
-        (flatObjectMetadata) =>
-          tableNamesWithColumn.has(
-            computeObjectTargetTable(flatObjectMetadata),
-          ) && hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
-      );
+    if (!isNonEmptyArray(objectsWithCreator)) {
+      return;
+    }
 
-      if (!isNonEmptyArray(objectsWithCreator)) {
-        return;
-      }
-
-      await this.insertCustodianGrants({
-        recordShareRepository,
-        workspaceId,
-        objectsWithCreator,
-        creatorWorkspaceMemberId,
-        granteeWorkspaceMemberId,
-      });
-    }, buildSystemAuthContext(workspaceId));
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.insertCustodianGrants({
+          recordShareRepository: this.workspaceOrmManager.getRepository(
+            RECORD_SHARE_OBJECT_METADATA_NAME,
+            { shouldBypassPermissionChecks: true },
+          ),
+          workspaceId,
+          objectsWithCreator,
+          creatorWorkspaceMemberId,
+          granteeWorkspaceMemberId,
+        }),
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   private async insertCustodianGrants({
@@ -190,7 +177,7 @@ export class PrivateRecordStorageService {
     work,
   }: {
     workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
     transactionScope?: WorkspaceTransactionScope;
     work: (repository: WorkspaceRepository) => Promise<TResult>;
   }): Promise<TResult> {

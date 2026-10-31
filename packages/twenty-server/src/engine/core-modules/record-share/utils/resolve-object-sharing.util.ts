@@ -26,7 +26,6 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
 export type ObjectSharing = {
   isShareable: boolean;
   isShareRequired: boolean;
-  // General access of a record without an everyone row, null when its object is not shareable
   defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: OperationType[];
@@ -74,7 +73,6 @@ export const resolveObjectSharing = ({
   const isShareRequired =
     flatObjectMetadata.readability === MetadataReadability.PRIVATE;
   const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;
-  // Records of other shareable objects follow their roles unless made private one by one
   const isShareable = isShareRequired || canBeShared;
 
   const operationTypesGrantedBeyondRole = canBeShared
