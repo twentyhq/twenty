@@ -1,16 +1,16 @@
-import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
-import { frontComponentMediaSessionsState } from '@/front-components/media-session/states/frontComponentMediaSessionsState';
+import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
+import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type FrontComponentMediaSessionStatus } from '@/front-components/media-session/types/FrontComponentMediaSessionStatus';
+import { type MediaAccessSession } from '@/media-access/types/MediaAccessSession';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-const meta: Meta<typeof FrontComponentMediaSessionIndicator> = {
-  title: 'Modules/FrontComponents/FrontComponentMediaSessionIndicator',
-  component: FrontComponentMediaSessionIndicator,
+const meta: Meta<typeof MediaAccessIndicator> = {
+  title: 'Modules/MediaAccess/MediaAccessIndicator',
+  component: MediaAccessIndicator,
   decorators: [ComponentDecorator],
 };
 
@@ -24,13 +24,13 @@ const MediaSessionIndicatorPreview = ({
   const [store] = useState(() => {
     const previewStore = createStore();
 
-    previewStore.set(frontComponentMediaSessionsState.atom, [
+    previewStore.set(mediaAccessSessionsState.atom, [
       {
         id: 'recorder',
-        applicationId: 'recorder',
-        applicationName: 'Call recorder',
-        activeMediaTypes: isPending ? [] : ['audio', 'video'],
-        pendingMediaTypes: isPending ? ['audio', 'video'] : [],
+        ownerId: 'recorder',
+        ownerName: 'Call recorder',
+        status: isPending ? 'pending' : 'capturing',
+        mediaTypes: ['audio', 'video'],
         onStop: fn(),
       },
     ]);
@@ -40,14 +40,12 @@ const MediaSessionIndicatorPreview = ({
 
   return (
     <Provider store={store}>
-      <FrontComponentMediaSessionIndicator />
+      <MediaAccessIndicator />
     </Provider>
   );
 };
 
-export const CircularIndicators: StoryObj<
-  typeof FrontComponentMediaSessionIndicator
-> = {
+export const CircularIndicators: StoryObj<typeof MediaAccessIndicator> = {
   render: () => (
     <>
       <MediaSessionIndicatorPreview isPending={false} />
@@ -57,7 +55,10 @@ export const CircularIndicators: StoryObj<
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    for (const name of ['Apps recording', 'Recording requests']) {
+    for (const name of [
+      'Microphone or camera in use',
+      'Media access requests',
+    ]) {
       const trigger = canvas.getByRole('button', { name });
       const dot = trigger.querySelector('span[aria-hidden]:empty');
 
@@ -82,19 +83,19 @@ export const CircularIndicators: StoryObj<
 const StoredSessionsIndicator = ({
   sessions,
 }: {
-  sessions: FrontComponentMediaSessionStatus[];
+  sessions: MediaAccessSession[];
 }) => {
   const [store] = useState(() => {
     const previewStore = createStore();
 
-    previewStore.set(frontComponentMediaSessionsState.atom, sessions);
+    previewStore.set(mediaAccessSessionsState.atom, sessions);
 
     return previewStore;
   });
 
   return (
     <Provider store={store}>
-      <FrontComponentMediaSessionIndicator />
+      <MediaAccessIndicator />
     </Provider>
   );
 };
@@ -103,16 +104,16 @@ const stopRecorderAudio = fn();
 const stopRecorderVideo = fn();
 const stopCameraApp = fn();
 
-const recorderSession: FrontComponentMediaSessionStatus = {
+const recorderSession: MediaAccessSession = {
   id: 'recorder-audio',
-  applicationId: 'recorder',
-  applicationName: 'Recorder',
-  activeMediaTypes: ['audio'],
-  pendingMediaTypes: [],
+  ownerId: 'recorder',
+  ownerName: 'Recorder',
+  status: 'capturing',
+  mediaTypes: ['audio'],
   onStop: fn(),
 };
 
-export const Hidden: StoryObj<typeof FrontComponentMediaSessionIndicator> = {
+export const Hidden: StoryObj<typeof MediaAccessIndicator> = {
   render: () => <StoredSessionsIndicator sessions={[]} />,
   play: async ({ canvasElement }) => {
     await expect(
@@ -121,9 +122,7 @@ export const Hidden: StoryObj<typeof FrontComponentMediaSessionIndicator> = {
   },
 };
 
-export const OneRowPerApplication: StoryObj<
-  typeof FrontComponentMediaSessionIndicator
-> = {
+export const OneRowPerApplication: StoryObj<typeof MediaAccessIndicator> = {
   render: () => (
     <StoredSessionsIndicator
       sessions={[
@@ -131,15 +130,15 @@ export const OneRowPerApplication: StoryObj<
         {
           ...recorderSession,
           id: 'recorder-video',
-          activeMediaTypes: ['video'],
+          mediaTypes: ['video'],
           onStop: stopRecorderVideo,
         },
         {
           ...recorderSession,
           id: 'camera-session',
-          applicationId: 'camera-app',
-          applicationName: 'Camera app',
-          activeMediaTypes: ['video'],
+          ownerId: 'camera-app',
+          ownerName: 'Camera app',
+          mediaTypes: ['video'],
           onStop: stopCameraApp,
         },
       ]}
@@ -151,11 +150,11 @@ export const OneRowPerApplication: StoryObj<
     await expect(canvas.queryByText('Recorder')).not.toBeInTheDocument();
 
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Apps recording' }),
+      canvas.getByRole('button', { name: 'Microphone or camera in use' }),
     );
 
     const applications = await screen.findByRole('list', {
-      name: 'Apps recording',
+      name: 'Microphone or camera in use',
     });
     await waitFor(() => expect(applications).toBeVisible());
     const applicationsCanvas = within(applications);
@@ -169,7 +168,7 @@ export const OneRowPerApplication: StoryObj<
     await expect(applicationsCanvas.getByText('Camera')).toBeVisible();
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Stop recording for Recorder' }),
+      screen.getByRole('button', { name: 'Stop capture for Recorder' }),
     );
 
     await expect(stopRecorderAudio).toHaveBeenCalledTimes(1);
@@ -178,16 +177,14 @@ export const OneRowPerApplication: StoryObj<
   },
 };
 
-export const PendingRequest: StoryObj<
-  typeof FrontComponentMediaSessionIndicator
-> = {
+export const PendingRequest: StoryObj<typeof MediaAccessIndicator> = {
   render: () => (
     <StoredSessionsIndicator
       sessions={[
         {
           ...recorderSession,
-          activeMediaTypes: [],
-          pendingMediaTypes: ['audio'],
+          status: 'pending',
+          mediaTypes: ['audio'],
         },
       ]}
     />
@@ -196,33 +193,31 @@ export const PendingRequest: StoryObj<
     const canvas = within(canvasElement);
 
     await expect(
-      canvas.queryByRole('button', { name: 'Apps recording' }),
+      canvas.queryByRole('button', { name: 'Microphone or camera in use' }),
     ).not.toBeInTheDocument();
 
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Recording requests' }),
+      canvas.getByRole('button', { name: 'Media access requests' }),
     );
 
     await waitFor(async () => {
       await expect(screen.getByText('Waiting for permission')).toBeVisible();
     });
     await expect(
-      screen.getByRole('button', { name: 'Cancel recording for Recorder' }),
+      screen.getByRole('button', { name: 'Cancel media request for Recorder' }),
     ).toBeVisible();
   },
 };
 
-export const ClosesWithEscape: StoryObj<
-  typeof FrontComponentMediaSessionIndicator
-> = {
+export const ClosesWithEscape: StoryObj<typeof MediaAccessIndicator> = {
   render: () => <StoredSessionsIndicator sessions={[recorderSession]} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      canvas.getByRole('button', { name: 'Apps recording' }),
+      canvas.getByRole('button', { name: 'Microphone or camera in use' }),
     );
-    await screen.findByRole('list', { name: 'Apps recording' });
+    await screen.findByRole('list', { name: 'Microphone or camera in use' });
     await userEvent.keyboard('{Escape}');
 
     await waitFor(async () => {
