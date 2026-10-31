@@ -2,9 +2,16 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
@@ -75,6 +82,23 @@ export class ShareWithService {
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
+
+    if (isPrivate && !objectSharing.isPrivateByDefault) {
+      const { featureFlagsMap } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'featureFlagsMap',
+        ]);
+
+      if (!isPrivateRecordEnabled(featureFlagsMap)) {
+        throw new RecordShareException(
+          'Private records are not enabled for this workspace yet',
+          RecordShareExceptionCode.INVALID_SHARE_WITH,
+          {
+            userFriendlyMessage: msg`Private records are not available in this workspace yet.`,
+          },
+        );
+      }
+    }
 
     // A hard-destroyed record leaves its rows behind, and a client may reuse its id
     await this.recordShareStorageService.deleteByRecordIds({
