@@ -62,13 +62,13 @@ export const installAndBuildFrontComponentSharedDependencies = async ({
 
     return await buildFrontComponentSharedDependencies({
       resolveDirectory: directory,
-      dependencies: normalizeFrontComponentSharedDependencies(
-        dependencies ?? [],
-        Object.keys({
+      dependencies: normalizeFrontComponentSharedDependencies({
+        dependencies: dependencies ?? [],
+        packageNames: Object.keys({
           ...packageJsonContent.dependencies,
           ...packageJsonContent.devDependencies,
         }),
-      ),
+      }),
     });
   } finally {
     await rm(directory, { recursive: true, force: true });

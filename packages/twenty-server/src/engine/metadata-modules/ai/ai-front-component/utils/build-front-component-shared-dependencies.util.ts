@@ -21,7 +21,7 @@ export const buildFrontComponentSharedDependencies = async ({
 }): Promise<FrontComponentSharedDependencies> => {
   const exportNamesBySpecifier = new Map(
     await Promise.all(
-      normalizeFrontComponentSharedDependencies(dependencies).map(
+      normalizeFrontComponentSharedDependencies({ dependencies }).map(
         async (specifier) =>
           [
             specifier,
