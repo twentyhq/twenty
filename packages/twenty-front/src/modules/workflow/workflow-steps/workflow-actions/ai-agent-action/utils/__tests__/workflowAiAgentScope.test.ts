@@ -213,4 +213,51 @@ describe('workflow AI agent scope', () => {
       canUpdateAllObjectRecords: false,
     });
   });
+
+  it('keeps an action granted under all-objects reading, with its reading, once that reading is revoked', () => {
+    const scope = revokeWorkflowAiAgentAllObjectsPermissionInScope({
+      scope: grantWorkflowAiAgentObjectPermissionInScope({
+        scope: { canReadAllObjectRecords: true },
+        objectUniversalIdentifier: 'person',
+        permissionKey: 'canUpdateObjectRecords',
+      }),
+      permissionKey: 'canReadObjectRecords',
+    });
+
+    expect(
+      getWorkflowAiAgentObjectPermissionsFromScope({
+        scope,
+        objectMetadataItems,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        objectMetadataId: 'person-id',
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+      }),
+    ]);
+  });
+
+  it('restores reading on an entry that only relied on all-objects reading', () => {
+    expect(
+      revokeWorkflowAiAgentAllObjectsPermissionInScope({
+        scope: {
+          canReadAllObjectRecords: true,
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: 'person',
+              canUpdateObjectRecords: true,
+            },
+          ],
+        },
+        permissionKey: 'canReadObjectRecords',
+      }).objectPermissions,
+    ).toEqual([
+      {
+        objectUniversalIdentifier: 'person',
+        canUpdateObjectRecords: true,
+        canReadObjectRecords: true,
+      },
+    ]);
+  });
 });

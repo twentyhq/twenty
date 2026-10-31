@@ -1,9 +1,7 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type AiRunScope } from 'twenty-shared/ai';
 
-import { getWorkflowAiAgentEffectiveObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentEffectiveObjectPermission';
-
-// sets only the granted action, plus reading when it is not effective yet, so other actions keep their all-objects grant
+// reading is always set on the entry, so no all-objects change can leave the granted action without it
 export const grantWorkflowAiAgentObjectPermissionInScope = ({
   scope,
   objectUniversalIdentifier,
@@ -18,11 +16,6 @@ export const grantWorkflowAiAgentObjectPermissionInScope = ({
     (objectPermission) =>
       objectPermission.objectUniversalIdentifier === objectUniversalIdentifier,
   );
-  const canReadObjectRecords = getWorkflowAiAgentEffectiveObjectPermission({
-    scope,
-    objectPermission: existingObjectPermission,
-    permissionKey: 'canReadObjectRecords',
-  });
 
   return {
     ...scope,
@@ -33,7 +26,7 @@ export const grantWorkflowAiAgentObjectPermissionInScope = ({
       {
         ...existingObjectPermission,
         objectUniversalIdentifier,
-        ...(canReadObjectRecords ? {} : { canReadObjectRecords: true }),
+        canReadObjectRecords: true,
         [permissionKey]: true,
       },
     ],
