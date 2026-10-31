@@ -1,6 +1,11 @@
+import { type Readable } from 'node:stream';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+
+const CONNECT_TIMEOUT_MS = 10_000;
+const CLOSE_TIMEOUT_MS = 5_000;
 
 const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
   subscription OnAgentRunEvent($runId: UUID!) {
@@ -21,6 +26,11 @@ export const followAgentRunEvents = async ({
   const events: AgentChatSubscriptionEvent[] = [];
   const errors: string[] = [];
 
+  const connectTimeout = setTimeout(
+    () => abortController.abort(),
+    CONNECT_TIMEOUT_MS,
+  );
+
   const response = await fetch(`http://localhost:${APP_PORT}/metadata`, {
     method: 'POST',
     headers: {
@@ -33,7 +43,7 @@ export const followAgentRunEvents = async ({
       variables: { runId },
     }),
     signal: abortController.signal,
-  });
+  }).finally(() => clearTimeout(connectTimeout));
 
   if (!isDefined(response.body)) {
     abortController.abort();
@@ -41,7 +51,7 @@ export const followAgentRunEvents = async ({
   }
 
   // the integration setup swaps in node-fetch, whose body is a Node stream, not a web ReadableStream
-  const body = response.body as unknown as AsyncIterable<Uint8Array>;
+  const body = response.body as unknown as Readable;
 
   const reading = (async () => {
     const decoder = new TextDecoder();
@@ -92,9 +102,14 @@ export const followAgentRunEvents = async ({
   return {
     events,
     errors,
+    // an open stream keeps the test app from shutting down, so closing must not depend on the abort alone
     close: async () => {
       abortController.abort();
-      await reading;
+      body.destroy();
+      await Promise.race([
+        reading,
+        new Promise((resolve) => setTimeout(resolve, CLOSE_TIMEOUT_MS)),
+      ]);
     },
   };
 };

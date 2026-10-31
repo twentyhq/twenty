@@ -19,6 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const INPUT = [{ role: 'user' as const, content: 'Qualify Acme' }];
+const GENERATE_TIMEOUT_MS = 30_000;
 
 const setupApplicationWithToken = async (name: string) => {
   const application = await setupApplicationWithResources({ name });
@@ -99,7 +100,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
       const response = await makeMetadataApiRequest(
         generateQueryFactory({ input: INPUT, runId }),
         token,
-      );
+      ).timeout(GENERATE_TIMEOUT_MS);
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.generate).toMatchObject({
