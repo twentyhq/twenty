@@ -5,7 +5,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { validateFrontComponentSampleRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { v4 } from 'uuid';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';

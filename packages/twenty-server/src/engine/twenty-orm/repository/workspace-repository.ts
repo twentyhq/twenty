@@ -18,6 +18,10 @@ import {
 } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
+import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -25,14 +29,13 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
-} from 'src/engine/twenty-orm/repository/permissions.utils';
+} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
@@ -40,19 +43,19 @@ import {
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
   type SqlCondition,
-} from 'src/engine/twenty-orm/types/row-access-policy.type';
-import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
-import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
-import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { compileRowAccessExpression } from 'src/engine/permissions/combine/utils/compile-row-access-policy.util';
+import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
+import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
   type RowAccessRecord,
-} from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
-import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
-import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';
-import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
+} from 'src/engine/permissions/combine/utils/evaluate-row-access-policy.util';
+import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/permissions/combine/utils/is-row-access-expression-reading-role-filter.util';
+import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
+import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
+import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
@@ -60,12 +63,11 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
-import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
-import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
+import { isOwningApplicationAuthContext } from 'src/engine/permissions/principal/utils/is-owning-application-auth-context.util';
+import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/permissions/rls/utils/validate-rls-predicates-for-records.util';
 import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
 import { validateRecordsAgainstValidationRulesOrThrow } from 'src/engine/twenty-orm/utils/validate-records-against-validation-rules.util';
 import {
@@ -1804,6 +1806,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       string,
       Promise<RecordShareGrant[]>
     >();
+    let privateRecordStates:
+      | Promise<Map<string, PrivateRecordState>>
+      | undefined;
 
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
@@ -1827,7 +1832,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           requestedRecordIdSet.has(recordShareGrant.recordId),
         );
       },
+      findPrivateRecordStates: async () =>
+        (privateRecordStates ??= this.selectPrivateRecordStates(recordIds)),
     };
+  }
+
+  private async selectPrivateRecordStates(
+    recordIds: string[],
+  ): Promise<Map<string, PrivateRecordState>> {
+    return findPrivateRecordStates({
+      repository: this,
+      tableExpression: this.getTableExpression(
+        this.options.flatObjectMetadata.id,
+      ),
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      recordIds,
+      isPrivateRecordEnabled: isPrivateRecordEnabled(
+        this.options.internalContext.featureFlagsMap,
+      ),
+    });
   }
 
   private async findRecordShareGrants({
@@ -2022,10 +2046,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (
       isMainAlias &&
       !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !resolveObjectSharing({
+      !isOperationGrantedBeyondRole({
         flatObjectMetadata,
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
-      }).operationTypesGrantedBeyondRole.includes(operationType)
+        operationType,
+      })
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -2342,13 +2367,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
-      canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds: getRoleIdsFromRolePermissionConfig(
-          this.options.rolePermissionConfig,
-        ),
-        roleIdsWithAllRecordsAccess:
-          this.options.internalContext.roleIdsWithAllRecordsAccess,
-      }),
+      workspaceMemberId: isUserAuthContext(this.options.authContext)
+        ? this.options.authContext.workspaceMemberId
+        : undefined,
       isOwningApplication: (objectMetadata) =>
         isOwningApplicationAuthContext({
           authContext: this.options.authContext,

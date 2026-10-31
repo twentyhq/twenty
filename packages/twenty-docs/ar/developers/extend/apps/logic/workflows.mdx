@@ -101,7 +101,7 @@ export default defineWorkflow({
 
 ## الخطوات
 
-تدعم سير العمل في التطبيق أنواع الخطوات التالية: `LOGIC_FUNCTION`، `AI_AGENT`، `HTTP_REQUEST`، `CLASSIFY`، `CREATE_RECORD`، `UPDATE_RECORD`، `UPSERT_RECORD`، `DELETE_RECORD`، `FIND_RECORDS`، `PICK_RECORD`، `FILTER`، `IF_ELSE`، `ITERATOR`، `FORM`، `DELAY`، `WAIT_FOR_EVENT`، `SEND_EMAIL`، `DRAFT_EMAIL`، `CREATE_CALENDAR_EVENT`، و`EMPTY`.
+تدعم سير عمل التطبيق أنواع الخطوات التالية: `LOGIC_FUNCTION`، `AI_AGENT`، `HTTP_REQUEST`، `CLASSIFY`، `CREATE_RECORD`، `UPDATE_RECORD`، `UPSERT_RECORD`، `DELETE_RECORD`، `FIND_RECORDS`، `PICK_RECORD`، `FILTER`، `IF_ELSE`، `ITERATOR`، `FORM`، `DELAY`، `WAIT_FOR_EVENT`، `SEND_EMAIL`، `DRAFT_EMAIL`، `CREATE_CALENDAR_EVENT`، `SEND_CHAT_MESSAGE` و`EMPTY`.
 
 تتطابق مدخلاتها مع خطوات [منشئ سير العمل](/ar/user-guide/workflows/capabilities/workflow-actions)، مع استخدام المعرّفات العامة بدلًا من الأسماء:
 
@@ -117,6 +117,7 @@ export default defineWorkflow({
   * `connectedAccountId`: متغير، مثل `{{trigger.properties.after.connectedAccountId}}`. تتطلب خطوات البريد الإلكتروني أيضًا معرّف عضو مساحة العمل، مثل `{{trigger.properties.after.assigneeId}}`، والذي يُحل إلى أول حساب لذلك العضو قادر على الإرسال.
 
   عيّن واحدًا فقط من الاثنين.
+* ينشر `SEND_CHAT_MESSAGE` في صندوق الوارد لعضو مساحة العمل، والذي يُحدَّد باستخدام `workspaceMemberId`. تكون معرّفات الأعضاء محلية لكل مساحة عمل أيضًا، لذا يمرر التطبيق متغيرًا، مثل `{{trigger.properties.after.assigneeId}}`.
 
 ## بعد التثبيت
 

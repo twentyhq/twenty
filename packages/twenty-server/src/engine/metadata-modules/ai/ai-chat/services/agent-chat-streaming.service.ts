@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';

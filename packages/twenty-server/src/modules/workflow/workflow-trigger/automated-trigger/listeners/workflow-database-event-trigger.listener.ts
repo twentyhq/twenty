@@ -25,7 +25,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -44,8 +44,8 @@ import {
   type BaseDatabaseEventTriggerSettings,
   type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { resolveEventsReadableByRole } from 'src/engine/metadata-modules/permissions/utils/resolve-events-readable-by-role.util';
-import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
+import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
+import { resolveAutomationAdmittedRecordIds } from 'src/engine/permissions/combine/utils/resolve-automation-admitted-record-ids.util';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import {
   WorkflowTriggerJob,
@@ -517,7 +517,6 @@ export class WorkflowDatabaseEventTriggerListener {
     const {
       flatApplicationMaps,
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
@@ -525,7 +524,6 @@ export class WorkflowDatabaseEventTriggerListener {
     } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
       'flatApplicationMaps',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
@@ -541,7 +539,6 @@ export class WorkflowDatabaseEventTriggerListener {
       eventRecordAccessGate:
         this.recordAccessPolicyService.buildEventRecordAccessGate(payload),
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,

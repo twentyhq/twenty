@@ -3,7 +3,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';

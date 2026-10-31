@@ -1,0 +1,136 @@
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { buildNamedRecordGrantExpression } from 'src/engine/permissions/record-share/utils/build-named-record-grant-expression.util';
+import { buildRecordShareGate } from 'src/engine/permissions/record-share/utils/build-record-share-gate.util';
+import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
+import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
+import {
+  type RowAccessExpression,
+  type RowAccessPolicy,
+  type RowAccessPolicyContext,
+  type RowAccessPolicyTarget,
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
+import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
+import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
+
+export const buildRowAccessPolicy = ({
+  subject,
+  environment,
+  hypotheticalRecordShareAccessLevel,
+  ...target
+}: RowAccessPolicyContext &
+  RowAccessPolicyTarget & {
+    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+  }): RowAccessPolicy => {
+  if (subject.isSystemContext) {
+    return { kind: 'open' };
+  }
+
+  const context = { subject, environment };
+
+  if (
+    isObjectOperationDisabled({
+      objectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+    }) &&
+    !subject.isOwningApplication(target.flatObjectMetadata)
+  ) {
+    return { kind: 'denied' };
+  }
+
+  const canGrantOperationBeyondRole = isOperationGrantedBeyondRole({
+    flatObjectMetadata: target.flatObjectMetadata,
+    featureFlagsMap: environment.featureFlagsMap,
+    operationType: target.operationType,
+  });
+  const hasHypotheticalRecordShare =
+    isDefined(hypotheticalRecordShareAccessLevel) &&
+    resolveRequiredRecordShareAccessLevels(target.operationType).includes(
+      hypotheticalRecordShareAccessLevel,
+    );
+  const isHypotheticalRecordShareBeyondRole =
+    hasHypotheticalRecordShare && canGrantOperationBeyondRole;
+  const namedRecordGrant = canGrantOperationBeyondRole
+    ? buildNamedRecordGrantExpression({ ...context, ...target })
+    : undefined;
+
+  if (
+    isDefined(subject.objectsPermissions) &&
+    !isHypotheticalRecordShareBeyondRole &&
+    !isObjectOperationPermitted({
+      objectMetadata: target.flatObjectMetadata,
+      operationType: target.operationType,
+      objectsPermissions: subject.objectsPermissions,
+    })
+  ) {
+    return isDefined(namedRecordGrant)
+      ? { kind: 'gated', expression: namedRecordGrant }
+      : { kind: 'denied' };
+  }
+
+  if (isHypotheticalRecordShareBeyondRole) {
+    return { kind: 'open' };
+  }
+
+  const recordShareGate = buildRecordShareGate({ ...context, ...target });
+
+  const roleFilter = buildRoleFilterExpression(context, target);
+  const operands = [
+    roleFilter,
+    !hasHypotheticalRecordShare && recordShareGate.kind === 'gated'
+      ? recordShareGate.expression
+      : undefined,
+  ].filter(isDefined);
+
+  if (operands.length === 0) {
+    return { kind: 'open' };
+  }
+
+  // The share gate already admits named grants, so only a role filter keeps
+  // one out and needs the grant as an alternative
+  if (isDefined(roleFilter) && isDefined(namedRecordGrant)) {
+    return {
+      kind: 'gated',
+      expression: {
+        kind: 'or',
+        operands: [{ kind: 'and', operands }, namedRecordGrant],
+      },
+    };
+  }
+
+  return { kind: 'gated', expression: { kind: 'and', operands } };
+};
+
+const buildRoleFilterExpression = (
+  { subject, environment }: RowAccessPolicyContext,
+  { tableAlias, flatObjectMetadata }: RowAccessPolicyTarget,
+): RowAccessExpression | undefined => {
+  const recordFilter =
+    subject.resolveRowLevelPermissionRecordFilter(flatObjectMetadata);
+
+  if (!isDefined(recordFilter)) {
+    return undefined;
+  }
+
+  const condition = renderRowLevelPermissionFilterToSql({
+    recordFilter,
+    tableAlias,
+    objectMetadata: flatObjectMetadata,
+    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+  });
+
+  // A filter whose predicates all cancel out restricts nothing
+  if (condition === null) {
+    return undefined;
+  }
+
+  return {
+    kind: 'roleFilter',
+    tableAlias,
+    flatObjectMetadata,
+    recordFilter,
+    condition,
+  };
+};
