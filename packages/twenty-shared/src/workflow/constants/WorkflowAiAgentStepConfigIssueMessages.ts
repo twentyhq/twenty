@@ -1,8 +1,6 @@
 export const WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES = {
   AGENT_STEP_HAS_INLINE_CONFIG:
     'A step running an agent takes its instructions, model and permissions from the agent.',
-  AGENT_STEP_HAS_RESPONSE_FORMAT:
-    'A step running an agent outputs in the format the agent sets. Set the response format on the agent, not on the step.',
   GENERATE_STEP_HAS_CONVERSATION_CONFIG:
     'A step without an agent cannot ask humans or keep a conversation. Use an agent for this step, or remove its human input instructions and conversation setting.',
 } as const;

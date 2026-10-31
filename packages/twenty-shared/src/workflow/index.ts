@@ -40,10 +40,6 @@ export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { workflowAiAgentConversationConfigSchema } from './schemas/ai-agent-conversation-config-schema';
 export { workflowAiAgentInlineConfigSchema } from './schemas/ai-agent-inline-config-schema';
-export {
-  aiRunScopeSchema,
-  modelConfigurationSchema,
-} from './schemas/ai-run-schemas';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';

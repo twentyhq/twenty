@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
@@ -12,7 +11,6 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
   imports: [
     WorkflowExecutionContextModule,
     AiAgentExecutionModule,
-    AiAgentModule,
     WorkflowRunModule,
     WorkflowAgentConversationModule,
   ],

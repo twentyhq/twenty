@@ -101,6 +101,6 @@ export const resolveAiRunPermissionScope = ({
         permissionFlag,
         isPermissionFlagGranted(permissionFlag),
       ]),
-    ) as Record<PermissionFlagType, boolean>,
+    ),
   };
 };

@@ -97,13 +97,13 @@ describe('validateWorkflowAiAgentStep', () => {
     ).toEqual([]);
   });
 
-  it('refuses a response format on a step running a reusable agent', () => {
+  it('accepts a response format on a step running a reusable agent', () => {
     expect(
       errorCodesFor({
         agentId: 'agent-id',
         responseFormat: { type: 'text' },
       }),
-    ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
+    ).toEqual([]);
   });
 
   it('accepts a response format on a step running its hidden agent', () => {

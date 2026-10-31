@@ -22,13 +22,13 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
     ).toEqual(['AGENT_STEP_HAS_INLINE_CONFIG']);
   });
 
-  it('refuses a response format on a step running a reusable agent', () => {
+  it('accepts a response format on a step running a reusable agent', () => {
     expect(
       getWorkflowAiAgentStepConfigIssues({
         stepKind: 'agent',
         input: { responseFormat: { type: 'text' } },
       }),
-    ).toEqual(['AGENT_STEP_HAS_RESPONSE_FORMAT']);
+    ).toEqual([]);
   });
 
   it('accepts a response format on a step running its own hidden agent', () => {
