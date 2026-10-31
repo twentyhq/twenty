@@ -21,7 +21,6 @@ describe('buildAiRunScopeFromStepAgentRole', () => {
     expect(
       buildAiRunScopeFromStepAgentRole({
         ...DENY_ALL_ROLE,
-        canReadAllObjectRecords: true,
         objectPermissions: [
           {
             objectUniversalIdentifier: 'company',
@@ -49,7 +48,6 @@ describe('buildAiRunScopeFromStepAgentRole', () => {
         permissionFlagUniversalIdentifiers: ['send-email', 'ai'],
       }),
     ).toEqual({
-      canReadAllObjectRecords: true,
       objectPermissions: [
         {
           objectUniversalIdentifier: 'company',
@@ -66,5 +64,19 @@ describe('buildAiRunScopeFromStepAgentRole', () => {
       ],
       permissionFlagUniversalIdentifiers: ['ai', 'send-email'],
     });
+  });
+
+  it('leaves out all-records flags, which never reached objects without a row', () => {
+    expect(
+      buildAiRunScopeFromStepAgentRole({
+        ...DENY_ALL_ROLE,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+        canAccessAllTools: true,
+        canUpdateAllSettings: true,
+      }),
+    ).toEqual({ canAccessAllTools: true, canUpdateAllSettings: true });
   });
 });

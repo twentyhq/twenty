@@ -42,7 +42,8 @@ const keepTrueValues = <TValue extends Record<string, boolean>>(
     Object.entries(value).filter(([, entryValue]) => entryValue),
   ) as Partial<TValue>;
 
-// A scope denies what it leaves out, as the role's unset values did
+// Tools only ever reached the objects a step agent's role granted row by row, whatever its
+// all-records flags, and a scope's all-records flags would name every object, so they stay out
 export const buildAiRunScopeFromStepAgentRole = (
   role: StepAgentRole,
 ): AiRunScope => {
@@ -62,10 +63,6 @@ export const buildAiRunScopeFromStepAgentRole = (
 
   return {
     ...keepTrueValues({
-      canReadAllObjectRecords: role.canReadAllObjectRecords,
-      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
-      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
-      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
       canUpdateAllSettings: role.canUpdateAllSettings,
       canAccessAllTools: role.canAccessAllTools,
     }),
