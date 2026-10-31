@@ -6541,6 +6541,8 @@ msgstr "A kampány belső neve"
 
 #. js-lingui-id: Lztd7b
 #: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Érvénytelen hozzáférési szint."
@@ -10637,6 +10639,11 @@ msgstr "Jogalany azonosító"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Jogalany típusa"
+
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/services/private-record-storage.service.ts
+msgid "Private records are not available in this workspace yet."
+msgstr ""
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts

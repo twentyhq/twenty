@@ -6536,6 +6536,8 @@ msgstr "Internal name of the campaign"
 
 #. js-lingui-id: Lztd7b
 #: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Invalid access level."
@@ -10632,6 +10634,11 @@ msgstr "Principal ID"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Principal type"
+
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/services/private-record-storage.service.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "Private records are not available in this workspace yet."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
