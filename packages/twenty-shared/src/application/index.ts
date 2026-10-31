@@ -236,6 +236,16 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
+export type {
+  ObjectPermissionGrant,
+  FieldPermissionGrant,
+  RolePermissionGrants,
+} from './rolePermissionGrantsSchema';
+export {
+  objectPermissionGrantSchema,
+  fieldPermissionGrantSchema,
+  rolePermissionGrantsSchema,
+} from './rolePermissionGrantsSchema';
 export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 export type {
   RunAgentMessageRole,
@@ -288,7 +298,10 @@ export {
 } from './utils/applicationVariableValueSerialization';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
-export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export type {
+  EffectiveObjectPermissions,
+  ObjectRecordsPermissionGrants,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,

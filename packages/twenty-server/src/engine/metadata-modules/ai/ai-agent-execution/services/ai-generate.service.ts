@@ -7,10 +7,10 @@ import {
 } from 'twenty-shared/application';
 import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  aiRunScopeSchema,
   type AiRunScope,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { aiRunScopeSchema } from 'twenty-shared/workflow';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
@@ -20,10 +20,10 @@ import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
-import { AgentRunWithoutConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-without-conversation.service';
+import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
-import { type OneShotAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/one-shot-agent-run.type';
+import { type InRequestAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/in-request-agent-run.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentResponseFormatOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-response-format-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
@@ -48,7 +48,7 @@ type GenerateServiceInput = {
 export class AiGenerateService {
   constructor(
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
-    private readonly agentRunWithoutConversationService: AgentRunWithoutConversationService,
+    private readonly agentRunnerService: AgentRunnerService,
     private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
@@ -86,16 +86,15 @@ export class AiGenerateService {
       );
     }
 
-    const run = await this.agentRunWithoutConversationService.runOneShot({
+    const run = await this.agentRunnerService.runInRequest({
       workspaceId: workspace.id,
-      buildExecutionContext: () =>
-        this.buildExecutionContext({
-          workspace,
-          requestUserWorkspaceId,
-          requestWorkspaceMemberId,
-          callerApplication,
-          callerApiKey,
-        }),
+      executionContext: await this.buildExecutionContext({
+        workspace,
+        requestUserWorkspaceId,
+        requestWorkspaceMemberId,
+        callerApplication,
+        callerApiKey,
+      }),
       spec: {
         agentId: null,
         inlineConfig: {
@@ -111,9 +110,13 @@ export class AiGenerateService {
         instructions: null,
         ...(isDefined(responseFormat) ? { responseFormat } : {}),
         capabilities: { canAskHumans: false },
+        structuredOutputStrategy: 'same-request',
       },
-      messages,
-      structuredOutputStrategy: 'same-request',
+      prompt: {
+        messages,
+        senderUserWorkspaceId: requestUserWorkspaceId,
+        senderApplicationId: callerApplication?.id ?? null,
+      },
     });
 
     return this.buildResult({
@@ -123,16 +126,16 @@ export class AiGenerateService {
   }
 
   private buildResult({
-    run: { turnId, outcome, usage: runUsage },
+    run: { runId: turnId, outcome, summary },
     isJsonResponse,
   }: {
-    run: OneShotAgentRun;
+    run: InRequestAgentRun;
     isJsonResponse: boolean;
   }): GenerateResult {
-    const usage = isDefined(runUsage)
+    const usage = isDefined(summary)
       ? {
-          inputTokens: runUsage.inputTokens,
-          outputTokens: runUsage.outputTokens,
+          inputTokens: summary.usage.inputTokens,
+          outputTokens: summary.usage.outputTokens,
         }
       : null;
 
@@ -149,7 +152,7 @@ export class AiGenerateService {
       return buildFailure(outcome.error);
     }
 
-    if (!isPlainObject(outcome.result)) {
+    if (outcome.status !== 'COMPLETED' || !isPlainObject(outcome.result)) {
       return buildFailure('The run returned no result');
     }
 
