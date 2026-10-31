@@ -10,9 +10,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
 jest.mock('@sentry/node', () => ({
-  withMonitor: jest.fn(<TResult>(_slug: string, callback: () => TResult) =>
-    callback(),
-  ),
+  isInitialized: jest.fn(() => true),
+  captureCheckIn: jest.fn(() => 'check-in-id'),
 }));
 
 jest.mock(
@@ -65,9 +64,11 @@ describe('organization key validation schedule', () => {
     messageQueueService.addCron.mock.lastCall?.[0].data;
 
   const expectSentrySchedule = (value: string) =>
-    expect(Sentry.withMonitor).toHaveBeenCalledWith(
-      EnterpriseKeyValidationCronJob.name,
-      expect.any(Function),
+    expect(Sentry.captureCheckIn).toHaveBeenCalledWith(
+      {
+        monitorSlug: EnterpriseKeyValidationCronJob.name,
+        status: 'in_progress',
+      },
       expect.objectContaining({
         schedule: { type: 'crontab', value },
         timezone: 'UTC',

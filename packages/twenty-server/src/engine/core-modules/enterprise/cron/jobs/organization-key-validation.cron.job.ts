@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
-import * as Sentry from '@sentry/node';
 
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ENTERPRISE_KEY_VALIDATION_CRON_PATTERN } from 'src/engine/core-modules/enterprise/constants/organization-key-validation-cron-pattern.constant';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { type EnterpriseKeyValidationCronJobData } from 'src/engine/core-modules/enterprise/types/enterprise-key-validation-cron-job-data.type';
@@ -19,27 +19,19 @@ export class EnterpriseKeyValidationCronJob {
   constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
   @Process(EnterpriseKeyValidationCronJob.name)
+  // Sentry follows the pattern the queue registered, not one recomputed here.
+  // Schedulers registered by older versions carry no data and run at 04:00.
+  @SentryCronMonitor(
+    EnterpriseKeyValidationCronJob.name,
+    (data?: EnterpriseKeyValidationCronJobData) =>
+      toMinuteLevelCronPattern(
+        data?.cronPattern ?? ENTERPRISE_KEY_VALIDATION_CRON_PATTERN,
+      ),
+  )
   async handle(
-    data: EnterpriseKeyValidationCronJobData | undefined,
+    _data: EnterpriseKeyValidationCronJobData | undefined,
   ): Promise<void> {
-    // Sentry follows the pattern the queue registered, not one recomputed here.
-    // Schedulers registered by older versions carry no data and run at 04:00.
-    const cronPattern =
-      data?.cronPattern ?? ENTERPRISE_KEY_VALIDATION_CRON_PATTERN;
-
-    return Sentry.withMonitor(
-      EnterpriseKeyValidationCronJob.name,
-      () => this.refreshValidityAndReportSeats(),
-      {
-        schedule: {
-          type: 'crontab',
-          value: toMinuteLevelCronPattern(cronPattern),
-        },
-        checkinMargin: 1,
-        maxRuntime: 5,
-        timezone: 'UTC',
-      },
-    );
+    await this.refreshValidityAndReportSeats();
   }
 
   private async refreshValidityAndReportSeats(): Promise<void> {
