@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { findWorkflowAiAgentStepAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-workflow-ai-agent-step-agent.util';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -30,7 +29,16 @@ const updateAgentSchema = z.object({
 });
 
 export const createUpdateWorkflowAgentTool = (
-  deps: Pick<WorkflowToolDependencies, 'agentService'>,
+  deps: {
+    agentService: Pick<
+      WorkflowToolDependencies['agentService'],
+      'updateOneAgent'
+    >;
+    workflowAiAgentStepAgentService: Pick<
+      WorkflowToolDependencies['workflowAiAgentStepAgentService'],
+      'findStepOwnedAgent'
+    >;
+  },
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_agent' as const,
@@ -39,7 +47,7 @@ export const createUpdateWorkflowAgentTool = (
 - prompt: the agent's system prompt (its role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
 
-Any other AI_AGENT step is configured with update_workflow_version_step: a step without settings.input.agentId holds its own instructions, prompt, modelId, responseFormat and scope, and a step running a reusable agent sets only its prompt, the agent being edited on its own. The response format of a step running a hidden agent is also set with update_workflow_version_step, on settings.input.responseFormat.`,
+Any other AI_AGENT step is configured with update_workflow_version_step: a step without settings.input.agentId holds its own instructions, prompt, modelId and scope, and a step running a reusable agent takes those from the agent, which is edited on its own. Every AI_AGENT step sets its output format with update_workflow_version_step, on settings.input.responseFormat; a step running an agent without one outputs in the agent's format.`,
   inputSchema: updateAgentSchema,
   execute: async (parameters: {
     agentId: string;
@@ -50,13 +58,13 @@ Any other AI_AGENT step is configured with update_workflow_version_step: a step 
       const { agentId, prompt, modelId } = parameters;
       const { workspaceId } = context;
 
-      const { stepKind } = await findWorkflowAiAgentStepAgent({
-        agentService: deps.agentService,
-        input: { agentId },
-        workspaceId,
-      });
+      const stepOwnedAgent =
+        await deps.workflowAiAgentStepAgentService.findStepOwnedAgent({
+          input: { agentId },
+          workspaceId,
+        });
 
-      if (stepKind !== 'stepOwnedAgent') {
+      if (!isDefined(stepOwnedAgent)) {
         return {
           success: false,
           error: 'Not the hidden agent of a workflow step',

@@ -10,7 +10,7 @@ import { type WorkflowAiAgentStepPanelProps } from '@/workflow/workflow-steps/wo
 import { useMutation } from '@apollo/client/react';
 import { type ModelConfiguration } from 'twenty-shared/ai';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import {
   UpdateOneAgentDocument,
   type UpdateOneAgentMutationVariables,
@@ -35,7 +35,7 @@ export const WorkflowAiAgentStepOwnedAgentPromptTab = ({
   const updateAgentField = async (
     agentInput: Omit<UpdateOneAgentMutationVariables['input'], 'id'>,
   ) => {
-    if (readonly || !workflowAiAgentActionAgent) {
+    if (readonly || !isDefined(workflowAiAgentActionAgent)) {
       return;
     }
 
@@ -47,7 +47,10 @@ export const WorkflowAiAgentStepOwnedAgentPromptTab = ({
     const updatableAgentId = updatableStep.settings.input.agentId;
 
     if (!isDefined(updatableAgentId)) {
-      throw new Error(doNotTranslate('The AI agent step has no agent'));
+      throw new CustomError(
+        doNotTranslate('The AI agent step has no agent'),
+        'AI_AGENT_STEP_HAS_NO_AGENT',
+      );
     }
 
     const response = await updateAgent({

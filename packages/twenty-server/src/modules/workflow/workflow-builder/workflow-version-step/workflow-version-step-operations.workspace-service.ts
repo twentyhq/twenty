@@ -26,7 +26,6 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -48,13 +47,12 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
-import { findAgentRunnableByNewStepOrThrow } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-agent-runnable-by-new-step-or-throw.util';
-import { findWorkflowAiAgentStepAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-workflow-ai-agent-step-agent.util';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
+import { getWorkflowStepNameAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-name-after-rebuild.util';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
-  type WorkflowAiAgentAction,
   type WorkflowEmptyAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -71,9 +69,6 @@ const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
 };
 
 const DUPLICATED_STEP_POSITION_OFFSET = 50;
-
-// the name AI steps were created with when each ran a hidden agent
-const STEP_OWNED_AGENT_STEP_DEFAULT_NAME = 'Agent';
 
 const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
   x: 174,
@@ -98,6 +93,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly findRecordsService: FindRecordsService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -131,7 +127,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
       case WorkflowActionType.AI_AGENT: {
-        const stepAgent = await this.findStepOwnedAgent({ step, workspaceId });
+        const stepAgent =
+          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
+            input: step.settings.input,
+            workspaceId,
+          });
 
         if (!isDefined(stepAgent)) {
           break;
@@ -163,7 +163,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  // a name typed by the user survives a rebuild; only AI steps have a default name per kind to compare it with
   async getRebuiltStepName({
     existingStep,
     builtStep,
@@ -173,40 +172,19 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     builtStep: WorkflowAction;
     workspaceId: string;
   }): Promise<string> {
-    if (existingStep.type !== WorkflowActionType.AI_AGENT) {
-      return builtStep.name;
-    }
+    const { agent: previousAgent } =
+      existingStep.type === WorkflowActionType.AI_AGENT
+        ? await this.workflowAiAgentStepAgentService.findStepAgent({
+            input: existingStep.settings.input,
+            workspaceId,
+          })
+        : { agent: null };
 
-    const { agent } = await findWorkflowAiAgentStepAgent({
-      agentService: this.agentService,
-      input: existingStep.settings.input,
-      workspaceId,
+    return getWorkflowStepNameAfterRebuild({
+      existingStep,
+      builtStep,
+      previousAgentLabel: previousAgent?.label,
     });
-    const defaultNames = [
-      WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
-      STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
-      agent?.label,
-    ];
-
-    return defaultNames.includes(existingStep.name)
-      ? builtStep.name
-      : existingStep.name;
-  }
-
-  private async findStepOwnedAgent({
-    step,
-    workspaceId,
-  }: {
-    step: WorkflowAiAgentAction;
-    workspaceId: string;
-  }): Promise<FlatAgentWithRoleId | null> {
-    const { stepKind, agent } = await findWorkflowAiAgentStepAgent({
-      agentService: this.agentService,
-      input: step.settings.input,
-      workspaceId,
-    });
-
-    return stepKind === 'stepOwnedAgent' ? agent : null;
   }
 
   private async findFirstActiveObjectMetadata(workspaceId: string) {
@@ -618,11 +596,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           : undefined;
 
         if (isNonEmptyString(defaultAgentId)) {
-          const agent = await findAgentRunnableByNewStepOrThrow({
-            agentService: this.agentService,
-            agentId: defaultAgentId,
-            workspaceId,
-          });
+          const agent =
+            await this.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow(
+              { agentId: defaultAgentId, workspaceId },
+            );
 
           return {
             builtStep: {
@@ -1003,7 +980,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
-        const stepAgent = await this.findStepOwnedAgent({ step, workspaceId });
+        const stepAgent =
+          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
+            input: step.settings.input,
+            workspaceId,
+          });
 
         if (!isDefined(stepAgent)) {
           return clonedStep;
@@ -1175,7 +1156,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const stepAgent = await this.findStepOwnedAgent({ step, workspaceId });
+        const stepAgent =
+          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
+            input: step.settings.input,
+            workspaceId,
+          });
 
         if (!isDefined(stepAgent)) {
           return step;

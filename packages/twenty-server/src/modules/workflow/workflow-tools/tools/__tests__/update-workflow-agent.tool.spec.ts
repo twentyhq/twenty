@@ -8,13 +8,19 @@ const buildTool = ({
 }: { isStepOwnedAgent?: boolean } = {}) => {
   const agentService = {
     updateOneAgent: jest.fn().mockResolvedValue({ id: AGENT_ID }),
-    findOneAgentById: jest.fn().mockResolvedValue({
-      id: AGENT_ID,
-      label: 'Lead qualifier',
-      isSystem: isStepOwnedAgent,
-    }),
   };
-  const tool = createUpdateWorkflowAgentTool({ agentService } as never, {
+  const workflowAiAgentStepAgentService = {
+    findStepOwnedAgent: jest
+      .fn()
+      .mockResolvedValue(
+        isStepOwnedAgent ? { id: AGENT_ID, label: 'Lead qualifier' } : null,
+      ),
+  };
+  const deps: Parameters<typeof createUpdateWorkflowAgentTool>[0] = {
+    agentService,
+    workflowAiAgentStepAgentService,
+  };
+  const tool = createUpdateWorkflowAgentTool(deps, {
     workspaceId: WORKSPACE_ID,
     rolePermissionConfig: { shouldBypassPermissionChecks: true },
   });
@@ -26,11 +32,11 @@ describe('createUpdateWorkflowAgentTool', () => {
   it('updates the prompt and model of a step-owned agent', async () => {
     const { tool, agentService } = buildTool();
 
-    const result = (await tool.execute({
+    const result = await tool.execute({
       agentId: AGENT_ID,
       prompt: 'Qualify the lead',
       modelId: 'gpt-4o',
-    })) as Record<string, unknown>;
+    });
 
     expect(result.success).toBe(true);
     expect(agentService.updateOneAgent).toHaveBeenCalledWith({
@@ -42,10 +48,10 @@ describe('createUpdateWorkflowAgentTool', () => {
   it('refuses a reusable agent, which is edited on its own', async () => {
     const { tool, agentService } = buildTool({ isStepOwnedAgent: false });
 
-    const result = (await tool.execute({
+    const result = await tool.execute({
       agentId: AGENT_ID,
       prompt: 'Qualify the lead',
-    })) as Record<string, unknown>;
+    });
 
     expect(result.success).toBe(false);
     expect(agentService.updateOneAgent).not.toHaveBeenCalled();

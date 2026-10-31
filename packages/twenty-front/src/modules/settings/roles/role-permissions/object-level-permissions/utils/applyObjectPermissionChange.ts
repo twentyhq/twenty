@@ -14,20 +14,25 @@ export const applyObjectPermissionChange = <TObjectPermission extends object>({
   permissionKey: SettingsRoleObjectPermissionKey;
   value: boolean | null;
 }): TObjectPermission & ObjectPermissionValues => {
-  const isChangePermission = permissionKey !== 'canReadObjectRecords';
-
-  return {
+  const changedObjectPermission: TObjectPermission & ObjectPermissionValues = {
     ...objectPermission,
     [permissionKey]: value,
-    ...(isChangePermission && value !== false
-      ? { canReadObjectRecords: value }
-      : {}),
-    ...(!isChangePermission && value === false
-      ? {
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-        }
-      : {}),
   };
+
+  const isReadPermission = permissionKey === 'canReadObjectRecords';
+
+  if (!isReadPermission && value !== false) {
+    return { ...changedObjectPermission, canReadObjectRecords: value };
+  }
+
+  if (isReadPermission && value === false) {
+    return {
+      ...changedObjectPermission,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    };
+  }
+
+  return changedObjectPermission;
 };

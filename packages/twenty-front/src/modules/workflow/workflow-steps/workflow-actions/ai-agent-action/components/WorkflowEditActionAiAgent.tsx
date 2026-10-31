@@ -74,7 +74,7 @@ export const WorkflowEditActionAiAgent = ({
 }: WorkflowEditActionAiAgentProps) => {
   const { t } = useLingui();
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
-  const readonly = actionOptions.readonly === true;
+  const readonly = actionOptions.readonly ?? false;
   const agentId = action.settings.input.agentId;
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
@@ -106,7 +106,7 @@ export const WorkflowEditActionAiAgent = ({
 
   // saves the input of the latest render, so editing one field does not drop a pending edit of another
   const saveInput = useDebouncedCallback(() => {
-    if (actionOptions.readonly === true) {
+    if (actionOptions.readonly) {
       return;
     }
 
@@ -155,10 +155,11 @@ export const WorkflowEditActionAiAgent = ({
     activeTabIdComponentState,
     componentInstanceId,
   );
-  const currentTabId: WorkflowAiAgentTabId =
-    hasPermissionsTab && activeTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS
-      ? WORKFLOW_AI_AGENT_TABS.PERMISSIONS
-      : WORKFLOW_AI_AGENT_TABS.PROMPT;
+  const isPermissionsTabActive =
+    hasPermissionsTab && activeTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS;
+  const currentTabId: WorkflowAiAgentTabId = isPermissionsTabActive
+    ? WORKFLOW_AI_AGENT_TABS.PERMISSIONS
+    : WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
   const agentRoleId = agent?.roleId;
@@ -222,23 +223,28 @@ export const WorkflowEditActionAiAgent = ({
     return <SidePanelSkeletonLoader />;
   }
 
-  const renderPermissionsTab = () =>
-    stepKind === 'generate' ? (
-      <WorkflowAiAgentScopePermissionsTab
-        scope={input.scope}
-        readonly={readonly}
-        onScopeChange={(scope) => handleInputChange({ scope })}
-      />
-    ) : (
+  const rolePermissionFlagKeys =
+    role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
+
+  const renderPermissionsTab = () => {
+    if (stepKind === 'generate') {
+      return (
+        <WorkflowAiAgentScopePermissionsTab
+          scope={input.scope}
+          readonly={readonly}
+          onScopeChange={(scope) => handleInputChange({ scope })}
+        />
+      );
+    }
+
+    return (
       <WorkflowAiAgentPermissionsTab
         readonly
         objectPermissions={role?.objectPermissions ?? []}
-        permissionFlagKeys={
-          role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ??
-          []
-        }
+        permissionFlagKeys={rolePermissionFlagKeys}
       />
     );
+  };
 
   const renderPromptTab = () => {
     if (stepKind === 'generate') {

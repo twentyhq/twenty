@@ -102,7 +102,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   const hasPermissions =
     permissionFlagKeys.length > 0 ||
     objectPermissions.some((objectPermission) =>
-      CRUD_PERMISSIONS.some(({ key }) => objectPermission[key] === true),
+      CRUD_PERMISSIONS.some(({ key }) => objectPermission[key]),
     );
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },

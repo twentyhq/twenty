@@ -1,3 +1,7 @@
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
@@ -12,7 +16,13 @@ const trigger = {
   nextStepIds: [],
 };
 
-const buildStep = (type: string, input: Record<string, unknown> = {}) => ({
+const buildStep = ({
+  type,
+  input = {},
+}: {
+  type: string;
+  input?: Record<string, unknown>;
+}) => ({
   id: STEP_ID,
   name: 'Step',
   type,
@@ -36,13 +46,13 @@ const buildTool = () => {
   const coreWorkflowLifecycleService = {
     activateCoreWorkflowVersion: jest.fn().mockResolvedValue(true),
   };
-  const agentService = {
-    findOneAgentById: jest.fn(),
+  const workflowAiAgentStepAgentService = {
+    findAgentRunnableByNewStepOrThrow: jest.fn(),
   };
   const deps: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
     coreWorkflowMutationService,
     coreWorkflowLifecycleService,
-    agentService,
+    workflowAiAgentStepAgentService,
   };
 
   const tool = createCreateCompleteWorkflowTool(deps, {
@@ -55,7 +65,7 @@ const buildTool = () => {
     tool,
     coreWorkflowMutationService,
     coreWorkflowLifecycleService,
-    agentService,
+    workflowAiAgentStepAgentService,
   };
 };
 
@@ -67,7 +77,7 @@ const buildInput = (overrides: Partial<Record<string, unknown>> = {}) =>
   ({
     name: 'My workflow',
     trigger,
-    steps: [buildStep('SEND_EMAIL')],
+    steps: [buildStep({ type: 'SEND_EMAIL' })],
     edges,
     ...overrides,
   }) as unknown as ToolInput;
@@ -89,7 +99,7 @@ describe('createCreateCompleteWorkflowTool', () => {
         userWorkspaceId: 'user-workspace-id',
         name: 'My workflow',
         trigger,
-        steps: [buildStep('SEND_EMAIL')],
+        steps: [buildStep({ type: 'SEND_EMAIL' })],
         edges,
       }),
     );
@@ -128,7 +138,7 @@ describe('createCreateCompleteWorkflowTool', () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = await tool.execute(
-      buildInput({ steps: [buildStep('CODE')] }),
+      buildInput({ steps: [buildStep({ type: 'CODE' })] }),
     );
 
     expect(result.success).toBe(false);
@@ -141,7 +151,7 @@ describe('createCreateCompleteWorkflowTool', () => {
     const { tool, coreWorkflowMutationService } = buildTool();
 
     const result = await tool.execute(
-      buildInput({ steps: [buildStep('AI_AGENT')] }),
+      buildInput({ steps: [buildStep({ type: 'AI_AGENT' })] }),
     );
 
     expect(result.success).toBe(true);
@@ -151,17 +161,27 @@ describe('createCreateCompleteWorkflowTool', () => {
   });
 
   it("refuses an AI_AGENT step running another step's hidden agent", async () => {
-    const { tool, coreWorkflowMutationService, agentService } = buildTool();
+    const {
+      tool,
+      coreWorkflowMutationService,
+      workflowAiAgentStepAgentService,
+    } = buildTool();
 
-    agentService.findOneAgentById.mockResolvedValue({
-      id: 'hidden-agent-id',
-      label: 'Hidden step agent',
-      isSystem: true,
-    });
+    workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow.mockRejectedValue(
+      new WorkflowVersionStepException(
+        'Agent "Hidden step agent" is archived or belongs to another workflow step',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      ),
+    );
 
     const result = await tool.execute(
       buildInput({
-        steps: [buildStep('AI_AGENT', { agentId: 'hidden-agent-id' })],
+        steps: [
+          buildStep({
+            type: 'AI_AGENT',
+            input: { agentId: 'hidden-agent-id' },
+          }),
+        ],
       }),
     );
 
