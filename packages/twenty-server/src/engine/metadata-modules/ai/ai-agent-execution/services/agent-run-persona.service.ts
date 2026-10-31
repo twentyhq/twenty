@@ -4,10 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
-import {
-  resolveAgentRunPersonaFromAgent,
-  resolveAgentRunPersonaFromInlineConfig,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona.util';
+import { resolveAgentRunPersonaFromAgent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-agent.util';
+import { resolveAgentRunPersonaFromInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-inline-config.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
   AiException,

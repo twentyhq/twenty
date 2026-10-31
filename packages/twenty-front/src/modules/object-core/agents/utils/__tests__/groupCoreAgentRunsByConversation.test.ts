@@ -1,6 +1,6 @@
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 
-const buildRun = (id: string, threadId: string) => ({
+const buildRun = (id: string, threadId: string | null) => ({
   id,
   threadId,
   threadTitle: `Conversation ${threadId}`,
@@ -27,6 +27,15 @@ describe('groupCoreAgentRunsByConversation', () => {
         title: 'Conversation thread-a',
         runs: [runs[0], runs[2]],
       },
+      { type: 'run', run: runs[1] },
+    ]);
+  });
+
+  it('lists a run without a conversation as a plain row', () => {
+    const runs = [buildRun('run-2', null), buildRun('run-1', null)];
+
+    expect(groupCoreAgentRunsByConversation(runs)).toEqual([
+      { type: 'run', run: runs[0] },
       { type: 'run', run: runs[1] },
     ]);
   });

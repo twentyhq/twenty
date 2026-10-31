@@ -107,7 +107,7 @@ export class AgentRunWithoutConversationService {
               // the parts only matter to a conversation; reading them runs the loop to its end
             }
 
-            const streamError = started.source.getStreamError();
+            const streamError = started.source.getStreamError?.();
 
             if (isDefined(streamError)) {
               throw streamError;

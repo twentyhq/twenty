@@ -31,7 +31,6 @@ export type RoleFieldPermissionOverride = {
   canUpdateFieldValue?: boolean | null;
 };
 
-// What a role says about records, whether it is stored or written inline on an AI run
 export type RoleDefinitionForObjectsPermissions = {
   canReadAllObjectRecords: boolean;
   canUpdateAllObjectRecords: boolean;
