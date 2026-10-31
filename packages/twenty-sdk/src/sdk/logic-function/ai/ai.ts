@@ -107,6 +107,9 @@ const generateWithChunks = async ({
       deliverChunks(),
     ]);
 
+    // the reader ends quietly on abort, so an abort after the mutation returned would read as a full delivery
+    signal?.throwIfAborted();
+
     return result;
   } finally {
     stopFollowing.abort();
