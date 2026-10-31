@@ -75,7 +75,7 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
   CONVERSATION_ATTACHMENT: `
 ## Attaching this conversation to records
 
-A record's Conversations tab lists the conversations attached to it, to whoever can already see them, so this conversation can be found again from the records it is about. Call \`attach_conversation_to_record\` for the records this conversation is materially about:
+Attaching this conversation to the records it is about links it to them, for whoever can already see it. Call \`attach_conversation_to_record\` for the records this conversation is materially about:
 - the record the user is working on, whether they named it or are viewing it and asking about it
 - the records you create or change for the user
 

@@ -1,5 +1,6 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { v4 as uuidv4 } from 'uuid';
 
 import { type MergeAiChatInboxFeatureFlagsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791822328094-merge-ai-chat-inbox-feature-flags.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -19,6 +20,72 @@ const COMPANY_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER =
 const PERSON_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.conversations
     .widgets.conversations.universalIdentifier;
+
+const RECORD_PAGES_WITH_CONVERSATIONS_TAB = [
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage,
+];
+
+// Workspaces no longer get the Conversations tab, so recreate it beside the Messages tab as 2.47 found it
+const createLegacyConversationsTabs = async () => {
+  for (const recordPage of RECORD_PAGES_WITH_CONVERSATIONS_TAB) {
+    const tabId = uuidv4();
+
+    await global.testDataSource.query(
+      `INSERT INTO core."pageLayoutTab"
+         (id, title, "workspaceId", position, "pageLayoutId", "universalIdentifier",
+          "applicationId", icon, "layoutMode", "isActive", "isSystemSideEffect")
+       SELECT $1, 'Conversations', "workspaceId", 65, "pageLayoutId", $2,
+          "applicationId", 'IconMessage', "layoutMode", "isActive", "isSystemSideEffect"
+       FROM core."pageLayoutTab"
+       WHERE "workspaceId" = $3 AND "universalIdentifier" = $4`,
+      [
+        tabId,
+        recordPage.tabs.conversations.universalIdentifier,
+        SEED_APPLE_WORKSPACE_ID,
+        recordPage.tabs.emails.universalIdentifier,
+      ],
+    );
+
+    await global.testDataSource.query(
+      `INSERT INTO core."pageLayoutWidget"
+         (id, "pageLayoutTabId", "workspaceId", title, type, "objectMetadataId",
+          "gridPosition", configuration, "universalIdentifier", "applicationId",
+          position, "isActive", "conditionalAvailabilityExpression", "isSystemSideEffect")
+       SELECT $1, $2, "workspaceId", 'Conversations', 'CHAT_THREADS', "objectMetadataId",
+          "gridPosition", '{"configurationType": "CHAT_THREADS"}', $3, "applicationId",
+          position, "isActive", 'featureFlags.IS_AI_CHAT_INBOX_ENABLED', "isSystemSideEffect"
+       FROM core."pageLayoutWidget"
+       WHERE "workspaceId" = $4 AND "universalIdentifier" = $5`,
+      [
+        uuidv4(),
+        tabId,
+        recordPage.tabs.conversations.widgets.conversations.universalIdentifier,
+        SEED_APPLE_WORKSPACE_ID,
+        recordPage.tabs.emails.widgets.emails.universalIdentifier,
+      ],
+    );
+  }
+};
+
+const deleteLegacyConversationsTabs = async () => {
+  const conversationsTabUniversalIdentifiers =
+    RECORD_PAGES_WITH_CONVERSATIONS_TAB.map(
+      (recordPage) => recordPage.tabs.conversations.universalIdentifier,
+    );
+
+  await global.testDataSource.query(
+    `DELETE FROM core."pageLayoutWidget" WHERE "pageLayoutTabId" IN (
+       SELECT id FROM core."pageLayoutTab"
+       WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2::uuid[]))`,
+    [SEED_APPLE_WORKSPACE_ID, conversationsTabUniversalIdentifiers],
+  );
+  await global.testDataSource.query(
+    `DELETE FROM core."pageLayoutTab"
+     WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2::uuid[])`,
+    [SEED_APPLE_WORKSPACE_ID, conversationsTabUniversalIdentifiers],
+  );
+};
 
 const setFlag = (key: string, value: boolean) =>
   global.testDataSource.query(
@@ -78,21 +145,28 @@ describe('2-47 workspace command - merge AI chat inbox feature flags (integratio
     );
   };
 
-  beforeAll(() => {
+  const recomputePageLayoutCaches = () =>
+    workspaceCacheService.invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
+
+  beforeAll(async () => {
     command = getAppProviderByClassName<MergeAiChatInboxFeatureFlagsCommand>(
       'MergeAiChatInboxFeatureFlagsCommand',
     );
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+
+    await createLegacyConversationsTabs();
+    await recomputePageLayoutCaches();
   });
 
   afterAll(async () => {
     await setFlag('IS_AI_CHAT_INBOX_ENABLED', true);
-    await setWidgetExpression(
-      PERSON_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER,
-      'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
-    );
+    await deleteLegacyConversationsTabs();
+    await recomputePageLayoutCaches();
   });
 
   it('turns the inbox on for a workspace that had one of the merged flags, and drops them', async () => {

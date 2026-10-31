@@ -11,22 +11,22 @@ const computeStandardFlatEntityMaps = (isWorkspaceCreation?: boolean) =>
     isWorkspaceCreation,
   }).allFlatEntityMaps;
 
-const COMPANY_CONVERSATIONS_TAB =
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
-    .conversations;
+const AGENT_CHAT_THREAD_CHAT_TAB =
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.agentChatThreadRecordPage.tabs
+    .chat;
 
 describe('widget types only workspace creation builds', () => {
-  it('should leave chat threads widgets, and the tab they fill, out of what upgrade commands build', () => {
+  it('should leave chat widgets, and the tab they fill, out of what upgrade commands build', () => {
     const allFlatEntityMaps = computeStandardFlatEntityMaps();
 
-    const chatThreadsWidgets = Object.values(
+    const chatWidgets = Object.values(
       allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
-    ).filter((widget) => widget?.type === WidgetType.CHAT_THREADS);
+    ).filter((widget) => widget?.type === WidgetType.CHAT);
 
-    expect(chatThreadsWidgets).toEqual([]);
+    expect(chatWidgets).toEqual([]);
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        COMPANY_CONVERSATIONS_TAB.universalIdentifier
+        AGENT_CHAT_THREAD_CHAT_TAB.universalIdentifier
       ],
     ).toBeUndefined();
   });
@@ -36,15 +36,13 @@ describe('widget types only workspace creation builds', () => {
 
     expect(
       allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
-        COMPANY_CONVERSATIONS_TAB.widgets.conversations.universalIdentifier
+        AGENT_CHAT_THREAD_CHAT_TAB.widgets.chat.universalIdentifier
       ]?.type,
-    ).toBe(WidgetType.CHAT_THREADS);
+    ).toBe(WidgetType.CHAT);
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
-        COMPANY_CONVERSATIONS_TAB.universalIdentifier
+        AGENT_CHAT_THREAD_CHAT_TAB.universalIdentifier
       ]?.widgetUniversalIdentifiers,
-    ).toEqual([
-      COMPANY_CONVERSATIONS_TAB.widgets.conversations.universalIdentifier,
-    ]);
+    ).toEqual([AGENT_CHAT_THREAD_CHAT_TAB.widgets.chat.universalIdentifier]);
   });
 });

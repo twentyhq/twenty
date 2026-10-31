@@ -8,6 +8,7 @@ export const getStandardPageLayoutWidgetTitles = () => [
   msg({ message: `Notes`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Files`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Emails`, context: 'pageLayoutWidget.title' }),
+  msg({ message: `Messages`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Calendar`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Note`, context: 'pageLayoutWidget.title' }),
   msg({ message: `Task`, context: 'pageLayoutWidget.title' }),
