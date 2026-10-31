@@ -3,12 +3,13 @@ import { getResolvedApplicationDescription } from '@/applications/utils/getResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
+import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
 import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
 import { type SettingsApplicationsTableRowItem } from '@/settings/applications/types/SettingsApplicationsTableRowItem';
 import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
 import { i18n } from '@lingui/core';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type RowItemsWorkspace = Pick<CurrentWorkspace, 'workspaceCustomApplication'>;
 
@@ -18,17 +19,28 @@ const getApplicationRowItem = ({
 }: {
   application: SettingsApplicationsTableApplication;
   currentWorkspace: RowItemsWorkspace | null | undefined;
-}): SettingsApplicationsTableRowItem => ({
-  id: application.id,
-  name: getApplicationDisplayName({ application, currentWorkspace }),
-  description: getResolvedApplicationDescription({
-    application,
-    currentWorkspace,
-  }),
-  logoUrl: application.logoUrl,
-  universalIdentifier: application.universalIdentifier,
-  sourceType: application.applicationRegistration?.sourceType,
-});
+}): SettingsApplicationsTableRowItem => {
+  // OAuth-only installs have no bundle to carry a logo
+  const builtInMcpClientApp = findBuiltInMcpClientApp(
+    application.applicationRegistration?.wellKnownOAuthClient,
+  );
+
+  return {
+    id: application.id,
+    name: getApplicationDisplayName({ application, currentWorkspace }),
+    description: getResolvedApplicationDescription({
+      application,
+      currentWorkspace,
+    }),
+    logoUrl:
+      application.logoUrl ??
+      (isDefined(builtInMcpClientApp)
+        ? getBuiltInAppLogoUrl(builtInMcpClientApp)
+        : undefined),
+    universalIdentifier: application.universalIdentifier,
+    sourceType: application.applicationRegistration?.sourceType,
+  };
+};
 
 const getBuiltInAppRowItem = (
   builtInApp: BuiltInApp,

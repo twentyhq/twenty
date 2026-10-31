@@ -8,7 +8,7 @@ import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStanda
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBuiltInMcpClientAppConnectButton } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectButton';
-import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
@@ -152,9 +152,8 @@ export const SettingsAvailableApplicationDetails = () => {
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
   // Each member connects these from their own account, so there is nothing for the workspace to install
-  const builtInMcpClientApp = BUILT_IN_MCP_CLIENT_APPS.find(
-    ({ wellKnownOAuthClient }) =>
-      wellKnownOAuthClient === detail?.wellKnownOAuthClient,
+  const builtInMcpClientApp = findBuiltInMcpClientApp(
+    detail?.wellKnownOAuthClient,
   );
 
   const renderActionButton = () => {

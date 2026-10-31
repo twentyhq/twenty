@@ -1,12 +1,16 @@
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
 import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import {
   NPM_APPLICATION,
   OAUTH_ONLY_APPLICATION,
   STANDARD_APPLICATION,
 } from '@/settings/applications/testing/settingsApplicationsTableFixtures';
 import { getSettingsApplicationsTableRowItems } from '@/settings/applications/utils/getSettingsApplicationsTableRowItems';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import {
+  ApplicationRegistrationSourceType,
+  WellKnownOAuthClient,
+} from '~/generated-metadata/graphql';
 
 describe('getSettingsApplicationsTableRowItems', () => {
   it('lists the standard app, then built-in apps, then the other apps with OAuth-only apps last', () => {
@@ -98,5 +102,33 @@ describe('getSettingsApplicationsTableRowItems', () => {
       name: 'Custom',
       description: "Host your workspace's customizations and overrides.",
     });
+  });
+
+  it('shows the bundled logo of a well-known client install, which has none of its own', () => {
+    const [claudeRowItem, zapierRowItem] = getSettingsApplicationsTableRowItems(
+      {
+        applications: [
+          {
+            ...OAUTH_ONLY_APPLICATION,
+            id: 'claude-application-id',
+            applicationRegistration: {
+              id: 'claude-registration-id',
+              sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+              wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+            },
+          },
+          OAUTH_ONLY_APPLICATION,
+        ],
+        builtInApps: [],
+        currentWorkspace: null,
+      },
+    );
+
+    expect(claudeRowItem.logoUrl).toBe(
+      getBuiltInAppLogoUrl(
+        BUILT_IN_MCP_CLIENT_APPS.find(({ id }) => id === 'claude')!,
+      ),
+    );
+    expect(zapierRowItem.logoUrl).toBeUndefined();
   });
 });
