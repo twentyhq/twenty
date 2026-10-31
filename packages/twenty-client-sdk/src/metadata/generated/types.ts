@@ -10805,18 +10805,28 @@ export default {
             "chatMessages": [
                 21,
                 {
+                    "agentUniversalIdentifier": [
+                        532
+                    ],
                     "threadId": [
-                        532,
-                        "UUID!"
+                        532
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],
             "chatStreamCatchupChunks": [
                 144,
                 {
+                    "agentUniversalIdentifier": [
+                        532
+                    ],
                     "threadId": [
-                        532,
-                        "UUID!"
+                        532
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],
@@ -12325,6 +12335,9 @@ export default {
             "result": [
                 318
             ],
+            "runId": [
+                532
+            ],
             "status": [
                 1
             ],
@@ -12919,9 +12932,14 @@ export default {
             "onAgentChatEvent": [
                 14,
                 {
+                    "agentUniversalIdentifier": [
+                        532
+                    ],
                     "threadId": [
-                        532,
-                        "UUID!"
+                        532
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],

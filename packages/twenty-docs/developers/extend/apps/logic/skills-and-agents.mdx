@@ -146,7 +146,7 @@ to `defineAgent()`, and pass what you want it to work on as `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -328,6 +328,57 @@ name a member at all.
   agent's own role, since that would grant more access than the caller asked
   for.
 </Warning>
+
+### Following a conversation
+
+An app reads the conversations it holds with its agents through the same API
+as the chat: `listConversationMessages()` returns its history, and
+`streamConversation()` yields its live events, token by token. Name the
+conversation by the agent and the `thread` key you pass to `runAgent()`; you
+can start following it before the first run reaches it.
+
+```ts src/logic-functions/follow-conversation.ts
+import { streamConversation } from 'twenty-sdk/logic-function';
+
+const abortController = new AbortController();
+
+for await (const event of streamConversation({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  threadKey: `${channelId}:${threadTs}`,
+  signal: abortController.signal,
+})) {
+  if (event.type === 'stream-chunk') {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  }
+
+  // the reply was saved, or the run failed
+  if (event.type === 'message-persisted' || event.type === 'stream-error') {
+    abortController.abort();
+  }
+}
+```
+
+- Events are the chat's own: `stream-chunk` carries an AI SDK
+  `UIMessageChunk` and a `seq`, and notifications such as `message-persisted`
+  (a reply was saved), `queue-updated` or `stream-error` say when to read the
+  history again. A `keepalive` comes once connected, then every few seconds;
+  what happened before it is in the history.
+- To turn chunks into messages as the chat does, pipe them into
+  `readUIMessageStream()` from the `ai` package.
+- `listConversationMessages()` returns `{ messages, streamCatchup }`: the saved
+  messages with their parts, and the chunks of a reply still streaming. Skip
+  live chunks whose `seq` is at most `streamCatchup.maxSeq`, since they repeat
+  them.
+- `runAgent()` returns `runId`, the turn the call opens: messages of that run
+  carry it as `turnId`. A run that waits goes on in later turns of the
+  conversation.
+- The stream stays open until you abort its `signal` or `break`, and throws if
+  the connection drops: read the history and stream again to resume.
+- An app reads only its own conversations. Turns run as a member (see above)
+  show only their text, as they do to other members in the chat: live, their
+  other chunks arrive as empty `message-metadata` chunks, so `seq` stays
+  gapless.
+- Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 </Accordion>
 <Accordion title="ai.generate" description="Call a model from a logic function, without an agent">

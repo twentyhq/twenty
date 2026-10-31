@@ -21,6 +21,7 @@ export type AgentRunnerRunInput = {
     messages: RunAgentMessage[];
     senderUserWorkspaceId: string | null;
     senderApplicationId: string | null;
+    turnId?: string;
   } | null;
   executionContext: AgentRunExecutionContext;
 };

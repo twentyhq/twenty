@@ -715,6 +715,7 @@ export class AgentRunnerService {
         workspaceId,
         threadId,
         agentId: persona.agentId,
+        turnId: prompt?.turnId,
         senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
         senderApplicationId: prompt?.senderApplicationId ?? null,
         createdBy: executionContext.turnCreatedBy,

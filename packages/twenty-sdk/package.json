@@ -88,7 +88,7 @@
   "engines": {
     "node": "^24.5.0 || ^26.5.1",
     "yarn": "^4.0.2",
-    "twenty": ">=2.49.0"
+    "twenty": ">=2.55.0"
   },
   "typesVersions": {
     "*": {

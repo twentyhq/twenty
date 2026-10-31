@@ -3335,6 +3335,7 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 export interface RunAgentResult {
     error?: Scalars['String']
     result?: Scalars['JSON']
+    runId: Scalars['UUID']
     status: Scalars['String']
     success: Scalars['Boolean']
     threadId: Scalars['UUID']
@@ -7594,8 +7595,8 @@ export interface QueryGenqlSelection{
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
-    chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatMessages?: (AgentMessageGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
+    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String']} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -7954,6 +7955,7 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
     result?: boolean | number
+    runId?: boolean | number
     status?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
@@ -8168,7 +8170,7 @@ export interface SubscriptionGenqlSelection{
     eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {fieldFilters?: (EventLogFieldFilterInput[] | null), table: EventLogTable} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
-    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
