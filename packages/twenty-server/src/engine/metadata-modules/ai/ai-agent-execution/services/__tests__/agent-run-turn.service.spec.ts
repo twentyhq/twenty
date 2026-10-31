@@ -39,7 +39,10 @@ const EXECUTION_CONTEXT = {
 
 const STEP_USAGE = { inputTokens: 100, outputTokens: 10, totalTokens: 110 };
 
-const buildTurn = (output: Promise<unknown>) => ({
+const buildTurn = (
+  output: Promise<unknown>,
+  stopReason: string | null = null,
+) => ({
   stream: {
     stream: new ReadableStream({ start: (controller) => controller.close() }),
     text: Promise.resolve('{"fit":true}'),
@@ -54,14 +57,15 @@ const buildTurn = (output: Promise<unknown>) => ({
   },
   modelConfig: { modelId: 'model-id' },
   toolset: { offeredPausingToolNames: [] },
-  getStopReason: () => null,
+  getStopReason: () => stopReason,
 });
 
 const buildService = ({
   output = Promise.resolve({ fit: true }),
-}: { output?: Promise<unknown> } = {}) => {
+  stopReason = null,
+}: { output?: Promise<unknown>; stopReason?: string | null } = {}) => {
   const agentTurnService = {
-    start: jest.fn().mockResolvedValue(buildTurn(output)),
+    start: jest.fn().mockResolvedValue(buildTurn(output, stopReason)),
   };
   const aiBillingService = {
     assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
@@ -142,6 +146,38 @@ describe('AgentRunTurnService', () => {
     await expect(
       service.completeTurn({ ...input, started }),
     ).rejects.toBeInstanceOf(AiException);
+    expect(generateText).toHaveBeenCalledTimes(0);
+  });
+
+  it('completes a stopped same-request turn with its stop reason instead of failing on the output', async () => {
+    const output = Promise.reject(new Error('No output generated'));
+
+    output.catch(() => undefined);
+
+    const { service } = buildService({
+      output,
+      stopReason: 'workspaceAllowance',
+    });
+    const input = {
+      ...TURN_INPUT,
+      structuredOutputStrategy: 'same-request' as const,
+    };
+
+    const started = await service.startTurn(input);
+    const completed = await service.completeTurn({ ...input, started });
+
+    expect(completed.stopReason).toBe('workspaceAllowance');
+    expect(completed.structuredOutputSteps).toEqual([]);
+    expect(generateText).toHaveBeenCalledTimes(0);
+  });
+
+  it('spends no follow-up request on a stopped turn', async () => {
+    const { service } = buildService({ stopReason: 'workspaceAllowance' });
+
+    const started = await service.startTurn(TURN_INPUT);
+    const completed = await service.completeTurn({ ...TURN_INPUT, started });
+
+    expect(completed.stopReason).toBe('workspaceAllowance');
     expect(generateText).toHaveBeenCalledTimes(0);
   });
 

@@ -332,7 +332,7 @@ name a member at all.
 </Accordion>
 <Accordion title="ai.generate" description="Call a model from a logic function, without an agent">
 
-`ai.generate()` makes one model call from a logic function. Unlike
+`ai.generate()` calls a model from a logic function. Unlike
 `runAgent()`, it needs no `defineAgent()`: the call carries its own
 instructions, and opens no conversation. Use it for one-shot work such as
 classifying, summarizing or extracting.
@@ -351,8 +351,21 @@ const { success, text, error } = await ai.generate({
 - `modelId` (optional) picks the model. Without it, the call uses the
   workspace's default model.
 - `responseFormat` (optional) works as in `runAgent()`. With
-  `{ type: 'json', schema }`, the result is in `object` and `text` is `null`.
-- `turnId` identifies the recorded turn, with its model, usage and credits.
+  `{ type: 'json', schema }`, the schema goes on the model request itself, so
+  a JSON answer takes one request (plus tool steps when a `scope` grants
+  tools).
+- `scope` (optional) lets the call use the database, as described below.
+
+It resolves to `{ success, text, object, error, turnId, usage }`:
+
+- `text` is the reply of a text response, and `null` for a JSON one.
+- `object` is the result of a JSON response, and `null` otherwise.
+- `error` explains a failed run, when `success` is `false`. A failed run
+  resolves this way rather than throwing; invalid input still throws.
+- `turnId` identifies the recorded turn, with its model, usage and credits. It
+  is `null` when the call failed before the turn was recorded.
+- `usage` is `{ inputTokens, outputTokens }`, or `null` when the run failed
+  before its turn completed.
 
 The call acts as whoever made it: the member a user-scoped token belongs to,
 otherwise your application, otherwise the API key. It never exceeds your

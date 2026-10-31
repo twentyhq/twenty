@@ -82,7 +82,7 @@ When adding AI behavior:
 
 ## AI Generate
 
-`ai.generate` asks a model for one answer, with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
+`ai.generate` calls a model with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
 
 ```ts
 import { ai } from 'twenty-sdk/logic-function';
@@ -93,7 +93,7 @@ const { success, text, error } = await ai.generate({
 });
 ```
 
-For JSON, pass a `responseFormat`; the schema goes on the model request and the result comes back in `object`:
+For JSON, pass a `responseFormat`: the schema goes on the model request itself, so the answer takes one request (plus tool steps when a `scope` grants tools), and comes back in `object`:
 
 ```ts
 const { object } = await ai.generate({
@@ -109,9 +109,9 @@ const { object } = await ai.generate({
 ```
 
 - Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach.
-- The call runs as the caller (the member who triggered the run, else the app) and never exceeds the app's role. The caller needs the AI permission.
+- The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. The app's default role needs the AI permission flag.
 - `modelId` is optional; the workspace default model is used when unset.
-- It returns `{ success, text, object, error, turnId, usage }`: `text` for a text response, `object` for a JSON one, `error` when `success` is false. A failed run comes back as `success: false` rather than a throw (invalid input still throws), so check `success`.
+- It returns `{ success, text, object, error, turnId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `turnId` for the recorded turn and `usage` as `{ inputTokens, outputTokens }` (both `null` when the run failed before them). A failed run comes back as `success: false` rather than a throw (invalid input still throws), so check `success`.
 
 ## Inbox Messages
 

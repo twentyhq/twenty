@@ -287,7 +287,9 @@ export class AgentRunTurnService {
     let steps = loopSteps;
     let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
-    const isStructuredOutputExpected = isDefined(agentSchema) && !isPaused;
+    // a stopped run fails whatever it returned, so it spends no request on its output
+    const isStructuredOutputExpected =
+      isDefined(agentSchema) && !isPaused && !isDefined(stopReason);
 
     if (
       isStructuredOutputExpected &&
