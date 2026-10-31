@@ -134,9 +134,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         null,
     });
 
-    // a conversation only when someone can take part in it; a one-shot step leaves a turn on record
+    // a Generate step (no agent) is always one-shot, even with stale conversation settings; an agent
+    // step converses only when someone can take part in it, a one-shot step leaves a turn on record
     const hasConversation =
-      spec.capabilities.canAskHumans || isDefined(conversationSettings);
+      isDefined(agent) &&
+      (spec.capabilities.canAskHumans || isDefined(conversationSettings));
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,

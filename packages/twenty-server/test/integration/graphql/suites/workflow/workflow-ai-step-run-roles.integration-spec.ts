@@ -171,12 +171,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       },
     });
 
-  const createAgentStepWorkflow = async ({
-    conversation,
-  }: Pick<
-    WorkflowAiAgentAction['settings']['input'],
-    'conversation'
-  > = {}): Promise<string> => {
+  const createAiStepWorkflow = async (
+    stepInput: Partial<WorkflowAiAgentAction['settings']['input']> = {},
+  ): Promise<string> => {
     const { coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowId } =
       await createCoreWorkflow({ name: 'AI step run roles' });
 
@@ -189,7 +186,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       valid: true,
       nextStepIds: [],
       settings: {
-        input: { agentId, prompt: 'List the records', conversation },
+        input: { agentId, prompt: 'List the records', ...stepInput },
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: { value: 0 },
@@ -401,7 +398,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     await setMemberObjectAccess(false);
     const calls = mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
@@ -414,7 +411,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     await setMemberRowRule([{ value: 'Visible' }]);
     const calls = mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
@@ -443,7 +440,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
        ORDER BY part."orderIndex"`,
     );
 
-  const findLatestAgentTurn = async (): Promise<{
+  const findLatestAgentTurn = async (
+    turnAgentId: string | null = agentId,
+  ): Promise<{
     id: string;
     threadId: string | null;
     status: AgentTurnStatus;
@@ -454,8 +453,8 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       `SELECT id, "threadId", status, "inputTokens"::float8 AS "inputTokens",
          "outputTokens"::float8 AS "outputTokens"
        FROM "${schema}"."agentTurn"
-       WHERE "agentId" = $1 ORDER BY "createdAt" DESC LIMIT 1`,
-      [agentId],
+       WHERE "agentId" IS NOT DISTINCT FROM $1 ORDER BY "createdAt" DESC LIMIT 1`,
+      [turnAgentId],
     );
 
     return turn;
@@ -464,7 +463,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   it('records a step without a conversation as one turn, outside any thread', async () => {
     mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
@@ -482,10 +481,37 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     ).toEqual([]);
   });
 
+  it('runs a Generate step one-shot, outside any thread', async () => {
+    mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createAiStepWorkflow({
+          agentId: undefined,
+          instructions: 'Read the records you are asked about',
+          modelId: TEST_AI_MODEL_ID,
+        }),
+      ),
+    ).toBe('COMPLETED');
+
+    const turn = await findLatestAgentTurn(null);
+
+    expect(turn).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.COMPLETED,
+    });
+    expect(
+      await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."agentMessage" WHERE "turnId" = $1`,
+        [turn.id],
+      ),
+    ).toEqual([]);
+  });
+
   it('fails a step without a conversation when the provider keeps failing', async () => {
     mockModelCallingFindTool({ providerFailure: 'EVERY_CALL' });
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'FAILED',
     );
 
@@ -498,7 +524,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   it('keeps the usage of the steps a failed run without a conversation spent', async () => {
     mockModelCallingFindTool({ providerFailure: 'EVERY_ANSWER' });
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'FAILED',
     );
 
@@ -517,7 +543,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
 
     expect(
       await runAsMemberUntilDone(
-        await createAgentStepWorkflow({ conversation: { scope: 'STEP' } }),
+        await createAiStepWorkflow({ conversation: { scope: 'STEP' } }),
       ),
     ).toBe('COMPLETED');
 
@@ -541,7 +567,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
 
     expect(
       await runAsMemberUntilDone(
-        await createAgentStepWorkflow({ conversation: { scope: 'STEP' } }),
+        await createAiStepWorkflow({ conversation: { scope: 'STEP' } }),
       ),
     ).toBe('COMPLETED');
 
