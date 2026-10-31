@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   WORKFLOW_ACTION_FEATURE_FLAGS,
@@ -9,10 +10,15 @@ import { z } from 'zod';
 
 import { type CreatedCoreWorkflow } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowVersionEdge } from 'src/modules/workflow/workflow-builder/utils/assemble-workflow-version-content.util';
+import { assertAgentRunnableByNewStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-runnable-by-new-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
@@ -53,7 +59,9 @@ const createCompleteWorkflowSchema = z.object({
 
 type CreateCompleteWorkflowToolDeps = Pick<
   WorkflowToolDependencies,
-  'coreWorkflowMutationService' | 'coreWorkflowLifecycleService'
+  | 'coreWorkflowMutationService'
+  | 'coreWorkflowLifecycleService'
+  | 'agentService'
 >;
 
 type CreateCompleteWorkflowFailure = {
@@ -202,6 +210,7 @@ const createWorkflowOrBuildFailure = async ({
 > => {
   try {
     assertStepTypesAreSupported(steps);
+    await assertAiAgentStepsRunReusableAgents({ deps, workspaceId, steps });
 
     return {
       createdWorkflow:
@@ -243,4 +252,45 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
+};
+
+const assertAiAgentStepsRunReusableAgents = async ({
+  deps,
+  workspaceId,
+  steps,
+}: {
+  deps: Pick<WorkflowToolDependencies, 'agentService'>;
+  workspaceId: string;
+  steps: WorkflowAction[];
+}): Promise<void> => {
+  const agentIds = new Set(
+    steps.flatMap((step) =>
+      step.type === WorkflowActionType.AI_AGENT &&
+      isNonEmptyString(step.settings.input.agentId)
+        ? [step.settings.input.agentId]
+        : [],
+    ),
+  );
+
+  await Promise.all(
+    [...agentIds].map(async (agentId) => {
+      const agent = await deps.agentService
+        .findOneAgentById({ id: agentId, workspaceId })
+        .catch((error) => {
+          if (
+            error instanceof AiException &&
+            error.code === AiExceptionCode.AGENT_NOT_FOUND
+          ) {
+            throw new WorkflowVersionStepException(
+              `Agent "${agentId}" not found. Run an existing reusable agent, or give the step its own instructions.`,
+              WorkflowVersionStepExceptionCode.NOT_FOUND,
+            );
+          }
+
+          throw error;
+        });
+
+      assertAgentRunnableByNewStep(agent);
+    }),
+  );
 };

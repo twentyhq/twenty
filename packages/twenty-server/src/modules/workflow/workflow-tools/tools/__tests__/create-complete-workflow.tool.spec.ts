@@ -12,13 +12,13 @@ const trigger = {
   nextStepIds: [],
 };
 
-const buildStep = (type: string) => ({
+const buildStep = (type: string, input: Record<string, unknown> = {}) => ({
   id: STEP_ID,
   name: 'Step',
   type,
   valid: true,
   nextStepIds: [],
-  settings: { input: {}, outputSchema: {} },
+  settings: { input, outputSchema: {} },
 });
 
 const edges = [{ source: 'trigger', target: STEP_ID }];
@@ -36,9 +36,16 @@ const buildTool = () => {
   const coreWorkflowLifecycleService = {
     activateCoreWorkflowVersion: jest.fn().mockResolvedValue(true),
   };
+  const agentService = {
+    findOneAgentById: jest.fn(),
+  };
 
   const tool = createCreateCompleteWorkflowTool(
-    { coreWorkflowMutationService, coreWorkflowLifecycleService } as never,
+    {
+      coreWorkflowMutationService,
+      coreWorkflowLifecycleService,
+      agentService,
+    } as never,
     {
       workspaceId: 'workspace-id',
       userWorkspaceId: 'user-workspace-id',
@@ -46,7 +53,12 @@ const buildTool = () => {
     },
   );
 
-  return { tool, coreWorkflowMutationService, coreWorkflowLifecycleService };
+  return {
+    tool,
+    coreWorkflowMutationService,
+    coreWorkflowLifecycleService,
+    agentService,
+  };
 };
 
 type ToolInput = Parameters<
@@ -138,6 +150,32 @@ describe('createCreateCompleteWorkflowTool', () => {
     expect(
       coreWorkflowMutationService.createWorkflowWithContent,
     ).toHaveBeenCalled();
+  });
+
+  it("refuses an AI_AGENT step running another step's hidden agent", async () => {
+    const { tool, coreWorkflowMutationService, agentService } = buildTool();
+
+    agentService.findOneAgentById.mockResolvedValue({
+      id: 'hidden-agent-id',
+      label: 'Hidden step agent',
+      isSystem: true,
+    });
+
+    const result = await tool.execute(
+      buildInput({
+        steps: [buildStep('AI_AGENT', { agentId: 'hidden-agent-id' })],
+      }),
+    );
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        error: expect.stringContaining('belongs to another workflow step'),
+      }),
+    );
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).not.toHaveBeenCalled();
   });
 
   it('activates the created version when asked to', async () => {

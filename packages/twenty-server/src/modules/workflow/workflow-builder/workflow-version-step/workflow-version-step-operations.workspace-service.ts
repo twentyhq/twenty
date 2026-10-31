@@ -46,6 +46,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { assertAgentRunnableByNewStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/assert-agent-runnable-by-new-step.util';
 import { findStepOwnedAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-step-owned-agent.util';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -573,6 +574,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             id: defaultAgentId,
             workspaceId,
           });
+
+          assertAgentRunnableByNewStep(agent);
 
           return {
             builtStep: {
