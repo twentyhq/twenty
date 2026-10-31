@@ -477,6 +477,45 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       );
     });
 
+    it.each([
+      {
+        type: 'DRAFT_EMAIL' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          recipients: { to: 'jane@example.com' },
+        },
+      },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          title: 'Kick-off',
+          startsAt: '2026-11-02T09:00:00.000Z',
+          endsAt: '2026-11-02T09:30:00.000Z',
+          isFullDay: false,
+          sendInvitations: true,
+          addConferencing: false,
+        },
+      },
+    ])(
+      'stores a $type step with only the values it declares',
+      ({ type, input }) => {
+        const manifest = buildWorkflow({
+          steps: [
+            buildStep({
+              type,
+              overrides: { input } as Partial<WorkflowStepManifest>,
+            }),
+          ],
+        });
+
+        expect(
+          syncWorkflow(manifest).flatWorkflowVersion.steps?.[0]?.settings.input,
+        ).toEqual(input);
+        expectRoundTrip(manifest);
+      },
+    );
+
     it('omits values the sync derives', () => {
       const result = exportWorkflow(
         syncWorkflow(
@@ -1034,6 +1073,30 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step.outputSchema).toEqual({});
+  });
+
+  it('exports an email step written without files', () => {
+    const input = {
+      connectedAccountId: '{{trigger.properties.after.accountId}}',
+      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+      subject: 'Hello',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Draft Email',
+          type: 'DRAFT_EMAIL',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'DRAFT_EMAIL', input });
   });
 
   it('exports a chat message step that waits for an approval', () => {
