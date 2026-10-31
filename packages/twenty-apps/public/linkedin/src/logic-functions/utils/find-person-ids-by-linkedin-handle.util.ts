@@ -4,6 +4,8 @@ import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-
 import { getLinkedinProfileSlug } from 'src/logic-functions/utils/get-linkedin-profile-slug.util';
 import { type LinkedinPersonRecord } from 'src/types/linkedin-person-record.type';
 
+const STORED_SLUG_ENDINGS = ['', '/%', '?%', '#%'];
+
 const getStoredSlugForms = (slug: string): string[] => [
   ...new Set([
     slug,
@@ -26,15 +28,17 @@ export const findPersonIdsByLinkedinHandle = async (
     people: {
       __args: {
         filter: {
-          or: getStoredSlugForms(slug).map((storedSlug) => ({
-            linkedinLink: {
-              primaryLinkUrl: {
-                ilike: `%linkedin.com/in/${escapeSqlLikePattern(storedSlug)}%`,
+          or: getStoredSlugForms(slug).flatMap((storedSlug) =>
+            STORED_SLUG_ENDINGS.map((ending) => ({
+              linkedinLink: {
+                primaryLinkUrl: {
+                  ilike: `%linkedin.com/in/${escapeSqlLikePattern(storedSlug)}${ending}`,
+                },
               },
-            },
-          })),
+            })),
+          ),
         },
-        first: 10,
+        first: 50,
       },
       edges: { node: { id: true, linkedinLink: { primaryLinkUrl: true } } },
     },

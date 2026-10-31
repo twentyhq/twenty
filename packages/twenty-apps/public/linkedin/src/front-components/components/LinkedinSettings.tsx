@@ -68,6 +68,7 @@ export const LinkedinSettings = () => {
     progress: number;
   } | null>(null);
   const lastHistoryImportRef = useRef<LinkedinHistoryImportState | null>(null);
+  const settingsSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const showView = (view: LinkedinSettingsView) => {
     const historyImport = view.isConnected ? view.historyImport : null;
@@ -114,20 +115,26 @@ export const LinkedinSettings = () => {
         : current,
     );
 
-    try {
-      showView(
-        await postLinkedinSettingsRouteOrThrow({
-          routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
-          body: update,
-        }),
-      );
-    } catch {
-      enqueueSnackbar({
-        message: t('Could not save LinkedIn settings. Try again.'),
-        variant: 'error',
-      });
-      await loadSettings();
-    }
+    const save = async () => {
+      try {
+        showView(
+          await postLinkedinSettingsRouteOrThrow({
+            routePath: LINKEDIN_SETTINGS_ROUTE_PATHS.update,
+            body: update,
+          }),
+        );
+      } catch {
+        enqueueSnackbar({
+          message: t('Could not save LinkedIn settings. Try again.'),
+          variant: 'error',
+        });
+        await loadSettings();
+      }
+    };
+
+    settingsSaveQueueRef.current = settingsSaveQueueRef.current.then(save);
+
+    await settingsSaveQueueRef.current;
   };
 
   const handleSync = async () => {

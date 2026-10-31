@@ -16,10 +16,11 @@ import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-lin
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import {
+  getLinkedinHistoryImportPlanning,
   getLinkedinHistoryImportProgress,
   saveLinkedinHistoryImportChunkChats,
+  saveLinkedinHistoryImportPlanning,
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
-import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
@@ -35,13 +36,17 @@ type LinkedinPlanHistoryImportResult = {
   chunkCount?: number;
 };
 
+const getCurrentPlanJobId = ({
+  runId,
+  continuationIndex,
+}: LinkedinPlanHistoryImportJobPayload): string =>
+  getLinkedinPlanHistoryImportJobId({ runId, continuationIndex });
+
 const continuePlanning = async (
   payload: LinkedinPlanHistoryImportJobPayload,
   delayMs?: number,
 ): Promise<LinkedinPlanHistoryImportResult> => {
-  const state = await getActiveLinkedinHistoryImportState(payload);
-
-  if (state === null) {
+  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return { status: 'CANCELLED' };
   }
 
@@ -50,10 +55,12 @@ const continuePlanning = async (
     continuationIndex: payload.continuationIndex,
   });
 
-  await saveLinkedinHistoryImportState({
-    connectedAccountId: payload.connectedAccountId,
-    state: {
-      ...state,
+  await saveLinkedinHistoryImportPlanning({
+    ...payload,
+    planning: {
+      plannedChunkCount: payload.plannedChunkCount ?? 0,
+      plannedConversationCount: payload.plannedConversationCount ?? 0,
+      reportedConversationCount: payload.reportedConversationCount,
       planJobId,
       resumeAt: isDefined(delayMs)
         ? new Date(Date.now() + delayMs).toISOString()
@@ -85,9 +92,8 @@ const planChunk = async ({
   reportedConversationCount: number | undefined;
 }): Promise<boolean> => {
   const { connectedAccountId, runId } = payload;
-  const state = await getActiveLinkedinHistoryImportState(payload);
 
-  if (state === null) {
+  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return false;
   }
 
@@ -97,16 +103,14 @@ const planChunk = async ({
     chunkIndex,
     chats,
   });
-  await saveLinkedinHistoryImportState({
+  await saveLinkedinHistoryImportPlanning({
     connectedAccountId,
-    state: {
-      ...state,
-      resumeAt: undefined,
+    runId,
+    planning: {
       plannedChunkCount: chunkIndex + 1,
       plannedConversationCount: conversationCount,
-      ...(isDefined(reportedConversationCount)
-        ? { totalConversationCount: reportedConversationCount }
-        : {}),
+      reportedConversationCount,
+      planJobId: getCurrentPlanJobId(payload),
     },
   });
 
@@ -133,21 +137,18 @@ const finishPlanning = async ({
   chunkCount: number;
   conversationCount: number;
 }): Promise<LinkedinPlanHistoryImportResult> => {
-  const state = await getActiveLinkedinHistoryImportState(payload);
-
-  if (state === null) {
+  if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return { status: 'CANCELLED' };
   }
 
-  await saveLinkedinHistoryImportState({
-    connectedAccountId: payload.connectedAccountId,
-    state: {
-      ...state,
-      totalConversationCount: conversationCount,
+  await saveLinkedinHistoryImportPlanning({
+    ...payload,
+    planning: {
+      plannedChunkCount: chunkCount,
+      plannedConversationCount: conversationCount,
+      reportedConversationCount: conversationCount,
       chunkCount,
-      ...(chunkCount === 0
-        ? { status: 'COMPLETED', finishedAt: new Date().toISOString() }
-        : {}),
+      planJobId: getCurrentPlanJobId(payload),
     },
   });
 
@@ -302,19 +303,17 @@ export const linkedinPlanHistoryImportHandler = async (
       error,
       context,
       onFinalFailure: async (importError) => {
-        const state = await getActiveLinkedinHistoryImportState(payload);
-
-        if (state !== null) {
-          await saveLinkedinHistoryImportState({
-            connectedAccountId: payload.connectedAccountId,
-            state: {
-              ...state,
-              status: 'FAILED',
-              finishedAt: new Date().toISOString(),
-              error: importError,
-            },
-          });
+        if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
+          return;
         }
+
+        await saveLinkedinHistoryImportPlanning({
+          ...payload,
+          planning: {
+            ...(await getLinkedinHistoryImportPlanning(payload)),
+            error: importError,
+          },
+        });
       },
     });
   }

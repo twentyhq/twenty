@@ -61,12 +61,10 @@ describe('matchLinkedinParticipantPersonId', () => {
   it('links the only unlinked namesake and stores the profile link on it', async () => {
     mocks.query
       .mockResolvedValueOnce(buildPeople([]))
-      .mockResolvedValueOnce(
-        buildPeople([
-          { id: 'namesake-id' },
-          { id: 'linked-namesake-id', primaryLinkUrl: 'linkedin.com/in/x' },
-        ]),
-      );
+      .mockResolvedValueOnce(buildPeople([{ id: 'namesake-id' }]));
+    mocks.mutation.mockResolvedValueOnce({
+      updatePeople: [{ id: 'namesake-id' }],
+    });
 
     await expect(
       matchLinkedinParticipantPersonId({
@@ -75,14 +73,50 @@ describe('matchLinkedinParticipantPersonId', () => {
       }),
     ).resolves.toBe('namesake-id');
     expect(mocks.mutation).toHaveBeenCalledExactlyOnceWith({
-      updatePerson: {
+      updatePeople: {
         __args: {
-          id: 'namesake-id',
+          filter: {
+            and: [
+              { id: { eq: 'namesake-id' } },
+              expect.objectContaining({ or: expect.any(Array) }),
+            ],
+          },
           data: { linkedinLink: { primaryLinkUrl: HANDLE } },
         },
         id: true,
       },
     });
+  });
+
+  it('matches again when another job linked the namesake first', async () => {
+    mocks.query
+      .mockResolvedValueOnce(buildPeople([]))
+      .mockResolvedValueOnce(buildPeople([{ id: 'namesake-id' }]))
+      .mockResolvedValueOnce(
+        buildPeople([{ id: 'namesake-id', primaryLinkUrl: HANDLE }]),
+      );
+    mocks.mutation.mockResolvedValueOnce({ updatePeople: [] });
+
+    await expect(
+      matchLinkedinParticipantPersonId({
+        user: JULIE,
+        isNameMatchingEnabled: true,
+      }),
+    ).resolves.toBe('namesake-id');
+    expect(mocks.query).toHaveBeenCalledTimes(3);
+  });
+
+  it('never matches by name without the public profile URL', async () => {
+    mocks.query.mockResolvedValueOnce(buildPeople([]));
+
+    await expect(
+      matchLinkedinParticipantPersonId({
+        user: { ...JULIE, public_identifier: undefined },
+        isNameMatchingEnabled: true,
+      }),
+    ).resolves.toBeUndefined();
+    expect(mocks.query).toHaveBeenCalledTimes(1);
+    expect(mocks.mutation).not.toHaveBeenCalled();
   });
 
   it('links nobody when several namesakes match', async () => {

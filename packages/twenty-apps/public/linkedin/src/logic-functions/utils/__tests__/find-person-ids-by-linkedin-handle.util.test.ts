@@ -39,7 +39,7 @@ describe('findPersonIdsByLinkedinHandle', () => {
     ).resolves.toEqual(['person-0']);
   });
 
-  it('searches the decoded, decomposed and encoded forms of an accented slug', async () => {
+  it('searches the exact decoded, decomposed and encoded forms of an accented slug', async () => {
     mockStoredLinks([]);
 
     await findPersonIdsByLinkedinHandle(
@@ -51,12 +51,15 @@ describe('findPersonIdsByLinkedinHandle', () => {
         condition.linkedinLink.primaryLinkUrl.ilike,
     );
 
-    expect(patterns).toEqual([
-      '%linkedin.com/in/daphné-müller%',
-      '%linkedin.com/in/daphné-müller%',
-      '%linkedin.com/in/daphn\\%C3\\%A9-m\\%C3\\%BCller%',
-      '%linkedin.com/in/daphne\\%CC\\%81-mu\\%CC\\%88ller%',
-    ]);
+    expect(patterns).toEqual(
+      expect.arrayContaining([
+        '%linkedin.com/in/daphné-müller',
+        '%linkedin.com/in/daphné-müller/%',
+        '%linkedin.com/in/daphn\\%C3\\%A9-m\\%C3\\%BCller',
+        '%linkedin.com/in/daphne\\%CC\\%81-mu\\%CC\\%88ller?%',
+      ]),
+    );
+    expect(patterns).not.toContain('%linkedin.com/in/daphné-müller%');
   });
 
   it('ignores people whose link only contains the slug', async () => {

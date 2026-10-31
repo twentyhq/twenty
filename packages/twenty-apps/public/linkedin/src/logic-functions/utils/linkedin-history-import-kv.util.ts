@@ -1,5 +1,6 @@
 import { kv } from 'twenty-sdk/logic-function';
 
+import { type LinkedinHistoryImportPlanning } from 'src/logic-functions/types/linkedin-history-import-planning.type';
 import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/linkedin-history-import-progress.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 
@@ -11,6 +12,30 @@ const EMPTY_PROGRESS: LinkedinHistoryImportProgress = {
   importedConversationCount: 0,
   currentChunkProcessedCount: 0,
 };
+
+const EMPTY_PLANNING: LinkedinHistoryImportPlanning = {
+  plannedChunkCount: 0,
+  plannedConversationCount: 0,
+};
+
+const getPlanningKey = ({
+  connectedAccountId,
+  runId,
+}: LinkedinHistoryImportRun): string =>
+  `linkedin-history-import-planning:${connectedAccountId}:${runId}`;
+
+export const getLinkedinHistoryImportPlanning = async (
+  run: LinkedinHistoryImportRun,
+): Promise<LinkedinHistoryImportPlanning> =>
+  (await kv.get<LinkedinHistoryImportPlanning>(getPlanningKey(run))) ??
+  EMPTY_PLANNING;
+
+export const saveLinkedinHistoryImportPlanning = ({
+  planning,
+  ...run
+}: LinkedinHistoryImportRun & {
+  planning: LinkedinHistoryImportPlanning;
+}): Promise<void> => kv.set(getPlanningKey(run), planning);
 
 const getChunkChatsKey = ({
   connectedAccountId,
@@ -51,12 +76,15 @@ export const saveLinkedinHistoryImportProgress = ({
   progress: LinkedinHistoryImportProgress;
 }): Promise<void> => kv.set(getProgressKey(run), progress);
 
-export const deleteLinkedinHistoryImportData = async ({
-  chunkCount,
-  ...run
-}: LinkedinHistoryImportRun & { chunkCount: number }): Promise<void> => {
+export const deleteLinkedinHistoryImportData = async (
+  run: LinkedinHistoryImportRun,
+): Promise<void> => {
+  const planning = await getLinkedinHistoryImportPlanning(run);
+  const chunkCount = planning.chunkCount ?? planning.plannedChunkCount;
+
   await Promise.all([
     kv.delete(getProgressKey(run)),
+    kv.delete(getPlanningKey(run)),
     ...Array.from({ length: chunkCount }, (_, chunkIndex) =>
       kv.delete(getChunkChatsKey({ ...run, chunkIndex })),
     ),

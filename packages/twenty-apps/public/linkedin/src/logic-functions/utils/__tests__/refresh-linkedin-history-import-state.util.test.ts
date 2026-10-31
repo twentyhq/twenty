@@ -25,22 +25,28 @@ const { refreshLinkedinHistoryImportState } =
 
 const STATE_KEY = 'linkedin-history-import:connection-id';
 const PROGRESS_KEY = 'linkedin-history-import-progress:connection-id:run-1';
+const PLANNING_KEY = 'linkedin-history-import-planning:connection-id:run-1';
 
-const LISTING_STATE: LinkedinHistoryImportState = {
+const RUNNING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
   importPolicy: 'ALL',
   status: 'IMPORTING',
   importedConversationCount: 0,
   processedConversationCount: 0,
-  plannedChunkCount: 3,
-  plannedConversationCount: 60,
   startedAt: '2026-10-30T00:00:00.000Z',
 };
 
-const LISTED_STATE: LinkedinHistoryImportState = {
-  ...LISTING_STATE,
+const LISTING_PLANNING = {
+  plannedChunkCount: 3,
+  plannedConversationCount: 60,
+  planJobId: 'linkedin-history-plan-run-1-0',
+};
+
+const LISTED_PLANNING = {
+  ...LISTING_PLANNING,
+  plannedConversationCount: 45,
+  reportedConversationCount: 45,
   chunkCount: 3,
-  totalConversationCount: 45,
 };
 
 const mockJobStates = (states: Record<string, string>) =>
@@ -63,36 +69,50 @@ const setProgress = (progress: Record<string, unknown>) =>
     ...progress,
   });
 
+const getEnqueuedJobIds = (): string[] =>
+  mocks.enqueueJobs.mock.calls.flatMap(([input]) =>
+    input.jobs.map((job: { jobId: string }) => job.jobId),
+  );
+
 describe('refreshLinkedinHistoryImportState', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.kvStore.clear();
-    mocks.kvStore.set(STATE_KEY, LISTING_STATE);
+    mocks.kvStore.set(STATE_KEY, RUNNING_STATE);
+    mocks.kvStore.set(PLANNING_KEY, LISTING_PLANNING);
     mockJobStates({
       'linkedin-history-plan-run-1-0': 'ACTIVE',
       'linkedin-history-chunk-run-1-1': 'ACTIVE',
     });
   });
 
-  it('counts the chats of finished pages and of the page being imported', async () => {
+  it('shows the listing and the chats imported so far', async () => {
     setProgress({
       completedChunkCount: 1,
       completedConversationCount: 20,
       importedConversationCount: 14,
       currentChunkProcessedCount: 7,
+      currentChunkImportedCount: 3,
+      currentJobId: 'linkedin-history-chunk-run-1-1',
     });
 
     await expect(
       refreshLinkedinHistoryImportState('connection-id'),
     ).resolves.toEqual({
-      ...LISTING_STATE,
+      ...RUNNING_STATE,
       processedConversationCount: 27,
-      importedConversationCount: 14,
+      importedConversationCount: 17,
+      plannedChunkCount: 3,
+      plannedConversationCount: 60,
+      totalConversationCount: undefined,
+      chunkCount: undefined,
+      resumeAt: undefined,
     });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('completes the run once every listed page is imported and clears its data', async () => {
-    mocks.kvStore.set(STATE_KEY, LISTED_STATE);
+    mocks.kvStore.set(PLANNING_KEY, LISTED_PLANNING);
     mocks.kvStore.set(
       'linkedin-history-import-chats:connection-id:run-1:2',
       [],
@@ -112,7 +132,11 @@ describe('refreshLinkedinHistoryImportState', () => {
         processedConversationCount: 45,
       }),
     );
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+      expect.objectContaining({ status: 'COMPLETED' }),
+    );
     expect(mocks.kvStore.has(PROGRESS_KEY)).toBe(false);
+    expect(mocks.kvStore.has(PLANNING_KEY)).toBe(false);
     expect(
       mocks.kvStore.has('linkedin-history-import-chats:connection-id:run-1:2'),
     ).toBe(false);
@@ -132,8 +156,21 @@ describe('refreshLinkedinHistoryImportState', () => {
         error: { code: 'AUTH_FAILED', message: 'Signed out' },
       }),
     );
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
-      expect.objectContaining({ status: 'FAILED' }),
+  });
+
+  it('fails the run with the error the listing stored', async () => {
+    mocks.kvStore.set(PLANNING_KEY, {
+      ...LISTING_PLANNING,
+      error: { code: 'UNKNOWN', message: 'Invalid querystring' },
+    });
+
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        status: 'FAILED',
+        error: { code: 'UNKNOWN', message: 'Invalid querystring' },
+      }),
     );
   });
 
@@ -159,28 +196,50 @@ describe('refreshLinkedinHistoryImportState', () => {
 
     await refreshLinkedinHistoryImportState('connection-id');
 
-    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+    expect(getEnqueuedJobIds()).toEqual(['linkedin-history-chunk-run-1-2']);
+  });
+
+  it('resumes a page whose job ended without finishing it', async () => {
+    mocks.kvStore.set(PLANNING_KEY, LISTED_PLANNING);
+    setProgress({
+      completedChunkCount: 1,
+      currentJobId: 'linkedin-history-chunk-run-1-1',
+    });
+    mockJobStates({ 'linkedin-history-chunk-run-1-1': 'COMPLETED' });
+
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(expect.objectContaining({ status: 'IMPORTING' }));
+    expect(getEnqueuedJobIds()).toEqual([
+      'linkedin-history-chunk-run-1-1-resume-1',
+    ]);
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual(
       expect.objectContaining({
-        jobs: [
-          {
-            jobId: 'linkedin-history-chunk-run-1-2',
-            payload: {
-              connectedAccountId: 'connection-id',
-              runId: 'run-1',
-              chunkIndex: 2,
-            },
-          },
-        ],
+        currentJobId: 'linkedin-history-chunk-run-1-1-resume-1',
+        currentResumeIndex: 1,
+        recoveryCount: 1,
       }),
     );
   });
 
-  it('leaves the page being imported alone', async () => {
-    setProgress({ completedChunkCount: 1 });
+  it('gives up on a page that keeps ending without progress', async () => {
+    mocks.kvStore.set(PLANNING_KEY, LISTED_PLANNING);
+    setProgress({
+      completedChunkCount: 1,
+      currentJobId: 'linkedin-history-chunk-run-1-1-resume-3',
+      currentResumeIndex: 3,
+      recoveryCount: 3,
+    });
+    mockJobStates({ 'linkedin-history-chunk-run-1-1-resume-3': 'COMPLETED' });
 
-    await refreshLinkedinHistoryImportState('connection-id');
-
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    await expect(
+      refreshLinkedinHistoryImportState('connection-id'),
+    ).resolves.toEqual(
+      expect.objectContaining({
+        status: 'FAILED',
+        error: expect.objectContaining({ code: 'STALLED' }),
+      }),
+    );
   });
 
   it('fails a run whose planning job is gone', async () => {
@@ -197,7 +256,7 @@ describe('refreshLinkedinHistoryImportState', () => {
   });
 
   it('leaves a finished run as it is', async () => {
-    mocks.kvStore.set(STATE_KEY, { ...LISTING_STATE, status: 'CANCELLED' });
+    mocks.kvStore.set(STATE_KEY, { ...RUNNING_STATE, status: 'CANCELLED' });
 
     await refreshLinkedinHistoryImportState('connection-id');
 

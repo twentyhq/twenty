@@ -11,7 +11,6 @@ export type LinkedinHistoryImportState = {
   chunkCount?: number;
   plannedChunkCount?: number;
   plannedConversationCount?: number;
-  planJobId?: string;
   startedAt: string;
   resumeAt?: string;
   finishedAt?: string;

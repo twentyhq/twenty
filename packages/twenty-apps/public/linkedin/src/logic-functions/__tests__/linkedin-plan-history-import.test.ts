@@ -42,6 +42,7 @@ const { linkedinPlanHistoryImportHandler } =
   await import('src/logic-functions/linkedin-plan-history-import');
 
 const STATE_KEY = 'linkedin-history-import:connection-id';
+const PLANNING_KEY = 'linkedin-history-import-planning:connection-id:run-1';
 
 const RUNNING_STATE: LinkedinHistoryImportState = {
   runId: 'run-1',
@@ -108,12 +109,13 @@ describe('linkedinPlanHistoryImportHandler', () => {
 
     expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
     expect(getStoredChatIds(2)).toEqual(buildChatIds(5, 40));
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual({
-      ...RUNNING_STATE,
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(RUNNING_STATE);
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
       plannedChunkCount: 3,
       plannedConversationCount: 45,
-      totalConversationCount: 45,
+      reportedConversationCount: 45,
       chunkCount: 3,
+      planJobId: 'linkedin-history-plan-run-1-0',
     });
   });
 
@@ -163,7 +165,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
         totalCount: 340,
       })
       .mockImplementationOnce(async () => {
-        stateWhileListing = mocks.kvStore.get(STATE_KEY);
+        stateWhileListing = mocks.kvStore.get(PLANNING_KEY);
 
         return { items: [{ id: 'chat-1' }], nextCursor: undefined };
       });
@@ -171,10 +173,10 @@ describe('linkedinPlanHistoryImportHandler', () => {
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
     expect(stateWhileListing).toEqual({
-      ...RUNNING_STATE,
       plannedChunkCount: 1,
       plannedConversationCount: 1,
-      totalConversationCount: 340,
+      reportedConversationCount: 340,
+      planJobId: 'linkedin-history-plan-run-1-0',
     });
   });
 
@@ -208,11 +210,12 @@ describe('linkedinPlanHistoryImportHandler', () => {
         reportedConversationCount: undefined,
       },
     });
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual({
-      ...RUNNING_STATE,
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
       plannedChunkCount: 3,
       plannedConversationCount: 60,
+      reportedConversationCount: undefined,
       planJobId: 'linkedin-history-plan-run-1-1',
+      resumeAt: undefined,
     });
   });
 
@@ -245,7 +248,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
         delayMs: (2 * 60 * 60 + 1) * 1000,
       }),
     );
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
       expect.objectContaining({
         planJobId: 'linkedin-history-plan-run-1-1',
         resumeAt: expect.any(String),
@@ -253,14 +256,14 @@ describe('linkedinPlanHistoryImportHandler', () => {
     );
   });
 
-  it('completes a run with no conversations right away', async () => {
+  it('records a run with no conversations as fully listed', async () => {
     mockChatPages([0]);
 
     await linkedinPlanHistoryImportHandler(PAYLOAD);
 
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
-      expect.objectContaining({ status: 'COMPLETED', chunkCount: 0 }),
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
+      expect.objectContaining({ chunkCount: 0 }),
     );
   });
 
@@ -273,7 +276,7 @@ describe('linkedinPlanHistoryImportHandler', () => {
     expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
-  it('closes the run as failed on an error Twenty will not retry', async () => {
+  it('records a listing error Twenty will not retry', async () => {
     mocks.listUnipileChats.mockRejectedValue({
       status: 400,
       title: 'Invalid querystring',
@@ -285,9 +288,9 @@ describe('linkedinPlanHistoryImportHandler', () => {
         maxRetries: 3,
       }),
     ).rejects.toThrow('Invalid querystring');
-    expect(mocks.kvStore.get(STATE_KEY)).toEqual(
+    expect(mocks.kvStore.get(STATE_KEY)).toEqual(RUNNING_STATE);
+    expect(mocks.kvStore.get(PLANNING_KEY)).toEqual(
       expect.objectContaining({
-        status: 'FAILED',
         error: { code: 'UNKNOWN', message: 'Invalid querystring' },
       }),
     );
