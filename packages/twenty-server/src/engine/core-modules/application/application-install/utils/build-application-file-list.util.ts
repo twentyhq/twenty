@@ -11,6 +11,7 @@ export type ApplicationFileToStore = {
   resourcePath?: string;
   fileFolder: FileFolder;
   isRequired: boolean;
+  shouldDeleteStoredFileWhenMissing?: boolean;
 };
 
 export const buildApplicationFileList = (
@@ -27,6 +28,7 @@ export const buildApplicationFileList = (
       resourcePath: 'yarn.lock',
       fileFolder: FileFolder.Dependencies,
       isRequired: false,
+      shouldDeleteStoredFileWhenMissing: true,
     },
     {
       relativePath: 'manifest.json',

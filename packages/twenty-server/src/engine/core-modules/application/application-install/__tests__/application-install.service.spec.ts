@@ -59,6 +59,7 @@ describe('ApplicationInstallService', () => {
   };
   const fileStorageService = {
     writeFile: jest.fn(),
+    deleteFile: jest.fn(),
   };
   const appRegistrationRepository = {
     findOne: jest.fn(),
@@ -200,6 +201,43 @@ describe('ApplicationInstallService', () => {
     expect(applicationService.update).not.toHaveBeenCalledWith(
       APPLICATION_ID,
       expect.objectContaining({ logo: LOGO_PATH }),
+    );
+  });
+
+  it('stores the packaged yarn.lock as the application yarn.lock', async () => {
+    await fs.mkdir(join(extractedDir, 'dependencies'));
+    await fs.writeFile(join(extractedDir, 'dependencies/yarn.lock'), 'lock');
+
+    await install();
+
+    expect(fileStorageService.writeFile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'yarn.lock',
+      }),
+    );
+    expect(fileStorageService.deleteFile).not.toHaveBeenCalled();
+  });
+
+  it('deletes the stored yarn.lock when the package has none', async () => {
+    applicationLookupService.findByUniversalIdentifier.mockResolvedValue({
+      id: APPLICATION_ID,
+      logo: LOGO_PATH,
+      logoFileId: LOGO_FILE_ID,
+      version: '1.0.0',
+    });
+
+    await install();
+
+    expect(fileStorageService.deleteFile).toHaveBeenCalledTimes(1);
+    expect(fileStorageService.deleteFile).toHaveBeenCalledWith({
+      fileFolder: FileFolder.Dependencies,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      workspaceId: WORKSPACE_ID,
+      resourcePath: 'yarn.lock',
+    });
+    expect(fileStorageService.writeFile).not.toHaveBeenCalledWith(
+      expect.objectContaining({ resourcePath: 'yarn.lock' }),
     );
   });
 
