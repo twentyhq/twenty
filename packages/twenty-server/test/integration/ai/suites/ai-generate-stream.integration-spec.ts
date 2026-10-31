@@ -77,13 +77,20 @@ describe('ai.generate runs followed by their application (integration)', () => {
 
   it('streams a run to its application under the run id it chose, and to no other application', async () => {
     const runId = randomUUID();
-    const ownStream = await followAgentRunEvents({ runId, token });
-    const otherStream = await followAgentRunEvents({
-      runId,
-      token: otherToken,
-    });
+    const streams: Awaited<ReturnType<typeof followAgentRunEvents>>[] = [];
 
     try {
+      const ownStream = await followAgentRunEvents({ runId, token });
+
+      streams.push(ownStream);
+
+      const otherStream = await followAgentRunEvents({
+        runId,
+        token: otherToken,
+      });
+
+      streams.push(otherStream);
+
       await waitFor(
         () => ownStream.events.length > 0 && otherStream.events.length > 0,
       );
@@ -118,8 +125,10 @@ describe('ai.generate runs followed by their application (integration)', () => {
         type: 'message-persisted',
       });
     } finally {
-      await Promise.all([ownStream.close(), otherStream.close()]);
+      await Promise.all(streams.map((stream) => stream.close()));
     }
+
+    const [ownStream, otherStream] = streams;
 
     expect(ownStream.errors).toEqual([]);
     expect(otherStream.errors).toEqual([]);
