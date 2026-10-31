@@ -447,7 +447,8 @@ const { object } = await ai.generate({
 A scope only narrows: it grants nothing the caller doesn't already have.
 
 To show the reply while it is written, pass `onChunk`. The call still resolves
-to the same result, once the last chunk was handed to `onChunk`:
+to the same result, once the last chunk was handed to `onChunk` (or 5 s after
+the result, if the stream's end never arrives):
 
 ```ts
 const { text } = await ai.generate({

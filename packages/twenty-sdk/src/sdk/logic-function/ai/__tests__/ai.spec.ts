@@ -277,6 +277,42 @@ describe('ai.generate with onChunk', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('resolves with the result when the end event never arrives', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+
+    const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+
+    try {
+      runChannel.answerMutation({ data: { generate: RESULT } });
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      await expect(generation).resolves.toEqual(RESULT);
+      expect(fetchSpy.mock.calls[0][1]?.signal?.aborted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('rejects at once when onChunk throws, without waiting for the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: () => {
+        throw new Error('Could not render the chunk');
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.send({ type: 'stream-chunk', chunk: { type: 'start' }, seq: 1 });
+
+    await expect(generation).rejects.toThrow('Could not render the chunk');
+    expect(fetchSpy.mock.calls[1][1]?.signal?.aborted).toBe(true);
+  });
+
   it('stops following the run when the mutation fails', async () => {
     const runChannel = mockRunChannel(fetchSpy);
 

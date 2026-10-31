@@ -32,6 +32,8 @@ const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
   }
 `;
 
+const END_EVENT_GRACE_MS = 5_000;
+
 type GenerateVariables = {
   input: Omit<GenerateInput, 'input' | 'onChunk' | 'signal'> & {
     input: ReturnType<typeof toRunAgentMessages>;
@@ -104,13 +106,29 @@ const generateWithChunks = async ({
       }
     };
 
-    const [result] = await Promise.all([
-      requestGenerate({
-        variables: { input: { ...variables.input, runId } },
-        signal: runSignal,
-      }),
-      deliverChunks(),
+    const delivered = deliverChunks();
+    const generated = requestGenerate({
+      variables: { input: { ...variables.input, runId } },
+      signal: runSignal,
+    });
+
+    void delivered.catch(() => undefined);
+
+    // a failing onChunk rejects at once, while delivering every chunk still waits for the result
+    const result = await Promise.race([
+      generated,
+      delivered.then(() => generated),
     ]);
+
+    // the result is final, so a lost end event only cuts the stream short instead of blocking forever
+    let endEventGraceTimer: ReturnType<typeof setTimeout> | undefined;
+
+    await Promise.race([
+      delivered,
+      new Promise((resolve) => {
+        endEventGraceTimer = setTimeout(resolve, END_EVENT_GRACE_MS);
+      }),
+    ]).finally(() => clearTimeout(endEventGraceTimer));
 
     // the reader ends quietly on abort, so an abort after the mutation returned would read as a full delivery
     signal?.throwIfAborted();
