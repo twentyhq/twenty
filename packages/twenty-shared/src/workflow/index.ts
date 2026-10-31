@@ -167,6 +167,7 @@ export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';
 export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
+export { isWorkflowAiAgentGenerateStep } from './utils/isWorkflowAiAgentGenerateStep';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {
