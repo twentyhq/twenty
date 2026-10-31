@@ -23,8 +23,8 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -324,7 +324,7 @@ describe('A restricted record on an object open by default', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRole.id,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

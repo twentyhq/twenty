@@ -163,6 +163,40 @@ describe('FrontComponentWorkerEffect', () => {
     return renderEffect;
   };
 
+  it('renders supplied SDK sources without granting network or app credentials', async () => {
+    const render = jest.fn().mockResolvedValue(undefined);
+    mockThreadRender(render);
+    const setError = jest.fn();
+    const rerender = mountEffect({ setReceiver: jest.fn(), setError });
+    await flushPendingWork();
+    jest.mocked(fetchComponentSource).mockClear();
+    render.mockClear();
+    const sdkClientSources = {
+      core: 'export class CoreApiClient {}',
+      metadata: 'export class MetadataApiClient {}',
+    };
+
+    rerender({
+      componentUrl: 'about:blank#preview',
+      componentSource:
+        'import { CoreApiClient } from "twenty-client-sdk/core";',
+      sdkClientSources,
+    });
+    await flushPendingWork();
+
+    expect(fetchComponentSource).not.toHaveBeenCalled();
+    expect(setError).toHaveBeenLastCalledWith(null);
+    expect(render).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        sdkClientSources,
+        hostFetchOrigins: [],
+        applicationAccessToken: undefined,
+        apiUrl: undefined,
+      }),
+    );
+  });
+
   it('keeps the receiver connected while waiting for readiness', async () => {
     const { render, resolveRender } = createDeferredRender();
     mockThreadRender(render);

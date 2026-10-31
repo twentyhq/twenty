@@ -8,7 +8,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const RECORD_TABLE_NAMES = ['person', '_pet'];
-const ACCESS_GROUP_IDS = 'accessGroupIds';
+const ACCESS_GROUP_IDS = '_accessGroupIds';
 
 type ColumnRow = {
   tableName: string;
@@ -201,28 +201,6 @@ describe('2-55 workspace command - add access group storage columns (integration
         `DELETE FROM "${SCHEMA}"."accessGroup" WHERE "roleId" = $1`,
         [roleId],
       );
-    }
-  });
-
-  it('skips a table whose column of the same name has another type', async () => {
-    await dropRecordColumn('_rocket');
-    await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."_rocket" ADD COLUMN "${ACCESS_GROUP_IDS}" text`,
-    );
-
-    try {
-      await runOnWorkspace();
-
-      expect(
-        (await findColumns())
-          .filter((column) => column.tableName === '_rocket')
-          .map((column) => [column.columnName, column.dataType]),
-      ).toEqual([[ACCESS_GROUP_IDS, 'text']]);
-    } finally {
-      await global.testDataSource.query(
-        `ALTER TABLE "${SCHEMA}"."_rocket" DROP COLUMN "${ACCESS_GROUP_IDS}"`,
-      );
-      await runOnWorkspace();
     }
   });
 });

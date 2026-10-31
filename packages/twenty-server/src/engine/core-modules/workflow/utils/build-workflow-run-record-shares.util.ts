@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
+import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 
 // must agree with buildCoreWorkflowVisibilitySqlPredicate
 export const buildWorkflowRunRecordShares = ({

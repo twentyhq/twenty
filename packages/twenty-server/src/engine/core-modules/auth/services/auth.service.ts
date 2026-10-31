@@ -76,7 +76,7 @@ import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/w
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository

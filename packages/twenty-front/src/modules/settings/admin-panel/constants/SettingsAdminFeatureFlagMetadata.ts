@@ -28,6 +28,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
+  [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
+    label: msg`AI chat component builder`,
+    description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: {
     label: msg`AI chat inbox`,
     description: msg`Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages.`,
@@ -43,6 +47,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
+  },
+  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: {
+    label: msg`Private records`,
+    description: msg`Let people make a record visible only to its creator and the people it is shared with.`,
   },
   [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: {
     label: msg`Record rules through relations`,

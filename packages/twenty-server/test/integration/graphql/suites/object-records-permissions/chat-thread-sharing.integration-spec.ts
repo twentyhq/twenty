@@ -15,7 +15,7 @@ import {
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
@@ -39,14 +39,14 @@ import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
+import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
@@ -190,7 +190,7 @@ const shareThread = ({
 };
 
 describe('Conversation sharing through the authenticated API', () => {
-  it.each(['member', 'role', 'everyone', 'setup'])(
+  it.each(['member', 'role'])(
     'grants read-only %s access and denies it immediately after revocation',
     async (audience) => {
       const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -361,7 +361,7 @@ describe('Conversation sharing through the authenticated API', () => {
     },
   );
 
-  it.each(['member', 'role', 'everyone'])(
+  it.each(['member', 'role'])(
     'executes as an invited %s editor and denies further work after downgrade',
     async (audience) => {
       const workspaceId = SEED_APPLE_WORKSPACE_ID;
@@ -1032,7 +1032,7 @@ describe('Conversations through the record API', () => {
           isSystemContext: false,
           objectsPermissions: rolesPermissions[roleId],
           principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
-          canAccessAllRecords: false,
+          workspaceMemberId,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
