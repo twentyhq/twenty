@@ -27,7 +27,7 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
-import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type AgentRunPersonaSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
@@ -737,7 +737,7 @@ export class AgentRunnerService {
     spec,
   }: {
     workspaceId: string;
-    spec: AgentRunSpec;
+    spec: AgentRunPersonaSpec;
   }): Promise<ResolvedAgentRunPersona> {
     if (spec.agentId === null) {
       return resolveAgentRunPersonaFromInlineConfig(spec.inlineConfig);

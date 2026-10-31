@@ -111,6 +111,13 @@ export class DatabaseToolProvider implements ToolProvider {
         })
       : new Map<string, ExplicitObjectPermission>();
 
+    if (
+      requireExplicitObjectGrants &&
+      explicitPermissionByObjectId.size === 0
+    ) {
+      return descriptors;
+    }
+
     const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     );

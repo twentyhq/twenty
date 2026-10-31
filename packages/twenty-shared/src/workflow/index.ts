@@ -82,6 +82,7 @@ export { workflowIteratorActionSettingsSchema } from './schemas/iterator-action-
 export { workflowLogicFunctionActionSchema } from './schemas/logic-function-action-schema';
 export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-function-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
+export { modelConfigurationSchema } from './schemas/model-configuration-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
 export { workflowPickRecordActionSchema } from './schemas/pick-record-action-schema';
 export {
@@ -167,6 +168,7 @@ export { hasWorkflowAiAgentConversationConfig } from './utils/hasWorkflowAiAgent
 export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';
 export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
+export { isWorkflowAiAgentGenerateStep } from './utils/isWorkflowAiAgentGenerateStep';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {
