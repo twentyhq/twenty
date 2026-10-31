@@ -24,7 +24,6 @@ export const answerWith = (text: string): ScriptedModelResponse => ({
   usage: SCRIPTED_MODEL_USAGE,
 });
 
-// returns the names of the tools offered on each model call
 export const mockScriptedAiModel = (
   respond: (callIndex: number) => ScriptedModelResponse,
 ) => {

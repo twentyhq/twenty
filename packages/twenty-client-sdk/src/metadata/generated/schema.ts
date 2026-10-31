@@ -6243,7 +6243,7 @@ export interface FullNameGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface GenerateInput {input: RunAgentMessageInput[],instructions?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),scope?: (Scalars['JSON'] | null)}
+export interface GenerateInput {input: RunAgentMessageInput[],instructions?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runId?: (Scalars['UUID'] | null),scope?: (Scalars['JSON'] | null)}
 
 export interface GenerateResultGenqlSelection{
     error?: boolean | number
@@ -8170,7 +8170,7 @@ export interface SubscriptionGenqlSelection{
     eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {fieldFilters?: (EventLogFieldFilterInput[] | null), table: EventLogTable} })
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
-    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
+    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), runId?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number

@@ -19,10 +19,13 @@ const isAgentChatSubscriptionEvent = (
   isRecord(value) && isString(value.type);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
-const parseServerSentEventOrThrow = (
-  block: string,
-  caller: string,
-): ServerSentEvent => {
+const parseServerSentEventOrThrow = ({
+  block,
+  caller,
+}: {
+  block: string;
+  caller: string;
+}): ServerSentEvent => {
   const lines = block.split('\n');
 
   if (lines.includes('event: complete')) {
@@ -120,10 +123,10 @@ export async function* streamAgentChatEvents({
       let boundary = buffer.indexOf('\n\n');
 
       while (boundary !== -1) {
-        const serverSentEvent = parseServerSentEventOrThrow(
-          buffer.slice(0, boundary),
+        const serverSentEvent = parseServerSentEventOrThrow({
+          block: buffer.slice(0, boundary),
           caller,
-        );
+        });
 
         buffer = buffer.slice(boundary + 2);
         boundary = buffer.indexOf('\n\n');

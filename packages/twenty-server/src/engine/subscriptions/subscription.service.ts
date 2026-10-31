@@ -109,7 +109,6 @@ export class SubscriptionService {
     return `${SubscriptionChannel.AGENT_CHAT_CHANNEL}:${workspaceId}:${threadId}`;
   }
 
-  // live once it resolves, so a subscriber can start what it follows only then
   async subscribeToAgentChat<TPayload>({
     workspaceId,
     threadId,

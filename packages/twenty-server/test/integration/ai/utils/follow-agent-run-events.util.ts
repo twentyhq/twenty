@@ -9,7 +9,6 @@ const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
   }
 `;
 
-// follows a run over GraphQL server-sent events, as the SDK does, collecting what arrives until closed
 export const followAgentRunEvents = async ({
   runId,
   token,
@@ -85,8 +84,10 @@ export const followAgentRunEvents = async ({
           }
         }
       }
-    } catch {
-      // closed by the test
+    } catch (error) {
+      if (!abortController.signal.aborted) {
+        errors.push(String(error));
+      }
     }
   })();
 

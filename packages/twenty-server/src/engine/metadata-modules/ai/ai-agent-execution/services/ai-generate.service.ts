@@ -124,8 +124,7 @@ export class AiGenerateService {
     };
   }
 
-  // a run id the caller picks names its run on the caller's channel, so an app may only follow its own runs.
-  // Its turn's primary key also refuses a reused id that gets past the lookup
+  // keyed by the caller app so an app follows only its own runs; the turn's primary key backs the lookup in a race
   private async resolveStreamChannelIdOrThrow({
     workspaceId,
     callerApplication,

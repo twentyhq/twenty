@@ -7,7 +7,11 @@ const APPLICATION = { id: 'application-id' };
 const RUN_ID = '3f1c9a52-7b0e-4d6a-8c2f-9e4b5a6d7c81';
 const INPUT = [{ role: 'user', content: 'Qualify Acme' }];
 
-const buildService = ({ existingTurn = null }: { existingTurn?: unknown }) => {
+const buildService = ({
+  existingTurn = null,
+}: {
+  existingTurn?: { id: string } | null;
+}) => {
   const runInRequest = jest.fn().mockResolvedValue({
     runId: RUN_ID,
     outcome: { status: 'COMPLETED', result: { response: 'A fit' } },
@@ -23,13 +27,15 @@ const buildService = ({ existingTurn = null }: { existingTurn?: unknown }) => {
   return { service, runInRequest, findOne };
 };
 
-const generate = (
-  service: AiGenerateService,
-  {
-    input,
-    callerApplication,
-  }: { input: Record<string, unknown>; callerApplication: unknown },
-) =>
+const generate = ({
+  service,
+  input,
+  callerApplication,
+}: {
+  service: AiGenerateService;
+  input: Record<string, unknown>;
+  callerApplication: typeof APPLICATION | undefined;
+}) =>
   service.generate({
     workspace: WORKSPACE as never,
     requestUserWorkspaceId: null,
@@ -43,7 +49,8 @@ describe('AiGenerateService', () => {
   it('runs under the caller run id and streams to that run channel of the caller', async () => {
     const { service, runInRequest } = buildService({});
 
-    await generate(service, {
+    await generate({
+      service,
       input: { input: INPUT, runId: RUN_ID },
       callerApplication: APPLICATION,
     });
@@ -62,7 +69,8 @@ describe('AiGenerateService', () => {
   it('streams nowhere without a run id', async () => {
     const { service, runInRequest, findOne } = buildService({});
 
-    await generate(service, {
+    await generate({
+      service,
       input: { input: INPUT },
       callerApplication: APPLICATION,
     });
@@ -82,7 +90,8 @@ describe('AiGenerateService', () => {
     });
 
     await expect(
-      generate(service, {
+      generate({
+        service,
         input: { input: INPUT, runId: RUN_ID },
         callerApplication: APPLICATION,
       }),
@@ -94,7 +103,8 @@ describe('AiGenerateService', () => {
     const { service, runInRequest } = buildService({});
 
     await expect(
-      generate(service, {
+      generate({
+        service,
         input: { input: INPUT, runId: RUN_ID },
         callerApplication: undefined,
       }),
@@ -106,7 +116,8 @@ describe('AiGenerateService', () => {
     const { service } = buildService({});
 
     await expect(
-      generate(service, {
+      generate({
+        service,
         input: { input: INPUT, runId: 'run-1' },
         callerApplication: APPLICATION,
       }),

@@ -38,10 +38,13 @@ type GenerateVariables = {
   };
 };
 
-const requestGenerate = async (
-  variables: GenerateVariables,
-  signal: AbortSignal | undefined,
-): Promise<GenerateResult> => {
+const requestGenerate = async ({
+  variables,
+  signal,
+}: {
+  variables: GenerateVariables;
+  signal: AbortSignal | undefined;
+}): Promise<GenerateResult> => {
   const { generate: result } = await postGraphqlRequest<
     GenerateVariables,
     { generate: GenerateResult }
@@ -55,8 +58,7 @@ const requestGenerate = async (
   return result;
 };
 
-// The run's channel is followed before the run starts: its first event, a keepalive, comes once the
-// subscription is live. The server ends the channel after the last chunk, before the mutation returns
+// starts the run once its channel is live (the first keepalive), and ends at the end event after its last chunk
 const generateWithChunks = async ({
   variables,
   onChunk,
@@ -80,7 +82,7 @@ const generateWithChunks = async ({
       signal: runSignal,
     });
 
-    if ((await events.next()).done === true) {
+    if ((await events.next()).done) {
       signal?.throwIfAborted();
 
       throw new Error('ai.generate() failed: the stream ended before the run');
@@ -103,7 +105,10 @@ const generateWithChunks = async ({
     };
 
     const [result] = await Promise.all([
-      requestGenerate({ input: { ...variables.input, runId } }, runSignal),
+      requestGenerate({
+        variables: { input: { ...variables.input, runId } },
+        signal: runSignal,
+      }),
       deliverChunks(),
     ]);
 
@@ -128,6 +133,6 @@ export const ai = {
 
     return isDefined(onChunk)
       ? generateWithChunks({ variables, onChunk, signal })
-      : requestGenerate(variables, signal);
+      : requestGenerate({ variables, signal });
   },
 };

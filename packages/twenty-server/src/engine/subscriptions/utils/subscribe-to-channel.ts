@@ -1,8 +1,7 @@
 import { type RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
-// Subscribed once it resolves, so it gets whatever is published afterwards. RedisPubSub's asyncIterator
-// subscribes on its first read instead, which can come after a subscriber was told it is live
+// subscribed once it resolves, unlike RedisPubSub's asyncIterator, which subscribes on its first read
 export const subscribeToChannel = async <TPayload>({
   pubSub,
   channel,
@@ -10,7 +9,7 @@ export const subscribeToChannel = async <TPayload>({
   pubSub: Pick<RedisPubSub, 'subscribe' | 'unsubscribe'>;
   channel: string;
 }): Promise<AsyncIterableIterator<TPayload>> => {
-  const receivedPayloads: TPayload[] = [];
+  const receivedResults: IteratorResult<TPayload>[] = [];
   const pendingReads: ((result: IteratorResult<TPayload>) => void)[] = [];
   let isClosed = false;
 
@@ -25,7 +24,7 @@ export const subscribeToChannel = async <TPayload>({
         return;
       }
 
-      receivedPayloads.push(payload);
+      receivedResults.push({ done: false, value: payload });
     },
   );
 
@@ -33,7 +32,7 @@ export const subscribeToChannel = async <TPayload>({
     if (!isClosed) {
       isClosed = true;
       pubSub.unsubscribe(subscriptionId);
-      receivedPayloads.length = 0;
+      receivedResults.length = 0;
       pendingReads
         .splice(0)
         .forEach((pendingRead) =>
@@ -50,11 +49,10 @@ export const subscribeToChannel = async <TPayload>({
         return close();
       }
 
-      if (receivedPayloads.length > 0) {
-        return Promise.resolve({
-          done: false,
-          value: receivedPayloads.shift() as TPayload,
-        });
+      const receivedResult = receivedResults.shift();
+
+      if (isDefined(receivedResult)) {
+        return Promise.resolve(receivedResult);
       }
 
       return new Promise((resolve) => pendingReads.push(resolve));

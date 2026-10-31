@@ -93,10 +93,8 @@ const toNextEvent = (event: Record<string, unknown>) =>
   );
 
 const isStreamRequest = (requestInit: RequestInit | undefined) =>
-  (requestInit?.headers as Record<string, string>)?.Accept ===
-  'text/event-stream';
+  new Headers(requestInit?.headers).get('Accept') === 'text/event-stream';
 
-// the run channel answers the subscription, and the mutation waits until the test sends its result
 const mockRunChannel = (fetchSpy: MockInstance<typeof fetch>) => {
   let channel: ReadableStreamDefaultController<Uint8Array> | undefined;
   let isChannelCancelled = false;

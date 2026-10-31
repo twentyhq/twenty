@@ -11,10 +11,13 @@ import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/a
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
-const buildService = async (
-  finish: jest.Mock,
-  eventPublisherService: Record<string, jest.Mock> = {},
-) => {
+const buildService = async ({
+  finish,
+  eventPublisherService = {},
+}: {
+  finish: jest.Mock;
+  eventPublisherService?: Record<string, jest.Mock>;
+}) => {
   const module = await Test.createTestingModule({
     providers: [
       AgentTurnStreamService,
@@ -104,7 +107,7 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
 
     await expect(
       streamTurnWithoutClaim({
-        service: await buildService(finish),
+        service: await buildService({ finish }),
         turnError,
       }),
     ).rejects.toBe(turnError);
@@ -119,9 +122,9 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
 
   it('fails with the turn error when recording the failure fails', async () => {
     const turnError = new Error('Provider unavailable');
-    const service = await buildService(
-      jest.fn().mockRejectedValue(new Error('Database unavailable')),
-    );
+    const service = await buildService({
+      finish: jest.fn().mockRejectedValue(new Error('Database unavailable')),
+    });
 
     await expect(streamTurnWithoutClaim({ service, turnError })).rejects.toBe(
       turnError,
@@ -139,7 +142,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     const eventPublisherService = buildPublisher();
 
     await streamReplyWithoutClaim({
-      service: await buildService(jest.fn(), eventPublisherService),
+      service: await buildService({ finish: jest.fn(), eventPublisherService }),
     });
 
     expect(eventPublisherService.publish).not.toHaveBeenCalled();
@@ -149,7 +152,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     const eventPublisherService = buildPublisher();
 
     const { streamed } = await streamReplyWithoutClaim({
-      service: await buildService(jest.fn(), eventPublisherService),
+      service: await buildService({ finish: jest.fn(), eventPublisherService }),
       streamChannelId: 'run-channel-id',
     });
 
@@ -178,10 +181,10 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
 
     await expect(
       streamTurnWithoutClaim({
-        service: await buildService(
-          jest.fn().mockResolvedValue(true),
+        service: await buildService({
+          finish: jest.fn().mockResolvedValue(true),
           eventPublisherService,
-        ),
+        }),
         turnError,
         streamChannelId: 'run-channel-id',
       }),

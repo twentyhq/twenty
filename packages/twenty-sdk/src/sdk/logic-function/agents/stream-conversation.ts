@@ -15,7 +15,6 @@ export type StreamConversationInput = AgentConversationInput & {
   signal?: AbortSignal;
 };
 
-// a dropped connection throws: read the history and stream again to resume
 export const streamConversation = ({
   signal,
   ...conversation

@@ -108,7 +108,6 @@ export class AgentRunnerService {
     streamChannelId,
     ...input
   }: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'> & {
-    // where the run streams, when its caller follows it
     streamChannelId?: string;
   }): Promise<InRequestAgentRun> {
     const persona = await this.agentRunPersonaService.resolveOrThrow({
