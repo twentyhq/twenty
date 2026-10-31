@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -80,15 +82,17 @@ describe('2-55 workspace command - add private record column (integration)', () 
       `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'person'`,
       [SEED_APPLE_WORKSPACE_ID],
     );
-    [{ id: restrictedPersonId }, { id: viewOnlyPersonId }] =
-      await global.testDataSource.query(
-        `SELECT id FROM "${SCHEMA}"."person" ORDER BY id LIMIT 2`,
-      );
+    restrictedPersonId = randomUUID();
+    viewOnlyPersonId = randomUUID();
+    await global.testDataSource.query(
+      `INSERT INTO "${SCHEMA}"."person" (id) VALUES ($1), ($2)`,
+      [restrictedPersonId, viewOnlyPersonId],
+    );
   });
 
   afterAll(async () => {
     await global.testDataSource.query(
-      `UPDATE "${SCHEMA}"."person" SET "_isPrivate" = false WHERE id = ANY($1)`,
+      `DELETE FROM "${SCHEMA}"."person" WHERE id = ANY($1)`,
       [[restrictedPersonId, viewOnlyPersonId]],
     );
   });
