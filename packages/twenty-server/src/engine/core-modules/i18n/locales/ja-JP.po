@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "必須フィールドが不足しています。すべての必須値を入力して、もう一度お試しください。"
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "このラベルを持つ役割はすでに存在します。"
@@ -403,6 +403,11 @@ msgstr "このラベルを持つ役割はすでに存在します。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "シークレット変数にはデフォルト値を設定できません。"
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "ログイン済みのチャットが必要です。"
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -720,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "実際の録画開始時刻"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "コンポーネントを作成する前に、{missingPackageNames} を Workspace アプリの package.json と yarn.lock に追加してください。"
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -777,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "ビューをリストに追加"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "コンポーネントを作成する前に、yarn.lock を Workspace アプリに追加してください。"
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -796,7 +811,7 @@ msgid "Admin Panel"
 msgstr "管理パネル"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "管理者ロールが見つかりません。"
 
@@ -1015,6 +1030,11 @@ msgstr "ワークスペースメンバーに割り当てられた AI チャッ�
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "ワークスペースメンバーが所有するAIチャットスレッド"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "AIコンポーネントビルダーは無効です。"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1282,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "APIキーロールの設定が見つかりません。"
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "APIキーロールが見つかりません。"
 
@@ -1717,7 +1737,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "このプロバイダーでは認証が有効になっていません。"
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "この機能にアクセスするには認証が必要です。サインインしてもう一度お試しください。"
 
@@ -1728,7 +1748,7 @@ msgstr "この操作を実行するには認証が必要です"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "認証が必要です。"
 
@@ -2463,12 +2483,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "草稿または最後に公開されたバージョン以外は有効化できません"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "システムオブジェクトにはフィールド権限を追加できません。"
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "システムオブジェクトには権限を追加できません。"
 
@@ -2501,7 +2521,7 @@ msgid "Cannot delete standard skill"
 msgstr "標準スキルは削除できません"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "最後の管理者は削除できません。"
 
@@ -2517,12 +2537,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "削除できません。まずラベル識別子フィールドを更新してください"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "読み取り不可のオブジェクトには書き込み権限を付与できません。"
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "読み取り権限なしに書き込み権限は付与できません。"
 
@@ -2597,7 +2617,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "述語のロールを{existingRoleIdentifier}から{updatedRoleIdentifier}に変更することはできません。"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "ワークスペースの最後の管理者は削除できません。"
 
@@ -2614,7 +2634,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "他のアプリケーションが所有するロールを対象にできません"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "他のアプリケーションが所有するロールを対象にできません。"
@@ -2850,7 +2870,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "上書きする既存のタイムラインアクティビティタイプを選択してください"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "共有するユーザーまたはロールを選択してください。"
 
@@ -3068,6 +3088,11 @@ msgstr "コンポーネントのビルドが{timeoutSeconds}秒の制限時間�
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "コンポーネントのビルドが{maximumOutputMegabytes} MBの出力制限を超過しました。"
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "コンポーネントの下書きが見つからないか、有効期限が切れています。"
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3087,7 +3112,7 @@ msgid "Compose Email"
 msgstr "メールを作成"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "複合型が見つかりません。"
 
@@ -3688,7 +3713,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "フィールドメタデータが作成されましたが、親オブジェクトメタデータが見つかりませんでした"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "プライベートオブジェクトのレコードを作成するには、shareWith 引数が必要です"
 
@@ -3854,8 +3879,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "カスタムオブジェクトにラベル識別子フィールドがありません。"
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "カスタムロールは Organization Plan の一部です。"
@@ -4178,7 +4203,7 @@ msgid "Default Person Layout"
 msgstr "デフォルト人物レイアウト"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "デフォルトロールが見つかりません。"
 
@@ -4600,7 +4625,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "各関連レコードパスフィールドは、前のリレーションで到達したオブジェクトに属している必要があります"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "各 shareWith エントリでは、workspaceMemberId、roleId、everyone のいずれか1つのみを指定する必要があります"
 
@@ -4857,7 +4882,7 @@ msgid "Emoji the member reacted with"
 msgstr "メンバーが使用したリアクションの絵文字"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "空のフィールド権限は許可されていません。"
 
@@ -5291,7 +5316,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "ジョブの再試行に失敗しました。後でもう一度お試しください。"
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "フィールド権限の更新に失敗しました。"
 
@@ -5346,6 +5371,12 @@ msgstr "フィールド \"{relationFieldName}\" はリレーションではあ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "フィールド \"{workspaceMemberFieldName}\" は workspaceMember オブジェクトのフィールドではないため、この条件は適用されません"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "フィールド {0}.{fieldName} は利用できません。アクセス可能なトップレベルのフィールドを選択してください。"
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5410,8 +5441,8 @@ msgid "Field metadata not found"
 msgstr "フィールドメタデータが見つかりません"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5492,7 @@ msgid "Field permission not found"
 msgstr "フィールド権限が見つかりません。"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "フィールド権限が見つかりません。"
 
@@ -5492,7 +5523,7 @@ msgid "Field referenced in index does not exist"
 msgstr "インデックスで参照されたフィールドは存在しません"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "フィールド制限は読み取り可能なオブジェクトにのみ適用されます。"
 
@@ -6540,8 +6571,10 @@ msgid "Internal name of the campaign"
 msgstr "キャンペーンの内部名"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "無効なアクセスレベルです。"
 
@@ -6577,7 +6610,7 @@ msgid "Invalid application workflow definition."
 msgstr "無効なアプリケーションワークフロー定義です。"
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "無効な引数が指定されました。"
 
@@ -6620,6 +6653,11 @@ msgstr "無効な分類リクエストです。"
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "無効なコマンドメニュー項目の入力です。"
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "無効なコンポーネント下書き入力です。"
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7080,7 +7118,7 @@ msgid "Invalid permission flag permission type."
 msgstr "権限フラグの権限タイプが無効です。"
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "無効な権限設定です。"
 
@@ -7104,6 +7142,11 @@ msgstr "無効な電話国コードです。"
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "無効な電話番号です。"
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "無効なプレビューエラーメッセージです。"
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7244,8 +7287,8 @@ msgstr "無効なURL形式です。"
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "無効なUUID形式です。"
 
@@ -7545,7 +7588,7 @@ msgid "Job Title"
 msgstr "役職"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "結合列名は必須です。"
 
@@ -8110,6 +8153,11 @@ msgstr "非公開にする"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "ワークフローを非公開にする"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "アプリケーションの管理が必要です。"
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9097,7 +9145,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "選択したオブジェクトにこのロールの権限が設定されていません。最初にオブジェクト権限を設定してください。"
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "データソースに権限が見つかりません。"
 
@@ -9117,12 +9165,12 @@ msgid "No records were affected."
 msgstr "対象となったレコードはありません。"
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "アプリケーションにロールが割り当てられていません。"
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "このユーザーにはワークスペース内のロールが見つかりません。"
 
@@ -9152,7 +9200,7 @@ msgid "No trigger type provided"
 msgstr "トリガータイプが提供されていません"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "有効な認証コンテキストが見つかりません。"
 
@@ -9466,9 +9514,9 @@ msgid "Object metadata not found"
 msgstr "オブジェクトメタデータが見つかりません"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9556,7 @@ msgid "Object permission not found"
 msgstr "オブジェクト権限が見つかりません。"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "オブジェクト権限が見つかりません。"
 
@@ -9653,7 +9701,7 @@ msgid "Only error"
 msgstr "唯一のエラー"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "フィールド制限のみ許可されています。"
 
@@ -10345,7 +10393,7 @@ msgid "Permission flag to update not found"
 msgstr "更新の権限フラグが見つかりません。"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "権限が見つかりません。"
 
@@ -10638,6 +10686,11 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "プリンシパルの種類"
 
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/services/private-record-storage.service.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "このワークスペースではプライベートレコードをまだ利用できません。"
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10805,7 +10858,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "レート制限に達しました。後でもう一度お試しください。"
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "生の SQL クエリは許可されていません。"
 
@@ -11111,6 +11164,11 @@ msgstr "関連レコードパスが見つかりません。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
 msgstr "関連レコードパスオブジェクトが見つかりません"
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "関連レコードパスには Organization プランが必要です。"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11482,7 +11540,7 @@ msgid "Role is not editable"
 msgstr "ロールは編集できません。"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "ロールには少なくとも1つの対象が必要です。"
 
@@ -11526,10 +11584,10 @@ msgstr "ロールが見つかりません"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "ロールが見つかりません。"
 
@@ -11730,6 +11788,16 @@ msgstr "実行回数"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "実行回数"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "サンプルレコードが 100 KB を超えています。"
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "サンプルレコードには、選択したフィールドと id のみを含める必要があります。"
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -12248,17 +12316,17 @@ msgid "Shared record"
 msgstr "共有レコード"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith はこのワークスペースに属していないロールを指定しています"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith はこのワークスペースに属していないワークスペースメンバーを指定しています"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith は同じプリンシパルを複数回指定しています"
 
@@ -12381,7 +12449,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "選択した権限の一部が無効です。 有効な権限設定を試してください。"
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "一部のワークスペースメンバーシップが見つかりませんでした。このワークスペースへのアクセス権がなくなった可能性があります。"
 
@@ -13189,7 +13257,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "お探しのエージェントが見つかりませんでした。削除されたか、アクセスできない可能性があります。"
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "APIキーに有効なロールが割り当てられていません。APIキーの設定を確認してください。"
 
@@ -13205,7 +13273,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "アプリケーションのソースチャネルが想定された型と一致しません。"
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "アプリケーションに有効なロールが割り当てられていません。アプリケーションの設定を確認してください。"
 
@@ -13266,6 +13334,16 @@ msgstr "会社のウェブサイトのURLです。このURLを使用して会社
 msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "その会社の年間売上高合計"
+
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "コンポーネントの依存関係が大きすぎます。Workspace アプリの依存関係を減らしてから、もう一度お試しください。"
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "コンポーネントの依存関係を検証できませんでした。もう一度コンポーネントを作成してみてください。"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13357,7 +13435,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "デフォルトロールはワークスペースの正しい機能に必要なため削除することはできません。"
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "デフォルトのロールは削除できません。"
 
@@ -13547,7 +13625,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "MCP リクエストのパラメーターが無効です。"
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "メンバーロールは削除できません。"
@@ -13879,6 +13957,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "ワークフローバージョンのステータス"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "ビルド中にWorkspaceアプリの依存関係が変更されました。もう一度コンポーネントを作成してみてください。"
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -13916,12 +13999,12 @@ msgid "The workspace member who last updated the record"
 msgstr "レコードを最後に更新したワークスペースのメンバー"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "そのロールはこれらのレコードにアクセスできず、このオブジェクトはアクセス可能なロールとのみ共有されています。"
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "そのロールはこのレコードを閲覧できず、このオブジェクトは閲覧可能なユーザーとのみ共有されています。"
 
@@ -14204,6 +14287,16 @@ msgstr "このドメインはすでに登録されています。"
 msgid "This domain is already taken."
 msgstr "このドメインはすでに使用されています。"
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "この下書きは更新中です。もう一度お試しください。"
+
+#. js-lingui-id: HJFKCt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgstr "この下書きは置き換えられたか、別のチャットに属しています。新しい下書きを開始してください。"
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14382,7 +14475,7 @@ msgid "This message channel cannot send messages."
 msgstr "このメッセージチャネルはメッセージを送信できません。"
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "このメソッドは許可されていません。"
 
@@ -14568,12 +14661,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "このロールはAPIキーに割り当てられません。"
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "このロールはユーザーに割り当てられません。"
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "このロールは編集できません。"
 
@@ -15039,7 +15132,7 @@ msgid "To do"
 msgstr "未着手"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "管理者候補が多すぎます。"
 
@@ -15376,12 +15469,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "不明なナビゲーションメニュー項目タイプ {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "不明な操作です。"
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "不明な権限が必要です。"
 
@@ -15518,7 +15611,7 @@ msgid "Update DateTime"
 msgstr "更新日時"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "更新フィールドの制限は更新可能なオブジェクトにのみ適用されます。"
 
@@ -15761,7 +15854,7 @@ msgid "User already exists"
 msgstr "ユーザーは既に存在します"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "ユーザーには既にロールが割り当てられています。"
 
@@ -15776,7 +15869,7 @@ msgid "User does not have access to this workspace"
 msgstr "ユーザーはこのワークスペースにアクセスできません"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "ユーザーにはアクセス権がありません。"
 
@@ -15833,7 +15926,7 @@ msgstr "ユーザーはメール/パスワードで作成されていません"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "ユーザーワークスペースが見つかりません。"
 
@@ -17098,7 +17191,7 @@ msgid "Workspace does not exist."
 msgstr "ワークスペースが存在しません。"
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "ワークスペースIDとロールが一致しません。"
 
@@ -17190,7 +17283,7 @@ msgstr "ワークスペースメンバーの名前"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "ワークスペースメンバーが見つかりません。"
 
@@ -17437,12 +17530,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "自分自身のリカバリーコードを生成することはできません。代わりにプロフィールから二要素認証をリセットしてください。"
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "自分のロールを変更することはできません。別の管理者にロールの更新を依頼してください。"
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "あなたに割り当てられているロールは削除できません。別の管理者に削除を依頼してください。"
 
@@ -17453,12 +17546,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "読み取りアクセスも付与せずに編集権限を付与することはできません。最初に読み取りアクセスを有効にしてください。"
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "自分のロールから設定へのアクセス権を削除することはできません。別の管理者にこの変更を依頼してください。"
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "最後の管理者から管理者ロールを削除することはできません。最初に別の管理者を割り当ててください。"
 
@@ -17483,7 +17576,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "システムオブジェクトにはフィールドアクセス権を設定できません。それらはプラットフォームによって管理されています。"
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "自分のロールを更新することはできません。"
 
@@ -17572,7 +17665,7 @@ msgstr "ワークスペースのブロックリストを管理する権限があ
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "この操作を行う権限がありません。"
 
@@ -17700,8 +17793,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "あなたのロールではこれらのレコードの一部を削除できないため、マージできません。"
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "このワークスペースでのロールが見つかりませんでした。ワークスペース管理者に連絡してください。"
 
