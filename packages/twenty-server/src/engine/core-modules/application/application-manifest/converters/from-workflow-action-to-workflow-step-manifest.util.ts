@@ -1,7 +1,10 @@
 import isEqual from 'lodash.isequal';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  hasWorkflowAiAgentConversationConfig,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
@@ -215,6 +218,15 @@ const fromActionInput = ({
       const { agentId, ...rest } = toRecord(input);
 
       checkAiRunScopeReferences({ scope: rest.scope, resolvers });
+
+      if (
+        !isDefined(agentId) &&
+        hasWorkflowAiAgentConversationConfig(action.settings.input)
+      ) {
+        resolvers.markUnsupported(
+          'AI agent step with human input instructions or a conversation but no agent to run',
+        );
+      }
 
       return isDefined(agentId)
         ? {

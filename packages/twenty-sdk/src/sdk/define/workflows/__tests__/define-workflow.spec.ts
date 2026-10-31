@@ -184,4 +184,31 @@ describe('defineWorkflow', () => {
       ).success,
     ).toBe(false);
   });
+
+  it('refuses a conversation on an AI agent step without an agent', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          instructions: 'Qualify the lead.',
+          prompt: 'Qualify {{trigger.name}}',
+          conversation: { scope: 'RUN' },
+        }),
+      ).errors,
+    ).toEqual([
+      'version.steps.0.input.agentUniversalIdentifier: Human input instructions and a conversation need a step running an agent; a step generating from its own instructions runs once, without a conversation',
+    ]);
+  });
+
+  it('accepts a conversation on an AI agent step running an agent', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+          prompt: 'Qualify {{trigger.name}}',
+          humanInputInstructions: 'Ask when the company is unclear',
+          conversation: { scope: 'RUN' },
+        }),
+      ).success,
+    ).toBe(true);
+  });
 });

@@ -622,6 +622,35 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       });
     });
 
+    it.each([
+      { humanInputInstructions: 'Ask when the company is unclear' },
+      { conversation: { scope: 'RUN' } },
+    ])('reports a step without an agent that stores %o', (agentOnlyInput) => {
+      const synced = syncWorkflow(
+        buildWorkflow({
+          steps: [
+            buildStep({
+              type: 'AI_AGENT',
+              overrides: {
+                input: {
+                  instructions: 'Qualify the lead.',
+                  prompt: 'Summarize {{trigger.text}}',
+                },
+              },
+            }),
+          ],
+        }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, agentOnlyInput);
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          'AI agent step with human input instructions or a conversation but no agent to run',
+      });
+    });
+
     it('reports a webhook with authentication', () => {
       const synced = syncWorkflow(
         buildWorkflow({
@@ -1144,6 +1173,30 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
 
     expect(step).toMatchObject({ type: 'AI_AGENT', input });
     expect(step.input).not.toHaveProperty('agentUniversalIdentifier');
+  });
+
+  it('exports a step without an agent with the blank human input instructions the builder stores', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      prompt: '{{trigger.properties.after.summary}}',
+      humanInputInstructions: '',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
   });
 
   it('exports a step without a position as null', () => {

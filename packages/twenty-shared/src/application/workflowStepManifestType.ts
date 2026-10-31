@@ -24,6 +24,7 @@ import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
+import { hasWorkflowAiAgentConversationConfig } from '@/workflow/utils/hasWorkflowAiAgentConversationConfig';
 import { hasWorkflowAiAgentInlineConfig } from '@/workflow/utils/hasWorkflowAiAgentInlineConfig';
 
 export const workflowManifestPositionSchema = z.object({
@@ -264,6 +265,17 @@ const workflowStepManifestOptions = [
             path: ['agentUniversalIdentifier'],
             message:
               'A step running an agent takes its instructions, model, model configuration and scope from the agent',
+          });
+        }
+        if (
+          !isDefined(input.agentUniversalIdentifier) &&
+          hasWorkflowAiAgentConversationConfig(input)
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['agentUniversalIdentifier'],
+            message:
+              'Human input instructions and a conversation need a step running an agent; a step generating from its own instructions runs once, without a conversation',
           });
         }
       }),
