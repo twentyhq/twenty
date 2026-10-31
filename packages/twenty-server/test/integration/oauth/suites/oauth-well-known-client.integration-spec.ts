@@ -9,9 +9,11 @@ import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
+const CODE_VERIFIER = 'integration-verifier';
 const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
 
@@ -48,7 +50,7 @@ describe('OAuth well-known clients (integration)', () => {
   let chatGptClientId: string;
   const createdRegistrationClientIds: string[] = [];
   const codeChallenge = base64UrlEncode(
-    crypto.createHash('sha256').update('integration-verifier').digest(),
+    crypto.createHash('sha256').update(CODE_VERIFIER).digest(),
   );
 
   const register = (body: Record<string, unknown>) =>
@@ -82,6 +84,14 @@ describe('OAuth well-known clients (integration)', () => {
         [createdRegistrationClientIds],
       );
     }
+
+    await ds.query(
+      `DELETE FROM core."application" application
+       USING core."applicationRegistration" registration
+       WHERE registration.id = application."applicationRegistrationId"
+         AND registration."universalIdentifier" = ANY($1)`,
+      [Object.values(WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS)],
+    );
 
     await ds.query(
       `DELETE FROM core."appToken" WHERE context->>'redirectUri' = ANY($1)`,
@@ -206,6 +216,62 @@ describe('OAuth well-known clients (integration)', () => {
         sourceType: 'OAUTH_ONLY',
         wellKnownOAuthClient: 'CLAUDE',
       });
+    });
+  });
+
+  describe('Shared installation', () => {
+    const authorizeAsMember = async (token: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: authorizeAppMutation,
+          variables: {
+            clientId: claudeClientId,
+            redirectUrl: CLAUDE_CALLBACK,
+            codeChallenge,
+          },
+        },
+        token,
+      );
+
+      return new URL(
+        response.body.data.authorizeApp.redirectUrl,
+      ).searchParams.get('code');
+    };
+
+    const exchangeCode = (code: string | null) =>
+      request(baseUrl).post('/oauth/token').send({
+        grant_type: 'authorization_code',
+        code,
+        client_id: claudeClientId,
+        code_verifier: CODE_VERIFIER,
+        redirect_uri: CLAUDE_CALLBACK,
+      });
+
+    it('should give two members connecting at once one Claude application', async () => {
+      const [janeCode, jonyCode] = await Promise.all([
+        authorizeAsMember(APPLE_JANE_ADMIN_ACCESS_TOKEN),
+        authorizeAsMember(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ]);
+
+      const [janeExchange, jonyExchange] = await Promise.all([
+        exchangeCode(janeCode),
+        exchangeCode(jonyCode),
+      ]);
+
+      expect(janeExchange.status).toBe(200);
+      expect(jonyExchange.status).toBe(200);
+
+      const claudeApplications = await ds.query(
+        `SELECT application.id FROM core."application" application
+         JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
+         WHERE registration."universalIdentifier" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
+        [
+          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          SEED_APPLE_WORKSPACE_ID,
+        ],
+      );
+
+      expect(claudeApplications).toHaveLength(1);
     });
   });
 

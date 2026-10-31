@@ -777,17 +777,22 @@ export class OAuthService {
     return scope.split(' ').filter((entry) => entry.length > 0);
   }
 
+  private findInstalledApplication(
+    applicationRegistration: ApplicationRegistrationEntity,
+    workspaceId: string,
+  ): Promise<ApplicationEntity | null> {
+    return this.applicationRepository.findOne(workspaceId, {
+      where: { applicationRegistrationId: applicationRegistration.id },
+    });
+  }
+
   private async findOrInstallApplication(
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
-    const existingApplication = await this.applicationRepository.findOne(
+    const existingApplication = await this.findInstalledApplication(
+      applicationRegistration,
       workspaceId,
-      {
-        where: {
-          applicationRegistrationId: applicationRegistration.id,
-        },
-      },
     );
 
     if (existingApplication) {
@@ -800,13 +805,9 @@ export class OAuthService {
         workspaceId,
       });
 
-      const installedApplication = await this.applicationRepository.findOne(
+      const installedApplication = await this.findInstalledApplication(
+        applicationRegistration,
         workspaceId,
-        {
-          where: {
-            applicationRegistrationId: applicationRegistration.id,
-          },
-        },
       );
 
       if (installedApplication) {
@@ -823,16 +824,34 @@ export class OAuthService {
       );
     }
 
-    return this.applicationService.create({
-      universalIdentifier: applicationRegistration.universalIdentifier,
-      name: applicationRegistration.name,
-      description: `OAuth application registered as "${applicationRegistration.name}"`,
-      version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
-      sourcePath: 'oauth-install',
-      sourceType: applicationRegistration.sourceType,
-      applicationRegistrationId: applicationRegistration.id,
-      workspaceId,
-    });
+    try {
+      return await this.applicationService.create({
+        universalIdentifier: applicationRegistration.universalIdentifier,
+        name: applicationRegistration.name,
+        description:
+          applicationRegistration.description ??
+          `OAuth application registered as "${applicationRegistration.name}"`,
+        version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
+        sourcePath: 'oauth-install',
+        sourceType: applicationRegistration.sourceType,
+        applicationRegistrationId: applicationRegistration.id,
+        workspaceId,
+      });
+    } catch (error) {
+      // Two members connecting a shared client for the first time race to create its install; the loser reuses it,
+      // since its authorization code is already spent
+      const concurrentlyInstalledApplication =
+        await this.findInstalledApplication(
+          applicationRegistration,
+          workspaceId,
+        );
+
+      if (isDefined(concurrentlyInstalledApplication)) {
+        return concurrentlyInstalledApplication;
+      }
+
+      throw error;
+    }
   }
 
   // OAuth RFC 6749 requires expires_in as seconds
