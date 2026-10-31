@@ -15,6 +15,7 @@ import {
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -45,6 +46,7 @@ export class OAuthService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationAuthorizationService: ApplicationAuthorizationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -617,7 +619,9 @@ export class OAuthService {
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+      await this.oAuthClientRegistrationResolverService.resolveByClientId(
+        clientId,
+      );
 
     if (!applicationRegistration) {
       return this.errorResponse('invalid_client', 'Client not found');

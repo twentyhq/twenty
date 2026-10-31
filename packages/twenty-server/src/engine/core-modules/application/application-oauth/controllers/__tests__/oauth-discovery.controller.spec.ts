@@ -168,6 +168,17 @@ describe('OAuthDiscoveryController', () => {
       expect(metadata).not.toHaveProperty('registration_endpoint');
     });
 
+    it('accepts Client ID Metadata Documents from public clients', async () => {
+      const metadata = await controller.getAuthorizationServerMetadata(
+        buildMockRequest('workspace.twenty.com'),
+      );
+
+      expect(metadata).toMatchObject({
+        client_id_metadata_document_supported: true,
+      });
+      expect(metadata.token_endpoint_auth_methods_supported).toContain('none');
+    });
+
     it('exposes the CLI client id, provisioning the registration if missing', async () => {
       const request = buildMockRequest('crm.acme.com');
 
