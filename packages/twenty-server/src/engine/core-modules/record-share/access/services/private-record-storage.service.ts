@@ -50,9 +50,11 @@ export class PrivateRecordStorageService {
         'flatFieldMetadataMaps',
       ]);
 
-    const rows = await this.withRepository(
-      { workspaceId, flatObjectMetadata, transactionScope },
-      (repository) =>
+    const rows = await this.withRepository({
+      workspaceId,
+      flatObjectMetadata,
+      transactionScope,
+      work: (repository) =>
         repository.executeRaw<{ id: string } & PrivateRecordState>(
           buildSelectPrivateRecordStatesSql({
             tableExpression: buildTableExpression({
@@ -66,7 +68,7 @@ export class PrivateRecordStorageService {
           }),
           { recordIds },
         ),
-    );
+    });
 
     return new Map(
       rows.map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
@@ -151,28 +153,29 @@ export class PrivateRecordStorageService {
       return;
     }
 
-    await this.withRepository(
-      { workspaceId, flatObjectMetadata, transactionScope },
-      (repository) =>
+    await this.withRepository({
+      workspaceId,
+      flatObjectMetadata,
+      transactionScope,
+      work: (repository) =>
         repository.executeRaw(
           `UPDATE ${buildTableExpression({ workspaceId, flatObjectMetadata })} SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = :isPrivate WHERE "id" = ANY(:recordIds)`,
           { isPrivate, recordIds },
         ),
-    );
+    });
   }
 
-  private async withRepository<TResult>(
-    {
-      workspaceId,
-      flatObjectMetadata,
-      transactionScope,
-    }: {
-      workspaceId: string;
-      flatObjectMetadata: FlatObjectMetadata;
-      transactionScope?: WorkspaceTransactionScope;
-    },
-    work: (repository: WorkspaceRepository) => Promise<TResult>,
-  ): Promise<TResult> {
+  private async withRepository<TResult>({
+    workspaceId,
+    flatObjectMetadata,
+    transactionScope,
+    work,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    transactionScope?: WorkspaceTransactionScope;
+    work: (repository: WorkspaceRepository) => Promise<TResult>;
+  }): Promise<TResult> {
     if (isDefined(transactionScope)) {
       return work(
         transactionScope.getRepository(

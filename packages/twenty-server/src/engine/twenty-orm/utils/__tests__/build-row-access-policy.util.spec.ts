@@ -152,7 +152,9 @@ describe('buildRowAccessPolicy', () => {
     });
 
     expect(policy.kind).toBe('gated');
-    if (policy.kind !== 'gated') throw new Error('Expected a privacy gate');
+    if (policy.kind !== 'gated') {
+      throw new Error('Expected a privacy gate');
+    }
     expect(policy.condition.sql).toContain(
       '("company"."_isPrivate" = FALSE) OR',
     );
@@ -461,7 +463,9 @@ describe('buildRowAccessPolicy', () => {
     it('admits a private record to its creator next to its shares', () => {
       const policy = buildForCreator(readEverything);
 
-      if (policy.kind !== 'gated') throw new Error('Expected a privacy gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a privacy gate');
+      }
       expect(policy.condition.sql).toMatch(
         /^\(\(\("company"."_isPrivate" = FALSE\) OR \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\) OR \(EXISTS/,
       );
@@ -475,7 +479,9 @@ describe('buildRowAccessPolicy', () => {
         principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
       });
 
-      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
       expect(policy.condition.sql).toContain(
         '("company"."_isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
       );

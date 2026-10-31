@@ -73,6 +73,12 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
         queryRunner,
         schemaName,
       });
+      const restrictedRecordCountsByObjectMetadataId = options.dryRun
+        ? await this.countRestrictedRecordsByObjectMetadataId({
+            queryRunner,
+            schemaName,
+          })
+        : undefined;
 
       for (const flatObjectMetadata of Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
@@ -95,11 +101,9 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
         if (options.dryRun) {
           dryRunColumnCount += hasColumn ? 0 : 1;
           dryRunPrivateRecordCount += isRestrictableObject(flatObjectMetadata)
-            ? await this.countRestrictedRecords({
-                queryRunner,
-                schemaName,
-                objectMetadataId: flatObjectMetadata.id,
-              })
+            ? (restrictedRecordCountsByObjectMetadataId?.get(
+                flatObjectMetadata.id,
+              ) ?? 0)
             : 0;
 
           continue;
@@ -190,23 +194,27 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     }
   }
 
-  private async countRestrictedRecords({
+  private async countRestrictedRecordsByObjectMetadataId({
     queryRunner,
     schemaName,
-    objectMetadataId,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-    objectMetadataId: string;
-  }): Promise<number> {
-    const [{ count }]: { count: string }[] = await queryRunner.query(
-      `SELECT COUNT(*) AS count FROM ${escapeIdentifier(schemaName)}."recordShare"
-         WHERE "objectMetadataId" = $1 AND "principalType" = 'EVERYONE'
-           AND "rowCause" = 'MANUAL' AND "accessLevel" = 'NONE' AND "deletedAt" IS NULL`,
-      [objectMetadataId],
-    );
+  }): Promise<Map<string, number>> {
+    const counts: { objectMetadataId: string; count: string }[] =
+      await queryRunner.query(
+        `SELECT "objectMetadataId", COUNT(*) AS count FROM ${escapeIdentifier(schemaName)}."recordShare"
+           WHERE "principalType" = 'EVERYONE' AND "rowCause" = 'MANUAL'
+             AND "accessLevel" = 'NONE' AND "deletedAt" IS NULL
+           GROUP BY "objectMetadataId"`,
+      );
 
-    return Number(count);
+    return new Map(
+      counts.map(({ objectMetadataId, count }) => [
+        objectMetadataId,
+        Number(count),
+      ]),
+    );
   }
 
   // "Anyone can view" has no private equivalent, so those records follow their roles again

@@ -155,7 +155,6 @@ describe('Access to all records and ownership transfer', () => {
     await setRecordSharingEnabled(true);
   });
 
-  // Private records are out of reach of the admin who cleans up
   const makeRecordsPublic = () =>
     global.testDataSource.query(
       `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."_${OBJECT_NAME}" SET "_isPrivate" = false`,
@@ -375,7 +374,6 @@ describe('Access to all records and ownership transfer', () => {
           rowCause: RecordShareRowCause.MANUAL,
         },
       ]);
-      // The creator keeps private records through createdBy, not a share row
       expect(
         await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
       ).toEqual([]);
@@ -400,7 +398,6 @@ describe('Access to all records and ownership transfer', () => {
         actingUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       });
 
-      // Private records of a removed creator would otherwise reach no one
       expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual(
         [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
       );
