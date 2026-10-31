@@ -31,21 +31,7 @@ describe('getOrganizationKeyValidationCronPattern', () => {
     expect(seconds.size).toBeGreaterThan(50);
   });
 
-  it('gives Sentry the same time without the seconds field', () => {
-    const pattern =
-      getOrganizationKeyValidationCronPattern('server-production');
-
-    expect(
-      getOrganizationKeyValidationCronPattern('server-production', {
-        withSeconds: false,
-      }),
-    ).toBe(pattern.split(' ').slice(1).join(' '));
-  });
-
   it('keeps refreshing if a server ID cannot be persisted', () => {
     expect(getOrganizationKeyValidationCronPattern(null)).toBe('0 4 * * *');
-    expect(
-      getOrganizationKeyValidationCronPattern(null, { withSeconds: false }),
-    ).toBe('0 4 * * *');
   });
 });

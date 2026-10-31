@@ -3,8 +3,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
 
+import { ENTERPRISE_KEY_VALIDATION_CRON_PATTERN } from 'src/engine/core-modules/enterprise/constants/organization-key-validation-cron-pattern.constant';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
-import { getOrganizationKeyValidationCronPattern } from 'src/engine/core-modules/enterprise/utils/get-organization-key-validation-cron-pattern.util';
+import { type EnterpriseKeyValidationCronJobData } from 'src/engine/core-modules/enterprise/types/enterprise-key-validation-cron-job-data.type';
+import { toMinuteLevelCronPattern } from 'src/engine/core-modules/enterprise/utils/to-minute-level-cron-pattern.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -17,8 +19,13 @@ export class EnterpriseKeyValidationCronJob {
   constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
   @Process(EnterpriseKeyValidationCronJob.name)
-  async handle(): Promise<void> {
-    const serverId = await this.enterprisePlanService.getOrCreateServerId();
+  async handle(
+    data: EnterpriseKeyValidationCronJobData | undefined,
+  ): Promise<void> {
+    // Sentry follows the pattern the queue registered, not one recomputed here.
+    // Schedulers registered by older versions carry no data and run at 04:00.
+    const cronPattern =
+      data?.cronPattern ?? ENTERPRISE_KEY_VALIDATION_CRON_PATTERN;
 
     return Sentry.withMonitor(
       EnterpriseKeyValidationCronJob.name,
@@ -26,9 +33,7 @@ export class EnterpriseKeyValidationCronJob {
       {
         schedule: {
           type: 'crontab',
-          value: getOrganizationKeyValidationCronPattern(serverId, {
-            withSeconds: false,
-          }),
+          value: toMinuteLevelCronPattern(cronPattern),
         },
         checkinMargin: 1,
         maxRuntime: 5,

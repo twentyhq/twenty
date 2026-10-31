@@ -5,6 +5,7 @@ import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/ente
 import { EnterpriseKeyValidationCronJob } from 'src/engine/core-modules/enterprise/cron/jobs/organization-key-validation.cron.job';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { getOrganizationKeyValidationCronPattern } from 'src/engine/core-modules/enterprise/utils/get-organization-key-validation-cron-pattern.util';
+import { toMinuteLevelCronPattern } from 'src/engine/core-modules/enterprise/utils/to-minute-level-cron-pattern.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 
@@ -60,36 +61,59 @@ describe('organization key validation schedule', () => {
     job = module.get(EnterpriseKeyValidationCronJob);
   });
 
-  it('uses the same stable time for the queue and Sentry', async () => {
-    await command.run();
-    await command.run();
-    await job.handle();
+  const registeredJobData = () =>
+    messageQueueService.addCron.mock.lastCall?.[0].data;
 
-    const pattern = getOrganizationKeyValidationCronPattern('server-example');
-    const sentryPattern = getOrganizationKeyValidationCronPattern(
-      'server-example',
-      { withSeconds: false },
-    );
-
-    for (const registration of messageQueueService.addCron.mock.calls) {
-      expect(registration[0]).toEqual({
-        jobName: EnterpriseKeyValidationCronJob.name,
-        data: undefined,
-        options: { repeat: { pattern, tz: 'UTC' } },
-      });
-    }
-
-    expect(messageQueueService.addCron).toHaveBeenCalledTimes(2);
+  const expectSentrySchedule = (value: string) =>
     expect(Sentry.withMonitor).toHaveBeenCalledWith(
       EnterpriseKeyValidationCronJob.name,
       expect.any(Function),
       expect.objectContaining({
-        schedule: { type: 'crontab', value: sentryPattern },
+        schedule: { type: 'crontab', value },
         timezone: 'UTC',
       }),
     );
+
+  it('registers a stable time and hands it to the job for Sentry', async () => {
+    await command.run();
+    await command.run();
+
+    const pattern = getOrganizationKeyValidationCronPattern('server-example');
+
+    for (const registration of messageQueueService.addCron.mock.calls) {
+      expect(registration[0]).toEqual({
+        jobName: EnterpriseKeyValidationCronJob.name,
+        data: { cronPattern: pattern },
+        options: { repeat: { pattern, tz: 'UTC' } },
+      });
+    }
+
+    await job.handle(registeredJobData());
+
+    expectSentrySchedule(toMinuteLevelCronPattern(pattern));
     expect(enterprisePlanService.refreshValidityToken).toHaveBeenCalledTimes(1);
     expect(enterprisePlanService.reportSeats).toHaveBeenCalledWith(2);
+  });
+
+  it('keeps Sentry on the registered fallback after the server ID becomes available', async () => {
+    enterprisePlanService.getOrCreateServerId.mockResolvedValueOnce(null);
+
+    await command.run();
+    await job.handle(registeredJobData());
+
+    expect(messageQueueService.addCron).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: { repeat: { pattern: '0 4 * * *', tz: 'UTC' } },
+      }),
+    );
+    expectSentrySchedule('0 4 * * *');
+    expect(enterprisePlanService.getOrCreateServerId).toHaveBeenCalledTimes(1);
+  });
+
+  it('assumes 04:00 for a scheduler registered by an older version', async () => {
+    await job.handle(undefined);
+
+    expectSentrySchedule('0 4 * * *');
   });
 
   it('still reports seats after a failed refresh', async () => {
@@ -97,28 +121,8 @@ describe('organization key validation schedule', () => {
       new Error('Billing service temporarily unavailable'),
     );
 
-    await expect(job.handle()).resolves.toBeUndefined();
+    await expect(job.handle(undefined)).resolves.toBeUndefined();
 
     expect(enterprisePlanService.reportSeats).toHaveBeenCalledWith(2);
-  });
-
-  it('preserves a matching fallback schedule when there is no persisted ID', async () => {
-    enterprisePlanService.getOrCreateServerId.mockResolvedValue(null);
-
-    await command.run();
-    await job.handle();
-
-    expect(messageQueueService.addCron).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: { repeat: { pattern: '0 4 * * *', tz: 'UTC' } },
-      }),
-    );
-    expect(Sentry.withMonitor).toHaveBeenCalledWith(
-      EnterpriseKeyValidationCronJob.name,
-      expect.any(Function),
-      expect.objectContaining({
-        schedule: { type: 'crontab', value: '0 4 * * *' },
-      }),
-    );
   });
 });
