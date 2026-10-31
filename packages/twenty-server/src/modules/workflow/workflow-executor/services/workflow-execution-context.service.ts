@@ -5,6 +5,7 @@ import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -235,7 +236,7 @@ export class WorkflowExecutionContextService {
       );
 
     // In the future we should probably assign the Admin role to the Standard Application
-    let roleId = application.defaultRoleId;
+    let roleId = getApplicationRuntimeRoleId(application);
 
     if (!isDefined(roleId)) {
       // Fallback: Look up admin role for existing workspaces without defaultRoleId
@@ -252,6 +253,7 @@ export class WorkflowExecutionContextService {
       application: {
         ...application,
         defaultRoleId: roleId,
+        runtimeRoleId: roleId,
       },
     });
   }

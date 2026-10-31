@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -19,7 +20,9 @@ export const resolveRoleIdsFromAuthContext = ({
   if (isUserAuthContext(authContext)) {
     return resolveRoleIdsForUser({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
-      applicationRoleId: authContext.application?.defaultRoleId,
+      applicationRoleId: isDefined(authContext.application)
+        ? getApplicationRuntimeRoleId(authContext.application)
+        : undefined,
     });
   }
 
@@ -30,7 +33,9 @@ export const resolveRoleIdsFromAuthContext = ({
   }
 
   if (isApplicationAuthContext(authContext)) {
-    const applicationRoleId = authContext.application.defaultRoleId;
+    const applicationRoleId = getApplicationRuntimeRoleId(
+      authContext.application,
+    );
 
     return isDefined(applicationRoleId) ? [applicationRoleId] : [];
   }

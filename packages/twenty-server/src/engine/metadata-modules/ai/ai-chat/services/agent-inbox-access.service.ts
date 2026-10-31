@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -40,7 +41,8 @@ export class AgentInboxAccessService {
       return;
     }
 
-    const { id: applicationId, defaultRoleId } = authContext.application;
+    const { id: applicationId } = authContext.application;
+    const defaultRoleId = getApplicationRuntimeRoleId(authContext.application);
     const canApplicationWriteThread =
       (await this.doesApplicationParticipateInThread({
         workspaceId,

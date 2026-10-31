@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationWithRuntimeRole, getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const computeRecordExportPermissionsHash = ({
@@ -10,7 +11,7 @@ export const computeRecordExportPermissionsHash = ({
 }: {
   permissionsHash: string;
   application:
-    | Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'>
+    | (Pick<FlatApplication, 'id' | 'deletedAt'> & ApplicationWithRuntimeRole)
     | undefined;
 }): string =>
   createHash('sha256')
@@ -20,7 +21,7 @@ export const computeRecordExportPermissionsHash = ({
         application: isDefined(application)
           ? {
               id: application.id,
-              defaultRoleId: application.defaultRoleId,
+              runtimeRoleId: getApplicationRuntimeRoleId(application),
               deletedAt: application.deletedAt,
             }
           : null,

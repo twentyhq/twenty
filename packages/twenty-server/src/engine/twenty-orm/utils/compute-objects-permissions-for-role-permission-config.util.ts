@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,16 +14,22 @@ import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compu
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
-const buildApplicationIdByDefaultRoleId = (
+// A grant keeps its confined application's owner rights on the application's own objects
+const buildApplicationIdByRuntimeRoleId = (
   flatApplicationMaps: ApplicationDefaultRoleMaps,
 ): Partial<Record<string, string>> =>
   Object.fromEntries(
-    Object.values(flatApplicationMaps.byId).flatMap((flatApplication) =>
-      isDefined(flatApplication?.defaultRoleId) &&
-      !isDefined(flatApplication.deletedAt)
-        ? [[flatApplication.defaultRoleId, flatApplication.id]]
-        : [],
-    ),
+    Object.values(flatApplicationMaps.byId).flatMap((flatApplication) => {
+      if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
+        return [];
+      }
+
+      const runtimeRoleId = getApplicationRuntimeRoleId(flatApplication);
+
+      return isDefined(runtimeRoleId)
+        ? [[runtimeRoleId, flatApplication.id]]
+        : [];
+    }),
   );
 
 export const computeObjectsPermissionsForRolePermissionConfig = ({
@@ -44,8 +51,8 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     return {};
   }
 
-  const applicationIdByDefaultRoleId =
-    buildApplicationIdByDefaultRoleId(flatApplicationMaps);
+  const applicationIdByRuntimeRoleId =
+    buildApplicationIdByRuntimeRoleId(flatApplicationMaps);
 
   const { applicationRoleId, ...nonApplicationRoleIdsBySource } =
     intersectionOf;
@@ -56,7 +63,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
   const getActingApplicationId = (roleId: string) =>
     roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
-      ? applicationIdByDefaultRoleId[roleId]
+      ? applicationIdByRuntimeRoleId[roleId]
       : undefined;
 
   const permissionsPerRole = roleIds.map((roleId) => {

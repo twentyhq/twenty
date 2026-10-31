@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -114,7 +115,7 @@ export class CallDatabaseEventTriggerJobsJob {
       }
 
       const admittedEvents = await resolveEventsReadableByRole({
-        roleId: application.defaultRoleId,
+        roleId: getApplicationRuntimeRoleId(application),
         owningApplicationId: application.id,
         workspaceEventBatch,
         eventRecordAccessGate,

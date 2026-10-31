@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/twenty-orm/utils/compute-objects-permissions-for-role-permission-config.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
@@ -283,7 +284,8 @@ export class PermissionsService {
       return buildUserRoleIdsBySource({
         userRoleId: userFlatRole.id,
         application: {
-          defaultRoleId: this.findApplicationRoleIdOrThrow({
+          ...application,
+          runtimeRoleId: this.findApplicationRoleIdOrThrow({
             application,
             flatRoleMaps,
           }),
@@ -359,12 +361,14 @@ export class PermissionsService {
     application: FlatApplication;
     flatRoleMaps: FlatRoleMaps;
   }): string | null {
-    if (!isDefined(application.defaultRoleId)) {
+    const applicationRoleId = getApplicationRuntimeRoleId(application);
+
+    if (!isDefined(applicationRoleId)) {
       return null;
     }
 
     const flatRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: application.defaultRoleId,
+      flatEntityId: applicationRoleId,
       flatEntityMaps: flatRoleMaps,
     });
 

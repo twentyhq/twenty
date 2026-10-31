@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -57,7 +58,7 @@ const resolveCreatorRoleId = ({
   apiKeyRoleMap: Record<string, string>;
 }): string | null | undefined => {
   if (isApplicationAuthContext(authContext)) {
-    return authContext.application.defaultRoleId;
+    return getApplicationRuntimeRoleId(authContext.application);
   }
 
   if (isApiKeyAuthContext(authContext)) {

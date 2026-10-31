@@ -6,6 +6,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { SelectionDepth } from 'src/engine/api/common/common-select-fields/types/selection-depth.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -112,10 +113,10 @@ export abstract class RestApiBaseHandler {
       intersectionOf = { userWorkspaceRoleId };
     } else if (
       isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultRoleId)
+      isDefined(getApplicationRuntimeRoleId(authContext.application))
     ) {
       intersectionOf = {
-        applicationRoleId: authContext.application.defaultRoleId,
+        applicationRoleId: getApplicationRuntimeRoleId(authContext.application),
       };
     } else {
       throw new PermissionsException(
