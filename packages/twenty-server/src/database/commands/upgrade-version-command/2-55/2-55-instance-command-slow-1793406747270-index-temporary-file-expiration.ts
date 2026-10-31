@@ -1,6 +1,6 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 
-import { createCoreIndexConcurrently } from 'src/database/commands/upgrade-version-command/2-55/utils/create-core-index-concurrently.util';
+import { createCoreIndexConcurrently } from 'src/database/commands/upgrade-version-command/2-46/utils/create-core-index-concurrently.util';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
