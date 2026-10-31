@@ -1,4 +1,4 @@
-import { isArray, isObject, isString } from '@sniptt/guards';
+import { isArray, isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -44,7 +44,7 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
     .map((line) => line.slice('data:'.length).trimStart())
     .join('\n');
 
-  if (data.length === 0) {
+  if (!isNonEmptyString(data)) {
     return null;
   }
 
@@ -66,12 +66,17 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
     };
   }
 
-  const event =
-    isRecord(result.data) && isRecord(result.data.onAgentChatEvent)
-      ? result.data.onAgentChatEvent.event
-      : undefined;
+  if (!isRecord(result.data) || !isRecord(result.data.onAgentChatEvent)) {
+    return null;
+  }
 
-  return isAgentChatSubscriptionEvent(event) ? { type: 'event', event } : null;
+  const { event } = result.data.onAgentChatEvent;
+
+  if (!isAgentChatSubscriptionEvent(event)) {
+    return null;
+  }
+
+  return { type: 'event', event };
 };
 
 export async function* streamConversation({
@@ -82,7 +87,7 @@ export async function* streamConversation({
     getApplicationApiConfigOrThrow('streamConversation');
   let reader: ReadableStreamDefaultReader<string> | undefined;
 
-  if (signal?.aborted === true) {
+  if (signal?.aborted) {
     return;
   }
 

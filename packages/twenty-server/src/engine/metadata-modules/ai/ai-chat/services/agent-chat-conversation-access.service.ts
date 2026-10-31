@@ -77,7 +77,7 @@ export class AgentChatConversationAccessService {
     });
   }
 
-  // the latest turn is the one streaming; when it cannot be read, its chunks stay hidden
+  // the latest turn is the one streaming
   async isLatestTurnOpenedByOtherMember({
     workspaceId,
     threadId,
@@ -87,21 +87,17 @@ export class AgentChatConversationAccessService {
     threadId: string;
     workspaceMemberId: string | undefined;
   }): Promise<boolean> {
-    try {
-      const latestTurn = await this.turnRepository.findOne(workspaceId, {
-        where: { threadId },
-        order: { createdAt: 'DESC', id: 'DESC' },
-      });
+    const latestTurn = await this.turnRepository.findOne(workspaceId, {
+      where: { threadId },
+      order: { createdAt: 'DESC', id: 'DESC' },
+    });
 
-      return (
-        isDefined(latestTurn?.createdBy) &&
-        isAgentTurnOpenedByOtherMember({
-          createdBy: latestTurn.createdBy,
-          workspaceMemberId,
-        })
-      );
-    } catch {
-      return true;
-    }
+    return (
+      isDefined(latestTurn?.createdBy) &&
+      isAgentTurnOpenedByOtherMember({
+        createdBy: latestTurn.createdBy,
+        workspaceMemberId,
+      })
+    );
   }
 }

@@ -110,17 +110,19 @@ export class AgentChatSubscriptionResolver {
           isStreamingTurnHidden = await isLatestTurnOpenedByOtherMember();
         }
 
-        return isStreamingTurnHidden
-          ? {
-              onAgentChatEvent: {
-                threadId,
-                event: {
-                  ...event,
-                  chunk: maskStreamChunkOfTurnActedByOthers(event.chunk),
-                },
-              },
-            }
-          : payload;
+        if (!isStreamingTurnHidden) {
+          return payload;
+        }
+
+        return {
+          onAgentChatEvent: {
+            threadId,
+            event: {
+              ...event,
+              chunk: maskStreamChunkOfTurnActedByOthers(event.chunk),
+            },
+          },
+        };
       },
     );
 
