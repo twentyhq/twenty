@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER } from '@/marketplace/constants/PermissionFlagTypeByUniversalIdentifier';
 
 export const getWorkflowAiAgentPermissionFlagKeysFromScope = (
-  scope: AiRunScope | undefined,
+  scope: Pick<AiRunScope, 'permissionFlagUniversalIdentifiers'> | undefined,
 ): string[] =>
   (scope?.permissionFlagUniversalIdentifiers ?? [])
     .map((universalIdentifier) =>

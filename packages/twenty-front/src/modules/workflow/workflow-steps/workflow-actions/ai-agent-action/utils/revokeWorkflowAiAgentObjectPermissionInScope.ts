@@ -7,7 +7,6 @@ import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING
 
 const CRUD_PERMISSION_KEYS = CRUD_PERMISSIONS.map(({ key }) => key);
 
-// an explicit denial is only needed while an all-objects grant would otherwise cover the action
 export const revokeWorkflowAiAgentObjectPermissionInScope = ({
   scope,
   objectUniversalIdentifier,

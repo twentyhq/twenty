@@ -11,7 +11,7 @@ const WORKSPACE_ID = 'workspace-id';
 const STEP_AGENT_ID = 'step-agent-id';
 const REUSABLE_AGENT_ID = 'reusable-agent-id';
 
-const buildAgent = (id: string, isSystem: boolean) => ({
+const buildAgent = ({ id, isSystem }: { id: string; isSystem: boolean }) => ({
   id,
   isSystem,
   label: 'Agent',
@@ -49,11 +49,11 @@ const buildService = () => {
     deleteManyAgents: jest.fn().mockResolvedValue(undefined),
     findOneAgentById: jest.fn(async ({ id }: { id: string }) => {
       if (id === STEP_AGENT_ID) {
-        return buildAgent(STEP_AGENT_ID, true);
+        return buildAgent({ id: STEP_AGENT_ID, isSystem: true });
       }
 
       if (id === REUSABLE_AGENT_ID) {
-        return buildAgent(REUSABLE_AGENT_ID, false);
+        return buildAgent({ id: REUSABLE_AGENT_ID, isSystem: false });
       }
 
       throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND);
