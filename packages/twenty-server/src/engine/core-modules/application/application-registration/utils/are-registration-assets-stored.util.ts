@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationRegistrationAssetManifest } from 'src/engine/core-modules/application/application-registration/types/application-registration-asset-manifest.type';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { isStorableAssetPath } from 'src/engine/core-modules/application/application-registration/utils/is-storable-asset-path.util';
 import { toGalleryImagePaths } from 'src/engine/core-modules/application/application-registration/utils/to-gallery-image-paths.util';
-import type { ApplicationManifest } from 'twenty-shared/application';
 
 // True when every storable asset declared by the manifest already has a file
 // stored for the registration, so a sync can skip re-downloading them.
@@ -12,7 +12,7 @@ export const areRegistrationAssetsStored = (
     ApplicationRegistrationEntity,
     'logoFileId' | 'galleryImages'
   >,
-  manifestApplication: ApplicationManifest | undefined,
+  manifestApplication: ApplicationRegistrationAssetManifest | undefined,
 ): boolean => {
   const logoPath = manifestApplication?.logo ?? manifestApplication?.logoUrl;
 

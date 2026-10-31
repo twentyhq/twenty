@@ -3,6 +3,7 @@ import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/comp
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
+import { collapseWellKnownOAuthClientApplications } from '@/settings/applications/utils/collapseWellKnownOAuthClientApplications';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -21,16 +22,19 @@ export const SettingsApplicationsInstalledAppsSection = () => {
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
+  const displayedApplications = isAppPreferencesEnabled
+    ? collapseWellKnownOAuthClientApplications(installedApplications)
+    : installedApplications;
   const {
     statusesById,
     error: statusError,
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusesById({
-    applications: installedApplications,
+    applications: displayedApplications,
     shouldSkip: !isAppPreferencesEnabled,
   });
 
-  if (installedApplications.length === 0) {
+  if (displayedApplications.length === 0) {
     return null;
   }
 
@@ -49,8 +53,8 @@ export const SettingsApplicationsInstalledAppsSection = () => {
           </StyledToolbar>
         ) : undefined
       }
-      applications={installedApplications}
-      builtInAccountApps={installedBuiltInAccountApps}
+      applications={displayedApplications}
+      builtInApps={installedBuiltInAccountApps}
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
       statusesById={statusesById}

@@ -15,6 +15,7 @@ import {
 
 import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,11 +26,15 @@ import {
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
+import { toOAuthClientInformationResponse } from 'src/engine/core-modules/application/application-oauth/utils/to-oauth-client-information-response.util';
+import { findWellKnownOAuthClientByRedirectUris } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-redirect-uris.util';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { Repository } from 'typeorm';
@@ -48,6 +53,8 @@ export class OAuthRegistrationController {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly throttlerService: ThrottlerService,
+    private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Post('register')
@@ -59,12 +66,18 @@ export class OAuthRegistrationController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const rateLimitResult = await this.applyRateLimit(req);
+    if (
+      !this.twentyConfigService.get(
+        'IS_OAUTH_DYNAMIC_CLIENT_REGISTRATION_ENABLED',
+      )
+    ) {
+      res.status(404);
 
-    if (rateLimitResult) {
-      res.status(429);
-
-      return rateLimitResult;
+      return {
+        error: 'not_found',
+        error_description:
+          'Dynamic client registration is disabled on this server',
+      };
     }
 
     for (const uri of body.redirect_uris) {
@@ -119,7 +132,6 @@ export class OAuthRegistrationController {
     // secret via DCR. Silently downgrade any auth method to "none".
     const requestedTokenEndpointAuthMethod =
       body.token_endpoint_auth_method ?? 'none';
-    const tokenEndpointAuthMethod = 'none';
 
     if (
       requestedTokenEndpointAuthMethod !== 'none' &&
@@ -139,39 +151,64 @@ export class OAuthRegistrationController {
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))
       : [...ALL_OAUTH_SCOPES];
 
-    const clientId = v4();
-
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: v4(),
-      name: body.client_name,
-      oAuthClientId: clientId,
-      oAuthClientSecretHash: null,
-      oAuthRedirectUris: body.redirect_uris,
-      oAuthScopes: requestedScopes as OAuthScope[],
-      createdByUserId: null,
-      ownerWorkspaceId: null,
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      logo: body.logo_uri ?? null,
-    });
-
-    await this.applicationRegistrationRepository.save(registration);
-
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
 
     const issuer = `${req.protocol}://${req.get('host')}`;
 
-    return {
-      client_id: clientId,
-      client_name: body.client_name,
-      redirect_uris: body.redirect_uris,
-      grant_types: grantTypes,
-      response_types: responseTypes,
-      token_endpoint_auth_method: tokenEndpointAuthMethod,
-      scope: requestedScopes.join(' '),
-      client_id_issued_at: Math.floor(Date.now() / 1000),
-      registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${clientId}`,
-    };
+    // RFC 7591 §3.2.1 lets the server pick the client_id
+    const wellKnownOAuthClient = findWellKnownOAuthClientByRedirectUris(
+      body.redirect_uris,
+    );
+
+    if (isDefined(wellKnownOAuthClient)) {
+      const wellKnownOAuthClientRegistration =
+        await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
+          wellKnownOAuthClient,
+        );
+
+      return toOAuthClientInformationResponse({
+        registration: wellKnownOAuthClientRegistration,
+        issuer,
+        redirectUris: body.redirect_uris,
+        scopes: requestedScopes.filter((scope) =>
+          wellKnownOAuthClientRegistration.oAuthScopes.includes(scope),
+        ),
+        grantTypes,
+        responseTypes,
+      });
+    }
+
+    // Only new registrations count: a well-known client's users arrive from a few shared IPs and get the seeded client
+    const rateLimitResult = await this.applyRateLimit(req);
+
+    if (rateLimitResult) {
+      res.status(429);
+
+      return rateLimitResult;
+    }
+
+    const registration = await this.applicationRegistrationRepository.save(
+      this.applicationRegistrationRepository.create({
+        universalIdentifier: v4(),
+        name: body.client_name,
+        oAuthClientId: v4(),
+        oAuthClientSecretHash: null,
+        oAuthRedirectUris: body.redirect_uris,
+        oAuthScopes: requestedScopes as OAuthScope[],
+        createdByUserId: null,
+        ownerWorkspaceId: null,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        logo: body.logo_uri ?? null,
+      }),
+    );
+
+    return toOAuthClientInformationResponse({
+      registration,
+      issuer,
+      grantTypes,
+      responseTypes,
+    });
   }
 
   // RFC 7592 read-back. No registration_access_token is issued; the client_id
@@ -202,18 +239,10 @@ export class OAuthRegistrationController {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
 
-    const issuer = `${req.protocol}://${req.get('host')}`;
-
-    return {
-      client_id: registration.oAuthClientId,
-      client_name: registration.name,
-      redirect_uris: registration.oAuthRedirectUris,
-      grant_types: ['authorization_code', 'refresh_token'],
-      response_types: ['code'],
-      token_endpoint_auth_method: 'none',
-      scope: registration.oAuthScopes.join(' '),
-      registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
-    };
+    return toOAuthClientInformationResponse({
+      registration,
+      issuer: `${req.protocol}://${req.get('host')}`,
+    });
   }
 
   private async applyRateLimit(

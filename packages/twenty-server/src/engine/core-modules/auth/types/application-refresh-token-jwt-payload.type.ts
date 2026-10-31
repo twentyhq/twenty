@@ -7,4 +7,5 @@ export type ApplicationRefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   applicationId: string;
   userWorkspaceId?: string;
   userId?: string;
+  iat?: number;
 };

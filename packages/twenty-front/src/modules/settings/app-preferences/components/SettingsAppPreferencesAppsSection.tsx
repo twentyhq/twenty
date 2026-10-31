@@ -1,3 +1,5 @@
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
+import { useBuiltInMcpClientAppStatusesById } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppStatusesById';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -29,6 +31,7 @@ export const SettingsAppPreferencesAppsSection = () => {
     error: accountGroupsError,
     refetch: refetchAccountGroups,
   } = useMyAccountGroups();
+  const builtInMcpClientAppStatusesById = useBuiltInMcpClientAppStatusesById();
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
   const hasAccountGroupsLoadError = isDefined(accountGroupsError);
@@ -66,10 +69,10 @@ export const SettingsAppPreferencesAppsSection = () => {
       applications={applicationsWithPreferences.map(
         ({ application }) => application,
       )}
-      builtInAccountApps={enabledBuiltInAccountApps}
+      builtInApps={[...enabledBuiltInAccountApps, ...BUILT_IN_MCP_CLIENT_APPS]}
       linkTarget="applicationPreferences"
       middleColumn="status"
-      statusesById={statusesById}
+      statusesById={{ ...statusesById, ...builtInMcpClientAppStatusesById }}
       isLoading={isLoadingApplications}
     />
   );

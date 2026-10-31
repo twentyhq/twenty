@@ -7,6 +7,8 @@ import { getStandardApplicationReadme } from '@/applications/utils/getStandardAp
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBuiltInMcpClientAppConnectButton } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectButton';
+import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
@@ -149,6 +151,35 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
+  // Each member connects these from their own account, so there is nothing for the workspace to install
+  const builtInMcpClientApp = findBuiltInMcpClientApp(
+    detail?.wellKnownOAuthClient,
+  );
+
+  const renderActionButton = () => {
+    if (!isDefined(detail)) {
+      return undefined;
+    }
+
+    if (isDefined(builtInMcpClientApp)) {
+      return (
+        <SettingsBuiltInMcpClientAppConnectButton
+          builtInMcpClientApp={builtInMcpClientApp}
+        />
+      );
+    }
+
+    return (
+      <SettingsApplicationActionButton
+        installedApplicationId={application?.id}
+        canInstallMarketplaceApps={canInstallMarketplaceApps}
+        onInstall={requestInstall}
+        isInstalling={isInstalling}
+        installProgress={installProgress}
+      />
+    );
+  };
+
   const renderContent = () => {
     if (isUnavailable) {
       return (
@@ -242,17 +273,7 @@ export const SettingsAvailableApplicationDetails = () => {
             />
           ) : undefined
         }
-        actionButton={
-          isDefined(detail) ? (
-            <SettingsApplicationActionButton
-              installedApplicationId={application?.id}
-              canInstallMarketplaceApps={canInstallMarketplaceApps}
-              onInstall={requestInstall}
-              isInstalling={isInstalling}
-              installProgress={installProgress}
-            />
-          ) : undefined
-        }
+        actionButton={renderActionButton()}
       >
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (

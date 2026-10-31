@@ -12,10 +12,12 @@ import { OAuthDiscoveryController } from 'src/engine/core-modules/application/ap
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { OAuthTokenController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-token.controller';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
+import { OAuthClientRegistrationModule } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
@@ -29,11 +31,13 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ]),
     ApplicationRegistrationModule,
     ApplicationAuthorizationModule,
+    OAuthClientRegistrationModule,
     ApplicationCoreModule,
     ApplicationInstallModule,
     TokenModule,
     DomainServerConfigModule,
     ThrottlerModule,
+    WellKnownOAuthClientModule,
   ],
   controllers: [
     OAuthTokenController,

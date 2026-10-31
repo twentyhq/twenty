@@ -15,6 +15,8 @@ import { MarketplaceQueryService } from 'src/engine/core-modules/application/app
 import { MarketplaceResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { ApplicationRegistrationSeedingModule } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.module';
+import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
 import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.command';
 
 @Module({
@@ -26,6 +28,8 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     ApplicationRegistrationVersionModule,
     CoreEntityCacheModule,
     PermissionsModule,
+    WellKnownOAuthClientModule,
+    ApplicationRegistrationSeedingModule,
   ],
   providers: [
     MarketplaceService,

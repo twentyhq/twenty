@@ -7,12 +7,15 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
   FeatureFlagKey,
+  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
+import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -41,11 +44,17 @@ const buildApplication = ({
   name,
   description,
   latestAvailableVersion,
+  sourceType = ApplicationRegistrationSourceType.NPM,
+  wellKnownOAuthClient = null,
+  universalIdentifier = `${id}-universal-identifier`,
 }: {
   id: string;
   name: string;
   description: string;
   latestAvailableVersion: string;
+  sourceType?: ApplicationRegistrationSourceType;
+  wellKnownOAuthClient?: WellKnownOAuthClient | null;
+  universalIdentifier?: string;
 }) => ({
   __typename: 'Application',
   id,
@@ -53,13 +62,14 @@ const buildApplication = ({
   description,
   logoUrl: null,
   version: '1.0.0',
-  universalIdentifier: `${id}-universal-identifier`,
+  universalIdentifier,
   applicationRegistrationId: `${id}-registration-id`,
   applicationRegistration: {
     __typename: 'ApplicationRegistrationSummary',
     id: `${id}-registration-id`,
     latestAvailableVersion,
-    sourceType: ApplicationRegistrationSourceType.NPM,
+    sourceType,
+    wellKnownOAuthClient,
   },
   defaultRoleId: null,
 });
@@ -85,10 +95,50 @@ const NOTES_APPLICATION = buildApplication({
   latestAvailableVersion: '1.0.0',
 });
 
+const EARLIER_CLAUDE_CONNECTION_APPLICATION = buildApplication({
+  id: 'earlier-claude-connection-application-id',
+  name: 'Claude',
+  description: 'OAuth application registered as Claude',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+});
+
+const CLAUDE_APPLICATION = buildApplication({
+  id: 'claude-application-id',
+  name: 'Claude',
+  description:
+    'Work with your Twenty workspace from Claude through the Twenty connector.',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+  universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+});
+
+const ZAPIER_APPLICATION = buildApplication({
+  id: 'zapier-application-id',
+  name: 'Zapier',
+  description: 'OAuth application registered as Zapier',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+});
+
+const BRIDGE_APPLICATION = buildApplication({
+  id: 'bridge-application-id',
+  name: 'Bridge',
+  description: 'OAuth application registered as Bridge',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+});
+
 const APPLICATIONS = [
   RECORDER_APPLICATION,
   ACME_APPLICATION,
   NOTES_APPLICATION,
+  EARLIER_CLAUDE_CONNECTION_APPLICATION,
+  CLAUDE_APPLICATION,
+  ZAPIER_APPLICATION,
+  BRIDGE_APPLICATION,
 ];
 
 const APPLICATIONS_FOR_STATUS = [
@@ -124,6 +174,16 @@ const APPLICATIONS_FOR_STATUS = [
       }),
     ],
   },
+  ...[
+    EARLIER_CLAUDE_CONNECTION_APPLICATION,
+    CLAUDE_APPLICATION,
+    ZAPIER_APPLICATION,
+    BRIDGE_APPLICATION,
+  ].map(({ id }) => ({
+    __typename: 'Application',
+    id,
+    applicationVariables: [],
+  })),
 ];
 
 const findManyApplicationsForStatus = fn();
@@ -237,6 +297,14 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
     expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
     expect(canvas.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
     expect(findManyApplicationsForStatus).not.toHaveBeenCalled();
+    expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual(
+      expect.arrayContaining([
+        `/settings/applications/${EARLIER_CLAUDE_CONNECTION_APPLICATION.id}`,
+        `/settings/applications/${CLAUDE_APPLICATION.id}`,
+        `/settings/applications/${ZAPIER_APPLICATION.id}`,
+        `/settings/applications/${BRIDGE_APPLICATION.id}`,
+      ]),
+    );
   },
 };
 
@@ -270,6 +338,36 @@ export const ShowsStatusInPlaceOfTypeWithAppPreferences: Story = {
 
     expect(within(gmailRow).getByText('Built-in')).toBeVisible();
     expect(gmailRow).not.toHaveTextContent('Setup incomplete');
+  },
+};
+
+export const ShowsOneClaudeRowForEveryClaudeConnection: Story = {
+  beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: true }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const recorderRow = await canvas.findByRole('link', { name: /Recorder/ });
+
+    // The status query also writes Query.findManyApplications, so check the rows once it has landed
+    expect(
+      await within(recorderRow).findByText('Setup incomplete'),
+    ).toBeVisible();
+
+    const rowLinks = getSettingsApplicationsTableRowLinks(canvasElement);
+
+    expect(rowLinks).toContain(
+      `/settings/applications/${CLAUDE_APPLICATION.id}`,
+    );
+    expect(rowLinks).not.toContain(
+      `/settings/applications/${EARLIER_CLAUDE_CONNECTION_APPLICATION.id}`,
+    );
+    expect(canvas.getAllByRole('link', { name: /Claude/ })).toHaveLength(1);
+    expect(rowLinks).toEqual(
+      expect.arrayContaining([
+        `/settings/applications/${ZAPIER_APPLICATION.id}`,
+        `/settings/applications/${BRIDGE_APPLICATION.id}`,
+      ]),
+    );
   },
 };
 

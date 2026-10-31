@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { AppPath } from 'twenty-shared/types';
 import { Authorize } from '~/pages/auth/Authorize';
@@ -12,7 +12,10 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getOperationName } from '~/utils/getOperationName';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { FindApplicationRegistrationByClientIdDocument } from '~/generated-metadata/graphql';
+import {
+  FindApplicationRegistrationByClientIdDocument,
+  WellKnownOAuthClient,
+} from '~/generated-metadata/graphql';
 
 const MOCKED_REDIRECT_URL = 'https://chatgpt.com/connector';
 
@@ -23,6 +26,7 @@ const buildHandlers = (
     logoUrl: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
+    wellKnownOAuthClient?: WellKnownOAuthClient | null;
   } | null,
 ) => [
   graphql.query(
@@ -33,6 +37,7 @@ const buildHandlers = (
           findApplicationRegistrationByClientId: application
             ? {
                 __typename: 'PublicApplicationRegistration',
+                wellKnownOAuthClient: null,
                 ...application,
               }
             : null,
@@ -93,6 +98,7 @@ export const Default: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
+        wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
       }),
     },
   },
@@ -102,6 +108,39 @@ export const Default: Story = {
       timeout: 5000,
     });
     await canvas.findByText('chatgpt.com');
+    await canvas.findByText('Verified by Twenty as the official ChatGPT');
+  },
+};
+
+export const UnverifiedClientBorrowingAKnownName: Story = {
+  args: {
+    searchParams: {
+      client_id: 'self-named-claude-client-id',
+      redirect_uri: 'https://claude-connector.example.com/callback',
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: buildHandlers({
+        id: 'application-id-self-named-claude',
+        name: 'Claude',
+        logoUrl: null,
+        oAuthScopes: ['api', 'profile'],
+        websiteUrl: null,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Connect Claude to your account', undefined, {
+      timeout: 5000,
+    });
+    await canvas.findByText(
+      'This app calls itself Claude, but Twenty could not confirm it is. Only continue if you started this connection from Claude.',
+    );
+    expect(
+      canvas.queryByText('Verified by Twenty as the official Claude'),
+    ).not.toBeInTheDocument();
   },
 };
 

@@ -1,4 +1,5 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
+import { OAUTH_SCOPE_LABELS } from '@/auth/constants/OAuthScopeLabels';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
@@ -8,6 +9,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -160,11 +162,6 @@ export const Authorize = () => {
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
 
-  const oauthScopeLabels: { [scope: string]: string | undefined } = {
-    api: t`Access your workspace data`,
-    profile: t`Read your profile`,
-  };
-
   // Support both camelCase (legacy) and standard OAuth snake_case params
   const clientId = searchParam.get('client_id') ?? searchParam.get('clientId');
   const codeChallenge =
@@ -304,6 +301,10 @@ export const Authorize = () => {
           <StyledOAuthTitle level={2} size="lg">
             <Trans>Connect {appName} to your account</Trans>
           </StyledOAuthTitle>
+          <AuthorizeClientIdentityNotice
+            appName={appName}
+            wellKnownOAuthClient={applicationRegistration.wellKnownOAuthClient}
+          />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
@@ -312,6 +313,7 @@ export const Authorize = () => {
               <StyledScopeList>
                 {requestedScopes.map((scope) => {
                   const ScopeIcon = OAUTH_SCOPE_ICONS[scope] ?? IconDatabase;
+                  const scopeLabel = OAUTH_SCOPE_LABELS[scope];
 
                   return (
                     <StyledScopeItem key={scope}>
@@ -321,7 +323,9 @@ export const Authorize = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledScopeIcon>
-                      <span>{oauthScopeLabels[scope] ?? scope}</span>
+                      <span>
+                        {isDefined(scopeLabel) ? t(scopeLabel) : scope}
+                      </span>
                     </StyledScopeItem>
                   );
                 })}

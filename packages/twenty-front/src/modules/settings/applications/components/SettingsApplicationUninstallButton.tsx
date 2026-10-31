@@ -17,6 +17,7 @@ type SettingsApplicationUninstallButtonProps = {
   isUninstalling?: boolean;
   uninstallProgress?: number;
   disabledReason?: string;
+  warning?: string;
 };
 
 export const SettingsApplicationUninstallButton = ({
@@ -24,6 +25,7 @@ export const SettingsApplicationUninstallButton = ({
   isUninstalling,
   uninstallProgress,
   disabledReason,
+  warning,
 }: SettingsApplicationUninstallButtonProps) => {
   const { openDialog } = useDialog();
   const uninstallDialogId = useId();
@@ -67,10 +69,13 @@ export const SettingsApplicationUninstallButton = ({
         dialogId={uninstallDialogId}
         title={t`Uninstall Application?`}
         subtitle={
-          <Trans>
-            Please type {`"${confirmationValue}"`} to confirm you want to
-            uninstall this application.
-          </Trans>
+          <>
+            {isNonEmptyString(warning) && `${warning} `}
+            <Trans>
+              Please type {`"${confirmationValue}"`} to confirm you want to
+              uninstall this application.
+            </Trans>
+          </>
         }
         onConfirmClick={onUninstall}
         confirmButtonText={t`Uninstall`}

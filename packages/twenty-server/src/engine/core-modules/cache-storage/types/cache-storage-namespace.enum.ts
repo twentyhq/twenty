@@ -7,6 +7,7 @@ export enum CacheStorageNamespace {
   EngineWorkspace = 'engine:workspace',
   EngineCoreEntity = 'engine:core-entity',
   EngineAuthSession = 'engine:auth-session',
+  EngineOAuthClientMetadataDocument = 'engine:oauth-client-metadata-document',
   EngineLock = 'engine:lock',
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',

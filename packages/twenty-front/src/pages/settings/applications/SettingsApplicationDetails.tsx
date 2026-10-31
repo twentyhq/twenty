@@ -1,3 +1,4 @@
+import { getApplicationLogoUrl } from '@/applications/utils/getApplicationLogoUrl';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -100,6 +101,10 @@ export const SettingsApplicationDetails = () => {
 
   const displayName =
     detail?.name ?? application?.name ?? t`Application details`;
+
+  const logoUrl = isDefined(application)
+    ? getApplicationLogoUrl(application)
+    : undefined;
 
   const handleUpgradeCompleted = useCallback(() => {
     void refetch();
@@ -285,6 +290,7 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailGeneralTab
             application={application}
             displayName={displayName}
+            logoUrl={logoUrl}
             description={description}
             coverImageUrl={coverImageUrl}
             marketplaceUniversalIdentifier={detail?.universalIdentifier}
@@ -336,7 +342,7 @@ export const SettingsApplicationDetails = () => {
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsApplicationDetailPageLayout
         applicationId={application?.id}
-        logoUrl={application?.logoUrl}
+        logoUrl={logoUrl}
         displayName={displayName}
         links={[
           {

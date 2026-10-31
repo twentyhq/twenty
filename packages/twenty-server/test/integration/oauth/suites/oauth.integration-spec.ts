@@ -1060,10 +1060,13 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    it('should let the user authorize again after revoking', async () => {
+    it('should let the user authorize again after revoking, without reviving the revoked refresh token', async () => {
       const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
 
       await revokeRefreshToken(revokedRefreshToken);
+
+      // Token issue times have second precision
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       const { refreshToken } = await exchangeForTokens();
 
@@ -1075,6 +1078,15 @@ describe('OAuth (integration)', () => {
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);
+
+      const revokedRefresh = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: revokedRefreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(revokedRefresh.body.error).toBe('invalid_grant');
     });
 
     // Deleting the row recreates the state of tokens minted before this table existed.
@@ -1123,6 +1135,7 @@ describe('OAuth (integration)', () => {
             applicationId
             applicationName
             scopes
+            wellKnownOAuthClient
           }
         }
       `,
@@ -1176,6 +1189,7 @@ describe('OAuth (integration)', () => {
       expect(authorization).toBeDefined();
       expect(authorization.applicationName).toBe(testRegistration.name);
       expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.wellKnownOAuthClient).toBeNull();
     });
 
     it('should stop the refresh token being redeemed when revoked from the list', async () => {
@@ -1241,6 +1255,110 @@ describe('OAuth (integration)', () => {
       expect(revokeResponse.body.data.revokeApplicationAuthorization).toBe(
         false,
       );
+      expect((await findAuthorization()).revokedAt).toBeNull();
+    });
+
+    const listWorkspaceAuthorizations = (token: string) =>
+      makeMetadataApiRequest(
+        {
+          query: gql`
+            query WorkspaceApplicationAuthorizations($applicationId: UUID!) {
+              workspaceApplicationAuthorizations(
+                applicationId: $applicationId
+              ) {
+                id
+                userId
+                applicationId
+                scopes
+              }
+            }
+          `,
+          variables: { applicationId: testApplication.id },
+        },
+        token,
+      );
+
+    const revokeWorkspaceAuthorization = (
+      applicationAuthorizationId: string,
+      token: string,
+    ) =>
+      makeMetadataApiRequest(
+        {
+          query: gql`
+            mutation RevokeWorkspaceApplicationAuthorization(
+              $applicationAuthorizationId: UUID!
+            ) {
+              revokeWorkspaceApplicationAuthorization(
+                applicationAuthorizationId: $applicationAuthorizationId
+              )
+            }
+          `,
+          variables: { applicationAuthorizationId },
+        },
+        token,
+      );
+
+    it('should list each member who authorized the application to an admin', async () => {
+      await exchangeForTokens('read');
+
+      const res = await listWorkspaceAuthorizations(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(res.body.errors).toBeUndefined();
+      expect(res.body.data.workspaceApplicationAuthorizations).toEqual([
+        expect.objectContaining({
+          userId: TEST_USER_ID,
+          applicationId: testApplication.id,
+          scopes: ['read'],
+        }),
+      ]);
+    });
+
+    it('should let an admin revoke a member authorization', async () => {
+      const { refreshToken } = await exchangeForTokens();
+
+      const listResponse = await listWorkspaceAuthorizations(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+      const [{ id }] =
+        listResponse.body.data.workspaceApplicationAuthorizations;
+
+      const revokeResponse = await revokeWorkspaceAuthorization(
+        id,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(
+        revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
+      ).toBe(true);
+
+      const res = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(res.body.error).toBe('invalid_grant');
+    });
+
+    it('should keep member authorizations from members without the Applications permission', async () => {
+      await exchangeForTokens();
+
+      const listResponse = await listWorkspaceAuthorizations(
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(listResponse.body.errors).toBeDefined();
+
+      const { id } = await findListedAuthorization();
+      const revokeResponse = await revokeWorkspaceAuthorization(
+        id,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(revokeResponse.body.errors).toBeDefined();
       expect((await findAuthorization()).revokedAt).toBeNull();
     });
   });

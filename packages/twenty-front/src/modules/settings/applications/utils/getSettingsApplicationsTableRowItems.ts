@@ -1,9 +1,10 @@
+import { getApplicationLogoUrl } from '@/applications/utils/getApplicationLogoUrl';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { getResolvedApplicationDescription } from '@/applications/utils/getResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
 import { type SettingsApplicationsTableRowItem } from '@/settings/applications/types/SettingsApplicationsTableRowItem';
 import { sortApplicationsWithOAuthOnlyLast } from '@/settings/applications/utils/sortApplicationsWithOAuthOnlyLast';
@@ -25,27 +26,27 @@ const getApplicationRowItem = ({
     application,
     currentWorkspace,
   }),
-  logoUrl: application.logoUrl,
+  logoUrl: getApplicationLogoUrl(application),
   universalIdentifier: application.universalIdentifier,
   sourceType: application.applicationRegistration?.sourceType,
 });
 
-const getBuiltInAccountAppRowItem = (
-  builtInAccountApp: BuiltInAccountApp,
+const getBuiltInAppRowItem = (
+  builtInApp: BuiltInApp,
 ): SettingsApplicationsTableRowItem => ({
-  id: builtInAccountApp.id,
-  name: i18n._(builtInAccountApp.name),
-  description: i18n._(builtInAccountApp.description),
-  logoUrl: getBuiltInAccountAppLogoUrl(builtInAccountApp),
+  id: builtInApp.id,
+  name: i18n._(builtInApp.name),
+  description: i18n._(builtInApp.description),
+  logoUrl: getBuiltInAppLogoUrl(builtInApp),
 });
 
 export const getSettingsApplicationsTableRowItems = ({
   applications,
-  builtInAccountApps,
+  builtInApps,
   currentWorkspace,
 }: {
   applications: SettingsApplicationsTableApplication[];
-  builtInAccountApps: BuiltInAccountApp[];
+  builtInApps: BuiltInApp[];
   currentWorkspace: RowItemsWorkspace | null | undefined;
 }): SettingsApplicationsTableRowItem[] => {
   const sortedApplications = sortApplicationsWithOAuthOnlyLast(applications);
@@ -53,7 +54,7 @@ export const getSettingsApplicationsTableRowItems = ({
     application: SettingsApplicationsTableApplication,
   ) => getApplicationRowItem({ application, currentWorkspace });
 
-  if (!isNonEmptyArray(builtInAccountApps)) {
+  if (!isNonEmptyArray(builtInApps)) {
     return sortedApplications.map(toApplicationRowItem);
   }
 
@@ -61,7 +62,7 @@ export const getSettingsApplicationsTableRowItems = ({
     ...sortedApplications
       .filter(isTwentyStandardApplication)
       .map(toApplicationRowItem),
-    ...builtInAccountApps.map(getBuiltInAccountAppRowItem),
+    ...builtInApps.map(getBuiltInAppRowItem),
     ...sortedApplications
       .filter((application) => !isTwentyStandardApplication(application))
       .map(toApplicationRowItem),

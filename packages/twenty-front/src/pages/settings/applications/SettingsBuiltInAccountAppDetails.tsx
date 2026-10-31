@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
-import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -19,7 +19,7 @@ export const SettingsBuiltInAccountAppDetails = ({
   const { t } = useLingui();
 
   const appName = t(builtInAccountApp.name);
-  const logoUrl = getBuiltInAccountAppLogoUrl(builtInAccountApp);
+  const logoUrl = getBuiltInAppLogoUrl(builtInAccountApp);
 
   return (
     <SettingsPageLayout

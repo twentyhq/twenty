@@ -100,6 +100,8 @@ export class StaleRegistrationCleanupService {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .andWhere('registration.createdAt < :cutoffDate', { cutoffDate })
+      // Listed registrations are curated, not left behind by an abandoned connection
+      .andWhere('registration.isListed = false')
       .orderBy('registration.createdAt', 'ASC')
       .take(batchSize);
 

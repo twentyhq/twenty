@@ -26,8 +26,10 @@ import {
   GOOGLE_MESSAGE_CHANNEL_ID,
   MESSAGE_CHANNELS,
   MICROSOFT_ACCOUNT_ID,
+  myApplicationPreferencesRequested,
   deleteConnectedAccount,
   disconnectConnectedAccount,
+  removeConnectedAccountsPermission,
   seedAccountGroupsStory,
   withoutDeletedAccounts,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -641,6 +643,8 @@ export const AppPreferencesListInstalledApps: Story = {
     );
     expect(canvas.getByText('Granola')).toBeVisible();
     expect(canvas.getByText('Linear')).toBeVisible();
+    expect(canvas.getByRole('link', { name: /Claude/ })).toBeVisible();
+    expect(getTab({ canvasElement, tabId: 'accounts' })).toBeVisible();
     expect(
       canvas.getByText('Records, transcribes and summarizes your meetings.'),
     ).toBeVisible();
@@ -678,6 +682,34 @@ export const AppPreferencesListInstalledApps: Story = {
       ),
     ).toBeVisible();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+export const ListsOnlyChatGptAndClaudeWithoutAccountsPermission: Story = {
+  ...accountGroupsStory,
+  args: {
+    additionalRoutes: ['/settings/app-preferences/claude'],
+  },
+  beforeEach: async () => {
+    await seedAccountGroupsStory();
+    removeConnectedAccountsPermission();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('link', { name: /ChatGPT/ }, { timeout: 3000 }),
+    ).toBeVisible();
+    expect(canvas.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
+    expect(canvas.queryByText('Outlook')).not.toBeInTheDocument();
+    expect(canvas.queryByTestId('tab-accounts')).not.toBeInTheDocument();
+    expect(myApplicationPreferencesRequested).not.toHaveBeenCalled();
+
+    await userEvent.click(canvas.getByRole('link', { name: /Claude/ }));
+
+    expect(
+      await canvas.findByText('Navigated to /settings/app-preferences/claude'),
+    ).toBeVisible();
   },
 };
 
@@ -785,7 +817,9 @@ export const ConnectionsLoadErrorHidesStatusesUntilRetry: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(canvas.getByText('Linear')).toBeVisible();
+    expect(
+      await canvas.findByText('Linear', undefined, { timeout: 3000 }),
+    ).toBeVisible();
     expect(canvas.queryByText('Not connected')).not.toBeInTheDocument();
     expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
 

@@ -466,6 +466,8 @@ type ApplicationAuthorization {
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
   scopes: [String!]
+  userId: UUID!
+  wellKnownOAuthClient: WellKnownOAuthClient
   workspaceId: UUID!
 }
 
@@ -709,6 +711,7 @@ type ApplicationRegistrationSummary {
   latestAvailableVersion: String
   logoUrl: String
   sourceType: ApplicationRegistrationSourceType!
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type ApplicationRegistrationVariable {
@@ -2946,6 +2949,7 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type MarketplaceAppObject {
@@ -3420,6 +3424,7 @@ type Mutation {
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
+  revokeWorkspaceApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
@@ -3999,6 +4004,7 @@ type PublicApplicationRegistration {
   name: String!
   oAuthScopes: [String!]!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type PublicConnectionParametersOutput {
@@ -4220,6 +4226,7 @@ type Query {
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
+  workspaceApplicationAuthorizations(applicationId: UUID!): [ApplicationAuthorization!]!
 }
 
 type RatioAggregateConfig {
@@ -6137,6 +6144,11 @@ type Webhook {
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
+}
+
+enum WellKnownOAuthClient {
+  CHATGPT
+  CLAUDE
 }
 
 union WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration

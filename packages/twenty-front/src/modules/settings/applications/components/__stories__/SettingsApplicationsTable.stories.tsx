@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { BUILT_IN_ACCOUNT_APPS } from '@/settings/app-preferences/constants/BuiltInAccountApps';
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
 import {
@@ -24,7 +25,7 @@ const meta: Meta<typeof SettingsApplicationsTable> = {
       NPM_APPLICATION,
       STANDARD_APPLICATION,
     ],
-    builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
+    builtInApps: BUILT_IN_ACCOUNT_APPS,
     linkTarget: 'applicationDetail',
     middleColumn: 'type',
   },
@@ -120,7 +121,7 @@ export const SearchWithNoMatchShowsAnEmptyState: Story = {
 
 export const KeepsExistingOrderWithoutBuiltInAccountApps: Story = {
   args: {
-    builtInAccountApps: [],
+    builtInApps: [],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -137,7 +138,7 @@ export const KeepsExistingOrderWithoutBuiltInAccountApps: Story = {
 export const StatusColumnShowsTheMostUrgentStatus: Story = {
   args: {
     applications: [NPM_APPLICATION, TARBALL_APPLICATION, STANDARD_APPLICATION],
-    builtInAccountApps: [],
+    builtInApps: [],
     middleColumn: 'status',
     statusesById: {
       [NPM_APPLICATION.id]: [
@@ -173,7 +174,7 @@ export const StatusColumnShowsTheMostUrgentStatus: Story = {
 export const TypeColumnShowsUpdateNextToTheDescription: Story = {
   args: {
     applications: [NPM_APPLICATION, TARBALL_APPLICATION],
-    builtInAccountApps: [],
+    builtInApps: [],
     middleColumn: 'type',
     statusesById: {
       [NPM_APPLICATION.id]: [
@@ -204,6 +205,7 @@ export const MemberRowsLinkToTheirPreferences: Story = {
     description:
       'Choose your preferences for the apps installed on your workspace by the admin',
     applications: [OAUTH_ONLY_APPLICATION, NPM_APPLICATION],
+    builtInApps: [...BUILT_IN_ACCOUNT_APPS, ...BUILT_IN_MCP_CLIENT_APPS],
     linkTarget: 'applicationPreferences',
     middleColumn: 'status',
     statusesById: {
@@ -222,6 +224,8 @@ export const MemberRowsLinkToTheirPreferences: Story = {
       '/settings/app-preferences/google',
       '/settings/app-preferences/outlook',
       '/settings/app-preferences/imap',
+      '/settings/app-preferences/chatgpt',
+      '/settings/app-preferences/claude',
       '/settings/app-preferences/npm-application-id',
       '/settings/app-preferences/oauth-application-id',
     ]);

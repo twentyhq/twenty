@@ -16,6 +16,7 @@ import {
 import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('MarketplaceAppDetail')
 export class MarketplaceAppDetailDTO {
@@ -36,6 +37,10 @@ export class MarketplaceAppDetailDTO {
 
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
+
+  // Set for the clients a member connects from their own account rather than installs
+  @Field(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 
   @IsOptional()
   @IsString()
