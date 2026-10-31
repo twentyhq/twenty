@@ -378,6 +378,7 @@ for await (const event of streamConversation({
   show only their text, as they do to other members in the chat: live, their
   other chunks arrive as empty `message-metadata` chunks, so `seq` stays
   gapless.
+- Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 </Accordion>
 <Accordion title="ai.generate" description="Call a model from a logic function, without an agent">
