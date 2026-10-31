@@ -4,6 +4,7 @@ import { expect, within } from 'storybook/test';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  MessageChannelType,
   MessageChannelVisibility,
   type TimelineThread,
 } from '~/generated/graphql';
@@ -30,6 +31,11 @@ const thread: TimelineThread = {
   subject: 'A quick hello from Twenty',
   numberOfMessagesInThread: 1,
   participantCount: 1,
+  channel: {
+    type: MessageChannelType.EMAIL,
+    provider: 'google',
+    applicationId: null,
+  },
 };
 
 const meta: Meta<typeof EmailThreadPreview> = {
@@ -99,5 +105,29 @@ export const DraftWithMetadataVisibility: Story = {
     await expect(
       canvas.queryByText('A quick hello from Twenty'),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const LinkedInConversation: Story = {
+  args: {
+    thread: {
+      ...thread,
+      subject: '',
+      lastMessageBody: 'Great meeting you at Dreamforce. Happy to connect.',
+      numberOfMessagesInThread: 4,
+      channel: {
+        type: MessageChannelType.APP,
+        provider: 'app',
+        applicationId: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(
+      'Great meeting you at Dreamforce. Happy to connect.',
+    );
+    await expect(canvas.queryByText('4')).not.toBeInTheDocument();
   },
 };

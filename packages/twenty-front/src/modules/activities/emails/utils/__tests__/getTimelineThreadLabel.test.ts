@@ -1,5 +1,8 @@
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
-import { MessageChannelVisibility } from '~/generated/graphql';
+import {
+  MessageChannelType,
+  MessageChannelVisibility,
+} from '~/generated/graphql';
 
 describe('getTimelineThreadLabel', () => {
   it('should return the subject when it is shared', () => {
@@ -27,5 +30,19 @@ describe('getTimelineThreadLabel', () => {
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       }),
     ).toBe('Email thread');
+  });
+
+  it('should fall back to a conversation label for chat channels', () => {
+    expect(
+      getTimelineThreadLabel({
+        subject: '',
+        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        channel: {
+          type: MessageChannelType.APP,
+          provider: 'app',
+          applicationId: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
+        },
+      }),
+    ).toBe('Conversation');
   });
 });
