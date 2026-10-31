@@ -1,0 +1,150 @@
+---
+title: Хлебные крошки
+description: Показывает расположение страницы с помощью цепочки ссылок на родительские страницы.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+## Обзор
+
+`Breadcrumb` отображает упорядоченную навигационную цепочку. Включает декоративные разделители, стили фокуса ссылок и усечение метки последнего элемента. Элементы сохраняют нативное поведение якорей и поддерживают пользовательскую маршрутизацию через `render`. Навигационная цепочка последовательно использует среднюю насыщенность шрифта, в том числе внутри заголовков с другой насыщенностью.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--display" title="Пример Breadcrumb" height={100} />
+
+## Использование
+
+Передавайте элементы в порядке от родительского к текущему. Для навигационного ориентира по умолчанию используется доступное имя `Breadcrumb`; используйте `aria-label`, чтобы локализовать его или различать несколько цепочек. Для последнего элемента по умолчанию используется `aria-current="page"` независимо от того, имеет ли он назначение или отображает обычный текст.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+Элементы с `href` используют нативные якоря. Элементы без назначения по умолчанию отображаются как текст. Разделители `/` являются декоративными, скрыты от вспомогательных технологий и не входят в доступные имена ссылок. Ссылки следуют обычному поведению браузера при нажатии Tab и Enter, включая клики с модификаторами и открытие в новой вкладке.
+
+## Нативные свойства элемента
+
+Каждый элемент поддерживает нативные атрибуты якоря, обработчики событий, `className`, `style` и `ref`. Например, передайте `target` и `rel` для новой вкладки, `download` для файла или `referrerPolicy` для управления запросом. Ref элемента указывает на отрисованный DOM-элемент.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const ReferenceBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Reference location"
+    links={[
+      {
+        children: 'Documentation',
+        href: 'https://docs.twenty.com',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        referrerPolicy: 'no-referrer',
+      },
+      { children: 'Companies' },
+    ]}
+  />
+);
+```
+
+## Текущая страница
+
+Явное значение `aria-current` для элемента имеет приоритет над его позицией. Используйте `aria-current="page"` для другого элемента и `aria-current={false}` для последнего элемента, когда текущая страница находится раньше в цепочке. Другие нативные значения текущего элемента, такие как `step`, также сохраняются. Убедитесь, что текущим является только нужный элемент.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyContextBreadcrumb = () => (
+  <Breadcrumb
+    links={[
+      { children: 'Home', href: '/' },
+      {
+        children: 'Companies',
+        href: '/companies',
+        'aria-current': 'page',
+      },
+      { children: 'Acme', 'aria-current': false },
+    ]}
+  />
+);
+```
+
+## Ссылки маршрутизатора
+
+Используйте свойство `render` элемента, чтобы передать компонент ссылки вашего маршрутизатора вместе с `href`. Передавайте назначения, состояние и параметры истории, специфичные для маршрутизатора, непосредственно этому компоненту. `render` принимает элемент или функцию, получающую переданные свойства, включая нативные атрибуты якоря и его ref.
+
+Отрисованная ссылка должна передавать предоставленные свойства и ref своему якорному элементу. Сохраняйте нативное поведение ссылок при обработке навигации, включая клики с модификаторами и новые вкладки. Требования к композиции см. в разделе [пользовательские компоненты](/ru/ui/primitives/overview#custom-components).
+
+Приложение выбирает назначения и определяет, когда показывать мобильное действие возврата. `Breadcrumb` не определяет маршруты и не сворачивает родительские элементы в меню.
+
+## Длинные метки
+
+Последний элемент сжимается и обрезается с многоточием, когда в контейнере ограничено пространство. Родительские элементы сохраняют свою ширину. Простые строковые метки автоматически становятся встроенной подсказкой браузера. Используйте `title`, чтобы переопределить этот текст или предоставить подсказку для расширенного содержимого. Установите `title=""`, чтобы отключить автоматическую всплывающую подсказку.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--truncation" title="Breadcrumb с длинной меткой текущей страницы" height={100} />
+
+## Расширенное содержимое
+
+`children` элемента может включать текст и вспомогательное визуальное содержимое. Сохраняйте метку читаемой и не вкладывайте интерактивные элементы управления внутрь ссылки.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rich-content" title="Breadcrumb со вспомогательным содержимым" height={100} />
+
+## Направление текста
+
+Цепочка следует направлению окружающего текста. Установите `dir="rtl"` для `Breadcrumb` или родительского элемента для содержимого справа налево. Если другим элементам управления требуется соответствующее направленное поведение клавиатуры или указателя, также задайте для [DirectionProvider](/ru/ui/primitives/layout/direction-provider) то же направление.
+
+<StoryEmbed storyId="primitives-navigation-breadcrumb--rtl" title="Breadcrumb в содержимом справа налево" height={100} />
+
+## Настройка корневого элемента
+
+Нативные атрибуты навигации, включая доступные имена, `className`, `style` и обработчики событий, передаются корневому ориентиру. Корневой ref указывает на его элемент `nav`. Корневой `render` также принимает элемент или функцию; сохраните ориентир навигации и передайте его предоставленные свойства и ref.
+
+```tsx
+import { useRef } from 'react';
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const HeaderBreadcrumb = () => {
+  const navigationRef = useRef<HTMLElement>(null);
+  const companiesRef = useRef<HTMLAnchorElement>(null);
+
+  return (
+    <Breadcrumb
+      aria-label="Company location"
+      ref={navigationRef}
+      render={<nav data-location="header" />}
+      links={[
+        {
+          children: 'Companies',
+          href: '/companies',
+          ref: companiesRef,
+          render: (props) => (
+            <a {...props} data-route={props.href}>
+              {props.children}
+            </a>
+          ),
+        },
+        { children: 'Acme' },
+      ]}
+    />
+  );
+};
+```
+
+## Свойства
+
+<BreadcrumbReference />
+
+<PageBanner illustration="card-page-navigation" />

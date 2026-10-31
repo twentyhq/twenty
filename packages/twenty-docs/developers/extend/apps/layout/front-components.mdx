@@ -170,12 +170,12 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 <Note>
   A `USER` item renders as a tab on the app's page under **Settings > App
   preferences**, where only the signed-in member sees it, and only when their
-  role grants the `CONNECTED_ACCOUNTS` permission. That page is not enabled in
+  role grants the User Apps permission. That page is not enabled in
   every workspace yet: where it is not, a `USER` item is persisted and synced
   but nothing renders it.
 </Note>
 
-A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.CONNECTED_ACCOUNTS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.USER_APPS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
 
 <Note>
   `defineSettingsFrontComponent()` is deprecated in favor of
@@ -458,6 +458,34 @@ try {
 }
 ```
 
+## Posting to the inbox
+
+`sendInboxMessage` and the [inbox](/developers/extend/apps/logic/inbox) mention helpers are exported from `twenty-sdk/front-component` too, so a component can post a message without a logic function in between. The message is from your app, and the call carries the component's token, so the member looking at the page needs the `AI` permission, like every recipient.
+
+To show the conversation afterwards, navigate to it with the `threadId` the call returns:
+
+```tsx
+import {
+  AppPath,
+  navigate,
+  sendInboxMessage,
+} from 'twenty-sdk/front-component';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [workspaceMemberId],
+  threadKey: 'weekly-digest',
+  idempotencyKey: `weekly-digest-${weekNumber}`,
+  title: 'Your weekly digest',
+  text: 'Three deals moved to negotiation this week.',
+});
+
+await navigate(AppPath.AiChatInbox, { threadId });
+```
+
+- `workspaceMemberIds` takes workspace member ids, not the user id `useUserId()` returns.
+- A conversation opens only for its participants, so navigate to it when the member looking at the page is one of the recipients.
+- The inbox is a main-page route: `navigate` opens it there, and `openSidePanelPage` cannot open it in the side panel.
+
 ## Accessing runtime context
 
 Inside your component, use SDK hooks to access the current user, record, and component instance:
@@ -635,8 +663,8 @@ Notes:
 - Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
 - The key must be one your app declares in [`defineApplication()`](/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
 - Secret variables read back masked, never as the stored value. Writing them works normally.
-- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
-- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no `APPLICATIONS` permission, but it needs the `CONNECTED_ACCOUNTS` permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles). See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
+- Reading a variable's `value`, and writing it, need the Workspace Apps settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.WORKSPACE_APPS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no Workspace Apps permission, but it needs the User Apps permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.USER_APPS` to `permissionFlagUniversalIdentifiers` in your [application role](/developers/extend/apps/config/roles). See [Workspace and user variables](/developers/extend/apps/config/application#workspace-and-user-variables).
 
 ### System variables
 
@@ -964,6 +992,8 @@ Foundational controls are grouped under `twenty-ui/primitives/<family>`. Shared 
 
 Use [`MainButton`](/ui/components/input/main-button) for prominent actions and [`LightButton`](/ui/components/input/light-button) for lightweight actions. Use `Button`, `Field`, `Input`, `Select`, and other primitives from `twenty-ui/primitives/input` for foundational controls and forms. Follow each compound control's documented parts, such as `Field.Root`, `Field.Label`, and `Field.Description`.
 
+Pass `alignItemWithTrigger={false}` to `Select.Positioner`. Aligning the selected item with the trigger, Base UI's default, needs synchronous layout measurements that the sandbox cannot provide, so the popup collapses when it reopens.
+
 Use [`Dropdown`](/ui/components/navigation/dropdown) from `twenty-ui/components/navigation` for action menus, option pickers, and nonmodal form panels. Use `enqueueSnackbar` from `twenty-sdk/front-component` for host notifications.
 
 The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.
@@ -1128,13 +1158,13 @@ Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll
 
 Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
-A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type. It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
+A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type, or when it is a press that your `document` listeners are waiting for (see below). It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
 
 Handlers a library adds with `React.cloneElement`, such as the ones behind Base UI's `render` prop, run after the element's own handlers instead of replacing them, so passing `onClick: undefined` to `cloneElement` does not remove the element's handler. A handler on a Base UI `render` element can still call `event.preventBaseUIHandler()` to skip Base UI's own handler.
 
 `event.target.value` and `checked` reflect the control once the browser has applied the user's change: in `input`, `change`, `click`, `blur` and `focusout` handlers, and in `keyup` handlers for `value`. In `keydown`, `beforeinput` and pointer handlers they hold the control's value and checked state as of its last edit, whatever your component listens to: an `Enter` handler reads the text typed so far, but a handler for a printable key does not see that key yet, so read live values from a controlled input or an `onChange` handler.
 
-`document` listeners receive the events that cross from your component, but nothing that happens elsewhere on the page, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
+`document` listeners receive the events that cross from your component, with one exception for presses. While your component listens for `pointerdown`, `pointerup`, `pointercancel`, `mousedown`, `mouseup` or `click` on `document`, as an open popup does to close on outside presses, every press reaches those listeners: a press inside your component is dispatched at the element the user pressed even when nothing handles it, and a press elsewhere on the page is dispatched at `document.body` with its button state, click count and pointer type, but no coordinates or modifier keys. Clicks without a press, such as a keyboard activating a control outside your component, and presses on the page's scrollbars are not sent, and a touch swipe outside your component only arrives as `pointerdown` and `pointercancel`, so it does not close an open popup. Nothing else from the rest of the page crosses, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
 ### Attributes and styling
 

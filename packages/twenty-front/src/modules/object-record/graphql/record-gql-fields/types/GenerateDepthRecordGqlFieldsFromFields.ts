@@ -6,6 +6,8 @@ export type GenerateDepthRecordGqlFieldsFromFields = {
     EnrichedObjectMetadataItem,
     | 'id'
     | 'fields'
+    | 'readableFields'
+    | 'updatableFields'
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
     | 'nameSingular'

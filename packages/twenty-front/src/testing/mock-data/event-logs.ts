@@ -2,11 +2,13 @@ import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type FlatApplication } from '@/metadata-store/types/FlatApplication';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
-  type EventLogRecord,
   EventLogTable,
+  type EventLogsQuery,
 } from '~/generated-metadata/graphql';
 import { workspaceLogoUrl } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+
+type MockedEventLogRecord = EventLogsQuery['eventLogs']['records'][number];
 
 type MockedLogicFunction = {
   id: string;
@@ -98,7 +100,7 @@ const buildApplicationLogRecord = ({
   executionId: string;
   level: 'ERROR' | 'WARN' | 'INFO' | 'DEBUG';
   message: string;
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event: logicFunction.name,
   timestamp,
@@ -242,7 +244,7 @@ const buildCompanyDeletionRecord = ({
 }: {
   timestamp: string;
   company: { id: string };
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event: 'Object Record Deleted',
   timestamp,
@@ -272,7 +274,7 @@ const buildWorkspaceEventRecord = ({
   timestamp: string;
   userId?: string | null;
   properties: Record<string, unknown>;
-}): EventLogRecord => ({
+}): MockedEventLogRecord => ({
   __typename: 'EventLogRecord',
   event,
   timestamp,
@@ -283,7 +285,7 @@ const buildWorkspaceEventRecord = ({
 });
 
 export const mockedEventLogRecordsByTable: Partial<
-  Record<EventLogTable, EventLogRecord[]>
+  Record<EventLogTable, MockedEventLogRecord[]>
 > = {
   [EventLogTable.OBJECT_EVENT]: [
     {
@@ -590,7 +592,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'AI',
       timestamp: '2026-09-24T11:56:21.408Z',
-      userId: JONAS_WEBER.userWorkspaceId,
+      userId: JONAS_WEBER.userWorkspaceId ?? null,
       recordId: null,
       objectMetadataId: null,
       properties: {
@@ -606,7 +608,7 @@ export const mockedEventLogRecordsByTable: Partial<
       __typename: 'EventLogRecord',
       event: 'WORKFLOW',
       timestamp: '2026-09-24T11:41:09.772Z',
-      userId: SARAH_CHEN.userWorkspaceId,
+      userId: SARAH_CHEN.userWorkspaceId ?? null,
       recordId: null,
       objectMetadataId: null,
       properties: {
@@ -621,7 +623,7 @@ export const mockedEventLogRecordsByTable: Partial<
   ],
 };
 
-export const mockedEventLogLiveApplicationLogs: EventLogRecord[] = [
+export const mockedEventLogLiveApplicationLogs: MockedEventLogRecord[] = [
   buildApplicationLogRecord({
     timestamp: '2026-09-24T12:05:12.418Z',
     logicFunction: SCORE_INBOUND_LEAD,

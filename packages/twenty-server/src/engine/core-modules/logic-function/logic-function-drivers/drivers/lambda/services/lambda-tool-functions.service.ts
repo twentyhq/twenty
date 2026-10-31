@@ -1,19 +1,23 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
-
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
-  ResourceConflictException,
+  UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
+import * as fs from 'fs/promises';
+import { join } from 'path';
 import { isDefined } from 'twenty-shared/utils';
 
+import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import {
+  BUILD_LOCK_MAX_RETRIES,
+  BUILD_LOCK_RETRY_MS,
+  BUILD_LOCK_TTL_MS,
   BUILDER_FUNCTION_NAME_PREFIX,
   BUILDER_HANDLER_PATH,
   BUILDER_LAMBDA_MEMORY_MB,
@@ -25,6 +29,7 @@ import {
   YARN_INSTALL_LAMBDA_MEMORY_MB,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import {
   type BuilderLambdaPayload,
   type BuilderLambdaResult,
@@ -34,12 +39,31 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
-import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import {
+  type LogicFunctionTranspileParams,
+  type LogicFunctionTranspileResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
+import {
+  type BrowserTranspileParams,
+  type BrowserTranspileResult,
+  type BrowserDependenciesBuildParams,
+  type TranspileParams,
+  type TranspileResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
+import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
+import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
+import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/utils/copy-front-component-builder.util';
+import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util';
+import {
+  FrontComponentException,
+  FrontComponentExceptionCode,
+} from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -57,17 +81,27 @@ export class LambdaToolFunctionsService {
       'lambdaRole' | 'resourceNamespace' | 'resourceTags'
     >,
     private readonly awsClient: LambdaAwsClientService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async transpile(
-    params: Omit<BuilderLambdaPayload, 'action'>,
-  ): Promise<BuilderLambdaResult> {
+    params: LogicFunctionTranspileParams,
+  ): Promise<LogicFunctionTranspileResult>;
+  async transpile(
+    params: BrowserTranspileParams,
+  ): Promise<BrowserTranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult> {
+    if (params.targetRuntime === 'browser') {
+      const { targetRuntime: _targetRuntime, ...request } = params;
+      return frontComponentBuildResultSchema.parse(
+        await this.invokeBrowserBuilder({ ...request, action: 'transpile' }),
+      );
+    }
+    await this.ensureBuilderLambdaExists();
+
     const lambdaClient = await this.awsClient.getLambdaClient();
     const builderFunctionName = await this.getBuilderFunctionName();
-    await this.ensureBuilderLambdaExists({
-      functionName: builderFunctionName,
-      copyFiles: copyBuilder,
-    });
 
     const payload: BuilderLambdaPayload = {
       action: 'transpile',
@@ -128,6 +162,63 @@ export class LambdaToolFunctionsService {
     return { builtCode: parsedResult.builtCode };
   }
 
+  async buildDependencies({
+    targetRuntime: _targetRuntime,
+    ...request
+  }: BrowserDependenciesBuildParams) {
+    return frontComponentDependenciesBuildResultSchema.parse(
+      await this.invokeBrowserBuilder({
+        ...request,
+        action: 'buildDependencies',
+      }),
+    );
+  }
+
+  private async invokeBrowserBuilder({
+    workspaceId,
+    ...input
+  }: FrontComponentBuilderRequest & { workspaceId: string }): Promise<unknown> {
+    const isDependenciesBuild = input.action === 'buildDependencies';
+    const functionName = await getFrontComponentBuilderName({
+      workspaceId,
+      namespace: this.options.resourceNamespace,
+      action: input.action,
+    });
+    const timeoutSeconds = isDependenciesBuild
+      ? YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS
+      : BUILDER_LAMBDA_TIMEOUT_SECONDS;
+    await this.ensureBuildToolLambdaIsActive({
+      functionName,
+      memoryMb: isDependenciesBuild
+        ? YARN_INSTALL_LAMBDA_MEMORY_MB
+        : BUILDER_LAMBDA_MEMORY_MB,
+      timeoutSeconds,
+      copyFiles: async (directory) => {
+        await copyFrontComponentBuilder(directory);
+        if (isDependenciesBuild) {
+          await fs.cp(YARN_ENGINE_DIRNAME, join(directory, 'yarn-engine'), {
+            recursive: true,
+          });
+        }
+      },
+    });
+    const lambdaClient = await this.awsClient.getLambdaClient();
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: functionName,
+        Payload: JSON.stringify(input),
+      }),
+      { abortSignal: AbortSignal.timeout(timeoutSeconds * 1000) },
+    );
+    if (result.FunctionError || !isDefined(result.Payload)) {
+      throw new FrontComponentException(
+        'Frontend component builder Lambda failed.',
+        FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+      );
+    }
+    return JSON.parse(result.Payload.transformToString());
+  }
+
   async runYarnInstallCreateLayer(
     params: Omit<YarnInstallLambdaPayload, 'action'>,
   ): Promise<YarnInstallLambdaResult> {
@@ -180,7 +271,7 @@ export class LambdaToolFunctionsService {
     return parsedResult;
   }
 
-  async ensureCommonLayerExists(): Promise<string> {
+  private async ensureCommonLayerExists(): Promise<string> {
     const commonLayerName = await this.getCommonLayerName();
     const existingArn =
       await this.awsClient.getExistingLayerArn(commonLayerName);
@@ -223,108 +314,100 @@ export class LambdaToolFunctionsService {
     }
   }
 
-  private async ensureYarnInstallLambdaExists(): Promise<void> {
-    const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    if (isDefined(await this.awsClient.getFunction(yarnInstallFunctionName))) {
-      return;
-    }
-
-    const commonLayerArn = await this.ensureCommonLayerExists();
-
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
-
-    try {
-      await copyYarnInstall(sourceTemporaryDir);
-
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
-
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: yarnInstallFunctionName,
-        Layers: [commonLayerArn],
-        Handler: 'index.handler',
-        Role: this.options.lambdaRole,
-        Tags: this.options.resourceTags,
-        Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
-        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-      };
-
-      await lambdaClient.send(new CreateFunctionCommand(params));
-    } finally {
-      await temporaryDirManager.clean();
-    }
-
-    await this.awsClient.waitFunctionActive(yarnInstallFunctionName);
-  }
-
-  async ensureBuilderLambdaExists({
+  async ensureBuildToolLambdaIsActive({
     functionName,
+    memoryMb,
+    timeoutSeconds,
     copyFiles,
-    dependencyLayerArn,
   }: {
-    dependencyLayerArn?: string;
     functionName: string;
+    memoryMb: number;
+    timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
   }): Promise<void> {
-    const lambdaClient = await this.awsClient.getLambdaClient();
+    const existingFunction = await this.awsClient.getFunction(functionName);
 
-    const existing = await this.awsClient.getFunction(functionName);
-    if (isDefined(existing)) {
-      if (existing.Configuration?.State !== 'Active') {
-        await this.awsClient.waitFunctionActive(functionName);
-      }
-
+    if (existingFunction?.Configuration?.State === 'Active') {
       return;
     }
 
-    const commonLayerArn = await this.ensureCommonLayerExists();
+    await this.cacheLockService.withLock(
+      async () => {
+        const existingFunction = await this.awsClient.getFunction(functionName);
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
+        if (isDefined(existingFunction)) {
+          if (existingFunction.Configuration?.State === 'Inactive') {
+            const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await copyFiles(sourceTemporaryDir);
+            await lambdaClient.send(
+              new UpdateFunctionConfigurationCommand({
+                FunctionName: functionName,
+                MemorySize: memoryMb,
+                Timeout: timeoutSeconds,
+              }),
+            );
+          }
 
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+          await this.awsClient.waitFunctionActive(functionName);
 
-      const params: CreateFunctionCommandInput = {
-        Code: {
-          ZipFile: await fs.readFile(lambdaZipPath),
-        },
-        FunctionName: functionName,
-        Layers: isDefined(dependencyLayerArn)
-          ? [commonLayerArn, dependencyLayerArn]
-          : [commonLayerArn],
-        Handler: 'index.handler',
-        Role: this.options.lambdaRole,
-        Tags: this.options.resourceTags,
-        Runtime: LogicFunctionRuntime.NODE22,
-        Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
-        MemorySize: BUILDER_LAMBDA_MEMORY_MB,
-        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-      };
-
-      try {
-        await lambdaClient.send(new CreateFunctionCommand(params));
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
+          return;
         }
-      }
-    } finally {
-      await temporaryDirManager.clean();
-    }
 
-    await this.awsClient.waitFunctionActive(functionName);
+        const commonLayerArn = await this.ensureCommonLayerExists();
+        const temporaryDirManager = new TemporaryDirManager();
+        const { sourceTemporaryDir, lambdaZipPath } =
+          await temporaryDirManager.init();
+
+        try {
+          await copyFiles(sourceTemporaryDir);
+          await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+          const lambdaClient = await this.awsClient.getLambdaClient();
+          const params: CreateFunctionCommandInput = {
+            Code: { ZipFile: await fs.readFile(lambdaZipPath) },
+            FunctionName: functionName,
+            Layers: [commonLayerArn],
+            Handler: 'index.handler',
+            Role: this.options.lambdaRole,
+            Tags: this.options.resourceTags,
+            Runtime: LogicFunctionRuntime.NODE22,
+            Timeout: timeoutSeconds,
+            MemorySize: memoryMb,
+            EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+          };
+
+          await lambdaClient.send(new CreateFunctionCommand(params));
+        } finally {
+          await temporaryDirManager.clean();
+        }
+
+        await this.awsClient.waitFunctionActive(functionName);
+      },
+      `lambda-tool-build:${functionName}`,
+      {
+        ttl: BUILD_LOCK_TTL_MS,
+        ms: BUILD_LOCK_RETRY_MS,
+        maxRetries: BUILD_LOCK_MAX_RETRIES,
+      },
+    );
+  }
+
+  private async ensureYarnInstallLambdaExists(): Promise<void> {
+    await this.ensureBuildToolLambdaIsActive({
+      functionName: await this.getYarnInstallFunctionName(),
+      memoryMb: YARN_INSTALL_LAMBDA_MEMORY_MB,
+      timeoutSeconds: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: copyYarnInstall,
+    });
+  }
+
+  private async ensureBuilderLambdaExists(): Promise<void> {
+    await this.ensureBuildToolLambdaIsActive({
+      functionName: await this.getBuilderFunctionName(),
+      memoryMb: BUILDER_LAMBDA_MEMORY_MB,
+      timeoutSeconds: BUILDER_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: copyBuilder,
+    });
   }
 
   private async getCommonLayerName(): Promise<string> {
@@ -357,16 +440,20 @@ export class LambdaToolFunctionsService {
       return this.yarnInstallFunctionName;
     }
 
-    const handlerContent = await fs.readFile(
-      YARN_INSTALL_HANDLER_PATH,
-      'utf-8',
-    );
+    const [handlerContent, installerContent] = await Promise.all([
+      fs.readFile(YARN_INSTALL_HANDLER_PATH, 'utf-8'),
+      fs.readFile(
+        join(YARN_ENGINE_DIRNAME, 'install-yarn-dependencies.cjs'),
+        'utf-8',
+      ),
+    ]);
 
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
       contents: [
         handlerContent,
+        installerContent,
         String(YARN_INSTALL_LAMBDA_MEMORY_MB),
         String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
         String(LAMBDA_EPHEMERAL_STORAGE_MB),

@@ -1,12 +1,13 @@
 import { release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/createFileInputAwareRemoteConnection';
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
+import { type HostOutsidePressController } from '@/host/events/types/HostOutsidePressController';
 import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
@@ -23,6 +24,7 @@ import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/util
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/module-imports/containsSdkClientImportSpecifier';
@@ -38,8 +40,8 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
-  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   initialExecutionContext: FrontComponentExecutionContext;
@@ -48,6 +50,7 @@ type FrontComponentWorkerEffectProps = {
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
   hostScrollController: HostScrollController;
+  outsidePressController: HostOutsidePressController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
@@ -55,6 +58,7 @@ type FrontComponentWorkerEffectProps = {
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
   hostScrollController,
+  outsidePressController,
   componentUrl,
   componentSource: providedComponentSource,
   componentProps,
@@ -64,8 +68,8 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sdkClientSources: providedSdkClientSources,
   sharedDependenciesUrl,
-  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   initialExecutionContext,
@@ -76,11 +80,25 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
+  const onReadyRef = useRef(onReady);
+  const componentPropsRef = useRef(componentProps);
+
+  if (!fastDeepEqual(componentPropsRef.current, componentProps)) {
+    componentPropsRef.current = componentProps;
+  }
+
+  const stableComponentProps = componentPropsRef.current;
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
 
   useEffect(() => {
     if (isInitializedRef.current) {
       return;
     }
+
+    setError(null);
 
     const newReceiver = new RemoteReceiver({ retain, release });
 
@@ -108,6 +126,7 @@ export const FrontComponentWorkerEffect = ({
       hostFetch,
       imageLoadingHost,
       geometryTracker,
+      outsidePressController,
       mediaSessionHost,
     });
 
@@ -140,24 +159,34 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
+        const resolveSharedDependenciesSource = () => {
+          if (isDefined(providedSharedDependenciesSource)) {
+            return providedSharedDependenciesSource;
+          }
+
+          if (
+            !isDefined(sharedDependenciesUrl) ||
+            !containsSharedDependenciesImportSpecifier(componentSource)
+          ) {
+            return undefined;
+          }
+
+          return fetchComponentSource({
+            url: sharedDependenciesUrl,
+            headers: authorizationHeaders,
+          });
+        };
+
         const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
-          isDefined(sdkClientUrls) &&
-          containsSdkClientImportSpecifier(componentSource)
-            ? fetchSdkClientSources({
-                sdkClientUrls,
-                headers: authorizationHeaders,
-              })
-            : undefined,
-          isDefined(providedSharedDependenciesSource)
-            ? providedSharedDependenciesSource
-            : isDefined(sharedDependenciesUrl) &&
-                containsSharedDependenciesImportSpecifier(componentSource)
-              ? fetchComponentSource({
-                  url: sharedDependenciesUrl,
-                  credentials: sharedDependenciesCredentials,
+          providedSdkClientSources ??
+            (isDefined(sdkClientUrls) &&
+            containsSdkClientImportSpecifier(componentSource)
+              ? fetchSdkClientSources({
+                  sdkClientUrls,
                   headers: authorizationHeaders,
                 })
-              : undefined,
+              : undefined),
+          resolveSharedDependenciesSource(),
         ]);
 
         if (isCancelled) {
@@ -167,6 +196,8 @@ export const FrontComponentWorkerEffect = ({
         const storageSnapshots = isDefined(storageNamespace)
           ? buildFrontComponentStorageSnapshots(storageNamespace)
           : undefined;
+
+        setReceiver(newReceiver);
 
         await thread.imports.render(
           createFileInputAwareRemoteConnection({
@@ -179,7 +210,7 @@ export const FrontComponentWorkerEffect = ({
           {
             componentUrl,
             componentSource,
-            componentProps,
+            componentProps: stableComponentProps,
             applicationAccessToken,
             apiUrl,
             functionsBaseUrl,
@@ -194,8 +225,9 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+
         if (!isCancelled) {
-          onReady?.();
+          onReadyRef.current?.();
         }
       } catch (error) {
         if (!isCancelled) {
@@ -206,7 +238,6 @@ export const FrontComponentWorkerEffect = ({
 
     resolveComponentSourceAndRender();
 
-    setReceiver(newReceiver);
     isInitializedRef.current = true;
 
     return () => {
@@ -224,21 +255,21 @@ export const FrontComponentWorkerEffect = ({
   }, [
     componentUrl,
     providedComponentSource,
-    componentProps,
+    providedSdkClientSources,
+    stableComponentProps,
     providedSharedDependenciesSource,
-    onReady,
     applicationAccessToken,
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
     sharedDependenciesUrl,
-    sharedDependenciesCredentials,
     applicationVariables,
     storageNamespace,
     initialExecutionContext,
     geometryTracker,
     hostFocusController,
     hostScrollController,
+    outsidePressController,
     mediaSessionHost,
     setError,
     setReceiver,

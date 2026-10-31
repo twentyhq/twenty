@@ -43,7 +43,10 @@ export const SidePanelShareRecordGeneralAccessItem = ({
     generalAccessLevel === RecordShareAccessLevel.NONE;
   const { hasGeneralAccess, label: generalAccessLabel } =
     getRecordSharingGeneralAccess({
-      sharing: { generalAccessLevel, hasManagedGeneralAccess },
+      sharing: {
+        generalAccessLevel: generalAccessLevel ?? null,
+        hasManagedGeneralAccess,
+      },
       objectLabelPlural,
     });
   const withDefaultMarker = ({
@@ -99,8 +102,11 @@ export const SidePanelShareRecordGeneralAccessItem = ({
       <Dropdown.Separator />
       <Dropdown.Section label={t(generalAccessLabel)}>
         {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
-          // Full access lets its holder manage sharing, so it is only granted by name
-          (option) => option.value !== RecordShareAccessLevel.FULL,
+          // Full access is only granted by name, and a record that follows its roles is private or editable
+          (option) =>
+            option.value !== RecordShareAccessLevel.FULL &&
+            (defaultGeneralAccessLevel === RecordShareAccessLevel.NONE ||
+              option.value !== RecordShareAccessLevel.READ),
         ).map((option) => (
           <Dropdown.OptionItem
             key={option.value}

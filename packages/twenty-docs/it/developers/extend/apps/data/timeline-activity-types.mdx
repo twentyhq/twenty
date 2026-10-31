@@ -3,20 +3,17 @@ title: Tipi Di Attività Timeline
 description: Definire gli eventi di audit automatico e gli eventi espliciti delle app che vengono visualizzati in tempi record.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Un tipo di attività della timeline definisce il vocabolario stabile per un evento mostrato nella timeline di un record. Oggetti standard e oggetti app utilizzano lo stesso contratto: un tipo ha un'etichetta e un'icona, può opzionalmente dichiarare quando viene emesso, e può opzionalmente renderizzare attraverso uno dei [componenti anteriori](/it/developers/extend/apps/layout/front-components).
 
 <Note>
-  I tipi di attività temporali sono in beta e stanno arrivando presto a Twenty 2.34. L'API
-  può evolvere mentre impariamo dai casi d'uso degli sviluppatori di app.
+  I tipi di attività della timeline sono in beta, l'API può evolversi mentre apprendiamo dai casi d'uso degli sviluppatori di app.
 </Note>
 
-Creane uno con il ponteggio:
-
-```bash filename="Terminal"
-yarn twenty dev:add timelineActivityType
-```
-
-O definirlo direttamente:
+Definisci un tipo di attività della timeline con `defineTimelineActivityType` da `twenty-sdk/define`:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -39,7 +36,7 @@ export default defineTimelineActivityType({
 
 Aggiungi `emit` quando Twenty dovrebbe creare questo tipo automaticamente. `emit.on` supporta `created`, `updated`, `deleted`, `restored`, `linked`, e `unlinked`, mentre `emit.objectUniversalIdentifier` identifica l'oggetto sorgente. Solo un tipo efficace può gestire la stessa chiave di emissione — `on`, oggetto e opzionale attraverso la relazione — in uno spazio di lavoro.
 
-Senza `emit.through`, l'evento è scritto sulla timeline del record di origine. Per adattarlo ai record correlati, imposta `emit.through. elationFieldUniversalIdentifier` o a una relazione diretta tra molti o a una [relazione di giunzione uno-a-molto](/it/developers/extend/apps/data/relations#junction-relations) sull'oggetto sorgente. Amante delle relazioni morph ad ogni membro del loro gruppo morph, in modo da una singola dichiarazione può colpire diversi tipi di oggetti.
+Senza `emit.through`, l'evento è scritto sulla timeline del record di origine. Per adattarlo ai record correlati, imposta `emit.through.relationFieldUniversalIdentifier` o a una relazione diretta tra molti o a una [relazione di giunzione uno-a-molto](/it/developers/extend/apps/data/relations#junction-relations) sull'oggetto sorgente. Amante delle relazioni morph ad ogni membro del loro gruppo morph, in modo da una singola dichiarazione può colpire diversi tipi di oggetti.
 
 Per una relazione diretta, la creazione o il ripristino del record di origine produce `linked`, eliminando produce `unlinked`, e ripuntando la relazione produce `unlinked` sul target precedente più `linked` sul nuovo obiettivo. Altri aggiornamenti di origine non producono eventi di collegamento. Questo è il contratto utilizzato dagli allegati, il cui obiettivo è una relazione diretta morfologica.
 
@@ -72,6 +69,8 @@ export default defineTimelineActivityType({
 ```
 
 Per impostazione predefinita, viene emesso un evento `updated` through per ogni aggiornamento della sorgente. Imposta `emit.through.triggerFieldUniversalIdentifiers` quando solo le modifiche ai campi sorgente selezionati devono apparire nelle timeline di destinazione.
+
+Un evento `linked` viene contrassegnato da una marca temporale nel momento in cui viene scritto. Quando il record di origine contiene il proprio momento temporale, imposta `emit.through.happensAtFieldUniversalIdentifier` su un campo `DATE_TIME` o `DATE` dell'oggetto di origine: la cronologia ancora invece l'evento al valore di quel campo e lo segue quando il valore cambia. Gli eventi email e calendario standard di Twenty usano questa opzione per ancorarsi a `receivedAt` e `startsAt`.
 
 Ometti `emit` per un evento di dominio esplicito creato dalla tua funzione logica. In questo modo si evita di produrre sia una riga di audit automatica sia una riga esplicita per la stessa operazione.
 
@@ -166,18 +165,21 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Campi di configurazione
 
-| Campo                                             | Obbligatorio | Descrizione                                                                     |
-| ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Sì           | UUID stabile per il tipo tra installazioni e aggiornamenti                      |
-| `name`                                            | Sì           | Nome programmatico locale dell'app; deve essere univoco all'interno dell'app    |
-| `label`                                           | Sì           | Testo dell'azione rivolto all'utente usato dal renderer nativo                  |
-| `icon`                                            | No           | Nome dell'icona Twenty visualizzata accanto all'evento                          |
-| `emit`                                            | No           | Dichiarazione di emissione automatica; ometti per i tipi solo espliciti         |
-| `emit.on`                                         | Con emit     | Azione di audit che causa la scrittura di questo tipo                           |
-| `emit.objectUniversalIdentifier`                  | Con emit     | Oggetto i cui record emettono questo tipo                                       |
-| `emit.through.relationFieldUniversalIdentifier`   | No           | Relazione diretta o di giunzione utilizzata per ventilare le timeline correlate |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No           | Campi sorgente che possono attivare un evento `updated` through                 |
-| `frontComponentUniversalIdentifier`               | No           | Componente anteriore di proprietà dell'app montato quando la riga è espansa     |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No           | Tipo di emissione esistente sostituito; richiede `emit`                         |
+| Campo                                             | Obbligatorio | Descrizione                                                                                                                       |
+| ------------------------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Sì           | UUID stabile per il tipo tra installazioni e aggiornamenti                                                                        |
+| `name`                                            | Sì           | Nome programmatico locale dell'app; deve essere univoco all'interno dell'app                                                      |
+| `label`                                           | Sì           | Testo dell'azione rivolto all'utente usato dal renderer nativo                                                                    |
+| `icon`                                            | No           | Nome dell'icona Twenty visualizzata accanto all'evento                                                                            |
+| `emit`                                            | No           | Dichiarazione di emissione automatica; ometti per i tipi solo espliciti                                                           |
+| `emit.on`                                         | Con emit     | Azione di audit che causa la scrittura di questo tipo                                                                             |
+| `emit.objectUniversalIdentifier`                  | Con emit     | Oggetto i cui record emettono questo tipo                                                                                         |
+| `emit.through.relationFieldUniversalIdentifier`   | No           | Relazione diretta o di giunzione utilizzata per ventilare le timeline correlate                                                   |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No           | Campi sorgente che possono attivare un evento `updated` through                                                                   |
+| `emit.through.happensAtFieldUniversalIdentifier`  | No           | Campo della data di origine utilizzato come timestamp `happensAt` dell'evento per gli eventi `linked`, anziché l'ora di scrittura |
+| `frontComponentUniversalIdentifier`               | No           | Componente anteriore di proprietà dell'app montato quando la riga è espansa                                                       |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No           | Tipo di emissione esistente sostituito; richiede `emit`                                                                           |
 
 Venti istantanee identità semantica e fallback durevoli della presentazione quando viene creato un evento. Le righe storiche mantengono la loro azione originale e il significato dell'oggetto. Mentre il tipo è installato, la sua attuale etichetta, icona e componente frontale rendono live; dopo la disinstallazione, lo snapshot fallback mantiene la riga leggibile. La risoluzione utilizza l'identificatore universale, quindi la presentazione sopravvive anche reinstallando l'app.
+
+<PageBanner illustration="card-page-timeline" />

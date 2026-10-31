@@ -5,6 +5,340 @@ import { type ReleaseNote } from './release-note';
 
 export const RELEASE_NOTES: ReleaseNote[] = [
   {
+    release: '2.52.0',
+    date: '2026-10-27',
+    highlights: [
+      {
+        title: msg`Edit field values in place`,
+        description: (
+          <Trans>
+            Editing an email, phone, link or file now opens the input on that
+            item’s row instead of below the list, and link labels can be edited
+            from the cell. Full names take one input that splits into first and
+            last name as you type.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Toggles and table controls are back in notes`,
+        description: (
+          <Trans>
+            Toggle lists and toggle headings fold again, Tab indents blocks, and
+            headings 4 to 6 return to the slash menu. Tables get row and column
+            handles again to add, delete, merge and split cells.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Emails stay on the record you sent them from`,
+        description: (
+          <Trans>
+            An email sent from a record is now linked to that record, even when
+            the recipient isn’t its point of contact.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Open a chat from anywhere`,
+        description: (
+          <Trans>
+            New chat and Open chat in the command menu start a chat or find a
+            past one from any page, and the chat opens next to the page you’re
+            on.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.51.0',
+    date: '2026-10-25',
+    highlights: [
+      {
+        title: msg`A new editor for notes and tasks`,
+        description: (
+          <Trans>
+            Notes, tasks, rich text fields and rich text widgets now use the
+            same editor as emails and workflow forms. Existing content is
+            converted automatically.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Link emails and meetings to a deal`,
+        description: (
+          <Trans>
+            On an opportunity, the Emails and Calendar widgets have a Link
+            action to add any of the company’s email threads and meetings, not
+            only the ones with its point of contact.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Microsoft Teams transcripts in Twenty`,
+        description: (
+          <Trans>
+            The new Microsoft Teams app saves your Teams meeting transcripts to
+            call recordings and can write an AI summary of each call.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.50.0',
+    date: '2026-10-21',
+    highlights: [
+      {
+        title: msg`Open a meeting from its recording`,
+        description: (
+          <Trans>
+            Clicking a call in the Call recordings widget now opens its calendar
+            event, with the summary, transcript and participants in one place.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.49.0',
+    date: '2026-10-19',
+    highlights: [
+      {
+        title: msg`Choose whether to import private events`,
+        description: (
+          <Trans>
+            Private calendar events are imported again by default. Turn on
+            Exclude private events in calendar settings to leave them out;
+            changing it resyncs your calendar.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Call recordings on record pages`,
+        description: (
+          <Trans>
+            With the call recorder app, add a Call recordings widget to person,
+            company and opportunity pages to list the recent recorded meetings
+            linked to that record.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.47.0',
+    date: '2026-10-15',
+    highlights: [
+      {
+        title: msg`Twenty in Persian`,
+        description: (
+          <Trans>
+            The interface is now available in Persian, laid out right to left.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`See which app added a field`,
+        description: (
+          <Trans>
+            Fields, views, widgets and records that come from an installed app
+            show the app’s logo on their icon.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.46.0',
+    date: '2026-10-12',
+    highlights: [
+      {
+        title: msg`Agents get their own pages`,
+        description: (
+          <Trans>
+            Agents now have a list and a page each, like workflows. Create and
+            edit agents there instead of in settings.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Select records with Cmd and Shift`,
+        description: (
+          <Trans>
+            Shift-click selects a range of records in tables, boards and lists,
+            and Cmd-click (Ctrl-click on Windows) adds or removes a single
+            record.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Average, min and max for ratings`,
+        description: (
+          <Trans>
+            Rating fields can now show their average, minimum and maximum in
+            views and charts, and bar charts can be grouped by Created by.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Recovery codes for two-factor authentication`,
+        description: (
+          <Trans>
+            When a member loses their authenticator, an admin can issue a
+            one-time recovery code from the member’s page in settings. The
+            member signs in with it and their old authenticator is removed.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.45.0',
+    date: '2026-10-05',
+    highlights: [
+      {
+        title: msg`Many-to-many relations`,
+        description: (
+          <Trans>
+            A relation to a junction object can now skip it and show the records
+            on the other side, like a many-to-many relation. Set it up in the
+            relation field’s settings, in Advanced mode.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.44.0',
+    date: '2026-10-01',
+    highlights: [
+      {
+        title: msg`Add context to a chat from the + menu`,
+        description: (
+          <Trans>
+            The chat composer’s + menu attaches files and adds records or
+            skills, the same way typing <code>@</code> or <code>/</code> does.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Workflows can update emails and meetings`,
+        description: (
+          <Trans>
+            The Update Record step can now fill custom fields on emails and
+            calendar events, such as a category picked by a Classify step.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.43.0',
+    date: '2026-09-28',
+    highlights: [
+      {
+        title: msg`A page for every attachment`,
+        description: (
+          <Trans>
+            Attachments open on their own page with an inline preview, and the
+            attachments table shows what each file belongs to in a single
+            Attached to column.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`HTML in workflow emails`,
+        description: (
+          <Trans>
+            Send Email and Draft Email steps accept raw HTML. Type{' '}
+            <code>/html</code> in the body to paste a template, with variables
+            shown as chips.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.42.0',
+    date: '2026-09-23',
+    highlights: [
+      {
+        title: msg`Customize the sidebar in place`,
+        description: (
+          <Trans>
+            Adding a menu item opens a searchable list right in the sidebar, and
+            folders and links are edited in a small editor next to it.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`A command menu in sections`,
+        description: (
+          <Trans>
+            Commands are grouped into sections such as Pinned, Selection, the
+            current object, and Create record, instead of one long list.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Classify records in workflows`,
+        description: (
+          <Trans>
+            A new Classify step uses AI to answer questions you set about a
+            record, like which category an email belongs to, and passes each
+            answer to the next steps.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Granola meeting notes in Twenty`,
+        description: (
+          <Trans>
+            The new Granola app saves your Granola summaries and speaker
+            transcripts to call recordings, links them to the matching calendar
+            event, and keeps them in sync as notes change. It needs a Granola
+            Business or Enterprise plan.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.41.0',
+    date: '2026-09-17',
+    highlights: [
+      {
+        title: msg`Colored icons across the app`,
+        description: (
+          <Trans>
+            Objects, folders, links and pages now have colored icons in the
+            sidebar, headers and pickers.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Copy emails, phones and links on hover`,
+        description: (
+          <Trans>
+            Hover an email, phone or link in the side panel to copy it in one
+            click, as you already could in tables.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`See context and credits in AI chat`,
+        description: (
+          <Trans>
+            The chat composer shows how much of the context window you’ve used.
+            Open it to see your AI credit usage, when it resets, and a breakdown
+            for the last message and the whole conversation.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.40.0',
     date: '2026-09-15',
     highlights: [

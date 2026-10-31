@@ -132,6 +132,10 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
+  if (proposal.toolName === 'publish_front_component') {
+    return proposal.arguments;
+  }
+
   const toolArguments = editedArguments ?? proposal.arguments;
 
   if (isDefined(proposal.recordId)) {

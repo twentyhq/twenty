@@ -1,0 +1,55 @@
+---
+title: OverflowingTextTooltipModeProvider
+description: اختر متى يتحقق OverflowingTextWithTooltip من الاقتطاع لشجرة فرعية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## نظرة عامة
+
+يحدد `OverflowingTextTooltipModeProvider` كيفية تعامل كل [OverflowingTextWithTooltip](/ar/ui/primitives/typography/overflowing-text-with-tooltip) داخله مع تلميح الأدوات الخاص به. لا يعرض أي عنصر DOM.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--display" title="مثال على موفر وضع تلميح الأدوات للنص المتجاوز" height={180} />
+
+## استخدام
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+مرر المؤشر فوق التسمية المقتطعة أو ركز عليها لقراءة قيمتها الكاملة. غيّر `mode` في عناصر التحكم في Storybook لمقارنة وقت توفر تلميح الأدوات.
+
+## الأوضاع
+
+* `measure-on-hover`، وهو الوضع الافتراضي دون موفر، يتحقق من الاقتطاع عند دخول المؤشر وعند التركيز. يبقى التصنيف الملائم بعيدًا عن تلميح الأداة الخاص بالعنصر الأب.
+* يتحقق `measure-on-open` من الاقتطاع عندما يحاول تلميح الأداة الفتح. استخدمه للتصنيفات التي تُركَّب تحت المؤشر، مثل تراكب التمرير، حيث لا يحدث دخول للمؤشر.
+* يعرض `disabled` النص فقط، من دون أي أجزاء من تلميح الأداة. استخدمه للعديد من التصنيفات التي لا يمكن للمستخدم التمرير فوقها، مثل المحتوى المغطى بتراكب.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled" title="تم تعطيل تلميح الأدوات لشجرة فرعية" height={90} />
+
+تتجاوز الموفرات المتداخلة الوضع للشجرة الفرعية الخاصة بها.
+
+## الإزاحة
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

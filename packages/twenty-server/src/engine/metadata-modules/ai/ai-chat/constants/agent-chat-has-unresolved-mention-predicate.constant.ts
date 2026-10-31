@@ -1,0 +1,1 @@
+export const AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE = `(participant."lastMentionedAt" IS NOT NULL AND (participant."mentionsResolvedAt" IS NULL OR participant."lastMentionedAt" > participant."mentionsResolvedAt"))`;

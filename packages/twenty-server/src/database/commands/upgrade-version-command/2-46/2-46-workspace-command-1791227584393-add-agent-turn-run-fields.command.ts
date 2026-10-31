@@ -108,6 +108,7 @@ export class AddAgentTurnRunFieldsCommand extends ProvisionedWorkspaceCommandRun
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             workspaceId,
             isSystemBuild: true,
             applicationUniversalIdentifier:
@@ -184,6 +185,7 @@ export class AddAgentTurnRunFieldsCommand extends ProvisionedWorkspaceCommandRun
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

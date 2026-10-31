@@ -3,6 +3,8 @@ title: Campi di Relazione
 description: Collega i record tra oggetti diversi utilizzando campi di relazione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Tipi di relazioni
 
 ### Uno-a-molti
@@ -41,9 +43,9 @@ Molti record nell'Oggetto A possono essere collegati a molti record nell'Oggetto
 
 Le relazioni molti-a-molti utilizzano lo schema dell'**oggetto di giunzione**: un oggetto intermedio che collega entrambe le parti. Con la funzionalità delle relazioni di giunzione, Twenty visualizza direttamente i record collegati finali, nascondendo l'oggetto intermedio dall'interfaccia utente.
 
-<Warning>
-**Funzionalità beta**: le relazioni di giunzione devono essere abilitate in **Impostazioni → Community → Funzionalità** prima dell'uso.
-</Warning>
+<Note>
+L'interruttore **This is a relation to a Junction Object** viene visualizzato in un campo di relazione uno-a-molti con un singolo oggetto di destinazione, quando tale destinazione sembra un oggetto di giunzione (le sue relazioni, ignorando quelle di sistema, sono tutte molti-a-uno) e dispone di un'altra relazione attraverso cui puntare.
+</Note>
 
 Vedi [Come creare molte relazioni](/it/user-guide/data-model/how-tos/create-many-to-many-relations) per una guida completa passo-passo.
 
@@ -92,3 +94,5 @@ Twenty offre relazioni predefinite tra oggetti standard:
 
 * **L'eliminazione delle relazioni** rimuove il collegamento ma non i record correlati
 * **Le relazioni circolari** dovrebbero essere evitate per l'integrità dei dati
+
+<PageBanner illustration="card-page-relations" />

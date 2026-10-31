@@ -10,7 +10,7 @@ import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analyt
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { UsageResolver } from 'src/engine/core-modules/usage/usage.resolver';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({

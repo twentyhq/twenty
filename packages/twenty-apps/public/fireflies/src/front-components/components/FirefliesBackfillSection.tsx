@@ -2,10 +2,9 @@ import styled from '@emotion/styled';
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/components/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-backfill-max-window-days.constant';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
@@ -69,8 +68,8 @@ export const FirefliesBackfillSection = ({
   };
 
   return (
-    <Section>
-      <H2Title
+    <Section.Root>
+      <Section.Header
         title="Import call history"
         description="Imports past Fireflies calls as call recordings. Already-imported calls are skipped."
       />
@@ -87,11 +86,9 @@ export const FirefliesBackfillSection = ({
           />
         </StyledDaysInputContainer>
         <StyledDaysUnit>days</StyledDaysUnit>
-        <Button
-          title={isRequestingFirefliesBackfill ? 'Starting…' : 'Start backfill'}
-          disabled={isStartDisabled}
-          onClick={handleStartClick}
-        />
+        <Button disabled={isStartDisabled} onClick={handleStartClick}>
+          {isRequestingFirefliesBackfill ? 'Starting…' : 'Start backfill'}
+        </Button>
       </StyledRow>
       {!isApiKeyConfigured && (
         <StyledHint>Set the Fireflies API key first.</StyledHint>
@@ -102,6 +99,6 @@ export const FirefliesBackfillSection = ({
           {FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}.
         </StyledHint>
       )}
-    </Section>
+    </Section.Root>
   );
 };

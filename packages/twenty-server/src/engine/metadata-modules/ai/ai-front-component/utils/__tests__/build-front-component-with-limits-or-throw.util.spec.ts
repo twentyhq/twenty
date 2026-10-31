@@ -49,7 +49,10 @@ describe('component build limits', () => {
     );
     const result = expect(
       buildFrontComponentWithLimitsOrThrow({}),
-    ).rejects.toThrow('10 second time limit');
+    ).rejects.toMatchObject({
+      message: 'Component build exceeded the 10 second time limit.',
+      code: 'BUILD_TIMEOUT',
+    });
 
     await jest.advanceTimersByTimeAsync(10000);
     await result;
@@ -84,18 +87,41 @@ describe('component build limits', () => {
       ],
     });
 
-    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
-      '5 MB output limit',
-    );
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Component build exceeds the 5 MB output limit.',
+      code: 'OUTPUT_TOO_LARGE',
+    });
     expect(dispose).toHaveBeenCalledTimes(1);
   });
 
   it('preserves compiler diagnostics and releases a failed build', async () => {
     rebuild.mockRejectedValueOnce(new Error('Unsupported import'));
-    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
-      'Unsupported import',
-    );
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Unsupported import',
+      code: 'BUILD_FAILED',
+    });
     expect(dispose).toHaveBeenCalledTimes(1);
+    await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
+      output,
+    );
+  });
+
+  it('wraps context creation failures without disposing a missing context', async () => {
+    jest
+      .mocked(context)
+      .mockRejectedValueOnce(new Error('Invalid build options'));
+
+    await expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toMatchObject({
+      message: 'Invalid build options',
+      code: 'BUILD_FAILED',
+    });
+    expect(dispose).not.toHaveBeenCalled();
     await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
       output,
     );

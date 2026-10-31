@@ -61,3 +61,14 @@ describe('computeWorkflowManifestOutputSchema', () => {
     expect(outputSchema).toBe(AGENT_OUTPUT_SCHEMA);
   });
 });
+
+describe('computeWorkflowManifestOutputSchema with a stated output schema', () => {
+  it('keeps an empty output schema the workflow builder stored', () => {
+    expect(
+      computeWorkflowManifestOutputSchema({
+        step: { ...buildAiAgentStep({}), outputSchema: {} },
+        references,
+      }),
+    ).toEqual({});
+  });
+});

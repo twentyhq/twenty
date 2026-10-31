@@ -242,6 +242,27 @@ describe('reportAppConnectionAuthFailure resolver (e2e)', () => {
     );
   });
 
+  it('keeps the first failure time and the latest reason when the failure is reported again', async () => {
+    const connectedAccountId = uuidv4();
+
+    await insertAppConnection({
+      id: connectedAccountId,
+      applicationId: owningApplicationDbId,
+      connectionProviderId: owningProviderDbId,
+      scope: 'WORKSPACE',
+      userWorkspaceId: adminUserWorkspaceId,
+    });
+
+    await reportAuthFailure({ id: connectedAccountId, reason: 'first' });
+    const firstReport = await findAuthFailure(connectedAccountId);
+
+    await reportAuthFailure({ id: connectedAccountId, reason: 'second' });
+    const secondReport = await findAuthFailure(connectedAccountId);
+
+    expect(secondReport.authFailedAt).toEqual(firstReport.authFailedAt);
+    expect(secondReport.authFailedReason).toBe('second');
+  });
+
   it('leaves the reason empty when the caller gives none', async () => {
     const connectedAccountId = uuidv4();
 

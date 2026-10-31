@@ -16,7 +16,7 @@ const GLASS_THICKNESS_TO_WORLD_UNITS = 1 / 320;
 const GLASS_ATTENUATION_DISTANCE_MIN = 0.12;
 const GLASS_ENVIRONMENT_INTENSITY_BASE = 0.18;
 const GLASS_ENVIRONMENT_INTENSITY_MULTIPLIER = 0.12;
-const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x030303);
+const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x000000);
 // Lives under images/ (a reserved rewrite prefix) so the locale catch-all
 // cannot shadow it — and /halftone stays free for the studio page route.
 const GLASS_ENVIRONMENT_URL = '/images/halftone/environment.jpg';
@@ -28,6 +28,7 @@ const TRANSMISSION_SAMPLES = 10;
 // shader is extended with multi-sample IBL volume refraction, equirect
 // environment refraction, chromatic aberration and noise distortion.
 // Ported verbatim from the old site's halftone materials.
+// Adapted from @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
 class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
   declare anisotropicBlur: number;
   declare attenuationColor: THREE.Color;
@@ -490,7 +491,7 @@ function disposeEnvironmentScene(scene: THREE.Scene) {
 function createStudioGlassEnvironmentScene(backdropTexture?: THREE.Texture) {
   const studioScene = new THREE.Scene();
   studioScene.background = backdropTexture ?? GLASS_TRANSMISSION_BACKGROUND;
-  studioScene.backgroundIntensity = backdropTexture ? 1 : 0.4;
+  studioScene.backgroundIntensity = 1;
   return studioScene;
 }
 

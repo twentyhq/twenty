@@ -21,6 +21,12 @@ describe('getAiChatQuotaExhaustedKind', () => {
 
     expect(
       getAiChatQuotaExhaustedKind(
+        buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'userAllowance' }),
+      ),
+    ).toBe('userAllowance');
+
+    expect(
+      getAiChatQuotaExhaustedKind(
         buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'limit' }),
       ),
     ).toBe('limit');

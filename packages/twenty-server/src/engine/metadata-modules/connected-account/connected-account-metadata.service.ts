@@ -27,6 +27,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
@@ -34,7 +35,7 @@ import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/co
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/calendar-webhook-subscription.service';
 import { MessagingWebhookSubscriptionService } from 'src/modules/connected-account/webhook-subscription-manager/services/messaging-webhook-subscription.service';
@@ -311,6 +312,28 @@ export class ConnectedAccountMetadataService {
     }
 
     return connectedAccount;
+  }
+
+  async findAllForWorkflowStepResolution({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<ConnectedAccountForWorkflowStepResolution[]> {
+    return this.repository.find({
+      where: { workspaceId },
+      relations: { calendarChannels: true },
+      select: {
+        id: true,
+        handle: true,
+        provider: true,
+        connectionParameters: true,
+        archivedAt: true,
+        scopes: true,
+        scope: true,
+        calendarChannels: { id: true, isSyncEnabled: true },
+      },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
   }
 
   async getUserConnectedAccountIds({

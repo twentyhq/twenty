@@ -69,7 +69,7 @@ describe('webhooksResolver (e2e)', () => {
     }
 
     if (createdWebhookId) {
-      await deleteWebhook(createdWebhookId).catch(() => {});
+      await deleteWebhook({ id: createdWebhookId }).catch(() => {});
       createdWebhookId = undefined;
     }
   });
@@ -95,7 +95,7 @@ describe('webhooksResolver (e2e)', () => {
         secret: 'test-secret',
       };
 
-      const response = await createWebhook(webhookInput);
+      const response = await createWebhook({ input: webhookInput });
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeDefined();
@@ -121,7 +121,7 @@ describe('webhooksResolver (e2e)', () => {
         secret: 'test-secret',
       };
 
-      const response = await createWebhook(webhookInput);
+      const response = await createWebhook({ input: webhookInput });
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeDefined();
@@ -132,10 +132,12 @@ describe('webhooksResolver (e2e)', () => {
   describe('updateWebhook mutation', () => {
     it('should update a webhook successfully', async () => {
       const createResponse = await createWebhook({
-        targetUrl: 'https://example.com/webhook',
-        operations: ['person.created'],
-        description: 'Test webhook',
-        secret: 'test-secret',
+        input: {
+          targetUrl: 'https://example.com/webhook',
+          operations: ['person.created'],
+          description: 'Test webhook',
+          secret: 'test-secret',
+        },
       });
 
       const createdWebhookData = createResponse.body.data.createWebhook;
@@ -152,7 +154,7 @@ describe('webhooksResolver (e2e)', () => {
         },
       };
 
-      const updateResponse = await updateWebhook(updateInput);
+      const updateResponse = await updateWebhook({ input: updateInput });
 
       expect(updateResponse.status).toBe(200);
       expect(updateResponse.body.data).toBeDefined();
@@ -175,10 +177,12 @@ describe('webhooksResolver (e2e)', () => {
   describe('webhook query', () => {
     it('should find a specific webhook', async () => {
       const createResponse = await createWebhook({
-        targetUrl: 'https://example.com/webhook',
-        operations: ['person.created'],
-        description: 'Test webhook',
-        secret: 'test-secret',
+        input: {
+          targetUrl: 'https://example.com/webhook',
+          operations: ['person.created'],
+          description: 'Test webhook',
+          secret: 'test-secret',
+        },
       });
 
       const createdWebhookData = createResponse.body.data.createWebhook;
@@ -205,15 +209,17 @@ describe('webhooksResolver (e2e)', () => {
   describe('deleteWebhook mutation', () => {
     it('should delete a webhook successfully', async () => {
       const createResponse = await createWebhook({
-        targetUrl: 'https://example.com/webhook',
-        operations: ['person.created'],
-        description: 'Test webhook',
-        secret: 'test-secret',
+        input: {
+          targetUrl: 'https://example.com/webhook',
+          operations: ['person.created'],
+          description: 'Test webhook',
+          secret: 'test-secret',
+        },
       });
 
       const createdWebhookData = createResponse.body.data.createWebhook;
 
-      const deleteResponse = await deleteWebhook(createdWebhookData.id);
+      const deleteResponse = await deleteWebhook({ id: createdWebhookData.id });
 
       expect(deleteResponse.status).toBe(200);
       expect(deleteResponse.body.data).toBeDefined();
@@ -236,10 +242,12 @@ describe('webhooksResolver (e2e)', () => {
 
       try {
         const createWebhookResponse = await createWebhook({
-          targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
-          operations: ['person.created'],
-          description: 'SSRF test webhook',
-          secret: 'test-secret',
+          input: {
+            targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+            operations: ['person.created'],
+            description: 'SSRF test webhook',
+            secret: 'test-secret',
+          },
         });
 
         expect(createWebhookResponse.body.errors).toBeUndefined();
@@ -304,10 +312,12 @@ describe('webhooksResolver (e2e)', () => {
         );
 
         const createWebhookResponse = await createWebhook({
-          targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
-          operations: ['person.created'],
-          description: 'Delivery test webhook',
-          secret: 'test-secret',
+          input: {
+            targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+            operations: ['person.created'],
+            description: 'Delivery test webhook',
+            secret: 'test-secret',
+          },
         });
 
         expect(createWebhookResponse.body.errors).toBeUndefined();

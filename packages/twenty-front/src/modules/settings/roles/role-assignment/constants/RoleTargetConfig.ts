@@ -1,6 +1,7 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { t } from '@lingui/core/macro';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
@@ -32,9 +33,9 @@ export const ROLE_TARGET_CONFIG = {
   agent: {
     dropdownId: 'role-agent-select',
     getRoleMap: (maps: RoleMaps) => maps.agent,
-    getName: (entity: Agent) => entity.label,
+    getName: (entity: FlatAgent) => entity.label,
     getAssignedIds: (settingsDraftRole: RoleWithPartialMembers) =>
-      (settingsDraftRole.agents ?? []).map((agent: Agent) => agent.id),
+      (settingsDraftRole.agents ?? []).map((agent: FlatAgent) => agent.id),
     getExcludedIds: (assignedIds: string[]) => assignedIds,
     canBeAssigned: (settingsDraftRole: RoleWithPartialMembers) =>
       settingsDraftRole.canBeAssignedToAgents,

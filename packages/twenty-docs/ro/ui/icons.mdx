@@ -1,0 +1,90 @@
+---
+title: Pictograme
+description: Pictograme denumite, căutare dinamică, învelișuri pentru ilustrații și proprietățile acceptate de acestea.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import IconReference from '/snippets/ui/generated/icon/icon.mdx';
+import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
+import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
+import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
+import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+## Prezentare generală
+
+Importă pictograme denumite din `twenty-ui/icon`. Folosește controlul înconjurător sau textul vizibil pentru a comunica semnificația. Pictogramele decorative trebuie ascunse de tehnologia de asistență.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const CompleteButton = () => (
+  <Button startIcon={<IconCheck />}>Complete task</Button>
+);
+```
+
+Sloturile de pictograme ale butoanelor dimensionează deja pictograma și o ascund de tehnologia de asistență, astfel încât pictograma nu necesită proprietăți suplimentare acolo.
+
+## Proprietăți acceptate
+
+Pictogramele Tabler acceptă `size` (număr sau lungime CSS), `stroke` (grosimea conturului), `color` și atribute și referințe SVG native. Pictogramele personalizate de marcă și pentru ilustrații acceptă numai proprietățile enumerate în catalogul generat de mai jos. Dimensiunile lor implicite variază; transmite `size` pentru un rezultat consecvent. Culorile de marcă pot fi fixate de ilustrație, astfel încât suprascrierea culorii este disponibilă numai unde este indicată.
+
+Pictogramele personalizate care nu acceptă atribute de accesibilitate necesită un înveliș cu eticheta corespunzătoare sau `aria-hidden`. `className` și `style` sunt, de asemenea, disponibile numai unde sunt indicate. Importă o pictogramă specifică atunci când este posibil pentru a evita încărcarea catalogului dinamic.
+
+Pictogramele exportate își păstrează lățimea solicitată în aspectele flex, inclusiv în butoane. Permite textului adiacent să fie trunchiat sau permite părintelui să încadreze pe rândul următor ori să deruleze când spațiul este limitat. Atunci când o pictogramă acceptă `className` sau `style`, poți suprascrie explicit `flex-shrink` pentru un aspect care are nevoie de acest lucru. Containerele pentru ilustrații își păstrează, de asemenea, lățimea.
+
+## Nume de pictograme dinamice
+
+Folosește `IconsProvider` și `Icon` când numele sunt alese în timpul rulării. Furnizorul încarcă asincron harta completă a pictogramelor; pachetele construite fără împărțirea codului, precum componentele front-end, includ întreaga hartă. Înainte ca încărcarea să se finalizeze și pentru nume necunoscute, `Icon` redă `Icon123`. Harta dinamică diferă de catalogul de exporturi denumite; nu presupune că fiecare export de marcă sau ilustrație poate fi rezolvat după nume.
+
+```tsx
+import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DynamicAction = ({ iconName }: { iconName: string }) => (
+  <IconsProvider>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
+  </IconsProvider>
+);
+```
+
+`useIcons()` expune `getIcon(name, customDefaultIcon)` și `getIcons()` în cadrul aceluiași furnizor. `getIcons()` returnează inițial o hartă goală. `getIcon` folosește alternativa denumită când aceasta există, apoi `Icon123`. Furnizorul acceptă un element copil; folosește un fragment pentru mai mulți copii.
+
+### Proprietăți pentru pictograme
+
+<IconReference />
+
+### Proprietăți pentru IconsProvider
+
+<IconsProviderReference />
+
+## Înveliș pentru ilustrație
+
+`IllustrationIconWrapper` oferă stilizarea containerului pentru ilustrații și redirecționează atributele div native, elementele copil, stilurile și referințele. Fiecare export `IllustrationIcon*` este deja redat în interiorul acestuia, așadar folosește învelișul numai pentru a încadra propriul conținut de ilustrație.
+
+```tsx
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
+
+export const CalendarIllustration = () => (
+  <IllustrationIconWrapper role="img" aria-label="Calendar event">
+    <IconCalendarEvent size={32} />
+  </IllustrationIconWrapper>
+);
+```
+
+<IllustrationIconWrapperReference />
+
+## Pictogramă de încărcare animată
+
+`ThinkingOrbitLoaderIcon` se animează continuu cât timp este montată. Este decorativă și întotdeauna ascunsă de tehnologia de asistență. Afișează separat textul de încărcare și montează sau elimină pictograma în funcție de starea aplicației.
+
+<ThinkingOrbitLoaderIconReference />
+
+## Catalog de pictograme denumite
+
+Acest catalog este generat din exporturile publice `twenty-ui/icon` și grupează pictogramele după proprietățile pe care le acceptă.
+
+<IconCatalog />
+
+<PageBanner illustration="section-ui-components" />

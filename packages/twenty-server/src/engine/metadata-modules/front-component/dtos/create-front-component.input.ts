@@ -13,6 +13,11 @@ import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metad
 
 @InputType()
 export class CreateFrontComponentInput {
+  @IsBoolean()
+  @IsOptional()
+  @HideField()
+  usesSdkClient?: boolean;
+
   @IsOptional()
   @HideField()
   universalWidgetAvailability?: UniversalFrontComponentWidgetAvailability[];

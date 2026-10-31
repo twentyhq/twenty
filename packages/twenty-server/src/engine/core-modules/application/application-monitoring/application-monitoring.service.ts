@@ -12,6 +12,7 @@ import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/applicati
 import {
   type ApplicationMonitoringActiveWorkspaceCountRow,
   type ApplicationMonitoringActivityRow,
+  type ApplicationMonitoringCreditUsage,
   type ApplicationMonitoringFunctionRow,
   type ApplicationMonitoringIssueRow,
   type ApplicationMonitoringLifecycleRow,
@@ -30,6 +31,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type ApplicationMonitoringQueryParams = {
@@ -218,19 +220,30 @@ export class ApplicationMonitoringService {
       'applicationRegistrationId' | 'workspaceId'
     >;
     period: ApplicationMonitoringPeriod;
-  }): Promise<{ bucketStart: Date; creditsUsedMicro: number }[] | null> {
+  }): Promise<ApplicationMonitoringCreditUsage | null> {
     try {
-      const installations =
-        await this.applicationRegistrationService.findInstallations({
+      const [installations, billing] = await Promise.all([
+        this.applicationRegistrationService.findInstallations({
           applicationRegistrationId: params.applicationRegistrationId,
           workspaceId: isNonEmptyString(params.workspaceId)
             ? params.workspaceId
             : undefined,
-        });
+        }),
+        this.applicationRegistrationService.findBilling(
+          params.applicationRegistrationId,
+        ),
+      ]);
 
-      return await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
-        { installations, ...period },
-      );
+      const rows =
+        await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
+          {
+            installations,
+            declaredOperations: listDeclaredBillingChargeNames({ billing }),
+            ...period,
+          },
+        );
+
+      return { rows, billing };
     } catch (error) {
       this.logger.warn(
         `Failed to load credits used for registration ${params.applicationRegistrationId}`,

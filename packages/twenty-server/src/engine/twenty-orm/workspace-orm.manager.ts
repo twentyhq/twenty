@@ -2,8 +2,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+} from 'src/engine/permissions/permissions.exception';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
@@ -24,7 +24,7 @@ import {
   withWorkspaceContext,
   getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -145,10 +145,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -158,10 +158,10 @@ export class WorkspaceOrmManager {
       'featureFlagsMap',
       'billingEntitlements',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
@@ -194,10 +194,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
     };
   }
 
@@ -242,10 +242,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPerRoleId: {},
-      roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
       flatRoleTargetByAgentIdMaps: {},
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     };
   }
 }

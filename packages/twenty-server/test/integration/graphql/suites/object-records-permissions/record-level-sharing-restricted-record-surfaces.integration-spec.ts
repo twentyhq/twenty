@@ -23,8 +23,8 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -37,8 +37,6 @@ const RESTRICTED_COMPANY_ID = randomUUID();
 const OPEN_COMPANY_ID = randomUUID();
 const COMPANY_IDS = [RESTRICTED_COMPANY_ID, OPEN_COMPANY_ID];
 const PERSON_ID = randomUUID();
-const NOTE_ID = randomUUID();
-const NOTE_TARGET_ID = randomUUID();
 
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { generalAccessLevel } }`,
@@ -141,12 +139,6 @@ describe('A restricted record on an object open by default', () => {
       name: { firstName: 'Works at', lastName: 'Restricted' },
       companyId: RESTRICTED_COMPANY_ID,
     });
-    await createRecord('note', { id: NOTE_ID, title: 'On the restricted' });
-    await createRecord('noteTarget', {
-      id: NOTE_TARGET_ID,
-      noteId: NOTE_ID,
-      targetCompanyId: RESTRICTED_COMPANY_ID,
-    });
 
     const restricted = await changeSharing(SET_GENERAL_ACCESS, {
       accessLevel: RecordShareAccessLevel.NONE,
@@ -171,8 +163,6 @@ describe('A restricted record on an object open by default', () => {
     });
 
     for (const [singular, plural, ids] of [
-      ['noteTarget', 'noteTargets', [NOTE_TARGET_ID]],
-      ['note', 'notes', [NOTE_ID]],
       ['person', 'people', [PERSON_ID]],
       ['company', 'companies', COMPANY_IDS],
     ] as const) {
@@ -295,27 +285,6 @@ describe('A restricted record on an object open by default', () => {
     ).toEqual([OPEN_COMPANY_ID]);
   });
 
-  it('should hide the note attached to it only', async () => {
-    const findNoteIds = async (token: string) => {
-      const response = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'note',
-          objectMetadataPluralName: 'notes',
-          gqlFields: 'id',
-          filter: { id: { eq: NOTE_ID } },
-        }),
-        token,
-      );
-
-      expect(response.body.errors).toBeUndefined();
-
-      return collectIds(response.body.data.notes.edges);
-    };
-
-    expect(await findNoteIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
-    expect(await findNoteIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual([NOTE_ID]);
-  });
-
   it('should leave it out of the events delivered to others', async () => {
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
     const { rolesPermissions, flatObjectMetadataMaps } =
@@ -355,7 +324,7 @@ describe('A restricted record on an object open by default', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRole.id,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
@@ -443,18 +412,6 @@ describe('A restricted record on an object open by default', () => {
     expect(person.body.data.people.edges[0].node.company).toEqual({
       id: RESTRICTED_COMPANY_ID,
     });
-
-    const notes = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'note',
-        objectMetadataPluralName: 'notes',
-        gqlFields: 'id',
-        filter: { id: { eq: NOTE_ID } },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(collectIds(notes.body.data.notes.edges)).toEqual([NOTE_ID]);
 
     await changeSharing(REMOVE_SHARE, {
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },

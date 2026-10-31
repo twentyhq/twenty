@@ -42,6 +42,36 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
+  it('saves the proposed component revision even when approval arguments target another draft', async () => {
+    const proposal = {
+      toolName: 'publish_front_component',
+      toolLabel: 'Save component',
+      summary: 'Save the reviewed component',
+      template: 'generic' as const,
+      arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+    };
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
+      success: true,
+      result: { status: 'pending', proposal },
+    });
+    const executeTool = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'Saved' });
+
+    await call!.complete({
+      output: {
+        decision: 'approve',
+        arguments: { draftId: 'another-draft', checksum: 'another-checksum' },
+      },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'publish_front_component',
+      args: proposal.arguments,
+    });
+  });
+
   it.each([
     ['an unknown decision', { decision: 'maybe' }],
     [

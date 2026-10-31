@@ -3,6 +3,11 @@ title: Обзор
 description: Настройте само приложение — его идентичность, разрешения по умолчанию и то, что выполняется во время установки.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что покрывает конфигурационный слой
+
 **Конфигурационный слой** приложения Twenty описывает приложение *для платформы* — его идентичность, разрешения, которыми оно обладает, и код, который выполняется при установке или обновлении. Эти декларации не добавляют новых структур данных или поведения во время выполнения; они сообщают Twenty, *что это за приложение* и *как его настроить*.
 
 ```text
@@ -32,15 +37,18 @@ description: Настройте само приложение — его иде�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Конфигурация приложения" icon="rocket" href="/ru/developers/extend/apps/config/application">
-    `defineApplication` — идентичность, роль по умолчанию, переменные, метаданные маркетплейса.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/config/application" img="/images/user-guide/halftone/card-page-application-config.svg">
+    <CardTitle>Application Config</CardTitle>
+    `defineApplication` — идентичность, роль по умолчанию, переменные и метаданные маркета.
   </Card>
-  <Card title="Роли и разрешения" icon="shield-half" href="/ru/developers/extend/apps/config/roles">
+  <Card href="/ru/developers/extend/apps/config/roles" img="/images/user-guide/halftone/card-page-roles.svg">
+    <CardTitle>Роли и разрешения</CardTitle>
     `defineRole` — определите, что логические функции вашего приложения могут читать и записывать.
   </Card>
-  <Card title="Установочные хуки" icon="tool" href="/ru/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` и `defineUninstallLogicFunction` — создавайте резервные копии данных, заполняйте значения по умолчанию, проверяйте обновления, выполняйте очистку при удалении.
+  <Card href="/ru/developers/extend/apps/config/install-hooks" img="/images/user-guide/halftone/card-page-install-hooks.svg">
+    <CardTitle>Установите Hooks</CardTitle>
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, и `defineUninstallLogicFunction` — резервное копирование данных, инициализация по умолчанию, проверка обновлений, очистка после удаления.
   </Card>
 </CardGroup>
 
@@ -53,3 +61,5 @@ description: Настройте само приложение — его иде�
 <Note>
 Установочные хуки используют то же окружение выполнения, что и [логическая функция](/ru/developers/extend/apps/logic/logic-functions) — тот же формат обработчика, те же переменные окружения, тот же типизированный клиент API, — но объявляются через собственные функции `define` и находятся вне обычной модели триггеров (HTTP, cron, события базы данных).
 </Note>
+
+<PageBanner illustration="section-apps-config" />

@@ -3,6 +3,8 @@ title: Локальная настройка
 description: Руководство для участников (или любопытных разработчиков), которые хотят запускать Twenty локально.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Требования
 
 <Tabs>
@@ -10,13 +12,12 @@ description: Руководство для участников (или любо
 
 Прежде чем установить и использовать Twenty, убедитесь, что у вас установлено следующее:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
+* [Node v26](https://nodejs.org/en/download)
 * [yarn v4](https://yarnpkg.com/getting-started/install)
 * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` не будет работать, используйте `yarn`. Yarn теперь поставляется в комплекте с Node.js, так что устанавливать его отдельно не нужно.
-Нужно лишь выполнить `corepack enable`, чтобы активировать Yarn, если вы еще этого не сделали.
+`npm` не будет работать, используйте `yarn`. Node 26 больше не поставляется с Corepack, поэтому однократно установите его с помощью `npm install -g corepack`, а затем выполните `corepack enable`, чтобы включить Yarn.
 </Warning>
 
 </Tab>
@@ -62,6 +63,7 @@ nvm install # installs recommended node version
 
 nvm use # use recommended node version
 
+npm install -g corepack
 corepack enable
 ```
 
@@ -308,10 +310,12 @@ npx nx start
 
 **Backend**
 
-* Сервер Twenty будет работать на [http://localhost:3000](http://localhost:3000).
-* К GraphQL API можно получить доступ по адресу [http://localhost:3000/graphql](http://localhost:3000/graphql).
-* К REST API можно обратиться по адресу [http://localhost:3000/rest](http://localhost:3000/rest).
+* Сервер Twenty будет работать на [http://localhost:3000](http://localhost:3000)
+* К GraphQL API можно получить доступ по адресу [http://localhost:3000/graphql](http://localhost:3000/graphql)
+* К REST API можно обратиться по адресу [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## Устранение неполадок
 
 Если у вас возникли проблемы, проверьте [Устранение неполадок](/ru/developers/self-host/capabilities/troubleshooting) для получения решений.
+
+<PageBanner illustration="dev-contribute" />

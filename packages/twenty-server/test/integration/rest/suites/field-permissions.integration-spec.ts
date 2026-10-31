@@ -40,7 +40,7 @@ describe('Restricted fields', () => {
           primaryEmail: 'test@test.com',
         },
         phones: {
-          primaryPhoneNumber: '123456789',
+          primaryPhoneNumber: '4155552671',
           primaryPhoneCountryCode: 'US',
           primaryPhoneCallingCode: '+1',
         },
@@ -267,7 +267,7 @@ describe('Restricted fields', () => {
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
           phones: {
-            primaryPhoneNumber: '555123456',
+            primaryPhoneNumber: '2025550123',
             primaryPhoneCountryCode: 'US',
             primaryPhoneCallingCode: '+1',
           },
@@ -314,7 +314,7 @@ describe('Restricted fields', () => {
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
           phones: {
-            primaryPhoneNumber: '555123456',
+            primaryPhoneNumber: '2025550123',
             primaryPhoneCountryCode: 'US',
             primaryPhoneCallingCode: '+1',
           },
@@ -325,7 +325,7 @@ describe('Restricted fields', () => {
           const createdPerson = res.body.data.createPerson;
 
           expect(createdPerson).toBeDefined();
-          expect(createdPerson.phones.primaryPhoneNumber).toBe('555123456');
+          expect(createdPerson.phones.primaryPhoneNumber).toBe('2025550123');
         });
 
       await upsertRowLevelPermissionPredicates({
@@ -396,7 +396,7 @@ describe('Restricted fields', () => {
         body: [
           {
             phones: {
-              primaryPhoneNumber: '555123456',
+              primaryPhoneNumber: '2025550123',
               primaryPhoneCountryCode: 'US',
               primaryPhoneCallingCode: '+1',
             },
@@ -445,7 +445,7 @@ describe('Restricted fields', () => {
         body: [
           {
             phones: {
-              primaryPhoneNumber: '555123456',
+              primaryPhoneNumber: '2025550123',
               primaryPhoneCountryCode: 'US',
               primaryPhoneCallingCode: '+1',
             },
@@ -457,7 +457,7 @@ describe('Restricted fields', () => {
           const createdPeople = res.body.data.createPeople;
 
           expect(createdPeople).toHaveLength(1);
-          expect(createdPeople[0].phones.primaryPhoneNumber).toBe('555123456');
+          expect(createdPeople[0].phones.primaryPhoneNumber).toBe('2025550123');
         });
 
       await upsertRowLevelPermissionPredicates({

@@ -1,0 +1,55 @@
+---
+title: OverflowingTextTooltipModeProvider
+description: Scegli quando OverflowingTextWithTooltip verifica il troncamento per un sottoalbero.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## Panoramica
+
+`OverflowingTextTooltipModeProvider` imposta il modo in cui ogni [OverflowingTextWithTooltip](/it/ui/primitives/typography/overflowing-text-with-tooltip) al suo interno gestisce il proprio tooltip. Non esegue il rendering di alcun elemento DOM.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--display" title="Esempio del provider della modalità tooltip per testo con overflow" height={180} />
+
+## Utilizzo
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+Passa il mouse sopra o seleziona l'etichetta troncata per leggerne il valore completo. Modifica `mode` nei controlli di Storybook per confrontare quando il tooltip è disponibile.
+
+## Modalità
+
+* `measure-on-hover`, il valore predefinito senza un provider, verifica il troncamento all'ingresso del puntatore e al focus. Un'etichetta che si adatta non intralcia il tooltip del genitore.
+* `measure-on-open` verifica il troncamento quando il tooltip tenta di aprirsi. Usalo per le etichette che vengono montate sotto il puntatore, ad esempio una sovrapposizione al passaggio del mouse, dove non si verifica alcun ingresso del puntatore.
+* `disabled` esegue il rendering solo del testo, senza alcuna parte del tooltip. Usalo per molte etichette su cui un utente non può passare il mouse, ad esempio contenuti coperti da una sovrapposizione.
+
+<StoryEmbed storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled" title="Tooltip disabilitato per un sottoalbero" height={90} />
+
+I provider annidati sovrascrivono la modalità per il proprio sottoalbero.
+
+## Props
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

@@ -78,6 +78,10 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
             workspaceId: calendarChannel.workspaceId,
             calendarChannelId: calendarChannel.id,
           },
+          {
+            workspaceId: calendarChannel.workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

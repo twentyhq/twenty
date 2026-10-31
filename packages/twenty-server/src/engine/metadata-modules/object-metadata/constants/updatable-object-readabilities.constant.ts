@@ -4,5 +4,4 @@ import { MetadataReadability } from 'twenty-shared/types';
 // needs parent fields this API cannot set yet, so those stay manifest-only
 export const UPDATABLE_OBJECT_READABILITIES = [
   MetadataReadability.OPEN,
-  MetadataReadability.PRIVATE,
 ] as const;

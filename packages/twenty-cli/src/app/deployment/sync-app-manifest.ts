@@ -1,5 +1,5 @@
 import { isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isSameUniversalIdentifier } from '@/app/is-same-universal-identifier';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
@@ -49,7 +49,7 @@ export const syncAppManifest = async ({
   signal,
 }: {
   build: ToolingBuild;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
   target: ResolvedTarget;
   signal: AbortSignal;
 }) => {
@@ -58,7 +58,12 @@ export const syncAppManifest = async ({
     .mutation({
       __name: 'SyncApplication',
       syncApplication: {
-        __args: { manifest: build.manifest, inferDeletionFromMissingEntities },
+        __args: {
+          manifest: build.manifest,
+          ...(isDefined(inferDeletionFromMissingEntities) && {
+            inferDeletionFromMissingEntities,
+          }),
+        },
         applicationUniversalIdentifier: true,
         actions: true,
       },

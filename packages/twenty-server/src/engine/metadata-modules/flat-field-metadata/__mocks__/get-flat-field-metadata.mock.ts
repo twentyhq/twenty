@@ -30,6 +30,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     updatedAt: createdAt,
     defaultValue: null,
     writability: MetadataWritability.OPEN,
+    disabledFieldPermissionActions: null,
     options: null,
     morphId: null,
     settings: null,

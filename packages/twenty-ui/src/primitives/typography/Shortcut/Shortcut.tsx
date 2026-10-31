@@ -50,7 +50,9 @@ export const Shortcut = ({
           : presentation.groups.map((keys, stepIndex) => (
               <Fragment key={stepIndex}>
                 {stepIndex > 0 && (
-                  <span>{` ${presentation.sequenceJoinLabel} `}</span>
+                  <span className={styles.sequenceJoinLabel}>
+                    {` ${presentation.sequenceJoinLabel} `}
+                  </span>
                 )}
                 <span className={styles.combination}>
                   {keys.map((key, keyIndex) => (

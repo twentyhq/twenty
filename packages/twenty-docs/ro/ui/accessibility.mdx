@@ -1,0 +1,47 @@
+---
+title: Accesibilitate
+description: Etichetați controalele, păstrați comportamentul tastaturii și testați interfețele Twenty UI accesibile.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Componentele interactive migrate folosesc primitive Base UI pentru semantică și comportamentul tastaturii. Aplicația dvs. furnizează în continuare etichete relevante, descrieri, mesaje de eroare și ordinea de focalizare.
+
+## Etichetați fiecare control
+
+Utilizați `Field.Label` cu o intrare pentru a asocia o etichetă vizibilă cu elementul de control. `Field.Description` oferă text de suport:
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input type="email" name="email" required />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error>Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+Folosește [VisuallyHidden](/ro/ui/primitives/accessibility/visually-hidden) atunci când textul de suport ar trebui să rămână disponibil pentru tehnologia de asistență fără a fi afișat.
+
+Textele substitutive completează etichetele; nu le înlocuiesc. Pentru un element de control fără text vizibil, furnizați un nume accesibil folosind `aria-label` sau `aria-labelledby`.
+
+## Păstrați comportamentul nativ
+
+Utilizați proprietățile de stare și de schimbare ale componentei, cum ar fi `checked` și `onCheckedChange` pentru `Switch`. Mențineți vizibili indicatorii de focalizare. Când utilizați `render` pentru a înlocui un element, păstrați referința, gestionarii de evenimente și atributele pe care componenta i le transmite.
+
+Un element de control dezactivat nu poate fi modificat și este, în general, exclus din navigarea cu tastatura și din trimiterea formularelor. Un element de control doar în citire își păstrează valoarea și poate rămâne focalizabil; alegeți starea care corespunde interacțiunii intenționate.
+
+## Testați interfața completă
+
+Verificați navigarea cu tastatura, etichetele, anunțurile de eroare, deplasarea focalizării în suprapuneri și zoomul în contextul în care este utilizată componenta. Verificați contrastul în ambele palete și după aplicarea suprascrierilor personalizate ale tokenurilor.
+
+Scenariile Twenty UI conțin verificări de interacțiune și de accesibilitate automatizate. Unele scenarii amână în continuare verificările contrastului de culoare, astfel că aceste verificări nu stabilesc conformitatea deplină cu accesibilitatea pentru o aplicație.
+
+<PageBanner illustration="page-cover-accessibility" />

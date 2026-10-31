@@ -1,0 +1,75 @@
+---
+title: Restrângibilă
+description: Compune un declanșator accesibil și un panou animat cu extindere controlată sau necontrolată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
+
+## Prezentare generală
+
+`Collapsible` expune contractele Root, Trigger și Panel ale Base UI. Root gestionează starea de extindere, Trigger oferă activare prin tastatură și relația cu panoul, iar Panel gestionează animația și durata de viață a conținutului.
+
+<StoryEmbed storyId="ui-layout-collapsible--display" title="Exemplu Collapsible" height={160} />
+
+## Utilizare
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen style={{ width: 360, maxWidth: '100%' }}>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text
+        style={{
+          paddingTop: 12,
+          color: 'var(--t-font-color-secondary)',
+          lineHeight: 1.5,
+        }}
+      >
+        Match each CSV column to a record field before importing.
+      </Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
+```
+
+Utilizați `defaultOpen` pentru extinderea necontrolată. Utilizați `open` și `onOpenChange` atunci când aplicația gestionează starea. Funcția de apel invers primește valoarea booleană solicitată și detaliile evenimentului Base UI, inclusiv `reason`, `event` și `cancel()`. Anularea unei modificări păstrează starea curentă. Un panou controlat extern poate omite Trigger atunci când starea sa provine de la un alt control sau dintr-o condiție a aplicației.
+
+Trigger moștenește starea `disabled` a Root și o poate suprascrie cu propriul prop `disabled`. Declanșatorul nativ acceptă Enter și Space și furnizează automat `aria-expanded` și `aria-controls`. Oferiți fiecărui declanșator un nume accesibil semnificativ.
+
+## Anatomie
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
+
+## Personalizare nativă
+
+Root și Panel redau un `div`; Trigger redă un `button`. Fiecare parte acceptă atribute native, handlere, `className`, `style`, referințe și compunerea `render` Base UI. Callbackurile pentru clasă și stil primesc starea părții. Transmiteți mai departe toate prop-urile furnizate și referința din componentele de randare personalizate. Setați `nativeButton={false}` când Trigger redă un element care nu este buton.
+
+Tipurile publice includ `CollapsibleRootProps`, `CollapsibleTriggerProps`, `CollapsiblePanelProps`, cele trei tipuri de stare ale părților și `CollapsibleRootChangeEventDetails` și `CollapsibleRootChangeEventReason`.
+
+## Animație și durata de viață a conținutului
+
+Panel utilizează implicit `dimension="height"`. Utilizați `dimension="width"` pentru extinderea orizontală și constrângeți lățimea conținutului atunci când este necesar. `containAnimation` este implicit `true`, decupează conținutul care depășește limitele și aranjează conținutul într-o coloană. Setați-o la `false` atunci când conținutul trebuie să depășească limitele în timpul tranziției.
+
+`duration` al Panelului alege o presetare de temă (`instant`, `fast`, `normal` sau `slow`) și valoarea implicită este `normal`. Preferințele pentru mișcare redusă dezactivează tranzițiile.
+
+Panel este demontat implicit după închidere. Utilizați `keepMounted` pentru a păstra starea locală a conținutului în timp ce ascundeți panelul închis. `hiddenUntilFound` permite căutării în pagină a browserului să afișeze conținutul închis și are prioritate față de `keepMounted`.
+
+## Proprietăți
+
+<CollapsibleReference />
+
+<PageBanner illustration="layout" />

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsColorSample } from 'src/front-components/components/SettingsColorSample';
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';

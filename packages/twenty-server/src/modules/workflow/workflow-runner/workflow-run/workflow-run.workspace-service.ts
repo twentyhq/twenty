@@ -11,7 +11,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -520,6 +520,32 @@ export class WorkflowRunWorkspaceService {
         where: { id: workflowRunId },
       });
     }, authContext);
+  }
+
+  async getWorkflowRunCoreWorkflowId({
+    workflowRunId,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const workflowRun =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({
+              where: { id: workflowRunId },
+              select: ['id', 'coreWorkflowId'],
+            }),
+        authContext,
+      );
+
+    return workflowRun?.coreWorkflowId ?? null;
   }
 
   // read with the requester's own permissions, which follow the visibility of the run's workflow

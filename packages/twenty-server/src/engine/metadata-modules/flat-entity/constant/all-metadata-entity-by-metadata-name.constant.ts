@@ -6,12 +6,14 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { MessagingProviderEntity } from 'src/engine/metadata-modules/messaging-provider/entities/messaging-provider.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { McpServerEntity } from 'src/engine/metadata-modules/mcp-server/entities/mcp-server.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -36,6 +38,7 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
+import { RelatedRecordPathEntity } from 'src/engine/metadata-modules/related-record-path/entities/related-record-path.entity';
 import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
@@ -68,12 +71,15 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   rolePermissionFlag: RolePermissionFlagEntity,
   permissionFlag: PermissionFlagEntity,
   webhook: WebhookEntity,
+  mcpServer: McpServerEntity,
   applicationVariable: ApplicationVariableEntity,
   viewSort: ViewSortEntity,
   connectionProvider: ConnectionProviderEntity,
+  messagingProvider: MessagingProviderEntity,
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
+  relatedRecordPath: RelatedRecordPathEntity,
   validationRule: ValidationRuleEntity,
   workflow: WorkflowEntity,
   workflowVersion: WorkflowVersionEntity,

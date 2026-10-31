@@ -6,10 +6,24 @@ export type PlanTableTierId = 'enterprise' | 'organization' | 'pro';
 
 export type PlanTableCellType =
   | { kind: 'dash' }
-  | { kind: 'text'; text: MessageDescriptor }
+  | {
+      detail?: MessageDescriptor;
+      kind: 'metric';
+      prefix?: MessageDescriptor;
+      unit: MessageDescriptor;
+      value: MessageDescriptor;
+    }
+  | {
+      detail?: MessageDescriptor;
+      kind: 'text';
+      suffix?: MessageDescriptor;
+      text: MessageDescriptor;
+    }
+  | { kind: 'unlimited' }
   | { kind: 'yes'; label?: MessageDescriptor };
 
 export type PlanTableTierColumnType = {
+  highlighted?: boolean;
   id: PlanTableTierId;
   label: Record<PlansHostingMode, MessageDescriptor>;
 };
@@ -25,6 +39,7 @@ export type PlanTableFeatureRowDataType = {
   featureLabel: MessageDescriptor;
   selfHostTiers?: Partial<Record<PlanTableTierId, PlanTableCellType>>;
   tiers: Partial<Record<PlanTableTierId, PlanTableCellType>>;
+  tooltip?: MessageDescriptor;
   type: 'row';
 };
 

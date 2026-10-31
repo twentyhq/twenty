@@ -19,7 +19,9 @@ import {
   IconCoins,
   IconPlayerPause,
   IconRefresh,
+  type IconComponent,
   IconVersions,
+  useIcons,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -34,6 +36,7 @@ export const SettingsApplicationRegistrationInstallStats = ({
   isAdminView?: boolean;
 }) => {
   const { t, i18n } = useLingui();
+  const { getIcon } = useIcons();
   const apolloAdminClient = useApolloAdminClient();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
@@ -107,10 +110,34 @@ export const SettingsApplicationRegistrationInstallStats = ({
         })
       : '—';
 
+  const creditsUsedBreakdown = stats?.creditsUsedBreakdown ?? [];
+
+  const getCreditsUsedBreakdownIcon = ({
+    icon,
+    operation,
+  }: {
+    icon?: string | null;
+    operation?: string | null;
+  }): IconComponent => {
+    if (isDefined(icon)) {
+      return getIcon(icon);
+    }
+
+    if (
+      isDefined(operation) &&
+      isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
+    ) {
+      return USAGE_LIMIT_OPERATION_TYPE_ICONS[operation];
+    }
+
+    return IconCoins;
+  };
+
   const creditsUsedStats: SettingsStatRow[] = [
     {
       Icon: IconCoins,
       label: t`Credits used this month`,
+      hasSeparatorAfter: creditsUsedBreakdown.length > 0,
       value: (
         <Tooltip
           content={t`Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes.`}
@@ -119,25 +146,21 @@ export const SettingsApplicationRegistrationInstallStats = ({
         </Tooltip>
       ),
     },
-    ...(stats?.creditsUsedBreakdown ?? []).map(
-      ({ label, operation, creditsUsed }) => {
-        const operationLabel = isDefined(operation)
-          ? getUsageOperationTypeLabel(operation)
-          : undefined;
+    ...creditsUsedBreakdown.map(({ label, icon, operation, creditsUsed }) => {
+      const operationLabel = isDefined(operation)
+        ? getUsageOperationTypeLabel(operation)
+        : undefined;
 
-        return {
-          Icon:
-            isDefined(operation) &&
-            isKeyOfRecord(USAGE_LIMIT_OPERATION_TYPE_ICONS, operation)
-              ? USAGE_LIMIT_OPERATION_TYPE_ICONS[operation]
-              : IconCoins,
-          label: isDefined(operationLabel)
-            ? i18n._(operationLabel)
-            : (label ?? operation ?? '—'),
-          value: formatCredits(creditsUsed),
-        };
-      },
-    ),
+      return {
+        Icon: getCreditsUsedBreakdownIcon({ icon, operation }),
+        label:
+          label ??
+          (isDefined(operationLabel) ? i18n._(operationLabel) : undefined) ??
+          operation ??
+          '—',
+        value: formatCredits(creditsUsed),
+      };
+    }),
   ];
 
   return (
