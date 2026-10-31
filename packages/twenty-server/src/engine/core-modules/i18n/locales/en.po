@@ -399,6 +399,11 @@ msgstr "A role with this label already exists."
 msgid "A secret variable cannot have a default value."
 msgstr "A secret variable cannot have a default value."
 
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "A signed-in chat is required."
+
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
 msgid "A skill installed by an application cannot be renamed."
@@ -1020,6 +1025,11 @@ msgstr "AI chat threads assigned to the workspace member"
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "AI chat threads owned by the workspace member"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "AI component builder is disabled."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -3072,6 +3082,11 @@ msgstr "Component build exceeded the {timeoutSeconds} second time limit."
 #: src/engine/metadata-modules/ai/ai-front-component/utils/convert-front-component-build-failure-to-exception.util.ts
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Component build exceeds the {maximumOutputMegabytes} MB output limit."
+
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Component draft not found or expired."
 
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -5352,6 +5367,12 @@ msgstr "Field \"{relationFieldName}\" is not a relation"
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -6628,6 +6649,11 @@ msgstr "Invalid classification request."
 msgid "Invalid command menu item input."
 msgstr "Invalid command menu item input."
 
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Invalid component draft input."
+
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid configuration type for fields widget"
@@ -7111,6 +7137,11 @@ msgstr "Invalid phone country code."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Invalid phone number."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Invalid preview error message."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -8117,6 +8148,11 @@ msgstr "Make Private"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Make Workflow Private"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Managing applications is required."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -11748,6 +11784,16 @@ msgctxt "view.name"
 msgid "Runs"
 msgstr "Runs"
 
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Sample records exceed 100 KB."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Sample records must only contain selected fields and id."
+
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
@@ -14235,6 +14281,16 @@ msgstr "This domain is already registered."
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This domain is already taken."
 msgstr "This domain is already taken."
+
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "This draft is being updated. Try again."
+
+#. js-lingui-id: HJFKCt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgstr "This draft was superseded or belongs to another chat. Start a new draft."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
