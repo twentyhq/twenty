@@ -16066,7 +16066,7 @@ msgstr "Để từng thành viên tự quyết định cho riêng mình"
 #. js-lingui-id: bM+k1O
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr ""
+msgstr "Cho phép mọi người chỉ hiển thị bản ghi cho người tạo bản ghi đó và những người được chia sẻ bản ghi đó."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21568,7 +21568,7 @@ msgstr "Riêng tư"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Bản ghi riêng tư"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

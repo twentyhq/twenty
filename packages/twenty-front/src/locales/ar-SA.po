@@ -16066,7 +16066,7 @@ msgstr "دع كل عضو يقرر بنفسه"
 #. js-lingui-id: bM+k1O
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr ""
+msgstr "اسمح للأشخاص بجعل السجل مرئيًا لمنشئه والأشخاص الذين تمت مشاركته معهم فقط."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21568,7 +21568,7 @@ msgstr "خاص"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "السجلات الخاصة"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

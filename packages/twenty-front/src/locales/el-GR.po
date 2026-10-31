@@ -16066,7 +16066,7 @@ msgstr "Αφήστε κάθε μέλος να αποφασίσει μόνο το
 #. js-lingui-id: bM+k1O
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people make a record visible only to its creator and the people it is shared with."
-msgstr ""
+msgstr "Να επιτρέπεται στους χρήστες να κάνουν μια εγγραφή ορατή μόνο στον δημιουργό της και στα άτομα με τα οποία κοινοποιείται."
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -21568,7 +21568,7 @@ msgstr "Ιδιωτικό"
 #. js-lingui-id: MAkP8e
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Private records"
-msgstr ""
+msgstr "Ιδιωτικές εγγραφές"
 
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts

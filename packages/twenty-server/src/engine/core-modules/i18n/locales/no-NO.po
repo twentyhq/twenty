@@ -723,7 +723,7 @@ msgstr "Faktisk opptaksstart"
 #. js-lingui-id: ihM2nS
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
-msgstr ""
+msgstr "Legg til {missingPackageNames} i Workspace-appens package.json og yarn.lock før du oppretter en komponent."
 
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -785,7 +785,7 @@ msgstr "Legg til visning i liste"
 #. js-lingui-id: ScY5iZ
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "Add yarn.lock to the Workspace app before creating a component."
-msgstr ""
+msgstr "Legg til yarn.lock i Workspace-appen før du oppretter en komponent."
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10653,7 +10653,7 @@ msgstr "Prinsipaltype"
 #. js-lingui-id: mQkeUR
 #: src/engine/permissions/private-record/services/private-record-storage.service.ts
 msgid "Private records are not available in this workspace yet."
-msgstr ""
+msgstr "Private oppføringer er ikke tilgjengelige i dette arbeidsområdet ennå."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13292,12 +13292,12 @@ msgstr "Selskapets totale årlige omsetning"
 #. js-lingui-id: ccHTwy
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
-msgstr ""
+msgstr "Komponentavhengighetene er for store. Reduser avhengighetene i Workspace-appen og prøv på nytt."
 
 #. js-lingui-id: m3v5Oe
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The component dependencies could not be verified. Try creating the component again."
-msgstr ""
+msgstr "Komponentavhengighetene kunne ikke bekreftes. Prøv å opprette komponenten på nytt."
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13914,7 +13914,7 @@ msgstr "Status for arbeidsflytversjon"
 #. js-lingui-id: VyvnL/
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The Workspace app dependencies changed during the build. Try creating the component again."
-msgstr ""
+msgstr "Avhengighetene for Workspace-appen ble endret under byggingen. Prøv å opprette komponenten på nytt."
 
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts

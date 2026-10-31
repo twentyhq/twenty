@@ -723,7 +723,7 @@ msgstr "실제 녹화 시작 시간"
 #. js-lingui-id: ihM2nS
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
-msgstr ""
+msgstr "컴포넌트를 만들기 전에 Workspace 앱의 package.json 및 yarn.lock에 {missingPackageNames}을 추가하세요."
 
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -785,7 +785,7 @@ msgstr "보기를 목록에 추가"
 #. js-lingui-id: ScY5iZ
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "Add yarn.lock to the Workspace app before creating a component."
-msgstr ""
+msgstr "컴포넌트를 만들기 전에 Workspace 앱에 yarn.lock을 추가하세요."
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -10653,7 +10653,7 @@ msgstr "주체 유형"
 #. js-lingui-id: mQkeUR
 #: src/engine/permissions/private-record/services/private-record-storage.service.ts
 msgid "Private records are not available in this workspace yet."
-msgstr ""
+msgstr "이 워크스페이스에서는 아직 비공개 레코드를 사용할 수 없습니다."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -13292,12 +13292,12 @@ msgstr "회사의 총 연간 매출"
 #. js-lingui-id: ccHTwy
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
-msgstr ""
+msgstr "컴포넌트 종속성이 너무 큽니다. Workspace 앱 종속성을 줄이고 다시 시도하세요."
 
 #. js-lingui-id: m3v5Oe
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The component dependencies could not be verified. Try creating the component again."
-msgstr ""
+msgstr "구성 요소 종속성을 확인할 수 없습니다. 구성 요소를 다시 생성해 보세요."
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13914,7 +13914,7 @@ msgstr "워크플로 버전 상태"
 #. js-lingui-id: VyvnL/
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The Workspace app dependencies changed during the build. Try creating the component again."
-msgstr ""
+msgstr "빌드 중에 Workspace 앱 종속성이 변경되었습니다. 구성 요소를 다시 생성해 보세요."
 
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
