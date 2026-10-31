@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,23 +36,20 @@ export const followAgentRunEvents = async ({
   });
 
   if (!isDefined(response.body)) {
+    abortController.abort();
     throw new Error(`The subscription failed with HTTP ${response.status}`);
   }
 
-  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  // the integration setup swaps in node-fetch, whose body is a Node stream, not a web ReadableStream
+  const body = response.body as unknown as AsyncIterable<Uint8Array>;
 
   const reading = (async () => {
+    const decoder = new TextDecoder();
     let buffer = '';
 
     try {
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          return;
-        }
-
-        buffer += value;
+      for await (const chunk of body) {
+        buffer += decoder.decode(chunk, { stream: true });
 
         let boundary = buffer.indexOf('\n\n');
 
@@ -66,7 +64,7 @@ export const followAgentRunEvents = async ({
           buffer = buffer.slice(boundary + 2);
           boundary = buffer.indexOf('\n\n');
 
-          if (data.length === 0) {
+          if (!isNonEmptyString(data)) {
             continue;
           }
 
