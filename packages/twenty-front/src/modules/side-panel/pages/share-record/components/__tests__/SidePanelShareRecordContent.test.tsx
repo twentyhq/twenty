@@ -35,7 +35,6 @@ type Share = RecordSharingFieldsFragment['shares'][number];
 const sharing: RecordSharingFieldsFragment = {
   isShareable: true,
   isPrivate: true,
-  isAlwaysPrivate: false,
   canManageSharing: true,
   permissions: {
     canRead: true,

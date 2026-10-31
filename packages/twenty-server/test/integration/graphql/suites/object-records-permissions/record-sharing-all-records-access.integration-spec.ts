@@ -205,7 +205,7 @@ describe('Access to all records and ownership transfer', () => {
 
   afterAll(async () => {
     await makeRecordsPublic();
-    await setRecordSharingEnabled(false);
+    await setRecordSharingEnabled(true);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,

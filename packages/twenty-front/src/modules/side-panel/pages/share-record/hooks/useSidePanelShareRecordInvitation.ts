@@ -51,10 +51,7 @@ export const useSidePanelShareRecordInvitation = ({
     workspaceName,
   };
   const everyoneRecipients: RecordSharingInvitationRecipient[] =
-    isDefined(sharing) &&
-    isDefined(currentWorkspace) &&
-    !hasGeneralAccess &&
-    !sharing.isAlwaysPrivate
+    isDefined(sharing) && isDefined(currentWorkspace) && !hasGeneralAccess
       ? [
           {
             kind: 'everyone',

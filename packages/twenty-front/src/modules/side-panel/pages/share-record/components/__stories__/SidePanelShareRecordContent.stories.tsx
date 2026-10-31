@@ -56,7 +56,6 @@ const SHARING = {
   __typename: 'RecordSharingDTO' as const,
   isShareable: true,
   isPrivate: true,
-  isAlwaysPrivate: false,
   canManageSharing: true,
   hasManagedGeneralAccess: false,
   permissions: {

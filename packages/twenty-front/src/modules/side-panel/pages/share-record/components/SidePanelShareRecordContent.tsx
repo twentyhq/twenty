@@ -170,7 +170,6 @@ export const SidePanelShareRecordContent = ({
                     >
                       <SidePanelShareRecordGeneralAccessItem
                         isPrivate={sharing.isPrivate}
-                        isAlwaysPrivate={sharing.isAlwaysPrivate}
                         hasManagedGeneralAccess={
                           sharing.hasManagedGeneralAccess
                         }

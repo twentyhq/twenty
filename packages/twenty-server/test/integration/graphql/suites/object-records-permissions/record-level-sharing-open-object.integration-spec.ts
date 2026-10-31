@@ -172,7 +172,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
+    await setRecordSharingEnabled(true);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,

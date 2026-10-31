@@ -78,9 +78,6 @@ export class RecordSharingDTO {
   isPrivate: boolean;
 
   @Field(() => Boolean)
-  isAlwaysPrivate: boolean;
-
-  @Field(() => Boolean)
   canManageSharing: boolean;
 
   @Field(() => RecordPermissionsDTO)

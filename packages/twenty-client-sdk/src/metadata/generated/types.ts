@@ -11786,9 +11786,6 @@ export default {
             "hasManagedGeneralAccess": [
                 4
             ],
-            "isAlwaysPrivate": [
-                4
-            ],
             "isPrivate": [
                 4
             ],

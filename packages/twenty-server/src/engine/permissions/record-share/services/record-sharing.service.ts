@@ -32,7 +32,7 @@ import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
-import { isObjectSharingAlwaysPrivate } from 'src/engine/permissions/record-share/utils/is-object-sharing-always-private.util';
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -237,7 +237,6 @@ export class RecordSharingService {
       return {
         isShareable: sharingObject.isShareable,
         isPrivate: false,
-        isAlwaysPrivate: isObjectSharingAlwaysPrivate(sharingObject),
         canManageSharing: false,
         permissions,
         hasManagedGeneralAccess: false,
@@ -252,34 +251,35 @@ export class RecordSharingService {
   private async writeRecordPrivacy({
     workspaceId,
     transactionScope,
-    sharingObject: { flatObjectMetadata, isShareRequired, isPrivateByDefault },
+    sharingObject: { flatObjectMetadata },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
 
-    if (
-      isObjectSharingAlwaysPrivate({ isShareRequired, isPrivateByDefault }) &&
-      !isPrivate
-    ) {
+    if (isPrivate && !isPrivateRecordEnabled(featureFlagsMap)) {
       throw new RecordShareException(
-        'Records of this object are always private',
+        'Private records are not enabled for this workspace yet',
         RecordShareExceptionCode.INVALID_SHARE_WITH,
-        { userFriendlyMessage: msg`This record can only be private.` },
+        {
+          userFriendlyMessage: msg`Private records are not available in this workspace yet.`,
+        },
       );
     }
 
-    if (!isShareRequired) {
-      await this.privateRecordStorageService.setPrivate({
-        workspaceId,
-        flatObjectMetadata,
-        recordIds: [args.recordId],
-        isPrivate,
-        transactionScope,
-      });
-    }
+    await this.privateRecordStorageService.setPrivate({
+      workspaceId,
+      flatObjectMetadata,
+      recordIds: [args.recordId],
+      isPrivate,
+      transactionScope,
+    });
 
     // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
@@ -311,11 +311,7 @@ export class RecordSharingService {
       ],
     });
 
-    if (
-      isShareRequired ||
-      isPrivateByDefault ||
-      args.authContext.workspaceMemberId === creatorWorkspaceMemberId
-    ) {
+    if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
       return;
     }
 
@@ -366,7 +362,6 @@ export class RecordSharingService {
     return {
       isShareable: sharingObject.isShareable,
       isPrivate,
-      isAlwaysPrivate: isObjectSharingAlwaysPrivate(sharingObject),
       canManageSharing,
       permissions,
       hasManagedGeneralAccess: shares.some(
@@ -471,8 +466,7 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const { flatObjectMetadata, isShareable, isShareRequired } = sharingObject;
-    const canBePrivate = isShareable && !isShareRequired;
+    const { flatObjectMetadata, isShareable } = sharingObject;
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -504,23 +498,20 @@ export class RecordSharingService {
       recordIds: [recordId],
       transactionScope,
     });
-    const privateRecordState = canBePrivate
-      ? await this.findPrivateRecordState({
-          workspaceId,
-          flatObjectMetadata,
-          recordId,
-          transactionScope,
-        })
-      : undefined;
+    const privateRecordState = await this.findPrivateRecordState({
+      workspaceId,
+      flatObjectMetadata,
+      recordId,
+      transactionScope,
+    });
 
-    const isPrivate =
-      isShareRequired || (privateRecordState?.isPrivate ?? false);
+    const isPrivate = privateRecordState?.isPrivate ?? false;
     const creatorWorkspaceMemberId =
       privateRecordState?.createdByWorkspaceMemberId ?? undefined;
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
       principalIds,
-      implicitAccessLevels: canBePrivate
+      implicitAccessLevels: isShareable
         ? [
             isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
             creatorWorkspaceMemberId === authContext.workspaceMemberId ||

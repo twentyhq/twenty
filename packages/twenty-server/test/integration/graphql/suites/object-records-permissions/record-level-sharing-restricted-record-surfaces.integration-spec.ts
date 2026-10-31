@@ -149,7 +149,7 @@ describe('A restricted record on an object open by default', () => {
   afterAll(async () => {
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value: false,
+      value: true,
       expectToFail: false,
     });
     await shares.deleteByRecordIds({

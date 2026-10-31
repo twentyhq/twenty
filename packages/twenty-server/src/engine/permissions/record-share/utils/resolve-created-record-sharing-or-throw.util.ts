@@ -18,42 +18,17 @@ export type CreatedRecordSharing = {
 
 // shareWith also reaches records created through nested relations, whose objects may not be shareable
 export const resolveCreatedRecordSharingOrThrow = ({
-  objectSharing: { isShareable, isShareRequired, isPrivateByDefault },
+  objectSharing: { isShareable, isPrivateByDefault },
   shareWith,
 }: {
-  objectSharing: Pick<
-    ObjectSharing,
-    'isShareable' | 'isShareRequired' | 'isPrivateByDefault'
-  >;
+  objectSharing: Pick<ObjectSharing, 'isShareable' | 'isPrivateByDefault'>;
   shareWith?: ShareWithInput[] | null;
 }): CreatedRecordSharing | null => {
   if (!isShareable) {
-    return null;
+    return isPrivateByDefault ? { shareWith: [], isPrivate: true } : null;
   }
 
   const entries = shareWith ?? [];
-
-  if (
-    (isShareRequired || isPrivateByDefault) &&
-    entries.some(
-      (entry) =>
-        entry.everyone && entry.accessLevel !== RecordShareAccessLevel.NONE,
-    )
-  ) {
-    throw new RecordShareException(
-      'Records of this object are always private',
-      RecordShareExceptionCode.INVALID_SHARE_WITH,
-      { userFriendlyMessage: msg`This record can only be private.` },
-    );
-  }
-
-  if (isShareRequired) {
-    return {
-      shareWith: entries.filter((entry) => !entry.everyone),
-      isPrivate: false,
-    };
-  }
-
   const everyoneEntries = entries.filter((entry) => entry.everyone);
 
   if (
@@ -69,11 +44,14 @@ export const resolveCreatedRecordSharingOrThrow = ({
   }
 
   const namedEntries = entries.filter((entry) => !entry.everyone);
+  const isSharedWithEveryone = everyoneEntries.some(
+    (entry) => entry.accessLevel !== RecordShareAccessLevel.NONE,
+  );
   const isPrivate =
-    isPrivateByDefault ||
     everyoneEntries.some(
       (entry) => entry.accessLevel === RecordShareAccessLevel.NONE,
-    );
+    ) ||
+    (isPrivateByDefault && !isSharedWithEveryone);
 
   return isPrivate || isNonEmptyArray(namedEntries)
     ? { shareWith: namedEntries, isPrivate }
