@@ -121,6 +121,19 @@ describe('getFilterValueSchema', () => {
     });
   });
 
+  describe('text', () => {
+    it.each([ViewFilterOperand.IS, ViewFilterOperand.IS_NOT] as const)(
+      'should accept a non empty string on TEXT %s',
+      (operand) => {
+        expectAccepted({ filterType: 'TEXT', operand }, 'Acme');
+      },
+    );
+
+    it('should reject an empty string on TEXT IS', () => {
+      expectRejected({ filterType: 'TEXT', operand: ViewFilterOperand.IS }, '');
+    });
+  });
+
   describe('numbers', () => {
     it.each(['NUMBER', 'RATING', 'CURRENCY'] as const)(
       'should accept a numeric string on %s',

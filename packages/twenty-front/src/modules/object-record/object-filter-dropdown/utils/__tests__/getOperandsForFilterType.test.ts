@@ -51,8 +51,14 @@ describe('getOperandsForFilterType', () => {
 
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
+  const textOperands = [
+    ...containsOperands,
+    RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
+  ];
+
   const testCases = [
-    ['TEXT', [...containsOperands, ...emptyOperands]],
+    ['TEXT', [...textOperands, ...emptyOperands]],
     ['FULL_NAME', [...containsOperands, ...emptyOperands]],
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],

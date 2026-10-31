@@ -15,6 +15,20 @@ describe('getIncompatibleViewFilterOperandError', () => {
     ).toBeUndefined();
   });
 
+  it.each([ViewFilterOperand.IS, ViewFilterOperand.IS_NOT])(
+    'should return undefined when %s is used on a TEXT field',
+    (operand) => {
+      expect(
+        getIncompatibleViewFilterOperandError({
+          operand,
+          fieldType: FieldMetadataType.TEXT,
+          subFieldName: null,
+          relationTargetFieldType: undefined,
+        }),
+      ).toBeUndefined();
+    },
+  );
+
   it('should return an error when the operand is not supported by the field type', () => {
     const error = getIncompatibleViewFilterOperandError({
       operand: ViewFilterOperand.IS_IN_PAST,

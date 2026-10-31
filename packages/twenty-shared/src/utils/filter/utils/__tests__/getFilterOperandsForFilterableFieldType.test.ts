@@ -7,6 +7,18 @@ describe('getFilterOperandsForFilterableFieldType', () => {
     ViewFilterOperand.IS_NOT_EMPTY,
   ];
 
+  it('should return text operands including case-sensitive equality', () => {
+    expect(
+      getFilterOperandsForFilterableFieldType({ filterType: 'TEXT' }),
+    ).toEqual([
+      ViewFilterOperand.CONTAINS,
+      ViewFilterOperand.DOES_NOT_CONTAIN,
+      ViewFilterOperand.IS,
+      ViewFilterOperand.IS_NOT,
+      ...emptyOperands,
+    ]);
+  });
+
   it('should return select operands', () => {
     expect(
       getFilterOperandsForFilterableFieldType({ filterType: 'SELECT' }),
