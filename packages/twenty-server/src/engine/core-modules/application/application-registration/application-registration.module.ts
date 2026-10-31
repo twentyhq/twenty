@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationClaimController } from 'src/engine/core-modules/application/application-registration/application-registration-claim.controller';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
@@ -70,7 +69,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,
     ApplicationRegistrationAssetService,
-    ApplicationRegistrationAssetUrlService,
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
@@ -78,7 +76,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ApplicationRegistrationClaimService,
     ApplicationRegistrationVariableModule,
     ApplicationRegistrationAssetService,
-    ApplicationRegistrationAssetUrlService,
+    ApplicationRegistrationLookupModule,
   ],
 })
 export class ApplicationRegistrationModule {}

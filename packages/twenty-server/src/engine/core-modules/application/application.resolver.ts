@@ -12,6 +12,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -59,6 +61,7 @@ export class ApplicationResolver {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationStopService: ApplicationStopService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -108,17 +111,33 @@ export class ApplicationResolver {
 
   // Resolves the display url of the logo bundled in the installed
   // application's public assets, so clients never build file urls themselves.
+  // An OAuth-only install has no bundle, so it shows its registration's logo.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
-    @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
+    @Parent()
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'logo' | 'applicationRegistration'
+    >,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    return buildPublicAssetLogoUrl({
+    const bundledLogoUrl = buildPublicAssetLogoUrl({
       logo: application.logo,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+
+    if (
+      isDefined(bundledLogoUrl) ||
+      !isDefined(application.applicationRegistration)
+    ) {
+      return bundledLogoUrl;
+    }
+
+    return this.applicationRegistrationAssetUrlService.buildLogoUrl(
+      application.applicationRegistration,
+    );
   }
 
   @ResolveField(() => Boolean)

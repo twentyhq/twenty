@@ -28,6 +28,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   application: Pick<
     Application,
     | 'id'
+    | 'logoUrl'
     | 'autoUpgrade'
     | 'canBeUninstalled'
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
@@ -35,7 +36,6 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'logicFunctions'
   >;
   displayName: string;
-  logoUrl?: string;
   description?: string;
   coverImageUrl?: string;
   marketplaceUniversalIdentifier?: string;
@@ -53,7 +53,6 @@ type SettingsApplicationDetailGeneralTabProps = {
 export const SettingsApplicationDetailGeneralTab = ({
   application,
   displayName,
-  logoUrl,
   description,
   coverImageUrl,
   marketplaceUniversalIdentifier,
@@ -157,7 +156,7 @@ export const SettingsApplicationDetailGeneralTab = ({
       <Section.Root>
         <SettingsApplicationOverviewCard
           applicationId={application.id}
-          logoUrl={logoUrl}
+          logoUrl={application.logoUrl}
           displayName={displayName}
           description={description}
           coverImageUrl={coverImageUrl}

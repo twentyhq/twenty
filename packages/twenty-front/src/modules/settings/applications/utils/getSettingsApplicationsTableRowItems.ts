@@ -1,4 +1,3 @@
-import { getApplicationLogoUrl } from '@/applications/utils/getApplicationLogoUrl';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { getResolvedApplicationDescription } from '@/applications/utils/getResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
@@ -26,7 +25,7 @@ const getApplicationRowItem = ({
     application,
     currentWorkspace,
   }),
-  logoUrl: getApplicationLogoUrl(application),
+  logoUrl: application.logoUrl,
   universalIdentifier: application.universalIdentifier,
   sourceType: application.applicationRegistration?.sourceType,
 });

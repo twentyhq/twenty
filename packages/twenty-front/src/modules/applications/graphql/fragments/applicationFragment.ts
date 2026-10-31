@@ -20,7 +20,6 @@ export const APPLICATION_FRAGMENT = gql`
       latestAvailableVersion
       sourceType
       logoUrl
-      wellKnownOAuthClient
     }
     canBeUninstalled
     autoUpgrade

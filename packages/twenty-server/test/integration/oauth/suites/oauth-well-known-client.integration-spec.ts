@@ -273,6 +273,48 @@ describe('OAuth well-known clients (integration)', () => {
 
       expect(claudeApplications).toHaveLength(1);
     });
+
+    it('should show the registration logo on its install, which has no bundle of its own', async () => {
+      const [{ logo: previousLogo }] = await ds.query(
+        `SELECT logo FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+      );
+      const logoUrl = 'https://claude.ai/logo.png';
+
+      await ds.query(
+        `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
+        [logoUrl, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+      );
+
+      try {
+        const response = await makeMetadataApiRequest(
+          {
+            query: gql`
+              query FindManyApplications {
+                findManyApplications {
+                  universalIdentifier
+                  logoUrl
+                }
+              }
+            `,
+          },
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        );
+
+        const claudeApplication = response.body.data.findManyApplications.find(
+          ({ universalIdentifier }: { universalIdentifier: string }) =>
+            universalIdentifier ===
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        );
+
+        expect(claudeApplication.logoUrl).toBe(logoUrl);
+      } finally {
+        await ds.query(
+          `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
+          [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+        );
+      }
+    });
   });
 
   describe('Consent screen', () => {
