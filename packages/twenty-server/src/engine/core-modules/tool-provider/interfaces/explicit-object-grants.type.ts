@@ -1,5 +1,4 @@
-import { type AiRunScope } from 'twenty-shared/ai';
+import { type ObjectRecordsPermissionGrants } from 'twenty-shared/application';
 
-export type ExplicitObjectGrants =
-  | { type: 'role'; roleId: string }
-  | { type: 'scope'; scope: AiRunScope };
+// the only objects a run is handed tools for, so it is not handed one per object its roles can reach
+export type ExplicitObjectGrants = ObjectRecordsPermissionGrants;

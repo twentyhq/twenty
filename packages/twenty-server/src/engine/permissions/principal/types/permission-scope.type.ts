@@ -1,8 +1,4 @@
-import { type PermissionFlagType } from 'twenty-shared/constants';
-import { type ObjectsPermissions } from 'twenty-shared/types';
+import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
 
-// A restriction written inline on an AI run rather than stored as a role
-export type PermissionScope = {
-  objectsPermissions: ObjectsPermissions;
-  grantedPermissionFlags: PermissionFlagType[];
-};
+// A restriction written inline on an AI run rather than stored as a role, resolved like a member's permissions
+export type PermissionScope = UserWorkspacePermissions;

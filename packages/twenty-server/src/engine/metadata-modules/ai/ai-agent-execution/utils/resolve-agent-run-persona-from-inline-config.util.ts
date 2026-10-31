@@ -13,5 +13,9 @@ export const resolveAgentRunPersonaFromInlineConfig = (
   modelConfiguration: inlineConfig.modelConfiguration,
   responseFormat: null,
   promptCacheKey: inlineConfig.promptCacheKey,
-  permissions: { type: 'scope', scope: inlineConfig.scope },
+  permissions: {
+    agentRoleId: null,
+    scope: inlineConfig.scope,
+    explicitObjectGrants: inlineConfig.scope,
+  },
 });
