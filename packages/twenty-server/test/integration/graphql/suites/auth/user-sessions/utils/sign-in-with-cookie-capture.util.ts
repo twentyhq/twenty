@@ -11,6 +11,7 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 type RequestHeaders = {
   originHeader?: string;
   cookieHeader?: string;
+  omitSessionCookieOptIn?: boolean;
 };
 
 // Supertest requests dispatch lazily, so Origin and Cookie can be set on the
@@ -20,13 +21,18 @@ type RequestHeaders = {
 // util's default admin token.
 export const postMetadataOperationWithHeaders = (
   graphqlOperation: Parameters<typeof makeMetadataApiRequest>[0],
-  { originHeader, cookieHeader }: RequestHeaders,
+  {
+    originHeader,
+    cookieHeader,
+    omitSessionCookieOptIn = false,
+  }: RequestHeaders,
   expectedStatus = 200,
 ) => {
-  const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null).set(
-    SESSION_COOKIE_OPT_IN_HEADER_NAME,
-    '1',
-  );
+  const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null);
+
+  if (!omitSessionCookieOptIn) {
+    graphqlRequest.set(SESSION_COOKIE_OPT_IN_HEADER_NAME, '1');
+  }
 
   if (originHeader !== undefined) {
     graphqlRequest.set('Origin', originHeader);
@@ -54,6 +60,7 @@ export const signInWithCookieCapture = async ({
   workspaceSubdomain = 'apple',
   originHeader,
   cookieHeader,
+  omitSessionCookieOptIn,
 }: SignInOptions = {}): Promise<Response> => {
   const workspaceOrigin = buildWorkspaceOriginForSubdomain(workspaceSubdomain);
 
@@ -63,7 +70,7 @@ export const signInWithCookieCapture = async ({
       password,
       origin: workspaceOrigin,
     }),
-    { originHeader, cookieHeader },
+    { originHeader, cookieHeader, omitSessionCookieOptIn },
   );
 
   const loginToken =
@@ -77,7 +84,7 @@ export const signInWithCookieCapture = async ({
       loginToken,
       origin: workspaceOrigin,
     }),
-    { originHeader, cookieHeader },
+    { originHeader, cookieHeader, omitSessionCookieOptIn },
   );
 };
 
