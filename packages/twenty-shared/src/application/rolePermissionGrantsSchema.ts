@@ -15,7 +15,6 @@ export const fieldPermissionGrantSchema = z.strictObject({
   canUpdateFieldValue: z.boolean().optional(),
 });
 
-// what a role allows, without its identity or row-level predicates
 export const rolePermissionGrantsSchema = z.strictObject({
   canReadAllObjectRecords: z.boolean().optional(),
   canUpdateAllObjectRecords: z.boolean().optional(),

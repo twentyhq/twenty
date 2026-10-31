@@ -4,8 +4,8 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
+  getWorkflowAiAgentStepKind,
   hasWorkflowAiAgentConversationConfig,
-  isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -100,8 +100,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
+    const stepKind = getWorkflowAiAgentStepKind(step.settings.input);
     const [configIssue] = getWorkflowAiAgentStepConfigIssues({
-      hasAgent: !isWorkflowAiAgentGenerateStep(step.settings.input),
+      stepKind,
       input: step.settings.input,
     });
 
@@ -145,7 +146,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       !(await this.conversationWriterService.canInsertTurnWithoutThread(
         workspaceId,
       )) ||
-      (!isWorkflowAiAgentGenerateStep(step.settings.input) &&
+      (stepKind !== 'generate' &&
         hasWorkflowAiAgentConversationConfig(step.settings.input));
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({

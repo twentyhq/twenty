@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { agentRunSummarySchema } from '@/ai/schemas/agent-run-summary-schema';
+import { agentRunSummarySchema } from '@/ai/schemas/internal/agent-run-summary-schema';
 
 const stepLogEntrySchema = z.object({
   timestamp: z.string(),

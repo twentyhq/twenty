@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { aiRunScopeSchema } from '@/ai/schemas/ai-run-scope-schema';
-import { modelConfigurationSchema } from '@/ai/schemas/model-configuration-schema';
+import { aiRunScopeSchema } from '@/ai/schemas/internal/ai-run-scope-schema';
+import { modelConfigurationSchema } from '@/ai/schemas/internal/model-configuration-schema';
 
 export const workflowAiAgentInlineConfigSchema = z.object({
   instructions: z.string().optional(),

@@ -542,10 +542,9 @@ export class AgentTurnStreamService {
       isTextReplyRequired: !isBackgroundRun,
     });
 
-    if (!isBackgroundRun) {
+    if (!isBackgroundRun && isDefined(claim)) {
       this.logTurnWithoutText({
-        workspaceId,
-        threadId,
+        claim,
         result,
         modelId,
         stopReason,
@@ -652,8 +651,7 @@ export class AgentTurnStreamService {
   }
 
   private logTurnWithoutText({
-    workspaceId,
-    threadId,
+    claim: { threadId, workspaceId },
     result: { replyParts, isAborted, streamError, usage },
     modelId,
     stopReason,
@@ -661,8 +659,7 @@ export class AgentTurnStreamService {
     isSilent,
     hasAwaitingCall,
   }: {
-    workspaceId: string;
-    threadId: string | null;
+    claim: Pick<AgentChatStreamClaim, 'threadId' | 'workspaceId'>;
     result: Pick<
       AgentTurnStreamResult,
       'replyParts' | 'isAborted' | 'streamError' | 'usage'
