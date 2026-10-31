@@ -12,7 +12,8 @@ export type AgentRunnerRunInput = {
   workspaceId: string;
   // null for a one-shot run: no thread, no claim, and nothing to pause on
   conversation: AgentRunConversation | null;
-  caller: AgentRunCaller;
+  // null for a run answered within its caller's request, which pauses on nothing and is called back by no one
+  caller: AgentRunCaller | null;
   spec: AgentRunSpec;
   persona: ResolvedAgentRunPersona;
   // what the run is asked and who asked it; absent when the run continues its conversation without a new message

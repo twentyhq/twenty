@@ -1,6 +1,7 @@
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 
 import { type AgentRunInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-inline-config.type';
+import { type AgentStructuredOutputStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-structured-output-strategy.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 
 // What a suspended run needs to continue without its caller building it again.
@@ -21,4 +22,5 @@ export type AgentRunSpec = AgentRunPersonaSpec & {
   };
   additionalExcludedToolNames?: string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
+  structuredOutputStrategy?: AgentStructuredOutputStrategy;
 };

@@ -706,6 +706,7 @@ export class AgentTurnStreamService {
   }: {
     part: {
       type: string;
+      finishReason?: string;
       usage?: {
         inputTokens?: number;
         outputTokens?: number;
@@ -717,7 +718,8 @@ export class AgentTurnStreamService {
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
   }) {
-    if (part.type === 'finish-step') {
+    // a failed step still ends with a finish-step, one that reports no usage
+    if (part.type === 'finish-step' && part.finishReason !== 'error') {
       Object.assign(usage, addStepToAgentTurnUsage(modelConfig, usage, part));
       usage.conversationSize = part.usage?.inputTokens ?? 0;
     }
