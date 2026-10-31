@@ -7,7 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
-import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
+import { ViewPermissionsModule } from 'src/engine/permissions/view/view-permissions.module';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';

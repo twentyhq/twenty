@@ -8,7 +8,7 @@ import { RecordAccessPolicyService } from 'src/engine/permissions/combine/servic
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
-import { RecordPermissionsModule } from 'src/engine/metadata-modules/record-permissions/record-permissions.module';
+import { RecordPermissionsModule } from 'src/engine/permissions/record-permissions/record-permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
