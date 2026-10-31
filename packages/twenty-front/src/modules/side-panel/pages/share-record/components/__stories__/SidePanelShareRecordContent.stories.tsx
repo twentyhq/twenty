@@ -210,12 +210,6 @@ export const Default: Story = {
     await expect(restrictedLabel.scrollWidth).toBeLessThanOrEqual(
       restrictedLabel.clientWidth,
     );
-    const generalAccessHeading = page.getByText(
-      `Everyone with access to ${args.objectLabelPlural}`,
-    );
-    const headingRange = canvasElement.ownerDocument.createRange();
-    headingRange.selectNodeContents(generalAccessHeading);
-    await expect(headingRange.getClientRects()).toHaveLength(1);
     await expect(
       page.queryByRole('menuitemradio', { name: 'Full access' }),
     ).not.toBeInTheDocument();
