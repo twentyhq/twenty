@@ -159,6 +159,30 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ).toEqual([]);
     });
 
+    it('should keep a private record an api key creates with its role, which has no createdBy member', () => {
+      expect(
+        buildRecordShareInputsForCreatedRecords({
+          recordIds: ['record-1'],
+          objectMetadataId: OBJECT_METADATA_ID,
+          authContext: apiKeyAuthContext,
+          apiKeyRoleMap,
+          shareWith: [],
+          isShareRequired: false,
+          isPrivate: true,
+        }),
+      ).toEqual([
+        {
+          recordId: 'record-1',
+          objectMetadataId: OBJECT_METADATA_ID,
+          principalId: API_KEY_ROLE_ID,
+          principalType: RecordSharePrincipalType.ROLE,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'record-1',
+        },
+      ]);
+    });
+
     it('should give an api key a FULL row for its role next to MANUAL rows sourced from the record', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({

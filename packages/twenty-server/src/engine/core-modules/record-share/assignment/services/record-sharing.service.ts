@@ -312,25 +312,44 @@ export class RecordSharingService {
       transactionScope,
     });
 
-    // Whoever makes someone else's record private keeps managing it
-    if (
-      isPrivate &&
-      args.authContext.workspaceMemberId !== creatorWorkspaceMemberId
-    ) {
-      await this.recordShareStorageService.setManualShare({
+    // Whoever makes someone else's record private keeps managing it, through
+    // an owner row a removed share cannot take away; it goes once the record
+    // follows its roles again
+    if (!isPrivate) {
+      await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
-        enabled: true,
-        share: {
+        criteria: [
+          {
+            objectMetadataId: args.objectMetadataId,
+            recordId: args.recordId,
+            rowCause: RecordShareRowCause.OWNER,
+          },
+        ],
+      });
+
+      return;
+    }
+
+    if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
+      return;
+    }
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      transactionScope,
+      recordShares: [
+        {
+          recordId: args.recordId,
+          objectMetadataId: args.objectMetadataId,
           principalId: args.authContext.workspaceMemberId,
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           accessLevel: RecordShareAccessLevel.FULL,
-          objectMetadataId: args.objectMetadataId,
-          recordId: args.recordId,
+          rowCause: RecordShareRowCause.OWNER,
           sourceId: args.recordId,
         },
-      });
-    }
+      ],
+    });
   }
 
   private async buildSharingResponse({
