@@ -22,7 +22,7 @@ export const getWorkflowAiAgentScopePermissions = ({
   objectPermissions: WorkflowAiAgentObjectPermission[];
   permissionFlagKeys: string[];
 } => {
-  const getAllObjectsValue = (
+  const hasAllObjectsPermission = (
     action: (typeof OBJECT_PERMISSION_ACTIONS)[number],
   ) => scope?.[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]] ?? false;
 
@@ -31,7 +31,7 @@ export const getWorkflowAiAgentScopePermissions = ({
     ...Object.fromEntries(
       OBJECT_PERMISSION_ACTIONS.map((action) => [
         action,
-        getAllObjectsValue(action),
+        hasAllObjectsPermission(action),
       ]),
     ),
   };
@@ -56,7 +56,7 @@ export const getWorkflowAiAgentScopePermissions = ({
               action,
               resolveObjectPermissionValue({
                 objectValue: objectPermission[action],
-                allObjectsValue: getAllObjectsValue(action),
+                hasAllObjectsPermission: hasAllObjectsPermission(action),
                 isSystemObject: objectMetadataItem.isSystem,
               }),
             ]),

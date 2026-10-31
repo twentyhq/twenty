@@ -83,7 +83,10 @@ export const WorkflowEditActionAiAgent = ({
     workflowAiAgentActionAgent.id === agentId
       ? workflowAiAgentActionAgent
       : undefined;
-  const stepKind = getWorkflowAiAgentStepKind(action.settings.input, agent);
+  const stepKind = getWorkflowAiAgentStepKind({
+    input: action.settings.input,
+    agent,
+  });
 
   const { data: agentData, loading: agentLoading } = useQuery(
     FindOneAgentDocument,

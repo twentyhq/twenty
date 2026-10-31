@@ -55,7 +55,7 @@ export class WorkflowAiAgentStepAgentService {
         throw error;
       });
 
-    return { stepKind: getWorkflowAiAgentStepKind(input, agent), agent };
+    return { stepKind: getWorkflowAiAgentStepKind({ input, agent }), agent };
   }
 
   async findStepOwnedAgent({
