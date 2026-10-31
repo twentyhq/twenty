@@ -86,7 +86,7 @@ export class MakeStandardChildObjectsInheritedCommand extends ProvisionedWorkspa
       coreDataSource: this.coreDataSource,
       workspaceId,
       objects: STANDARD_CHILD_OBJECTS_TO_MAKE_INHERITED,
-      dryRun: isDryRun,
+      isDryRun,
     });
 
     this.logger.log(

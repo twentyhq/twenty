@@ -68,7 +68,7 @@ export class MakeNotesAndTasksInheritTheirTargetsCommand extends ProvisionedWork
       coreDataSource: this.coreDataSource,
       workspaceId,
       objects: STANDARD_OBJECTS_TO_INHERIT_THROUGH_TARGETS,
-      dryRun: isDryRun,
+      isDryRun,
     });
 
     this.logger.log(

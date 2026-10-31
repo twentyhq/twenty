@@ -9,7 +9,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-// The standard objects the standard application declared SYSTEM writable
 const PLATFORM_OWNED_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
   STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,

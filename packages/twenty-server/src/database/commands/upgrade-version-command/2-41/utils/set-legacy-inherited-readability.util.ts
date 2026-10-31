@@ -5,7 +5,7 @@ export const setLegacyInheritedReadability = async ({
   coreDataSource,
   workspaceId,
   objects,
-  dryRun,
+  isDryRun,
 }: {
   coreDataSource: DataSource;
   workspaceId: string;
@@ -13,7 +13,7 @@ export const setLegacyInheritedReadability = async ({
     universalIdentifier: string;
     readabilityParentFieldUniversalIdentifiers: readonly string[];
   }[];
-  dryRun: boolean;
+  isDryRun: boolean;
 }): Promise<number> => {
   let updatedCount = 0;
 
@@ -30,7 +30,7 @@ export const setLegacyInheritedReadability = async ({
       universalIdentifier,
       readabilityParentFieldUniversalIdentifiers,
     ];
-    const rows: { id: string }[] = dryRun
+    const rows: { id: string }[] = isDryRun
       ? await coreDataSource.query(
           `SELECT id FROM core."objectMetadata" WHERE ${filter}`,
           parameters,
