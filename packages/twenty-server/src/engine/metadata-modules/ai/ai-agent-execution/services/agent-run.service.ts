@@ -13,10 +13,8 @@ import {
   type RunAgentResult,
   type RunAgentThread,
 } from 'twenty-shared/application';
-import { type AgentResponseFormat } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
-import { agentResponseFormatSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -58,6 +56,7 @@ import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
+import { parseAgentResponseFormatOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-response-format-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -171,7 +170,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       );
     }
 
-    const responseFormat = this.parseResponseFormatOrThrow(
+    const responseFormat = parseAgentResponseFormatOrThrow(
       input.responseFormat,
     );
 
@@ -722,28 +721,5 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       workspaceId,
       viaApplication: application,
     });
-  }
-
-  // the resolver runs no validation pipe, so the format is checked here before it reaches the model
-  private parseResponseFormatOrThrow(
-    responseFormat: unknown,
-  ): AgentResponseFormat | undefined {
-    if (!isDefined(responseFormat)) {
-      return undefined;
-    }
-
-    const parsedResponseFormat =
-      agentResponseFormatSchema.safeParse(responseFormat);
-
-    if (!parsedResponseFormat.success) {
-      throw new AiException(
-        `Invalid response format: ${parsedResponseFormat.error.issues
-          .map((issue) => issue.message)
-          .join(', ')}`,
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
-
-    return parsedResponseFormat.data;
   }
 }

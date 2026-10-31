@@ -206,7 +206,7 @@ export interface AgentRun {
     reply?: Scalars['String']
     startedAt?: Scalars['DateTime']
     status: AgentTurnStatus
-    threadId: Scalars['UUID']
+    threadId?: Scalars['UUID']
     threadTitle?: Scalars['String']
     toolNames: Scalars['String'][]
     __typename: 'AgentRun'
@@ -1708,6 +1708,22 @@ export interface FullName {
     __typename: 'FullName'
 }
 
+export interface GenerateResult {
+    error?: Scalars['String']
+    object?: Scalars['JSON']
+    success: Scalars['Boolean']
+    text?: Scalars['String']
+    turnId?: Scalars['UUID']
+    usage?: GenerateUsage
+    __typename: 'GenerateResult'
+}
+
+export interface GenerateUsage {
+    inputTokens: Scalars['Int']
+    outputTokens: Scalars['Int']
+    __typename: 'GenerateUsage'
+}
+
 export interface GetAuthorizationUrlForSSO {
     authorizationURL: Scalars['String']
     id: Scalars['UUID']
@@ -2371,6 +2387,7 @@ export interface Mutation {
     enqueueJobs: EnqueueJobsResult
     enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult
     executeOneLogicFunction: LogicFunctionExecutionResult
+    generate: GenerateResult
     generateApiKeyToken: ApiKeyToken
     generateFrontComponentApplicationTokenPair: ApplicationTokenPair
     generatePlaygroundToken: AuthToken
@@ -6218,6 +6235,26 @@ export interface FullNameGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface GenerateInput {input: RunAgentMessageInput[],instructions?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),scope?: (Scalars['JSON'] | null)}
+
+export interface GenerateResultGenqlSelection{
+    error?: boolean | number
+    object?: boolean | number
+    success?: boolean | number
+    text?: boolean | number
+    turnId?: boolean | number
+    usage?: GenerateUsageGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface GenerateUsageGenqlSelection{
+    inputTokens?: boolean | number
+    outputTokens?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
 export interface GetAuthorizationUrlForSSOGenqlSelection{
@@ -6900,6 +6937,7 @@ export interface MutationGenqlSelection{
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     enrichWorkspaceCompany?: WorkspaceCompanyEnrichmentResultGenqlSelection
     executeOneLogicFunction?: (LogicFunctionExecutionResultGenqlSelection & { __args: {input: ExecuteOneLogicFunctionInput} })
+    generate?: (GenerateResultGenqlSelection & { __args: {input: GenerateInput} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
     generateFrontComponentApplicationTokenPair?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     generatePlaygroundToken?: AuthTokenGenqlSelection
@@ -10441,6 +10479,22 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isFullName = (obj?: { __typename?: any } | null): obj is FullName => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFullName"')
       return FullName_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GenerateResult_possibleTypes: string[] = ['GenerateResult']
+    export const isGenerateResult = (obj?: { __typename?: any } | null): obj is GenerateResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateResult"')
+      return GenerateResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const GenerateUsage_possibleTypes: string[] = ['GenerateUsage']
+    export const isGenerateUsage = (obj?: { __typename?: any } | null): obj is GenerateUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateUsage"')
+      return GenerateUsage_possibleTypes.includes(obj.__typename)
     }
     
 

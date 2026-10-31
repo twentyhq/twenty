@@ -17,6 +17,8 @@ import { DeliverAgentRunOutcomeJob } from 'src/engine/metadata-modules/ai/ai-age
 import { RunAgentJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/run-agent.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
+import { AiGenerateResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/ai-generate.resolver';
+import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
@@ -90,6 +92,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentMessageResolver,
     AgentRunResolver,
     AgentRunService,
+    AiGenerateResolver,
+    AiGenerateService,
     AgentRunSettlementService,
     AgentRunnerService,
     AgentStepLoopService,

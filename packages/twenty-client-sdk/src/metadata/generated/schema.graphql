@@ -215,7 +215,7 @@ type AgentRun {
   reply: String
   startedAt: DateTime
   status: AgentTurnStatus!
-  threadId: UUID!
+  threadId: UUID
   threadTitle: String
   toolNames: [String!]!
 }
@@ -2567,6 +2567,28 @@ type FullName {
   lastName: String!
 }
 
+input GenerateInput {
+  input: [RunAgentMessageInput!]!
+  instructions: String
+  modelId: String
+  responseFormat: JSON
+  scope: JSON
+}
+
+type GenerateResult {
+  error: String
+  object: JSON
+  success: Boolean!
+  text: String
+  turnId: UUID
+  usage: GenerateUsage
+}
+
+type GenerateUsage {
+  inputTokens: Int!
+  outputTokens: Int!
+}
+
 input GetApiKeyInput {
   id: UUID!
 }
@@ -3375,6 +3397,7 @@ type Mutation {
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  generate(input: GenerateInput!): GenerateResult!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!

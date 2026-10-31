@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type RunAgentMessage } from 'twenty-shared/application';
+import { type AgentRunSummary } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
@@ -8,6 +10,9 @@ import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
+import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
+import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type OneShotAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/one-shot-agent-run.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
@@ -67,16 +72,46 @@ export class AgentRunWithoutConversationService {
       return;
     }
 
+    const { outcome, summary } = await this.runOneShot({
+      workspaceId,
+      buildExecutionContext: () =>
+        handler.buildExecutionContext({ workspaceId, caller }),
+      spec,
+      messages: prompt?.messages ?? [],
+    });
+
+    await this.agentRunSuspensionService.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId: null,
+      outcome,
+      summary,
+    });
+  }
+
+  // Runs one turn and records it. Whatever fails, setup included, comes back as a failed outcome,
+  // so a caller waiting on the run always gets one
+  async runOneShot({
+    workspaceId,
+    buildExecutionContext,
+    spec,
+    messages,
+  }: {
+    workspaceId: string;
+    buildExecutionContext: () => Promise<AgentRunExecutionContext>;
+    spec: AgentRunSpec;
+    messages: RunAgentMessage[];
+  }): Promise<OneShotAgentRun> {
     let turnId: string | null = null;
     // usage is read as each step ends, so a run that fails midway still records what it spent
     let usage: AgentTurnUsage = NO_USAGE;
     let outcome: AgentRunCallerOutcome;
-    let summary = null;
+    let summary: AgentRunSummary | null = null;
 
     // whatever fails, the caller gets an outcome, so a workflow step never stays pending
     try {
       const [executionContext, persona] = await Promise.all([
-        handler.buildExecutionContext({ workspaceId, caller }),
+        buildExecutionContext(),
         this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
       const runTurnId = await this.conversationWriterService.insertTurn({
@@ -92,7 +127,7 @@ export class AgentRunWithoutConversationService {
       const startedAtMs = Date.now();
       const turnInput = {
         persona,
-        messages: prompt?.messages ?? [],
+        messages,
         baseSystemPrompt: [
           spec.baseSystemPrompt,
           ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
@@ -211,12 +246,6 @@ export class AgentRunWithoutConversationService {
         );
     }
 
-    await this.agentRunSuspensionService.deliverOutcome({
-      workspaceId,
-      caller,
-      threadId: null,
-      outcome,
-      summary,
-    });
+    return { turnId, outcome, summary };
   }
 }
