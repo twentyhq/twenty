@@ -134,29 +134,35 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         null,
     });
 
-    const conversation =
-      await this.workflowAgentConversationService.openConversation({
-        runInfo,
-        stepId: currentStepId,
-        title: step.name,
-        recipientWorkspaceMemberId: isNonEmptyString(recipientWorkspaceMemberId)
-          ? recipientWorkspaceMemberId
-          : null,
-        threadKey: resolveConversationThreadKey({
-          conversation: conversationSettings,
-          defaultScope: 'STEP',
-          workflowRunId: runInfo.workflowRunId,
-          stepExecutionKey: buildStepExecutionKey({
-            stepId: currentStepId,
-            steps,
-            context,
+    // a conversation only when someone can take part in it; a one-shot step leaves a turn on record
+    const hasConversation =
+      spec.capabilities.canAskHumans || isDefined(conversationSettings);
+    const conversation = hasConversation
+      ? await this.workflowAgentConversationService.openConversation({
+          runInfo,
+          stepId: currentStepId,
+          title: step.name,
+          recipientWorkspaceMemberId: isNonEmptyString(
+            recipientWorkspaceMemberId,
+          )
+            ? recipientWorkspaceMemberId
+            : null,
+          threadKey: resolveConversationThreadKey({
+            conversation: conversationSettings,
+            defaultScope: 'STEP',
+            workflowRunId: runInfo.workflowRunId,
+            stepExecutionKey: buildStepExecutionKey({
+              stepId: currentStepId,
+              steps,
+              context,
+            }),
           }),
-        }),
-      });
+        })
+      : null;
 
     const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
-    // the conversation is linked from the start, so the run can be followed while it goes on
+    // a conversation is linked from the start, so the run can be followed while it goes on
     await this.workflowRunStepLogService.setAiAgentStepLog({
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
@@ -164,7 +170,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       summary: buildStartedAgentRunSummary(
         agent?.modelId ?? spec.inlineConfig?.modelId ?? '',
       ),
-      threadId: conversation.threadId,
+      threadId: conversation?.threadId ?? null,
     });
 
     await this.agentRunnerService.start({

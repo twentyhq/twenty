@@ -30,7 +30,7 @@ export const workflowAiAgentActionSettingsSchema =
       humanInputInstructions: z.string().optional(),
       // the member the agent's conversation is with, the workflow's creator when empty
       workspaceMemberId: z.string().optional(),
-      // a new conversation each time the step runs when unset
+      // without one, a step that asks no human runs without a conversation
       conversation: workflowConversationSchema.optional(),
     }),
   });

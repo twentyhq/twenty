@@ -150,7 +150,8 @@ export class AgentTurnRecorderService {
   }: {
     workspaceId: string;
     turnId: string;
-    threadId: string;
+    // null for a turn without a conversation, which has no thread totals to add to
+    threadId: string | null;
     usage: AgentTurnUsage;
   }): Promise<void> {
     await this.turnRepository
