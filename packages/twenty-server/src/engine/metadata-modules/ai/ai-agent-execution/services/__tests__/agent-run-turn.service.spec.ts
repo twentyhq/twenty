@@ -38,10 +38,13 @@ const EXECUTION_CONTEXT = {
 
 const STEP_USAGE = { inputTokens: 100, outputTokens: 10, totalTokens: 110 };
 
-const buildTurn = (
-  output: Promise<unknown>,
-  stopReason: string | null = null,
-) => ({
+const buildTurn = ({
+  output,
+  stopReason = null,
+}: {
+  output: Promise<unknown>;
+  stopReason?: string | null;
+}) => ({
   stream: {
     stream: new ReadableStream({ start: (controller) => controller.close() }),
     text: Promise.resolve('{"fit":true}'),
@@ -64,7 +67,7 @@ const buildService = ({
   stopReason = null,
 }: { output?: Promise<unknown>; stopReason?: string | null } = {}) => {
   const agentTurnService = {
-    start: jest.fn().mockResolvedValue(buildTurn(output, stopReason)),
+    start: jest.fn().mockResolvedValue(buildTurn({ output, stopReason })),
   };
   const aiBillingService = {
     assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
