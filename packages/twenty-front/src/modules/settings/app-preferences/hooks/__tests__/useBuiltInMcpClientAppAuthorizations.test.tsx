@@ -1,3 +1,4 @@
+import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
@@ -22,7 +23,7 @@ const CLAUDE_AUTHORIZATION = {
 };
 
 const renderUseBuiltInMcpClientAppAuthorizations = (
-  result: Record<string, unknown>,
+  result: MockedResponse['result'],
 ) =>
   renderHook(() => useBuiltInMcpClientAppAuthorizations(CLAUDE_APP), {
     wrapper: ({ children }: { children: ReactNode }) => (

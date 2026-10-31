@@ -63,8 +63,8 @@ export const SettingsBuiltInMcpClientAppConnectionRowDropdownMenu = ({
         title={t`Disconnect ${appName}?`}
         subtitle={
           <Trans>
-            {appName} will lose access to this workspace. Requests already in
-            progress can take a few minutes to stop.
+            {appName} will lose access to this workspace when its current access
+            token expires.
           </Trans>
         }
         onConfirmClick={async () => {

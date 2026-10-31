@@ -1,4 +1,5 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionRowDropdownMenu';
 import { SettingsBuiltInMcpClientAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsCell';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
@@ -10,6 +11,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,6 +22,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledTableRows = styled.div`
@@ -58,9 +61,21 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
 }: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
+
+  const getLastUsedLabel = (
+    authorization: BuiltInMcpClientAppAuthorization,
+  ) => {
+    const lastUsed = beautifyPastDateRelativeToNow(
+      authorization.lastUsedAt,
+      localeCatalog,
+    );
+
+    return t`Last used ${lastUsed}`;
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -116,7 +131,9 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                 name={
                   <>
                     <app.Icon size={theme.icon.size.md} />
-                    <OverflowingTextWithTooltip text={appName} />
+                    <OverflowingTextWithTooltip
+                      text={getLastUsedLabel(authorization)}
+                    />
                   </>
                 }
                 middle={
