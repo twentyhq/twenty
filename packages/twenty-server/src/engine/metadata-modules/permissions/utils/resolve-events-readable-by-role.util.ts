@@ -2,9 +2,9 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
+import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/access/types/event-record-access-gate.type';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/access/utils/build-role-row-access-policy-subject.util';
+import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/access/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';

@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { buildWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';

@@ -19,13 +19,13 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
+import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/assignment/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
-import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-workspace-member-row-access-policy-subject.util';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
+import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/assignment/services/record-share-principal.service';
+import { RecordSharingService } from 'src/engine/core-modules/record-share/assignment/services/record-sharing.service';
+import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/core-modules/record-share/access/utils/build-workspace-member-row-access-policy-subject.util';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/access/utils/resolve-record-ids-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';

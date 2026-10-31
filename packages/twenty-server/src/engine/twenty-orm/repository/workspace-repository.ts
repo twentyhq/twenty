@@ -32,7 +32,7 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/access/utils/can-roles-access-all-records.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
@@ -43,12 +43,12 @@ import {
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
-import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/access/types/record-share-grant.type';
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
   type RowAccessRecord,
-} from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+} from 'src/engine/core-modules/record-share/access/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/core-modules/record-share/utils/is-operation-granted-beyond-role.util';
 import { isObjectOperationDisabled } from 'src/engine/twenty-orm/utils/is-object-operation-disabled.util';

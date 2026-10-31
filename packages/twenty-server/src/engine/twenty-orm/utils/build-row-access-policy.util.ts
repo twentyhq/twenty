@@ -1,8 +1,8 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
-import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
+import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/sql/utils/build-named-record-grant-expression.util';
+import { buildRecordShareGate } from 'src/engine/core-modules/record-share/sql/utils/build-record-share-gate.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/core-modules/record-share/utils/is-operation-granted-beyond-role.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {

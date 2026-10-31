@@ -17,8 +17,8 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/access/constants/everyone-row-access-policy-subject.constant';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/access/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;

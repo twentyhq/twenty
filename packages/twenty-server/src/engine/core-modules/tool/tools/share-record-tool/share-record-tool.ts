@@ -10,7 +10,7 @@ import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/core-modules/record-share/record-share.exception';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
+import { RecordSharingService } from 'src/engine/core-modules/record-share/assignment/services/record-sharing.service';
 import { ShareRecordToolInputZodSchema } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool.schema';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';

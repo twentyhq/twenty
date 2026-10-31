@@ -9,8 +9,8 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { buildPendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up/utils/build-pending-wake-up-event.util';
 import { doesEventMatchPendingWakeUp } from 'src/engine/core-modules/pending-wake-up/utils/does-event-match-pending-wake-up.util';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/utils/resolve-automation-admitted-record-ids.util';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/access/services/record-access-policy.service';
+import { resolveAutomationAdmittedRecordIds } from 'src/engine/core-modules/record-share/access/utils/resolve-automation-admitted-record-ids.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 

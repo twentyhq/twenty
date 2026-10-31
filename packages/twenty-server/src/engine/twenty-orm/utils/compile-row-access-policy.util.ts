@@ -1,7 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
-import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
+import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/sql/utils/build-record-share-condition.util';
+import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/sql/utils/build-record-share-exception-condition.util';
 import {
   type CompiledRowAccessPolicy,
   type RowAccessExpression,

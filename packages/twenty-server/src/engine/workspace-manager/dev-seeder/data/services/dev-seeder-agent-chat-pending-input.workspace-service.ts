@@ -11,7 +11,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';

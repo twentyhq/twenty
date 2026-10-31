@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
+import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/access/record-share-storage.module';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';

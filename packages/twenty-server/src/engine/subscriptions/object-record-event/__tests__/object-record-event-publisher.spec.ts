@@ -24,8 +24,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/access/services/record-access-policy.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
