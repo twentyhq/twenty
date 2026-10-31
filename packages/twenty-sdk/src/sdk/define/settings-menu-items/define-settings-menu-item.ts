@@ -60,7 +60,7 @@ export const defineSettingsMenuItem: DefineEntity<SettingsMenuItemConfig> = (
       );
     } else if (isReservedSettingsMenuItemSlug(config.slug)) {
       errors.push(
-        `SettingsMenuItem slug "${config.slug}" is reserved for a built-in settings tab`,
+        `SettingsMenuItem slug "${config.slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
       );
     }
   }

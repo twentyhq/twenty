@@ -118,14 +118,14 @@ describe('defineSettingsMenuItem', () => {
     },
   );
 
-  it.each(['general', 'variables'])(
+  it.each(['general', 'variables', '7d48ab00-8e9c-408b-b7ea-8e752c59ee7a'])(
     'should reject the reserved slug "%s"',
     (slug) => {
       const result = defineSettingsMenuItem({ ...VALID_CONFIG, slug });
 
       expect(result.success).toBe(false);
       expect(result.errors).toContain(
-        `SettingsMenuItem slug "${slug}" is reserved for a built-in settings tab`,
+        `SettingsMenuItem slug "${slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
       );
     },
   );

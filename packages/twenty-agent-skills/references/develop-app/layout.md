@@ -65,7 +65,7 @@ The menu item points at the component, not the reverse, so one component can bac
 
 Items sort by ascending `position`, which is a decimal so an item can be slotted between two existing ones. Two items of one app cannot share a position in the same scope, and `General` is reserved for the built-in item.
 
-`slug` (optional) is the tab's id in the page URL hash (`#sync`); without it the tab is addressed by `universalIdentifier`, which keeps working as an alias once a slug is added. It must be lowercase kebab-case, at most 64 characters, not `general` or `variables`, and unique across the app's items in both scopes.
+`slug` (optional) is the tab's id in the page URL hash (`#sync`); without it the tab is addressed by `universalIdentifier`, which keeps working as an alias once a slug is added. It must be lowercase kebab-case, at most 64 characters, not `general`, `variables` or UUID-shaped, and unique across the app's items in both scopes.
 
 ## Verification
 

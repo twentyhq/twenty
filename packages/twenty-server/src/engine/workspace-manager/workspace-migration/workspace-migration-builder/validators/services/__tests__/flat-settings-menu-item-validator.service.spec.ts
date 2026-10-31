@@ -153,7 +153,7 @@ describe('FlatSettingsMenuItemValidatorService slug validation', () => {
       },
     );
 
-    it.each(['general', 'variables'])(
+    it.each(['general', 'variables', '7d48ab00-8e9c-408b-b7ea-8e752c59ee7a'])(
       'rejects the reserved slug "%s"',
       (slug) => {
         expect(

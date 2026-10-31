@@ -166,7 +166,7 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 
 Each item's tab is addressed by a hash in the page URL, so you can link to it directly, for example `/settings/applications/<applicationId>#sync` or `/settings/app-preferences/<applicationId>#sync`. Set `slug` to choose that hash; without one, the tab is addressed by the item's `universalIdentifier`. Adding a slug later keeps links that use the `universalIdentifier` working: they open the same tab.
 
-A slug is lowercase kebab-case (letters, digits and single hyphens, such as `sync` or `sync-settings`) and at most 64 characters. `general` and `variables` are reserved for the built-in tabs, and two items of one app cannot share a slug, even across scopes. The build and the sync both refuse a slug that breaks these rules.
+A slug is lowercase kebab-case (letters, digits and single hyphens, such as `sync` or `sync-settings`) and at most 64 characters. `general` and `variables` are reserved for the built-in tabs, a UUID-shaped slug is refused because it could shadow another tab's link, and two items of one app cannot share a slug, even across scopes. The build and the sync both refuse a slug that breaks these rules.
 
 After a member connects or reconnects an account in **Settings > App preferences**, they land on the app's first `USER` item tab, in `position` order, or on **General** when the app declares none.
 
