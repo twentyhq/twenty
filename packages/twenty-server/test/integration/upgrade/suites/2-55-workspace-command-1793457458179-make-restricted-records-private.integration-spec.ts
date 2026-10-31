@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type MakeRestrictedRecordsPrivateCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793457458179-make-restricted-records-private.command';
@@ -58,7 +59,7 @@ describe('2-55 workspace command - make restricted records private (integration)
   };
 
   const setPrivateRecordFlag = async (value: boolean | undefined) => {
-    if (value === undefined) {
+    if (!isDefined(value)) {
       await global.testDataSource.query(
         `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
         [SEED_APPLE_WORKSPACE_ID, FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],

@@ -256,7 +256,6 @@ export class RecordShareStorageService {
     );
   }
 
-  // The select returns the "objectMetadataId" and "recordId" of the records to grant
   async insertOwnerGrantsFromSelect({
     workspaceId,
     recordSelect,
