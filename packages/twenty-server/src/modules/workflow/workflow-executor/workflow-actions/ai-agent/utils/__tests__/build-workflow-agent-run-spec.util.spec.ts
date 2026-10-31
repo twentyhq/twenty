@@ -30,7 +30,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         prompt: 'Draft the quote',
         humanInputInstructions: '  ',
       }),
-      isApplicationBound: false,
+      isWorkspaceCustomApplicationRun: true,
     });
 
     expect(spec).toMatchObject({
@@ -50,7 +50,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         agentId: 'agent-id',
         humanInputInstructions: ' Ask before choosing a plan. ',
       }),
-      isApplicationBound: false,
+      isWorkspaceCustomApplicationRun: true,
     });
 
     expect(spec.agentId).toBe('agent-id');
@@ -60,13 +60,13 @@ describe('buildWorkflowAgentRunSpec', () => {
     expect(spec.instructions).toMatch(/Ask before choosing a plan\.$/);
   });
 
-  it('keeps tools out of reach of an application-bound run', () => {
+  it("keeps the tools acting with the member's role alone from a run of another application", () => {
     expect(
       buildWorkflowAgentRunSpec({
         step: buildStep({ agentId: 'agent-id', prompt: 'Draft the quote' }),
-        isApplicationBound: true,
+        isWorkspaceCustomApplicationRun: false,
       }).additionalExcludedToolNames,
-    ).toContain('send_email');
+    ).toEqual(['save_campaign']);
   });
 
   it("asks for the step's output format", () => {
@@ -80,7 +80,7 @@ describe('buildWorkflowAgentRunSpec', () => {
 
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id', responseFormat }),
-      isApplicationBound: false,
+      isWorkspaceCustomApplicationRun: true,
     });
 
     expect(spec.responseFormat).toEqual(responseFormat);
@@ -89,7 +89,7 @@ describe('buildWorkflowAgentRunSpec', () => {
   it("leaves the agent's output format to apply when the step gives none", () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id' }),
-      isApplicationBound: false,
+      isWorkspaceCustomApplicationRun: true,
     });
 
     expect(spec).not.toHaveProperty('responseFormat');
