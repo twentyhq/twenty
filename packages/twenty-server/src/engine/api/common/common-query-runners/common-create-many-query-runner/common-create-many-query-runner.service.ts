@@ -50,7 +50,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { ShareWithService } from 'src/engine/core-modules/record-share/assignment/services/share-with.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/assignment/types/share-with-input.type';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
-import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/assignment/utils/resolve-share-with-to-write.util';
+import { resolveCreatedRecordSharingOrThrow } from 'src/engine/core-modules/record-share/assignment/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -88,7 +88,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
-        resolveShareWithToWrite({
+        resolveCreatedRecordSharingOrThrow({
           objectSharing,
           shareWith: args.shareWith,
         }),
@@ -610,12 +610,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
-    const shareWithToWrite = resolveShareWithToWrite({
+    const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
       objectSharing,
       shareWith,
     });
 
-    if (!isDefined(shareWithToWrite)) {
+    if (!isDefined(createdRecordSharing)) {
       return;
     }
 
@@ -633,7 +633,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      shareWith: shareWithToWrite,
+      createdRecordSharing,
       transactionScope,
     });
   }

@@ -458,7 +458,7 @@ describe('Records shared beyond the role that can access their object', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRoleId,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

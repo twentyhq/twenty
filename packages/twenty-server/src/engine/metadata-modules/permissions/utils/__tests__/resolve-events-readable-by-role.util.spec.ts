@@ -84,7 +84,6 @@ const resolveForApplication = (owningApplicationId: string) =>
       resolveAdmittedRecordIds: async () => new Set(['record-1']),
     },
     rolesPermissions: { [ROLE_ID]: { [OBJECT_METADATA_ID]: FULL_ACCESS } },
-    roleIdsWithAllRecordsAccess: [ROLE_ID],
     flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
     flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataMaps,

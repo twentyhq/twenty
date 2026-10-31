@@ -2,9 +2,11 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildPrivateRecordCreatorExpression } from 'src/engine/core-modules/record-share/sql/utils/build-private-record-creator-expression.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
+  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -21,22 +23,16 @@ export const buildRecordShareGate = ({
     RowAccessPolicyTarget,
     'tableAlias' | 'flatObjectMetadata' | 'operationType'
   >): RowAccessPolicy => {
-  const { isShareRequired, canRestrictGeneralAccess } = resolveObjectSharing({
+  const { isShareable, isShareRequired } = resolveObjectSharing({
     flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
   });
 
-  const isPrivate =
-    isShareRequired && !subject.isOwningApplication(flatObjectMetadata);
-
   if (
-    !isPrivate &&
-    (!canRestrictGeneralAccess || subject.canAccessAllRecords)
+    !isShareable ||
+    (isShareRequired && subject.isOwningApplication(flatObjectMetadata)) ||
+    !isDefined(subject.principalIds)
   ) {
-    return { kind: 'open' };
-  }
-
-  if (!isDefined(subject.principalIds)) {
     return { kind: 'open' };
   }
 
@@ -46,14 +42,38 @@ export const buildRecordShareGate = ({
     return { kind: 'open' };
   }
 
+  const recordShared: RowAccessExpression = {
+    kind: 'recordShared',
+    tableAlias,
+    objectMetadataId: flatObjectMetadata.id,
+    principalIds: subject.principalIds,
+    accessLevels,
+  };
+
+  if (isShareRequired) {
+    return { kind: 'gated', expression: recordShared };
+  }
+
+  // Roles never reach a private record: only its creator and its shares do
+  const creator = buildPrivateRecordCreatorExpression(
+    { subject, environment },
+    { tableAlias, flatObjectMetadata },
+  );
+
   return {
     kind: 'gated',
     expression: {
-      kind: isPrivate ? 'recordShared' : 'recordNotRestricted',
-      tableAlias,
-      objectMetadataId: flatObjectMetadata.id,
-      principalIds: subject.principalIds,
-      accessLevels,
+      kind: 'or',
+      operands: [
+        {
+          kind: 'recordPrivacy',
+          isPrivate: false,
+          tableAlias,
+          objectMetadataId: flatObjectMetadata.id,
+        },
+        ...(isDefined(creator) ? [creator] : []),
+        recordShared,
+      ],
     },
   };
 };

@@ -20,6 +20,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK } from 'src/engine/core-modules/record-share/access/__mocks__/public-private-record-storage-service.mock';
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/access/services/private-record-storage.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/access/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -217,6 +219,12 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: RecordShareStorageService,
           useValue: recordShareStorageService,
+        },
+
+        {
+          provide: PrivateRecordStorageService,
+
+          useValue: PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK,
         },
 
         RecordAccessPolicyService,

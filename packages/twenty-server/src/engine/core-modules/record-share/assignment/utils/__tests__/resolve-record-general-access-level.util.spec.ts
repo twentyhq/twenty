@@ -36,16 +36,18 @@ describe('resolveRecordGeneralAccessLevel', () => {
         resolveRecordGeneralAccessLevel({
           defaultGeneralAccessLevel,
           recordShares: [],
+          isPrivate: false,
         }),
       ).toBe(defaultGeneralAccessLevel);
     },
   );
 
-  it('should read a restriction of a record open by default', () => {
+  it('should report no general access on a private record', () => {
     expect(
       resolveRecordGeneralAccessLevel({
         defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
-        recordShares: [buildEveryoneShare(RecordShareAccessLevel.NONE)],
+        recordShares: [],
+        isPrivate: true,
       }),
     ).toBe(RecordShareAccessLevel.NONE);
   });
@@ -55,6 +57,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
       resolveRecordGeneralAccessLevel({
         defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
         recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
+        isPrivate: false,
       }),
     ).toBe(RecordShareAccessLevel.READ);
   });
@@ -69,6 +72,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
             RecordShareRowCause.RULE,
           ),
         ],
+        isPrivate: false,
       }),
     ).toBe(RecordShareAccessLevel.READ_WRITE);
   });
@@ -78,6 +82,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
       resolveRecordGeneralAccessLevel({
         defaultGeneralAccessLevel: null,
         recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
+        isPrivate: false,
       }),
     ).toBeNull();
   });

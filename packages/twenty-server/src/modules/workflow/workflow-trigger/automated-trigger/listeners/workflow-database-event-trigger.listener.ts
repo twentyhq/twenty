@@ -517,7 +517,6 @@ export class WorkflowDatabaseEventTriggerListener {
     const {
       flatApplicationMaps,
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
@@ -525,7 +524,6 @@ export class WorkflowDatabaseEventTriggerListener {
     } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
       'flatApplicationMaps',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
@@ -541,7 +539,6 @@ export class WorkflowDatabaseEventTriggerListener {
       eventRecordAccessGate:
         this.recordAccessPolicyService.buildEventRecordAccessGate(payload),
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,

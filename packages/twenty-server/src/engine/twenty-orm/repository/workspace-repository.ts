@@ -18,6 +18,10 @@ import {
 } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type PrivateRecordState } from 'src/engine/core-modules/record-share/access/types/private-record-state.type';
+import { buildSelectPrivateRecordStatesSql } from 'src/engine/core-modules/record-share/access/utils/build-select-private-record-states-sql.util';
+import { hasCreatedByField } from 'src/engine/core-modules/record-share/utils/has-created-by-field.util';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -32,7 +36,6 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/access/utils/can-roles-access-all-records.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
@@ -63,7 +66,6 @@ import {
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { getActiveValidationRules } from 'src/engine/twenty-orm/utils/get-active-validation-rules.util';
@@ -1804,6 +1806,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       string,
       Promise<RecordShareGrant[]>
     >();
+    // Write policies only gate the repository's own records
+    let privateRecordStates:
+      | Promise<Map<string, PrivateRecordState>>
+      | undefined;
 
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
@@ -1827,7 +1833,38 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           requestedRecordIdSet.has(recordShareGrant.recordId),
         );
       },
+      fetchPrivateRecordStates: async () =>
+        (privateRecordStates ??= this.findPrivateRecordStates(recordIds)),
     };
+  }
+
+  private async findPrivateRecordStates(
+    recordIds: string[],
+  ): Promise<Map<string, PrivateRecordState>> {
+    if (recordIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.executeRaw<{ id: string } & PrivateRecordState>(
+      buildSelectPrivateRecordStatesSql({
+        tableExpression: this.getTableExpression(
+          this.options.flatObjectMetadata.id,
+        ),
+        hasCreatedByField: hasCreatedByField({
+          flatObjectMetadata: this.options.flatObjectMetadata,
+          flatFieldMetadataMaps:
+            this.options.internalContext.flatFieldMetadataMaps,
+        }),
+      }),
+      { recordIds },
+    );
+
+    return new Map(
+      rows.map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
+        id,
+        { isPrivate, createdByWorkspaceMemberId },
+      ]),
+    );
   }
 
   private async findRecordShareGrants({
@@ -2343,13 +2380,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
-      canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds: getRoleIdsFromRolePermissionConfig(
-          this.options.rolePermissionConfig,
-        ),
-        roleIdsWithAllRecordsAccess:
-          this.options.internalContext.roleIdsWithAllRecordsAccess,
-      }),
+      workspaceMemberId: isUserAuthContext(this.options.authContext)
+        ? this.options.authContext.workspaceMemberId
+        : undefined,
       isOwningApplication: (objectMetadata) =>
         isOwningApplicationAuthContext({
           authContext: this.options.authContext,

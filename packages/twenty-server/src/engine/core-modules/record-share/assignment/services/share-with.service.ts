@@ -6,9 +6,11 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/assignment/services/record-share-principal.service';
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/access/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/assignment/types/share-with-input.type';
 import { buildRecordShareInputsForCreatedRecords } from 'src/engine/core-modules/record-share/assignment/utils/build-record-share-inputs-for-created-records.util';
+import { type CreatedRecordSharing } from 'src/engine/core-modules/record-share/assignment/utils/resolve-created-record-sharing-or-throw.util';
 import { type ObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/assignment/utils/resolve-share-with-principal-or-throw.util';
 import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/assignment/utils/validate-share-with-arg-or-throw.util';
@@ -21,6 +23,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ShareWithService {
   constructor(
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -60,7 +63,7 @@ export class ShareWithService {
     objectSharing,
     recordIds,
     apiKeyRoleMap,
-    shareWith,
+    createdRecordSharing: { shareWith, isPrivate },
     transactionScope,
   }: {
     authContext: WorkspaceAuthContext;
@@ -68,7 +71,7 @@ export class ShareWithService {
     objectSharing: ObjectSharing;
     recordIds: string[];
     apiKeyRoleMap: Record<string, string>;
-    shareWith: ShareWithInput[];
+    createdRecordSharing: CreatedRecordSharing;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
@@ -89,10 +92,21 @@ export class ShareWithService {
         authContext,
         apiKeyRoleMap,
         shareWith,
-        canRestrictGeneralAccess: objectSharing.canRestrictGeneralAccess,
+        isShareRequired: objectSharing.isShareRequired,
+        isPrivate,
       }),
       transactionScope,
     });
+
+    if (isPrivate) {
+      await this.privateRecordStorageService.setPrivate({
+        workspaceId,
+        flatObjectMetadata,
+        recordIds,
+        isPrivate: true,
+        transactionScope,
+      });
+    }
 
     await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow({
       workspaceId,

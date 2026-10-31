@@ -16,19 +16,16 @@ const OBJECT = {
 const OPEN_BY_DEFAULT = {
   isShareable: true,
   isShareRequired: false,
-  canRestrictGeneralAccess: true,
   defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
 };
 const ROLE_ONLY = {
   isShareable: false,
   isShareRequired: false,
-  canRestrictGeneralAccess: false,
   defaultGeneralAccessLevel: null,
 };
 const PRIVATE = {
   isShareable: true,
   isShareRequired: true,
-  canRestrictGeneralAccess: false,
   defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
 };
 const RECORD_SHARING = {

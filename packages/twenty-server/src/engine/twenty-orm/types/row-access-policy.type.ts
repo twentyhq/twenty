@@ -32,7 +32,16 @@ export type RowAccessExpression =
       // Compiled as a grant list read once, so it can be ORed with an indexed filter
       isUncorrelated?: boolean;
     } & RecordShareExpressionTarget)
-  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget);
+  | ({ kind: 'recordPrivacy'; isPrivate: boolean } & PrivateRecordTarget)
+  | ({
+      kind: 'recordCreatedBy';
+      workspaceMemberId: string;
+    } & PrivateRecordTarget);
+
+export type PrivateRecordTarget = {
+  tableAlias: string;
+  objectMetadataId: string;
+};
 
 export type RecordShareExpressionTarget = {
   tableAlias: string;
@@ -55,7 +64,7 @@ export type RowAccessPolicySubject = {
   isSystemContext: boolean;
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
-  canAccessAllRecords: boolean;
+  workspaceMemberId: string | undefined;
   isOwningApplication: (objectMetadata: FlatObjectMetadata) => boolean;
   resolveRowLevelPermissionRecordFilter: (
     objectMetadata: FlatObjectMetadata,

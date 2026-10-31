@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import {
-  type RecordShareAccessLevel,
+  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
@@ -14,12 +14,18 @@ import { type RecordShare } from 'src/engine/core-modules/record-share/types/rec
 export const resolveRecordGeneralAccessLevel = ({
   defaultGeneralAccessLevel,
   recordShares,
+  isPrivate,
 }: {
   defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   recordShares: RecordShare[];
+  isPrivate: boolean;
 }): RecordShareAccessLevel | null => {
   if (!isDefined(defaultGeneralAccessLevel)) {
     return null;
+  }
+
+  if (isPrivate) {
+    return RecordShareAccessLevel.NONE;
   }
 
   const everyoneManualShare = recordShares.find(

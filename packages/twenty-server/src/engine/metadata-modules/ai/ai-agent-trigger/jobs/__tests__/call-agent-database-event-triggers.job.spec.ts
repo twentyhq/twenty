@@ -11,6 +11,8 @@ import {
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK } from 'src/engine/core-modules/record-share/access/__mocks__/public-private-record-storage-service.mock';
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/access/services/private-record-storage.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/access/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
@@ -184,6 +186,10 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CallAgentDatabaseEventTriggersJob,
+        {
+          provide: PrivateRecordStorageService,
+          useValue: PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK,
+        },
         RecordAccessPolicyService,
         {
           provide: getQueueToken(MessageQueue.aiQueue),

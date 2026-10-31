@@ -322,7 +322,6 @@ export class AgentChatSharingService {
       workspaceId,
       [
         'rolesPermissions',
-        'roleIdsWithAllRecordsAccess',
         'flatRowLevelPermissionPredicateMaps',
         'flatRowLevelPermissionPredicateGroupMaps',
         'flatFieldMetadataMaps',

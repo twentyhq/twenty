@@ -14,7 +14,8 @@ export const isRowAccessExpressionReadingRoleFilter = (
     case 'roleFilter':
       return true;
     case 'recordShared':
-    case 'recordNotRestricted':
+    case 'recordPrivacy':
+    case 'recordCreatedBy':
       return false;
     default:
       return assertUnreachable(expression);

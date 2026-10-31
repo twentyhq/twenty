@@ -5,7 +5,6 @@ import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/access/utils/can-roles-access-all-records.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -18,7 +17,6 @@ export const buildRoleRowAccessPolicySubject = ({
   roleId,
   owningApplicationId,
   rolesPermissions,
-  roleIdsWithAllRecordsAccess,
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
@@ -28,7 +26,6 @@ export const buildRoleRowAccessPolicySubject = ({
   roleId: string | undefined;
   owningApplicationId: string | undefined;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  roleIdsWithAllRecordsAccess: string[];
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
@@ -43,10 +40,7 @@ export const buildRoleRowAccessPolicySubject = ({
       ? rolesPermissions[roleId]
       : undefined,
     principalIds: [EVERYONE_PRINCIPAL_ID, ...roleIds],
-    canAccessAllRecords: canRolesAccessAllRecords({
-      roleIds,
-      roleIdsWithAllRecordsAccess,
-    }),
+    workspaceMemberId: undefined,
     isOwningApplication: (objectMetadata) =>
       isDefined(owningApplicationId) &&
       objectMetadata.applicationId === owningApplicationId,

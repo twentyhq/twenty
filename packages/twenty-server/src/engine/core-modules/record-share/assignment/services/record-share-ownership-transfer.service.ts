@@ -65,15 +65,16 @@ export class RecordShareOwnershipTransferService {
       Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
         .filter(isDefined)
         // Rows written while sharing was enabled still need a custodian
-        .filter(
-          (flatObjectMetadata) =>
-            resolveObjectSharing({
-              flatObjectMetadata,
-              featureFlagsMap: {
-                [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
-              },
-            }).canRestrictGeneralAccess,
-        )
+        .filter((flatObjectMetadata) => {
+          const { isShareable, isShareRequired } = resolveObjectSharing({
+            flatObjectMetadata,
+            featureFlagsMap: {
+              [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+            },
+          });
+
+          return isShareable && !isShareRequired;
+        })
         .map((flatObjectMetadata) => flatObjectMetadata.id)
     );
   }

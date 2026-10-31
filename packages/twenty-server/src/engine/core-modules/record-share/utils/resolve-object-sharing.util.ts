@@ -26,7 +26,6 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
 export type ObjectSharing = {
   isShareable: boolean;
   isShareRequired: boolean;
-  canRestrictGeneralAccess: boolean;
   // General access of a record without an everyone row, null when its object is not shareable
   defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   canShareBeyondRole: boolean;
@@ -34,17 +33,17 @@ export type ObjectSharing = {
 };
 
 const resolveDefaultGeneralAccessLevel = ({
+  isShareable,
   isShareRequired,
-  canRestrictGeneralAccess,
 }: Pick<
   ObjectSharing,
-  'isShareRequired' | 'canRestrictGeneralAccess'
+  'isShareable' | 'isShareRequired'
 >): RecordShareAccessLevel | null => {
   if (isShareRequired) {
     return RecordShareAccessLevel.NONE;
   }
 
-  return canRestrictGeneralAccess ? RecordShareAccessLevel.READ_WRITE : null;
+  return isShareable ? RecordShareAccessLevel.READ_WRITE : null;
 };
 
 export const resolveObjectSharing = ({
@@ -63,9 +62,9 @@ export const resolveObjectSharing = ({
   // Private records are only reached through their shares, whatever the flag
   const isShareRequired =
     flatObjectMetadata.readability === MetadataReadability.PRIVATE;
-  const canRestrictGeneralAccess =
-    !isShareRequired && isRecordSharingEnabled && !flatObjectMetadata.isSystem;
-  const isShareable = isShareRequired || canRestrictGeneralAccess;
+  // Records of other shareable objects follow their roles unless made private one by one
+  const isShareable =
+    isShareRequired || (isRecordSharingEnabled && !flatObjectMetadata.isSystem);
 
   const operationTypesGrantedBeyondRole =
     isRecordSharingEnabled && !flatObjectMetadata.isSystem
@@ -80,10 +79,9 @@ export const resolveObjectSharing = ({
   return {
     isShareable,
     isShareRequired,
-    canRestrictGeneralAccess,
     defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel({
+      isShareable,
       isShareRequired,
-      canRestrictGeneralAccess,
     }),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,

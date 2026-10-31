@@ -14,5 +14,6 @@ export const buildWorkspaceMemberRowAccessPolicySubject = ({
   return {
     ...roleSubject,
     principalIds: [...(roleSubject.principalIds ?? []), workspaceMemberId],
+    workspaceMemberId,
   };
 };
