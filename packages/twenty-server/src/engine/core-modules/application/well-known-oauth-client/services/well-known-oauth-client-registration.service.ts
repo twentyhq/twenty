@@ -2,21 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
-import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
+
+const DISPLAY_FIELD_NAMES = [
+  'name',
+  'description',
+  'aboutDescription',
+  'author',
+  'category',
+  'websiteUrl',
+  'logo',
+] as const;
 
 const toDisplayFields = (
   wellKnownOAuthClient: WellKnownOAuthClientDefinition,
@@ -28,7 +29,6 @@ const toDisplayFields = (
   category: wellKnownOAuthClient.category,
   websiteUrl: wellKnownOAuthClient.websiteUrl,
   logo: wellKnownOAuthClient.logo,
-  isListed: true,
 });
 
 // One OAuth-only registration per well-known client, shared by every connection
@@ -38,77 +38,48 @@ export class WellKnownOAuthClientRegistrationService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationRegistrationSeedingService: ApplicationRegistrationSeedingService,
   ) {}
 
   async findOrCreateRegistration(
     wellKnownOAuthClient: WellKnownOAuthClientDefinition,
   ): Promise<ApplicationRegistrationEntity> {
-    const existingRegistration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        wellKnownOAuthClient.universalIdentifier,
-      );
-
-    if (isDefined(existingRegistration)) {
-      return existingRegistration;
-    }
-
-    const insertResult = await this.applicationRegistrationRepository
-      .createQueryBuilder()
-      .insert()
-      .into(ApplicationRegistrationEntity)
-      .values({
+    return this.applicationRegistrationSeedingService.findOrCreateOAuthOnlyRegistration(
+      {
         ...toDisplayFields(wellKnownOAuthClient),
+        isListed: true,
         universalIdentifier: wellKnownOAuthClient.universalIdentifier,
-        oAuthClientId: v4(),
-        oAuthClientSecretHash: null,
         oAuthRedirectUris:
           wellKnownOAuthClient.allowedRedirectUris.filter(isString),
         oAuthScopes: [...ALL_OAUTH_SCOPES],
-        ownerWorkspaceId: null,
-        createdByUserId: null,
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      })
-      .orIgnore()
-      .returning('id')
-      .execute();
-
-    // Seeded registrations are listed, so the marketplace must pick up one created between catalog syncs
-    if (insertResult.raw.length > 0) {
-      await this.coreEntityCacheService.invalidate(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      );
-    }
-
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        wellKnownOAuthClient.universalIdentifier,
-      );
-
-    if (!isDefined(registration)) {
-      throw new ApplicationException(
-        `Failed to create the ${wellKnownOAuthClient.name} application registration`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
+      },
+    );
   }
 
   // Display content ships with the server, so existing registrations are brought up to date on each sync
   async syncRegistration(
     wellKnownOAuthClient: WellKnownOAuthClientDefinition,
-  ): Promise<ApplicationRegistrationEntity> {
+  ): Promise<{
+    registration: ApplicationRegistrationEntity;
+    hasChanged: boolean;
+  }> {
     const registration =
       await this.findOrCreateRegistration(wellKnownOAuthClient);
+    const displayFields = toDisplayFields(wellKnownOAuthClient);
 
-    await this.applicationRegistrationRepository.update(
-      registration.id,
-      toDisplayFields(wellKnownOAuthClient),
-    );
+    const hasChanged =
+      !registration.isListed ||
+      DISPLAY_FIELD_NAMES.some(
+        (fieldName) => registration[fieldName] !== displayFields[fieldName],
+      );
 
-    return registration;
+    if (hasChanged) {
+      await this.applicationRegistrationRepository.update(registration.id, {
+        ...displayFields,
+        isListed: true,
+      });
+    }
+
+    return { registration, hasChanged };
   }
 }

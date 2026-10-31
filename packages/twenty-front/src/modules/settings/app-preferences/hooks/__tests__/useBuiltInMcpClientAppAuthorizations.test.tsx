@@ -16,23 +16,17 @@ const CLAUDE_APP = BUILT_IN_MCP_CLIENT_APPS[1];
 const CLAUDE_AUTHORIZATION = {
   __typename: 'ApplicationAuthorization',
   id: 'claude-authorization-id',
-  applicationId: 'claude-application-id',
-  applicationName: 'Claude',
   scopes: ['api', 'profile'],
   wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
-  lastAuthorizedAt: '2026-10-12T09:00:00.000Z',
   lastUsedAt: '2026-10-12T09:00:00.000Z',
-  createdAt: '2026-10-12T09:00:00.000Z',
 };
 
 const CHATGPT_AUTHORIZATION = {
   ...CLAUDE_AUTHORIZATION,
   id: 'chatgpt-authorization-id',
-  applicationName: 'ChatGPT',
   wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
 };
 
-// A client may call itself Claude, only the server says whether it is
 const SELF_NAMED_CLAUDE_AUTHORIZATION = {
   ...CLAUDE_AUTHORIZATION,
   id: 'self-named-claude-authorization-id',

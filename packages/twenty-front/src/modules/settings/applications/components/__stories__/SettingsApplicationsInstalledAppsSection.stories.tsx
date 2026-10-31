@@ -95,7 +95,6 @@ const NOTES_APPLICATION = buildApplication({
   latestAvailableVersion: '1.0.0',
 });
 
-// Installed by a Claude connection made before the server seeded the Claude registration
 const EARLIER_CLAUDE_CONNECTION_APPLICATION = buildApplication({
   id: 'earlier-claude-connection-application-id',
   name: 'Claude',

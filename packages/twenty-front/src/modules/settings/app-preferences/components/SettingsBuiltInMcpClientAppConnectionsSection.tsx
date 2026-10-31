@@ -1,5 +1,7 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
-import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionRowDropdownMenu';
+import { SettingsBuiltInMcpClientAppConnectTooltip } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectTooltip';
+import { useBuiltInMcpClientAppConnectLink } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppConnectLink';
+import { SettingsApplicationAuthorizationRowDropdownMenu } from '@/settings/applications/components/SettingsApplicationAuthorizationRowDropdownMenu';
 import { SettingsApplicationAuthorizationPermissionsCell } from '@/settings/applications/components/SettingsApplicationAuthorizationPermissionsCell';
 import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
@@ -10,17 +12,20 @@ import { SettingsApplicationTableRow } from '@/settings/applications/components/
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { useMutation } from '@apollo/client/react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import {
+  CurrentUserApplicationAuthorizationsDocument,
+  RevokeApplicationAuthorizationDocument,
+} from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
@@ -43,17 +48,23 @@ const StyledConnectCardContainer = styled.div`
 
 type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
   app: BuiltInMcpClientApp;
-  connectLink: string | undefined;
 };
 
 export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   app,
-  connectLink,
 }: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { authorizations, loading, hasLoadError, refetch } =
     useBuiltInMcpClientAppAuthorizations(app);
+  const connectLink = useBuiltInMcpClientAppConnectLink(app);
+  const [revokeApplicationAuthorization] = useMutation(
+    RevokeApplicationAuthorizationDocument,
+    {
+      refetchQueries: [{ query: CurrentUserApplicationAuthorizationsDocument }],
+      awaitRefetchQueries: true,
+    },
+  );
 
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
@@ -84,12 +95,9 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
 
     if (authorizations.length === 0) {
       return (
-        <Tooltip
-          content={t`${appName} needs this server to use HTTPS.`}
-          side="bottom"
-          positionMethod="fixed"
-          delay={TooltipDelay.shortDelay}
-          disabled={!isConnectDisabled}
+        <SettingsBuiltInMcpClientAppConnectTooltip
+          appName={appName}
+          isConnectDisabled={isConnectDisabled}
         >
           <StyledConnectCardContainer>
             <SettingsCard
@@ -99,7 +107,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
               disabled={isConnectDisabled}
             />
           </StyledConnectCardContainer>
-        </Tooltip>
+        </SettingsBuiltInMcpClientAppConnectTooltip>
       );
     }
 
@@ -138,9 +146,21 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                 detailsAlign="left"
                 shouldShowDetailsOnMobile
                 action={
-                  <SettingsBuiltInMcpClientAppConnectionRowDropdownMenu
+                  <SettingsApplicationAuthorizationRowDropdownMenu
                     applicationAuthorizationId={authorization.id}
-                    appName={appName}
+                    revokeLabel={t`Disconnect`}
+                    confirmationTitle={t`Disconnect ${appName}?`}
+                    confirmationSubtitle={
+                      <Trans>
+                        {appName} will lose access to this workspace when its
+                        current access token expires.
+                      </Trans>
+                    }
+                    onRevoke={(applicationAuthorizationId) =>
+                      revokeApplicationAuthorization({
+                        variables: { applicationAuthorizationId },
+                      })
+                    }
                   />
                 }
               />

@@ -49,6 +49,27 @@ export const SettingsAccounts = () => {
     tabs.map((tab) => tab.id),
   );
 
+  const renderContent = () => {
+    if (!isAppPreferencesEnabled) {
+      return <SettingsAccountsLegacySections />;
+    }
+
+    if (!hasConnectedAccountsPermission) {
+      return <SettingsBuiltInMcpClientAppsSection />;
+    }
+
+    return (
+      <>
+        {activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.APPS && (
+          <SettingsAppPreferencesAppsSection />
+        )}
+        {activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS && (
+          <SettingsAppPreferencesAccountsTab />
+        )}
+      </>
+    );
+  };
+
   return (
     <SettingsPageLayout
       title={pageTitle}
@@ -70,25 +91,7 @@ export const SettingsAccounts = () => {
       }
     >
       <SettingsAccountsMessageChannelsSSEEffect />
-      <SettingsPageContainer>
-        {isAppPreferencesEnabled ? (
-          <>
-            {!hasConnectedAccountsPermission && (
-              <SettingsBuiltInMcpClientAppsSection />
-            )}
-            {hasConnectedAccountsPermission &&
-              activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.APPS && (
-                <SettingsAppPreferencesAppsSection />
-              )}
-            {hasConnectedAccountsPermission &&
-              activeTabId === SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS && (
-                <SettingsAppPreferencesAccountsTab />
-              )}
-          </>
-        ) : (
-          <SettingsAccountsLegacySections />
-        )}
-      </SettingsPageContainer>
+      <SettingsPageContainer>{renderContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );
 };

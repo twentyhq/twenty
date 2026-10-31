@@ -54,6 +54,7 @@ import {
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
 import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
+import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -612,11 +613,7 @@ export class AuthService {
         );
       }
 
-      const isLoopback =
-        redirectUrl.hostname === 'localhost' ||
-        redirectUrl.hostname === '127.0.0.1';
-
-      if (!isLoopback) {
+      if (!isLoopbackHostname(redirectUrl.hostname)) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,

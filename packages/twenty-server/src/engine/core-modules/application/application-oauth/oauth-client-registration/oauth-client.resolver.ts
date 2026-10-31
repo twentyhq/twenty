@@ -47,7 +47,7 @@ export class OAuthClientResolver {
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
         wellKnownOAuthClient:
-          getWellKnownOAuthClientOfRegistration(registration)?.client ?? null,
+          getWellKnownOAuthClientOfRegistration(registration),
       };
     }
 

@@ -32,7 +32,6 @@ type AuthorizeClientIdentityNoticeProps = {
   wellKnownOAuthClient?: WellKnownOAuthClient | null;
 };
 
-// The name on the consent screen is whatever a dynamically registered client chose, so only the server's identification is trusted
 export const AuthorizeClientIdentityNotice = ({
   appName,
   wellKnownOAuthClient,

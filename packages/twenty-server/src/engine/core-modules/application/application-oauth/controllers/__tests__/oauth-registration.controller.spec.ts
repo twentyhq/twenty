@@ -42,7 +42,10 @@ describe('OAuthRegistrationController', () => {
     isDynamicClientRegistrationEnabled = true;
     applicationRegistrationRepository = {
       create: jest.fn((registration) => registration),
-      save: jest.fn(),
+      save: jest.fn(async (registration) => ({
+        ...registration,
+        createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      })),
     };
     findOrCreateRegistration = jest.fn().mockResolvedValue({
       oAuthClientId: 'seeded-claude-client-id',

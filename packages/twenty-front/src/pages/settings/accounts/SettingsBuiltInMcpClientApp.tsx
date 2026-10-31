@@ -5,14 +5,11 @@ import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltI
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { getBuiltInMcpClientAppConnectLink } from '@/settings/mcp/utils/getBuiltInMcpClientAppConnectLink';
-import { buildMcpServerUrl } from '@/settings/mcp/utils/mcpSetup';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const SettingsBuiltInMcpClientApp = () => {
   const { t } = useLingui();
@@ -29,10 +26,6 @@ export const SettingsBuiltInMcpClientApp = () => {
 
   const appName = t(app.name);
   const logoUrl = getBuiltInAppLogoUrl(app);
-  const connectLink = getBuiltInMcpClientAppConnectLink({
-    builtInMcpClientAppId: app.id,
-    mcpServerUrl: buildMcpServerUrl(REACT_APP_SERVER_BASE_URL),
-  });
 
   return (
     <SettingsPageLayout
@@ -65,10 +58,7 @@ export const SettingsBuiltInMcpClientApp = () => {
             description={t(app.description)}
           />
         </Section.Root>
-        <SettingsBuiltInMcpClientAppConnectionsSection
-          app={app}
-          connectLink={connectLink}
-        />
+        <SettingsBuiltInMcpClientAppConnectionsSection app={app} />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

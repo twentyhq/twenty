@@ -1,10 +1,6 @@
-import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
-import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
+import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 
-const CHATGPT_UNIVERSAL_IDENTIFIER = WELL_KNOWN_OAUTH_CLIENTS.find(
-  ({ client }) => client === WellKnownOAuthClient.CHATGPT,
-)?.universalIdentifier as string;
+import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
 
 describe('isRedirectUriRegisteredForApplicationRegistration', () => {
   it('matches the stored callbacks of a regular registration exactly', () => {
@@ -29,7 +25,8 @@ describe('isRedirectUriRegisteredForApplicationRegistration', () => {
 
   it('lets a seeded well-known registration use every callback its vendor documents', () => {
     const applicationRegistration = {
-      universalIdentifier: CHATGPT_UNIVERSAL_IDENTIFIER,
+      universalIdentifier:
+        WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
       oAuthRedirectUris: [
         'https://chatgpt.com/connector_platform_oauth_redirect',
       ],

@@ -1,21 +1,25 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { SettingsApplicationAuthorizationPermissionsCell } from '@/settings/applications/components/SettingsApplicationAuthorizationPermissionsCell';
-import { SettingsApplicationAuthorizedMemberRowDropdownMenu } from '@/settings/applications/components/SettingsApplicationAuthorizedMemberRowDropdownMenu';
+import { SettingsApplicationAuthorizationRowDropdownMenu } from '@/settings/applications/components/SettingsApplicationAuthorizationRowDropdownMenu';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { WorkspaceApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
+import {
+  RevokeWorkspaceApplicationAuthorizationDocument,
+  WorkspaceApplicationAuthorizationsDocument,
+} from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -41,8 +45,26 @@ export const SettingsApplicationAuthorizedMembersSection = ({
     WorkspaceApplicationAuthorizationsDocument,
     { variables: { applicationId }, fetchPolicy: 'cache-and-network' },
   );
+  const [revokeWorkspaceApplicationAuthorization] = useMutation(
+    RevokeWorkspaceApplicationAuthorizationDocument,
+    {
+      refetchQueries: [
+        {
+          query: WorkspaceApplicationAuthorizationsDocument,
+          variables: { applicationId },
+        },
+      ],
+      awaitRefetchQueries: true,
+    },
+  );
 
   const authorizations = data?.workspaceApplicationAuthorizations ?? [];
+  const workspaceMemberByUserId = new Map(
+    currentWorkspaceMembers.map((workspaceMember) => [
+      workspaceMember.userId,
+      workspaceMember,
+    ]),
+  );
 
   const renderContent = () => {
     if (loading && !isDefined(data)) {
@@ -74,12 +96,11 @@ export const SettingsApplicationAuthorizedMembersSection = ({
         />
         <StyledTableRows>
           {authorizations.map((authorization) => {
-            const workspaceMember = currentWorkspaceMembers.find(
-              (member) => member.userId === authorization.userId,
+            const workspaceMember = workspaceMemberByUserId.get(
+              authorization.userId,
             );
             const memberName = isDefined(workspaceMember)
-              ? `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim() ||
-                workspaceMember.userEmail
+              ? getWorkspaceMemberNameOrEmail(workspaceMember)
               : t`Former member`;
 
             return (
@@ -110,11 +131,22 @@ export const SettingsApplicationAuthorizedMembersSection = ({
                 detailsAlign="left"
                 shouldShowDetailsOnMobile
                 action={
-                  <SettingsApplicationAuthorizedMemberRowDropdownMenu
+                  <SettingsApplicationAuthorizationRowDropdownMenu
                     applicationAuthorizationId={authorization.id}
-                    applicationId={applicationId}
-                    applicationName={applicationName}
-                    memberName={memberName}
+                    revokeLabel={t`Revoke access`}
+                    confirmationTitle={t`Revoke ${memberName}'s access?`}
+                    confirmationSubtitle={
+                      <Trans>
+                        {applicationName} will lose access to this workspace on
+                        behalf of {memberName} when its current access token
+                        expires.
+                      </Trans>
+                    }
+                    onRevoke={(applicationAuthorizationId) =>
+                      revokeWorkspaceApplicationAuthorization({
+                        variables: { applicationAuthorizationId },
+                      })
+                    }
                   />
                 }
               />

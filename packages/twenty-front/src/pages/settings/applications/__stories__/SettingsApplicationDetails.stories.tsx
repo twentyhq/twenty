@@ -461,7 +461,6 @@ export const OAuthOnlyAppListsItsConnectedMembers: Story = {
                   __typename: 'ApplicationAuthorization',
                   id: CLAUDE_MEMBER_AUTHORIZATION_ID,
                   userId: mockedWorkspaceMemberData.userId,
-                  applicationId: APPLICATION_ID,
                   scopes: ['api', 'profile'],
                   lastUsedAt: new Date().toISOString(),
                 },

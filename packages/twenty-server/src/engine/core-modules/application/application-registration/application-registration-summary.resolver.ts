@@ -26,6 +26,6 @@ export class ApplicationRegistrationSummaryResolver {
   wellKnownOAuthClient(
     @Parent() registration: ApplicationRegistrationEntity,
   ): WellKnownOAuthClient | null {
-    return getWellKnownOAuthClientOfRegistration(registration)?.client ?? null;
+    return getWellKnownOAuthClientOfRegistration(registration);
   }
 }

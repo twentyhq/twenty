@@ -16,7 +16,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
-  In,
   IsNull,
   type DeepPartial,
   type FindOptionsWhere,
@@ -25,9 +24,7 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
-import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -37,6 +34,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
@@ -66,10 +64,6 @@ import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-mo
 import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
-import {
   UPGRADE_APPLICATIONS_JOB_NAME,
   type UpgradeApplicationsJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
@@ -86,7 +80,6 @@ import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credi
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -140,13 +133,13 @@ export class ApplicationRegistrationService {
     private readonly fileStorageService: FileStorageService,
     private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly cacheLockService: CacheLockService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly applicationRegistrationSeedingService: ApplicationRegistrationSeedingService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -248,15 +241,8 @@ export class ApplicationRegistrationService {
     }
   }
 
-  async invalidateMarketplaceAppsCache(): Promise<void> {
-    try {
-      await this.coreEntityCacheService.invalidate(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      );
-    } catch (error) {
-      this.logger.error('Failed to invalidate marketplace apps cache', error);
-    }
+  private async invalidateMarketplaceAppsCache(): Promise<void> {
+    await this.applicationRegistrationSeedingService.invalidateMarketplaceCatalog();
   }
 
   emitRegistrationPublishMetric({
@@ -1021,52 +1007,15 @@ export class ApplicationRegistrationService {
   }
 
   async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
-    const existing =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      );
-
-    if (isDefined(existing)) {
-      return existing;
-    }
-
-    const insertResult = await this.applicationRegistrationRepository
-      .createQueryBuilder()
-      .insert()
-      .into(ApplicationRegistrationEntity)
-      .values({
+    return this.applicationRegistrationSeedingService.findOrCreateOAuthOnlyRegistration(
+      {
         universalIdentifier:
           TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
         name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-        oAuthClientId: v4(),
-        oAuthClientSecretHash: null,
         oAuthRedirectUris: [],
         oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
-        ownerWorkspaceId: null,
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        createdByUserId: null,
-      })
-      .orIgnore()
-      .returning('id')
-      .execute();
-
-    if (insertResult.raw.length > 0) {
-      await this.invalidateMarketplaceAppsCache();
-    }
-
-    const registration =
-      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-      );
-
-    if (!isDefined(registration)) {
-      throw new ApplicationException(
-        'Failed to create the Twenty CLI application registration',
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
+      },
+    );
   }
 
   async findManyCatalogCards(): Promise<ApplicationRegistrationCatalogCard[]> {
@@ -1086,15 +1035,12 @@ export class ApplicationRegistrationService {
         'category',
         'manifest',
       ],
-      // Well-known OAuth clients have no package, but members can connect them from the marketplace
+      // Listed OAuth-only registrations, the well-known clients, have no package but members connect them from the marketplace
       where: [
         { sourceType: ApplicationRegistrationSourceType.NPM },
         {
-          universalIdentifier: In(
-            WELL_KNOWN_OAUTH_CLIENTS.map(
-              ({ universalIdentifier }) => universalIdentifier,
-            ),
-          ),
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+          isListed: true,
         },
       ],
     });

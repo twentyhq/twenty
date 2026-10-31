@@ -24,15 +24,11 @@ const buildClaudeAuthorization = ({
 }: { id?: string; lastUsedHoursAgo?: number } = {}) => ({
   __typename: 'ApplicationAuthorization',
   id,
-  applicationId: '20202020-6a7b-4c3d-8e4f-0000000000a1',
-  applicationName: 'Claude',
   scopes: ['api', 'profile'],
   wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
-  lastAuthorizedAt: '2026-10-12T09:00:00.000Z',
   lastUsedAt: new Date(
     Date.now() - lastUsedHoursAgo * 60 * 60 * 1000,
   ).toISOString(),
-  createdAt: '2026-10-12T09:00:00.000Z',
 });
 
 const revokedAuthorizationIds = new Set<string>();

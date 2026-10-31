@@ -5,18 +5,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-const getWellKnownOAuthClientOfApplication = (
-  application: Pick<ApplicationEntity, 'applicationRegistration'>,
-) =>
-  isDefined(application.applicationRegistration)
-    ? getWellKnownOAuthClientOfRegistration(application.applicationRegistration)
-        ?.client
-    : undefined;
 
 @Injectable()
 export class ApplicationAuthorizationService {
@@ -104,7 +97,6 @@ export class ApplicationAuthorizationService {
     });
   }
 
-  // Inner join drops authorizations of soft-deleted applications
   async findActiveAuthorizationsForUserWorkspace({
     userId,
     workspaceId,
@@ -112,24 +104,12 @@ export class ApplicationAuthorizationService {
     userId: string;
     workspaceId: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
-    return await this.applicationAuthorizationRepository
-      .createQueryBuilder('applicationAuthorization')
-      .innerJoinAndSelect('applicationAuthorization.application', 'application')
-      .leftJoinAndSelect(
-        'application.applicationRegistration',
-        'applicationRegistration',
-      )
-      .where('applicationAuthorization.userId = :userId', { userId })
-      .andWhere('applicationAuthorization.workspaceId = :workspaceId', {
-        workspaceId,
-      })
-      .andWhere('applicationAuthorization.revokedAt IS NULL')
-      .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
+    return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+      .andWhere('applicationAuthorization.userId = :userId', { userId })
       .getMany();
   }
 
-  // Connections made before a well-known client had its seeded registration installed their own copies,
-  // so the client's members are gathered across every install the server attributes to it
+  // A well-known client's members are gathered across every install the server attributes to it
   async findActiveAuthorizationsForWorkspaceApplication({
     workspaceId,
     applicationId,
@@ -142,37 +122,30 @@ export class ApplicationAuthorizationService {
       relations: ['applicationRegistration'],
     });
 
-    if (!isDefined(application)) {
-      return [];
+    const wellKnownOAuthClient = getWellKnownOAuthClientOfRegistration(
+      application?.applicationRegistration,
+    );
+
+    if (!isDefined(wellKnownOAuthClient)) {
+      return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+        .andWhere('applicationAuthorization.applicationId = :applicationId', {
+          applicationId,
+        })
+        .getMany();
     }
 
-    const wellKnownOAuthClient =
-      getWellKnownOAuthClientOfApplication(application);
-
-    const workspaceAuthorizations =
-      await this.applicationAuthorizationRepository
-        .createQueryBuilder('applicationAuthorization')
-        .innerJoinAndSelect(
-          'applicationAuthorization.application',
-          'application',
-        )
-        .leftJoinAndSelect(
-          'application.applicationRegistration',
-          'applicationRegistration',
-        )
-        .where('applicationAuthorization.workspaceId = :workspaceId', {
-          workspaceId,
+    const oAuthOnlyAuthorizations =
+      await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+        .andWhere('applicationRegistration.sourceType = :sourceType', {
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
         })
-        .andWhere('applicationAuthorization.revokedAt IS NULL')
-        .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
         .getMany();
 
-    return workspaceAuthorizations.filter(
+    return oAuthOnlyAuthorizations.filter(
       (authorization) =>
-        authorization.applicationId === applicationId ||
-        (isDefined(wellKnownOAuthClient) &&
-          getWellKnownOAuthClientOfApplication(authorization.application) ===
-            wellKnownOAuthClient),
+        getWellKnownOAuthClientOfRegistration(
+          authorization.application.applicationRegistration,
+        ) === wellKnownOAuthClient,
     );
   }
 
@@ -218,6 +191,29 @@ export class ApplicationAuthorizationService {
     applicationId: string;
   }): Promise<boolean> {
     return await this.revokeMatching({ userId, applicationId });
+  }
+
+  // Inner join drops authorizations of soft-deleted applications; only the registration columns that identify a well-known client are loaded
+  private createActiveAuthorizationsQueryBuilder(workspaceId: string) {
+    return this.applicationAuthorizationRepository
+      .createQueryBuilder('applicationAuthorization')
+      .innerJoinAndSelect('applicationAuthorization.application', 'application')
+      .leftJoin(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .addSelect([
+        'applicationRegistration.id',
+        'applicationRegistration.universalIdentifier',
+        'applicationRegistration.sourceType',
+        'applicationRegistration.ownerWorkspaceId',
+        'applicationRegistration.oAuthRedirectUris',
+      ])
+      .where('applicationAuthorization.workspaceId = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('applicationAuthorization.revokedAt IS NULL')
+      .orderBy('applicationAuthorization.lastUsedAt', 'DESC');
   }
 
   // The union rules out empty criteria, which would revoke every row

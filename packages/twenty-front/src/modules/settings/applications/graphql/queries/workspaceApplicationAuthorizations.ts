@@ -5,7 +5,6 @@ export const WORKSPACE_APPLICATION_AUTHORIZATIONS = gql`
     workspaceApplicationAuthorizations(applicationId: $applicationId) {
       id
       userId
-      applicationId
       scopes
       lastUsedAt
     }

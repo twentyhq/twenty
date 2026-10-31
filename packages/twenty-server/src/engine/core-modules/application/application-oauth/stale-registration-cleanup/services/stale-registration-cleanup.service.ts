@@ -7,7 +7,6 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { STALE_REGISTRATION_CLEANUP_BATCH_SIZE } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-cleanup-batch-size.constant';
-import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
 import { STALE_REGISTRATION_GRACE_PERIOD_DAYS } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/constants/stale-registration-grace-period-days.constant';
 
 @Injectable()
@@ -101,15 +100,8 @@ export class StaleRegistrationCleanupService {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .andWhere('registration.createdAt < :cutoffDate', { cutoffDate })
-      .andWhere(
-        'registration.universalIdentifier NOT IN (:...wellKnownOAuthClientUniversalIdentifiers)',
-        {
-          wellKnownOAuthClientUniversalIdentifiers:
-            WELL_KNOWN_OAUTH_CLIENTS.map(
-              ({ universalIdentifier }) => universalIdentifier,
-            ),
-        },
-      )
+      // Listed registrations are curated, not left behind by an abandoned connection
+      .andWhere('registration.isListed = false')
       .orderBy('registration.createdAt', 'ASC')
       .take(batchSize);
 

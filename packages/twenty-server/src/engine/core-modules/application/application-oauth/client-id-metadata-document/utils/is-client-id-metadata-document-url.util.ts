@@ -1,15 +1,11 @@
+import { getUrlSafely } from 'twenty-shared/utils';
+
 // draft-ietf-oauth-client-id-metadata-document §3: an https URL with a path and no fragment
 export const isClientIdMetadataDocumentUrl = (clientId: string): boolean => {
-  let url: URL;
-
-  try {
-    url = new URL(clientId);
-  } catch {
-    return false;
-  }
+  const url = getUrlSafely(clientId);
 
   return (
-    url.protocol === 'https:' &&
+    url?.protocol === 'https:' &&
     url.pathname !== '/' &&
     url.hash === '' &&
     url.username === '' &&

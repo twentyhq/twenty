@@ -1,12 +1,6 @@
-const LOOPBACK_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
+import { getUrlSafely, isDefined } from 'twenty-shared/utils';
 
-const parseUrl = (url: string): URL | null => {
-  try {
-    return new URL(url);
-  } catch {
-    return null;
-  }
-};
+import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 
 // RFC 8252 §7.3: native apps bind an ephemeral port, so a registered loopback callback matches on any port
 export const doRedirectUrisMatch = ({
@@ -20,14 +14,14 @@ export const doRedirectUrisMatch = ({
     return true;
   }
 
-  const registeredUrl = parseUrl(registeredRedirectUri);
-  const requestedUrl = parseUrl(redirectUri);
+  const registeredUrl = getUrlSafely(registeredRedirectUri);
+  const requestedUrl = getUrlSafely(redirectUri);
 
   if (
-    registeredUrl === null ||
-    requestedUrl === null ||
+    !isDefined(registeredUrl) ||
+    !isDefined(requestedUrl) ||
     registeredUrl.protocol !== 'http:' ||
-    !LOOPBACK_HOSTNAMES.includes(registeredUrl.hostname)
+    !isLoopbackHostname(registeredUrl.hostname)
   ) {
     return false;
   }

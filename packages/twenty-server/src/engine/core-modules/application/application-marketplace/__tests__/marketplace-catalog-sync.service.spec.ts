@@ -6,6 +6,7 @@ import { ApplicationPackageFetcherService } from 'src/engine/core-modules/applic
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
@@ -15,22 +16,28 @@ describe('MarketplaceCatalogSyncService - well-known OAuth clients', () => {
   let fetchAppsFromRegistry: jest.Mock;
   let syncRegistration: jest.Mock;
   let storeRegistrationAssets: jest.Mock;
-  let invalidateMarketplaceAppsCache: jest.Mock;
+  let invalidateMarketplaceCatalog: jest.Mock;
 
   beforeEach(async () => {
     fetchAppsFromRegistry = jest.fn().mockResolvedValue([]);
     syncRegistration = jest.fn(async ({ universalIdentifier }) => ({
-      id: `${universalIdentifier}-registration`,
+      registration: {
+        id: `${universalIdentifier}-registration`,
+        logoFileId: null,
+        galleryImages: [],
+      },
+      hasChanged: false,
     }));
     storeRegistrationAssets = jest.fn();
-    invalidateMarketplaceAppsCache = jest.fn();
+    invalidateMarketplaceCatalog = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MarketplaceCatalogSyncService,
+        { provide: ApplicationRegistrationService, useValue: {} },
         {
-          provide: ApplicationRegistrationService,
-          useValue: { invalidateMarketplaceAppsCache },
+          provide: ApplicationRegistrationSeedingService,
+          useValue: { invalidateMarketplaceCatalog },
         },
         { provide: ApplicationRegistrationLookupService, useValue: {} },
         {
@@ -62,7 +69,23 @@ describe('MarketplaceCatalogSyncService - well-known OAuth clients', () => {
         }),
       );
     }
-    expect(invalidateMarketplaceAppsCache).toHaveBeenCalled();
+    expect(invalidateMarketplaceCatalog).toHaveBeenCalled();
+  });
+
+  it('leaves the cached catalog alone when the seeded registrations are up to date', async () => {
+    syncRegistration.mockImplementation(async ({ universalIdentifier }) => ({
+      registration: {
+        id: `${universalIdentifier}-registration`,
+        logoFileId: 'stored-logo-file-id',
+        galleryImages: [],
+      },
+      hasChanged: false,
+    }));
+
+    await service.syncCatalog();
+
+    expect(storeRegistrationAssets).not.toHaveBeenCalled();
+    expect(invalidateMarketplaceCatalog).not.toHaveBeenCalled();
   });
 
   it('reads the logos shipped with the server', async () => {

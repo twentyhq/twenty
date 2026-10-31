@@ -5,8 +5,7 @@ import {
   type WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 
-// Connections made before the server seeded a registration per well-known client each installed their own copy,
-// so one row, preferably the seeded install, stands for all of them
+// One row per well-known client, preferably its seeded install over earlier per-connection ones
 export const collapseWellKnownOAuthClientApplications = <
   TApplication extends {
     universalIdentifier?: string | null;

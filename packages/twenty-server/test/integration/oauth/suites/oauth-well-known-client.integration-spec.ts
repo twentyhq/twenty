@@ -2,30 +2,18 @@ import crypto from 'crypto';
 
 import gql from 'graphql-tag';
 import request from 'supertest';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
-import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
 const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
-
-const findWellKnownOAuthClientUniversalIdentifier = (
-  client: WellKnownOAuthClient,
-): string => {
-  const wellKnownOAuthClient = WELL_KNOWN_OAUTH_CLIENTS.find(
-    (definition) => definition.client === client,
-  );
-
-  if (!wellKnownOAuthClient) {
-    throw new Error(`Missing well-known OAuth client ${client}`);
-  }
-
-  return wellKnownOAuthClient.universalIdentifier;
-};
 
 const authorizeAppMutation = gql`
   mutation AuthorizeApp(
@@ -84,6 +72,11 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   afterAll(async () => {
+    // Other suites insert catalog rows directly and expect the cached catalog to be rebuilt from them
+    await getAppProviderByClassName<CoreEntityCacheService>(
+      'CoreEntityCacheService',
+    ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
+
     if (createdRegistrationClientIds.length > 0) {
       await ds.query(
         `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
@@ -109,11 +102,7 @@ describe('OAuth well-known clients (integration)', () => {
 
       const [seededRegistration] = await ds.query(
         `SELECT "oAuthClientId", "sourceType" FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-        [
-          findWellKnownOAuthClientUniversalIdentifier(
-            WellKnownOAuthClient.CLAUDE,
-          ),
-        ],
+        [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
 
       expect(seededRegistration.oAuthClientId).toBe(claudeClientId);
@@ -181,16 +170,12 @@ describe('OAuth well-known clients (integration)', () => {
       expect(response.body.data.findManyMarketplaceApps).toEqual(
         expect.arrayContaining([
           {
-            id: findWellKnownOAuthClientUniversalIdentifier(
-              WellKnownOAuthClient.CHATGPT,
-            ),
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
             name: 'ChatGPT',
             isListed: true,
           },
           {
-            id: findWellKnownOAuthClientUniversalIdentifier(
-              WellKnownOAuthClient.CLAUDE,
-            ),
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
             name: 'Claude',
             isListed: true,
           },
@@ -212,9 +197,8 @@ describe('OAuth well-known clients (integration)', () => {
           }
         `,
         variables: {
-          universalIdentifier: findWellKnownOAuthClientUniversalIdentifier(
-            WellKnownOAuthClient.CLAUDE,
-          ),
+          universalIdentifier:
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
         },
       });
 

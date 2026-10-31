@@ -3,38 +3,33 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useMutation } from '@apollo/client/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconUnlink } from 'twenty-ui/icon';
-import {
-  CurrentUserApplicationAuthorizationsDocument,
-  RevokeApplicationAuthorizationDocument,
-} from '~/generated-metadata/graphql';
 
-type SettingsBuiltInMcpClientAppConnectionRowDropdownMenuProps = {
+type SettingsApplicationAuthorizationRowDropdownMenuProps = {
   applicationAuthorizationId: string;
-  appName: string;
+  revokeLabel: string;
+  confirmationTitle: string;
+  confirmationSubtitle: ReactNode;
+  onRevoke: (applicationAuthorizationId: string) => Promise<unknown>;
 };
 
-export const SettingsBuiltInMcpClientAppConnectionRowDropdownMenu = ({
+export const SettingsApplicationAuthorizationRowDropdownMenu = ({
   applicationAuthorizationId,
-  appName,
-}: SettingsBuiltInMcpClientAppConnectionRowDropdownMenuProps) => {
+  revokeLabel,
+  confirmationTitle,
+  confirmationSubtitle,
+  onRevoke,
+}: SettingsApplicationAuthorizationRowDropdownMenuProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { openDialog } = useDialog();
-  const [revokeApplicationAuthorization] = useMutation(
-    RevokeApplicationAuthorizationDocument,
-    {
-      refetchQueries: [{ query: CurrentUserApplicationAuthorizationsDocument }],
-      awaitRefetchQueries: true,
-    },
-  );
 
-  const disconnectDialogId = `disconnect-application-authorization-${applicationAuthorizationId}`;
+  const revokeDialogId = `revoke-application-authorization-${applicationAuthorizationId}`;
 
   return (
     <>
@@ -53,30 +48,25 @@ export const SettingsBuiltInMcpClientAppConnectionRowDropdownMenu = ({
           <Dropdown.Section>
             <Dropdown.ActionItem
               startIcon={<IconUnlink />}
-              onClick={() => openDialog(disconnectDialogId)}
-            >{t`Disconnect`}</Dropdown.ActionItem>
+              onClick={() => openDialog(revokeDialogId)}
+            >
+              {revokeLabel}
+            </Dropdown.ActionItem>
           </Dropdown.Section>
         </DropdownContent>
       </DropdownRoot>
       <ConfirmationDialog
-        dialogId={disconnectDialogId}
-        title={t`Disconnect ${appName}?`}
-        subtitle={
-          <Trans>
-            {appName} will lose access to this workspace when its current access
-            token expires.
-          </Trans>
-        }
+        dialogId={revokeDialogId}
+        title={confirmationTitle}
+        subtitle={confirmationSubtitle}
         onConfirmClick={async () => {
           try {
-            await revokeApplicationAuthorization({
-              variables: { applicationAuthorizationId },
-            });
+            await onRevoke(applicationAuthorizationId);
           } catch (error) {
             enqueueToast(getToastOptionsFromError({ error }));
           }
         }}
-        confirmButtonText={t`Disconnect`}
+        confirmButtonText={revokeLabel}
         shouldWaitForConfirmBeforeClosing
       />
     </>
