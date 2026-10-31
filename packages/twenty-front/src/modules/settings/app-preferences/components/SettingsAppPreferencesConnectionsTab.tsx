@@ -2,6 +2,7 @@ import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferenc
 import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
+import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
 import { SettingsApplicationAddConnectionButton } from '@/settings/applications/components/SettingsApplicationAddConnectionButton';
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
@@ -16,13 +17,11 @@ const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
 type SettingsAppPreferencesConnectionsTabProps = {
   applicationId: string;
   connectionProviders: ApplicationWithPreferences['connectionProviders'];
-  connectionRedirectLocation: string;
 };
 
 export const SettingsAppPreferencesConnectionsTab = ({
   applicationId,
   connectionProviders,
-  connectionRedirectLocation,
 }: SettingsAppPreferencesConnectionsTabProps) => {
   const { t } = useLingui();
   const {
@@ -70,7 +69,9 @@ export const SettingsAppPreferencesConnectionsTab = ({
                   <SettingsApplicationAddConnectionButton
                     applicationId={applicationId}
                     providerName={provider.name}
-                    redirectLocation={connectionRedirectLocation}
+                    redirectLocation={getApplicationPreferencesGeneralPath(
+                      applicationId,
+                    )}
                   />
                 )}
               </>
@@ -80,7 +81,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
                   applicationId={applicationId}
                   connectionProvider={provider}
                   title={t`Connect with ${provider.displayName}`}
-                  redirectLocation={connectionRedirectLocation}
                 />
               )
             )}
