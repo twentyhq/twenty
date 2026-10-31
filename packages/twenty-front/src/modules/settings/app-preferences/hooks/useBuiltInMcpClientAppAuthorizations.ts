@@ -5,23 +5,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
 
 export const useBuiltInMcpClientAppAuthorizations = (
-  builtInMcpClientApp: BuiltInMcpClientApp | undefined,
+  builtInMcpClientApp: BuiltInMcpClientApp,
 ) => {
   const { data, loading, error, refetch } = useQuery(
     CurrentUserApplicationAuthorizationsDocument,
-    {
-      fetchPolicy: 'cache-and-network',
-      skip: !isDefined(builtInMcpClientApp),
-    },
+    { fetchPolicy: 'cache-and-network' },
   );
 
   return {
-    authorizations: isDefined(builtInMcpClientApp)
-      ? getBuiltInMcpClientAppAuthorizations({
-          authorizations: data?.currentUserApplicationAuthorizations ?? [],
-          builtInMcpClientApp,
-        })
-      : [],
+    authorizations: getBuiltInMcpClientAppAuthorizations({
+      authorizations: data?.currentUserApplicationAuthorizations ?? [],
+      builtInMcpClientApp,
+    }),
     loading: loading && !isDefined(data),
     hasLoadError: isDefined(error) && !isDefined(data),
     refetch,

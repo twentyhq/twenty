@@ -34,16 +34,15 @@ const CurrentPathname = () => {
   return <span data-testid="pathname">{location.pathname}</span>;
 };
 
-const renderProtectedRoute = (
-  surface: 'main' | 'side-panel',
-  {
-    settingsPermission,
-    requiredFeatureFlag,
-  }: {
-    settingsPermission?: PermissionFlagType;
-    requiredFeatureFlag?: FeatureFlagKey;
-  } = { settingsPermission: PermissionFlagType.ROLES },
-) =>
+const renderProtectedRoute = ({
+  surface,
+  settingsPermission,
+  requiredFeatureFlag,
+}: {
+  surface: 'main' | 'side-panel';
+  settingsPermission?: PermissionFlagType;
+  requiredFeatureFlag?: FeatureFlagKey;
+}) =>
   render(
     <WorkspaceSurfaceContext.Provider
       value={{
@@ -82,7 +81,10 @@ describe('SettingsProtectedRouteWrapper', () => {
   });
 
   it('keeps a denied side-panel route in place', () => {
-    renderProtectedRoute('side-panel');
+    renderProtectedRoute({
+      surface: 'side-panel',
+      settingsPermission: PermissionFlagType.ROLES,
+    });
 
     expect(screen.getByTestId('pathname')).toHaveTextContent('/settings/roles');
     expect(
@@ -92,7 +94,10 @@ describe('SettingsProtectedRouteWrapper', () => {
   });
 
   it('preserves the existing profile redirect on the main surface', async () => {
-    renderProtectedRoute('main');
+    renderProtectedRoute({
+      surface: 'main',
+      settingsPermission: PermissionFlagType.ROLES,
+    });
 
     await waitFor(() =>
       expect(screen.getByTestId('pathname')).toHaveTextContent(
@@ -103,7 +108,8 @@ describe('SettingsProtectedRouteWrapper', () => {
   });
 
   it('opens a route that only requires a feature flag without any permission', () => {
-    renderProtectedRoute('main', {
+    renderProtectedRoute({
+      surface: 'main',
       requiredFeatureFlag: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
     });
 
@@ -113,7 +119,8 @@ describe('SettingsProtectedRouteWrapper', () => {
   it('redirects a flag-only route when the feature flag is off', async () => {
     useIsFeatureEnabledMock.mockReturnValue(false);
 
-    renderProtectedRoute('main', {
+    renderProtectedRoute({
+      surface: 'main',
       requiredFeatureFlag: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
     });
 

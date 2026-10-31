@@ -1,6 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsBuiltInMcpClientAppConnectionsSection } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionsSection';
-import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
@@ -21,8 +20,6 @@ export const SettingsBuiltInMcpClientApp = () => {
   const app = BUILT_IN_MCP_CLIENT_APPS.find(
     (builtInMcpClientApp) => builtInMcpClientApp.id === applicationId,
   );
-  const { authorizations, loading, hasLoadError, refetch } =
-    useBuiltInMcpClientAppAuthorizations(app);
 
   if (!isDefined(app)) {
     return (
@@ -71,10 +68,6 @@ export const SettingsBuiltInMcpClientApp = () => {
         <SettingsBuiltInMcpClientAppConnectionsSection
           app={app}
           connectLink={connectLink}
-          authorizations={authorizations}
-          loading={loading}
-          hasLoadError={hasLoadError}
-          refetch={refetch}
         />
       </SettingsPageContainer>
     </SettingsPageLayout>

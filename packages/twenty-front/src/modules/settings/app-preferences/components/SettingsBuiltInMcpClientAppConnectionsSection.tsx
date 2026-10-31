@@ -1,7 +1,7 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionRowDropdownMenu';
 import { SettingsBuiltInMcpClientAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsCell';
+import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
 import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
@@ -11,7 +11,6 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +21,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledTableRows = styled.div`
@@ -45,23 +44,16 @@ const StyledConnectCardContainer = styled.div`
 type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
   app: BuiltInMcpClientApp;
   connectLink: string | undefined;
-  authorizations: BuiltInMcpClientAppAuthorization[];
-  loading: boolean;
-  hasLoadError: boolean;
-  refetch: () => Promise<unknown>;
 };
 
 export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   app,
   connectLink,
-  authorizations,
-  loading,
-  hasLoadError,
-  refetch,
 }: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const { authorizations, loading, hasLoadError, refetch } =
+    useBuiltInMcpClientAppAuthorizations(app);
 
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
@@ -69,9 +61,8 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const getLastUsedLabel = (
     authorization: BuiltInMcpClientAppAuthorization,
   ) => {
-    const lastUsed = beautifyPastDateRelativeToNow(
+    const lastUsed = beautifyPastDateRelativeToNowShort(
       authorization.lastUsedAt,
-      localeCatalog,
     );
 
     return t`Last used ${lastUsed}`;

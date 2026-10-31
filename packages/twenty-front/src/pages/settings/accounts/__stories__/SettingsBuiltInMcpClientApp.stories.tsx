@@ -97,7 +97,7 @@ export const ClaudeConnectionListsItsPermissions: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Connected')).toBeVisible();
-    expect(canvas.getByText('Last used about 2 hours ago')).toBeVisible();
+    expect(canvas.getByText('Last used 2h')).toBeVisible();
     expect(canvas.getByText('Permissions')).toBeVisible();
     expect(
       canvas.getByText('Access your workspace data, Read your profile'),
@@ -126,8 +126,8 @@ export const ClaudeConnectionsShowWhenEachWasLastUsed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Last used 3 days ago')).toBeVisible();
-    expect(canvas.getByText('Last used about 2 hours ago')).toBeVisible();
+    expect(await canvas.findByText('Last used 3d')).toBeVisible();
+    expect(canvas.getByText('Last used 2h')).toBeVisible();
   },
 };
 
@@ -157,6 +157,6 @@ export const ClaudeOpensWithoutConnectedAccountsPermission: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Connected')).toBeVisible();
-    expect(canvas.getByText('Last used about 2 hours ago')).toBeVisible();
+    expect(canvas.getByText('Last used 2h')).toBeVisible();
   },
 };
