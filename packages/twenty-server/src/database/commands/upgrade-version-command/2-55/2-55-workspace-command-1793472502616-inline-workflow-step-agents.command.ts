@@ -89,7 +89,7 @@ type ConversationalStepAgentSource = {
 
 // Moves each builder AI step's hidden agent into the step; deleting the agents is a later command.
 // A step with human input or a conversation is an Agent step: it keeps its agent, made visible so that deletion spares it
-@RegisteredWorkspaceCommand('2.55.0', 1793446972324)
+@RegisteredWorkspaceCommand('2.55.0', 1793472502616)
 @Command({
   name: 'upgrade:2-55:inline-workflow-step-agents',
   description:

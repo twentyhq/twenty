@@ -8,7 +8,7 @@ import { AddAccessGroupStorageColumnsCommand } from 'src/database/commands/upgra
 import { AddPrivateRecordColumnCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793436309311-add-private-record-column.command';
 import { MakeRestrictedRecordsPrivateCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793457458179-make-restricted-records-private.command';
 import { MakeChatThreadsPrivateRecordsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793460623155-make-chat-threads-private-records.command';
-import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793446972324-inline-workflow-step-agents.command';
+import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793472502616-inline-workflow-step-agents.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
