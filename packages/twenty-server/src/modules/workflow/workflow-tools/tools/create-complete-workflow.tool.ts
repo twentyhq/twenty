@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_ACTION_FEATURE_FLAGS,
   workflowActionSchema,
   WorkflowActionType,
@@ -51,10 +52,20 @@ const createCompleteWorkflowSchema = z.object({
     .describe('Whether to activate the workflow immediately (default: false)'),
 });
 
-type CreateCompleteWorkflowToolDeps = Pick<
-  WorkflowToolDependencies,
-  'coreWorkflowMutationService' | 'coreWorkflowLifecycleService'
->;
+type CreateCompleteWorkflowToolDeps = {
+  coreWorkflowMutationService: Pick<
+    WorkflowToolDependencies['coreWorkflowMutationService'],
+    'createWorkflowWithContent'
+  >;
+  coreWorkflowLifecycleService: Pick<
+    WorkflowToolDependencies['coreWorkflowLifecycleService'],
+    'activateCoreWorkflowVersion'
+  >;
+  workflowAiAgentStepAgentService: Pick<
+    WorkflowToolDependencies['workflowAiAgentStepAgentService'],
+    'findAgentRunnableByNewStepOrThrow'
+  >;
+};
 
 type CreateCompleteWorkflowFailure = {
   success: false;
@@ -91,7 +102,7 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
-- Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_workflow_agent to configure the agent.
+- Setting an AI_AGENT step's agentId without being asked to run that agent: a step without agentId carries its own settings.input.instructions (system prompt), prompt (the message sent on each run), modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers; no data access when unset). A step with agentId runs that existing agent: the agent supplies the instructions, model and permissions, and its response format unless the step sets settings.input.responseFormat.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -202,6 +213,11 @@ const createWorkflowOrBuildFailure = async ({
 > => {
   try {
     assertStepTypesAreSupported(steps);
+    await assertAiAgentStepsRunReusableAgentsOrThrow({
+      deps,
+      workspaceId,
+      steps,
+    });
 
     return {
       createdWorkflow:
@@ -233,13 +249,6 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
     );
   }
 
-  if (steps.some((step) => step.type === WorkflowActionType.AI_AGENT)) {
-    throw new WorkflowVersionStepException(
-      'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_workflow_agent to configure the agent.',
-      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-    );
-  }
-
   const flagGatedStep = steps.find((step) =>
     isDefined(WORKFLOW_ACTION_FEATURE_FLAGS[step.type]),
   );
@@ -250,4 +259,33 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
+};
+
+const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
+  deps,
+  workspaceId,
+  steps,
+}: {
+  deps: Pick<CreateCompleteWorkflowToolDeps, 'workflowAiAgentStepAgentService'>;
+  workspaceId: string;
+  steps: WorkflowAction[];
+}): Promise<void> => {
+  const agentIds = new Set(
+    steps.flatMap((step) =>
+      step.type === WorkflowActionType.AI_AGENT &&
+      !isWorkflowAiAgentGenerateStep(step.settings.input) &&
+      isDefined(step.settings.input.agentId)
+        ? [step.settings.input.agentId]
+        : [],
+    ),
+  );
+
+  await Promise.all(
+    [...agentIds].map((agentId) =>
+      deps.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow({
+        agentId,
+        workspaceId,
+      }),
+    ),
+  );
 };

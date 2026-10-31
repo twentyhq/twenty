@@ -2,7 +2,9 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
+import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
@@ -19,11 +21,8 @@ const CRUD_PERMISSION_ORDER = CRUD_PERMISSIONS.reduce<
 
 type WorkflowAiAgentPermissionListProps = {
   readonly: boolean;
-  objectPermissions: ObjectPermission[];
-  onDeletePermission: (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => void;
+  objectPermissions: WorkflowAiAgentObjectPermission[];
+  onDeletePermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
   searchQuery: string;
 };
 
@@ -36,20 +35,24 @@ export const WorkflowAiAgentPermissionList = ({
   const { activeObjectMetadataItems: objectMetadataItems } =
     useFilteredObjectMetadataItems();
 
+  const allObjectsLabel = t`all objects`;
+
   const sortedExistingPermissions = objectPermissions
     .reduce<
       Array<{
-        objectMetadataId: string;
+        objectMetadataId: string | null;
         objectLabel: string;
         permissionKey: SettingsRoleObjectPermissionKey;
         permissionLabel: string;
       }>
     >((permissions, objectPermission) => {
-      const objectMetadata = objectMetadataItems.find(
-        (item) => item.id === objectPermission.objectMetadataId,
-      );
+      const objectLabel = isDefined(objectPermission.objectMetadataId)
+        ? objectMetadataItems.find(
+            (item) => item.id === objectPermission.objectMetadataId,
+          )?.labelPlural
+        : allObjectsLabel;
 
-      if (!objectMetadata) {
+      if (!isDefined(objectLabel)) {
         return permissions;
       }
 
@@ -57,9 +60,9 @@ export const WorkflowAiAgentPermissionList = ({
         if (objectPermission[crud.key] === true) {
           permissions.push({
             objectMetadataId: objectPermission.objectMetadataId,
-            objectLabel: objectMetadata.labelPlural,
+            objectLabel,
             permissionKey: crud.key,
-            permissionLabel: crud.label(objectMetadata.labelPlural),
+            permissionLabel: crud.label(objectLabel),
           });
         }
       });
@@ -75,6 +78,16 @@ export const WorkflowAiAgentPermissionList = ({
           CRUD_PERMISSION_ORDER[permissionA.permissionKey] -
           CRUD_PERMISSION_ORDER[permissionB.permissionKey]
         );
+      }
+
+      const isPermissionAOnAllObjects = !isDefined(
+        permissionA.objectMetadataId,
+      );
+
+      if (
+        isPermissionAOnAllObjects !== !isDefined(permissionB.objectMetadataId)
+      ) {
+        return isPermissionAOnAllObjects ? -1 : 1;
       }
 
       return permissionA.objectLabel.localeCompare(permissionB.objectLabel);
@@ -104,11 +117,12 @@ export const WorkflowAiAgentPermissionList = ({
           }}
           isEnabled={true}
           readonly={readonly}
+          showDeleteButton={!readonly && isDefined(onDeletePermission)}
           onDelete={() =>
-            onDeletePermission(
-              permission.objectMetadataId,
-              permission.permissionKey,
-            )
+            onDeletePermission?.({
+              objectMetadataId: permission.objectMetadataId,
+              permissionKey: permission.permissionKey,
+            })
           }
         />
       ))}

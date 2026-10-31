@@ -10,6 +10,7 @@ import type { LogicFunctionFromSourceService } from 'src/engine/metadata-modules
 import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import type { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import type { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import type { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 
 export type WorkflowToolDependencies = {
   coreWorkflowListService: CoreWorkflowListService;
@@ -23,6 +24,7 @@ export type WorkflowToolDependencies = {
   logicFunctionFromSourceService: LogicFunctionFromSourceService;
   flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService;
   agentService: AgentService;
+  workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService;
 };
 
 export type WorkflowToolContext = {

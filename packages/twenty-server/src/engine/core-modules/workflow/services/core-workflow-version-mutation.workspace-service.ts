@@ -46,6 +46,7 @@ import {
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
+import { isWorkflowStepRebuiltOnUpdate } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/is-workflow-step-rebuilt-on-update.util';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -220,10 +221,13 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       );
     }
 
-    const isStepTypeChanged = existingStep.type !== step.type;
+    const isStepRebuilt = isWorkflowStepRebuiltOnUpdate({
+      existingStep,
+      updatedStep: step,
+    });
 
-    const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
-      ? await this.rebuildStepForTypeChange({
+    const { updatedStep, additionalCreatedSteps } = isStepRebuilt
+      ? await this.rebuildStep({
           existingStep,
           newStep: step,
           workspaceId,
@@ -247,7 +251,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         steps: updatedSteps,
       })
       .catch(async (error: unknown) => {
-        if (isStepTypeChanged) {
+        if (isStepRebuilt) {
           const stepsToDelete =
             error instanceof CoreWorkflowVersionPostCommitError
               ? [existingStep]
@@ -268,7 +272,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         throw error;
       });
 
-    if (isStepTypeChanged) {
+    if (isStepRebuilt) {
       await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
         {
           step: existingStep,
@@ -699,7 +703,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     });
   }
 
-  private async rebuildStepForTypeChange({
+  private async rebuildStep({
     existingStep,
     newStep,
     workspaceId,
@@ -725,6 +729,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     return {
       updatedStep: {
         ...builtStep,
+        name: await this.workflowVersionStepOperationsWorkspaceService.getRebuiltStepName(
+          { existingStep, builtStep, workspaceId },
+        ),
         nextStepIds: getNextStepIdsForStepTypeChange({
           existingStep,
           builtStep,
