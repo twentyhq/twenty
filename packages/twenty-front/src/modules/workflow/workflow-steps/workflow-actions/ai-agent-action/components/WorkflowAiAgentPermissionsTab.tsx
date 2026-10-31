@@ -3,35 +3,21 @@ import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permiss
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
-import { useWorkflowAiAgentScopePermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentScopePermissionActions';
-import { getWorkflowAiAgentObjectPermissionsFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentObjectPermissionsFromScope';
-import { hasWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/hasWorkflowAiAgentAllObjectsPermissionInScope';
-import { getWorkflowAiAgentPermissionFlagKeysFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentPermissionFlagKeysFromScope';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
-import {
-  GetRoleDocument,
-  type ObjectPermission,
-} from '~/generated-metadata/graphql';
-import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
+import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { WorkflowAiAgentAllObjectsPermissionList } from './WorkflowAiAgentAllObjectsPermissionList';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
@@ -70,29 +56,24 @@ const StyledGroupsContainer = styled.div`
 `;
 
 type WorkflowAiAgentPermissionsTabProps = {
-  stepId: string;
   readonly: boolean;
-  // a legacy step runs a hidden agent whose role holds its permissions; any other step holds a scope
-  isAgentBacked: boolean;
-  scope: AiRunScope | undefined;
-  onScopeChange: (scope: AiRunScope) => void;
-  isAgentLoading: boolean;
-  refetchAgent: () => Promise<{ data?: { findOneAgent?: FlatAgent } }>;
+  objectPermissions: WorkflowAiAgentObjectPermission[];
+  permissionFlagKeys: string[];
+  onAddPermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
+  onDeletePermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
+  onAddPermissionFlag?: (permissionFlagKey: string) => void;
+  onDeletePermissionFlag?: (permissionFlagKey: string) => void;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
-  stepId,
   readonly,
-  isAgentBacked,
-  scope,
-  onScopeChange,
-  isAgentLoading,
-  refetchAgent,
+  objectPermissions,
+  permissionFlagKeys,
+  onAddPermission,
+  onDeletePermission,
+  onAddPermissionFlag,
+  onDeletePermissionFlag,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const workflowAiAgentActionAgent = useAtomStateValue(
-    workflowAiAgentActionAgentState,
-  );
-
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
@@ -117,40 +98,12 @@ export const WorkflowAiAgentPermissionsTab = ({
       itemA.nameSingular.localeCompare(itemB.nameSingular),
     );
 
-  const agentRoleId = workflowAiAgentActionAgent?.roleId;
-  const {
-    data: roleData,
-    loading: roleLoading,
-    refetch: refetchRole,
-  } = useQuery(GetRoleDocument, {
-    variables: { id: agentRoleId ?? '' },
-    skip: !isAgentBacked || !isDefined(agentRoleId),
-  });
-
   const [searchQuery, setSearchQuery] = useState('');
-  const role = roleData?.getRole;
-  const roleObjectPermissions = role?.objectPermissions || [];
-  const scopeObjectPermissions = getWorkflowAiAgentObjectPermissionsFromScope({
-    scope,
-    objectMetadataItems: allObjectMetadataItems,
-  });
-  const objectPermissions: ObjectPermission[] = isAgentBacked
-    ? roleObjectPermissions
-    : scopeObjectPermissions;
-  const permissionFlagKeys = isAgentBacked
-    ? (role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ??
-      [])
-    : getWorkflowAiAgentPermissionFlagKeysFromScope(scope);
-  const hasListedPermissions =
-    objectPermissions.length > 0 || permissionFlagKeys.length > 0;
-  const hasRolePermissions =
-    isDefined(workflowAiAgentActionAgent?.roleId) && hasListedPermissions;
-  const hasScopePermissions =
-    hasListedPermissions ||
-    hasWorkflowAiAgentAllObjectsPermissionInScope(scope);
-  const hasPermissions = isAgentBacked
-    ? hasRolePermissions
-    : hasScopePermissions;
+  const hasPermissions =
+    permissionFlagKeys.length > 0 ||
+    objectPermissions.some((objectPermission) =>
+      CRUD_PERMISSIONS.some(({ key }) => objectPermission[key] === true),
+    );
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
@@ -176,46 +129,6 @@ export const WorkflowAiAgentPermissionsTab = ({
     permissionFlagKeys,
     searchQuery,
   });
-
-  const refetchAgentAndRoles = async () => {
-    const result = await refetchAgent();
-    const refetchedAgent = result?.data?.findOneAgent;
-
-    // The role may have just been created, so the query can still be skipped or bound to a stale id
-    if (isDefined(refetchedAgent?.roleId)) {
-      await refetchRole({ id: refetchedAgent.roleId });
-    }
-
-    return { refetchedAgent };
-  };
-
-  const rolePermissionActions = useWorkflowAiAgentPermissionActions({
-    stepId,
-    readonly,
-    objectPermissions: roleObjectPermissions,
-    permissionFlagKeys,
-    refetchAgentAndRoles,
-  });
-  const scopePermissionActions = useWorkflowAiAgentScopePermissionActions({
-    scope,
-    readonly,
-    permissionFlagKeys,
-    onScopeChange,
-  });
-  const {
-    handleAddPermission,
-    handleDeletePermission,
-    handleAddPermissionFlag,
-    handleDeletePermissionFlag,
-  } = isAgentBacked ? rolePermissionActions : scopePermissionActions;
-
-  if (isAgentBacked && (isAgentLoading || roleLoading)) {
-    return <SidePanelSkeletonLoader />;
-  }
-
-  if (isAgentBacked && !isDefined(workflowAiAgentActionAgent)) {
-    return null;
-  }
 
   const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
     ? allObjectMetadataItems.find(
@@ -296,7 +209,7 @@ export const WorkflowAiAgentPermissionsTab = ({
             })}
             objectPermissions={objectPermissionForSelected}
             readonly={readonly}
-            onAddPermission={handleAddPermission}
+            onAddPermission={onAddPermission}
             objectMetadataId={selectedObject.id}
           />
         )}
@@ -324,27 +237,17 @@ export const WorkflowAiAgentPermissionsTab = ({
                 permissions={filteredActionPermissions}
                 enabledPermissionFlagKeys={permissionFlagKeys}
                 readonly={readonly}
-                onAddPermissionFlag={handleAddPermissionFlag}
+                onAddPermissionFlag={onAddPermissionFlag}
               />
             </>
           ))}
 
         {shouldShowExistingPermissions && (
           <>
-            {!isAgentBacked && (
-              <WorkflowAiAgentAllObjectsPermissionList
-                scope={scope}
-                readonly={readonly}
-                searchQuery={searchQuery}
-                onDeletePermission={
-                  scopePermissionActions.handleDeleteAllObjectsPermission
-                }
-              />
-            )}
             <WorkflowAiAgentPermissionList
               readonly={readonly}
               objectPermissions={objectPermissions}
-              onDeletePermission={handleDeletePermission}
+              onDeletePermission={onDeletePermission}
               searchQuery={searchQuery}
             />
             <WorkflowAiAgentPermissionsFlagList
@@ -353,7 +256,7 @@ export const WorkflowAiAgentPermissionsTab = ({
               enabledPermissionFlagKeys={permissionFlagKeys}
               readonly={readonly}
               showDeleteButton={!readonly}
-              onDeletePermissionFlag={handleDeletePermissionFlag}
+              onDeletePermissionFlag={onDeletePermissionFlag}
             />
           </>
         )}

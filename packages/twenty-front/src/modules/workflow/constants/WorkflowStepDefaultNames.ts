@@ -2,7 +2,6 @@ import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentGenerateStepDefaultName';
 import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { CREATE_CALENDAR_EVENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateCalendarEventAction';
@@ -29,6 +28,7 @@ import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from 'twenty-shared/workflow';
 
 export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   type: WorkflowActionType | WorkflowTriggerType;

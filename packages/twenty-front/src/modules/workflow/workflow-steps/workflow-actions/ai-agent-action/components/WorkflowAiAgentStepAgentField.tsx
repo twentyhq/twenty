@@ -1,3 +1,4 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -17,7 +18,7 @@ export const WorkflowAiAgentStepAgentField = ({
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const Icon = getIcon(agent.icon || 'IconLego');
+  const Icon = getIcon(getAgentIcon(agent.icon));
 
   return (
     <FormFieldInputContainer>

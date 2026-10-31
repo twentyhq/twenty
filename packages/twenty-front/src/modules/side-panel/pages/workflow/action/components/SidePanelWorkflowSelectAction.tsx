@@ -17,7 +17,6 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentGenerateStepDefaultName';
 import { isAgentSelectableAsWorkflowStep } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/isAgentSelectableAsWorkflowStep';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -31,7 +30,6 @@ import {
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
   defaultSettings?: Record<string, unknown>;
-  defaultName?: string;
 };
 
 export const SidePanelWorkflowSelectAction = ({
@@ -94,25 +92,13 @@ export const SidePanelWorkflowSelectAction = ({
   );
 
   const handleActionClick = (actionType: WorkflowActionType) => {
-    if (actionType === 'AI_AGENT') {
-      // they replace a step's settings on a type change, so Generate drops an agent step's agent
-      onActionSelected({
-        type: actionType,
-        defaultSettings: { input: { instructions: '', prompt: '' } },
-        defaultName: WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
-      });
-
-      return;
-    }
-
     onActionSelected({ type: actionType });
   };
 
-  const handleAgentClick = (agent: { id: string; label: string }) => {
+  const handleAgentClick = (agentId: string) => {
     onActionSelected({
       type: 'AI_AGENT',
-      defaultSettings: { input: { agentId: agent.id } },
-      defaultName: agent.label,
+      defaultSettings: { input: { agentId } },
     });
   };
 
@@ -152,7 +138,7 @@ export const SidePanelWorkflowSelectAction = ({
             <AgentMenuItem
               key={agent.id}
               agent={agent}
-              onClick={() => handleAgentClick(agent)}
+              onClick={() => handleAgentClick(agent.id)}
             />
           ))}
         </>

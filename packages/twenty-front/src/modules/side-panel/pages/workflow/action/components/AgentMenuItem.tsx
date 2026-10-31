@@ -1,3 +1,4 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
@@ -11,7 +12,7 @@ type AgentMenuItemProps = {
 
 export const AgentMenuItem = ({ agent, onClick }: AgentMenuItemProps) => {
   const { getIcon } = useIcons();
-  const Icon = getIcon(agent.icon || 'IconLego');
+  const Icon = getIcon(getAgentIcon(agent.icon));
 
   return (
     <ListItemButton

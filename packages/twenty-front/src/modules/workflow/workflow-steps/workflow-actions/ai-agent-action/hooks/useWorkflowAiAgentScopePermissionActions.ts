@@ -1,27 +1,23 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
-import { grantWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermissionInScope';
-import { revokeWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermissionInScope';
-import { revokeWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentAllObjectsPermissionInScope';
-import { setWorkflowAiAgentPermissionFlagKeysInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentPermissionFlagKeysInScope';
+import { applyWorkflowAiAgentScopeObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopeObjectPermissionChange';
+import { isUndefined } from '@sniptt/guards';
 import { type AiRunScope } from 'twenty-shared/ai';
+import { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseWorkflowAiAgentScopePermissionActionsParams = {
   scope: AiRunScope | undefined;
-  readonly: boolean;
   permissionFlagKeys: string[];
   onScopeChange: (scope: AiRunScope) => void;
 };
 
 export const useWorkflowAiAgentScopePermissionActions = ({
   scope,
-  readonly,
   permissionFlagKeys,
   onScopeChange,
 }: UseWorkflowAiAgentScopePermissionActionsParams) => {
@@ -42,100 +38,53 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     setWorkflowAiAgentPermissionsIsSystemObjectsListOpen(false);
   };
 
-  const findObjectUniversalIdentifier = (objectMetadataId: string) =>
-    objectMetadataItems.find((item) => item.id === objectMetadataId)
-      ?.universalIdentifier;
-
-  const updateObjectPermissionInScope = ({
-    objectMetadataId,
-    permissionKey,
-    update,
-  }: WorkflowAiAgentObjectPermissionChange & {
-    update: typeof grantWorkflowAiAgentObjectPermissionInScope;
-  }): boolean => {
-    const objectUniversalIdentifier =
-      findObjectUniversalIdentifier(objectMetadataId);
-
-    if (readonly || !isDefined(objectUniversalIdentifier)) {
-      return false;
-    }
-
-    onScopeChange(update({ scope, objectUniversalIdentifier, permissionKey }));
-
-    return true;
-  };
-
-  const handleAddPermission = (
-    change: WorkflowAiAgentObjectPermissionChange,
+  const changeObjectPermission = (
+    { objectMetadataId, permissionKey }: WorkflowAiAgentObjectPermissionChange,
+    value: boolean,
   ) => {
-    if (
-      updateObjectPermissionInScope({
-        ...change,
-        update: grantWorkflowAiAgentObjectPermissionInScope,
-      })
-    ) {
-      closeAddPermission();
-    }
-  };
+    const objectUniversalIdentifier = isDefined(objectMetadataId)
+      ? objectMetadataItems.find((item) => item.id === objectMetadataId)
+          ?.universalIdentifier
+      : null;
 
-  const handleDeletePermission = (
-    change: WorkflowAiAgentObjectPermissionChange,
-  ) => {
-    updateObjectPermissionInScope({
-      ...change,
-      update: revokeWorkflowAiAgentObjectPermissionInScope,
-    });
-  };
-
-  const handleAddPermissionFlag = (permissionFlagKey: string) => {
-    if (readonly || permissionFlagKeys.includes(permissionFlagKey)) {
+    if (isUndefined(objectUniversalIdentifier)) {
       return;
     }
 
     onScopeChange(
-      setWorkflowAiAgentPermissionFlagKeysInScope({
+      applyWorkflowAiAgentScopeObjectPermissionChange({
         scope,
-        permissionFlagKeys: [...permissionFlagKeys, permissionFlagKey],
-      }),
-    );
-    closeAddPermission();
-  };
-
-  const handleDeleteAllObjectsPermission = (
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
-    if (readonly) {
-      return;
-    }
-
-    onScopeChange(
-      revokeWorkflowAiAgentAllObjectsPermissionInScope({
-        scope,
+        objectUniversalIdentifier,
         permissionKey,
+        value,
       }),
     );
   };
 
-  const handleDeletePermissionFlag = (permissionFlagKey: string) => {
-    if (readonly) {
-      return;
-    }
-
-    onScopeChange(
-      setWorkflowAiAgentPermissionFlagKeysInScope({
-        scope,
-        permissionFlagKeys: permissionFlagKeys.filter(
-          (key) => key !== permissionFlagKey,
-        ),
-      }),
-    );
-  };
+  const setPermissionFlagKeys = (nextPermissionFlagKeys: string[]) =>
+    onScopeChange({
+      ...scope,
+      permissionFlagUniversalIdentifiers: nextPermissionFlagKeys
+        .map((permissionFlagKey) =>
+          PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE.get(permissionFlagKey),
+        )
+        .filter(isDefined),
+    });
 
   return {
-    handleAddPermission,
-    handleDeletePermission,
-    handleAddPermissionFlag,
-    handleDeletePermissionFlag,
-    handleDeleteAllObjectsPermission,
+    onAddPermission: (change: WorkflowAiAgentObjectPermissionChange) => {
+      changeObjectPermission(change, true);
+      closeAddPermission();
+    },
+    onDeletePermission: (change: WorkflowAiAgentObjectPermissionChange) =>
+      changeObjectPermission(change, false),
+    onAddPermissionFlag: (permissionFlagKey: string) => {
+      setPermissionFlagKeys([...permissionFlagKeys, permissionFlagKey]);
+      closeAddPermission();
+    },
+    onDeletePermissionFlag: (permissionFlagKey: string) =>
+      setPermissionFlagKeys(
+        permissionFlagKeys.filter((key) => key !== permissionFlagKey),
+      ),
   };
 };
