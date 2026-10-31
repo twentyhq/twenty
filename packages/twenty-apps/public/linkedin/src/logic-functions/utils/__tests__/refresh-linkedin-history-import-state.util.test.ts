@@ -4,11 +4,13 @@ import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-impo
 
 const mocks = vi.hoisted(() => ({
   getJobs: vi.fn(),
+  enqueueJobs: vi.fn(),
   kvStore: new Map<string, unknown>(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
   getJobs: mocks.getJobs,
+  enqueueJobs: mocks.enqueueJobs,
   kv: {
     get: async (key: string) => mocks.kvStore.get(key) ?? null,
     set: async (key: string, value: unknown) => {
@@ -150,6 +152,35 @@ describe('refreshLinkedinHistoryImportState', () => {
         error: { code: 'UNKNOWN', message: 'Boom' },
       }),
     );
+  });
+
+  it('queues the listed page again when its job is missing', async () => {
+    setProgress({ completedChunkCount: 2, completedConversationCount: 40 });
+
+    await refreshLinkedinHistoryImportState('connection-id');
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: 'linkedin-history-chunk-run-1-2',
+            payload: {
+              connectedAccountId: 'connection-id',
+              runId: 'run-1',
+              chunkIndex: 2,
+            },
+          },
+        ],
+      }),
+    );
+  });
+
+  it('leaves the page being imported alone', async () => {
+    setProgress({ completedChunkCount: 1 });
+
+    await refreshLinkedinHistoryImportState('connection-id');
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('fails a run whose planning job is gone', async () => {

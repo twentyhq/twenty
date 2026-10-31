@@ -33,6 +33,18 @@ type LinkedinImportHistoryResult = {
   importedConversationCount?: number;
 };
 
+const handOffToNextChunk = async ({
+  connectedAccountId,
+  runId,
+  chunkIndex,
+}: LinkedinImportHistoryJobPayload): Promise<void> => {
+  const nextChunk = { connectedAccountId, runId, chunkIndex: chunkIndex + 1 };
+
+  if ((await getLinkedinHistoryImportChunkChats(nextChunk)) !== null) {
+    await enqueueLinkedinImportHistoryJob(nextChunk);
+  }
+};
+
 const saveProgressIfActive = async ({
   payload,
   progress,
@@ -60,6 +72,12 @@ export const linkedinImportHistoryHandler = async (
   const { connectedAccountId, runId, chunkIndex } = payload;
   const startProgress = await getLinkedinHistoryImportProgress(payload);
   const chats = await getLinkedinHistoryImportChunkChats(payload);
+
+  if (startProgress.completedChunkCount === chunkIndex + 1) {
+    await handOffToNextChunk(payload);
+
+    return { status: 'SKIPPED' };
+  }
 
   if (startProgress.completedChunkCount !== chunkIndex || chats === null) {
     return { status: 'SKIPPED' };
@@ -221,11 +239,7 @@ export const linkedinImportHistoryHandler = async (
     return { status: 'CANCELLED' };
   }
 
-  const nextChunk = { connectedAccountId, runId, chunkIndex: chunkIndex + 1 };
-
-  if ((await getLinkedinHistoryImportChunkChats(nextChunk)) !== null) {
-    await enqueueLinkedinImportHistoryJob(nextChunk);
-  }
+  await handOffToNextChunk(payload);
 
   return { status: 'COMPLETED', importedConversationCount };
 };

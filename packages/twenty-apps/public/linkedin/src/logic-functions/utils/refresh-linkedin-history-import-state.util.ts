@@ -1,6 +1,7 @@
 import { getJobs } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enqueue-linkedin-import-history-job.util';
 import {
   getLinkedinImportHistoryJobId,
   getLinkedinPlanHistoryImportJobId,
@@ -106,6 +107,19 @@ export const refreshLinkedinHistoryImportState = async (
           }),
       )
     : undefined;
+  if (
+    hasPlannedCurrentChunk &&
+    !isDefined(currentChunkJob) &&
+    !isDefined(progress.currentJobId) &&
+    !isDefined(progress.error)
+  ) {
+    await enqueueLinkedinImportHistoryJob({
+      connectedAccountId,
+      runId: state.runId,
+      chunkIndex: progress.completedChunkCount,
+    });
+  }
+
   const error =
     progress.error ??
     (currentChunkJob?.state === 'FAILED'

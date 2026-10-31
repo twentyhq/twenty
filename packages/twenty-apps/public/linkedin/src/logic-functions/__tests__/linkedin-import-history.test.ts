@@ -183,10 +183,32 @@ describe('linkedinImportHistoryHandler', () => {
     await linkedinImportHistoryHandler(PAYLOAD);
   });
 
-  it('skips a page that is not next in line', async () => {
+  it('only hands over to the next page when retried after finishing its own', async () => {
     mocks.kvStore.set(PROGRESS_KEY, {
       ...PROGRESS_BEFORE_CHUNK_2,
       completedChunkCount: 3,
+    });
+    mocks.kvStore.set(getChatsKey(3), [{ id: 'chat-3' }]);
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'SKIPPED',
+    });
+    expect(mocks.ingestLinkedinMessages).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            jobId: 'linkedin-history-chunk-run-1-3',
+          }),
+        ],
+      }),
+    );
+  });
+
+  it('skips a page that is not next in line', async () => {
+    mocks.kvStore.set(PROGRESS_KEY, {
+      ...PROGRESS_BEFORE_CHUNK_2,
+      completedChunkCount: 1,
     });
 
     await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
