@@ -6520,6 +6520,7 @@ export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
   canManageSharing: Scalars['Boolean']['output'];
   hasManagedGeneralAccess: Scalars['Boolean']['output'];
+  isAlwaysPrivate: Scalars['Boolean']['output'];
   isPrivate: Scalars['Boolean']['output'];
   isShareable: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;

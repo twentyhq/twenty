@@ -4,6 +4,7 @@ export const RECORD_SHARING_FRAGMENT = gql`
   fragment RecordSharingFields on RecordSharingDTO {
     isShareable
     isPrivate
+    isAlwaysPrivate
     canManageSharing
     permissions {
       canRead

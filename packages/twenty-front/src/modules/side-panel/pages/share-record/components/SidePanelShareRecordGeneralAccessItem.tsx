@@ -16,6 +16,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SidePanelShareRecordGeneralAccessItemProps = {
   isPrivate: boolean;
+  isAlwaysPrivate: boolean;
   hasManagedGeneralAccess: boolean;
   objectLabelPlural: string;
   isSaving: boolean;
@@ -24,6 +25,7 @@ type SidePanelShareRecordGeneralAccessItemProps = {
 
 export const SidePanelShareRecordGeneralAccessItem = ({
   isPrivate,
+  isAlwaysPrivate,
   hasManagedGeneralAccess,
   objectLabelPlural,
   isSaving,
@@ -71,16 +73,18 @@ export const SidePanelShareRecordGeneralAccessItem = ({
         >
           {t`Restricted`}
         </Dropdown.OptionItem>
-        <Dropdown.OptionItem
-          startIcon={<IconPencil />}
-          selected={!isPrivate}
-          disabled={!isPrivate || isSaving}
-          onSelect={() => {
-            void setPrivate(false);
-          }}
-        >
-          {t(generalAccessLabel)}
-        </Dropdown.OptionItem>
+        {!isAlwaysPrivate && (
+          <Dropdown.OptionItem
+            startIcon={<IconPencil />}
+            selected={!isPrivate}
+            disabled={!isPrivate || isSaving}
+            onSelect={() => {
+              void setPrivate(false);
+            }}
+          >
+            {t(generalAccessLabel)}
+          </Dropdown.OptionItem>
+        )}
       </Dropdown.Section>
     </SidePanelShareRecordDropdownItem>
   );

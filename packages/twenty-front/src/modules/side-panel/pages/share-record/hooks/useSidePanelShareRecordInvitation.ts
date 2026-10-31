@@ -51,7 +51,10 @@ export const useSidePanelShareRecordInvitation = ({
     workspaceName,
   };
   const everyoneRecipients: RecordSharingInvitationRecipient[] =
-    isDefined(sharing) && isDefined(currentWorkspace) && !hasGeneralAccess
+    isDefined(sharing) &&
+    isDefined(currentWorkspace) &&
+    !hasGeneralAccess &&
+    !sharing.isAlwaysPrivate
       ? [
           {
             kind: 'everyone',
@@ -82,7 +85,7 @@ export const useSidePanelShareRecordInvitation = ({
   );
   const hasInvalidAccessLevel =
     accessLevel === RecordShareAccessLevel.NONE ||
-    (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
+    (hasEveryoneRecipient && accessLevel !== RecordShareAccessLevel.READ_WRITE);
 
   const onRecipientsChange = (
     nextRecipients: RecordSharingInvitationRecipient[],

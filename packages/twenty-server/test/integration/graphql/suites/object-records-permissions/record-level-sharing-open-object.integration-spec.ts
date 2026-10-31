@@ -80,10 +80,13 @@ describe('Record-level sharing on an object open by default', () => {
       token,
     );
 
-  const setPrivate = (
-    isPrivate: boolean,
+  const setPrivate = ({
+    isPrivate,
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  ) =>
+  }: {
+    isPrivate: boolean;
+    token?: string;
+  }) =>
     makeMetadataApiRequest(
       {
         query: SET_PRIVATE,
@@ -160,7 +163,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   beforeEach(async () => {
-    await setPrivate(false);
+    await setPrivate({ isPrivate: false });
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -216,7 +219,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should hide a private record from everyone but its creator, with no share row for the creator', async () => {
-    const restricted = await setPrivate(true);
+    const restricted = await setPrivate({ isPrivate: true });
 
     expect(restricted.body.errors).toBeUndefined();
     expect(restricted.body.data.setRecordPrivate).toMatchObject({
@@ -233,7 +236,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should let a grant lift a restriction up to its level', async () => {
-    await setPrivate(true);
+    await setPrivate({ isPrivate: true });
     await setShare({ principal: JONY });
 
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
@@ -255,8 +258,8 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should let a private record follow its roles again', async () => {
-    await setPrivate(true);
-    const reopened = await setPrivate(false);
+    await setPrivate({ isPrivate: true });
+    const reopened = await setPrivate({ isPrivate: false });
 
     expect(reopened.body.data.setRecordPrivate).toMatchObject({
       isPrivate: false,
@@ -274,7 +277,10 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should keep sharing in the hands of the creator and full access holders', async () => {
-    const response = await setPrivate(true, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    const response = await setPrivate({
+      isPrivate: true,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(response.body.errors).toBeDefined();
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
@@ -295,7 +301,10 @@ describe('Record-level sharing on an object open by default', () => {
       accessLevel: RecordShareAccessLevel.FULL,
     });
 
-    const restricted = await setPrivate(true, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+    const restricted = await setPrivate({
+      isPrivate: true,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(restricted.body.errors).toBeUndefined();
 
@@ -332,7 +341,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should keep a record private when a grant is removed', async () => {
-    await setPrivate(true);
+    await setPrivate({ isPrivate: true });
     await setShare({ principal: JONY });
 
     const removed = await makeMetadataApiRequest({
@@ -349,7 +358,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   it('should leave open objects untouched while the flag is off', async () => {
-    await setPrivate(true);
+    await setPrivate({ isPrivate: true });
     await setRecordSharingEnabled(false);
 
     try {
@@ -361,7 +370,7 @@ describe('Record-level sharing on an object open by default', () => {
         canManageSharing: false,
         isPrivate: false,
       });
-      expect((await setPrivate(true)).body.errors).toBeDefined();
+      expect((await setPrivate({ isPrivate: true })).body.errors).toBeDefined();
     } finally {
       await setRecordSharingEnabled(true);
     }

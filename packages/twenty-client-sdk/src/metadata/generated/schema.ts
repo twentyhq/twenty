@@ -3167,6 +3167,7 @@ export type RecordShareRowCause = 'APPLICATION' | 'MANUAL' | 'OWNER' | 'RULE'
 export interface RecordSharingDTO {
     canManageSharing: Scalars['Boolean']
     hasManagedGeneralAccess: Scalars['Boolean']
+    isAlwaysPrivate: Scalars['Boolean']
     isPrivate: Scalars['Boolean']
     isShareable: Scalars['Boolean']
     permissions: RecordPermissionsDTO
@@ -7743,6 +7744,7 @@ export interface RecordSharePrincipalInput {roleId?: (Scalars['UUID'] | null),wo
 export interface RecordSharingDTOGenqlSelection{
     canManageSharing?: boolean | number
     hasManagedGeneralAccess?: boolean | number
+    isAlwaysPrivate?: boolean | number
     isPrivate?: boolean | number
     isShareable?: boolean | number
     permissions?: RecordPermissionsDTOGenqlSelection

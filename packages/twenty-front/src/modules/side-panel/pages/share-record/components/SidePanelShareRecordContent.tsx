@@ -13,6 +13,7 @@ import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-s
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 import { getRecordSharingRecipientGroups } from '@/object-record/record-sharing/utils/getRecordSharingRecipientGroups';
+import { getRecordSharingReadOnlyDescription } from '@/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
 import { SidePanelShareRecordGroup } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGroup';
 import { SidePanelShareRecordList } from '@/side-panel/pages/share-record/components/SidePanelShareRecordList';
@@ -169,6 +170,7 @@ export const SidePanelShareRecordContent = ({
                     >
                       <SidePanelShareRecordGeneralAccessItem
                         isPrivate={sharing.isPrivate}
+                        isAlwaysPrivate={sharing.isAlwaysPrivate}
                         hasManagedGeneralAccess={
                           sharing.hasManagedGeneralAccess
                         }
@@ -233,11 +235,12 @@ export const SidePanelShareRecordContent = ({
                 </>
               ) : (
                 <StyledDescription>
-                  {!sharing.isShareable
-                    ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
-                    : sharing.isPrivate
-                      ? t`Only the creator of this record and people with full access to it can change who has access.`
-                      : t`Only the creator of this record, people with full access to it and admins can change who has access.`}
+                  {t(
+                    getRecordSharingReadOnlyDescription({
+                      sharing,
+                      objectLabelPlural,
+                    }),
+                  )}
                 </StyledDescription>
               ))
             )}

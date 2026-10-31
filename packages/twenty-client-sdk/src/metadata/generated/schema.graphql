@@ -4282,6 +4282,7 @@ enum RecordShareRowCause {
 type RecordSharingDTO {
   canManageSharing: Boolean!
   hasManagedGeneralAccess: Boolean!
+  isAlwaysPrivate: Boolean!
   isPrivate: Boolean!
   isShareable: Boolean!
   permissions: RecordPermissionsDTO!

@@ -65,6 +65,12 @@ type RecordSharingChange = {
   creatorWorkspaceMemberId: string | undefined;
 };
 
+const isAlwaysPrivate = ({
+  isShareRequired,
+  isPrivateByDefault,
+}: Pick<ObjectSharing, 'isShareRequired' | 'isPrivateByDefault'>): boolean =>
+  isShareRequired || isPrivateByDefault;
+
 @Injectable()
 export class RecordSharingService {
   constructor(
@@ -236,6 +242,7 @@ export class RecordSharingService {
       return {
         isShareable: sharingObject.isShareable,
         isPrivate: false,
+        isAlwaysPrivate: isAlwaysPrivate(sharingObject),
         canManageSharing: false,
         permissions,
         hasManagedGeneralAccess: false,
@@ -258,7 +265,10 @@ export class RecordSharingService {
   }): Promise<void> {
     const { isPrivate } = args;
 
-    if ((isShareRequired || isPrivateByDefault) && !isPrivate) {
+    if (
+      isAlwaysPrivate({ isShareRequired, isPrivateByDefault }) &&
+      !isPrivate
+    ) {
       throw new RecordShareException(
         'Records of this object are always private',
         RecordShareExceptionCode.INVALID_SHARE_WITH,
@@ -361,6 +371,7 @@ export class RecordSharingService {
     return {
       isShareable: sharingObject.isShareable,
       isPrivate,
+      isAlwaysPrivate: isAlwaysPrivate(sharingObject),
       canManageSharing,
       permissions,
       hasManagedGeneralAccess: shares.some(

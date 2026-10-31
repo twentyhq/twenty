@@ -85,10 +85,13 @@ describe('Records shared beyond the role that can access their object', () => {
       token,
     );
 
-  const setPrivate = (
-    isPrivate: boolean,
+  const setPrivate = ({
+    isPrivate,
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  ) =>
+  }: {
+    isPrivate: boolean;
+    token?: string;
+  }) =>
     makeMetadataApiRequest(
       {
         query: SET_PRIVATE,
@@ -252,7 +255,12 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(deleted.body.errors).toBeDefined();
     expect(
-      (await setPrivate(true, APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.errors,
+      (
+        await setPrivate({
+          isPrivate: true,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        })
+      ).body.errors,
     ).toBeDefined();
 
     const sharing = await makeMetadataApiRequest(
@@ -268,7 +276,7 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should not let a record that follows its roles reach beyond the role', async () => {
-    const share = await setPrivate(false);
+    const share = await setPrivate({ isPrivate: false });
 
     expect(share.body.errors).toBeUndefined();
     expect(await findIdsAsJony()).toEqual({ errors: undefined, ids: [] });
@@ -283,7 +291,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
     await setShare({ principal: { roleId: memberRoleId } });
-    await setPrivate(true);
+    await setPrivate({ isPrivate: true });
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
