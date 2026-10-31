@@ -2850,7 +2850,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Wybierz istniejący typ aktywności na osi czasu do nadpisania."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Wybierz jedną osobę lub jedną rolę, której chcesz udostępnić."
 
@@ -3688,7 +3688,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Utworzono metadane pola, brak metadanych obiektu nadrzędnego"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Utworzenie rekordu prywatnego obiektu wymaga argumentu shareWith"
 
@@ -4600,7 +4600,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Każde pole ścieżki powiązanego rekordu musi należeć do obiektu osiągniętego przez poprzednią relację"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Każdy wpis shareWith musi wskazywać dokładnie jedno z: workspaceMemberId, roleId lub everyone"
 
@@ -6540,8 +6540,8 @@ msgid "Internal name of the campaign"
 msgstr "Wewnętrzna nazwa kampanii"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Nieprawidłowy poziom dostępu."
 
@@ -7244,8 +7244,8 @@ msgstr "Nieprawidłowy format adresu URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Nieprawidłowy format UUID."
 
@@ -12254,17 +12254,17 @@ msgid "Shared record"
 msgstr "Udostępniony rekord"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith wskazuje rolę, która nie należy do tej przestrzeni roboczej"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith wskazuje członka przestrzeni roboczej, który nie należy do tej przestrzeni roboczej"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith wskazuje tego samego odbiorcę więcej niż raz"
 
@@ -13922,12 +13922,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Członek przestrzeni roboczej, który jako ostatni zaktualizował rekord"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ich rola nie ma dostępu do tych rekordów, a ten obiekt jest udostępniany tylko rolom, które go mają."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ich rola nie może zobaczyć tego rekordu, a ten obiekt jest udostępniany tylko osobom, które mogą go zobaczyć."
 

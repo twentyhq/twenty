@@ -2850,7 +2850,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Vyberte existující typ aktivity časové osy, který chcete přepsat."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Vyberte jednu osobu nebo jednu roli, se kterou chcete sdílet."
 
@@ -3688,7 +3688,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Vytvořena metadata pole, metadata nadřazeného objektu nenalezena"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Vytvoření záznamu soukromého objektu vyžaduje argument shareWith"
 
@@ -4600,7 +4600,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Každé pole cesty souvisejícího záznamu musí patřit k objektu dosaženému předchozí relací"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Každá položka shareWith musí cílit přesně na jednu z hodnot workspaceMemberId, roleId nebo everyone"
 
@@ -6540,8 +6540,8 @@ msgid "Internal name of the campaign"
 msgstr "Interní název kampaně"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Neplatná úroveň přístupu."
 
@@ -7244,8 +7244,8 @@ msgstr "Neplatný formát adresy URL."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Neplatný formát UUID."
 
@@ -12254,17 +12254,17 @@ msgid "Shared record"
 msgstr "Sdílený záznam"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith uvádí roli, která nepatří do tohoto pracovního prostoru"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith uvádí člena pracovního prostoru, který nepatří do tohoto pracovního prostoru"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith uvádí stejný subjekt více než jednou"
 
@@ -13922,12 +13922,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Člen pracovního prostoru, který naposledy aktualizoval záznam"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Jejich role nemá přístup k těmto záznamům a tento objekt je sdílen pouze s rolemi, které přístup mají."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Jejich role nemůže tento záznam zobrazit a tento objekt je sdílen pouze s lidmi, kteří jej zobrazit mohou."
 

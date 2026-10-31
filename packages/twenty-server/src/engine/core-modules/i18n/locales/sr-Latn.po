@@ -2850,7 +2850,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Izaberite postojeći tip aktivnosti vremenske linije koji želite da zamenite."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Izaberite jednu osobu ili jednu ulogu sa kojom ćete deliti."
 
@@ -3688,7 +3688,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Kreiran metapodatak polja, metapodatak roditeljskog objekta nije pronađen"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Kreiranje zapisa privatnog objekta zahteva argument shareWith"
 
@@ -4600,7 +4600,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Svako polje putanje povezanog zapisa mora pripadati objektu do kog vodi prethodna relacija"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Svaki unos shareWith mora ciljati tačno jedan od workspaceMemberId, roleId ili everyone"
 
@@ -6540,8 +6540,8 @@ msgid "Internal name of the campaign"
 msgstr "Interni naziv kampanje"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/services/record-sharing.service.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Nevažeći nivo pristupa."
 
@@ -7244,8 +7244,8 @@ msgstr "Nevažeći format URL-a."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Nevažeći format UUID-a."
 
@@ -12254,17 +12254,17 @@ msgid "Shared record"
 msgstr "Deljeni zapis"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith navodi ulogu koja ne pripada ovom radnom prostoru"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith navodi člana radnog prostora koji ne pripada ovom radnom prostoru"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith navodi istog subjekta više puta"
 
@@ -13922,12 +13922,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Član radnog prostora koji je poslednji ažurirao zapis"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Njihova uloga ne može da pristupi ovim zapisima, a ovaj objekat se deli samo sa ulogama koje mogu."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Njihova uloga ne može da vidi ovaj zapis, a ovaj objekat se deli samo sa osobama koje mogu."
 
