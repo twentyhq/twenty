@@ -11,7 +11,6 @@ import {
 } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildAgentRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
-import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { isDenyingRoleIdsBySource } from 'src/engine/permissions/principal/utils/is-denying-role-ids-by-source.util';
 
 const resolveRoleIdsBySourceFromAuthContext = ({
@@ -44,10 +43,7 @@ const resolveRoleIdsBySourceFromAuthContext = ({
 
   if (isApplicationAuthContext(authContext)) {
     return {
-      ...resolveApplicationRoleId({
-        application: authContext.application,
-        isMissingApplicationRoleTolerated: false,
-      }),
+      applicationRoleId: authContext.application.defaultRoleId ?? null,
       ...buildAgentRoleIdsBySource({
         agentId: authContext.agentId,
         flatRoleTargetByAgentIdMaps,

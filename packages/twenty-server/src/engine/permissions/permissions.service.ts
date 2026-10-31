@@ -287,6 +287,7 @@ export class PermissionsService {
             application,
             flatRoleMaps,
           }),
+          sourceType: application.sourceType,
         },
       });
     }
