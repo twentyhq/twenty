@@ -16,6 +16,7 @@ type ColumnRow = {
 describe('2-55 workspace command - add private record column (integration)', () => {
   let command: AddPrivateRecordColumnCommand;
   let personObjectMetadataId: string;
+  let petObjectMetadataId: string;
 
   const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
     command.runOnWorkspace({
@@ -36,6 +37,21 @@ describe('2-55 workspace command - add private record column (integration)', () 
       [SCHEMA],
     );
 
+  const findPrivateRecordIndex = async (
+    objectMetadataId: string,
+  ): Promise<{ definition: string; isValid: boolean } | undefined> => {
+    const [index] = await global.testDataSource.query(
+      `SELECT pg_get_indexdef(i.indexrelid) AS definition, i.indisvalid AS "isValid"
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = $2`,
+      [SCHEMA, `IDX_PRIVATE_RECORD_${objectMetadataId.replace(/-/g, '')}`],
+    );
+
+    return index;
+  };
+
   beforeAll(async () => {
     command = getAppProviderByClassName<AddPrivateRecordColumnCommand>(
       'AddPrivateRecordColumnCommand',
@@ -43,6 +59,10 @@ describe('2-55 workspace command - add private record column (integration)', () 
 
     [{ id: personObjectMetadataId }] = await global.testDataSource.query(
       `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'person'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    [{ id: petObjectMetadataId }] = await global.testDataSource.query(
+      `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'pet'`,
       [SEED_APPLE_WORKSPACE_ID],
     );
   });
@@ -64,19 +84,9 @@ describe('2-55 workspace command - add private record column (integration)', () 
       ),
     ).toEqual([]);
 
-    const [{ definition }] = await global.testDataSource.query(
-      `SELECT pg_get_indexdef(i.indexrelid) AS definition
-         FROM pg_index i
-         JOIN pg_class c ON c.oid = i.indexrelid
-         JOIN pg_namespace n ON n.oid = c.relnamespace
-         WHERE n.nspname = $1 AND c.relname = $2`,
-      [
-        SCHEMA,
-        `IDX_PRIVATE_RECORD_${personObjectMetadataId.replace(/-/g, '')}`,
-      ],
-    );
-
-    expect(definition).toContain('WHERE "_isPrivate"');
+    expect(
+      (await findPrivateRecordIndex(personObjectMetadataId))?.definition,
+    ).toContain('WHERE "_isPrivate"');
   });
 
   it('adds a missing column back, but not on a dry run', async () => {
@@ -89,10 +99,17 @@ describe('2-55 workspace command - add private record column (integration)', () 
       (await findColumns()).some(({ tableName }) => tableName === '_pet'),
     ).toBe(false);
 
+    expect(await findPrivateRecordIndex(petObjectMetadataId)).toBeUndefined();
+
     await runOnWorkspace();
     await runOnWorkspace();
     expect(
       (await findColumns()).filter(({ tableName }) => tableName === '_pet'),
     ).toHaveLength(1);
+
+    const petIndex = await findPrivateRecordIndex(petObjectMetadataId);
+
+    expect(petIndex?.isValid).toBe(true);
+    expect(petIndex?.definition).toContain('WHERE "_isPrivate"');
   });
 });

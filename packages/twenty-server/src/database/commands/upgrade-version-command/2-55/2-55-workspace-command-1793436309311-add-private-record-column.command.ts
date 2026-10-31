@@ -6,10 +6,9 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { IS_PRIVATE_COLUMN_DEFINITION } from 'src/engine/permissions/private-record/constants/is-private-column-definition.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { buildPrivateRecordIndexDefinition } from 'src/engine/permissions/private-record/utils/build-private-record-index-definition.util';
-import { hasIsPrivateColumn } from 'src/engine/permissions/private-record/utils/has-is-private-column.util';
+import { enrichRecordTableSchemaWithIsPrivate } from 'src/engine/permissions/private-record/utils/enrich-record-table-schema-with-is-private.util';
+import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -67,7 +66,13 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
       for (const flatObjectMetadata of Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       ).filter(isDefined)) {
-        if (!hasIsPrivateColumn(flatObjectMetadata)) {
+        const { columnDefinitions, indexDefinitions } =
+          enrichRecordTableSchemaWithIsPrivate({
+            objectMetadata: flatObjectMetadata,
+            tableSchema: { columnDefinitions: [], indexDefinitions: [] },
+          });
+
+        if (columnDefinitions.length === 0) {
           continue;
         }
 
@@ -93,25 +98,24 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
             queryRunner,
             schemaName,
             tableName,
+            columnDefinitions,
           });
         }
 
-        const indexDefinition = buildPrivateRecordIndexDefinition({
-          objectMetadataId: flatObjectMetadata.id,
-        });
-
-        await this.dropInvalidIndex({
-          queryRunner,
-          schemaName,
-          indexName: indexDefinition.name,
-        });
-        await this.workspaceSchemaManagerService.indexManager.createIndex({
-          queryRunner,
-          schemaName,
-          tableName,
-          index: indexDefinition,
-          concurrently: true,
-        });
+        for (const indexDefinition of indexDefinitions) {
+          await this.dropInvalidIndex({
+            queryRunner,
+            schemaName,
+            indexName: indexDefinition.name,
+          });
+          await this.workspaceSchemaManagerService.indexManager.createIndex({
+            queryRunner,
+            schemaName,
+            tableName,
+            index: indexDefinition,
+            concurrently: true,
+          });
+        }
       }
     } finally {
       if (isQueryRunnerConnected) {
@@ -162,10 +166,12 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     queryRunner,
     schemaName,
     tableName,
+    columnDefinitions,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
+    columnDefinitions: WorkspaceSchemaColumnDefinition[];
   }): Promise<void> {
     await queryRunner.query(`SET lock_timeout = '8s'`);
 
@@ -174,7 +180,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
         queryRunner,
         schemaName,
         tableName,
-        columnDefinitions: [IS_PRIVATE_COLUMN_DEFINITION],
+        columnDefinitions,
       });
     } finally {
       await queryRunner.query('RESET lock_timeout');
@@ -205,6 +211,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
         queryRunner,
         schemaName,
         indexName: name,
+        concurrently: true,
       });
     }
   }
