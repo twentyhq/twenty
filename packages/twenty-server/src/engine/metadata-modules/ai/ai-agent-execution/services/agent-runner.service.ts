@@ -498,7 +498,6 @@ export class AgentRunnerService {
       input,
       suspension,
     });
-    // a run pauses in its conversation, so one without is offered neither waits nor questions
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();
@@ -586,7 +585,7 @@ export class AgentRunnerService {
       summary,
       // a stop can also land while the structured output is asked for, after the stream ended
       outcome:
-        streamed.isAborted || abortSignal?.aborted === true
+        streamed.isAborted || abortSignal?.aborted
           ? { status: 'FAILED', error: 'The run was stopped' }
           : await this.settleTurn({
               input,
@@ -600,7 +599,6 @@ export class AgentRunnerService {
     };
   }
 
-  // A run without a conversation records its turn alone, with nothing before it to continue from
   private async openTurn({
     input: { workspaceId, conversation, persona, prompt, executionContext },
     suspension,

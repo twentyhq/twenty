@@ -94,7 +94,6 @@ export type AgentTurnStreamInput<
   TCompletion extends AgentTurnCompletion,
 > = {
   workspaceId: string;
-  // null for a turn without a conversation
   claim: AgentChatStreamClaim | null;
   turnId: string;
   abortSignal?: AbortSignal;
@@ -226,8 +225,7 @@ export class AgentTurnStreamService {
     }
   }
 
-  // A turn without a claim streams to no one: it keeps no reply and has no thread to report to.
-  // A turn whose completion fails still records the usage it streamed, as billing does
+  // a turn whose completion fails still records the usage it streamed, as billing does
   async streamTurn<
     TStarted extends { source: AgentTurnStreamSource },
     TCompletion extends AgentTurnCompletion,
@@ -465,7 +463,7 @@ export class AgentTurnStreamService {
     }
 
     for await (const chunk of publishStream) {
-      if (!isDefined(claim) || (chunk as { type?: string }).type === 'error') {
+      if (!isDefined(claim) || chunk.type === 'error') {
         continue;
       }
 
