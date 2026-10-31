@@ -1045,6 +1045,9 @@ export default {
             "lastUsedAt": [
                 211
             ],
+            "redirectUriHostnames": [
+                1
+            ],
             "scopes": [
                 1
             ],

@@ -9,24 +9,29 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconUnlink } from 'twenty-ui/icon';
-import { RevokeApplicationAuthorizationDocument } from '~/generated-metadata/graphql';
+import {
+  CurrentUserApplicationAuthorizationsDocument,
+  RevokeApplicationAuthorizationDocument,
+} from '~/generated-metadata/graphql';
 
 type SettingsBuiltInMcpClientAppConnectionRowDropdownMenuProps = {
   applicationAuthorizationId: string;
   appName: string;
-  onDisconnected: () => Promise<unknown>;
 };
 
 export const SettingsBuiltInMcpClientAppConnectionRowDropdownMenu = ({
   applicationAuthorizationId,
   appName,
-  onDisconnected,
 }: SettingsBuiltInMcpClientAppConnectionRowDropdownMenuProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { openDialog } = useDialog();
   const [revokeApplicationAuthorization] = useMutation(
     RevokeApplicationAuthorizationDocument,
+    {
+      refetchQueries: [{ query: CurrentUserApplicationAuthorizationsDocument }],
+      awaitRefetchQueries: true,
+    },
   );
 
   const disconnectDialogId = `disconnect-application-authorization-${applicationAuthorizationId}`;
@@ -67,7 +72,6 @@ export const SettingsBuiltInMcpClientAppConnectionRowDropdownMenu = ({
             await revokeApplicationAuthorization({
               variables: { applicationAuthorizationId },
             });
-            await onDisconnected();
           } catch (error) {
             enqueueToast(getToastOptionsFromError({ error }));
           }

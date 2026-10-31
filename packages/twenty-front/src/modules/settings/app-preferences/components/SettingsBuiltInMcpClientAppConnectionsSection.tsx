@@ -133,7 +133,6 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                   <SettingsBuiltInMcpClientAppConnectionRowDropdownMenu
                     applicationAuthorizationId={authorization.id}
                     appName={appName}
-                    onDisconnected={refetch}
                   />
                 }
               />

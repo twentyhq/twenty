@@ -465,6 +465,7 @@ type ApplicationAuthorization {
   id: UUID!
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
+  redirectUriHostnames: [String!]!
   scopes: [String!]
   workspaceId: UUID!
 }
