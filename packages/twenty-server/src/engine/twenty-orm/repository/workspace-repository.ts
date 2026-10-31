@@ -1806,7 +1806,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       string,
       Promise<RecordShareGrant[]>
     >();
-    // Write policies only gate the repository's own records
     let privateRecordStates:
       | Promise<Map<string, PrivateRecordState>>
       | undefined;
@@ -1833,12 +1832,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           requestedRecordIdSet.has(recordShareGrant.recordId),
         );
       },
-      fetchPrivateRecordStates: async () =>
-        (privateRecordStates ??= this.findPrivateRecordStates(recordIds)),
+      findPrivateRecordStates: async () =>
+        (privateRecordStates ??= this.selectPrivateRecordStates(recordIds)),
     };
   }
 
-  private async findPrivateRecordStates(
+  private async selectPrivateRecordStates(
     recordIds: string[],
   ): Promise<Map<string, PrivateRecordState>> {
     if (recordIds.length === 0) {

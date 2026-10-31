@@ -22,14 +22,13 @@ export type RowAccessEvaluationContext = {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<RecordShareGrant[]>;
-  fetchPrivateRecordStates: (args: {
+  findPrivateRecordStates: (args: {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<Map<string, PrivateRecordState>>;
 };
 
-// A destroyed record is gone by the time its events are delivered, and its
-// snapshot has no privacy: it follows its roles, like most records
+// A destroyed record is gone when its events are delivered and its snapshot carries no privacy
 const UNKNOWN_PRIVATE_RECORD_STATE: PrivateRecordState = {
   isPrivate: false,
   createdByWorkspaceMemberId: null,
@@ -149,7 +148,7 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
     }
     case 'recordPrivacy':
     case 'recordCreatedBy': {
-      const privateRecordStates = await context.fetchPrivateRecordStates({
+      const privateRecordStates = await context.findPrivateRecordStates({
         objectMetadataId: expression.objectMetadataId,
         recordIds,
       });

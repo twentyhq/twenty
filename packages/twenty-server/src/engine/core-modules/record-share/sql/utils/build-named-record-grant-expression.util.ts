@@ -12,11 +12,16 @@ import {
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
-export const buildNamedRecordGrantExpression = (
-  context: RowAccessPolicyContext,
-  { tableAlias, flatObjectMetadata, operationType }: RowAccessPolicyTarget,
-): RowAccessExpression | undefined => {
-  const principalIds = resolveNamedPrincipalIds(context.subject);
+export const buildNamedRecordGrantExpression = ({
+  subject,
+  environment,
+  tableAlias,
+  flatObjectMetadata,
+  operationType,
+}: RowAccessPolicyContext & RowAccessPolicyTarget):
+  | RowAccessExpression
+  | undefined => {
+  const principalIds = resolveNamedPrincipalIds(subject);
   const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
 
   if (!isNonEmptyArray(accessLevels)) {
@@ -38,11 +43,13 @@ export const buildNamedRecordGrantExpression = (
 
   const { isShareRequired } = resolveObjectSharing({
     flatObjectMetadata,
-    featureFlagsMap: context.environment.featureFlagsMap,
+    featureFlagsMap: environment.featureFlagsMap,
   });
   const creator = isShareRequired
     ? undefined
-    : buildPrivateRecordCreatorExpression(context, {
+    : buildPrivateRecordCreatorExpression({
+        workspaceMemberId: subject.workspaceMemberId,
+        flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
         tableAlias,
         flatObjectMetadata,
       });

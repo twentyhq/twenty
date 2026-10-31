@@ -40,7 +40,13 @@ describe('2-55 workspace command - add private record column (integration)', () 
       [SCHEMA],
     );
 
-  const insertEveryoneShare = (recordId: string, accessLevel: string) =>
+  const insertEveryoneShare = ({
+    recordId,
+    accessLevel,
+  }: {
+    recordId: string;
+    accessLevel: string;
+  }) =>
     global.testDataSource.query(
       `INSERT INTO "${SCHEMA}"."recordShare"
          ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
@@ -123,8 +129,14 @@ describe('2-55 workspace command - add private record column (integration)', () 
   });
 
   it('turns records restricted to the people with access into private records and drops view-only restrictions', async () => {
-    await insertEveryoneShare(restrictedPersonId, 'NONE');
-    await insertEveryoneShare(viewOnlyPersonId, 'READ');
+    await insertEveryoneShare({
+      recordId: restrictedPersonId,
+      accessLevel: 'NONE',
+    });
+    await insertEveryoneShare({
+      recordId: viewOnlyPersonId,
+      accessLevel: 'READ',
+    });
 
     await runOnWorkspace({ dryRun: true });
     expect(await findPrivatePersonIds()).toEqual([]);

@@ -6,7 +6,6 @@ import {
 } from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Binds :recordIds
 export const buildSelectPrivateRecordStatesSql = ({
   tableExpression,
   hasCreatedByField,

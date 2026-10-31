@@ -25,6 +25,7 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/core-modules/record-share/record-share.exception';
 import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/assignment/services/record-share-principal.service';
+import { type PrivateRecordState } from 'src/engine/core-modules/record-share/access/types/private-record-state.type';
 import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/access/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/access/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
@@ -261,8 +262,6 @@ export class RecordSharingService {
     return this.buildSharingResponse({ args, sharingObject, permissions });
   }
 
-  // On an object whose records need a share, general access is an everyone
-  // row. Elsewhere a record is either private or follows its roles
   private async writeGeneralAccess({
     workspaceId,
     transactionScope,
@@ -312,9 +311,7 @@ export class RecordSharingService {
       transactionScope,
     });
 
-    // Whoever makes someone else's record private keeps managing it, through
-    // an owner row a removed share cannot take away; it goes once the record
-    // follows its roles again
+    // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
@@ -524,16 +521,20 @@ export class RecordSharingService {
       recordIds: [recordId],
       transactionScope,
     });
-    const privateRecordState = canBePrivate
-      ? (
-          await this.privateRecordStorageService.findStates({
-            workspaceId,
-            flatObjectMetadata,
-            recordIds: [recordId],
-            transactionScope,
-          })
-        ).get(recordId)
-      : undefined;
+    let privateRecordState: PrivateRecordState | undefined;
+
+    if (canBePrivate) {
+      const privateRecordStates =
+        await this.privateRecordStorageService.findStates({
+          workspaceId,
+          flatObjectMetadata,
+          recordIds: [recordId],
+          transactionScope,
+        });
+
+      privateRecordState = privateRecordStates.get(recordId);
+    }
+
     const isPrivate = privateRecordState?.isPrivate ?? false;
     const creatorWorkspaceMemberId =
       privateRecordState?.createdByWorkspaceMemberId ?? undefined;

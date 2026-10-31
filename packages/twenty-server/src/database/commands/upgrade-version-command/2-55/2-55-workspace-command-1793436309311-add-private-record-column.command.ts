@@ -176,8 +176,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     return new Map(columns.map(({ tableName, udtName }) => [tableName, udtName]));
   }
 
-  // A nullable-free column with a constant default is metadata-only, but the
-  // exclusive lock must not queue every query on the table
+  // Metadata-only, but the exclusive lock must not queue every query on the table
   private async addColumnWithLockTimeout({
     queryRunner,
     schemaName,
@@ -220,8 +219,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     return Number(count);
   }
 
-  // "Only people with access" becomes a private record. "Anyone can view" has
-  // no private record equivalent and goes, so role holders can edit again
+  // "Anyone can view" has no private equivalent, so those records follow their roles again
   private async convertRestrictionsToPrivateRecords({
     queryRunner,
     schemaName,

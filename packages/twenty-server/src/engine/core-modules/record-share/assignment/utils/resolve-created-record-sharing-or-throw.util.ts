@@ -16,9 +16,7 @@ export type CreatedRecordSharing = {
   isPrivate: boolean;
 };
 
-// Null when the created records get no share row and stay public. shareWith
-// also reaches the records created through nested relations, so an object
-// whose records are only shared through roles writes nothing
+// shareWith also reaches records created through nested relations, whose objects may not be shareable
 export const resolveCreatedRecordSharingOrThrow = ({
   objectSharing: { isShareable, isShareRequired, defaultGeneralAccessLevel },
   shareWith,
@@ -39,14 +37,13 @@ export const resolveCreatedRecordSharingOrThrow = ({
     return {
       shareWith: entries.filter(
         (entry) =>
-          entry.everyone !== true ||
-          entry.accessLevel !== defaultGeneralAccessLevel,
+          !entry.everyone || entry.accessLevel !== defaultGeneralAccessLevel,
       ),
       isPrivate: false,
     };
   }
 
-  const everyoneEntries = entries.filter((entry) => entry.everyone === true);
+  const everyoneEntries = entries.filter((entry) => entry.everyone);
 
   if (
     everyoneEntries.some(
@@ -60,7 +57,7 @@ export const resolveCreatedRecordSharingOrThrow = ({
     );
   }
 
-  const namedEntries = entries.filter((entry) => entry.everyone !== true);
+  const namedEntries = entries.filter((entry) => !entry.everyone);
   const isPrivate = everyoneEntries.some(
     (entry) => entry.accessLevel === RecordShareAccessLevel.NONE,
   );

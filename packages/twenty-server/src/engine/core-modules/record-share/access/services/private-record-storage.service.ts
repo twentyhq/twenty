@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
+import {
+  CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME,
+  IS_PRIVATE_COLUMN_NAME,
+} from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
 import { type PrivateRecordState } from 'src/engine/core-modules/record-share/access/types/private-record-state.type';
 import { buildSelectPrivateRecordStatesSql } from 'src/engine/core-modules/record-share/access/utils/build-select-private-record-states-sql.util';
 import { hasCreatedByField } from 'src/engine/core-modules/record-share/utils/has-created-by-field.util';
@@ -69,6 +72,36 @@ export class PrivateRecordStorageService {
         { isPrivate, createdByWorkspaceMemberId },
       ]),
     );
+  }
+
+  async findPrivateRecordIdsCreatedBy({
+    workspaceId,
+    flatObjectMetadata,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    workspaceMemberId: string;
+  }): Promise<string[]> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
+      return [];
+    }
+
+    const rows = await this.withRepository(
+      { workspaceId, flatObjectMetadata },
+      (repository) =>
+        repository.executeRaw<{ id: string }>(
+          `SELECT "id" FROM ${buildTableExpression({ workspaceId, flatObjectMetadata })} WHERE ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} AND ${escapeIdentifier(CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME)} = :workspaceMemberId`,
+          { workspaceMemberId },
+        ),
+    );
+
+    return rows.map(({ id }) => id);
   }
 
   // Must share the caller's transaction so the records and their privacy change together

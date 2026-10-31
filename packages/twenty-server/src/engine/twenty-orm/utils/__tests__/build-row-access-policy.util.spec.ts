@@ -6,7 +6,6 @@ import {
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -438,12 +437,16 @@ describe('buildRowAccessPolicy', () => {
       ...buildObject({ id: 'company' }),
       fieldIds: [createdByField.id],
     };
+    const emptyFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+      byUniversalIdentifier: {},
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    };
     const creatorEnvironment = {
       ...sharingEnvironment,
       flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: createdByField,
-        flatEntityMaps:
-          createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+        flatEntityMaps: emptyFlatFieldMetadataMaps,
       }),
     };
     const buildForCreator = (subject: RowAccessPolicySubject) =>

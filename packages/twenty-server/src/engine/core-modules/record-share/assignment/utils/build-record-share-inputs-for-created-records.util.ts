@@ -133,8 +133,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
         : shareWithPrincipal,
     );
 
-  // A member who creates a private record keeps it through createdBy; an
-  // application or API key has no member to be its creator
+  // An application or API key has no createdBy member to keep its private records through
   const shouldWriteCreatorRows =
     isShareRequired || (isPrivate && !isUserAuthContext(authContext));
 

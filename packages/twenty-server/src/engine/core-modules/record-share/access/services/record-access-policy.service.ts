@@ -92,7 +92,7 @@ export class RecordAccessPolicyService {
     let privateRecordStates:
       | Promise<Map<string, PrivateRecordState>>
       | undefined;
-    const fetchPrivateRecordStates = () =>
+    const findPrivateRecordStates = () =>
       (privateRecordStates ??= this.privateRecordStorageService.findStates({
         workspaceId,
         flatObjectMetadata: objectMetadata,
@@ -129,7 +129,7 @@ export class RecordAccessPolicyService {
             flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
             shouldIgnoreSoftDeleteDefaultFilter: true,
             fetchRecordShares,
-            fetchPrivateRecordStates,
+            findPrivateRecordStates,
           },
         });
       },

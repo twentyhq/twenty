@@ -53,7 +53,7 @@ export const buildRowAccessPolicy = ({
   const isHypotheticalRecordShareBeyondRole =
     hasHypotheticalRecordShare && canGrantOperationBeyondRole;
   const namedRecordGrant = canGrantOperationBeyondRole
-    ? buildNamedRecordGrantExpression(context, target)
+    ? buildNamedRecordGrantExpression({ ...context, ...target })
     : undefined;
 
   if (

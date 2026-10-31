@@ -54,11 +54,12 @@ export const buildRecordShareGate = ({
     return { kind: 'gated', expression: recordShared };
   }
 
-  // Roles never reach a private record: only its creator and its shares do
-  const creator = buildPrivateRecordCreatorExpression(
-    { subject, environment },
-    { tableAlias, flatObjectMetadata },
-  );
+  const creator = buildPrivateRecordCreatorExpression({
+    workspaceMemberId: subject.workspaceMemberId,
+    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+    tableAlias,
+    flatObjectMetadata,
+  });
 
   return {
     kind: 'gated',

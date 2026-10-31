@@ -106,7 +106,7 @@ const buildContext = (
       recordIds.includes(recordShare.recordId),
     ),
   ),
-  fetchPrivateRecordStates: jest.fn(async () => privateRecordStates),
+  findPrivateRecordStates: jest.fn(async () => privateRecordStates),
   ...overrides,
 });
 

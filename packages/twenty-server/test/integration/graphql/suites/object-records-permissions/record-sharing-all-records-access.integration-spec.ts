@@ -389,6 +389,21 @@ describe('Access to all records and ownership transfer', () => {
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
+
+      await getAppProviderByClassName<RecordShareOwnershipTransferService>(
+        'RecordShareOwnershipTransferService',
+      ).transferRecordSharesToCustodian({
+        removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
+          UserWorkspaceEntity,
+        ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.JONY }),
+        removedWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        actingUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
+
+      // Private records of a removed creator would otherwise reach no one
+      expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual(
+        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      );
     } finally {
       await shares.deleteByRecordIds({
         workspaceId,
