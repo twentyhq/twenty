@@ -55,6 +55,15 @@ describe('describeCronExpression', () => {
         'at 09:00 UTC on the last day of the month',
       );
     });
+
+    it('should describe both day of month and day of week when both are set', () => {
+      expect(describeCronExpression('0 9 1 * 1')).toBe(
+        'at 09:00 UTC on the 1st of the month and only on Monday',
+      );
+      expect(describeCronExpression('0 9 1,15 * 1-5')).toBe(
+        'at 09:00 UTC on the 1st and 15th of the month and on weekdays',
+      );
+    });
   });
 
   describe('month-specific expressions', () => {
