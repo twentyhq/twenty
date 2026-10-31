@@ -49,6 +49,31 @@ const buildStarted = (streamError?: unknown) => ({
   },
 });
 
+const buildCompleteTurn = ({
+  stopReason,
+  completeError,
+}: {
+  stopReason?: string;
+  completeError?: Error;
+}) => {
+  if (isDefined(completeError)) {
+    return jest.fn().mockRejectedValue(completeError);
+  }
+
+  return jest.fn().mockResolvedValue({
+    result: { response: 'Qualified' },
+    steps: [],
+    modelId: 'model-id',
+    stopReason,
+    usage: {},
+    nativeWebSearchCallCount: 0,
+    isPaused: false,
+    totalCostInDollars: 0,
+    creditsUsedMicro: 0,
+    structuredOutputSteps: [],
+  });
+};
+
 const buildService = ({
   waitingState = 'WAITING',
   streamError,
@@ -73,20 +98,7 @@ const buildService = ({
   };
   const agentRunTurnService = {
     startTurn: jest.fn().mockResolvedValue(buildStarted(streamError)),
-    completeTurn: isDefined(completeError)
-      ? jest.fn().mockRejectedValue(completeError)
-      : jest.fn().mockResolvedValue({
-          result: { response: 'Qualified' },
-          steps: [],
-          modelId: 'model-id',
-          stopReason,
-          usage: {},
-          nativeWebSearchCallCount: 0,
-          isPaused: false,
-          totalCostInDollars: 0,
-          creditsUsedMicro: 0,
-          structuredOutputSteps: [],
-        }),
+    completeTurn: buildCompleteTurn({ stopReason, completeError }),
   };
   const agentRunSuspensionService = {
     deliverOutcome: jest.fn().mockResolvedValue(undefined),
@@ -330,6 +342,28 @@ describe('AgentRunWithoutConversationService', () => {
         usage: expect.objectContaining({ inputTokens: 1_000 }),
       }),
     );
+  });
+
+  it('fails the outcome with the cause of a turn that could not complete', async () => {
+    const { service } = buildService({
+      completeError: new Error('Provider overloaded'),
+    });
+
+    const oneShotRun = await service.runOneShot({
+      workspaceId: WORKSPACE_ID,
+      buildExecutionContext: jest.fn().mockResolvedValue({
+        authContext: { type: 'application' },
+        turnCreatedBy: { source: 'APPLICATION', name: 'App' },
+      }),
+      spec: inlineSpec,
+      messages: [{ role: 'user', content: 'Qualify Acme' }],
+      structuredOutputStrategy: 'same-request',
+    });
+
+    expect(oneShotRun.outcome).toEqual({
+      status: 'FAILED',
+      error: 'Provider overloaded',
+    });
   });
 
   it('keeps a completed outcome when recording the turn fails', async () => {

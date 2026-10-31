@@ -1,8 +1,7 @@
-import { generateText, type OutputInterface } from 'ai';
+import { generateText, NoOutputGeneratedError, type OutputInterface } from 'ai';
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
-import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
 
 jest.mock('ai', () => ({
   ...jest.requireActual('ai'),
@@ -130,9 +129,34 @@ describe('AgentRunTurnService', () => {
   });
 
   it('fails a same-request turn whose reply is not an object', async () => {
-    const output = Promise.reject(new Error('No object generated'));
+    for (const output of [
+      Promise.resolve('Acme is a good fit'),
+      Promise.reject(new NoOutputGeneratedError()),
+    ]) {
+      output.catch(() => undefined);
 
-    // the turn reads the output only once the stream ends
+      const { service } = buildService({ output });
+      const input = {
+        ...TURN_INPUT,
+        structuredOutputStrategy: 'same-request' as const,
+      };
+      const started = await service.startTurn(input);
+
+      await expect(
+        service.completeTurn({ ...input, started }),
+      ).rejects.toMatchObject({
+        message:
+          'The model did not return an object matching the response format',
+      });
+    }
+
+    expect(generateText).toHaveBeenCalledTimes(0);
+  });
+
+  it('keeps the cause of a same-request turn whose stream failed', async () => {
+    const providerError = new Error('Provider overloaded');
+    const output = Promise.reject(providerError);
+
     output.catch(() => undefined);
 
     const { service } = buildService({ output });
@@ -140,13 +164,11 @@ describe('AgentRunTurnService', () => {
       ...TURN_INPUT,
       structuredOutputStrategy: 'same-request' as const,
     };
-
     const started = await service.startTurn(input);
 
-    await expect(
-      service.completeTurn({ ...input, started }),
-    ).rejects.toBeInstanceOf(AiException);
-    expect(generateText).toHaveBeenCalledTimes(0);
+    await expect(service.completeTurn({ ...input, started })).rejects.toBe(
+      providerError,
+    );
   });
 
   it('completes a stopped same-request turn with its stop reason instead of failing on the output', async () => {

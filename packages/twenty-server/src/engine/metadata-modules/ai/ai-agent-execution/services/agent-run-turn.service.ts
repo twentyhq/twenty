@@ -5,6 +5,8 @@ import {
   convertToModelMessages,
   generateText,
   jsonSchema,
+  NoObjectGeneratedError,
+  NoOutputGeneratedError,
   Output,
   type TextStreamPart,
   type ToolSet,
@@ -370,7 +372,17 @@ export class AgentRunTurnService {
 
   private async readSameRequestOutputOrThrow(turn: AgentTurn): Promise<object> {
     const output: unknown = await Promise.resolve(turn.stream.output).catch(
-      () => undefined,
+      (error: unknown) => {
+        // only a reply that parses into no object is a format failure; anything else keeps its own cause
+        if (
+          NoObjectGeneratedError.isInstance(error) ||
+          NoOutputGeneratedError.isInstance(error)
+        ) {
+          return undefined;
+        }
+
+        throw error;
+      },
     );
 
     if (!isPlainObject(output)) {
