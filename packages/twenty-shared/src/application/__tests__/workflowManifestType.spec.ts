@@ -167,11 +167,54 @@ describe('workflow manifest step types', () => {
         },
       },
     },
+    {
+      type: 'AI_AGENT',
+      input: {
+        instructions: 'Qualify the lead from its last email.',
+        modelId: 'auto-select-workspace-default-model',
+        modelConfiguration: { webSearch: { enabled: true } },
+        scope: {
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+              canReadObjectRecords: true,
+            },
+          ],
+        },
+        prompt: '{{trigger.properties.after.summary}}',
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
 
     expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  it('refuses an AI agent step running an agent with its own config', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        instructions: 'Qualify the lead.',
+      },
+    });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(false);
+  });
+
+  it('refuses an AI agent step scope with row-level predicates', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'AI_AGENT',
+      input: {
+        instructions: 'Qualify the lead.',
+        scope: { rowLevelPermissionPredicates: [] },
+      },
+    });
+
+    expect(workflowManifestSchema.safeParse(definition).success).toBe(false);
   });
 
   describe('connected account reference', () => {

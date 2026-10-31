@@ -22,7 +22,9 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 
 ## AI Agent Steps
 
-- `AI_AGENT` runs one of the app's agents, named with `agentUniversalIdentifier`, and takes the step's `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` and `workspaceMemberId` (the member the agent's conversation is with).
+- `AI_AGENT` either runs one of the app's agents, named with `agentUniversalIdentifier`, or carries its own `instructions`, `modelId`, `modelConfiguration` and `scope`. Never both: an agent brings its own instructions, model and permissions.
+- Either way it takes the step's `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` and `workspaceMemberId` (the member the agent's conversation is with).
+- `scope` is what the step's AI may reach on top of the permissions of whoever runs the workflow: a role's permissions (`canReadAllObjectRecords`, `objectPermissions`, `fieldPermissions`, `permissionFlagUniversalIdentifiers`, ...) without its identity or row-level predicates. Anything left out is denied, and without a `scope` the step gets no data tools.
 - A step can only name an agent the app exports: `twenty app pull` reports a workflow on any other agent as unsupported.
 
 ## Email and Calendar Steps

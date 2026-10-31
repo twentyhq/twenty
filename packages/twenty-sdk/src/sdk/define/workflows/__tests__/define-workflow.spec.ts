@@ -140,4 +140,44 @@ describe('defineWorkflow', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([error]);
   });
+
+  const withAiAgentStep = (input: Record<string, unknown>) =>
+    ({
+      ...workflow,
+      version: {
+        ...workflow.version,
+        steps: [
+          {
+            universalIdentifier: STEP_ID,
+            name: 'Qualify',
+            type: 'AI_AGENT',
+            input,
+            nextStepIds: [],
+          },
+        ],
+      },
+    }) as WorkflowManifest;
+
+  it('accepts an AI agent step that carries its own config', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          instructions: 'Qualify the lead.',
+          scope: { canReadAllObjectRecords: true },
+          prompt: 'Qualify {{trigger.name}}',
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('refuses an AI agent step that runs an agent with its own config', () => {
+    expect(
+      defineWorkflow(
+        withAiAgentStep({
+          agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+          modelId: 'model-id',
+        }),
+      ).success,
+    ).toBe(false);
+  });
 });

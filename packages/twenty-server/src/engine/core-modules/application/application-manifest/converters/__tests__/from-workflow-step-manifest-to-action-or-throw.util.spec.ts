@@ -228,6 +228,38 @@ describe('application workflow actions', () => {
     expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });
   });
 
+  it('keeps an agent step that carries its own config as is, with no agent to resolve', () => {
+    const input = {
+      instructions: 'Qualify the lead.',
+      modelId: 'auto-select-workspace-default-model',
+      scope: {
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            canReadObjectRecords: true,
+          },
+        ],
+      },
+      prompt: 'Qualify {{trigger.name}}',
+    };
+    const result = fromWorkflowStepManifestToActionOrThrow({
+      step: workflowStepManifestSchema.parse({
+        universalIdentifier: STEP_ID,
+        name: 'Qualify',
+        type: 'AI_AGENT',
+        input,
+        nextStepIds: [],
+      }),
+      index: 0,
+      references: { ...references, agentIdByUniversalIdentifier: new Map() },
+    });
+
+    expect(result.settings.input).toEqual(input);
+    expect(result.settings.outputSchema).toMatchObject({
+      response: { type: 'string' },
+    });
+  });
+
   it('resolves functions, agents, objects and filter fields', () => {
     expect(convert(WorkflowActionType.LOGIC_FUNCTION).settings.input).toEqual({
       logicFunctionId: LOCAL_ID,

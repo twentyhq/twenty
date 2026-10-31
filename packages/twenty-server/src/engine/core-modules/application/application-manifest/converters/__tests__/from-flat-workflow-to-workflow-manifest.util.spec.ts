@@ -1061,6 +1061,42 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     });
   });
 
+  it('exports an agent step that carries its own config, with no agent to reference', () => {
+    const input = {
+      instructions: 'Qualify the lead from its last email.',
+      modelId: 'auto-select-workspace-default-model',
+      modelConfiguration: { webSearch: { enabled: true } },
+      scope: {
+        canReadAllObjectRecords: true,
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: OBJECT_ID,
+            canUpdateObjectRecords: true,
+          },
+        ],
+        permissionFlagUniversalIdentifiers: ['send-email-tool'],
+      },
+      prompt: '{{trigger.properties.after.summary}}',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Qualify the lead',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'AI_AGENT', input });
+    expect(step.input).not.toHaveProperty('agentUniversalIdentifier');
+  });
+
   it('exports a step without a position as null', () => {
     const [step] = exportBuilderVersion({
       triggers: [recordCreatedTrigger()],

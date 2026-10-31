@@ -183,10 +183,13 @@ const fromActionInput = ({
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
 
-      return {
-        ...rest,
-        agentUniversalIdentifier: resolvers.agentUniversalIdentifier(agentId),
-      };
+      return isDefined(agentId)
+        ? {
+            ...rest,
+            agentUniversalIdentifier:
+              resolvers.agentUniversalIdentifier(agentId),
+          }
+        : rest;
     }
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:

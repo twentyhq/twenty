@@ -24,6 +24,7 @@ import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
+import { hasWorkflowAiAgentInlineConfig } from '@/workflow/utils/hasWorkflowAiAgentInlineConfig';
 
 export const workflowManifestPositionSchema = z.object({
   x: z.number(),
@@ -247,12 +248,26 @@ const workflowStepManifestOptions = [
       .extend(connectedAccountReferenceShape)
       .superRefine(refineConnectedAccountReference),
   ),
+  // a step either runs a reusable agent or carries its own instructions, model and scope
   stepSchema(
     'AI_AGENT',
     workflowAiAgentActionSettingsSchema.shape.input
       .omit({ agentId: true })
-      .extend({ agentUniversalIdentifier: z.uuid() })
-      .strict(),
+      .extend({ agentUniversalIdentifier: z.uuid().optional() })
+      .strict()
+      .superRefine((input, context) => {
+        if (
+          isDefined(input.agentUniversalIdentifier) &&
+          hasWorkflowAiAgentInlineConfig(input)
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['agentUniversalIdentifier'],
+            message:
+              'A step running an agent takes its instructions, model, model configuration and scope from the agent',
+          });
+        }
+      }),
   ),
 ] as const;
 

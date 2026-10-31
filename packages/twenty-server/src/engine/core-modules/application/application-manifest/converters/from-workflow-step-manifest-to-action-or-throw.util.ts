@@ -46,14 +46,16 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
       break;
     case 'AI_AGENT': {
       const { agentUniversalIdentifier, ...rest } = step.input;
-      input = {
-        ...rest,
-        agentId: resolve(
-          references.agentIdByUniversalIdentifier,
-          agentUniversalIdentifier,
-          'application agent',
-        ),
-      };
+      input = isDefined(agentUniversalIdentifier)
+        ? {
+            ...rest,
+            agentId: resolve(
+              references.agentIdByUniversalIdentifier,
+              agentUniversalIdentifier,
+              'application agent',
+            ),
+          }
+        : rest;
       break;
     }
     case 'CREATE_RECORD':
