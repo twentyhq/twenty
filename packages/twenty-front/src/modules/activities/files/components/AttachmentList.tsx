@@ -22,6 +22,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 import { AttachmentRow } from './AttachmentRow';
 
 type AttachmentListProps = {
@@ -124,11 +125,7 @@ export const AttachmentList = ({
     if (!isDefined(previewedAttachment)) {
       return;
     }
-    window.open(
-      getAttachmentUrl({ attachment: previewedAttachment }),
-      '_blank',
-      'noopener,noreferrer',
-    );
+    openUrlInNewTab(getAttachmentUrl({ attachment: previewedAttachment }));
   };
 
   return (

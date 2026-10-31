@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledLoadingContainer = styled.div`
   align-items: center;
@@ -42,7 +43,7 @@ export const GlobalFilePreviewModal = () => {
     if (!isDefined(filePreview) || !isNonEmptyString(filePreview.url)) {
       return;
     }
-    window.open(filePreview.url, '_blank', 'noopener,noreferrer');
+    openUrlInNewTab(filePreview.url);
   };
 
   if (!isDefined(filePreview)) {
