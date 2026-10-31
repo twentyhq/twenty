@@ -10,7 +10,7 @@ export const restrictObjectsPermissionsToScope = ({
   scope,
 }: {
   objectsPermissions: ObjectsPermissions;
-  scope: PermissionScope;
+  scope: Pick<PermissionScope, 'objectsPermissions'>;
 }): ObjectsPermissions =>
   Object.fromEntries(
     Object.entries(objectsPermissions).map(
