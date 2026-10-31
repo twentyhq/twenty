@@ -32,7 +32,8 @@ import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
-import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { assertPrivateRecordEnabledOrThrow } from 'src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util';
+import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -258,19 +259,14 @@ export class RecordSharingService {
     args: RecordSharingArgs & { isPrivate: boolean };
   }): Promise<void> {
     const { isPrivate } = args;
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
+    const { featureFlagsMap, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+        'flatFieldMetadataMaps',
+      ]);
 
-    if (isPrivate && !isPrivateRecordEnabled(featureFlagsMap)) {
-      throw new RecordShareException(
-        'Private records are not enabled for this workspace yet',
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        {
-          userFriendlyMessage: msg`Private records are not available in this workspace yet.`,
-        },
-      );
+    if (isPrivate) {
+      assertPrivateRecordEnabledOrThrow(featureFlagsMap);
     }
 
     await this.privateRecordStorageService.setPrivate({
@@ -283,6 +279,10 @@ export class RecordSharingService {
 
     // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
+      if (!hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps })) {
+        return;
+      }
+
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
