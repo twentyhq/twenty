@@ -28,44 +28,55 @@ export type StepAgentRole = {
   permissionFlagUniversalIdentifiers: string[];
 };
 
-const keepDefinedValues = <TValue extends Record<string, unknown>>(
-  value: TValue,
-): { [TKey in keyof TValue]?: NonNullable<TValue[TKey]> } =>
-  Object.fromEntries(
-    Object.entries(value).filter(([, entryValue]) => isDefined(entryValue)),
-  ) as { [TKey in keyof TValue]?: NonNullable<TValue[TKey]> };
+const toScopeObjectPermission = ({
+  objectUniversalIdentifier,
+  canReadObjectRecords,
+  canUpdateObjectRecords,
+  canSoftDeleteObjectRecords,
+  canDestroyObjectRecords,
+}: StepAgentRoleObjectPermission) => ({
+  objectUniversalIdentifier,
+  ...(isDefined(canReadObjectRecords) ? { canReadObjectRecords } : {}),
+  ...(isDefined(canUpdateObjectRecords) ? { canUpdateObjectRecords } : {}),
+  ...(isDefined(canSoftDeleteObjectRecords)
+    ? { canSoftDeleteObjectRecords }
+    : {}),
+  ...(isDefined(canDestroyObjectRecords) ? { canDestroyObjectRecords } : {}),
+});
 
-const keepTrueValues = <TValue extends Record<string, boolean>>(
-  value: TValue,
-): Partial<TValue> =>
-  Object.fromEntries(
-    Object.entries(value).filter(([, entryValue]) => entryValue),
-  ) as Partial<TValue>;
+const toScopeFieldPermission = ({
+  objectUniversalIdentifier,
+  fieldUniversalIdentifier,
+  canReadFieldValue,
+  canUpdateFieldValue,
+}: StepAgentRoleFieldPermission) => ({
+  objectUniversalIdentifier,
+  fieldUniversalIdentifier,
+  ...(isDefined(canReadFieldValue) ? { canReadFieldValue } : {}),
+  ...(isDefined(canUpdateFieldValue) ? { canUpdateFieldValue } : {}),
+});
 
-// Tools only ever reached the objects a step agent's role granted row by row, whatever its
-// all-records flags, and a scope's all-records flags would name every object, so they stay out
+// all-records flags stay out: tools only reached the objects the role granted row by row
 export const buildAiRunScopeFromStepAgentRole = (
-  role: StepAgentRole,
+  role: Pick<
+    StepAgentRole,
+    | 'canUpdateAllSettings'
+    | 'canAccessAllTools'
+    | 'objectPermissions'
+    | 'fieldPermissions'
+    | 'permissionFlagUniversalIdentifiers'
+  >,
 ): AiRunScope => {
   const objectPermissions = role.objectPermissions
-    .map(({ objectUniversalIdentifier, ...actions }) => ({
-      objectUniversalIdentifier,
-      ...keepDefinedValues(actions),
-    }))
+    .map(toScopeObjectPermission)
     .filter((objectPermission) => Object.keys(objectPermission).length > 1);
   const fieldPermissions = role.fieldPermissions
-    .map(({ objectUniversalIdentifier, fieldUniversalIdentifier, ...actions }) => ({
-      objectUniversalIdentifier,
-      fieldUniversalIdentifier,
-      ...keepDefinedValues(actions),
-    }))
+    .map(toScopeFieldPermission)
     .filter((fieldPermission) => Object.keys(fieldPermission).length > 2);
 
   return {
-    ...keepTrueValues({
-      canUpdateAllSettings: role.canUpdateAllSettings,
-      canAccessAllTools: role.canAccessAllTools,
-    }),
+    ...(role.canUpdateAllSettings ? { canUpdateAllSettings: true } : {}),
+    ...(role.canAccessAllTools ? { canAccessAllTools: true } : {}),
     ...(objectPermissions.length > 0 ? { objectPermissions } : {}),
     ...(fieldPermissions.length > 0 ? { fieldPermissions } : {}),
     ...(role.permissionFlagUniversalIdentifiers.length > 0

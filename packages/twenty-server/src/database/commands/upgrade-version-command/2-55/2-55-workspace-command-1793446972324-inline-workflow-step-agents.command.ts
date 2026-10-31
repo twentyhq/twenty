@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 import { type AgentResponseFormat, type AiRunScope } from 'twenty-shared/ai';
-import { MEMBER_ROLE_UNIVERSAL_IDENTIFIER } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -15,33 +14,34 @@ import {
   type StepAgentRoleObjectPermission,
 } from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
 import { inlinePausedAgentRunSpec } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-paused-agent-run-spec.util';
+import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agents.util';
 import {
-  inlineWorkflowStepAgents,
   normalizeStepModelConfiguration,
+  type StoredModelConfiguration,
+} from 'src/database/commands/upgrade-version-command/2-55/utils/normalize-step-model-configuration.util';
+import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/2-55/utils/rewrite-jsonb-rows-with-compare-and-set.util';
+import {
   type StepAgentInlineConfig,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agents.util';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+  type StoredWorkflowStep,
+} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const REWRITE_BATCH_SIZE = 100;
-const AGENT_DELETE_BATCH_SIZE = 100;
-
-// Runs that can still reach a step; a finished run is only read
-const NON_TERMINAL_WORKFLOW_RUN_STATUSES = ['NOT_STARTED', 'ENQUEUED', 'RUNNING'];
-
-type StoredJsonbRow = { id: string; value: unknown };
+// a failed run can be retried from its saved steps
+const WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP = [
+  'NOT_STARTED',
+  'ENQUEUED',
+  'RUNNING',
+  'FAILED',
+];
 
 type StepAgentRow = {
   id: string;
   prompt: string;
   modelId: string;
-  modelConfiguration: Parameters<typeof normalizeStepModelConfiguration>[0];
+  modelConfiguration: StoredModelConfiguration;
   responseFormat: AgentResponseFormat | null;
   applicationId: string;
   roleId: string | null;
@@ -60,33 +60,31 @@ type StepAgentRoleRow = Omit<
 type StepAgents = {
   inlineConfigByAgentId: Map<string, StepAgentInlineConfig>;
   applicationIdByAgentId: Map<string, string>;
-  // agents whose role a scope cannot express, which keep running as agents
+  // their role's row-level predicates have no scope equivalent, so their steps keep them
   keptAgentIds: Set<string>;
-  roleIdByAgentId: Map<string, string>;
 };
 
-type RewriteCounts = {
-  coreWorkflowVersionCount: number;
-  workflowVersionCount: number;
-  workflowRunCount: number;
-  pendingWakeUpCount: number;
+type WorkflowTables = {
+  workflowVersion: string | null;
+  workflowRun: string | null;
 };
 
-// Every AI step of a workflow built in the builder ran a hidden agent of the workspace custom
-// application. The step now carries that agent's prompt, model and permissions itself, so the
-// agents and their agent-only roles go. See the "AI runs without hidden agents" design doc
+type StoredWakeUpPayload = {
+  caller: { ref: { stepId: string } };
+  runSpec: { agentId: string | null } & Record<string, unknown>;
+};
+
+// Moves each builder AI step's hidden agent into the step; deleting the agents is a later command
 @RegisteredWorkspaceCommand('2.55.0', 1793446972324)
 @Command({
   name: 'upgrade:2-55:inline-workflow-step-agents',
   description:
-    'Move the prompt, model and permissions of the hidden agent behind each AI workflow step into the step, then delete those agents',
+    'Move the prompt, model and permissions of the hidden agent behind each AI workflow step into the step',
 })
 export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -118,54 +116,137 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       dataSource,
       workspaceId,
     });
-    const counts = await this.rewriteReferences({
-      dataSource,
-      workspaceId,
-      isDryRun,
-      stepAgents,
-      workflowTables,
-    });
+    const inlineSteps = ({
+      tableName,
+      rowId,
+      steps,
+    }: {
+      tableName: string;
+      rowId: string;
+      steps: StoredWorkflowStep[];
+    }) => {
+      if (!Array.isArray(steps)) {
+        return { value: steps, hasChanged: false };
+      }
 
-    const referencedAgentIds = await this.findReferencedAgentIds({
-      dataSource,
-      workspaceId,
-      workflowTables,
-    });
-    const orphanAgentIds = [...stepAgents.inlineConfigByAgentId.keys()].filter(
-      (agentId) => !referencedAgentIds.has(agentId),
-    );
+      const result = inlineWorkflowStepAgents({
+        steps,
+        inlineConfigByAgentId: stepAgents.inlineConfigByAgentId,
+        keptAgentIds: stepAgents.keptAgentIds,
+      });
 
-    if (isDryRun) {
-      this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: would inline the agents of ${counts.coreWorkflowVersionCount} core workflow version(s), ${counts.workflowVersionCount} workflow version(s), ${counts.workflowRunCount} workflow run(s) and ${counts.pendingWakeUpCount} paused run(s), then delete step agents, ${orphanAgentIds.length} of which are already unreferenced`,
-      );
+      for (const keptStepId of result.keptStepIds) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: step ${keptStepId} of ${tableName} ${rowId} keeps its agent, whose role has row-level predicates a step scope cannot express`,
+        );
+      }
 
-      return;
-    }
+      return { value: result.steps, hasChanged: result.hasChanged };
+    };
 
-    await this.deleteStepAgents({ workspaceId, agentIds: orphanAgentIds });
+    const coreWorkflowVersionCount =
+      await rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
+        dataSource,
+        isDryRun,
+        tableName: 'core."workflowVersion"',
+        columnName: 'steps',
+        whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"AI_AGENT"}]'`,
+        whereParameters: [workspaceId],
+        mapRow: ({ id, value }) =>
+          inlineSteps({
+            tableName: 'core workflow version',
+            rowId: id,
+            steps: value,
+          }),
+      });
 
-    const deletedRoleCount = await this.deleteUnusedAgentOnlyRoles({
-      dataSource,
-      workspaceId,
-      roleIds: orphanAgentIds
-        .map((agentId) => stepAgents.roleIdByAgentId.get(agentId))
-        .filter(isDefined),
-    });
+    const workflowVersionCount = isDefined(workflowTables.workflowVersion)
+      ? await rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
+          dataSource,
+          isDryRun,
+          tableName: workflowTables.workflowVersion,
+          columnName: 'steps',
+          whereClause: `steps @> '[{"type":"AI_AGENT"}]'`,
+          whereParameters: [],
+          mapRow: ({ id, value }) =>
+            inlineSteps({
+              tableName: 'workflow version',
+              rowId: id,
+              steps: value,
+            }),
+        })
+      : 0;
 
-    if (counts.coreWorkflowVersionCount > 0 || deletedRoleCount > 0) {
+    const workflowRunCount = isDefined(workflowTables.workflowRun)
+      ? await rewriteJsonbRowsWithCompareAndSet<{
+          flow: { steps: StoredWorkflowStep[] };
+        }>({
+          dataSource,
+          isDryRun,
+          tableName: workflowTables.workflowRun,
+          columnName: 'state',
+          whereClause: `status::text = ANY($1::text[]) AND state -> 'flow' -> 'steps' @> '[{"type":"AI_AGENT"}]'`,
+          whereParameters: [WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP],
+          mapRow: ({ id, value: state }) => {
+            const { value: steps, hasChanged } = inlineSteps({
+              tableName: 'workflow run',
+              rowId: id,
+              steps: state.flow.steps,
+            });
+
+            return {
+              value: { ...state, flow: { ...state.flow, steps } },
+              hasChanged,
+            };
+          },
+        })
+      : 0;
+
+    const pendingWakeUpCount =
+      await rewriteJsonbRowsWithCompareAndSet<StoredWakeUpPayload>({
+        dataSource,
+        isDryRun,
+        tableName: 'core."pendingWakeUp"',
+        columnName: 'payload',
+        whereClause: `"workspaceId" = $1 AND "ownerType" = 'AGENT_RUN' AND payload -> 'caller' ->> 'type' = 'WORKFLOW_STEP' AND payload -> 'runSpec' ->> 'agentId' = ANY($2::text[])`,
+        whereParameters: [
+          workspaceId,
+          [...stepAgents.inlineConfigByAgentId.keys()],
+        ],
+        mapRow: ({ value: payload }) => {
+          const agentId = payload.runSpec.agentId;
+          const inlineConfig = isDefined(agentId)
+            ? stepAgents.inlineConfigByAgentId.get(agentId)
+            : undefined;
+
+          if (!isDefined(agentId) || !isDefined(inlineConfig)) {
+            return { value: payload, hasChanged: false };
+          }
+
+          return {
+            value: {
+              ...payload,
+              runSpec: inlinePausedAgentRunSpec({
+                runSpec: payload.runSpec,
+                inlineConfig,
+                applicationId:
+                  stepAgents.applicationIdByAgentId.get(agentId) ?? null,
+                stepId: payload.caller.ref.stepId,
+              }),
+            },
+            hasChanged: true,
+          };
+        },
+      });
+
+    if (!isDryRun && coreWorkflowVersionCount > 0) {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatWorkflowVersionMaps',
-        'flatRoleMaps',
-        'flatRolePermissionFlagMaps',
-        'flatObjectPermissionMaps',
-        'flatFieldPermissionMaps',
-        'rolesPermissions',
       ]);
     }
 
     this.logger.log(
-      `Workspace ${workspaceId}: inlined the agents of ${counts.coreWorkflowVersionCount} core workflow version(s), ${counts.workflowVersionCount} workflow version(s), ${counts.workflowRunCount} workflow run(s) and ${counts.pendingWakeUpCount} paused run(s); deleted ${orphanAgentIds.length} agent(s) and ${deletedRoleCount} agent-only role(s)`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: inlined the agents of ${coreWorkflowVersionCount} core workflow version(s), ${workflowVersionCount} workflow version(s), ${workflowRunCount} workflow run(s) and ${pendingWakeUpCount} paused run(s)`,
     );
   }
 
@@ -176,8 +257,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     dataSource: DataSource;
     workspaceId: string;
   }): Promise<StepAgents> {
-    // Only builder steps create system agents in the custom application; an installed
-    // application's system agents are its own and stay
+    // only builder steps create system agents in the custom application; an installed app's are its own
     const agentRows: StepAgentRow[] = await dataSource.query(
       `SELECT agent.id, agent.prompt, agent."modelId", agent."modelConfiguration",
          agent."responseFormat", agent."applicationId", target."roleId"
@@ -191,27 +271,24 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       [workspaceId],
     );
 
-    const roleIds = [
-      ...new Set(agentRows.map(({ roleId }) => roleId).filter(isDefined)),
-    ];
     const scopeByRoleId = await this.loadRoleScopes({
       dataSource,
-      roleIds,
+      roleIds: [
+        ...new Set(agentRows.map(({ roleId }) => roleId).filter(isDefined)),
+      ],
     });
 
     const stepAgents: StepAgents = {
       inlineConfigByAgentId: new Map(),
       applicationIdByAgentId: new Map(),
       keptAgentIds: new Set(),
-      roleIdByAgentId: new Map(),
     };
 
     for (const agentRow of agentRows) {
-      stepAgents.applicationIdByAgentId.set(agentRow.id, agentRow.applicationId);
-
-      if (isDefined(agentRow.roleId)) {
-        stepAgents.roleIdByAgentId.set(agentRow.id, agentRow.roleId);
-      }
+      stepAgents.applicationIdByAgentId.set(
+        agentRow.id,
+        agentRow.applicationId,
+      );
 
       const scope = isDefined(agentRow.roleId)
         ? scopeByRoleId.get(agentRow.roleId)
@@ -236,7 +313,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     return stepAgents;
   }
 
-  // A role with row-level predicates has no scope: it is left out, so its agents are kept
+  // a role with row-level predicates is left out of the map, so its agents are kept
   private async loadRoleScopes({
     dataSource,
     roleIds,
@@ -300,18 +377,19 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
           ({ hasRowLevelPermissionPredicates }) =>
             !hasRowLevelPermissionPredicates,
         )
-        .map(({ id, hasRowLevelPermissionPredicates: _, ...role }) => [
-          id,
+        .map((role) => [
+          role.id,
           buildAiRunScopeFromStepAgentRole({
-            ...role,
+            canUpdateAllSettings: role.canUpdateAllSettings,
+            canAccessAllTools: role.canAccessAllTools,
             objectPermissions: objectPermissionRows
-              .filter(({ roleId }) => roleId === id)
+              .filter(({ roleId }) => roleId === role.id)
               .map(({ roleId: _roleId, ...permission }) => permission),
             fieldPermissions: fieldPermissionRows
-              .filter(({ roleId }) => roleId === id)
+              .filter(({ roleId }) => roleId === role.id)
               .map(({ roleId: _roleId, ...permission }) => permission),
             permissionFlagUniversalIdentifiers: flagRows
-              .filter(({ roleId }) => roleId === id)
+              .filter(({ roleId }) => roleId === role.id)
               .map(({ universalIdentifier }) => universalIdentifier),
           }),
         ]),
@@ -324,16 +402,19 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
   }: {
     dataSource: DataSource;
     workspaceId: string;
-  }): Promise<{ workflowVersion: string | null; workflowRun: string | null }> {
+  }): Promise<WorkflowTables> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const findTable = async (
-      universalIdentifier: string,
-      tableName: string,
-    ): Promise<string | null> => {
+    const findTable = async ({
+      universalIdentifier,
+      tableName,
+    }: {
+      universalIdentifier: string;
+      tableName: string;
+    }): Promise<string | null> => {
       if (
         !isDefined(
           flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier],
@@ -351,338 +432,14 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     };
 
     return {
-      workflowVersion: await findTable(
-        STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-        'workflowVersion',
-      ),
-      workflowRun: await findTable(
-        STANDARD_OBJECTS.workflowRun.universalIdentifier,
-        'workflowRun',
-      ),
+      workflowVersion: await findTable({
+        universalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        tableName: 'workflowVersion',
+      }),
+      workflowRun: await findTable({
+        universalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
+        tableName: 'workflowRun',
+      }),
     };
-  }
-
-  private async rewriteReferences({
-    dataSource,
-    workspaceId,
-    isDryRun,
-    stepAgents,
-    workflowTables,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    isDryRun: boolean;
-    stepAgents: StepAgents;
-    workflowTables: { workflowVersion: string | null; workflowRun: string | null };
-  }): Promise<RewriteCounts> {
-    const { inlineConfigByAgentId, keptAgentIds, applicationIdByAgentId } =
-      stepAgents;
-    const inlineSteps = (tableName: string, rowId: string, steps: unknown) => {
-      const result = inlineWorkflowStepAgents({
-        steps,
-        inlineConfigByAgentId,
-        keptAgentIds,
-      });
-
-      for (const keptStepId of result.keptStepIds) {
-        this.logger.warn(
-          `Workspace ${workspaceId}: step ${keptStepId} of ${tableName} ${rowId} keeps its agent, whose role has row-level predicates a step scope cannot express`,
-        );
-      }
-
-      return { value: result.steps, hasChanged: result.hasChanged };
-    };
-
-    const coreWorkflowVersionCount = await this.rewriteRows({
-      dataSource,
-      isDryRun,
-      tableName: 'core."workflowVersion"',
-      columnName: 'steps',
-      whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"AI_AGENT"}]'`,
-      whereParameters: [workspaceId],
-      mapRow: ({ id, value }) => inlineSteps('core workflow version', id, value),
-    });
-
-    const workflowVersionCount = isDefined(workflowTables.workflowVersion)
-      ? await this.rewriteRows({
-          dataSource,
-          isDryRun,
-          tableName: workflowTables.workflowVersion,
-          columnName: 'steps',
-          whereClause: `steps @> '[{"type":"AI_AGENT"}]'`,
-          whereParameters: [],
-          mapRow: ({ id, value }) => inlineSteps('workflow version', id, value),
-        })
-      : 0;
-
-    const workflowRunCount = isDefined(workflowTables.workflowRun)
-      ? await this.rewriteRows({
-          dataSource,
-          isDryRun,
-          tableName: workflowTables.workflowRun,
-          columnName: 'state',
-          whereClause: `status::text = ANY($1::text[]) AND state -> 'flow' -> 'steps' @> '[{"type":"AI_AGENT"}]'`,
-          whereParameters: [NON_TERMINAL_WORKFLOW_RUN_STATUSES],
-          mapRow: ({ id, value }) => {
-            const state = value as { flow: { steps: unknown } };
-            const { value: steps, hasChanged } = inlineSteps(
-              'workflow run',
-              id,
-              state.flow.steps,
-            );
-
-            return {
-              value: { ...state, flow: { ...state.flow, steps } },
-              hasChanged,
-            };
-          },
-        })
-      : 0;
-
-    const pendingWakeUpCount = await this.rewriteRows({
-      dataSource,
-      isDryRun,
-      tableName: 'core."pendingWakeUp"',
-      columnName: 'payload',
-      whereClause: `"workspaceId" = $1 AND "ownerType" = 'AGENT_RUN' AND payload -> 'caller' ->> 'type' = 'WORKFLOW_STEP' AND payload -> 'runSpec' ->> 'agentId' = ANY($2::text[])`,
-      whereParameters: [workspaceId, [...inlineConfigByAgentId.keys()]],
-      mapRow: ({ value }) => {
-        const payload = value as {
-          caller: { ref: { stepId: string } };
-          runSpec: { agentId: string } & Record<string, unknown>;
-        };
-        const agentId = payload.runSpec.agentId;
-        const inlineConfig = inlineConfigByAgentId.get(agentId);
-
-        if (!isDefined(inlineConfig)) {
-          return { value, hasChanged: false };
-        }
-
-        return {
-          value: {
-            ...payload,
-            runSpec: inlinePausedAgentRunSpec({
-              runSpec: payload.runSpec,
-              inlineConfig,
-              applicationId: applicationIdByAgentId.get(agentId) ?? null,
-              stepId: payload.caller.ref.stepId,
-            }),
-          },
-          hasChanged: true,
-        };
-      },
-    });
-
-    return {
-      coreWorkflowVersionCount,
-      workflowVersionCount,
-      workflowRunCount,
-      pendingWakeUpCount,
-    };
-  }
-
-  // Finished runs are left out: they only show what ran, and a deleted agent shows as missing there
-  private async findReferencedAgentIds({
-    dataSource,
-    workspaceId,
-    workflowTables,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    workflowTables: { workflowVersion: string | null; workflowRun: string | null };
-  }): Promise<Set<string>> {
-    const stepAgentIdsOf = (stepsExpression: string, fromClause: string) =>
-      `SELECT step -> 'settings' -> 'input' ->> 'agentId' AS "agentId"
-       FROM ${fromClause}
-       CROSS JOIN LATERAL jsonb_array_elements(
-         CASE WHEN jsonb_typeof(${stepsExpression}) = 'array' THEN ${stepsExpression} ELSE '[]'::jsonb END
-       ) step
-       WHERE step ->> 'type' = 'AI_AGENT'`;
-
-    const queries = [
-      `${stepAgentIdsOf('version.steps', 'core."workflowVersion" version')} AND version."workspaceId" = $1`,
-      `SELECT payload -> 'runSpec' ->> 'agentId' AS "agentId" FROM core."pendingWakeUp" WHERE "workspaceId" = $1`,
-      ...(isDefined(workflowTables.workflowVersion)
-        ? [stepAgentIdsOf('version.steps', `${workflowTables.workflowVersion} version`)]
-        : []),
-      ...(isDefined(workflowTables.workflowRun)
-        ? [
-            `${stepAgentIdsOf(`run.state -> 'flow' -> 'steps'`, `${workflowTables.workflowRun} run`)} AND run.status::text = ANY($2::text[])`,
-          ]
-        : []),
-    ];
-
-    const rows: { agentId: string | null }[] = await dataSource.query(
-      queries.join(' UNION '),
-      isDefined(workflowTables.workflowRun)
-        ? [workspaceId, NON_TERMINAL_WORKFLOW_RUN_STATUSES]
-        : [workspaceId],
-    );
-
-    return new Set(rows.map(({ agentId }) => agentId).filter(isDefined));
-  }
-
-  private async deleteStepAgents({
-    workspaceId,
-    agentIds,
-  }: {
-    workspaceId: string;
-    agentIds: string[];
-  }): Promise<void> {
-    if (agentIds.length === 0) {
-      return;
-    }
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    for (
-      let batchStart = 0;
-      batchStart < agentIds.length;
-      batchStart += AGENT_DELETE_BATCH_SIZE
-    ) {
-      const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatAgentMaps',
-          'flatRoleTargetByAgentIdMaps',
-        ]);
-      const flatAgentsToDelete = agentIds
-        .slice(batchStart, batchStart + AGENT_DELETE_BATCH_SIZE)
-        .map((agentId) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: agentId,
-            flatEntityMaps: flatAgentMaps,
-          }),
-        )
-        .filter(isDefined);
-
-      if (flatAgentsToDelete.length === 0) {
-        continue;
-      }
-
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              agent: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: flatAgentsToDelete,
-                flatEntityToUpdate: [],
-              },
-              roleTarget: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: flatAgentsToDelete
-                  .map(({ id }) => flatRoleTargetByAgentIdMaps[id])
-                  .filter(isDefined),
-                flatEntityToUpdate: [],
-              },
-            },
-            workspaceId,
-            isSystemBuild: true,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-          },
-        );
-
-      if (result.status === 'fail') {
-        throw new WorkspaceMigrationBuilderException(
-          result,
-          `Failed to delete workflow step agents in workspace ${workspaceId}`,
-        );
-      }
-    }
-  }
-
-  // Only a role made for these agents goes: agent-only, owned by the custom application, no longer
-  // assigned to anything and no application's default role. Its permissions go with it
-  private async deleteUnusedAgentOnlyRoles({
-    dataSource,
-    workspaceId,
-    roleIds,
-  }: {
-    dataSource: DataSource;
-    workspaceId: string;
-    roleIds: string[];
-  }): Promise<number> {
-    if (roleIds.length === 0) {
-      return 0;
-    }
-
-    const deletedRoles: [{ id: string }[], number] = await dataSource.query(
-      `DELETE FROM core."role" role
-       USING core."workspace" workspace
-       WHERE workspace.id = role."workspaceId"
-         AND role."workspaceId" = $1
-         AND role.id = ANY($2::uuid[])
-         AND role."applicationId" = workspace."workspaceCustomApplicationId"
-         AND role."universalIdentifier" <> $3
-         AND role."canBeAssignedToAgents" = true
-         AND role."canBeAssignedToUsers" = false
-         AND role."canBeAssignedToApiKeys" = false
-         AND NOT EXISTS (SELECT 1 FROM core."roleTarget" target WHERE target."roleId" = role.id)
-         AND NOT EXISTS (SELECT 1 FROM core."application" application WHERE application."defaultRoleId" = role.id)
-       RETURNING role.id`,
-      [workspaceId, [...new Set(roleIds)], MEMBER_ROLE_UNIVERSAL_IDENTIFIER],
-    );
-
-    return deletedRoles[0].length;
-  }
-
-  private async rewriteRows({
-    dataSource,
-    isDryRun,
-    tableName,
-    columnName,
-    whereClause,
-    whereParameters,
-    mapRow,
-  }: {
-    dataSource: DataSource;
-    isDryRun: boolean;
-    tableName: string;
-    columnName: string;
-    whereClause: string;
-    whereParameters: unknown[];
-    mapRow: (row: StoredJsonbRow) => { value: unknown; hasChanged: boolean };
-  }): Promise<number> {
-    let rewrittenRowCount = 0;
-    let afterRowId: string | undefined;
-
-    while (true) {
-      const parameters = isDefined(afterRowId)
-        ? [...whereParameters, afterRowId]
-        : whereParameters;
-
-      const rows: StoredJsonbRow[] = await dataSource.query(
-        `SELECT id, ${columnName} AS value FROM ${tableName} WHERE (${whereClause})${isDefined(afterRowId) ? ` AND id > $${parameters.length}` : ''} ORDER BY id LIMIT ${REWRITE_BATCH_SIZE}`,
-        parameters,
-      );
-
-      const rewrites = rows.flatMap((row) => {
-        const { value, hasChanged } = mapRow(row);
-
-        return hasChanged ? [{ id: row.id, from: row.value, to: value }] : [];
-      });
-
-      if (isDryRun) {
-        rewrittenRowCount += rewrites.length;
-      } else if (rewrites.length > 0) {
-        // Compare-and-set so a row edited since it was read is left as is
-        const [, updatedRowCount]: [unknown, number] = await dataSource.query(
-          `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"`,
-          [JSON.stringify(rewrites)],
-        );
-
-        rewrittenRowCount += updatedRowCount;
-      }
-
-      if (rows.length < REWRITE_BATCH_SIZE) {
-        return rewrittenRowCount;
-      }
-
-      afterRowId = rows[rows.length - 1].id;
-    }
   }
 }
