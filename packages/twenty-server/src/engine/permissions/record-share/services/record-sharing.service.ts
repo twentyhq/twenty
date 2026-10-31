@@ -2,7 +2,6 @@ import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/uti
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -18,10 +17,6 @@ import {
   type RecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import {
-  RecordShareException,
-  RecordShareExceptionCode,
-} from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
