@@ -7,7 +7,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 
 // Non-editable roles are left to the more accurate downstream ROLE_NOT_EDITABLE error
 export const validateRoleDeletionDoesNotLockOutActorOrThrow = ({

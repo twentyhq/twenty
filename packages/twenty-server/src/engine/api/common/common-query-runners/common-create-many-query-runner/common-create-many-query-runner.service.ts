@@ -47,13 +47,12 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
-import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
-import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
-import { resolveShareWithToWrite } from 'src/engine/core-modules/record-share/utils/resolve-share-with-to-write.util';
+import { ShareWithService } from 'src/engine/permissions/record-share/services/share-with.service';
+import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
+import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
 import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
 
@@ -77,10 +76,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
-    const isPrivateObject = sharingMode === RecordSharingMode.PRIVATE;
+    const objectSharing = resolveObjectSharing(queryRunnerContext);
 
-    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
+    if (objectSharing.isShareRequired || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
@@ -90,7 +88,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     if (
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
-        resolveShareWithToWrite({ sharingMode, shareWith: args.shareWith }),
+        resolveCreatedRecordSharingOrThrow({
+          objectSharing,
+          shareWith: args.shareWith,
+        }),
       ) ||
         containsNestedRelationCreate(
           args.data,
@@ -158,7 +159,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        isPrivateObject && isDefined(queryRunnerContext.transactionScope)
+        objectSharing.isShareRequired &&
+        isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,
               { shouldBypassPermissionChecks: true },
@@ -608,12 +610,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
     const objectSharing = resolveObjectSharing(queryRunnerContext);
-    const shareWithToWrite = resolveShareWithToWrite({
-      sharingMode: objectSharing.sharingMode,
+    const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
+      objectSharing,
       shareWith,
     });
 
-    if (!isDefined(shareWithToWrite)) {
+    if (!isDefined(createdRecordSharing)) {
       return;
     }
 
@@ -631,7 +633,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       apiKeyRoleMap: repository.internalContext.apiKeyRoleMap,
-      shareWith: shareWithToWrite,
+      createdRecordSharing,
       transactionScope,
     });
   }

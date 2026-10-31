@@ -44,4 +44,12 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
   },
+  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: {
+    label: msg`Private records`,
+    description: msg`Let people make a record visible only to its creator and the people it is shared with.`,
+  },
+  [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: {
+    label: msg`Record rules through relations`,
+    description: msg`Let record-level permission rules compare a field of a related record.`,
+  },
 };

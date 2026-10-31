@@ -2452,10 +2452,12 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
+  IS_PRIVATE_RECORD_ENABLED = 'IS_PRIVATE_RECORD_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
-  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 }
 
 export type Field = {
@@ -6682,6 +6684,7 @@ export type RowLevelPermissionPredicate = {
   objectMetadataId: Scalars['String']['output'];
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
+  relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
@@ -6718,6 +6721,7 @@ export type RowLevelPermissionPredicateInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;

@@ -2320,10 +2320,12 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_MCP_SERVERS_ENABLED
+  IS_PRIVATE_RECORD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
 }
 
 type Field {
@@ -4424,6 +4426,7 @@ type RowLevelPermissionPredicate {
   objectMetadataId: String!
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
   subFieldName: String
@@ -4459,6 +4462,7 @@ input RowLevelPermissionPredicateInput {
   id: UUID
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: UUID
   rowLevelPermissionPredicateGroupId: UUID
   subFieldName: String
   value: JSON

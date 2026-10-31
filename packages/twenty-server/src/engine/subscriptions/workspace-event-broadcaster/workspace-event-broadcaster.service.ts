@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/resolve-user-workspace-ids-with-permission-flag.util';
+import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/permissions/role/utils/resolve-user-workspace-ids-with-permission-flag.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';

@@ -92,7 +92,32 @@ describe('getAppPreferencesAppStatusesById', () => {
       }),
     ).toEqual({
       google: [{ type: 'accountSyncIssue', account: failedAccount }],
+      outlook: [{ type: 'notConnected' }],
     });
+  });
+
+  it('hints at connecting a built-in app only when no account uses it', () => {
+    const pausedAccount = buildAccount({
+      provider: ConnectedAccountProvider.GOOGLE,
+      applicationId: null,
+      archivedAt: '2026-09-01',
+      messageChannelSyncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+    });
+
+    expect(
+      getAppPreferencesAppStatusesById({
+        groups: [
+          {
+            id: 'group',
+            handle: 'tim@apple.dev',
+            builtInAccount: pausedAccount,
+            appAccounts: [],
+          },
+        ],
+        builtInAccountApps: [{ id: 'google' }, { id: 'imap' }],
+        applicationsWithPreferences: [],
+      }),
+    ).toEqual({ imap: [{ type: 'notConnected' }] });
   });
 
   it('asks to reconnect when an active connection failed to authenticate', () => {

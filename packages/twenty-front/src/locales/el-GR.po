@@ -270,7 +270,7 @@ msgstr "{0, plural, one {# Αντικείμενο} other {# Αντικείμεν
 #. placeholder {0}: parts.length
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
-msgstr ""
+msgstr "{0, plural, one {# βήμα} other {# βήματα}}"
 
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
@@ -1594,7 +1594,7 @@ msgstr "Μια συσκευή εγγραφής θα συνδεθεί όταν ξ
 #. js-lingui-id: fdM8v5
 #: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
 msgid "A role is required"
-msgstr ""
+msgstr "Απαιτείται ρόλος"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2197,6 +2197,11 @@ msgstr "Προσθήκη Email"
 msgid "Add email channel"
 msgstr "Προσθήκη καναλιού email"
 
+#. js-lingui-id: QwQhEf
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add embedded website"
+msgstr "Προσθήκη ενσωματωμένου ιστοτόπου"
+
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
@@ -2547,6 +2552,11 @@ msgstr "Προσθήκη URI"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Προσθήκη προβολής"
+
+#. js-lingui-id: hKxpSq
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add website"
+msgstr "Προσθήκη ιστοτόπου"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -3733,6 +3743,11 @@ msgstr "Η εφαρμογή διαγράφηκε με επιτυχία"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "App logs"
 msgstr "Αρχεία καταγραφής εφαρμογής"
+
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr "Λειτουργία εφαρμογής"
 
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -5284,6 +5299,8 @@ msgstr "Κλήσεις"
 
 #. js-lingui-id: rT2cV+
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "Κάμερα"
 
@@ -5651,6 +5668,11 @@ msgstr "Αλλαγή θέματος σε σύστημα"
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
 msgstr "Αλλαγές"
+
+#. js-lingui-id: OhVo1W
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
+msgstr "Οι αλλαγές αποθηκεύτηκαν. Επαναφορτώστε τις ανοιχτές καρτέλες του Twenty για να εφαρμοστούν τα ενημερωμένα δικαιώματα. Η επαναφόρτωση τερματίζει τις ενεργές κλήσεις και εγγραφές."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6033,6 +6055,11 @@ msgstr "Επιλέξτε ποιους φακέλους εισάγει αυτή �
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
+
+#. js-lingui-id: jgIz8c
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
+msgstr "Επιλέξτε ποιοι ιστότοποι που είναι ενσωματωμένοι σε γραφικά στοιχεία iframe μπορούν να ζητούν πρόσβαση στο μικρόφωνο ή στην κάμερα. Τα μέλη πρέπει και πάλι να ενεργοποιήσουν την πρόσβαση και να εγκρίνουν την άδεια του προγράμματος περιήγησης."
 
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
@@ -10644,6 +10671,11 @@ msgstr "Τα email δεν πρέπει να είναι κενά"
 msgid "embed"
 msgstr "ενσωμάτωση"
 
+#. js-lingui-id: cjPnTO
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Embedded website media access"
+msgstr "Πρόσβαση πολυμέσων ενσωματωμένου ιστότοπου"
+
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -10919,6 +10951,11 @@ msgstr "Εισαγάγετε ποσό x 1 000 000 (π.χ. $3.21 → 3210000)"
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com."
 msgstr "Εισαγάγετε μια προέλευση HTTP ή HTTPS χωρίς διαδρομή ή χαρακτήρα μπαλαντέρ, όπως https://portal.example.com."
+
+#. js-lingui-id: TO+jkh
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
+msgstr "Εισαγάγετε μια προέλευση HTTPS χωρίς διαδρομή ή χαρακτήρα υποκατάστασης, όπως https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -16008,6 +16045,11 @@ msgstr "Αφήστε κάθε μέλος να αποφασίσει μόνο το
 msgid "Let people restrict and share individual records."
 msgstr "Επιτρέψτε στους χρήστες να περιορίζουν και να κοινοποιούν μεμονωμένες εγγραφές."
 
+#. js-lingui-id: b3MaZQ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let record-level permission rules compare a field of a related record."
+msgstr "Να επιτρέπεται στους κανόνες δικαιωμάτων σε επίπεδο εγγραφής να συγκρίνουν ένα πεδίο μιας σχετικής εγγραφής."
+
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Let this member sign in again if they lost their authenticator app"
@@ -17303,6 +17345,8 @@ msgstr "Μέθοδος"
 
 #. js-lingui-id: 1iY5xv
 #: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "Μικρόφωνο"
 
@@ -22132,6 +22176,11 @@ msgstr "Ετικέτα εγγραφής"
 msgid "Record page"
 msgstr "Σελίδα εγγραφής"
 
+#. js-lingui-id: fHTWNa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record rules through relations"
+msgstr "Κανόνες εγγραφών μέσω συσχετίσεων"
+
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -22422,6 +22471,11 @@ msgstr "Αποδέσμευση & μεταφορά σε αυτόν τον δια�
 msgid "Reload"
 msgstr "Ανανέωση"
 
+#. js-lingui-id: tF5Smn
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Reload page"
+msgstr "Επαναφόρτωση σελίδας"
+
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Reload validity token"
@@ -22451,6 +22505,7 @@ msgstr "Απομακρυσμένο"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/modules/settings/components/SettingsImageInput.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/BaseChip.tsx
@@ -22570,6 +22625,11 @@ msgstr "Αφαίρεση συνδέσμου"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Remove logo"
 msgstr "Αφαίρεση λογότυπου"
+
+#. js-lingui-id: iW2ZAl
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
+msgid "Remove media access for {origin}"
+msgstr "Κατάργηση πρόσβασης πολυμέσων για το {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -26971,7 +27031,7 @@ msgstr "Το εικονίδιο που θα εμφανίζεται για την
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "The mail server certificate is invalid"
-msgstr ""
+msgstr "Το πιστοποιητικό του διακομιστή αλληλογραφίας δεν είναι έγκυρο"
 
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -27073,7 +27133,7 @@ msgstr "Δεν ήταν δυνατή η επίλυση της διαμόρφωσ
 #. js-lingui-id: baXgIX
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "The role attached to this webhook."
-msgstr ""
+msgstr "Ο ρόλος που επισυνάπτεται σε αυτό το webhook."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27539,6 +27599,11 @@ msgstr "Αυτό το κλειδί Οργανισμού είναι ήδη δεσ
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
 msgstr "Αυτό το κλειδί Οργανισμού είναι προς το παρόν δεσμευμένο σε διαφορετικό στιγμιότυπο διακομιστή. Η μεταφορά του εδώ θα το αποδεσμεύσει από τον προηγούμενο διακομιστή και θα σταματήσει την καταμέτρηση θέσεων σε αυτόν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;"
+
+#. js-lingui-id: NBHLa1
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "This origin is already configured. Use its switches to change access."
+msgstr "Αυτή η προέλευση έχει ήδη ρυθμιστεί. Χρησιμοποιήστε τους διακόπτες της για να αλλάξετε την πρόσβαση."
 
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -30533,6 +30598,11 @@ msgstr "Webhooks"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Website"
 msgstr "Ιστοσελίδα"
+
+#. js-lingui-id: 9FCp7Z
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Website origin"
+msgstr "Προέλευση ιστότοπου"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

@@ -12126,6 +12126,9 @@ export default {
             "positionInRowLevelPermissionPredicateGroup": [
                 6
             ],
+            "relationFieldMetadataId": [
+                1
+            ],
             "roleId": [
                 1
             ],
@@ -12204,6 +12207,9 @@ export default {
             ],
             "positionInRowLevelPermissionPredicateGroup": [
                 6
+            ],
+            "relationFieldMetadataId": [
+                529
             ],
             "rowLevelPermissionPredicateGroupId": [
                 529

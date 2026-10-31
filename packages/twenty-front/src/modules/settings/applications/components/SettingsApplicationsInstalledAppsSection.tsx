@@ -56,7 +56,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
       applications={displayedApplications}
       builtInApps={installedBuiltInAccountApps}
       linkTarget="applicationDetail"
-      middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}
+      middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
       statusesById={statusesById}
     />
   );

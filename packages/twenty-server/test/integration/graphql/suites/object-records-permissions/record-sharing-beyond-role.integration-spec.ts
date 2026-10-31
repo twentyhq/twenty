@@ -27,11 +27,11 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -288,7 +288,7 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
     await setShare({ principal: { roleId: memberRoleId } });
-    await setGeneralAccess(RecordShareAccessLevel.READ);
+    await setGeneralAccess(RecordShareAccessLevel.NONE);
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
@@ -299,7 +299,7 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(sharing.body.errors).toBeUndefined();
     expect(sharing.body.data.recordSharing.generalAccessLevel).toBe(
-      RecordShareAccessLevel.READ,
+      RecordShareAccessLevel.NONE,
     );
     expect(sharing.body.data.recordSharing.shares).toEqual(
       expect.arrayContaining([
@@ -458,7 +458,7 @@ describe('Records shared beyond the role that can access their object', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRoleId,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
