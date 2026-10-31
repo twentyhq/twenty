@@ -18,6 +18,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import {
   OBJECT_PERMISSION_ACTIONS,
+  type ObjectPermissionAction,
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   type RoleManifest,
 } from 'twenty-shared/application';
@@ -227,15 +228,28 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     billsCredits,
   ]);
 
-  const [grantObjectScopes, setGrantObjectScopes] = useState<
-    GrantObjectScope[]
-  >(() =>
+  const [grantObjectScopeOverrides, setGrantObjectScopeOverrides] = useState<
+    Partial<Record<ObjectPermissionAction, GrantObjectScope>>
+  >({});
+
+  const grantObjectScopes: GrantObjectScope[] =
     OBJECT_PERMISSION_ACTIONS.filter(
       (action) =>
         defaultRole?.[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]] ===
         true,
-    ).map((action) => ({ action, allObjects: true, objectMetadataIds: [] })),
-  );
+    ).map(
+      (action) =>
+        grantObjectScopeOverrides[action] ?? {
+          action,
+          allObjects: true,
+          objectMetadataIds: [],
+        },
+    );
+
+  const handleGrantObjectScopesChange = (scopes: GrantObjectScope[]) =>
+    setGrantObjectScopeOverrides(
+      Object.fromEntries(scopes.map((scope) => [scope.action, scope])),
+    );
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);
@@ -338,7 +352,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                       appObjectUniversalIdentifiers
                     }
                     scopes={grantObjectScopes}
-                    onScopesChange={setGrantObjectScopes}
+                    onScopesChange={handleGrantObjectScopesChange}
                   />
                 </StyledPermissionsCard>
               )}

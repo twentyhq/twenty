@@ -73,8 +73,28 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const agent = agentData?.findOneAgent;
 
-  const breadcrumbLinks =
-    fromAgentId && isDefined(agent)
+  const breadcrumbLinks = fromApplicationId
+    ? [
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.General),
+        },
+        {
+          children: t`Apps`,
+          href: getSettingsPath(SettingsPath.Applications),
+        },
+        {
+          children: settingsDraftRole.label,
+          href: getSettingsPath(
+            SettingsPath.ApplicationDetail,
+            { applicationId: fromApplicationId },
+            undefined,
+            APPLICATION_ACCESS_TAB_ID,
+          ),
+        },
+        { children: t`Permissions · ${objectLabelSingular}` },
+      ]
+    : fromAgentId && isDefined(agent)
       ? getCoreAgentBreadcrumbLinks([
           { children: agent.label, href: getCoreAgentLink(agent.id) },
           { children: t`Permissions · ${objectLabelSingular}` },

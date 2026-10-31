@@ -9,11 +9,11 @@ import { REQUESTED_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-ide
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier;
 
-// v1: read companies and all objects. v2: also update companies. v3: no longer reads all objects.
+// v1: read companies and all objects. v2: also update companies. v3: drops both additions.
 const REQUESTED_ACCESS_BY_VERSION = {
   1: { canReadAllObjectRecords: true, canUpdateCompanies: false },
   2: { canReadAllObjectRecords: true, canUpdateCompanies: true },
-  3: { canReadAllObjectRecords: false, canUpdateCompanies: true },
+  3: { canReadAllObjectRecords: false, canUpdateCompanies: false },
 } as const;
 
 const requestedAccess = REQUESTED_ACCESS_BY_VERSION[REQUESTED_ACCESS_VERSION];
