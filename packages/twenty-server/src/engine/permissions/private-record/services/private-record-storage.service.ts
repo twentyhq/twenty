@@ -10,6 +10,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/private-record/t
 import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { hasCreatedByField } from 'src/engine/permissions/private-record/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -88,6 +89,7 @@ export class PrivateRecordStorageService {
 
     const objectsWithCreator = flatObjectMetadatas.filter(
       (flatObjectMetadata) =>
+        !isPermissionStorageObject(flatObjectMetadata) &&
         hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
     );
 

@@ -82,11 +82,15 @@ const readEverything: RowAccessPolicySubject = {
   resolveRowLevelPermissionRecordFilter: () => null,
 };
 
-const build = (
-  subject: RowAccessPolicySubject,
-  flatObjectMetadata: FlatObjectMetadata,
+const build = ({
+  subject,
+  flatObjectMetadata,
   policyEnvironment = environment,
-) =>
+}: {
+  subject: RowAccessPolicySubject;
+  flatObjectMetadata: FlatObjectMetadata;
+  policyEnvironment?: typeof environment;
+}) =>
   buildCompiledRowAccessPolicy({
     subject,
     environment: policyEnvironment,
@@ -95,12 +99,16 @@ const build = (
     operationType: 'select',
   });
 
-const gatedSql = (
-  subject: RowAccessPolicySubject,
-  flatObjectMetadata: FlatObjectMetadata,
+const gatedSql = ({
+  subject,
+  flatObjectMetadata,
   policyEnvironment = environment,
-): string => {
-  const policy = build(subject, flatObjectMetadata, policyEnvironment);
+}: {
+  subject: RowAccessPolicySubject;
+  flatObjectMetadata: FlatObjectMetadata;
+  policyEnvironment?: typeof environment;
+}): string => {
+  const policy = build({ subject, flatObjectMetadata, policyEnvironment });
 
   expect(policy.kind).toBe('gated');
 
@@ -140,14 +148,21 @@ describe('buildRowAccessPolicy', () => {
       ...note,
       disabledObjectPermissionActions: ['canReadObjectRecords' as const],
     };
-    expect(build(readEverything, object)).toEqual({ kind: 'denied' });
     expect(
-      build({ ...readEverything, isOwningApplication: () => true }, object),
+      build({ subject: readEverything, flatObjectMetadata: object }),
+    ).toEqual({ kind: 'denied' });
+    expect(
+      build({
+        subject: { ...readEverything, isOwningApplication: () => true },
+        flatObjectMetadata: object,
+      }),
     ).toEqual({ kind: 'open' });
   });
 
   it('opens an object to a subject without predicate', () => {
-    expect(build(readEverything, note)).toEqual({ kind: 'open' });
+    expect(
+      build({ subject: readEverything, flatObjectMetadata: note }),
+    ).toEqual({ kind: 'open' });
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
@@ -189,7 +204,11 @@ describe('buildRowAccessPolicy', () => {
 
   it('gates every object on private records once they are enabled, without record sharing', () => {
     expect(
-      gatedSql(readEverything, person, privateRecordEnvironment),
+      gatedSql({
+        subject: readEverything,
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
     ).toContain('recordShare');
   });
 
@@ -304,33 +323,42 @@ describe('buildRowAccessPolicy', () => {
   });
 
   it('denies an object the subject has no permission on', () => {
-    expect(build({ ...readEverything, objectsPermissions: {} }, note)).toEqual({
+    expect(
+      build({
+        subject: { ...readEverything, objectsPermissions: {} },
+        flatObjectMetadata: note,
+      }),
+    ).toEqual({
       kind: 'denied',
     });
   });
 
   it('gates an object on the role predicate alone', () => {
-    const sql = gatedSql(
-      {
+    const sql = gatedSql({
+      subject: {
         ...readEverything,
         resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
       },
-      note,
-    );
+      flatObjectMetadata: note,
+    });
 
     expect(sql).toBe('("note"."title" = :restricted)');
   });
 
   it('gates records on their share rows and leaves them open without principals', () => {
     expect(
-      gatedSql(readEverything, person, privateRecordEnvironment),
+      gatedSql({
+        subject: readEverything,
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
     ).toContain('"person_recordShare"."recordId" = "person"."id"');
     expect(
-      build(
-        { ...readEverything, principalIds: undefined },
-        person,
-        privateRecordEnvironment,
-      ),
+      build({
+        subject: { ...readEverything, principalIds: undefined },
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
     ).toEqual({ kind: 'open' });
   });
 
