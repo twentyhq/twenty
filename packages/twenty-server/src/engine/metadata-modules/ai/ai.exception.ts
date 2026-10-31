@@ -24,6 +24,7 @@ export enum AiExceptionCode {
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
   CHAT_CHANNELS_UNAVAILABLE = 'CHAT_CHANNELS_UNAVAILABLE',
   CHAT_UPGRADE_IN_PROGRESS = 'CHAT_UPGRADE_IN_PROGRESS',
+  GENERATE_UPGRADE_IN_PROGRESS = 'GENERATE_UPGRADE_IN_PROGRESS',
   CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
   CHAT_CHANNEL_BUSY = 'CHAT_CHANNEL_BUSY',
   CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
@@ -90,6 +91,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Channels are not available yet. Try again in a few minutes.`;
     case AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS:
       return msg`Chats are not available yet. Try again in a few minutes.`;
+    case AiExceptionCode.GENERATE_UPGRADE_IN_PROGRESS:
+      return msg`AI generation is not available yet. Try again in a few minutes.`;
     case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       return msg`Move this channel's chats to another channel before deleting it.`;
     case AiExceptionCode.CHAT_CHANNEL_BUSY:

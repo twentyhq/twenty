@@ -107,7 +107,7 @@ export class AgentRunWithoutConversationService {
   }): Promise<OneShotAgentRun> {
     let turnId: string | null = null;
     // usage is read as each step ends, so a run that fails midway still records what it spent
-    let usage: AgentTurnUsage = NO_USAGE;
+    let usage: AgentTurnUsage | null = null;
     let outcome: AgentRunCallerOutcome;
     let summary: AgentRunSummary | null = null;
 
@@ -157,8 +157,16 @@ export class AgentRunWithoutConversationService {
               !read.done;
               read = await reader.read()
             ) {
-              if (read.value.type === 'finish-step') {
-                usage = addStepToAgentTurnUsage(modelConfig, usage, read.value);
+              // a failed step still ends with a finish-step, one that reports no usage
+              if (
+                read.value.type === 'finish-step' &&
+                read.value.finishReason !== 'error'
+              ) {
+                usage = addStepToAgentTurnUsage(
+                  modelConfig,
+                  usage ?? NO_USAGE,
+                  read.value,
+                );
               }
             }
 
@@ -173,11 +181,16 @@ export class AgentRunWithoutConversationService {
               started,
             });
 
-            usage = completed.structuredOutputSteps.reduce(
-              (turnUsage, step) =>
-                addStepToAgentTurnUsage(modelConfig, turnUsage, step),
-              usage,
-            );
+            usage =
+              completed.structuredOutputSteps.reduce<AgentTurnUsage | null>(
+                (turnUsage, step) =>
+                  addStepToAgentTurnUsage(
+                    modelConfig,
+                    turnUsage ?? NO_USAGE,
+                    step,
+                  ),
+                usage,
+              );
 
             return completed;
           }),
@@ -241,7 +254,12 @@ export class AgentRunWithoutConversationService {
 
     if (isDefined(turnId)) {
       await this.turnRecorderService
-        .recordUsage({ workspaceId, turnId, threadId: null, usage })
+        .recordUsage({
+          workspaceId,
+          turnId,
+          threadId: null,
+          usage: usage ?? NO_USAGE,
+        })
         .catch((recordError: unknown) =>
           this.logger.error(
             `Could not record the usage of turn ${turnId}`,
@@ -250,6 +268,6 @@ export class AgentRunWithoutConversationService {
         );
     }
 
-    return { turnId, outcome, summary };
+    return { turnId, outcome, summary, usage };
   }
 }

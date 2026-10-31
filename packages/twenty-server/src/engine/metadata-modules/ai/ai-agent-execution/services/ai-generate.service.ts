@@ -28,6 +28,7 @@ import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/meta
 import { parseAgentResponseFormatOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-response-format-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import {
   AiException,
@@ -48,6 +49,7 @@ export class AiGenerateService {
   constructor(
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunWithoutConversationService: AgentRunWithoutConversationService,
+    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async generate({
@@ -72,6 +74,17 @@ export class AiGenerateService {
     const scope = this.parseScopeOrThrow(input.scope);
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
+
+    if (
+      !(await this.conversationWriterService.canInsertTurnWithoutThread(
+        workspace.id,
+      ))
+    ) {
+      throw new AiException(
+        'AI generation is available once this workspace finishes upgrading',
+        AiExceptionCode.GENERATE_UPGRADE_IN_PROGRESS,
+      );
+    }
 
     const run = await this.agentRunWithoutConversationService.runOneShot({
       workspaceId: workspace.id,
@@ -110,16 +123,16 @@ export class AiGenerateService {
   }
 
   private buildResult({
-    run: { turnId, outcome, summary },
+    run: { turnId, outcome, usage: runUsage },
     isJsonResponse,
   }: {
     run: OneShotAgentRun;
     isJsonResponse: boolean;
   }): GenerateResult {
-    const usage = isDefined(summary)
+    const usage = isDefined(runUsage)
       ? {
-          inputTokens: summary.usage.inputTokens,
-          outputTokens: summary.usage.outputTokens,
+          inputTokens: runUsage.inputTokens,
+          outputTokens: runUsage.outputTokens,
         }
       : null;
 

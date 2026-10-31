@@ -31,12 +31,22 @@ const answerWith = (text: string): ScriptedModelResponse => ({
   usage: USAGE,
 });
 
-const mockModel = (respond: () => ScriptedModelResponse) => {
+const failWith = (message: string): ScriptedModelResponse => ({
+  ...answerWith(''),
+  streamError: new APICallError({
+    message,
+    url: 'https://provider.test',
+    requestBodyValues: {},
+    statusCode: 400,
+  }),
+});
+
+const mockModel = (respond: (callIndex: number) => ScriptedModelResponse) => {
   const offeredToolNamesByCall: string[][] = [];
-  const model = createScriptedLanguageModel((options) => {
+  const model = createScriptedLanguageModel((options, callIndex) => {
     offeredToolNamesByCall.push((options.tools ?? []).map((tool) => tool.name));
 
-    return respond();
+    return respond(callIndex);
   });
 
   jest
@@ -132,15 +142,7 @@ describe('generate mutation (integration)', () => {
   });
 
   it('reports a failing model in the result instead of a GraphQL error', async () => {
-    mockModel(() => ({
-      ...answerWith(''),
-      streamError: new APICallError({
-        message: 'Invalid request',
-        url: 'https://provider.test',
-        requestBodyValues: {},
-        statusCode: 400,
-      }),
-    }));
+    mockModel(() => failWith('Invalid request'));
 
     expect(
       await generate({ input: [{ role: 'user', content: 'Qualify Acme' }] }),
@@ -149,6 +151,35 @@ describe('generate mutation (integration)', () => {
       text: null,
       object: null,
       error: expect.stringContaining('Invalid request'),
+      usage: null,
+    });
+  });
+
+  it('reports the usage of the steps that finished before the model failed', async () => {
+    mockModel((callIndex) =>
+      callIndex === 0
+        ? {
+            content: [
+              {
+                type: 'tool-call',
+                toolCallId: 'missing-1',
+                toolName: 'missing_tool',
+                input: '{}',
+              },
+            ],
+            finishReason: { unified: 'tool-calls', raw: undefined },
+            usage: USAGE,
+          }
+        : failWith('Invalid request'),
+    );
+
+    expect(
+      await generate({ input: [{ role: 'user', content: 'Qualify Acme' }] }),
+    ).toMatchObject({
+      success: false,
+      error: expect.stringContaining('Invalid request'),
+      turnId: expect.any(String),
+      usage: { inputTokens: 12, outputTokens: 3 },
     });
   });
 });
