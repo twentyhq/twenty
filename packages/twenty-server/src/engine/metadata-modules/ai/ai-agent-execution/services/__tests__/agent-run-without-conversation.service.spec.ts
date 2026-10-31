@@ -54,11 +54,13 @@ const buildService = ({
   streamError,
   stopReason,
   personaError,
+  finishError,
 }: {
   waitingState?: string;
   streamError?: unknown;
   stopReason?: string;
   personaError?: Error;
+  finishError?: Error;
 } = {}) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue(waitingState),
@@ -89,7 +91,9 @@ const buildService = ({
     insertTurn: jest.fn().mockResolvedValue(TURN_ID),
   };
   const turnRecorderService = {
-    finish: jest.fn().mockResolvedValue(true),
+    finish: isDefined(finishError)
+      ? jest.fn().mockRejectedValue(finishError)
+      : jest.fn().mockResolvedValue(true),
     recordUsage: jest.fn().mockResolvedValue(undefined),
   };
 
@@ -254,6 +258,21 @@ describe('AgentRunWithoutConversationService', () => {
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'Agent is archived' },
+      }),
+    );
+  });
+
+  it('keeps a completed outcome when recording the turn fails', async () => {
+    const { service, agentRunSuspensionService } = buildService({
+      finishError: new Error('connection reset'),
+    });
+
+    await run(service);
+
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledTimes(1);
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'COMPLETED', result: { response: 'Qualified' } },
       }),
     );
   });

@@ -155,15 +155,23 @@ export class AgentRunWithoutConversationService {
           }
         : { status: 'COMPLETED', result: execution.result };
 
-      await this.turnRecorderService.finish({
-        workspaceId,
-        turnId: runTurnId,
-        status:
-          outcome.status === 'COMPLETED'
-            ? AgentTurnStatus.COMPLETED
-            : AgentTurnStatus.FAILED,
-        modelId: execution.modelId,
-      });
+      // the record of the run must not overturn its outcome
+      await this.turnRecorderService
+        .finish({
+          workspaceId,
+          turnId: runTurnId,
+          status:
+            outcome.status === 'COMPLETED'
+              ? AgentTurnStatus.COMPLETED
+              : AgentTurnStatus.FAILED,
+          modelId: execution.modelId,
+        })
+        .catch((finishError: unknown) =>
+          this.logger.error(
+            `Could not record the end of turn ${runTurnId}`,
+            finishError instanceof Error ? finishError.stack : finishError,
+          ),
+        );
     } catch (error) {
       this.logger.error(
         `One-shot agent run of workspace ${workspaceId} failed`,
