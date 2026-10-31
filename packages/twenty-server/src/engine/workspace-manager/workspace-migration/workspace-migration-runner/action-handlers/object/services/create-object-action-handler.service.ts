@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { enrichRecordTableSchemaWithIsPrivate } from 'src/engine/permissions/private-record/utils/enrich-record-table-schema-with-is-private.util';
 import { enrichAccessGroupTableSchema } from 'src/engine/permissions/access-group/utils/enrich-access-group-table-schema.util';
 import { enrichRecordTableSchemaWithAccessGroupIds } from 'src/engine/permissions/access-group/utils/enrich-record-table-schema-with-access-group-ids.util';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
@@ -175,11 +176,14 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
 
-    const tableSchema = enrichRecordTableSchemaWithAccessGroupIds({
+    const tableSchema = enrichRecordTableSchemaWithIsPrivate({
       objectMetadata: flatObjectMetadata,
-      tableSchema: enrichAccessGroupTableSchema({
+      tableSchema: enrichRecordTableSchemaWithAccessGroupIds({
         objectMetadata: flatObjectMetadata,
-        tableSchema: { columnDefinitions, indexDefinitions: [] },
+        tableSchema: enrichAccessGroupTableSchema({
+          objectMetadata: flatObjectMetadata,
+          tableSchema: { columnDefinitions, indexDefinitions: [] },
+        }),
       }),
     });
 

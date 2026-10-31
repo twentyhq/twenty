@@ -83,23 +83,6 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
               tableSchema: { columnDefinitions: [], indexDefinitions: [] },
             }),
           });
-        const conflictingColumnNames = columnDefinitions
-          .filter(
-            (columnDefinition) =>
-              existingColumnTypes.has(columnDefinition.name) &&
-              existingColumnTypes.get(columnDefinition.name) !==
-                (columnDefinition.isArray ? '_int4' : 'int4'),
-          )
-          .map((columnDefinition) => columnDefinition.name);
-
-        if (conflictingColumnNames.length > 0) {
-          this.logger.error(
-            `Skipping ${tableName} in workspace ${workspaceId}: column(s) ${conflictingColumnNames.join(', ')} already exist with another type`,
-          );
-
-          continue;
-        }
-
         const missingColumnDefinitions = columnDefinitions.filter(
           (columnDefinition) => !existingColumnTypes.has(columnDefinition.name),
         );

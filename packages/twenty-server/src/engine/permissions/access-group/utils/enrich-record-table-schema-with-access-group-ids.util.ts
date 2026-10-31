@@ -1,7 +1,7 @@
 import { ACCESS_GROUP_IDS_COLUMN_DEFINITION } from 'src/engine/permissions/access-group/constants/access-group-ids-column-definition.constant';
 import { type WorkspaceTableSchemaDefinitions } from 'src/engine/permissions/access-group/types/workspace-table-schema-definitions.type';
 import { buildAccessGroupIdsIndexDefinition } from 'src/engine/permissions/access-group/utils/build-access-group-ids-index-definition.util';
-import { hasAccessGroupIds } from 'src/engine/permissions/access-group/utils/has-access-group-ids.util';
+import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const enrichRecordTableSchemaWithAccessGroupIds = ({
@@ -11,7 +11,7 @@ export const enrichRecordTableSchemaWithAccessGroupIds = ({
   objectMetadata: Pick<FlatObjectMetadata, 'id' | 'universalIdentifier'>;
   tableSchema: WorkspaceTableSchemaDefinitions;
 }): WorkspaceTableSchemaDefinitions => {
-  if (!hasAccessGroupIds(objectMetadata)) {
+  if (isPermissionStorageObject(objectMetadata)) {
     return tableSchema;
   }
 
