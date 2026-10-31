@@ -1,10 +1,16 @@
-import { WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  getWorkflowAiAgentStepKind,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const errorCodesFor = (input: WorkflowAiAgentActionInput) => {
+const errorCodesFor = (
+  input: WorkflowAiAgentActionInput,
+  agent: { isSystem: boolean } = { isSystem: false },
+) => {
   const step = {
     id: 'step-1',
     name: 'Qualify',
@@ -20,7 +26,10 @@ const errorCodesFor = (input: WorkflowAiAgentActionInput) => {
     },
   } as WorkflowAiAgentAction;
 
-  return validateWorkflowAiAgentStep(step)
+  return validateWorkflowAiAgentStep({
+    step,
+    stepKind: getWorkflowAiAgentStepKind(input, agent),
+  })
     .filter(({ severity }) => severity === 'error')
     .map(({ code }) => code);
 };
@@ -85,6 +94,24 @@ describe('validateWorkflowAiAgentStep', () => {
         humanInputInstructions: 'Ask before choosing a plan.',
         conversation: { scope: 'KEY', key: 'lead' },
       }),
+    ).toEqual([]);
+  });
+
+  it('accepts a response format on a step running a reusable agent', () => {
+    expect(
+      errorCodesFor({
+        agentId: 'agent-id',
+        responseFormat: { type: 'text' },
+      }),
+    ).toEqual([]);
+  });
+
+  it('accepts a response format on a step running its hidden agent', () => {
+    expect(
+      errorCodesFor(
+        { agentId: 'agent-id', responseFormat: { type: 'text' } },
+        { isSystem: true },
+      ),
     ).toEqual([]);
   });
 });

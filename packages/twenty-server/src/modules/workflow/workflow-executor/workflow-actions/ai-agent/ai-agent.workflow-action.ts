@@ -4,7 +4,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
-  isWorkflowAiAgentGenerateStep,
+  getWorkflowAiAgentStepKind,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -98,7 +98,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     const [configIssue] = getWorkflowAiAgentStepConfigIssues({
-      hasAgent: !isWorkflowAiAgentGenerateStep(step.settings.input),
+      stepKind: getWorkflowAiAgentStepKind(step.settings.input),
       input: step.settings.input,
     });
 
