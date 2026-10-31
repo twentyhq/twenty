@@ -80,9 +80,9 @@ export class AiFrontComponentController {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Body('message') message: unknown,
   ) {
-    const previewError = z.string().min(1).max(2000).safeParse(message);
+    const validation = z.string().min(1).max(2000).safeParse(message);
 
-    if (!previewError.success) {
+    if (!validation.success) {
       throw new ApplicationException(
         doNotTranslate('Invalid preview error message.'),
         ApplicationExceptionCode.INVALID_INPUT,
@@ -94,7 +94,7 @@ export class AiFrontComponentController {
       workspaceId: workspace.id,
       userWorkspaceId,
       draftId,
-      previewError: previewError.data,
+      previewError: validation.data,
     });
   }
 }

@@ -28,7 +28,7 @@ import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-c
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
 
-const DRAFT_TTL = 24 * 60 * 60 * 1000;
+const DRAFT_TIME_TO_LIVE_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AiFrontComponentService {
@@ -169,7 +169,7 @@ export class AiFrontComponentService {
       await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-    let draft: FrontComponentDraft;
+    let draft: FrontComponentDraft | undefined;
 
     try {
       const stream = await this.fileStorageService.readFile({
@@ -183,14 +183,10 @@ export class AiFrontComponentService {
       if (error.code !== FileStorageExceptionCode.FILE_NOT_FOUND) {
         throw error;
       }
-      throw new ApplicationException(
-        doNotTranslate('Component draft not found or expired.'),
-        ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
-        { userFriendlyMessage: msg`Component draft not found or expired.` },
-      );
     }
 
     if (
+      !isDefined(draft) ||
       draft.expiresAt <= Date.now() ||
       draft.userWorkspaceId !== userWorkspaceId
     ) {
@@ -246,7 +242,7 @@ export class AiFrontComponentService {
       workspaceId: context.workspaceId,
       userWorkspaceId,
     });
-    const objectNamePlural = await this.validateQueryOrThrow({
+    const objectNamePlural = await this.getQueryObjectNamePluralOrThrow({
       query: input.query,
       authContext: context.authContext,
       rolePermissionConfig: context.rolePermissionConfig,
@@ -308,7 +304,7 @@ export class AiFrontComponentService {
         objectNamePlural,
         id,
         applicationId: application.id,
-        expiresAt: Date.now() + DRAFT_TTL,
+        expiresAt: Date.now() + DRAFT_TIME_TO_LIVE_IN_MILLISECONDS,
         userWorkspaceId,
         threadId,
       };
@@ -407,7 +403,7 @@ export class AiFrontComponentService {
     });
   }
 
-  private async validateQueryOrThrow({
+  private async getQueryObjectNamePluralOrThrow({
     query,
     authContext,
     rolePermissionConfig,
