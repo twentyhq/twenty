@@ -136,8 +136,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         null,
     });
 
-    // a Generate step (no agent) is always one-shot, even with stale conversation settings; an agent
-    // step converses only when someone can take part in it, a one-shot step leaves a turn on record
+    // only an agent step someone can take part in converses; any other step runs one-shot
     const hasConversation =
       !(await this.conversationWriterService.canInsertTurnWithoutThread(
         workspaceId,
