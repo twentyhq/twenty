@@ -6,6 +6,9 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import {
   ConnectedAccountProvider,
@@ -43,6 +46,29 @@ const CREATE_CHANNEL_MUTATION = gql`
       visibility
       isSyncEnabled
       connectedAccountId
+    }
+  }
+`;
+
+const GET_TIMELINE_THREADS_QUERY = gql`
+  query GetTimelineThreadsFromObjectRecord(
+    $objectNameSingular: String!
+    $recordId: UUID!
+  ) {
+    getTimelineThreadsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      page: 1
+      pageSize: 50
+    ) {
+      timelineThreads {
+        id
+        channel {
+          type
+          provider
+          applicationId
+        }
+      }
     }
   }
 `;
@@ -782,6 +808,64 @@ describe('app message channels API (e2e)', () => {
         subject: 'Interested in the role',
         text: 'Hi there',
       });
+    });
+
+    it('exposes the app channel on the timeline threads of the matched person', async () => {
+      const channel = await createChannelOrThrow();
+      const personId = uuidv4();
+
+      await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          data: { id: personId },
+        }),
+      );
+
+      const ingestResponse = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          buildMessage({
+            externalId: 'msg-1',
+            threadExternalId: `thread-${uuidv4()}`,
+            senderHandle: 'candidate@linkedin.test',
+            personId,
+          }),
+        ],
+      });
+
+      expect(ingestResponse.body.errors).toBeUndefined();
+
+      const [{ messageThreadId }] =
+        ingestResponse.body.data.ingestAppMessages.messages;
+
+      const timelineResponse = await makeGraphqlApiRequest({
+        query: GET_TIMELINE_THREADS_QUERY,
+        variables: { objectNameSingular: 'person', recordId: personId },
+      });
+
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: 'id',
+          recordId: personId,
+        }),
+      );
+
+      expect(timelineResponse.body.errors).toBeUndefined();
+      expect(
+        timelineResponse.body.data.getTimelineThreadsFromObjectRecord
+          .timelineThreads,
+      ).toEqual([
+        {
+          id: messageThreadId,
+          channel: {
+            type: MessageChannelType.APP,
+            provider: ConnectedAccountProvider.APP,
+            applicationId: owningApplicationDbId,
+          },
+        },
+      ]);
     });
 
     it('returns the same ids when a provider redelivers the same message', async () => {
