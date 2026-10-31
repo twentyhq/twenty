@@ -19,6 +19,11 @@ describe('failing session cookie writes without the opt-in header (integration)'
       omitSessionCookieOptIn: true,
     });
 
+    expect(signInResponse.body.errors).toBeUndefined();
+    expect(
+      signInResponse.body.data.getAuthTokensFromLoginToken.tokens
+        .accessOrWorkspaceAgnosticToken.token,
+    ).toBeDefined();
     expect(extractSessionCookie(signInResponse)).toBeUndefined();
   });
 
