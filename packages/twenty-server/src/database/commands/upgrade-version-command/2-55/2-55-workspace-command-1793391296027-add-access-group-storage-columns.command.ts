@@ -6,8 +6,8 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { enrichAccessGroupTableSchema } from 'src/engine/metadata-modules/access-group/utils/enrich-access-group-table-schema.util';
-import { enrichRecordTableSchemaWithAccessGroupIds } from 'src/engine/metadata-modules/access-group/utils/enrich-record-table-schema-with-access-group-ids.util';
+import { enrichAccessGroupTableSchema } from 'src/engine/permissions/access-group/utils/enrich-access-group-table-schema.util';
+import { enrichRecordTableSchemaWithAccessGroupIds } from 'src/engine/permissions/access-group/utils/enrich-record-table-schema-with-access-group-ids.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -83,23 +83,6 @@ export class AddAccessGroupStorageColumnsCommand extends ProvisionedWorkspaceCom
               tableSchema: { columnDefinitions: [], indexDefinitions: [] },
             }),
           });
-        const conflictingColumnNames = columnDefinitions
-          .filter(
-            (columnDefinition) =>
-              existingColumnTypes.has(columnDefinition.name) &&
-              existingColumnTypes.get(columnDefinition.name) !==
-                (columnDefinition.isArray ? '_int4' : 'int4'),
-          )
-          .map((columnDefinition) => columnDefinition.name);
-
-        if (conflictingColumnNames.length > 0) {
-          this.logger.error(
-            `Skipping ${tableName} in workspace ${workspaceId}: column(s) ${conflictingColumnNames.join(', ')} already exist with another type`,
-          );
-
-          continue;
-        }
-
         const missingColumnDefinitions = columnDefinitions.filter(
           (columnDefinition) => !existingColumnTypes.has(columnDefinition.name),
         );

@@ -101,7 +101,7 @@ Un flux de lucru webhook ascultă la `https://\<your-twenty-domain>/webhooks/wor
 
 ## Pași
 
-Fluxurile de lucru ale aplicației acceptă aceste tipuri de pași: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` și `EMPTY`.
+Fluxurile de lucru ale aplicației acceptă aceste tipuri de pași: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` și `EMPTY`.
 
 Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/user-guide/workflows/capabilities/workflow-actions), cu identificatori universali în locul numelor:
 
@@ -117,6 +117,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
   * `connectedAccountId`: o variabilă, cum ar fi `{{trigger.properties.after.connectedAccountId}}`. Pașii de e-mail acceptă, de asemenea, un ID de membru al spațiului de lucru, cum ar fi `{{trigger.properties.after.assigneeId}}`, care se rezolvă la primul cont al acelui membru care poate trimite.
 
   Setează exact unul dintre cele două.
+* `SEND_CHAT_MESSAGE` publică în căsuța de primire a unui membru al spațiului de lucru, setată cu `workspaceMemberId`. ID-urile membrilor sunt, de asemenea, locale pentru fiecare spațiu de lucru, astfel încât o aplicație transmite o variabilă, cum ar fi `{{trigger.properties.after.assigneeId}}`.
 
 ## După instalare
 

@@ -101,7 +101,7 @@ Un flujo de trabajo de webhook escucha en `https://\<your-twenty-domain>/webhook
 
 ## Pasos
 
-Los flujos de trabajo de la aplicación admiten estos tipos de pasos: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` y `EMPTY`.
+Los flujos de trabajo de la aplicación admiten estos tipos de pasos: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` y `EMPTY`.
 
 Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-actions), con identificadores universales en lugar de nombres:
 
@@ -117,6 +117,7 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
   * `connectedAccountId`: una variable, como `{{trigger.properties.after.connectedAccountId}}`. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
 
   Establece exactamente uno de los dos.
+* `SEND_CHAT_MESSAGE` publica en la bandeja de entrada de un miembro del espacio de trabajo, configurado con `workspaceMemberId`. Los ID de miembro también son locales para cada espacio de trabajo, por lo que una aplicación pasa una variable, como `{{trigger.properties.after.assigneeId}}`.
 
 ## Después de la instalación
 
