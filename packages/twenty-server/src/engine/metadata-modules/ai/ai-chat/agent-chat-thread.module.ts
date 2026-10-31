@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
-import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
+import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
