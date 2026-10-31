@@ -176,7 +176,7 @@ export class PermissionsService {
     const { scope } = rolePermissionConfig;
 
     return (
-      (!isDefined(scope) || scope.grantedPermissionFlags.includes(setting)) &&
+      (!isDefined(scope) || scope.permissionFlags[setting]) &&
       this.isPermissionFlagGrantedToRoles({
         roleIdsBySource: rolePermissionConfig.intersectionOf,
         setting,
