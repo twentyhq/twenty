@@ -122,7 +122,6 @@ export const WorkflowEditActionAiAgent = ({
           humanInputInstructions,
           workspaceMemberId: recipientWorkspaceMemberId,
           conversation,
-          // a step running an agent leaves its instructions, model and permissions to the agent
           ...(isAgentBacked
             ? {}
             : { instructions, modelId, modelConfiguration, scope }),

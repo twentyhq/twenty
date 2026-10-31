@@ -12,7 +12,9 @@ import {
 type AiAgentStep = {
   id: string;
   type: string;
-  settings: { input: Record<string, unknown> };
+  settings: {
+    input: { agentId?: string; instructions?: string; prompt?: string };
+  };
 };
 
 describe('Draft creation (e2e)', () => {

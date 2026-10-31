@@ -125,7 +125,7 @@ describe('system agents and workflows (e2e)', () => {
   });
 
   it('creates an AI agent step without a hidden agent, and never flags member agents as system', async () => {
-    const findSystemAgentIds = async () => {
+    const findAgentSystemFlags = async () => {
       const { data } = await findAgents({
         expectToFail: false,
         input: undefined,
@@ -142,7 +142,8 @@ describe('system agents and workflows (e2e)', () => {
       };
     };
 
-    const { systemAgentIds: systemAgentIdsBefore } = await findSystemAgentIds();
+    const { systemAgentIds: systemAgentIdsBefore } =
+      await findAgentSystemFlags();
 
     const createStepResponse = await workflowGraphqlRequest(
       `
@@ -175,7 +176,7 @@ describe('system agents and workflows (e2e)', () => {
       versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input,
     ).toEqual({ instructions: '', prompt: '' });
 
-    const { systemAgentIds, isUserAgentSystem } = await findSystemAgentIds();
+    const { systemAgentIds, isUserAgentSystem } = await findAgentSystemFlags();
 
     expect(systemAgentIds).toEqual(systemAgentIdsBefore);
     expect(isUserAgentSystem).toBe(false);

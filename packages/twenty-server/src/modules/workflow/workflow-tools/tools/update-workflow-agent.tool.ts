@@ -131,7 +131,7 @@ const setAiAgentStepsResponseFormat = async (
 ): Promise<number> => {
   const matchingSteps = await findDraftAiAgentSteps(deps, {
     workspaceId,
-    isMatchingStep: (step) => step.settings?.input?.agentId === agentId,
+    isMatchingStep: (step) => step.settings.input.agentId === agentId,
   });
 
   for (const { coreWorkflowVersionId, step } of matchingSteps) {

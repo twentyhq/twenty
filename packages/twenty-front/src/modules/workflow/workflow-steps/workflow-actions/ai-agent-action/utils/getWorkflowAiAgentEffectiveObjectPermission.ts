@@ -7,7 +7,6 @@ type AiRunScopeObjectPermission = NonNullable<
   AiRunScope['objectPermissions']
 >[number];
 
-// an action an object entry leaves unset falls back to the all-objects grant, as for a role
 export const getWorkflowAiAgentEffectiveObjectPermission = ({
   scope,
   objectPermission,

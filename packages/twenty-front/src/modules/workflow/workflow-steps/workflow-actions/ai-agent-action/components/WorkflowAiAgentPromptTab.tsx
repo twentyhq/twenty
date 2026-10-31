@@ -145,10 +145,11 @@ export const WorkflowAiAgentPromptTab = ({
     return null;
   }
 
-  const selectedModelId = isAgentBacked
-    ? (workflowAiAgentActionAgent?.modelId ??
-      AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID)
-    : (modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID);
+  const stepOrAgentModelId = isAgentBacked
+    ? workflowAiAgentActionAgent?.modelId
+    : modelId;
+  const selectedModelId =
+    stepOrAgentModelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
   const selectedModelConfiguration = isAgentBacked
     ? workflowAiAgentActionAgent?.modelConfiguration
     : modelConfiguration;

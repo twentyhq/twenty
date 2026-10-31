@@ -15,16 +15,18 @@ export const getWorkflowAiAgentCrudObjectPermission = (
     | undefined,
 ):
   | Partial<Omit<WorkflowAiAgentCrudObjectPermission, 'objectMetadataId'>>
-  | undefined =>
-  isDefined(objectPermission)
-    ? {
-        canReadObjectRecords:
-          objectPermission.canReadObjectRecords ?? undefined,
-        canUpdateObjectRecords:
-          objectPermission.canUpdateObjectRecords ?? undefined,
-        canSoftDeleteObjectRecords:
-          objectPermission.canSoftDeleteObjectRecords ?? undefined,
-        canDestroyObjectRecords:
-          objectPermission.canDestroyObjectRecords ?? undefined,
-      }
-    : undefined;
+  | undefined => {
+  if (!isDefined(objectPermission)) {
+    return undefined;
+  }
+
+  return {
+    canReadObjectRecords: objectPermission.canReadObjectRecords ?? undefined,
+    canUpdateObjectRecords:
+      objectPermission.canUpdateObjectRecords ?? undefined,
+    canSoftDeleteObjectRecords:
+      objectPermission.canSoftDeleteObjectRecords ?? undefined,
+    canDestroyObjectRecords:
+      objectPermission.canDestroyObjectRecords ?? undefined,
+  };
+};

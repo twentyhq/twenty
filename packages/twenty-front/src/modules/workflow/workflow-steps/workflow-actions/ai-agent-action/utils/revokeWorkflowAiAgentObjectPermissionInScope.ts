@@ -7,8 +7,7 @@ import { WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS } from '@/workflow/workfl
 
 const CRUD_PERMISSION_KEYS = CRUD_PERMISSIONS.map(({ key }) => key);
 
-// a revoked action is denied explicitly only while an all-objects grant would otherwise cover it;
-// revoking reading revokes every action, since none works without it
+// an explicit denial is only needed while an all-objects grant would otherwise cover the action
 export const revokeWorkflowAiAgentObjectPermissionInScope = ({
   scope,
   objectUniversalIdentifier,
@@ -38,7 +37,7 @@ export const revokeWorkflowAiAgentObjectPermissionInScope = ({
     ) {
       updatedObjectPermission[revokedPermissionKey] = false;
     } else {
-      delete updatedObjectPermission[revokedPermissionKey];
+      updatedObjectPermission[revokedPermissionKey] = undefined;
     }
   }
 
