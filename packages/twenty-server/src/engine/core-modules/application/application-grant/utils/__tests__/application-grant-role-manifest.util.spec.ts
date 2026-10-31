@@ -54,7 +54,10 @@ describe('application grant role manifest', () => {
     const grant = buildInitialGrantRoleManifest({
       requestedRoleManifest: buildRequest(),
       objectScopes: [
-        { action: 'canReadObjectRecords', objectUniversalIdentifiers: [PERSON] },
+        {
+          action: 'canReadObjectRecords',
+          objectUniversalIdentifiers: [PERSON],
+        },
       ],
     });
 
@@ -189,7 +192,8 @@ describe('application grant role manifest', () => {
     expect(narrowedGrant.permissionFlagUniversalIdentifiers).toEqual([]);
     expect(
       narrowedGrant.objectPermissions?.find(
-        (objectPermission) => objectPermission.objectUniversalIdentifier === PET,
+        (objectPermission) =>
+          objectPermission.objectUniversalIdentifier === PET,
       )?.canReadObjectRecords,
     ).toBe(true);
   });

@@ -1,6 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationWithRuntimeRole, getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
+import {
+  type ApplicationWithRuntimeRole,
+  getApplicationRuntimeRoleId,
+} from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {

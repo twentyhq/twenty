@@ -2,7 +2,10 @@ import { createHash } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationWithRuntimeRole, getApplicationRuntimeRoleId } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
+import {
+  type ApplicationWithRuntimeRole,
+  getApplicationRuntimeRoleId,
+} from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const computeRecordExportPermissionsHash = ({

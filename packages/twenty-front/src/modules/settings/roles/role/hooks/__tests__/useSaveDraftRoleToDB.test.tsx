@@ -32,7 +32,6 @@ const ROLE_BASIC_FIELDS_INPUT = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
-  canBeAssignedToApplications: false,
 };
 
 const PERSISTED_ROLE: RoleWithPartialMembers = {

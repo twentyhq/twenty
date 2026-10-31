@@ -16,7 +16,10 @@ const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
       },
     ],
     agents: [
-      { universalIdentifier: 'agent', roleUniversalIdentifier: 'requested-role' },
+      {
+        universalIdentifier: 'agent',
+        roleUniversalIdentifier: 'requested-role',
+      },
     ],
     ...overrides,
   }) as unknown as Manifest;

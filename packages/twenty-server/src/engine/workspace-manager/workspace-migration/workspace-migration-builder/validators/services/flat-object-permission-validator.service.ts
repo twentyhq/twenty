@@ -18,7 +18,8 @@ const validateObjectPermissionGrantsNoDisabledActionUnlessSystemBuild = ({
   ...args
 }: Parameters<typeof validateObjectPermissionGrantsNoDisabledAction>[0] & {
   isSystemBuild: boolean;
-}) => (isSystemBuild ? [] : validateObjectPermissionGrantsNoDisabledAction(args));
+}) =>
+  isSystemBuild ? [] : validateObjectPermissionGrantsNoDisabledAction(args);
 
 @Injectable()
 export class FlatObjectPermissionValidatorService {
