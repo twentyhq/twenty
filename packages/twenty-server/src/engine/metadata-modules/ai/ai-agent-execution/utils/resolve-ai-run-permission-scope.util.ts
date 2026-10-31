@@ -21,8 +21,14 @@ export const resolveAiRunPermissionScope = ({
   flatFieldMetadataMaps,
 }: {
   scope: AiRunScope;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): PermissionScope => {
   const findObjectMetadataId = (objectUniversalIdentifier: string) =>
     flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]?.id;

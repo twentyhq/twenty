@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
-import { aiRunScopeSchema } from '@/ai/schemas/ai-run-scope-schema';
-
 import { agentResponseFormatSchema } from './agent-response-format-schema';
+import { aiRunScopeSchema } from './ai-run-scope-schema';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { workflowConversationSchema } from './workflow-conversation-schema';
 
