@@ -78,7 +78,7 @@ export class FlatObjectPermissionValidatorService {
         }),
       );
 
-      if (!referencedRole.isEditable) {
+      if (!buildOptions.isSystemBuild && !referencedRole.isEditable) {
         validationResult.errors.push({
           code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
           message: t`Role is not editable`,
@@ -196,7 +196,7 @@ export class FlatObjectPermissionValidatorService {
         }),
       );
 
-      if (!referencedRole.isEditable) {
+      if (!buildOptions.isSystemBuild && !referencedRole.isEditable) {
         validationResult.errors.push({
           code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
           message: t`Role is not editable`,
@@ -266,6 +266,7 @@ export class FlatObjectPermissionValidatorService {
       flatObjectPermissionMaps: optimisticFlatObjectPermissionMaps,
       flatRoleMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectPermission
   >): FailedFlatEntityValidation<'objectPermission', 'delete'> {
@@ -295,7 +296,11 @@ export class FlatObjectPermissionValidatorService {
         flatEntityMaps: flatRoleMaps,
       });
 
-      if (isDefined(referencedRole) && !referencedRole.isEditable) {
+      if (
+        !buildOptions.isSystemBuild &&
+        isDefined(referencedRole) &&
+        !referencedRole.isEditable
+      ) {
         validationResult.errors.push({
           code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
           message: t`Role is not editable`,

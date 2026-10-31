@@ -622,6 +622,10 @@ export class ApplicationGrantService {
         );
 
       if (result.status === 'fail') {
+        this.logger.error(
+          `Application grant validation failed: ${JSON.stringify(result.report)}`,
+        );
+
         throw new WorkspaceMigrationBuilderException(
           result,
           'Validation errors occurred while writing the application grant',
