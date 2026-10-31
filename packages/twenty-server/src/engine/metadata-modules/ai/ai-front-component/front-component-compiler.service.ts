@@ -75,6 +75,7 @@ export class FrontComponentCompilerService {
       dependencyRevision: builtDependencies.dependencyRevision,
       componentName: FRONT_COMPONENT_WRAPPER_NAME,
       compiledSource: built.builtCode,
+      hasSdkClientImport: built.hasSdkClientImport,
       checksum: built.checksum,
     };
   }
