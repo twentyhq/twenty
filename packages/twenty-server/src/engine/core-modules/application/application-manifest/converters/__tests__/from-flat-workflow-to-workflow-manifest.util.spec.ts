@@ -693,13 +693,13 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
           'workflow step on a logic function that is not a workflow action of this application',
       },
       {
-        description: 'an agent of another application',
+        description: 'an agent the application does not export',
         step: buildStep({ type: 'AI_AGENT' }),
         exportReferences: {
           ...references,
           agentIdByUniversalIdentifier: new Map(),
         },
-        reason: 'workflow step on an agent of another application',
+        reason: 'workflow step on an agent the application does not export',
       },
     ])(
       'reports a step on $description',
@@ -1027,6 +1027,38 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     }).steps;
 
     expect(step.outputSchema).toEqual({});
+  });
+
+  it('exports an agent step with the conversation and member the builder stores', () => {
+    const input = {
+      prompt: '{{trigger.properties.after.summary}}',
+      responseFormat: { type: 'text' },
+      humanInputInstructions: 'Ask when the company is unclear',
+      conversation: {
+        key: 'mail:{{trigger.properties.after.id}}',
+        scope: 'KEY',
+      },
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Analyse the thread',
+          type: 'AI_AGENT',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input: { ...input, agentId: 'agent-id' },
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({
+      type: 'AI_AGENT',
+      input: { ...input, agentUniversalIdentifier: AGENT_ID },
+    });
   });
 
   it('exports a step without a position as null', () => {

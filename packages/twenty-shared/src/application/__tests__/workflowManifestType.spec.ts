@@ -153,6 +153,20 @@ describe('workflow manifest step types', () => {
         addConferencing: false,
       },
     },
+    {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        prompt: '{{trigger.properties.after.summary}}',
+        responseFormat: { type: 'text' },
+        humanInputInstructions: 'Ask when the company is unclear',
+        workspaceMemberId: ASSIGNEE,
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
