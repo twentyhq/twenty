@@ -11,6 +11,10 @@ import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
 import { Injectable } from '@nestjs/common';
+import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { msg } from '@lingui/core/macro';
 import {
   ApplicationException,
@@ -40,6 +44,9 @@ export class AiFrontComponentService {
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly permissions: PermissionsService,
     private readonly fileStorageService: FileStorageService,
+    private readonly frontComponentService: FrontComponentService,
+    @InjectWorkspaceScopedRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -264,14 +271,18 @@ export class AiFrontComponentService {
           draftId: previous.id,
         });
 
-        if (previous.isSuperseded || previous.threadId !== threadId) {
+        if (
+          previous.isSuperseded ||
+          previous.publicationStarted ||
+          previous.threadId !== threadId
+        ) {
           throw new ApplicationException(
             doNotTranslate(
-              'This draft was superseded or belongs to another chat. Start a new draft.',
+              'This draft was superseded, saved or belongs to another chat. Start a new draft.',
             ),
             ApplicationExceptionCode.INVALID_INPUT,
             {
-              userFriendlyMessage: msg`This draft was superseded or belongs to another chat. Start a new draft.`,
+              userFriendlyMessage: msg`This draft was superseded, saved or belongs to another chat. Start a new draft.`,
             },
           );
         }
@@ -343,6 +354,7 @@ export class AiFrontComponentService {
       draftId: draft.id,
       name: draft.name,
       isCurrent: !draft.isSuperseded,
+      publishedComponentId: draft.publishedComponentId,
       componentSource: draft.compiledSource,
       applicationId: draft.applicationId,
       sharedDependenciesChecksum:
@@ -382,6 +394,192 @@ export class AiFrontComponentService {
           workspaceId,
           draft: { ...draft, previewError },
         });
+      },
+    });
+  }
+
+  async publish({
+    draftId,
+    checksum,
+    context,
+  }: {
+    draftId: string;
+    checksum: string;
+    context: ToolProviderContext;
+  }) {
+    const { workspaceId, userWorkspaceId, authContext } = context;
+
+    if (
+      context.approvedToolName !== 'publish_front_component' ||
+      !isDefined(userWorkspaceId) ||
+      !isDefined(authContext)
+    ) {
+      throw new ApplicationException(
+        doNotTranslate('Saving a component requires human approval.'),
+        ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Saving a component requires human approval.`,
+        },
+      );
+    }
+
+    return this.withDraftLock({
+      workspaceId,
+      draftId,
+      callback: async () => {
+        const draft = await this.getDraftOrThrow({
+          workspaceId,
+          userWorkspaceId,
+          draftId,
+        });
+
+        if (draft.threadId !== context.threadId) {
+          throw new ApplicationException(
+            doNotTranslate('Approve this draft in its original chat.'),
+            ApplicationExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`Approve this draft in its original chat.`,
+            },
+          );
+        }
+        if (draft.isSuperseded || draft.checksum !== checksum) {
+          throw new ApplicationException(
+            doNotTranslate(
+              'This preview changed. Approve the latest revision.',
+            ),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`This preview changed. Approve the latest revision.`,
+            },
+          );
+        }
+
+        const { workspaceCustomFlatApplication: application } =
+          await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+        const sourceComponentPath = `src/ai-front-components/${draftId}.front-component.tsx`;
+        const builtComponentPath = `src/ai-front-components/${draftId}.mjs`;
+        const existing = await this.frontComponentRepository.findOne(
+          workspaceId,
+          { where: { id: draftId } },
+        );
+
+        if (
+          draft.applicationId !== application.id ||
+          (isDefined(existing) &&
+            (existing.applicationId !== application.id ||
+              existing.builtComponentChecksum !== checksum ||
+              existing.sourceComponentPath !== sourceComponentPath ||
+              existing.builtComponentPath !== builtComponentPath))
+        ) {
+          throw new ApplicationException(
+            doNotTranslate('The saved component differs from this draft.'),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`The saved component differs from this draft.`,
+            },
+          );
+        }
+
+        if (!isDefined(existing)) {
+          if (isDefined(draft.publishedComponentId)) {
+            throw new ApplicationException(
+              doNotTranslate(
+                'This saved component was deleted. Create a new draft.',
+              ),
+              ApplicationExceptionCode.INVALID_INPUT,
+              {
+                userFriendlyMessage: msg`This saved component was deleted. Create a new draft.`,
+              },
+            );
+          }
+          await this.getQueryObjectNamePluralOrThrow({
+            query: draft.query,
+            authContext,
+            rolePermissionConfig: context.rolePermissionConfig,
+          });
+          await this.saveDraft({
+            workspaceId,
+            draft: { ...draft, publicationStarted: true },
+          });
+
+          const files = [
+            {
+              resourcePath: sourceComponentPath,
+              sourceFile: draft.entrySource,
+              fileFolder: FileFolder.Source,
+            },
+            {
+              resourcePath: builtComponentPath,
+              sourceFile: draft.compiledSource,
+              fileFolder: FileFolder.BuiltFrontComponent,
+            },
+          ];
+
+          try {
+            for (const file of files) {
+              await this.fileStorageService.writeFile({
+                ...file,
+                workspaceId,
+                applicationUniversalIdentifier: application.universalIdentifier,
+                applicationId: application.id,
+                settings: { isTemporaryFile: false, toDelete: false },
+              });
+            }
+            await this.frontComponentService.createOne({
+              workspaceId,
+              ownerFlatApplication: application,
+              input: {
+                id: draftId,
+                universalIdentifier: draftId,
+                name: draft.name,
+                componentName: draft.componentName,
+                universalWidgetAvailability: [
+                  { pageLayoutType: draft.pageLayoutType },
+                ],
+                usesSdkClient: draft.hasSdkClientImport,
+                sourceComponentPath,
+                builtComponentPath,
+                builtComponentChecksum: checksum,
+              },
+            });
+          } catch (error) {
+            const registered = await this.frontComponentRepository.existsBy(
+              workspaceId,
+              { id: draftId },
+            );
+
+            if (!registered) {
+              for (const file of files) {
+                await this.fileStorageService.deleteFile({
+                  workspaceId,
+                  applicationUniversalIdentifier:
+                    application.universalIdentifier,
+                  applicationId: application.id,
+                  resourcePath: file.resourcePath,
+                  fileFolder: file.fileFolder,
+                });
+              }
+              await this.saveDraft({
+                workspaceId,
+                draft: { ...draft, publicationStarted: false },
+              });
+            }
+            throw error;
+          }
+        }
+
+        await this.saveDraft({
+          workspaceId,
+          draft: {
+            ...draft,
+            publicationStarted: true,
+            publishedComponentId: draftId,
+          },
+        });
+
+        return { frontComponentId: draftId, applicationId: application.id };
       },
     });
   }
