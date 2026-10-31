@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {برای وظیفه انتخاب‌شده دوب
 msgid "{label} (Auto)"
 msgstr "{label} (خودکار)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (پیش‌فرض)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "شناسه کلید دسترسی"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "دسترسی به {objectLabelPlural} بر اساس نقش‌ها تنظیم می‌شود، نه رکورد به رکورد."
 
@@ -4099,6 +4094,11 @@ msgstr "پیکان بالا"
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
 msgstr "همان‌طور که در فضای کاری نمایش داده خواهد شد"
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr ""
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "فقط وقتی اجرا شود که یکی از این فیلدها تغییر کند"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "فقط ایجادکننده این رکورد و افرادی که دسترسی کامل به آن دارند می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "فقط ایجادکننده این رکورد، افرادی که دسترسی کامل به آن دارند و مدیران می‌توانند مشخص کنند چه کسانی دسترسی دارند."
 

@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {Ceci va réessayer la tâche sélectionnée. Ell
 msgid "{label} (Auto)"
 msgstr "{label} (Automatique)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (par défaut)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "ID de clé d'accès"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "L'accès à {objectLabelPlural} est défini par les rôles, et non enregistrement par enregistrement."
 
@@ -4098,6 +4093,11 @@ msgstr "Flèche haut"
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
+msgstr ""
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
 msgstr ""
 
 #. js-lingui-id: 54PdN4
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "Exécuter uniquement lorsqu'un de ces champs change"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "Seuls le créateur de cet enregistrement et les personnes disposant d'un accès complet peuvent modifier les personnes qui y ont accès."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "Seuls le créateur de cet enregistrement, les personnes disposant d'un accès complet et les administrateurs peuvent modifier les personnes qui y ont accès."
 

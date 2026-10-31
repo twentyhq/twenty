@@ -6571,8 +6571,6 @@ msgid "Internal name of the campaign"
 msgstr "שם פנימי של הקמפיין"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/permissions/record-share/services/record-sharing.service.ts
-#: src/engine/permissions/record-share/services/record-sharing.service.ts
 #: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
 #: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
@@ -10687,7 +10685,7 @@ msgid "Principal type"
 msgstr "סוג ישות"
 
 #. js-lingui-id: mQkeUR
-#: src/engine/permissions/private-record/services/private-record-storage.service.ts
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
 msgid "Private records are not available in this workspace yet."
 msgstr "רשומות פרטיות אינן זמינות עדיין בסביבת עבודה זו."
 

@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {Ovo će ponoviti izabrani posao. Ponovo će se i
 msgid "{label} (Auto)"
 msgstr "{label} (Automatski)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (podrazumevano)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "ID ključa za pristup"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "Pristup objektima {objectLabelPlural} određuje se ulogama, a ne zapis po zapis."
 
@@ -4099,6 +4094,11 @@ msgstr "Strelica nagore"
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
 msgstr "Kako će biti prikazano u radnom prostoru"
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr ""
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "Pokreni samo kada se jedno od ovih polja promeni"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "Samo kreator ovog zapisa i osobe sa punim pristupom mogu da promene ko ima pristup."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "Samo kreator ovog zapisa, osobe sa punim pristupom i administratori mogu da promene ko ima pristup."
 

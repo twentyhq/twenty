@@ -847,11 +847,6 @@ msgstr ""
 msgid "{label} (Auto)"
 msgstr "{label}（自动）"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label}（默认）"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "访问密钥 ID"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "对 {objectLabelPlural} 的访问由角色设置，而非逐条记录设置。"
 
@@ -4098,6 +4093,11 @@ msgstr "向上箭头"
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
+msgstr ""
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
 msgstr ""
 
 #. js-lingui-id: 54PdN4
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "仅当这些字段之一发生更改时运行"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "只有此记录的创建者和拥有完全访问权限的人员才能更改谁有访问权限。"
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "只有此记录的创建者、拥有完全访问权限的人员和管理员才能更改谁有访问权限。"
 

@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, zero {ستتم إعادة محاولة المهام �
 msgid "{label} (Auto)"
 msgstr "{label} (تلقائي)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (افتراضي)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "معرّف مفتاح الوصول"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "يُحدَّد الوصول إلى {objectLabelPlural} بواسطة الأدوار، وليس سجلًا بسجل."
 
@@ -4099,6 +4094,11 @@ msgstr "سهم لأعلى"
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
 msgstr "كما سيظهر في مساحة العمل"
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr ""
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "شغّل فقط عند تغيّر أحد هذه الحقول"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "يمكن فقط لمنشئ هذا السجل والأشخاص الذين لديهم وصول كامل إليه تغيير من لديه حق الوصول."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "يمكن فقط لمنشئ هذا السجل والأشخاص الذين لديهم وصول كامل إليه والمسؤولين تغيير من لديه حق الوصول."
 

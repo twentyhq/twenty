@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {Isso irá reiniciar o trabalho selecionado. Ele 
 msgid "{label} (Auto)"
 msgstr "{label} (Automático)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (padrão)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "ID da chave de acesso"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "O acesso a {objectLabelPlural} é definido por funções, não registro por registro."
 
@@ -4098,6 +4093,11 @@ msgstr "Seta para cima"
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
+msgstr ""
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
 msgstr ""
 
 #. js-lingui-id: 54PdN4
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "Executar apenas quando um destes campos mudar"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "Apenas o criador deste registro e as pessoas com acesso total a ele podem alterar quem tem acesso."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "Apenas o criador deste registro, as pessoas com acesso total a ele e os administradores podem alterar quem tem acesso."
 

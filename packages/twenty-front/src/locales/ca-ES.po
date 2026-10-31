@@ -847,11 +847,6 @@ msgstr "{jobCount, plural, one {Això tornarà a intentar la feina seleccionada.
 msgid "{label} (Auto)"
 msgstr "{label} (Automàtic)"
 
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (per defecte)"
-
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
 msgid "{label} (deprecated)"
@@ -1704,7 +1699,7 @@ msgid "Access Key ID"
 msgstr "ID de la clau d'accés"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "L'accés a {objectLabelPlural} s'estableix per rols, no registre per registre."
 
@@ -4098,6 +4093,11 @@ msgstr "Fletxa amunt"
 #. js-lingui-id: cybVUo
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "As it will be displayed in the workspace"
+msgstr ""
+
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
 msgstr ""
 
 #. js-lingui-id: 54PdN4
@@ -20050,12 +20050,12 @@ msgid "Only run when one of these fields changes"
 msgstr "Executa'l només quan canviï un d'aquests camps"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "Només el creador d'aquest registre i les persones amb accés complet poden canviar qui hi té accés."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "Només el creador d'aquest registre, les persones amb accés complet i els administradors poden canviar qui hi té accés."
 
