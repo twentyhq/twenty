@@ -1,32 +1,14 @@
-import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import {
-  ForbiddenError,
-  NotFoundError,
-  UserInputError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import {
-  type PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 
-export const permissionGraphqlApiExceptionHandler = (
-  error: PermissionsException,
-) => {
-  switch (error.code) {
+export const permissionRestApiExceptionCodeToHttpStatus = (
+  code: PermissionsExceptionCode,
+): number => {
+  switch (code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
-      throw new ForbiddenError(error.message, {
-        userFriendlyMessage: msg`User does not have permission.`,
-        subCode: error.code,
-      });
     case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
-      throw new ForbiddenError(error.message, {
-        userFriendlyMessage: msg`No valid authentication context found.`,
-        subCode: error.code,
-      });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
-      throw new ForbiddenError(error);
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
     case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:
     case PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE:
@@ -38,7 +20,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
     case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
-      throw new ForbiddenError(error);
+      return 403;
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.INVALID_SETTING:
     case PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT:
@@ -49,13 +31,13 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
     case PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET:
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
-      throw new UserInputError(error);
+      return 400;
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
     case PermissionsExceptionCode.PERMISSION_NOT_FOUND:
-      throw new NotFoundError(error);
+      return 404;
     case PermissionsExceptionCode.UPSERT_FIELD_PERMISSION_FAILED:
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH:
@@ -76,9 +58,8 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
-      throw error;
-    default: {
-      return assertUnreachable(error.code);
-    }
+      return 500;
+    default:
+      return assertUnreachable(code);
   }
 };

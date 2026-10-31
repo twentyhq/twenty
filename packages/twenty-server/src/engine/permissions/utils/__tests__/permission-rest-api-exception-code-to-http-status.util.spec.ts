@@ -1,5 +1,5 @@
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { permissionRestApiExceptionCodeToHttpStatus } from 'src/engine/metadata-modules/permissions/utils/permission-rest-api-exception-code-to-http-status.util';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
+import { permissionRestApiExceptionCodeToHttpStatus } from 'src/engine/permissions/utils/permission-rest-api-exception-code-to-http-status.util';
 
 describe('permissionRestApiExceptionCodeToHttpStatus', () => {
   it('should return 403 for PERMISSION_DENIED', () => {

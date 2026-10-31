@@ -2,7 +2,7 @@ import { type ObjectsPermissions } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 export const isObjectOperationPermitted = ({
   objectMetadata,

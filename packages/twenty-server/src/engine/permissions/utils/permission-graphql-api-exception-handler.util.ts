@@ -1,14 +1,32 @@
+import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  ForbiddenError,
+  NotFoundError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  type PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 
-export const permissionRestApiExceptionCodeToHttpStatus = (
-  code: PermissionsExceptionCode,
-): number => {
-  switch (code) {
+export const permissionGraphqlApiExceptionHandler = (
+  error: PermissionsException,
+) => {
+  switch (error.code) {
     case PermissionsExceptionCode.PERMISSION_DENIED:
+      throw new ForbiddenError(error.message, {
+        userFriendlyMessage: msg`User does not have permission.`,
+        subCode: error.code,
+      });
     case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
+      throw new ForbiddenError(error.message, {
+        userFriendlyMessage: msg`No valid authentication context found.`,
+        subCode: error.code,
+      });
     case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
+      throw new ForbiddenError(error);
     case PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN:
     case PermissionsExceptionCode.CANNOT_UPDATE_SELF_ROLE:
     case PermissionsExceptionCode.CANNOT_DELETE_OWN_ROLE:
@@ -20,7 +38,7 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
     case PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT:
-      return 403;
+      throw new ForbiddenError(error);
     case PermissionsExceptionCode.INVALID_ARG:
     case PermissionsExceptionCode.INVALID_SETTING:
     case PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT:
@@ -31,13 +49,13 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
     case PermissionsExceptionCode.ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET:
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
-      return 400;
+      throw new UserInputError(error);
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
     case PermissionsExceptionCode.PERMISSION_NOT_FOUND:
-      return 404;
+      throw new NotFoundError(error);
     case PermissionsExceptionCode.UPSERT_FIELD_PERMISSION_FAILED:
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.WORKSPACE_ID_ROLE_USER_WORKSPACE_MISMATCH:
@@ -58,8 +76,9 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
-      return 500;
-    default:
-      return assertUnreachable(code);
+      throw error;
+    default: {
+      return assertUnreachable(error.code);
+    }
   }
 };

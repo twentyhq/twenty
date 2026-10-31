@@ -2,7 +2,7 @@
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const REQUIRED_RECORD_SHARE_ACCESS_LEVELS_BY_OPERATION_TYPE: Record<
   OperationType,

@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { type GqlContextType } from '@nestjs/graphql';
 
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/permissions/utils/permission-graphql-api-exception-handler.util';
 
 @Catch(PermissionsException)
 export class PermissionsGraphqlApiExceptionFilter implements ExceptionFilter {

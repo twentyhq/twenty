@@ -1,6 +1,6 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { hasRoleWideAccessToPermissionFlag } from 'src/engine/metadata-modules/permissions/utils/has-role-wide-access-to-permission-flag.util';
+import { hasRoleWideAccessToPermissionFlag } from 'src/engine/permissions/role/utils/has-role-wide-access-to-permission-flag.util';
 
 describe('hasRoleWideAccessToPermissionFlag', () => {
   it('grants settings flags through canUpdateAllSettings only', () => {

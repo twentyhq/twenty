@@ -10,11 +10,11 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
-} from 'src/engine/twenty-orm/repository/permissions.utils';
+} from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 describe('validateOperationIsPermittedOrThrow - system objects permissions', () => {
   const SYSTEM_OBJECT_ID = 'system-obj-message-id';

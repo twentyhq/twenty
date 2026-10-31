@@ -7,8 +7,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
+} from 'src/engine/permissions/permissions.exception';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/permissions/utils/permission-graphql-api-exception-handler.util';
 
 describe('permissionGraphqlApiExceptionHandler', () => {
   it('should throw ForbiddenError for PERMISSION_DENIED', () => {
