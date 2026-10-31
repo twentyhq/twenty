@@ -4,7 +4,6 @@ import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-build
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// built the way the sibling step specs are: the step type's settings union defeats a typed literal
 const errorCodesFor = (input: WorkflowAiAgentActionInput) => {
   const step = {
     id: 'step-1',
