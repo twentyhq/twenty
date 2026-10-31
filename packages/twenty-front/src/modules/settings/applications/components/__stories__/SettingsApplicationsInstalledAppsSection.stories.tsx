@@ -240,7 +240,7 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
   },
 };
 
-export const ShowsStatusWithAppPreferences: Story = {
+export const ShowsStatusInPlaceOfTypeWithAppPreferences: Story = {
   beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -250,23 +250,25 @@ export const ShowsStatusWithAppPreferences: Story = {
     expect(
       await within(recorderRow).findByText('Setup incomplete'),
     ).toBeVisible();
+    expect(within(recorderRow).getByText('NPM')).not.toBeVisible();
     expect(recorderRow).not.toHaveTextContent('Update');
-    expect(canvas.getByText('Status')).toBeVisible();
-    expect(canvas.queryByText('Type')).not.toBeInTheDocument();
+    expect(canvas.getByText('Type')).toBeVisible();
+    expect(canvas.queryByText('Status')).not.toBeInTheDocument();
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
     expect(within(acmeRow).getByText('Update')).toBeVisible();
-    expect(acmeRow).not.toHaveTextContent('NPM');
+    expect(within(acmeRow).getByText('NPM')).not.toBeVisible();
 
     const notesRow = canvas.getByRole('link', { name: /Notes/ });
 
+    expect(within(notesRow).getByText('NPM')).toBeVisible();
     expect(notesRow).not.toHaveTextContent('Setup incomplete');
     expect(notesRow).not.toHaveTextContent('Update');
 
     const gmailRow = canvas.getByRole('link', { name: /Gmail and Calendar/ });
 
-    expect(gmailRow).not.toHaveTextContent('Built-in');
+    expect(within(gmailRow).getByText('Built-in')).toBeVisible();
     expect(gmailRow).not.toHaveTextContent('Setup incomplete');
   },
 };
