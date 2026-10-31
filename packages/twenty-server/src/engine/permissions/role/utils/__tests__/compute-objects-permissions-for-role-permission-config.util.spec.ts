@@ -1,4 +1,10 @@
-import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectPermissions,
+  type RowLevelPermissionPredicate,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -233,5 +239,115 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
         'company-paid-invoices-field-id'
       ]?.canRead,
     ).toBe(false);
+  });
+
+  describe('with a scope', () => {
+    const USER_PREDICATE: RowLevelPermissionPredicate = {
+      id: 'predicate-id',
+      fieldMetadataId: AMOUNT_FIELD_ID,
+      objectMetadataId: INVOICE_ID,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      value: 'mine',
+      subFieldName: null,
+      rowLevelPermissionPredicateGroupId: null,
+      workspaceMemberFieldMetadataId: null,
+      workspaceMemberSubFieldName: null,
+      roleId: 'user-role-id',
+    };
+
+    const rolesPermissionsWithPredicate = {
+      ...rolesPermissions,
+      'user-role-id': {
+        [INVOICE_ID]: {
+          ...FULL_ACCESS,
+          rowLevelPermissionPredicates: [USER_PREDICATE],
+        },
+      },
+    };
+
+    const compute = ({
+      intersectionOf,
+      scopeObjectPermissions,
+    }: {
+      intersectionOf: RoleIdsBySource;
+      scopeObjectPermissions?: ObjectPermissions;
+    }) =>
+      computeObjectsPermissionsForRolePermissionConfig({
+        intersectionOf,
+        scope: {
+          objectsPermissions: isDefined(scopeObjectPermissions)
+            ? { [INVOICE_ID]: scopeObjectPermissions }
+            : {},
+        },
+        rolesPermissions: rolesPermissionsWithPredicate,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      })[INVOICE_ID];
+
+    it('narrows the roles to what the scope allows', () => {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: {
+          ...FULL_ACCESS,
+          canUpdateObjectRecords: false,
+        },
+      });
+
+      expect(invoicePermissions?.canReadObjectRecords).toBe(true);
+      expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    });
+
+    it('never grants what the roles deny', () => {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: FULL_ACCESS,
+      });
+
+      expect(invoicePermissions?.canDestroyObjectRecords).toBe(false);
+    });
+
+    it('denies an object the scope leaves out', () => {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+      });
+
+      expect(invoicePermissions?.canReadObjectRecords).toBe(false);
+      expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    });
+
+    it("keeps the roles' row-level predicates", () => {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: FULL_ACCESS,
+      });
+
+      expect(invoicePermissions?.rowLevelPermissionPredicates).toEqual([
+        USER_PREDICATE,
+      ]);
+    });
+
+    it('adds the field restrictions of the scope', () => {
+      const invoicePermissions = compute({
+        intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+        scopeObjectPermissions: {
+          ...FULL_ACCESS,
+          restrictedFields: {
+            [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
+          },
+        },
+      });
+
+      expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
+        canRead: false,
+        canUpdate: false,
+      });
+    });
+
+    it('grants nothing without a role', () => {
+      expect(
+        compute({ intersectionOf: {}, scopeObjectPermissions: FULL_ACCESS }),
+      ).toBeUndefined();
+    });
   });
 });

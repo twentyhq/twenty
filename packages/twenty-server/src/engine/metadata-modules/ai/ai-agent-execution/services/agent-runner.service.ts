@@ -17,6 +17,7 @@ import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execu
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
@@ -33,8 +34,6 @@ import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-ag
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
   type AgentChatStreamClaim,
@@ -45,12 +44,6 @@ import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
 
@@ -85,8 +78,7 @@ export class AgentRunnerService {
     private readonly agentRunJobScopeService: AgentRunJobScopeService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectWorkspaceScopedRepository(AgentEntity)
-    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    private readonly agentRunPersonaService: AgentRunPersonaService,
   ) {}
 
   async start(input: RunAgentJobData): Promise<void> {
@@ -95,7 +87,7 @@ export class AgentRunnerService {
       input,
       await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
-        agentId: input.spec.agentId,
+        spec: input.spec,
       }),
     );
   }
@@ -145,7 +137,7 @@ export class AgentRunnerService {
           jobData: { ...jobData, parkId: undefined },
           scope: await this.agentRunJobScopeService.resolve({
             workspaceId,
-            agentId: jobData.spec.agentId,
+            spec: jobData.spec,
           }),
         },
       });
@@ -182,9 +174,9 @@ export class AgentRunnerService {
     handler: AgentRunCallerHandler;
   }): Promise<AgentRunnerResult | typeof CONVERSATION_BUSY | null> {
     try {
-      const [executionContext, agent] = await Promise.all([
+      const [executionContext, persona] = await Promise.all([
         handler.buildExecutionContext({ workspaceId, caller }),
-        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+        this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
 
       return await this.withClaimedConversation({
@@ -199,7 +191,7 @@ export class AgentRunnerService {
                 conversation,
                 caller,
                 spec,
-                agent,
+                persona,
                 prompt,
                 executionContext,
               },
@@ -294,7 +286,7 @@ export class AgentRunnerService {
           jobData: { ...jobData, parkId: undefined },
           scope: await this.agentRunJobScopeService.resolve({
             workspaceId,
-            agentId: suspension.runSpec.agentId,
+            spec: suspension.runSpec,
           }),
         },
       });
@@ -415,8 +407,11 @@ export class AgentRunnerService {
         });
       }
 
-      const [agent, executionContext] = await Promise.all([
-        this.findAgentOrThrow({ workspaceId, agentId: runSpec.agentId }),
+      const [persona, executionContext] = await Promise.all([
+        this.agentRunPersonaService.resolveOrThrow({
+          workspaceId,
+          spec: runSpec,
+        }),
         handler.buildExecutionContext({ workspaceId, caller }),
       ]);
 
@@ -429,7 +424,7 @@ export class AgentRunnerService {
               conversation: { threadId, isCreated: false },
               caller,
               spec: runSpec,
-              agent,
+              persona,
               prompt: null,
               executionContext,
             },
@@ -487,7 +482,7 @@ export class AgentRunnerService {
       workspaceId,
       conversation: { threadId, isCreated },
       spec,
-      agent,
+      persona,
       prompt,
       executionContext,
     } = input;
@@ -503,7 +498,7 @@ export class AgentRunnerService {
       await this.agentRunConversationService.openTurn({
         workspaceId,
         threadId,
-        agentId: agent.id,
+        agentId: persona.agentId,
         senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
         senderApplicationId: prompt?.senderApplicationId ?? null,
         createdBy: executionContext.turnCreatedBy,
@@ -531,7 +526,7 @@ export class AgentRunnerService {
 
     const startedAtMs = Date.now();
     const turnInput = {
-      agent,
+      persona,
       messages: prompt?.messages ?? [],
       priorMessages,
       // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
@@ -543,7 +538,8 @@ export class AgentRunnerService {
       ].join('\n\n'),
       pausingTools: createAgentWaitTools(),
       canAskHumans: spec.capabilities.canAskHumans,
-      responseFormat: spec.responseFormat ?? agent.responseFormat,
+      responseFormat:
+        spec.responseFormat ?? persona.responseFormat ?? undefined,
       workspaceId,
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
@@ -725,36 +721,6 @@ export class AgentRunnerService {
         ? 'Agent paused to wait but its conversation could not be recorded.'
         : 'Agent asked a question that could not be recorded.',
     };
-  }
-
-  private async findAgentOrThrow({
-    workspaceId,
-    agentId,
-  }: {
-    workspaceId: string;
-    agentId: string;
-  }): Promise<AgentEntity> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: agentId },
-    });
-
-    if (!isDefined(agent)) {
-      throw new AiException(
-        `Agent with id ${agentId} not found`,
-        AiExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-
-    const effectiveAgent = resolveEffectiveAgent(agent);
-
-    if (!effectiveAgent.isActive) {
-      throw new AiException(
-        `Agent "${effectiveAgent.label}" is archived`,
-        AiExceptionCode.AGENT_IS_INACTIVE,
-      );
-    }
-
-    return effectiveAgent;
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

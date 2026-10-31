@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  getWorkflowAiAgentStepKind,
   MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES,
   NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES,
   validateWorkflowStructure,
@@ -74,7 +75,12 @@ export class WorkflowVersionValidationWorkspaceService {
     const stepTypeIssues = steps.flatMap((step) => {
       if (step.type === WorkflowActionType.AI_AGENT) {
         return [
-          ...validateWorkflowAiAgentStep(step),
+          ...validateWorkflowAiAgentStep({
+            step,
+            stepKind: getWorkflowAiAgentStepKind({
+              input: step.settings?.input ?? {},
+            }),
+          }),
           ...validateWorkflowConversationStep(step),
         ];
       }

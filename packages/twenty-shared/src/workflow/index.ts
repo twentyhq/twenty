@@ -15,6 +15,9 @@ export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSynce
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeatureFlags';
+export { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from './constants/WorkflowAiAgentGenerateStepDefaultName';
+export type { WorkflowAiAgentStepConfigIssueCode } from './constants/WorkflowAiAgentStepConfigIssueMessages';
+export { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from './constants/WorkflowAiAgentStepConfigIssueMessages';
 export { WORKFLOW_TRIGGER_DEFAULT_NAMES } from './constants/WorkflowTriggerDefaultNames';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
 export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
@@ -35,6 +38,8 @@ export { computeWorkflowLayout } from './layout/utils/compute-workflow-layout.ut
 export { agentResponseFormatSchema } from './schemas/agent-response-format-schema';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
+export { workflowAiAgentConversationConfigSchema } from './schemas/ai-agent-conversation-config-schema';
+export { workflowAiAgentInlineConfigSchema } from './schemas/ai-agent-inline-config-schema';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
@@ -137,6 +142,7 @@ export type {
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
+export type { WorkflowAiAgentStepKind } from './types/WorkflowAiAgentStepKind';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type {
   WorkflowClassifyCriterion,
@@ -161,9 +167,16 @@ export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
+export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
+export { getWorkflowAiAgentStepKind } from './utils/getWorkflowAiAgentStepKind';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { hasWorkflowAiAgentConversationConfig } from './utils/hasWorkflowAiAgentConversationConfig';
+export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';
+export { isAgentRunnableAsWorkflowStep } from './utils/isAgentRunnableAsWorkflowStep';
 export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
+export { isWorkflowAiAgentGenerateStep } from './utils/isWorkflowAiAgentGenerateStep';
+export { isWorkflowStepOwnedAgent } from './utils/isWorkflowStepOwnedAgent';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export {

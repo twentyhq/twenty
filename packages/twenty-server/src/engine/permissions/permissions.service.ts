@@ -173,12 +173,17 @@ export class PermissionsService {
         'flatRolePermissionFlagMaps',
       ]);
 
-    return this.isPermissionFlagGrantedToRoles({
-      roleIdsBySource: rolePermissionConfig.intersectionOf,
-      setting,
-      flatRoleMaps,
-      flatRolePermissionFlagMaps,
-    });
+    const { scope } = rolePermissionConfig;
+
+    return (
+      (!isDefined(scope) || (scope.permissionFlags[setting] ?? false)) &&
+      this.isPermissionFlagGrantedToRoles({
+        roleIdsBySource: rolePermissionConfig.intersectionOf,
+        setting,
+        flatRoleMaps,
+        flatRolePermissionFlagMaps,
+      })
+    );
   }
 
   // Like the ORM, a role missing from the cache grants nothing
