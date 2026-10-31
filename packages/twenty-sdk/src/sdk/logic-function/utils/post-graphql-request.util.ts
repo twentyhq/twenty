@@ -4,10 +4,12 @@ export const postGraphqlRequest = async <TVariables, TData>({
   query,
   variables,
   caller,
+  signal,
 }: {
   query: string;
   variables: TVariables;
   caller: string;
+  signal?: AbortSignal;
 }): Promise<TData> => {
   const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller);
 
@@ -18,6 +20,7 @@ export const postGraphqlRequest = async <TVariables, TData>({
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({ query, variables }),
+    signal,
   });
 
   if (!response.ok) {

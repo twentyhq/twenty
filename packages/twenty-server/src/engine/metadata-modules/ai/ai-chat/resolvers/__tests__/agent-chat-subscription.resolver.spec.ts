@@ -64,7 +64,7 @@ const buildResolver = () => {
     },
   };
   const conversationAccessService = {
-    resolveReadableThreadIdOrThrow: jest.fn().mockResolvedValue(THREAD_ID),
+    resolveReadableChannelIdOrThrow: jest.fn().mockResolvedValue(THREAD_ID),
     createLiveEventFilter: jest
       .fn()
       .mockResolvedValue(async (event: AgentChatSubscriptionEvent) => event),
@@ -95,7 +95,7 @@ describe('Shared conversation subscriptions', () => {
   it('refuses unauthorized subscriptions before opening a transport', async () => {
     const { resolver, conversationAccessService, subscriptionService } =
       buildResolver();
-    conversationAccessService.resolveReadableThreadIdOrThrow.mockRejectedValue(
+    conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
       denied(),
     );
     await expect(
@@ -122,12 +122,12 @@ describe('Shared conversation subscriptions', () => {
     context.deliver();
     await expect(pending).resolves.toEqual({ done: false, value: payload });
     expect(
-      context.conversationAccessService.resolveReadableThreadIdOrThrow,
+      context.conversationAccessService.resolveReadableChannelIdOrThrow,
     ).toHaveBeenLastCalledWith({
       workspace: WORKSPACE,
       callerApplication: undefined,
       workspaceMemberId: VIEWER_ID,
-      conversation: { threadId: THREAD_ID },
+      source: { threadId: THREAD_ID },
     });
     await subscription.return?.();
     expect(context.iterator.return).toHaveBeenCalledTimes(1);
@@ -154,8 +154,8 @@ describe('Shared conversation subscriptions', () => {
       },
     });
     expect(
-      context.conversationAccessService.resolveReadableThreadIdOrThrow,
-    ).toHaveBeenCalledWith(expect.objectContaining({ conversation }));
+      context.conversationAccessService.resolveReadableChannelIdOrThrow,
+    ).toHaveBeenCalledWith(expect.objectContaining({ source: conversation }));
     expect(
       context.subscriptionService.subscribeToAgentChat,
     ).toHaveBeenCalledWith({ workspaceId: WORKSPACE_ID, threadId: THREAD_ID });
@@ -211,7 +211,7 @@ describe('Shared conversation subscriptions', () => {
     );
     await subscription.next();
     const pending = subscription.next();
-    context.conversationAccessService.resolveReadableThreadIdOrThrow.mockRejectedValue(
+    context.conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
       denied(),
     );
     jest.setSystemTime(Date.now() + AGENT_CHAT_KEEPALIVE_INTERVAL_MS);
@@ -238,7 +238,7 @@ describe('Shared conversation subscriptions', () => {
       await pending;
     }
     expect(
-      context.conversationAccessService.resolveReadableThreadIdOrThrow,
+      context.conversationAccessService.resolveReadableChannelIdOrThrow,
     ).toHaveBeenCalledTimes(1);
     await subscription.return?.();
   });
@@ -256,7 +256,7 @@ describe('Shared conversation subscriptions', () => {
     const rejection = expect(pending).rejects.toMatchObject({
       extensions: { code: 'NOT_FOUND' },
     });
-    context.conversationAccessService.resolveReadableThreadIdOrThrow.mockRejectedValue(
+    context.conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
       denied(),
     );
     await jest.advanceTimersByTimeAsync(AGENT_CHAT_KEEPALIVE_INTERVAL_MS);

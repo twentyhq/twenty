@@ -35,4 +35,6 @@ export const generateInputSchema = z.object({
   responseFormat: agentResponseFormatSchema.nullish(),
   // no data tools when unset
   scope: aiRunScopeSchema.nullish(),
+  // a new id the caller picks for the run, so it can follow the run before it starts; the run streams only then
+  runId: z.uuid().nullish(),
 });

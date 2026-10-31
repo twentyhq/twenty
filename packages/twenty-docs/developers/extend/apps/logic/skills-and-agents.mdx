@@ -446,6 +446,34 @@ const { object } = await ai.generate({
 
 A scope only narrows: it grants nothing the caller doesn't already have.
 
+To show the reply while it is written, pass `onChunk`. The call still resolves
+to the same result, once the last chunk was handed to `onChunk`:
+
+```ts
+const { text } = await ai.generate({
+  input: `Draft a follow-up email to ${companyName}.`,
+  onChunk: (chunk) => {
+    // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+  },
+  signal: abortController.signal,
+});
+```
+
+- The call follows the run through the same subscription as
+  `streamConversation()`: it subscribes first, waits until the subscription is
+  live, then starts the run, so it misses no chunk.
+- Chunks are the chat's own: pipe them into `readUIMessageStream()` from the
+  `ai` package to build the message.
+- `runId` (optional) is the id the run gets, a UUID you pick; the result's
+  `runId` is the same. With `onChunk` and no `runId`, the SDK picks one. A
+  `runId` that was already used is refused. Naming a run is what makes it
+  stream, so pass one only to follow the run.
+- `signal` aborts the call: it rejects with the abort error and closes the
+  stream. The run itself goes on, and is recorded as usual.
+- An app follows only its own runs, so `onChunk` and `runId` need an app
+  token.
+- Requires `"engines": { "twenty": ">=2.55.0" }`.
+
 <Note>
   `ai.generate()` requires the AI permission flag on the app's default role,
   like `runAgent()`.

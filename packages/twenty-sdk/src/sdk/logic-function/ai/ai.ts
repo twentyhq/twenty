@@ -2,8 +2,10 @@ import {
   type GenerateInput,
   type GenerateResult,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
+import { streamAgentChatEvents } from '@/sdk/logic-function/utils/stream-agent-chat-events.util';
 import { toRunAgentMessages } from '@/sdk/logic-function/utils/to-run-agent-messages.util';
 
 const GENERATE_MUTATION = `
@@ -22,23 +24,107 @@ const GENERATE_MUTATION = `
   }
 `;
 
+const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
+  subscription OnAgentRunEvent($runId: UUID!) {
+    onAgentChatEvent(runId: $runId) {
+      event
+    }
+  }
+`;
+
+type GenerateVariables = {
+  input: Omit<GenerateInput, 'input' | 'onChunk' | 'signal'> & {
+    input: ReturnType<typeof toRunAgentMessages>;
+  };
+};
+
+const requestGenerate = async (
+  variables: GenerateVariables,
+  signal: AbortSignal | undefined,
+): Promise<GenerateResult> => {
+  const { generate: result } = await postGraphqlRequest<
+    GenerateVariables,
+    { generate: GenerateResult }
+  >({
+    query: GENERATE_MUTATION,
+    variables,
+    caller: 'ai.generate',
+    signal,
+  });
+
+  return result;
+};
+
+// The run's channel is followed before the run starts: its first event, a keepalive, comes once the
+// subscription is live. The server ends the channel after the last chunk, before the mutation returns
+const generateWithChunks = async ({
+  variables,
+  onChunk,
+  signal,
+}: {
+  variables: GenerateVariables;
+  onChunk: NonNullable<GenerateInput['onChunk']>;
+  signal: AbortSignal | undefined;
+}): Promise<GenerateResult> => {
+  const runId = variables.input.runId ?? crypto.randomUUID();
+  const stopFollowing = new AbortController();
+  const runSignal = isDefined(signal)
+    ? AbortSignal.any([signal, stopFollowing.signal])
+    : stopFollowing.signal;
+
+  try {
+    const events = streamAgentChatEvents({
+      query: ON_AGENT_RUN_EVENT_SUBSCRIPTION,
+      variables: { runId },
+      caller: 'ai.generate',
+      signal: runSignal,
+    });
+
+    if ((await events.next()).done === true) {
+      signal?.throwIfAborted();
+
+      throw new Error('ai.generate() failed: the stream ended before the run');
+    }
+
+    const deliverChunks = async () => {
+      for await (const event of events) {
+        if (event.type === 'stream-chunk') {
+          await onChunk(event.chunk);
+        }
+
+        if (
+          event.type === 'message-persisted' ||
+          event.type === 'credits-exhausted' ||
+          event.type === 'stream-error'
+        ) {
+          return;
+        }
+      }
+    };
+
+    const [result] = await Promise.all([
+      requestGenerate({ input: { ...variables.input, runId } }, runSignal),
+      deliverChunks(),
+    ]);
+
+    return result;
+  } finally {
+    stopFollowing.abort();
+  }
+};
+
 export const ai = {
   // runs as the function's caller; with no scope it gets no data tools, and a scope only narrows the caller
   generate: async ({
     input,
+    onChunk,
+    signal,
     ...rest
   }: GenerateInput): Promise<GenerateResult> => {
     const variables = { input: { ...rest, input: toRunAgentMessages(input) } };
 
-    const { generate: result } = await postGraphqlRequest<
-      typeof variables,
-      { generate: GenerateResult }
-    >({
-      query: GENERATE_MUTATION,
-      variables,
-      caller: 'ai.generate',
-    });
-
-    return result;
+    return isDefined(onChunk)
+      ? generateWithChunks({ variables, onChunk, signal })
+      : requestGenerate(variables, signal);
   },
 };

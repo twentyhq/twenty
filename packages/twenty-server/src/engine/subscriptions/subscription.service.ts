@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { filterMapAsyncIterator } from 'src/engine/subscriptions/utils/filter-map-async-iterator';
+import { subscribeToChannel } from 'src/engine/subscriptions/utils/subscribe-to-channel';
 
 @Injectable()
 export class SubscriptionService {
@@ -108,6 +109,7 @@ export class SubscriptionService {
     return `${SubscriptionChannel.AGENT_CHAT_CHANNEL}:${workspaceId}:${threadId}`;
   }
 
+  // live once it resolves, so a subscriber can start what it follows only then
   async subscribeToAgentChat<TPayload>({
     workspaceId,
     threadId,
@@ -115,11 +117,10 @@ export class SubscriptionService {
     workspaceId: string;
     threadId: string;
   }) {
-    const client = this.redisClient.getPubSubClient();
-
-    return client.asyncIterator<TPayload>(
-      this.getAgentChatChannel({ workspaceId, threadId }),
-    );
+    return subscribeToChannel<TPayload>({
+      pubSub: this.redisClient.getPubSubClient(),
+      channel: this.getAgentChatChannel({ workspaceId, threadId }),
+    });
   }
 
   async publishToAgentChat<T>({

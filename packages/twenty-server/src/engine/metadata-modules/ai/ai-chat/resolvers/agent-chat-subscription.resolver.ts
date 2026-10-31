@@ -23,7 +23,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
-import { AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
+import { AgentChatEventInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.input';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
@@ -57,27 +57,27 @@ export class AgentChatSubscriptionResolver {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
 
-  // the channel is the thread's own, so its events need no filter
+  // the channel is the thread's own, or a run's, so its events need no filter
   @Subscription(() => AgentChatEventDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async onAgentChatEvent(
-    @Args() conversation: AgentChatConversationInput,
+    @Args() source: AgentChatEventInput,
     @AuthWorkspace()
     workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>,
     @AuthApplication({ allowUndefined: true })
     callerApplication: ApplicationCallerOperation['callingApplication'],
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ) {
-    // resolving the conversation is its access check, and names the same thread each time
+    // resolving the channel is its access check, and names the same channel each time
     let threadId = '';
     const authorize = createSubscriptionAuthorization({
       check: async () => {
         threadId = await this.conversationAccessService
-          .resolveReadableThreadIdOrThrow({
+          .resolveReadableChannelIdOrThrow({
             workspace,
             callerApplication,
             workspaceMemberId,
-            conversation,
+            source,
           })
           .catch(aiGraphqlApiExceptionHandler);
       },
