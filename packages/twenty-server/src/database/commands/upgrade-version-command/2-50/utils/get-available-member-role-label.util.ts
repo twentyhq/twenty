@@ -1,4 +1,4 @@
-import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
+import { MEMBER_ROLE_LABEL } from 'src/engine/permissions/role/constants/member-role-label.constants';
 
 const FALLBACK_MEMBER_ROLE_LABEL = 'Workspace Member';
 

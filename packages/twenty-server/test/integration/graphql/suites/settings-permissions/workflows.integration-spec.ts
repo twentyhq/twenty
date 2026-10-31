@@ -7,7 +7,7 @@ import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/uti
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 const CREATE_CORE_WORKFLOW_MUTATION = gql`
   mutation CreateCoreWorkflow($input: CreateCoreWorkflowInput!) {

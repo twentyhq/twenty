@@ -10,7 +10,7 @@ import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-clie
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { SsoResolver } from 'src/engine/core-modules/sso/sso.resolver';
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceSsoIdentityProviderEntity]),

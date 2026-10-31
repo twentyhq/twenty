@@ -10,7 +10,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 const uploadWorkspaceLogoMutation = gql`
   mutation UploadWorkspaceLogo($file: Upload!) {
