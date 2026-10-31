@@ -421,31 +421,35 @@ describe('Shared conversation API boundaries', () => {
 
     await setRecordSharingEnabled(false);
 
-    await context.threadService.createThread({
-      id: threadId,
-      workspaceId: context.workspaceId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    });
-    await runWithReadOnlyChatPermission({
-      workspaceId: context.workspaceId,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
-      work: async () => {
-        const readable = await readThread(threadId);
-        const sent = await sendChatParticipationMessage({
-          threadId,
-          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        });
-
-        expect(readable.body.errors).toBeUndefined();
-        expect(sent.body.errors).toBeDefined();
-        expect(
-          await context.chatService.hasMessages({
+    try {
+      await context.threadService.createThread({
+        id: threadId,
+        workspaceId: context.workspaceId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      });
+      await runWithReadOnlyChatPermission({
+        workspaceId: context.workspaceId,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        work: async () => {
+          const readable = await readThread(threadId);
+          const sent = await sendChatParticipationMessage({
             threadId,
-            workspaceId: context.workspaceId,
-          }),
-        ).toBe(false);
-      },
-    }).finally(() => setRecordSharingEnabled(true));
+            token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          });
+
+          expect(readable.body.errors).toBeUndefined();
+          expect(sent.body.errors).toBeDefined();
+          expect(
+            await context.chatService.hasMessages({
+              threadId,
+              workspaceId: context.workspaceId,
+            }),
+          ).toBe(false);
+        },
+      });
+    } finally {
+      await setRecordSharingEnabled(true);
+    }
   });
 
   it('cannot take over a chat ID that another member creates concurrently', async () => {
