@@ -63,8 +63,10 @@ type ModelCall = {
 
 // The model calls the find tool once, then answers, so the test sees the tools the step offers and what they return
 const mockModelCallingFindTool = ({
-  failsOnceMidAnswer = false,
-}: { failsOnceMidAnswer?: boolean } = {}): ModelCall[] => {
+  providerFailure,
+}: {
+  providerFailure?: 'ONCE_MID_ANSWER' | 'EVERY_ANSWER' | 'EVERY_CALL';
+} = {}): ModelCall[] => {
   const calls: ModelCall[] = [];
   const model = createScriptedLanguageModel((options) => {
     calls.push({
@@ -74,6 +76,25 @@ const mockModelCallingFindTool = ({
         .flatMap((message) => message.content)
         .map((part) => JSON.stringify(part)),
     });
+
+    const failsThisCall =
+      providerFailure === 'EVERY_CALL' ||
+      (providerFailure === 'EVERY_ANSWER' && calls.length > 1) ||
+      (providerFailure === 'ONCE_MID_ANSWER' && calls.length === 2);
+
+    if (failsThisCall) {
+      return {
+        content: [{ type: 'text', text: 'Do' }],
+        finishReason: { unified: 'error', raw: undefined },
+        usage: USAGE,
+        streamError: new APICallError({
+          message: 'Service unavailable',
+          url: 'https://provider.test',
+          requestBodyValues: {},
+          statusCode: 503,
+        }),
+      };
+    }
 
     if (calls.length === 1) {
       return {
@@ -88,20 +109,6 @@ const mockModelCallingFindTool = ({
         ],
         finishReason: { unified: 'tool-calls', raw: undefined },
         usage: USAGE,
-      };
-    }
-
-    if (failsOnceMidAnswer && calls.length === 2) {
-      return {
-        content: [{ type: 'text', text: 'Do' }],
-        finishReason: { unified: 'error', raw: undefined },
-        usage: USAGE,
-        streamError: new APICallError({
-          message: 'Service unavailable',
-          url: 'https://provider.test',
-          requestBodyValues: {},
-          statusCode: 503,
-        }),
       };
     }
 
@@ -436,6 +443,24 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
        ORDER BY part."orderIndex"`,
     );
 
+  const findLatestAgentTurn = async (): Promise<{
+    id: string;
+    threadId: string | null;
+    status: AgentTurnStatus;
+    inputTokens: number | null;
+    outputTokens: number | null;
+  }> => {
+    const [turn] = await global.testDataSource.query(
+      `SELECT id, "threadId", status, "inputTokens"::float8 AS "inputTokens",
+         "outputTokens"::float8 AS "outputTokens"
+       FROM "${schema}"."agentTurn"
+       WHERE "agentId" = $1 ORDER BY "createdAt" DESC LIMIT 1`,
+      [agentId],
+    );
+
+    return turn;
+  };
+
   it('records a step without a conversation as one turn, outside any thread', async () => {
     mockModelCallingFindTool();
 
@@ -443,11 +468,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       'COMPLETED',
     );
 
-    const [turn] = await global.testDataSource.query(
-      `SELECT id, "threadId", status FROM "${schema}"."agentTurn"
-       WHERE "agentId" = $1 ORDER BY "createdAt" DESC LIMIT 1`,
-      [agentId],
-    );
+    const turn = await findLatestAgentTurn();
 
     expect(turn).toMatchObject({
       threadId: null,
@@ -459,6 +480,36 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
         [turn.id],
       ),
     ).toEqual([]);
+  });
+
+  it('fails a step without a conversation when the provider keeps failing', async () => {
+    mockModelCallingFindTool({ providerFailure: 'EVERY_CALL' });
+
+    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+      'FAILED',
+    );
+
+    expect(await findLatestAgentTurn()).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.FAILED,
+    });
+  });
+
+  it('keeps the usage of the steps a failed run without a conversation spent', async () => {
+    mockModelCallingFindTool({ providerFailure: 'EVERY_ANSWER' });
+
+    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+      'FAILED',
+    );
+
+    const turn = await findLatestAgentTurn();
+
+    expect(turn).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.FAILED,
+    });
+    expect(turn.inputTokens).toBeGreaterThan(0);
+    expect(turn.outputTokens).toBeGreaterThan(0);
   });
 
   it('saves the step reply in the parts chat saves', async () => {
@@ -484,7 +535,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   });
 
   it('completes the step when the provider fails midway through an answer once', async () => {
-    const calls = mockModelCallingFindTool({ failsOnceMidAnswer: true });
+    const calls = mockModelCallingFindTool({
+      providerFailure: 'ONCE_MID_ANSWER',
+    });
 
     expect(
       await runAsMemberUntilDone(
