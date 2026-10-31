@@ -22,7 +22,10 @@ const buildPersonaSpec = ({
   const { agentId, instructions, modelId, modelConfiguration, scope } =
     step.settings.input;
 
-  if (isNonEmptyString(agentId)) {
+  if (
+    !isWorkflowAiAgentGenerateStep(step.settings.input) &&
+    isDefined(agentId)
+  ) {
     return { agentId };
   }
 
@@ -51,9 +54,7 @@ export const buildWorkflowAgentRunSpec = ({
 }): AgentRunSpec => {
   const { humanInputInstructions, responseFormat } = step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();
-  const canAskHumans =
-    !isWorkflowAiAgentGenerateStep(step.settings.input) &&
-    isNonEmptyString(trimmedHumanInputInstructions);
+  const canAskHumans = isNonEmptyString(trimmedHumanInputInstructions);
 
   return {
     ...buildPersonaSpec({ step, applicationId }),
