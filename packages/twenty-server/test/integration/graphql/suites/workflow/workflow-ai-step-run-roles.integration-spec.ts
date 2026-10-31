@@ -77,12 +77,12 @@ const mockModelCallingFindTool = ({
         .map((part) => JSON.stringify(part)),
     });
 
-    const failsThisCall =
+    const shouldFailThisCall =
       providerFailure === 'EVERY_CALL' ||
       (providerFailure === 'EVERY_ANSWER' && calls.length > 1) ||
       (providerFailure === 'ONCE_MID_ANSWER' && calls.length === 2);
 
-    if (failsThisCall) {
+    if (shouldFailThisCall) {
       return {
         content: [{ type: 'text', text: 'Do' }],
         finishReason: { unified: 'error', raw: undefined },

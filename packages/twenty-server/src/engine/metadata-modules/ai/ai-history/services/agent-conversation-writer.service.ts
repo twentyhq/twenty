@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
@@ -30,6 +31,20 @@ export class AgentConversationWriterService {
     private readonly transactionService: AgentHistoryTransactionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  // upgrade fence: drop once 2-55's make-agent-turn-thread-optional has reached every workspace
+  async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return (
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier
+      ]?.isNullable === true
+    );
+  }
 
   runInTransaction<TResult>(
     workspaceId: string,

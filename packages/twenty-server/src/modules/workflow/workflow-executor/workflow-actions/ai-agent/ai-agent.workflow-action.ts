@@ -11,6 +11,7 @@ import { isWorkspaceCustomApplication } from 'src/engine/core-modules/applicatio
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -42,6 +43,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
+    private readonly conversationWriterService: AgentConversationWriterService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -137,8 +139,11 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     // a Generate step (no agent) is always one-shot, even with stale conversation settings; an agent
     // step converses only when someone can take part in it, a one-shot step leaves a turn on record
     const hasConversation =
-      isDefined(agent) &&
-      (spec.capabilities.canAskHumans || isDefined(conversationSettings));
+      !(await this.conversationWriterService.canInsertTurnWithoutThread(
+        workspaceId,
+      )) ||
+      (isDefined(agent) &&
+        (spec.capabilities.canAskHumans || isDefined(conversationSettings)));
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,
