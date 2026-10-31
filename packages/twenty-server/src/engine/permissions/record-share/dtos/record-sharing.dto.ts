@@ -13,7 +13,6 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
 import { RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 
 registerEnumType(RecordShareAccessLevel, { name: 'RecordShareAccessLevel' });
@@ -72,22 +71,17 @@ export class RecordSharingRoleDTO {
 
 @ObjectType()
 export class RecordSharingDTO {
-  @Field(() => RecordSharingMode)
-  sharingMode: RecordSharingMode;
+  @Field(() => Boolean)
+  isShareable: boolean;
+
+  @Field(() => Boolean)
+  isPrivate: boolean;
 
   @Field(() => Boolean)
   canManageSharing: boolean;
 
   @Field(() => RecordPermissionsDTO)
   permissions: RecordPermissionsDTO;
-
-  // Null when records of the object are not shared, or when the viewer can
-  // no longer read the record
-  @Field(() => RecordShareAccessLevel, { nullable: true })
-  generalAccessLevel: RecordShareAccessLevel | null;
-
-  @Field(() => RecordShareAccessLevel, { nullable: true })
-  defaultGeneralAccessLevel: RecordShareAccessLevel | null;
 
   @Field(() => Boolean)
   hasManagedGeneralAccess: boolean;

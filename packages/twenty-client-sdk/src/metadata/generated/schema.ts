@@ -2429,7 +2429,7 @@ export interface Mutation {
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
     setEnterpriseKey: EnterpriseLicenseInfoDTO
-    setRecordGeneralAccess: RecordSharingDTO
+    setRecordPrivate: RecordSharingDTO
     setRecordShare: RecordSharingDTO
     setResourceCreditSubscriptionPrice: BillingUpdate
     signIn: AvailableWorkspacesAndAccessTokens
@@ -3166,13 +3166,12 @@ export type RecordShareRowCause = 'APPLICATION' | 'MANUAL' | 'OWNER' | 'RULE'
 
 export interface RecordSharingDTO {
     canManageSharing: Scalars['Boolean']
-    defaultGeneralAccessLevel?: RecordShareAccessLevel
-    generalAccessLevel?: RecordShareAccessLevel
     hasManagedGeneralAccess: Scalars['Boolean']
+    isPrivate: Scalars['Boolean']
+    isShareable: Scalars['Boolean']
     permissions: RecordPermissionsDTO
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
-    sharingMode: RecordSharingMode
     __typename: 'RecordSharingDTO'
 }
 
@@ -3185,10 +3184,6 @@ export interface RecordSharingGrantDTO {
     rowCause: RecordShareRowCause
     __typename: 'RecordSharingGrantDTO'
 }
-
-
-/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
-export type RecordSharingMode = 'INHERITED' | 'OPEN_BY_DEFAULT' | 'PRIVATE' | 'ROLE_ONLY'
 
 export interface RecordSharingRoleDTO {
     canRead?: Scalars['Boolean']
@@ -6958,7 +6953,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
-    setRecordGeneralAccess?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, target: RecordTargetInput} })
+    setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
     setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -7747,13 +7742,12 @@ export interface RecordSharePrincipalInput {roleId?: (Scalars['UUID'] | null),wo
 
 export interface RecordSharingDTOGenqlSelection{
     canManageSharing?: boolean | number
-    defaultGeneralAccessLevel?: boolean | number
-    generalAccessLevel?: boolean | number
     hasManagedGeneralAccess?: boolean | number
+    isPrivate?: boolean | number
+    isShareable?: boolean | number
     permissions?: RecordPermissionsDTOGenqlSelection
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
-    sharingMode?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12697,13 +12691,6 @@ export const enumRecordShareRowCause = {
    MANUAL: 'MANUAL' as const,
    OWNER: 'OWNER' as const,
    RULE: 'RULE' as const
-}
-
-export const enumRecordSharingMode = {
-   INHERITED: 'INHERITED' as const,
-   OPEN_BY_DEFAULT: 'OPEN_BY_DEFAULT' as const,
-   PRIVATE: 'PRIVATE' as const,
-   ROLE_ONLY: 'ROLE_ONLY' as const
 }
 
 export const enumRelationType = {

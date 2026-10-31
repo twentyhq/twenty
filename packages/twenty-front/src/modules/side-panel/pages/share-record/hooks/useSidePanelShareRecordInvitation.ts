@@ -16,7 +16,7 @@ const DEFAULT_INVITATION_ACCESS_LEVEL = RecordShareAccessLevel.READ;
 
 type UseSidePanelShareRecordInvitationProps = Pick<
   ReturnType<typeof useRecordSharing>,
-  'sharing' | 'saving' | 'setShare' | 'setGeneralAccess'
+  'sharing' | 'saving' | 'setShare' | 'setPrivate'
 > & {
   objectLabelPlural: string;
 };
@@ -25,7 +25,7 @@ export const useSidePanelShareRecordInvitation = ({
   sharing,
   saving,
   setShare,
-  setGeneralAccess,
+  setPrivate,
   objectLabelPlural,
 }: UseSidePanelShareRecordInvitationProps) => {
   const { t } = useLingui();
@@ -104,7 +104,7 @@ export const useSidePanelShareRecordInvitation = ({
 
   const inviteRecipient = (recipient: RecordSharingInvitationRecipient) => {
     if (recipient.kind === 'everyone') {
-      return setGeneralAccess(accessLevel);
+      return setPrivate(false);
     }
 
     const principal =
