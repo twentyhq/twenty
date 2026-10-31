@@ -1,6 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkflowValidationIssue } from 'twenty-shared/workflow';
+import {
+  hasWorkflowAiAgentInlineConfig,
+  type WorkflowValidationIssue,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -9,11 +12,30 @@ export const validateWorkflowAiAgentStep = (
 ): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
 
-  if (!isNonEmptyString(step.settings?.input?.agentId)) {
+  const input = step.settings?.input;
+  const stepLabel = step.name ?? step.id;
+
+  if (
+    isNonEmptyString(input?.agentId) &&
+    hasWorkflowAiAgentInlineConfig(input)
+  ) {
     issues.push({
       severity: 'error',
-      code: 'AI_AGENT_MISSING_AGENT',
-      message: `Agent step "${step.name ?? step.id}" has no agent selected.`,
+      code: 'AI_AGENT_CONFLICTING_CONFIG',
+      message: `Agent step "${stepLabel}" runs an agent, so its instructions, model and permissions come from the agent.`,
+      stepId: step.id,
+    });
+  }
+
+  if (
+    !isNonEmptyString(input?.agentId) &&
+    !isNonEmptyString(input?.instructions?.trim()) &&
+    !isNonEmptyString(input?.prompt?.trim())
+  ) {
+    issues.push({
+      severity: 'error',
+      code: 'AI_AGENT_MISSING_INSTRUCTIONS',
+      message: `Agent step "${stepLabel}" has no instructions or prompt.`,
       stepId: step.id,
     });
   }
@@ -26,7 +48,7 @@ export const validateWorkflowAiAgentStep = (
     issues.push({
       severity: 'warning',
       code: 'AI_AGENT_MISSING_OUTPUT_VARIABLE',
-      message: `Agent step "${step.name ?? step.id}" has no output variable defined. Downstream steps won't be able to reference its result.`,
+      message: `Agent step "${stepLabel}" has no output variable defined. Downstream steps won't be able to reference its result.`,
       stepId: step.id,
     });
   }

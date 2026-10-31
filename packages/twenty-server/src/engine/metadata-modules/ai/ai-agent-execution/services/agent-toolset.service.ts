@@ -22,6 +22,7 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
+import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
@@ -45,11 +46,11 @@ export type AgentRegistryAccess =
       categories: readonly ToolCategory[];
       excludedToolNames: readonly string[];
     }
-  // an agent limited to the objects it was granted, whose few tools are sent with the turn
+  // a run limited to the objects it was granted, whose few tools are sent with the turn
   | {
       type: 'granted';
       toolContext: ToolContext;
-      agentRoleId: string;
+      explicitObjectGrants: ExplicitObjectGrants;
       categories: readonly ToolCategory[];
       excludedToolNames: readonly string[];
     }
@@ -245,7 +246,7 @@ export class AgentToolsetService {
         const directTools = await this.toolRegistry.getToolsByCategories(
           {
             ...toolContext,
-            explicitObjectGrantsRoleId: registryAccess.agentRoleId,
+            explicitObjectGrants: registryAccess.explicitObjectGrants,
           },
           {
             categories: [...registryAccess.categories],

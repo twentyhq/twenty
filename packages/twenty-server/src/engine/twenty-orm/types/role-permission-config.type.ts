@@ -1,3 +1,5 @@
+import { type PermissionScope } from 'src/engine/twenty-orm/types/permission-scope.type';
+
 // null: this actor takes part but has no role, so nothing is allowed
 export type RoleIdsBySource = {
   userWorkspaceRoleId?: string | null;
@@ -8,4 +10,4 @@ export type RoleIdsBySource = {
 
 export type RolePermissionConfig =
   | { shouldBypassPermissionChecks: true }
-  | { intersectionOf: RoleIdsBySource };
+  | { intersectionOf: RoleIdsBySource; scope?: PermissionScope };

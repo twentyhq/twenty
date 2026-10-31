@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
+import { hasWorkflowAiAgentInlineConfig } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -91,39 +92,47 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const agentRow = await this.agentRepository.findOne(workspaceId, {
-      where: { id: agentId },
-    });
-
-    if (!isDefined(agentRow)) {
+    if (
+      isNonEmptyString(agentId) &&
+      hasWorkflowAiAgentInlineConfig(step.settings.input)
+    ) {
       throw new WorkflowStepExecutorException(
-        `Agent with id ${agentId} not found`,
+        'A step running an agent takes its instructions, model and permissions from the agent',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-      );
-    }
-
-    const agent = resolveEffectiveAgent(agentRow);
-
-    if (!agent.isActive) {
-      const { label } = agent;
-
-      throw new WorkflowStepExecutorException(
-        `Agent "${label}" is archived`,
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-        { userFriendlyMessage: msg`Agent "${label}" is archived.` },
       );
     }
 
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
+    const agent = isNonEmptyString(agentId)
+      ? await this.findActiveAgentOrThrow({ workspaceId, agentId })
+      : null;
 
-    this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
-      {
-        executionContext,
-        targetApplicationId: agent.applicationId,
-        targetLabel: `Agent "${agent.name}"`,
-      },
-    );
+    if (isDefined(agent)) {
+      this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
+        {
+          executionContext,
+          targetApplicationId: agent.applicationId,
+          targetLabel: `Agent "${agent.name}"`,
+        },
+      );
+    }
+
+    const spec = buildWorkflowAgentRunSpec({
+      step,
+      isApplicationBound:
+        isDefined(executionContext.application) &&
+        !isWorkspaceCustomApplication({
+          application: executionContext.application,
+          workspaceCustomApplicationId:
+            executionContext.authContext.workspace.workspaceCustomApplicationId,
+        }),
+      // a run without an application id belongs to the workspace custom application
+      applicationId:
+        executionContext.application?.id ??
+        executionContext.authContext.workspace.workspaceCustomApplicationId ??
+        null,
+    });
 
     const conversation =
       await this.workflowAgentConversationService.openConversation({
@@ -152,7 +161,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
       stepId: currentStepId,
-      summary: buildStartedAgentRunSummary(agent.modelId),
+      summary: buildStartedAgentRunSummary(
+        agent?.modelId ?? spec.inlineConfig?.modelId ?? '',
+      ),
       threadId: conversation.threadId,
     });
 
@@ -163,17 +174,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
       }),
-      spec: buildWorkflowAgentRunSpec({
-        step,
-        isApplicationBound:
-          isDefined(executionContext.application) &&
-          !isWorkspaceCustomApplication({
-            application: executionContext.application,
-            workspaceCustomApplicationId:
-              executionContext.authContext.workspace
-                .workspaceCustomApplicationId,
-          }),
-      }),
+      spec,
       prompt: isDefined(resolvedPrompt)
         ? {
             messages: [{ role: 'user', content: resolvedPrompt }],
@@ -185,5 +186,38 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     });
 
     return { wait: { type: 'CALLBACK' } };
+  }
+
+  private async findActiveAgentOrThrow({
+    workspaceId,
+    agentId,
+  }: {
+    workspaceId: string;
+    agentId: string;
+  }) {
+    const agentRow = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
+    });
+
+    if (!isDefined(agentRow)) {
+      throw new WorkflowStepExecutorException(
+        `Agent with id ${agentId} not found`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (!agent.isActive) {
+      const { label } = agent;
+
+      throw new WorkflowStepExecutorException(
+        `Agent "${label}" is archived`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        { userFriendlyMessage: msg`Agent "${label}" is archived.` },
+      );
+    }
+
+    return agent;
   }
 }

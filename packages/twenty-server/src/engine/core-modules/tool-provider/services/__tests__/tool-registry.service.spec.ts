@@ -52,12 +52,14 @@ describe('ToolRegistryService', () => {
         rolePermissionConfig: {
           intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
         },
-        explicitObjectGrantsRoleId: agentRoleId,
+        explicitObjectGrants: { type: 'role', roleId: agentRoleId },
         resolveExecutionContext: async () => resolvedContext,
       });
 
       expect(generateDescriptors).toHaveBeenCalledWith(
-        expect.objectContaining({ explicitObjectGrantsRoleId: agentRoleId }),
+        expect.objectContaining({
+          explicitObjectGrants: { type: 'role', roleId: agentRoleId },
+        }),
         expect.anything(),
       );
     });

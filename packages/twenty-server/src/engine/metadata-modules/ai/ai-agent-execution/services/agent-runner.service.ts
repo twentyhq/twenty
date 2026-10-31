@@ -27,11 +27,17 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
+import {
+  resolveAgentRunPersonaFromAgent,
+  resolveAgentRunPersonaFromInlineConfig,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
@@ -95,7 +101,7 @@ export class AgentRunnerService {
       input,
       await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
-        agentId: input.spec.agentId,
+        spec: input.spec,
       }),
     );
   }
@@ -145,7 +151,7 @@ export class AgentRunnerService {
           jobData: { ...jobData, parkId: undefined },
           scope: await this.agentRunJobScopeService.resolve({
             workspaceId,
-            agentId: jobData.spec.agentId,
+            spec: jobData.spec,
           }),
         },
       });
@@ -182,9 +188,9 @@ export class AgentRunnerService {
     handler: AgentRunCallerHandler;
   }): Promise<AgentRunnerResult | typeof CONVERSATION_BUSY | null> {
     try {
-      const [executionContext, agent] = await Promise.all([
+      const [executionContext, persona] = await Promise.all([
         handler.buildExecutionContext({ workspaceId, caller }),
-        this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+        this.resolvePersonaOrThrow({ workspaceId, spec }),
       ]);
 
       return await this.withClaimedConversation({
@@ -199,7 +205,7 @@ export class AgentRunnerService {
                 conversation,
                 caller,
                 spec,
-                agent,
+                persona,
                 prompt,
                 executionContext,
               },
@@ -294,7 +300,7 @@ export class AgentRunnerService {
           jobData: { ...jobData, parkId: undefined },
           scope: await this.agentRunJobScopeService.resolve({
             workspaceId,
-            agentId: suspension.runSpec.agentId,
+            spec: suspension.runSpec,
           }),
         },
       });
@@ -415,8 +421,8 @@ export class AgentRunnerService {
         });
       }
 
-      const [agent, executionContext] = await Promise.all([
-        this.findAgentOrThrow({ workspaceId, agentId: runSpec.agentId }),
+      const [persona, executionContext] = await Promise.all([
+        this.resolvePersonaOrThrow({ workspaceId, spec: runSpec }),
         handler.buildExecutionContext({ workspaceId, caller }),
       ]);
 
@@ -429,7 +435,7 @@ export class AgentRunnerService {
               conversation: { threadId, isCreated: false },
               caller,
               spec: runSpec,
-              agent,
+              persona,
               prompt: null,
               executionContext,
             },
@@ -487,7 +493,7 @@ export class AgentRunnerService {
       workspaceId,
       conversation: { threadId, isCreated },
       spec,
-      agent,
+      persona,
       prompt,
       executionContext,
     } = input;
@@ -503,7 +509,7 @@ export class AgentRunnerService {
       await this.agentRunConversationService.openTurn({
         workspaceId,
         threadId,
-        agentId: agent.id,
+        agentId: persona.agentId,
         senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
         senderApplicationId: prompt?.senderApplicationId ?? null,
         createdBy: executionContext.turnCreatedBy,
@@ -531,7 +537,7 @@ export class AgentRunnerService {
 
     const startedAtMs = Date.now();
     const turnInput = {
-      agent,
+      persona,
       messages: prompt?.messages ?? [],
       priorMessages,
       // every run here goes on in the background, unlike a chat, so it can wait. The wait tools are
@@ -543,7 +549,8 @@ export class AgentRunnerService {
       ].join('\n\n'),
       pausingTools: createAgentWaitTools(),
       canAskHumans: spec.capabilities.canAskHumans,
-      responseFormat: spec.responseFormat ?? agent.responseFormat,
+      responseFormat:
+        spec.responseFormat ?? persona.responseFormat ?? undefined,
       workspaceId,
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
@@ -725,6 +732,22 @@ export class AgentRunnerService {
         ? 'Agent paused to wait but its conversation could not be recorded.'
         : 'Agent asked a question that could not be recorded.',
     };
+  }
+
+  private async resolvePersonaOrThrow({
+    workspaceId,
+    spec,
+  }: {
+    workspaceId: string;
+    spec: AgentRunSpec;
+  }): Promise<ResolvedAgentRunPersona> {
+    if (spec.agentId === null) {
+      return resolveAgentRunPersonaFromInlineConfig(spec.inlineConfig);
+    }
+
+    return resolveAgentRunPersonaFromAgent(
+      await this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
+    );
   }
 
   private async findAgentOrThrow({

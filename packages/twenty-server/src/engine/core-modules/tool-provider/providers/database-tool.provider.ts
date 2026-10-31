@@ -28,8 +28,11 @@ import { MERGE_MANY_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-cru
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import {
+  buildExplicitObjectPermissionByObjectId,
+  type ExplicitObjectPermission,
+} from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
-import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -98,29 +101,15 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
-    const { explicitObjectGrantsRoleId } = context;
-    const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
-
-    const explicitPermissionByObjectId = new Map<
-      string,
-      FlatObjectPermission
-    >();
-
-    if (requireExplicitObjectGrants) {
-      for (const flatObjectPermission of Object.values(
-        flatObjectPermissionMaps.byUniversalIdentifier,
-      )) {
-        if (
-          isDefined(flatObjectPermission) &&
-          flatObjectPermission.roleId === explicitObjectGrantsRoleId
-        ) {
-          explicitPermissionByObjectId.set(
-            flatObjectPermission.objectMetadataId,
-            flatObjectPermission,
-          );
-        }
-      }
-    }
+    const { explicitObjectGrants } = context;
+    const requireExplicitObjectGrants = isDefined(explicitObjectGrants);
+    const explicitPermissionByObjectId = requireExplicitObjectGrants
+      ? buildExplicitObjectPermissionByObjectId({
+          explicitObjectGrants,
+          flatObjectPermissionMaps,
+          flatObjectMetadataMaps,
+        })
+      : new Map<string, ExplicitObjectPermission>();
 
     const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,

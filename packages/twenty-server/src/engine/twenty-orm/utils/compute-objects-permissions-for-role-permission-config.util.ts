@@ -8,9 +8,11 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/twenty-orm/types/application-default-role-maps.type';
+import { type PermissionScope } from 'src/engine/twenty-orm/types/permission-scope.type';
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { getRoleIdsToIntersect } from 'src/engine/twenty-orm/utils/get-role-ids-to-intersect.util';
+import { restrictObjectsPermissionsToScope } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-scope.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/twenty-orm/utils/restrict-objects-permissions-to-disabled-actions.util';
 
 const buildApplicationIdByDefaultRoleId = (
@@ -27,12 +29,14 @@ const buildApplicationIdByDefaultRoleId = (
 
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
+  scope,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   intersectionOf: RoleIdsBySource;
+  scope?: PermissionScope;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -76,5 +80,13 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     return {};
   }
 
-  return computePermissionIntersection(permissionsPerRole);
+  const rolesObjectsPermissions =
+    computePermissionIntersection(permissionsPerRole);
+
+  return isDefined(scope)
+    ? restrictObjectsPermissionsToScope({
+        objectsPermissions: rolesObjectsPermissions,
+        scope,
+      })
+    : rolesObjectsPermissions;
 };

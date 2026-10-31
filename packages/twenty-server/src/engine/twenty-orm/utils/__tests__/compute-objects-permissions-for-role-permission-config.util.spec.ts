@@ -1,4 +1,5 @@
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -233,5 +234,110 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
         'company-paid-invoices-field-id'
       ]?.canRead,
     ).toBe(false);
+  });
+
+  describe('with a scope', () => {
+    const USER_PREDICATE = {
+      id: 'predicate-id',
+      fieldMetadataId: AMOUNT_FIELD_ID,
+      objectMetadataId: INVOICE_ID,
+      operand: 'is',
+      value: 'mine',
+      subFieldName: null,
+      rowLevelPermissionPredicateGroupId: null,
+      workspaceMemberFieldMetadataId: null,
+      workspaceMemberSubFieldName: null,
+      roleId: 'user-role-id',
+    } as unknown as ObjectPermissions['rowLevelPermissionPredicates'][number];
+
+    const rolesPermissionsWithPredicate = {
+      ...rolesPermissions,
+      'user-role-id': {
+        [INVOICE_ID]: {
+          ...FULL_ACCESS,
+          rowLevelPermissionPredicates: [USER_PREDICATE],
+        },
+      },
+    };
+
+    const compute = (
+      intersectionOf: RoleIdsBySource,
+      scopeObjectPermissions: ObjectPermissions | undefined,
+    ) =>
+      computeObjectsPermissionsForRolePermissionConfig({
+        intersectionOf,
+        scope: {
+          objectsPermissions: isDefined(scopeObjectPermissions)
+            ? { [INVOICE_ID]: scopeObjectPermissions }
+            : {},
+          grantedPermissionFlags: [],
+        },
+        rolesPermissions: rolesPermissionsWithPredicate,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      })[INVOICE_ID];
+
+    it('narrows the roles to what the scope allows', () => {
+      const invoicePermissions = compute(
+        { userWorkspaceRoleId: 'user-role-id' },
+        { ...FULL_ACCESS, canUpdateObjectRecords: false },
+      );
+
+      expect(invoicePermissions?.canReadObjectRecords).toBe(true);
+      expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    });
+
+    it('never grants what the roles deny', () => {
+      const invoicePermissions = compute(
+        { userWorkspaceRoleId: 'user-role-id' },
+        FULL_ACCESS,
+      );
+
+      // the user role cannot destroy an object its application disables it on
+      expect(invoicePermissions?.canDestroyObjectRecords).toBe(false);
+    });
+
+    it('denies an object the scope leaves out', () => {
+      const invoicePermissions = compute(
+        { userWorkspaceRoleId: 'user-role-id' },
+        undefined,
+      );
+
+      expect(invoicePermissions?.canReadObjectRecords).toBe(false);
+      expect(invoicePermissions?.canUpdateObjectRecords).toBe(false);
+    });
+
+    it("keeps the roles' row-level predicates", () => {
+      const invoicePermissions = compute(
+        { userWorkspaceRoleId: 'user-role-id' },
+        FULL_ACCESS,
+      );
+
+      expect(invoicePermissions?.rowLevelPermissionPredicates).toEqual([
+        USER_PREDICATE,
+      ]);
+    });
+
+    it('adds the field restrictions of the scope', () => {
+      const invoicePermissions = compute(
+        { userWorkspaceRoleId: 'user-role-id' },
+        {
+          ...FULL_ACCESS,
+          restrictedFields: {
+            [AMOUNT_FIELD_ID]: { canRead: false, canUpdate: false },
+          },
+        },
+      );
+
+      expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
+        canRead: false,
+        canUpdate: false,
+      });
+    });
+
+    it('grants nothing without a role', () => {
+      expect(compute({}, FULL_ACCESS)).toBeUndefined();
+    });
   });
 });

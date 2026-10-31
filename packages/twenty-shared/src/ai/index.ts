@@ -43,6 +43,7 @@ export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-na
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export { agentRunSummarySchema } from './schemas/agent-run-summary-schema';
+export { aiRunScopeSchema } from './schemas/ai-run-scope-schema';
 export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
@@ -59,6 +60,7 @@ export type {
 } from './types/AgentResponseSchema';
 export type { AgentRunSummary } from './types/AgentRunSummary';
 export type { AgentRunToolCallLog } from './types/AgentRunToolCallLog';
+export type { AiRunScope } from './types/AiRunScope';
 export type { AskQuestionAnswer } from './types/AskQuestionAnswer';
 export type { AskQuestionItem } from './types/AskQuestionItem';
 export type { AskQuestionOption } from './types/AskQuestionOption';
