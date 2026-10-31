@@ -15,7 +15,7 @@ const buildPersonaSpec = ({
   step,
   applicationId,
 }: {
-  step: WorkflowAiAgentAction;
+  step: Pick<WorkflowAiAgentAction, 'id' | 'settings'>;
   applicationId: string | null;
 }): AgentRunPersonaSpec => {
   const { agentId, instructions, modelId, modelConfiguration, scope } =

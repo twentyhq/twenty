@@ -113,27 +113,30 @@ export const computeObjectsPermissionsForRoleDefinition = ({
             objectPermission.objectMetadataId === objectMetadataId,
         );
 
-        const getPermissionValue = (
-          overrideValue: boolean | null | undefined,
-          defaultValue: boolean,
-        ) => overrideValue ?? (isSystem ? true : defaultValue);
+        const getPermissionValue = ({
+          overrideValue,
+          defaultValue,
+        }: {
+          overrideValue: boolean | null | undefined;
+          defaultValue: boolean;
+        }) => overrideValue ?? (isSystem ? true : defaultValue);
 
-        canRead = getPermissionValue(
-          objectPermissionOverride?.canReadObjectRecords,
-          canRead,
-        );
-        canUpdate = getPermissionValue(
-          objectPermissionOverride?.canUpdateObjectRecords,
-          canUpdate,
-        );
-        canSoftDelete = getPermissionValue(
-          objectPermissionOverride?.canSoftDeleteObjectRecords,
-          canSoftDelete,
-        );
-        canDestroy = getPermissionValue(
-          objectPermissionOverride?.canDestroyObjectRecords,
-          canDestroy,
-        );
+        canRead = getPermissionValue({
+          overrideValue: objectPermissionOverride?.canReadObjectRecords,
+          defaultValue: canRead,
+        });
+        canUpdate = getPermissionValue({
+          overrideValue: objectPermissionOverride?.canUpdateObjectRecords,
+          defaultValue: canUpdate,
+        });
+        canSoftDelete = getPermissionValue({
+          overrideValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
+          defaultValue: canSoftDelete,
+        });
+        canDestroy = getPermissionValue({
+          overrideValue: objectPermissionOverride?.canDestroyObjectRecords,
+          defaultValue: canDestroy,
+        });
       }
 
       for (const fieldPermission of fieldPermissions) {
