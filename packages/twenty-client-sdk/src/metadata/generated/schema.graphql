@@ -3434,7 +3434,7 @@ type Mutation {
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  setRecordGeneralAccess(accessLevel: RecordShareAccessLevel!, target: RecordTargetInput!): RecordSharingDTO!
+  setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -4282,13 +4282,12 @@ enum RecordShareRowCause {
 
 type RecordSharingDTO {
   canManageSharing: Boolean!
-  defaultGeneralAccessLevel: RecordShareAccessLevel
-  generalAccessLevel: RecordShareAccessLevel
   hasManagedGeneralAccess: Boolean!
+  isPrivate: Boolean!
+  isShareable: Boolean!
   permissions: RecordPermissionsDTO!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
-  sharingMode: RecordSharingMode!
 }
 
 type RecordSharingGrantDTO {
@@ -4298,16 +4297,6 @@ type RecordSharingGrantDTO {
   principalRoleId: UUID
   principalType: RecordSharePrincipalType!
   rowCause: RecordShareRowCause!
-}
-
-"""
-How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
-"""
-enum RecordSharingMode {
-  INHERITED
-  OPEN_BY_DEFAULT
-  PRIVATE
-  ROLE_ONLY
 }
 
 type RecordSharingRoleDTO {

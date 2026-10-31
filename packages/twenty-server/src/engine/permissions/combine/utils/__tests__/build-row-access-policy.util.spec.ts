@@ -51,6 +51,10 @@ const environment: RowAccessPolicyEnvironment &
   recordShareTableExpression: '"workspace"."recordShare"',
   featureFlagsMap: {},
 };
+const privateRecordEnvironment = {
+  ...environment,
+  featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true },
+};
 const sharingEnvironment = {
   ...environment,
   featureFlagsMap: {
@@ -78,23 +82,33 @@ const readEverything: RowAccessPolicySubject = {
   resolveRowLevelPermissionRecordFilter: () => null,
 };
 
-const build = (
-  subject: RowAccessPolicySubject,
-  flatObjectMetadata: FlatObjectMetadata,
-) =>
+const build = ({
+  subject,
+  flatObjectMetadata,
+  policyEnvironment = environment,
+}: {
+  subject: RowAccessPolicySubject;
+  flatObjectMetadata: FlatObjectMetadata;
+  policyEnvironment?: typeof environment;
+}) =>
   buildCompiledRowAccessPolicy({
     subject,
-    environment,
+    environment: policyEnvironment,
     tableAlias: flatObjectMetadata.nameSingular,
     flatObjectMetadata,
     operationType: 'select',
   });
 
-const gatedSql = (
-  subject: RowAccessPolicySubject,
-  flatObjectMetadata: FlatObjectMetadata,
-): string => {
-  const policy = build(subject, flatObjectMetadata);
+const gatedSql = ({
+  subject,
+  flatObjectMetadata,
+  policyEnvironment = environment,
+}: {
+  subject: RowAccessPolicySubject;
+  flatObjectMetadata: FlatObjectMetadata;
+  policyEnvironment?: typeof environment;
+}): string => {
+  const policy = build({ subject, flatObjectMetadata, policyEnvironment });
 
   expect(policy.kind).toBe('gated');
 
@@ -134,14 +148,21 @@ describe('buildRowAccessPolicy', () => {
       ...note,
       disabledObjectPermissionActions: ['canReadObjectRecords' as const],
     };
-    expect(build(readEverything, object)).toEqual({ kind: 'denied' });
     expect(
-      build({ ...readEverything, isOwningApplication: () => true }, object),
+      build({ subject: readEverything, flatObjectMetadata: object }),
+    ).toEqual({ kind: 'denied' });
+    expect(
+      build({
+        subject: { ...readEverything, isOwningApplication: () => true },
+        flatObjectMetadata: object,
+      }),
     ).toEqual({ kind: 'open' });
   });
 
   it('opens an object to a subject without predicate', () => {
-    expect(build(readEverything, note)).toEqual({ kind: 'open' });
+    expect(
+      build({ subject: readEverything, flatObjectMetadata: note }),
+    ).toEqual({ kind: 'open' });
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
@@ -181,11 +202,17 @@ describe('buildRowAccessPolicy', () => {
     ).toEqual({ kind: 'open' });
   });
 
-  it('keeps records of a PRIVATE object gated on their shares', () => {
-    expect(gatedSql(readEverything, person)).toContain('recordShare');
+  it('gates every object on private records once they are enabled, without record sharing', () => {
+    expect(
+      gatedSql({
+        subject: readEverything,
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
+    ).toContain('recordShare');
   });
 
-  it('keeps a system object open when record sharing is enabled', () => {
+  it('gates a system object on private records too', () => {
     expect(
       buildCompiledRowAccessPolicy({
         subject: readEverything,
@@ -193,8 +220,8 @@ describe('buildRowAccessPolicy', () => {
         tableAlias: 'note',
         flatObjectMetadata: { ...note, isSystem: true },
         operationType: 'select',
-      }),
-    ).toEqual({ kind: 'open' });
+      }).kind,
+    ).toBe('gated');
   });
 
   it('leaves an object open to inserts when record sharing is enabled', () => {
@@ -296,42 +323,49 @@ describe('buildRowAccessPolicy', () => {
   });
 
   it('denies an object the subject has no permission on', () => {
-    expect(build({ ...readEverything, objectsPermissions: {} }, note)).toEqual({
+    expect(
+      build({
+        subject: { ...readEverything, objectsPermissions: {} },
+        flatObjectMetadata: note,
+      }),
+    ).toEqual({
       kind: 'denied',
     });
   });
 
   it('gates an object on the role predicate alone', () => {
-    const sql = gatedSql(
-      {
+    const sql = gatedSql({
+      subject: {
         ...readEverything,
         resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
       },
-      note,
-    );
+      flatObjectMetadata: note,
+    });
 
     expect(sql).toBe('("note"."title" = :restricted)');
   });
 
-  it('gates a PRIVATE object on its share rows and leaves it open without principals', () => {
-    expect(gatedSql(readEverything, person)).toContain(
-      '"person_recordShare"."recordId" = "person"."id"',
-    );
+  it('gates records on their share rows and leaves them open without principals', () => {
     expect(
-      build({ ...readEverything, principalIds: undefined }, person),
-    ).toEqual({ kind: 'open' });
-  });
-
-  it('keeps a PRIVATE object open for its owning application', () => {
+      gatedSql({
+        subject: readEverything,
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
+    ).toContain('"person_recordShare"."recordId" = "person"."id"');
     expect(
-      build({ ...readEverything, isOwningApplication: () => true }, person),
+      build({
+        subject: { ...readEverything, principalIds: undefined },
+        flatObjectMetadata: person,
+        policyEnvironment: privateRecordEnvironment,
+      }),
     ).toEqual({ kind: 'open' });
   });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildCompiledRowAccessPolicy({
       subject: readEverything,
-      environment,
+      environment: privateRecordEnvironment,
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'select',

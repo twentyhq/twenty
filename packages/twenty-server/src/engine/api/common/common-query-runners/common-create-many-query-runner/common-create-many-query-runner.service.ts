@@ -78,7 +78,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ): Promise<ObjectRecord[]> {
     const objectSharing = resolveObjectSharing(queryRunnerContext);
 
-    if (objectSharing.isShareRequired || isNonEmptyArray(args.shareWith)) {
+    if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
@@ -159,7 +159,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        objectSharing.isShareRequired &&
+        objectSharing.isPrivateByDefault &&
         isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepository(
               flatObjectMetadata.nameSingular,

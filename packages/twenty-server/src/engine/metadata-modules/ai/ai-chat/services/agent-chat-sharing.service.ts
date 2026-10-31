@@ -250,10 +250,7 @@ export class AgentChatSharingService {
     };
     const sharing = await this.recordSharingService.getSharing(recordTarget);
 
-    if (
-      sharing.canManageSharing &&
-      !EDIT_ACCESS_LEVELS.includes(sharing.generalAccessLevel)
-    ) {
+    if (sharing.canManageSharing) {
       for (const memberId of chatMemberIds) {
         const memberShare = sharing.shares.find(
           ({ principalId }) => principalId === memberId,

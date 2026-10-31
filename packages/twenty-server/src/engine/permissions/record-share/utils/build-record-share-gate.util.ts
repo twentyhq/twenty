@@ -4,10 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { buildPrivateRecordCreatorExpression } from 'src/engine/permissions/private-record/utils/build-private-record-creator-expression.util';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
+import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import {
-  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -24,14 +23,9 @@ export const buildRecordShareGate = ({
     RowAccessPolicyTarget,
     'tableAlias' | 'flatObjectMetadata' | 'operationType'
   >): RowAccessPolicy => {
-  const { isShareable, isShareRequired } = resolveObjectSharing({
-    flatObjectMetadata,
-    featureFlagsMap: environment.featureFlagsMap,
-  });
-
   if (
-    !isShareable ||
-    (isShareRequired && subject.isOwningApplication(flatObjectMetadata)) ||
+    !isPrivateRecordEnabled(environment.featureFlagsMap) ||
+    isPermissionStorageObject(flatObjectMetadata) ||
     !isDefined(subject.principalIds)
   ) {
     return { kind: 'open' };
@@ -40,22 +34,6 @@ export const buildRecordShareGate = ({
   const accessLevels = resolveRequiredRecordShareAccessLevels(operationType);
 
   if (accessLevels.length === 0) {
-    return { kind: 'open' };
-  }
-
-  const recordShared: RowAccessExpression = {
-    kind: 'recordShared',
-    tableAlias,
-    objectMetadataId: flatObjectMetadata.id,
-    principalIds: subject.principalIds,
-    accessLevels,
-  };
-
-  if (isShareRequired) {
-    return { kind: 'gated', expression: recordShared };
-  }
-
-  if (!isPrivateRecordEnabled(environment.featureFlagsMap)) {
     return { kind: 'open' };
   }
 
@@ -78,7 +56,13 @@ export const buildRecordShareGate = ({
           objectMetadataId: flatObjectMetadata.id,
         },
         ...(isDefined(creator) ? [creator] : []),
-        recordShared,
+        {
+          kind: 'recordShared',
+          tableAlias,
+          objectMetadataId: flatObjectMetadata.id,
+          principalIds: subject.principalIds,
+          accessLevels,
+        },
       ],
     },
   };

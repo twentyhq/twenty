@@ -1,3 +1,4 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
@@ -14,7 +15,6 @@ import {
 } from 'test/integration/utils/restore-legacy-chat-membership-columns.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
@@ -26,6 +26,7 @@ import { parse } from 'graphql';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -146,18 +147,13 @@ const readStoredThreadState = async (threadId: string) => {
 };
 const SET_SHARE =
   parse(`mutation SetThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) {
-  setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { sharingMode }
+  setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing }
 }`);
 const REMOVE_SHARE =
   parse(`mutation RemoveThreadShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
-  removeRecordShare(target: $target, principal: $principal) { sharingMode }
+  removeRecordShare(target: $target, principal: $principal) { canManageSharing }
 }`);
-const SET_GENERAL_ACCESS =
-  parse(`mutation SetThreadGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) {
-  setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { sharingMode }
-}`);
-type ThreadAudience = RecordSharePrincipalInput | 'everyone';
-// Everyone is reached through the general access, where NONE withdraws it
+type ThreadAudience = RecordSharePrincipalInput;
 const shareThread = ({
   target,
   audience,
@@ -169,12 +165,6 @@ const shareThread = ({
   accessLevel: RecordShareAccessLevel;
   token?: string;
 }) => {
-  if (audience === 'everyone') {
-    return makeMetadataApiRequest(
-      { query: SET_GENERAL_ACCESS, variables: { target, accessLevel } },
-      token,
-    );
-  }
   return accessLevel === RecordShareAccessLevel.NONE
     ? makeMetadataApiRequest(
         { query: REMOVE_SHARE, variables: { target, principal: audience } },
@@ -188,6 +178,17 @@ const shareThread = ({
         token,
       );
 };
+
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
 
 describe('Conversation sharing through the authenticated API', () => {
   it.each(['member', 'role'])(
@@ -209,16 +210,8 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : audience === 'role'
-            ? { roleId }
-            : 'everyone';
-      const threadId =
-        audience === 'setup'
-          ? buildWorkspaceSetupChatThreadId({
-              workspaceId,
-              userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-            })
-          : randomUUID();
+          : { roleId };
+      const threadId = randomUUID();
       const target = {
         objectMetadataId:
           flatObjectMetadataMaps.byUniversalIdentifier[
@@ -343,13 +336,6 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(stop.body.errors[0].extensions.code).toBe('NOT_FOUND');
-        const grantAsViewer = await shareThread({
-          target,
-          audience: 'everyone',
-          accessLevel: RecordShareAccessLevel.READ,
-          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        });
-        expect(grantAsViewer.body.errors[0].extensions.code).toBe('NOT_FOUND');
         const anonymous = await readThread(threadId, null);
         expect(anonymous.body.errors).toBeDefined();
         expect((await changeShare(false)).body.errors).toBeUndefined();
@@ -386,9 +372,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : audience === 'role'
-            ? { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] }
-            : 'everyone';
+          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] };
       const threadId = randomUUID();
       const target = {
         objectMetadataId:
@@ -472,21 +456,13 @@ describe('Conversation sharing through the authenticated API', () => {
               .extensions.code,
           ).toBe('NOT_FOUND');
         }
-        // Full access lets its holder manage sharing, so everyone never gets it
-        if (threadAudience === 'everyone') {
+        expect(
+          (await grant(RecordShareAccessLevel.FULL)).body.errors,
+        ).toBeUndefined();
+        for (const enabled of [true, false]) {
           expect(
-            (await grant(RecordShareAccessLevel.FULL)).body.errors[0].extensions
-              .code,
-          ).toBe('BAD_USER_INPUT');
-        } else {
-          expect(
-            (await grant(RecordShareAccessLevel.FULL)).body.errors,
+            (await changeSharingAsParticipant(enabled)).body.errors,
           ).toBeUndefined();
-          for (const enabled of [true, false]) {
-            expect(
-              (await changeSharingAsParticipant(enabled)).body.errors,
-            ).toBeUndefined();
-          }
         }
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
