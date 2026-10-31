@@ -8,12 +8,14 @@ import {
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
 
+import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 import {
   WorkflowVersionValidationException,
   WorkflowVersionValidationExceptionCode,
 } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
+import { findWorkflowAiAgentStepAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-workflow-ai-agent-step-agent.util';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { validateWorkflowClassifyStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-classify-step.util';
@@ -29,6 +31,7 @@ const isBlockingActivation = (issue: WorkflowValidationIssue): boolean =>
 export class WorkflowVersionValidationWorkspaceService {
   constructor(
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
+    private readonly agentService: AgentService,
   ) {}
 
   // Legacy versions written before the write-time gate can still hold malformed content, so both malformed and
@@ -71,24 +74,34 @@ export class WorkflowVersionValidationWorkspaceService {
   }): Promise<WorkflowValidationIssue[]> {
     const structureResult = validateWorkflowStructure({ trigger, steps });
 
-    const stepTypeIssues = steps.flatMap((step) => {
-      if (step.type === WorkflowActionType.AI_AGENT) {
-        return [
-          ...validateWorkflowAiAgentStep(step),
-          ...validateWorkflowConversationStep(step),
-        ];
-      }
+    const stepTypeIssues = (
+      await Promise.all(
+        steps.map(async (step) => {
+          if (step.type === WorkflowActionType.AI_AGENT) {
+            const { stepKind } = await findWorkflowAiAgentStepAgent({
+              agentService: this.agentService,
+              input: step.settings?.input ?? {},
+              workspaceId,
+            });
 
-      if (step.type === WorkflowActionType.SEND_CHAT_MESSAGE) {
-        return validateWorkflowConversationStep(step);
-      }
+            return [
+              ...validateWorkflowAiAgentStep({ step, stepKind }),
+              ...validateWorkflowConversationStep(step),
+            ];
+          }
 
-      if (step.type === WorkflowActionType.CLASSIFY) {
-        return validateWorkflowClassifyStep(step);
-      }
+          if (step.type === WorkflowActionType.SEND_CHAT_MESSAGE) {
+            return validateWorkflowConversationStep(step);
+          }
 
-      return [];
-    });
+          if (step.type === WorkflowActionType.CLASSIFY) {
+            return validateWorkflowClassifyStep(step);
+          }
+
+          return [];
+        }),
+      )
+    ).flat();
 
     const metadataIssues = await this.validateWorkspaceMetadata({
       workspaceId,

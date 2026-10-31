@@ -8,6 +8,7 @@ import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider
 
 export type ResolvedAgentRunPersona = {
   agentId: string | null;
+  isSystemAgent: boolean;
   // the application the run is queued and billed under
   applicationId: string | null;
   instructions: string;

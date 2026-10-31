@@ -4,7 +4,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
-  isWorkflowAiAgentGenerateStep,
+  getWorkflowAiAgentStepKind,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -97,18 +97,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const [configIssue] = getWorkflowAiAgentStepConfigIssues({
-      hasAgent: !isWorkflowAiAgentGenerateStep(step.settings.input),
-      input: step.settings.input,
-    });
-
-    if (isDefined(configIssue)) {
-      throw new WorkflowStepExecutorException(
-        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[configIssue],
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-      );
-    }
-
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
@@ -128,6 +116,20 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     });
 
     const persona = await this.resolvePersonaOrThrow({ workspaceId, spec });
+
+    const [configIssue] = getWorkflowAiAgentStepConfigIssues({
+      stepKind: getWorkflowAiAgentStepKind(step.settings.input, {
+        isSystem: persona.isSystemAgent,
+      }),
+      input: step.settings.input,
+    });
+
+    if (isDefined(configIssue)) {
+      throw new WorkflowStepExecutorException(
+        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[configIssue],
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
       {

@@ -146,6 +146,7 @@ export type {
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
+export type { WorkflowAiAgentStepKind } from './types/WorkflowAiAgentStepKind';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type {
   WorkflowClassifyCriterion,
@@ -171,6 +172,7 @@ export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAuto
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
+export { getWorkflowAiAgentStepKind } from './utils/getWorkflowAiAgentStepKind';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { hasWorkflowAiAgentConversationConfig } from './utils/hasWorkflowAiAgentConversationConfig';
 export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';

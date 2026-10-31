@@ -11,6 +11,7 @@ export const resolveAgentRunPersonaFromAgent = ({
   agent: Pick<
     AgentEntity,
     | 'id'
+    | 'isSystem'
     | 'applicationId'
     | 'prompt'
     | 'modelId'
@@ -22,6 +23,7 @@ export const resolveAgentRunPersonaFromAgent = ({
   'agentRoleId' | 'explicitObjectGrants'
 >): ResolvedAgentRunPersona => ({
   agentId: agent.id,
+  isSystemAgent: agent.isSystem,
   applicationId: agent.applicationId,
   instructions: tipTapDocumentToMarkdown(agent.prompt),
   modelId: agent.modelId,
