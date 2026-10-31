@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  hasWorkflowAiAgentConversationConfig,
   hasWorkflowAiAgentInlineConfig,
   isWorkflowAiAgentGenerateStep,
   type WorkflowValidationIssue,
@@ -26,11 +27,7 @@ export const validateWorkflowAiAgentStep = (
     });
   }
 
-  if (
-    isGenerateStep &&
-    (isNonEmptyString(input?.humanInputInstructions?.trim()) ||
-      isDefined(input?.conversation))
-  ) {
+  if (isGenerateStep && hasWorkflowAiAgentConversationConfig(input ?? {})) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_CONFLICTING_CONFIG',
@@ -39,7 +36,6 @@ export const validateWorkflowAiAgentStep = (
     });
   }
 
-  // the prompt is the run's only message, and a model call needs one
   if (isGenerateStep && !isNonEmptyString(input?.prompt?.trim())) {
     issues.push({
       severity: 'error',
