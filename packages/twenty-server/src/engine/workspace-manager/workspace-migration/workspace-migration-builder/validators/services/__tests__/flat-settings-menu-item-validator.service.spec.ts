@@ -70,8 +70,13 @@ const buildCommonValidationArgs = (
   const optimisticFlatEntityMapsAndRelatedFlatEntityMaps =
     createEmptyAllFlatEntityMaps();
 
-  optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatSettingsMenuItemMaps =
-    buildSettingsMenuItemMaps(existingSettingsMenuItems);
+  for (const settingsMenuItem of existingSettingsMenuItems) {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: settingsMenuItem,
+      universalFlatEntityMapsToMutate:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatSettingsMenuItemMaps,
+    });
+  }
 
   return {
     additionalCacheDataMaps: {
