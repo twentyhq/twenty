@@ -12,6 +12,7 @@ import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
+import { type AgentStructuredOutputStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-structured-output-strategy.type';
 import { type OneShotAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/one-shot-agent-run.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
@@ -89,18 +90,18 @@ export class AgentRunWithoutConversationService {
     });
   }
 
-  // Runs one turn and records it. Whatever fails, setup included, comes back as a failed outcome,
-  // so a caller waiting on the run always gets one
   async runOneShot({
     workspaceId,
     buildExecutionContext,
     spec,
     messages,
+    structuredOutputStrategy,
   }: {
     workspaceId: string;
     buildExecutionContext: () => Promise<AgentRunExecutionContext>;
     spec: AgentRunSpec;
     messages: RunAgentMessage[];
+    structuredOutputStrategy?: AgentStructuredOutputStrategy;
   }): Promise<OneShotAgentRun> {
     let turnId: string | null = null;
     // usage is read as each step ends, so a run that fails midway still records what it spent
@@ -138,6 +139,7 @@ export class AgentRunWithoutConversationService {
         executionContext,
         additionalExcludedToolNames: spec.additionalExcludedToolNames,
         toolLoadingStrategy: spec.toolLoadingStrategy,
+        structuredOutputStrategy,
       };
 
       const execution = await workspaceAuthContextStorage.run(

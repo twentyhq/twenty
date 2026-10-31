@@ -55,12 +55,14 @@ const buildService = ({
   stopReason,
   personaError,
   finishError,
+  completeError,
 }: {
   waitingState?: string;
   streamError?: unknown;
   stopReason?: string;
   personaError?: Error;
   finishError?: Error;
+  completeError?: Error;
 } = {}) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue(waitingState),
@@ -71,18 +73,20 @@ const buildService = ({
   };
   const agentRunTurnService = {
     startTurn: jest.fn().mockResolvedValue(buildStarted(streamError)),
-    completeTurn: jest.fn().mockResolvedValue({
-      result: { response: 'Qualified' },
-      steps: [],
-      modelId: 'model-id',
-      stopReason,
-      usage: {},
-      nativeWebSearchCallCount: 0,
-      isPaused: false,
-      totalCostInDollars: 0,
-      creditsUsedMicro: 0,
-      structuredOutputSteps: [],
-    }),
+    completeTurn: isDefined(completeError)
+      ? jest.fn().mockRejectedValue(completeError)
+      : jest.fn().mockResolvedValue({
+          result: { response: 'Qualified' },
+          steps: [],
+          modelId: 'model-id',
+          stopReason,
+          usage: {},
+          nativeWebSearchCallCount: 0,
+          isPaused: false,
+          totalCostInDollars: 0,
+          creditsUsedMicro: 0,
+          structuredOutputSteps: [],
+        }),
   };
   const agentRunSuspensionService = {
     deliverOutcome: jest.fn().mockResolvedValue(undefined),
@@ -258,6 +262,72 @@ describe('AgentRunWithoutConversationService', () => {
     expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
       expect.objectContaining({
         outcome: { status: 'FAILED', error: 'Agent is archived' },
+      }),
+    );
+  });
+
+  it('leaves a workflow step on the follow-up structured output request', async () => {
+    const { service, agentRunTurnService } = buildService();
+
+    await run(service);
+
+    expect(
+      agentRunTurnService.startTurn.mock.calls[0][0].structuredOutputStrategy,
+    ).toBeUndefined();
+    expect(
+      agentRunTurnService.completeTurn.mock.calls[0][0]
+        .structuredOutputStrategy,
+    ).toBeUndefined();
+  });
+
+  it('hands the structured output strategy of a one-shot run to its turn', async () => {
+    const { service, agentRunTurnService } = buildService();
+
+    await service.runOneShot({
+      workspaceId: WORKSPACE_ID,
+      buildExecutionContext: jest.fn().mockResolvedValue({
+        authContext: { type: 'application' },
+        turnCreatedBy: { source: 'APPLICATION', name: 'App' },
+      }),
+      spec: inlineSpec,
+      messages: [{ role: 'user', content: 'Qualify Acme' }],
+      structuredOutputStrategy: 'same-request',
+    });
+
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledTimes(1);
+    expect(agentRunTurnService.startTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ structuredOutputStrategy: 'same-request' }),
+    );
+    expect(agentRunTurnService.completeTurn).toHaveBeenCalledWith(
+      expect.objectContaining({ structuredOutputStrategy: 'same-request' }),
+    );
+  });
+
+  it('fails the outcome, without throwing, when the reply matches no object', async () => {
+    const { service, turnRecorderService } = buildService({
+      completeError: new Error(
+        'The model did not return an object matching the response format',
+      ),
+    });
+
+    const oneShotRun = await service.runOneShot({
+      workspaceId: WORKSPACE_ID,
+      buildExecutionContext: jest.fn().mockResolvedValue({
+        authContext: { type: 'application' },
+        turnCreatedBy: { source: 'APPLICATION', name: 'App' },
+      }),
+      spec: inlineSpec,
+      messages: [{ role: 'user', content: 'Qualify Acme' }],
+      structuredOutputStrategy: 'same-request',
+    });
+
+    expect(oneShotRun.outcome).toEqual({
+      status: 'FAILED',
+      error: 'The model did not return an object matching the response format',
+    });
+    expect(turnRecorderService.recordUsage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        usage: expect.objectContaining({ inputTokens: 1_000 }),
       }),
     );
   });

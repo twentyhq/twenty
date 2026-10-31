@@ -22,8 +22,7 @@ const GENERATE_MUTATION = `
 `;
 
 export const ai = {
-  // One model call, as the function's caller: no agent and no conversation. Without a scope the
-  // call reads no records; a scope can only narrow what the caller may already reach
+  // runs as the function's caller; with no scope it gets no data tools, and a scope only narrows the caller
   generate: async ({
     input,
     ...rest

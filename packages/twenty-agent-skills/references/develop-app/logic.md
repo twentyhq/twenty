@@ -80,6 +80,39 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
+## AI Generate
+
+`ai.generate` asks a model for one answer, with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  input: 'Is Acme a good fit for us?', // or RunAgentMessage[] ({ role, content })
+  instructions: 'Qualify leads for Twenty in one sentence.',
+});
+```
+
+For JSON, pass a `responseFormat`; the schema goes on the model request and the result comes back in `object`:
+
+```ts
+const { object } = await ai.generate({
+  input: 'Is Acme a good fit for us?',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { fit: { type: 'boolean' }, reason: { type: 'string' } },
+    },
+  },
+});
+```
+
+- Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach.
+- The call runs as the caller (the member who triggered the run, else the app) and never exceeds the app's role. The caller needs the AI permission.
+- `modelId` is optional; the workspace default model is used when unset.
+- It returns `{ success, text, object, error, turnId, usage }`: `text` for a text response, `object` for a JSON one, `error` when `success` is false. A failed run comes back as `success: false` rather than a throw (invalid input still throws), so check `success`.
+
 ## Inbox Messages
 
 `sendInboxMessage` posts a message from the app in the chats of one or more workspace members. Import it from `twenty-sdk/logic-function` in a logic function and from `twenty-sdk/front-component` in a front component; the inbox helpers are the same in both.

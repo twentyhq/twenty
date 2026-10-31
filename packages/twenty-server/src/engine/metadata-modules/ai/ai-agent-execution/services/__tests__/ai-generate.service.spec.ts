@@ -1,5 +1,6 @@
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 
+import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { type AgentRunWithoutConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-without-conversation.service';
 import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -51,14 +52,28 @@ const buildService = ({
       };
     }),
   };
+  const apiKeyService = {
+    validateApiKey: jest.fn().mockResolvedValue({
+      id: 'api-key-id',
+      name: 'Key',
+      workspaceId: 'workspace-id',
+      expiresAt: new Date(),
+      revokedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }),
+  };
   const apiKeyRoleService = {
     getRoleIdForApiKeyId: jest.fn().mockResolvedValue('api-key-role-id'),
   };
 
   const service = new AiGenerateService(
-    agentActorContextService as never,
+    new AgentRunCallerContextService(
+      agentActorContextService as never,
+      apiKeyService as never,
+      apiKeyRoleService as never,
+    ),
     agentRunWithoutConversationService as never,
-    apiKeyRoleService as never,
   );
 
   return { service, agentRunWithoutConversationService };
@@ -144,8 +159,8 @@ describe('AiGenerateService', () => {
     });
   });
 
-  it('returns the structured result of a json response format', async () => {
-    const { service } = buildService({
+  it('returns the structured result of a json response format from one model request', async () => {
+    const { service, agentRunWithoutConversationService } = buildService({
       outcome: { status: 'COMPLETED', result: { fit: true } },
     });
 
@@ -167,6 +182,12 @@ describe('AiGenerateService', () => {
     });
 
     expect(result).toMatchObject({ text: null, object: { fit: true } });
+    expect(agentRunWithoutConversationService.runOneShot).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(agentRunWithoutConversationService.runOneShot).toHaveBeenCalledWith(
+      expect.objectContaining({ structuredOutputStrategy: 'same-request' }),
+    );
   });
 
   it('passes a valid scope and refuses an invalid one', async () => {

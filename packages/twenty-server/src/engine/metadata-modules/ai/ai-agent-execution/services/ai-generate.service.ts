@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import {
   type GenerateResult,
   type RunAgentMessage,
@@ -13,21 +14,19 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentRunWithoutConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-without-conversation.service';
-import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type OneShotAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/one-shot-agent-run.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentResponseFormatOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-response-format-or-throw.util';
+import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import {
@@ -44,13 +43,11 @@ type GenerateServiceInput = {
   scope?: unknown;
 };
 
-// One model call as the caller, with no agent and no conversation: its turn is the record
 @Injectable()
 export class AiGenerateService {
   constructor(
-    private readonly agentActorContextService: AgentActorContextService,
+    private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunWithoutConversationService: AgentRunWithoutConversationService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   async generate({
@@ -103,6 +100,7 @@ export class AiGenerateService {
         capabilities: { canAskHumans: false },
       },
       messages,
+      structuredOutputStrategy: 'same-request',
     });
 
     return this.buildResult({
@@ -137,23 +135,28 @@ export class AiGenerateService {
     }
 
     const result = isPlainObject(outcome.result) ? outcome.result : {};
-    const response = result.response;
+
+    if (isJsonResponse) {
+      return {
+        success: true,
+        text: null,
+        object: result,
+        error: null,
+        turnId,
+        usage,
+      };
+    }
 
     return {
       success: true,
-      text: isJsonResponse
-        ? null
-        : typeof response === 'string'
-          ? response
-          : '',
-      object: isJsonResponse ? result : null,
+      text: isString(result.response) ? result.response : '',
+      object: null,
       error: null,
       turnId,
       usage,
     };
   }
 
-  // The call acts as whoever made it: a member, else the calling application, else an API key
   private async buildExecutionContext({
     workspace,
     requestUserWorkspaceId,
@@ -168,12 +171,20 @@ export class AiGenerateService {
     callerApiKey?: FlatApiKey;
   }): Promise<AgentRunExecutionContext> {
     const { authContext, actorContext, callerRoleIds } =
-      await this.resolveCallerContext({
+      await this.agentRunCallerContextService.buildCallerContext({
         workspace,
-        requestUserWorkspaceId,
-        requestWorkspaceMemberId,
-        callerApplication,
-        callerApiKey,
+        callerRef: resolveAgentRunCallerRefOrThrow({
+          callerApplication,
+          callerApiKey,
+          requestUserWorkspaceId,
+          requestWorkspaceMemberId,
+        }),
+        applicationAuthContext: isDefined(callerApplication)
+          ? buildApplicationAuthContext({
+              workspace,
+              application: callerApplication,
+            })
+          : undefined,
       });
     // a call through an application never exceeds that application
     const agentRunRoleIds: AgentRunRoleIds = {
@@ -197,64 +208,6 @@ export class AiGenerateService {
       agentRunRoleIds,
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
-  }
-
-  private async resolveCallerContext({
-    workspace,
-    requestUserWorkspaceId,
-    requestWorkspaceMemberId,
-    callerApplication,
-    callerApiKey,
-  }: {
-    workspace: FlatWorkspace;
-    requestUserWorkspaceId: string | null;
-    requestWorkspaceMemberId: string | null;
-    callerApplication?: FlatApplication;
-    callerApiKey?: FlatApiKey;
-  }): Promise<AgentRunCallerContext> {
-    if (isDefined(requestWorkspaceMemberId)) {
-      const { authContext, actorContext, roleId } =
-        await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-          workspaceMemberId: requestWorkspaceMemberId,
-          workspaceId: workspace.id,
-          viaApplication: callerApplication,
-        });
-
-      return {
-        authContext,
-        actorContext,
-        callerRoleIds: { userWorkspaceRoleId: roleId },
-      };
-    }
-
-    if (isDefined(callerApplication) && !isDefined(requestUserWorkspaceId)) {
-      return {
-        authContext: buildApplicationAuthContext({
-          workspace,
-          application: callerApplication,
-        }),
-      };
-    }
-
-    if (isDefined(callerApiKey)) {
-      return {
-        authContext: buildApiKeyAuthContext({
-          workspace,
-          apiKey: callerApiKey,
-        }),
-        callerRoleIds: {
-          apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
-            callerApiKey.id,
-            workspace.id,
-          ),
-        },
-      };
-    }
-
-    throw new AiException(
-      'Generating requires a workspace member, an API key or an application',
-      AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-    );
   }
 
   private parseScopeOrThrow(scope: unknown): AiRunScope | null {

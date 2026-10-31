@@ -12,9 +12,10 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   type AgentResponseFormat,
+  type AgentResponseSchema,
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -38,6 +39,7 @@ import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
+import { type AgentStructuredOutputStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-structured-output-strategy.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
@@ -77,6 +79,7 @@ type AgentRunTurnInput = {
   executionContext: AgentRunExecutionContext;
   additionalExcludedToolNames?: readonly string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
+  structuredOutputStrategy?: AgentStructuredOutputStrategy;
   abortSignal?: AbortSignal;
 };
 
@@ -86,9 +89,14 @@ export type StartedAgentRunTurn = {
 };
 
 export type CompletedAgentRunTurn = AgentExecutionResult & {
-  // the structured output request is not part of the stream, so the turn's usage must add it
+  // a follow-up structured output request is not part of the stream, so the turn's usage must add it
   structuredOutputSteps: AgentTurnUsageStep[];
 };
+
+const buildStructuredOutput = (schema: AgentResponseSchema) =>
+  Output.object({
+    schema: jsonSchema(buildStrictAgentResponseSchema(schema)),
+  });
 
 const buildSpenders = ({
   persona,
@@ -120,6 +128,7 @@ export class AgentRunTurnService {
     executionContext,
     additionalExcludedToolNames = [],
     toolLoadingStrategy = 'preload',
+    structuredOutputStrategy = 'follow-up-request',
     priorMessages = [],
     pausingTools = {},
     canAskHumans = false,
@@ -189,6 +198,11 @@ export class AgentRunTurnService {
         ],
       }),
       promptCacheKey: persona.promptCacheKey,
+      output:
+        structuredOutputStrategy === 'same-request' &&
+        responseFormat?.type === 'json'
+          ? buildStructuredOutput(responseFormat.schema)
+          : undefined,
       abortSignal,
       billing: {
         workspaceId,
@@ -232,13 +246,14 @@ export class AgentRunTurnService {
     };
   }
 
-  // the structured output request is not part of the stream, so its usage is added to the turn's here
+  // a follow-up structured output request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
     started: { turn },
     persona,
     responseFormat,
     workspaceId,
     executionContext,
+    structuredOutputStrategy = 'follow-up-request',
     abortSignal,
   }: Pick<
     AgentRunTurnInput,
@@ -246,6 +261,7 @@ export class AgentRunTurnService {
     | 'responseFormat'
     | 'workspaceId'
     | 'executionContext'
+    | 'structuredOutputStrategy'
     | 'abortSignal'
   > & {
     started: StartedAgentRunTurn;
@@ -271,7 +287,14 @@ export class AgentRunTurnService {
     let steps = loopSteps;
     let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
-    if (isDefined(agentSchema) && !isPaused) {
+    const isStructuredOutputExpected = isDefined(agentSchema) && !isPaused;
+
+    if (
+      isStructuredOutputExpected &&
+      structuredOutputStrategy === 'same-request'
+    ) {
+      result = await this.readSameRequestOutputOrThrow(turn);
+    } else if (isStructuredOutputExpected) {
       const structuredResult = await generateText({
         instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
         model: registeredModel.model,
@@ -280,9 +303,7 @@ export class AgentRunTurnService {
                  Execution Results: ${text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({
-          schema: jsonSchema(buildStrictAgentResponseSchema(agentSchema)),
-        }),
+        output: buildStructuredOutput(agentSchema),
         abortSignal,
         providerOptions: getCallLevelProviderOptions({
           sdkPackage: registeredModel.sdkPackage,
@@ -343,6 +364,21 @@ export class AgentRunTurnService {
       creditsUsedMicro: convertDollarsToCreditsMicro(totalCostInDollars),
       structuredOutputSteps,
     };
+  }
+
+  private async readSameRequestOutputOrThrow(turn: AgentTurn): Promise<object> {
+    const output: unknown = await Promise.resolve(turn.stream.output).catch(
+      () => undefined,
+    );
+
+    if (!isPlainObject(output)) {
+      throw new AiException(
+        'The model did not return an object matching the response format',
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return output;
   }
 
   private async buildAgentRegistryAccess({
