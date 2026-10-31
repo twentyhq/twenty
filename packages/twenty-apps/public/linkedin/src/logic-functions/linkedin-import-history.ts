@@ -43,6 +43,7 @@ type LinkedinImportHistoryTotals = {
   messageCount: number;
   matchedPersonCount: number;
   createdPersonCount: number;
+  attachmentCount: number;
   skippedChatCounts: Record<
     NonNullable<LinkedinIngestResult['skippedReason']>,
     number
@@ -112,6 +113,7 @@ export const linkedinImportHistoryHandler = async (
     messageCount: 0,
     matchedPersonCount: 0,
     createdPersonCount: 0,
+    attachmentCount: 0,
     skippedChatCounts: { GROUP_CHATS_OFF: 0, NO_MESSAGES: 0, NO_CONTACT: 0 },
   };
 
@@ -214,6 +216,7 @@ export const linkedinImportHistoryHandler = async (
         cursor: chatCursor,
       });
       const ingestResult = await ingestLinkedinMessages({
+        unipileAccountId,
         channel,
         settings,
         chat,
@@ -224,6 +227,7 @@ export const linkedinImportHistoryHandler = async (
       totals.messageCount += ingestResult.ingestedMessageCount;
       totals.matchedPersonCount += ingestResult.matchedPersonCount;
       totals.createdPersonCount += ingestResult.createdPersonCount;
+      totals.attachmentCount += ingestResult.importedAttachmentCount;
       isChatImported ||= ingestResult.ingestedMessageCount > 0;
 
       if (isDefined(ingestResult.skippedReason) && !isDefined(chatCursor)) {
@@ -315,7 +319,7 @@ export const linkedinImportHistoryHandler = async (
     `[linkedin] history run ${runId} chunk ${chunkIndex}: ` +
       `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
-      `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ` +
+      `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ${totals.attachmentCount} attachments, ` +
       `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.GROUP_CHATS_OFF} group chats, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );

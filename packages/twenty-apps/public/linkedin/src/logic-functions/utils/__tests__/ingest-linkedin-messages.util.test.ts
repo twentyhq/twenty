@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   ingestMessages: vi.fn(),
   matchLinkedinParticipantPersonId: vi.fn(),
   createLinkedinPerson: vi.fn(),
+  importLinkedinMessageAttachments: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -24,6 +25,13 @@ vi.mock(
 vi.mock('src/logic-functions/utils/create-linkedin-person.util', () => ({
   createLinkedinPerson: mocks.createLinkedinPerson,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/import-linkedin-message-attachments.util',
+  () => ({
+    importLinkedinMessageAttachments: mocks.importLinkedinMessageAttachments,
+  }),
+);
 
 const { ingestLinkedinMessages } =
   await import('src/logic-functions/utils/ingest-linkedin-messages.util');
@@ -74,6 +82,7 @@ const ingest = ({
   chat?: typeof ONE_TO_ONE_CHAT | typeof GROUP_CHAT;
 } = {}) =>
   ingestLinkedinMessages({
+    unipileAccountId: 'acc_1',
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
     chat,
@@ -91,6 +100,7 @@ describe('ingestLinkedinMessages', () => {
     vi.clearAllMocks();
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
+    mocks.importLinkedinMessageAttachments.mockResolvedValue([]);
   });
 
   it('attaches the matched person to the participant', async () => {
@@ -179,5 +189,43 @@ describe('ingestLinkedinMessages', () => {
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('imports the attachments of the ingested messages', async () => {
+    const message = {
+      ...buildMessage(true),
+      attachments: [
+        { id: 'attachment-1', type: 'img' as const, mimetype: 'image/png' },
+      ],
+    };
+
+    mocks.importLinkedinMessageAttachments.mockResolvedValue([
+      {
+        messageExternalId: message.id,
+        attachmentId: 'attachment-1',
+        type: 'img',
+        mimeType: 'image/png',
+        content: Buffer.from('png'),
+      },
+    ]);
+
+    await expect(ingest({ messages: [message] })).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+      importedAttachmentCount: 1,
+    });
+    expect(
+      mocks.importLinkedinMessageAttachments,
+    ).toHaveBeenCalledExactlyOnceWith({
+      unipileAccountId: 'acc_1',
+      messages: [message],
+    });
+  });
+
+  it('imports no attachments from a skipped chat', async () => {
+    await ingest({
+      settings: { ...DEFAULT_LINKEDIN_SETTINGS, importPolicy: 'CONTACTS_ONLY' },
+    });
+
+    expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
   });
 });
