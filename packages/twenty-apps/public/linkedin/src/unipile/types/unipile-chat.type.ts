@@ -6,6 +6,7 @@ export type UnipileChat = {
   name: string;
   is_group: boolean;
   is_1to1: boolean;
+  last_message_timestamp?: string;
   user_id?: string;
   user?: UnipileUser;
   participants?: UnipileChatParticipant[];
