@@ -79,9 +79,16 @@ describe('ai.generate runs followed by their application (integration)', () => {
   it('streams a run to its application under the run id it chose, and to no other application', async () => {
     const runId = randomUUID();
     const streams: Awaited<ReturnType<typeof followAgentRunEvents>>[] = [];
+    const startedAt = Date.now();
+    // TEMPORARY: locates the step that stalls in CI; removed once found
+    const logStep = (step: string) =>
+      console.log(`[ai-generate-stream] +${Date.now() - startedAt}ms ${step}`);
 
     try {
+      logStep('connecting own stream');
       const ownStream = await followAgentRunEvents({ runId, token });
+
+      logStep('own stream connected');
 
       streams.push(ownStream);
 
@@ -91,16 +98,22 @@ describe('ai.generate runs followed by their application (integration)', () => {
       });
 
       streams.push(otherStream);
+      logStep('other stream connected');
 
       await waitFor(
         () => ownStream.events.length > 0 && otherStream.events.length > 0,
       );
+      logStep('both streams live');
       mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
 
       const response = await makeMetadataApiRequest(
         generateQueryFactory({ input: INPUT, runId }),
         token,
       ).timeout(GENERATE_TIMEOUT_MS);
+
+      logStep(
+        `generate answered ${JSON.stringify(response.body).slice(0, 300)}`,
+      );
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.generate).toMatchObject({
@@ -110,6 +123,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
       });
 
       await waitFor(() => ownStream.events.some(isRunEnd));
+      logStep('end event received');
 
       const chunks = ownStream.events.flatMap((event) =>
         event.type === 'stream-chunk' ? [event.chunk] : [],
@@ -125,8 +139,13 @@ describe('ai.generate runs followed by their application (integration)', () => {
       expect(ownStream.events.find(isRunEnd)).toMatchObject({
         type: 'message-persisted',
       });
+    } catch (error) {
+      logStep(`failed: ${String(error)}`);
+      throw error;
     } finally {
+      logStep(`closing ${streams.length} streams`);
       await Promise.all(streams.map((stream) => stream.close()));
+      logStep('streams closed');
     }
 
     const [ownStream, otherStream] = streams;
