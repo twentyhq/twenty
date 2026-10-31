@@ -124,7 +124,7 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
     ).toBeNull();
   });
 
-  it('should create a record of a private-by-default object private unless it is shared with everyone', () => {
+  it('should always create a record of a private-by-default object private', () => {
     expect(
       resolveCreatedRecordSharingOrThrow({
         objectSharing: PRIVATE_BY_DEFAULT_OBJECT,
@@ -136,6 +136,6 @@ describe('resolveCreatedRecordSharingOrThrow', () => {
         objectSharing: PRIVATE_BY_DEFAULT_OBJECT,
         shareWith: [EVERYONE_AT_DEFAULT],
       }),
-    ).toBeNull();
+    ).toEqual({ shareWith: [], isPrivate: true });
   });
 });

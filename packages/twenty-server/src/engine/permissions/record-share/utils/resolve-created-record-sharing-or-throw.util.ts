@@ -66,14 +66,11 @@ export const resolveCreatedRecordSharingOrThrow = ({
   }
 
   const namedEntries = entries.filter((entry) => !entry.everyone);
-  const isSharedWithEveryone = everyoneEntries.some(
-    (entry) => entry.accessLevel !== RecordShareAccessLevel.NONE,
-  );
   const isPrivate =
+    isPrivateByDefault ||
     everyoneEntries.some(
       (entry) => entry.accessLevel === RecordShareAccessLevel.NONE,
-    ) ||
-    (isPrivateByDefault && !isSharedWithEveryone);
+    );
 
   return isPrivate || isNonEmptyArray(namedEntries)
     ? { shareWith: namedEntries, isPrivate }

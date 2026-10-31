@@ -7,7 +7,6 @@ export type PrivateRecordInsertSql = {
   privateValue: string;
 };
 
-// The column only exists once private records are enabled, so earlier inserts leave it out
 export const buildPrivateRecordInsertSql = ({
   isPrivateRecordEnabled,
 }: {

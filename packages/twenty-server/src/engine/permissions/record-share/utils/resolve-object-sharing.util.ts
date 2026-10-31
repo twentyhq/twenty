@@ -69,7 +69,6 @@ export const resolveObjectSharing = ({
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
   const isPrivateByDefault = isPrivateByDefaultObject(flatObjectMetadata);
-  // Until private records are enabled, the chats of a workspace are only reached through their shares
   const isShareRequired =
     isPrivateByDefault && !isPrivateRecordEnabled(featureFlagsMap);
   const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;

@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -13,15 +13,10 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
-type ChatTable = { tableName: string; objectMetadataId: string };
-
-const EVERYONE_MANUAL_SHARE_CONDITION = `"principalType" = 'EVERYONE' AND "rowCause" = 'MANUAL' AND "deletedAt" IS NULL`;
-
 @RegisteredWorkspaceCommand('2.55.0', 1793460623155)
 @Command({
   name: 'upgrade:2-55:make-chat-threads-private-records',
-  description:
-    'Make chat threads and their participants private records, except those shared with everyone',
+  description: 'Make every chat thread and chat participant a private record',
 })
 export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -59,38 +54,57 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
         queryRunner,
         schemaName,
       });
-      const chatTables: ChatTable[] = Object.values(
+      const chatTableExpressions = Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
         .filter(isPrivateByDefaultObject)
-        .map((flatObjectMetadata) => ({
-          tableName: getWorkspaceSchemaContextForMigration({
-            workspaceId,
-            objectMetadata: flatObjectMetadata,
-          }).tableName,
-          objectMetadataId: flatObjectMetadata.id,
-        }))
-        .filter(({ tableName }) => tableNamesWithColumn.has(tableName));
+        .map(
+          (flatObjectMetadata) =>
+            getWorkspaceSchemaContextForMigration({
+              workspaceId,
+              objectMetadata: flatObjectMetadata,
+            }).tableName,
+        )
+        .filter((tableName) => tableNamesWithColumn.has(tableName))
+        .map(
+          (tableName) =>
+            `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
+        );
+
+      if (!isNonEmptyArray(chatTableExpressions)) {
+        return;
+      }
+
+      const isPrivateColumn = escapeIdentifier(IS_PRIVATE_COLUMN_NAME);
 
       if (options.dryRun) {
-        await this.logDryRun({
-          queryRunner,
-          schemaName,
-          workspaceId,
-          chatTables,
-        });
+        const [{ count }] = await queryRunner.query(
+          `SELECT ${chatTableExpressions
+            .map(
+              (tableExpression) =>
+                `(SELECT COUNT(*) FROM ${tableExpression} WHERE NOT ${isPrivateColumn})`,
+            )
+            .join(' + ')} AS count`,
+        );
+
+        this.logger.log(
+          `[DRY RUN] Would make ${count} chat record(s) private for workspace ${workspaceId}`,
+        );
 
         return;
       }
 
-      await this.convertChatTables({ queryRunner, schemaName, chatTables });
+      for (const tableExpression of chatTableExpressions) {
+        await queryRunner.query(
+          `UPDATE ${tableExpression} SET ${isPrivateColumn} = true WHERE NOT ${isPrivateColumn}`,
+        );
+      }
     } finally {
       if (isQueryRunnerConnected) {
         await queryRunner.release();
       }
     }
-
   }
 
   private async findTableNamesWithColumn({
@@ -107,77 +121,5 @@ export class MakeChatThreadsPrivateRecordsCommand extends ProvisionedWorkspaceCo
     );
 
     return new Set(columns.map(({ tableName }) => tableName));
-  }
-
-  private async logDryRun({
-    queryRunner,
-    schemaName,
-    workspaceId,
-    chatTables,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    workspaceId: string;
-    chatTables: ChatTable[];
-  }): Promise<void> {
-    for (const { tableName, objectMetadataId } of chatTables) {
-      const [{ privateCount, sharedWithEveryoneCount }] =
-        await queryRunner.query(
-          `SELECT
-             COUNT(*) FILTER (WHERE NOT ${this.buildSharedWithEveryoneCondition(schemaName)}) AS "privateCount",
-             COUNT(*) FILTER (WHERE ${this.buildSharedWithEveryoneCondition(schemaName)}) AS "sharedWithEveryoneCount"
-           FROM ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} AS chat_record`,
-          [objectMetadataId],
-        );
-
-      this.logger.log(
-        `[DRY RUN] Would make ${privateCount} ${tableName} record(s) private and leave ${sharedWithEveryoneCount} shared with everyone to their roles for workspace ${workspaceId}`,
-      );
-    }
-  }
-
-  private buildSharedWithEveryoneCondition(schemaName: string): string {
-    return `EXISTS (
-      SELECT 1 FROM ${escapeIdentifier(schemaName)}."recordShare" everyone_share
-      WHERE everyone_share."objectMetadataId" = $1 AND everyone_share."recordId" = chat_record.id
-        AND everyone_share."accessLevel" IN ('READ', 'READ_WRITE', 'FULL')
-        AND everyone_share.${EVERYONE_MANUAL_SHARE_CONDITION}
-    )`;
-  }
-
-  // One transaction, so no chat reads as shared with everyone while its share rows are being dropped
-  private async convertChatTables({
-    queryRunner,
-    schemaName,
-    chatTables,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    chatTables: ChatTable[];
-  }): Promise<void> {
-    await queryRunner.startTransaction();
-
-    try {
-      for (const { tableName, objectMetadataId } of chatTables) {
-        const table = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
-
-        await queryRunner.query(
-          `UPDATE ${table} AS chat_record
-             SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = NOT ${this.buildSharedWithEveryoneCondition(schemaName)}`,
-          [objectMetadataId],
-        );
-        await queryRunner.query(
-          `DELETE FROM ${escapeIdentifier(schemaName)}."recordShare"
-             WHERE "objectMetadataId" = $1 AND ${EVERYONE_MANUAL_SHARE_CONDITION}`,
-          [objectMetadataId],
-        );
-      }
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-
-      throw error;
-    }
   }
 }
