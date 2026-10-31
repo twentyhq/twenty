@@ -1,32 +1,33 @@
 /* @license Enterprise */
 
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 
 const OBJECT = {
-  readability: MetadataReadability.OPEN,
+  universalIdentifier: 'custom-object',
   isSystem: false,
   disabledObjectPermissionActions: null,
 };
 const OPEN_BY_DEFAULT = {
   isShareable: true,
   isShareRequired: false,
+  isPrivateByDefault: false,
   defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
 };
 const ROLE_ONLY = {
   isShareable: false,
   isShareRequired: false,
+  isPrivateByDefault: false,
   defaultGeneralAccessLevel: null,
 };
-const PRIVATE = {
-  isShareable: true,
-  isShareRequired: true,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+const CHAT_THREAD = {
+  ...OBJECT,
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+};
+const PRIVATE_CHAT_THREAD = {
+  [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
 };
 const RECORD_SHARING = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
@@ -95,42 +96,35 @@ describe('resolveObjectSharing', () => {
     });
   });
 
-  it.each([
-    { isSystem: false, featureFlagsMap: {} },
-    { isSystem: true, featureFlagsMap: RECORD_SHARING },
-  ])(
-    'should keep private records private for %o',
-    ({ isSystem, featureFlagsMap }) => {
-      expect(
-        resolveObjectSharing({
-          flatObjectMetadata: {
-            ...OBJECT,
-            readability: MetadataReadability.PRIVATE,
-            isSystem,
-          },
-          featureFlagsMap,
-        }),
-      ).toEqual({
-        ...PRIVATE,
-        canShareBeyondRole: false,
-        operationTypesGrantedBeyondRole: [],
-      });
-    },
-  );
-
-  it('should let a grant on a private object view or edit beyond the role', () => {
+  it('should reach chat threads through their shares until private records are enabled', () => {
     expect(
       resolveObjectSharing({
-        flatObjectMetadata: {
-          ...OBJECT,
-          readability: MetadataReadability.PRIVATE,
-        },
-        featureFlagsMap: RECORD_SHARING,
+        flatObjectMetadata: CHAT_THREAD,
+        featureFlagsMap: {},
       }),
     ).toEqual({
-      ...PRIVATE,
-      canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['select', 'update'],
+      isShareable: true,
+      isShareRequired: true,
+      isPrivateByDefault: true,
+      defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+      canShareBeyondRole: false,
+      operationTypesGrantedBeyondRole: [],
+    });
+  });
+
+  it('should make chat threads shareable private records once private records are enabled, whatever the sharing flag', () => {
+    expect(
+      resolveObjectSharing({
+        flatObjectMetadata: CHAT_THREAD,
+        featureFlagsMap: PRIVATE_CHAT_THREAD,
+      }),
+    ).toEqual({
+      isShareable: true,
+      isShareRequired: false,
+      isPrivateByDefault: true,
+      defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+      canShareBeyondRole: false,
+      operationTypesGrantedBeyondRole: [],
     });
   });
 });
