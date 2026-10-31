@@ -102,19 +102,21 @@ export const ClaudeConnectionListsItsPermissions: Story = {
   },
 };
 
-export const ClaudeConnectionsShowWhenEachWasLastUsed: Story = {
+const EARLIER_CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c2';
+
+export const ClaudeEarlierConnectionShowsAndDisconnectsAsOne: Story = {
   beforeEach: () => {
     getWorker().use(
       graphql.query('CurrentUserApplicationAuthorizations', () =>
         HttpResponse.json({
           data: {
             currentUserApplicationAuthorizations: [
-              buildClaudeAuthorization(),
               buildClaudeAuthorization({
-                id: '20202020-6a7b-4c3d-8e4f-0000000000c2',
+                id: EARLIER_CLAUDE_AUTHORIZATION_ID,
                 lastUsedHoursAgo: 72,
               }),
-            ],
+              buildClaudeAuthorization(),
+            ].filter(({ id }) => !revokedAuthorizationIds.has(id)),
           },
         }),
       ),
@@ -122,9 +124,24 @@ export const ClaudeConnectionsShowWhenEachWasLastUsed: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
-    expect(await canvas.findByText('Last used 3d')).toBeVisible();
-    expect(canvas.getByText('Last used 2h')).toBeVisible();
+    expect(await canvas.findByText('Last used 2h')).toBeVisible();
+    expect(canvas.queryByText('Last used 3d')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('button', { name: 'Add connection' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'More options' }));
+    await userEvent.click(await body.findByText('Disconnect'));
+    await userEvent.click(body.getByRole('button', { name: 'Disconnect' }));
+
+    await waitFor(() =>
+      expect([...revokedAuthorizationIds].sort()).toEqual(
+        [CLAUDE_AUTHORIZATION_ID, EARLIER_CLAUDE_AUTHORIZATION_ID].sort(),
+      ),
+    );
+    expect(await canvas.findByText('Connect with Claude')).toBeVisible();
   },
 };
 

@@ -17,9 +17,7 @@ import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconPlus } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { Button } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import {
@@ -27,17 +25,9 @@ import {
   RevokeApplicationAuthorizationDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
-import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledAddConnectionContainer = styled.div`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  display: flex;
-  justify-content: flex-end;
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -69,6 +59,14 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
 
+  // A member has one grant per install, plus one on an install made before ChatGPT and Claude were shared;
+  // to them it is one connection, so it reads and disconnects as one
+  const [latestAuthorization] = [...authorizations].sort(
+    (first, second) =>
+      new Date(second.lastUsedAt).getTime() -
+      new Date(first.lastUsedAt).getTime(),
+  );
+
   const getLastUsedLabel = (
     authorization: BuiltInMcpClientAppAuthorization,
   ) => {
@@ -78,6 +76,15 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
 
     return t`Last used ${lastUsed}`;
   };
+
+  const disconnect = () =>
+    Promise.all(
+      authorizations.map(({ id }) =>
+        revokeApplicationAuthorization({
+          variables: { applicationAuthorizationId: id },
+        }),
+      ),
+    );
 
   const renderContent = () => {
     if (loading) {
@@ -93,7 +100,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
       );
     }
 
-    if (authorizations.length === 0) {
+    if (!isDefined(latestAuthorization)) {
       return (
         <SettingsBuiltInMcpClientAppConnectTooltip
           appName={appName}
@@ -112,72 +119,53 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
     }
 
     return (
-      <>
-        <Table>
-          <SettingsApplicationTableHeaderRow
+      <Table>
+        <SettingsApplicationTableHeaderRow
+          middleColumn="status"
+          nameLabel={t`Connection`}
+          detailsLabel={t`Permissions`}
+          detailsAlign="left"
+          shouldShowDetailsOnMobile
+        />
+        <StyledTableRows>
+          <SettingsApplicationTableRow
             middleColumn="status"
-            nameLabel={t`Connection`}
-            detailsLabel={t`Permissions`}
+            hasActionMenu
+            name={
+              <>
+                <app.Icon size={theme.icon.size.md} />
+                <OverflowingTextWithTooltip
+                  text={getLastUsedLabel(latestAuthorization)}
+                />
+              </>
+            }
+            middle={
+              <Status color="green" weight="medium">{t`Connected`}</Status>
+            }
+            details={
+              <SettingsApplicationAuthorizationPermissionsCell
+                authorization={latestAuthorization}
+              />
+            }
             detailsAlign="left"
             shouldShowDetailsOnMobile
-          />
-          <StyledTableRows>
-            {authorizations.map((authorization) => (
-              <SettingsApplicationTableRow
-                key={authorization.id}
-                middleColumn="status"
-                hasActionMenu
-                name={
-                  <>
-                    <app.Icon size={theme.icon.size.md} />
-                    <OverflowingTextWithTooltip
-                      text={getLastUsedLabel(authorization)}
-                    />
-                  </>
+            action={
+              <SettingsApplicationAuthorizationRowDropdownMenu
+                applicationAuthorizationId={latestAuthorization.id}
+                revokeLabel={t`Disconnect`}
+                confirmationTitle={t`Disconnect ${appName}?`}
+                confirmationSubtitle={
+                  <Trans>
+                    {appName} will lose access to this workspace when its
+                    current access token expires.
+                  </Trans>
                 }
-                middle={
-                  <Status color="green" weight="medium">{t`Connected`}</Status>
-                }
-                details={
-                  <SettingsApplicationAuthorizationPermissionsCell
-                    authorization={authorization}
-                  />
-                }
-                detailsAlign="left"
-                shouldShowDetailsOnMobile
-                action={
-                  <SettingsApplicationAuthorizationRowDropdownMenu
-                    applicationAuthorizationId={authorization.id}
-                    revokeLabel={t`Disconnect`}
-                    confirmationTitle={t`Disconnect ${appName}?`}
-                    confirmationSubtitle={
-                      <Trans>
-                        {appName} will lose access to this workspace when its
-                        current access token expires.
-                      </Trans>
-                    }
-                    onRevoke={(applicationAuthorizationId) =>
-                      revokeApplicationAuthorization({
-                        variables: { applicationAuthorizationId },
-                      })
-                    }
-                  />
-                }
+                onRevoke={disconnect}
               />
-            ))}
-          </StyledTableRows>
-        </Table>
-        {isDefined(connectLink) && (
-          <StyledAddConnectionContainer>
-            <Button
-              startIcon={<IconPlus />}
-              size="sm"
-              variant="outline"
-              onClick={() => openUrlInNewTab(connectLink)}
-            >{t`Add connection`}</Button>
-          </StyledAddConnectionContainer>
-        )}
-      </>
+            }
+          />
+        </StyledTableRows>
+      </Table>
     );
   };
 
