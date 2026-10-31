@@ -80,14 +80,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    const rateLimitResult = await this.applyRateLimit(req);
-
-    if (rateLimitResult) {
-      res.status(429);
-
-      return rateLimitResult;
-    }
-
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
@@ -185,6 +177,15 @@ export class OAuthRegistrationController {
         grantTypes,
         responseTypes,
       });
+    }
+
+    // Only new registrations count: a well-known client's users arrive from a few shared IPs and get the seeded client
+    const rateLimitResult = await this.applyRateLimit(req);
+
+    if (rateLimitResult) {
+      res.status(429);
+
+      return rateLimitResult;
     }
 
     const registration = await this.applicationRegistrationRepository.save(

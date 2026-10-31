@@ -9,6 +9,10 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -20,6 +24,7 @@ describe('OAuthRegistrationController', () => {
     save: jest.Mock;
   };
   let findOrCreateRegistration: jest.Mock;
+  let tokenBucketThrottleOrThrow: jest.Mock;
 
   const request = {
     ip: '127.0.0.1',
@@ -47,6 +52,7 @@ describe('OAuthRegistrationController', () => {
         createdAt: new Date('2026-01-01T00:00:00.000Z'),
       })),
     };
+    tokenBucketThrottleOrThrow = jest.fn();
     findOrCreateRegistration = jest.fn().mockResolvedValue({
       oAuthClientId: 'seeded-claude-client-id',
       name: 'Claude',
@@ -63,7 +69,7 @@ describe('OAuthRegistrationController', () => {
         },
         {
           provide: ThrottlerService,
-          useValue: { tokenBucketThrottleOrThrow: jest.fn() },
+          useValue: { tokenBucketThrottleOrThrow },
         },
         {
           provide: WellKnownOAuthClientRegistrationService,
@@ -111,6 +117,34 @@ describe('OAuthRegistrationController', () => {
     expect(response).not.toMatchObject({
       client_id: 'seeded-claude-client-id',
     });
+  });
+
+  it('only rate limits registrations that create a client', async () => {
+    tokenBucketThrottleOrThrow.mockRejectedValue(
+      new ThrottlerException(
+        'Limit reached',
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      ),
+    );
+
+    await expect(
+      controller.register(
+        buildBody(['https://claude.ai/api/mcp/auth_callback']),
+        request,
+        buildResponse(),
+      ),
+    ).resolves.toMatchObject({ client_id: 'seeded-claude-client-id' });
+
+    const response = buildResponse();
+
+    await expect(
+      controller.register(
+        buildBody(['https://example.com/callback']),
+        request,
+        response,
+      ),
+    ).resolves.toMatchObject({ error: 'rate_limit_exceeded' });
+    expect(response.status).toHaveBeenCalledWith(429);
   });
 
   it('refuses to register once dynamic client registration is off', async () => {

@@ -44,7 +44,6 @@ describe('OAuth well-known clients (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
   let ds: DataSource;
-  // Registrations are rate limited per IP, so the suite registers each client once
   let claudeClientId: string;
   let chatGptClientId: string;
   const createdRegistrationClientIds: string[] = [];
