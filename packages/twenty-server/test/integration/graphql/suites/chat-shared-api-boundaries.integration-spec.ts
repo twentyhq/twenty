@@ -443,7 +443,7 @@ describe('Shared conversation API boundaries', () => {
     const [{ backendProcessId }]: { backendProcessId: number }[] =
       await runner.query('SELECT pg_backend_pid() AS "backendProcessId"');
     await runner.query(
-      `INSERT INTO "${context.schema}"."agentChatThread" (id, "workspaceMemberId") VALUES ($1, $2)`,
+      `INSERT INTO "${context.schema}"."agentChatThread" (id, "workspaceMemberId", "_isPrivate") VALUES ($1, $2, true)`,
       [threadId, context.workspaceMemberId],
     );
     const sending = sendChatParticipationMessage({
