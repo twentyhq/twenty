@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { AgentRunWithoutConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-without-conversation.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -42,10 +44,12 @@ const buildService = ({
   waitingState = 'WAITING',
   streamError,
   stopReason,
+  personaError,
 }: {
   waitingState?: string;
   streamError?: unknown;
   stopReason?: string;
+  personaError?: Error;
 } = {}) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue(waitingState),
@@ -83,16 +87,18 @@ const buildService = ({
   const service = new AgentRunWithoutConversationService(
     { getHandlerOrThrow: () => handler } as never,
     {
-      resolveOrThrow: jest.fn().mockResolvedValue({
-        agentId: null,
-        applicationId: null,
-        instructions: 'Qualify the lead.',
-        modelId: 'model-id',
-        modelConfiguration: null,
-        responseFormat: null,
-        promptCacheKey: 'workflow-step:step',
-        permissions: { type: 'scope', scope: null },
-      }),
+      resolveOrThrow: isDefined(personaError)
+        ? jest.fn().mockRejectedValue(personaError)
+        : jest.fn().mockResolvedValue({
+            agentId: null,
+            applicationId: null,
+            instructions: 'Qualify the lead.',
+            modelId: 'model-id',
+            modelConfiguration: null,
+            responseFormat: null,
+            promptCacheKey: 'workflow-step:step',
+            permissions: { type: 'scope', scope: null },
+          }),
     } as never,
     agentRunTurnService as never,
     agentRunSuspensionService as never,
@@ -201,5 +207,24 @@ describe('AgentRunWithoutConversationService', () => {
 
     expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
     expect(agentRunTurnService.startTurn).not.toHaveBeenCalled();
+  });
+
+  it('fails the outcome when the run cannot start, so the step never stays pending', async () => {
+    const {
+      service,
+      agentRunSuspensionService,
+      conversationWriterService,
+      turnRecorderService,
+    } = buildService({ personaError: new Error('Agent is archived') });
+
+    await run(service);
+
+    expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
+    expect(turnRecorderService.finish).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith(
+      expect.objectContaining({
+        outcome: { status: 'FAILED', error: 'Agent is archived' },
+      }),
+    );
   });
 });

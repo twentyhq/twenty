@@ -65,37 +65,42 @@ export class AgentRunWithoutConversationService {
       return;
     }
 
-    const [executionContext, persona] = await Promise.all([
-      handler.buildExecutionContext({ workspaceId, caller }),
-      this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
-    ]);
-    const turnId = await this.conversationWriterService.insertTurn({
-      workspaceId,
-      threadId: null,
-      agentId: persona.agentId,
-      status: AgentTurnStatus.RUNNING,
-      createdBy: executionContext.turnCreatedBy,
-    });
-    const startedAtMs = Date.now();
-    const turnInput = {
-      persona,
-      messages: prompt?.messages ?? [],
-      baseSystemPrompt: [
-        spec.baseSystemPrompt,
-        ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
-      ].join('\n\n'),
-      responseFormat:
-        spec.responseFormat ?? persona.responseFormat ?? undefined,
-      workspaceId,
-      executionContext,
-      additionalExcludedToolNames: spec.additionalExcludedToolNames,
-      toolLoadingStrategy: spec.toolLoadingStrategy,
-    };
-
+    let turnId: string | null = null;
     let outcome: AgentRunCallerOutcome;
     let summary = null;
 
+    // whatever fails, the caller gets an outcome, so a workflow step never stays pending
     try {
+      const [executionContext, persona] = await Promise.all([
+        handler.buildExecutionContext({ workspaceId, caller }),
+        this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
+      ]);
+      const runTurnId = await this.conversationWriterService.insertTurn({
+        workspaceId,
+        threadId: null,
+        agentId: persona.agentId,
+        status: AgentTurnStatus.RUNNING,
+        createdBy: executionContext.turnCreatedBy,
+      });
+
+      turnId = runTurnId;
+
+      const startedAtMs = Date.now();
+      const turnInput = {
+        persona,
+        messages: prompt?.messages ?? [],
+        baseSystemPrompt: [
+          spec.baseSystemPrompt,
+          ...(isNonEmptyString(spec.instructions) ? [spec.instructions] : []),
+        ].join('\n\n'),
+        responseFormat:
+          spec.responseFormat ?? persona.responseFormat ?? undefined,
+        workspaceId,
+        executionContext,
+        additionalExcludedToolNames: spec.additionalExcludedToolNames,
+        toolLoadingStrategy: spec.toolLoadingStrategy,
+      };
+
       const execution = await workspaceAuthContextStorage.run(
         executionContext.authContext,
         () =>
@@ -120,7 +125,7 @@ export class AgentRunWithoutConversationService {
 
             await this.turnRecorderService.recordUsage({
               workspaceId,
-              turnId,
+              turnId: runTurnId,
               threadId: null,
               usage: completed.steps.reduce(
                 (usage, step) =>
@@ -150,7 +155,7 @@ export class AgentRunWithoutConversationService {
 
       await this.turnRecorderService.finish({
         workspaceId,
-        turnId,
+        turnId: runTurnId,
         status:
           outcome.status === 'COMPLETED'
             ? AgentTurnStatus.COMPLETED
@@ -168,12 +173,21 @@ export class AgentRunWithoutConversationService {
         error: error instanceof Error ? error.message : String(error),
       };
 
-      await this.turnRecorderService.finish({
-        workspaceId,
-        turnId,
-        status: AgentTurnStatus.FAILED,
-        error: mapErrorToStreamError(error),
-      });
+      if (isDefined(turnId)) {
+        await this.turnRecorderService
+          .finish({
+            workspaceId,
+            turnId,
+            status: AgentTurnStatus.FAILED,
+            error: mapErrorToStreamError(error),
+          })
+          .catch((finishError: unknown) =>
+            this.logger.error(
+              `Could not record the failure of turn ${turnId}`,
+              finishError instanceof Error ? finishError.stack : finishError,
+            ),
+          );
+      }
     }
 
     await this.agentRunSuspensionService.deliverOutcome({
