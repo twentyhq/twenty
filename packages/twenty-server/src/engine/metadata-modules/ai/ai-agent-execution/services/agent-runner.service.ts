@@ -17,6 +17,7 @@ import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execu
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
@@ -27,18 +28,12 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
-import { type AgentRunPersonaSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
-import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
-import { resolveAgentRunPersonaFromAgent } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-agent.util';
-import { resolveAgentRunPersonaFromInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-persona-from-inline-config.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
   type AgentChatStreamClaim,
@@ -49,12 +44,6 @@ import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
 
@@ -89,8 +78,7 @@ export class AgentRunnerService {
     private readonly agentRunJobScopeService: AgentRunJobScopeService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectWorkspaceScopedRepository(AgentEntity)
-    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    private readonly agentRunPersonaService: AgentRunPersonaService,
   ) {}
 
   async start(input: RunAgentJobData): Promise<void> {
@@ -188,7 +176,7 @@ export class AgentRunnerService {
     try {
       const [executionContext, persona] = await Promise.all([
         handler.buildExecutionContext({ workspaceId, caller }),
-        this.resolvePersonaOrThrow({ workspaceId, spec }),
+        this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
 
       return await this.withClaimedConversation({
@@ -420,7 +408,10 @@ export class AgentRunnerService {
       }
 
       const [persona, executionContext] = await Promise.all([
-        this.resolvePersonaOrThrow({ workspaceId, spec: runSpec }),
+        this.agentRunPersonaService.resolveOrThrow({
+          workspaceId,
+          spec: runSpec,
+        }),
         handler.buildExecutionContext({ workspaceId, caller }),
       ]);
 
@@ -730,52 +721,6 @@ export class AgentRunnerService {
         ? 'Agent paused to wait but its conversation could not be recorded.'
         : 'Agent asked a question that could not be recorded.',
     };
-  }
-
-  private async resolvePersonaOrThrow({
-    workspaceId,
-    spec,
-  }: {
-    workspaceId: string;
-    spec: AgentRunPersonaSpec;
-  }): Promise<ResolvedAgentRunPersona> {
-    if (spec.agentId === null) {
-      return resolveAgentRunPersonaFromInlineConfig(spec.inlineConfig);
-    }
-
-    return resolveAgentRunPersonaFromAgent(
-      await this.findAgentOrThrow({ workspaceId, agentId: spec.agentId }),
-    );
-  }
-
-  private async findAgentOrThrow({
-    workspaceId,
-    agentId,
-  }: {
-    workspaceId: string;
-    agentId: string;
-  }): Promise<AgentEntity> {
-    const agent = await this.agentRepository.findOne(workspaceId, {
-      where: { id: agentId },
-    });
-
-    if (!isDefined(agent)) {
-      throw new AiException(
-        `Agent with id ${agentId} not found`,
-        AiExceptionCode.AGENT_NOT_FOUND,
-      );
-    }
-
-    const effectiveAgent = resolveEffectiveAgent(agent);
-
-    if (!effectiveAgent.isActive) {
-      throw new AiException(
-        `Agent "${effectiveAgent.label}" is archived`,
-        AiExceptionCode.AGENT_IS_INACTIVE,
-      );
-    }
-
-    return effectiveAgent;
   }
 
   // A record of the run, not its outcome, so a write failure must not fail the run

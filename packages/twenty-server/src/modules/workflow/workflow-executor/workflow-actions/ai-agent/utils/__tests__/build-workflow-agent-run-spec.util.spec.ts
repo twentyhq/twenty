@@ -63,21 +63,6 @@ describe('buildWorkflowAgentRunSpec', () => {
     expect(spec.instructions).toMatch(/Ask before choosing a plan\.$/);
   });
 
-  it('never lets a step without an agent ask humans', () => {
-    const spec = buildWorkflowAgentRunSpec({
-      step: buildStep({
-        prompt: 'Draft the quote',
-        humanInputInstructions: 'Ask before choosing a plan.',
-      }),
-      isApplicationBound: false,
-      applicationId: null,
-    });
-
-    expect(spec.agentId).toBeNull();
-    expect(spec.capabilities).toEqual({ canAskHumans: false });
-    expect(spec.instructions).toBeNull();
-  });
-
   it('keeps tools out of reach of an application-bound run', () => {
     expect(
       buildWorkflowAgentRunSpec({

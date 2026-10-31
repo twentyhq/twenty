@@ -12,6 +12,7 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   type AgentResponseFormat,
+  type AiRunScope,
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -40,13 +41,11 @@ import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { resolveAgentRunCallingApplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-calling-application.util';
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
-import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
@@ -58,6 +57,7 @@ import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billi
 import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import {
   AiException,
@@ -104,7 +104,6 @@ export class AgentRunTurnService {
   constructor(
     private readonly agentTurnService: AgentTurnService,
     private readonly aiBillingService: AiBillingService,
-    private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
     @InjectRepository(WorkspaceEntity)
@@ -406,9 +405,10 @@ export class AgentRunTurnService {
         };
   }
 
-  // null when the run may use no data tools at all
   private async resolveRegistryGrants({
-    persona: { permissions },
+    persona: {
+      permissions: { agentRoleId, scope, explicitObjectGrants },
+    },
     workspaceId,
     agentRunRoleIds,
   }: {
@@ -419,31 +419,31 @@ export class AgentRunTurnService {
     rolePermissionConfig: RolePermissionConfig;
     explicitObjectGrants: ExplicitObjectGrants;
   } | null> {
-    if (permissions.type === 'agentRole') {
-      const agentRoleId = await this.aiAgentRoleService.findAgentRoleId({
-        workspaceId: permissions.workspaceId,
-        agentId: permissions.agentId,
-      });
-
-      if (!isDefined(agentRoleId)) {
-        return null;
-      }
-
-      return {
-        rolePermissionConfig: buildAgentRolePermissionConfig({
-          agentRoleId,
-          agentRunRoleIds,
-        }),
-        explicitObjectGrants: { type: 'role', roleId: agentRoleId },
-      };
-    }
-
-    const { scope } = permissions;
-
-    if (!isDefined(scope)) {
+    if (!isDefined(explicitObjectGrants)) {
       return null;
     }
 
+    return {
+      rolePermissionConfig: {
+        intersectionOf: {
+          ...agentRunRoleIds,
+          ...(isDefined(agentRoleId) ? { agentRoleId } : {}),
+        },
+        ...(isDefined(scope)
+          ? { scope: await this.resolvePermissionScope({ workspaceId, scope }) }
+          : {}),
+      },
+      explicitObjectGrants,
+    };
+  }
+
+  private async resolvePermissionScope({
+    workspaceId,
+    scope,
+  }: {
+    workspaceId: string;
+    scope: AiRunScope;
+  }): Promise<PermissionScope> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -452,16 +452,10 @@ export class AgentRunTurnService {
         },
       );
 
-    return {
-      rolePermissionConfig: {
-        intersectionOf: { ...agentRunRoleIds },
-        scope: resolveAiRunPermissionScope({
-          scope,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        }),
-      },
-      explicitObjectGrants: { type: 'scope', scope },
-    };
+    return resolveAiRunPermissionScope({
+      scope,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
   }
 }
