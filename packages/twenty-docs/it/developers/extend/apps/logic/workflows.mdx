@@ -101,7 +101,7 @@ Un workflow webhook resta in ascolto su `https://\<your-twenty-domain>/webhooks/
 
 ## Passaggi
 
-I workflow dell'applicazione supportano questi tipi di passaggio: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` e `EMPTY`.
+I workflow dell'applicazione supportano questi tipi di passaggio: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` e `EMPTY`.
 
 I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user-guide/workflows/capabilities/workflow-actions), con identificatori universali al posto dei nomi:
 
@@ -117,6 +117,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
   * `connectedAccountId`: una variabile, ad esempio `{{trigger.properties.after.connectedAccountId}}`. I passaggi Email accettano anche un ID membro dell'area di lavoro, ad esempio `{{trigger.properties.after.assigneeId}}`, che viene risolto nel primo account di quel membro in grado di inviare.
 
   Imposta esattamente uno dei due.
+* `SEND_CHAT_MESSAGE` invia un messaggio alla posta in arrivo di un membro del workspace, impostato con `workspaceMemberId`. Anche gli ID dei membri sono locali a ciascun workspace, quindi un'app passa una variabile, ad esempio `{{trigger.properties.after.assigneeId}}`.
 
 ## Dopo l'installazione
 

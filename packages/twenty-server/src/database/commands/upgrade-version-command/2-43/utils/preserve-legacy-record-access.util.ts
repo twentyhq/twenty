@@ -5,9 +5,9 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/permissions/record-share/utils/resolve-inherited-readability-parents.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RowAccessPolicyEnvironment } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { type RowAccessPolicyEnvironment } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';

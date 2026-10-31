@@ -57,7 +57,7 @@ const describeAgentMessageSenders = (dataSource: DataSource) =>
      WHERE "senderWorkspaceMemberId" IS NOT NULL ORDER BY id`,
   );
 
-// accessGroupIds comes from a later upgrade, so the 2.42 tables never have it
+// _accessGroupIds comes from a later upgrade, so the 2.42 tables never have it
 const describeAgentHistoryColumns = ({
   dataSource,
   objectNames,
@@ -69,7 +69,7 @@ const describeAgentHistoryColumns = ({
     `SELECT table_name AS "objectName", column_name AS "columnName"
      FROM information_schema.columns
      WHERE table_schema = $1 AND table_name = ANY($2)
-       AND column_name <> 'accessGroupIds'
+       AND column_name <> '_accessGroupIds'
      ORDER BY 1, 2`,
     [SCHEMA, objectNames],
   );
