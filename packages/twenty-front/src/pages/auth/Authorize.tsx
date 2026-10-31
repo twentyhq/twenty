@@ -1,5 +1,4 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
-import { OAUTH_SCOPE_ICONS } from '@/auth/constants/OAuthScopeIcons';
 import { OAUTH_SCOPE_LABELS } from '@/auth/constants/OAuthScopeLabels';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -15,7 +14,11 @@ import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { getUrlSafely, isDefined } from 'twenty-shared/utils';
-import { IconDatabase } from 'twenty-ui/icon';
+import {
+  type IconComponent,
+  IconDatabase,
+  IconUserCircle,
+} from 'twenty-ui/icon';
 import { Heading } from 'twenty-ui/primitives/typography';
 import {
   useTheme,
@@ -144,6 +147,11 @@ const StyledErrorText = styled.div`
   text-align: center;
   width: 100%;
 `;
+
+const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
+  api: IconDatabase,
+  profile: IconUserCircle,
+};
 
 export const Authorize = () => {
   const { t } = useLingui();

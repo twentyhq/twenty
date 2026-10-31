@@ -1,6 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { SettingsBuiltInMcpClientAppConnectionsSection } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionsSection';
-import { SettingsBuiltInMcpClientAppPermissionsSection } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsSection';
 import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
@@ -70,16 +69,11 @@ export const SettingsBuiltInMcpClientApp = () => {
           />
         </Section.Root>
         <SettingsBuiltInMcpClientAppConnectionsSection
-          appName={appName}
-          logoUrl={logoUrl}
+          app={app}
           connectLink={connectLink}
           authorizations={authorizations}
           loading={loading}
           refetch={refetch}
-        />
-        <SettingsBuiltInMcpClientAppPermissionsSection
-          appName={appName}
-          authorizations={authorizations}
         />
       </SettingsPageContainer>
     </SettingsPageLayout>

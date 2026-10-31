@@ -83,14 +83,15 @@ export const ChatGptWithoutConnectionOffersToConnect: Story = {
   },
 };
 
-export const ClaudeConnectionListsItsActivityAndPermissions: Story = {
+export const ClaudeConnectionListsItsPermissions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Connected')).toBeVisible();
-    expect(canvas.getByText('Last active')).toBeVisible();
-    expect(canvas.getByText('Access your workspace data')).toBeVisible();
-    expect(canvas.getByText('Read your profile')).toBeVisible();
+    expect(canvas.getByText('Permissions')).toBeVisible();
+    expect(
+      canvas.getByText('Access your workspace data, Read your profile'),
+    ).toBeVisible();
   },
 };
 

@@ -1,14 +1,14 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
-import { AppChip } from '@/applications/components/AppChip';
-import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { SettingsBuiltInMcpClientAppConnectionRowDropdownMenu } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectionRowDropdownMenu';
+import { SettingsBuiltInMcpClientAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppPermissionsCell';
+import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
 import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,9 +16,9 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const StyledTableRows = styled.div`
@@ -33,9 +33,13 @@ const StyledAddConnectionContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledConnectCardContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
-  appName: string;
-  logoUrl: string;
+  app: BuiltInMcpClientApp;
   connectLink: string | undefined;
   authorizations: BuiltInMcpClientAppAuthorization[];
   loading: boolean;
@@ -43,15 +47,17 @@ type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
 };
 
 export const SettingsBuiltInMcpClientAppConnectionsSection = ({
-  appName,
-  logoUrl,
+  app,
   connectLink,
   authorizations,
   loading,
   refetch,
 }: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
   const { t } = useLingui();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+  const theme = useTheme();
+
+  const appName = t(app.name);
+  const isConnectDisabled = !isDefined(connectLink);
 
   const renderContent = () => {
     if (loading) {
@@ -60,17 +66,22 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
 
     if (authorizations.length === 0) {
       return (
-        <SettingsCard
-          Icon={<AppChip logoUrl={logoUrl} size="md" chipOnly />}
-          title={t`Connect with ${appName}`}
-          description={
-            isDefined(connectLink)
-              ? undefined
-              : t`${appName} needs this server to use HTTPS.`
-          }
-          href={connectLink}
-          disabled={!isDefined(connectLink)}
-        />
+        <Tooltip
+          content={t`${appName} needs this server to use HTTPS.`}
+          side="bottom"
+          positionMethod="fixed"
+          delay={TooltipDelay.shortDelay}
+          disabled={!isConnectDisabled}
+        >
+          <StyledConnectCardContainer>
+            <SettingsCard
+              Icon={<app.Icon size={theme.icon.size.md} />}
+              title={t`Connect with ${appName}`}
+              href={connectLink}
+              disabled={isConnectDisabled}
+            />
+          </StyledConnectCardContainer>
+        </Tooltip>
       );
     }
 
@@ -80,7 +91,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
           <SettingsApplicationTableHeaderRow
             middleColumn="status"
             nameLabel={t`Connection`}
-            detailsLabel={t`Last active`}
+            detailsLabel={t`Permissions`}
             detailsAlign="left"
             shouldShowDetailsOnMobile
           />
@@ -92,7 +103,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                 hasActionMenu
                 name={
                   <>
-                    <AppChip logoUrl={logoUrl} size="md" chipOnly />
+                    <app.Icon size={theme.icon.size.md} />
                     <OverflowingTextWithTooltip text={appName} />
                   </>
                 }
@@ -100,11 +111,8 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
                   <Status color="green" weight="medium">{t`Connected`}</Status>
                 }
                 details={
-                  <OverflowingTextWithTooltip
-                    text={beautifyPastDateRelativeToNow(
-                      authorization.lastUsedAt,
-                      localeCatalog,
-                    )}
+                  <SettingsBuiltInMcpClientAppPermissionsCell
+                    authorization={authorization}
                   />
                 }
                 detailsAlign="left"
