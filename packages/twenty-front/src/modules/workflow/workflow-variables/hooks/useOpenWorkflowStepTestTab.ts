@@ -12,7 +12,7 @@ import { WORKFLOW_STEP_TEST_TAB_LIST_COMPONENT_ID_BY_STEP_TYPE } from '@/workflo
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 export const useOpenWorkflowStepTestTab = () => {
   const { getIcon } = useIcons();

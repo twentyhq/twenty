@@ -11,7 +11,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEye, useIcons } from 'twenty-ui/icon';
+import { IconEye } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';

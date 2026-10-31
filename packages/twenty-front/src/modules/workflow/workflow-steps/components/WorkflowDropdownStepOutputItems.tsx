@@ -18,7 +18,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 

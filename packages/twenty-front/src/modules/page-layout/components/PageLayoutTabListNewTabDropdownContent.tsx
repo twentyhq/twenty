@@ -12,7 +12,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type PageLayoutTabListNewTabDropdownContentProps = {
   onCreate: () => void;

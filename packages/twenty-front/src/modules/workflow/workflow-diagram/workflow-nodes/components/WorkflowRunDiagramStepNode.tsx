@@ -30,7 +30,8 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { StepStatus } from 'twenty-shared/workflow';
-import { IconCheck, IconX, useIcons } from 'twenty-ui/icon';
+import { IconCheck, IconX } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 

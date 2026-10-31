@@ -15653,7 +15653,7 @@
   },
   {
     "name": "Icon",
-    "entryPoint": "twenty-ui/icon",
+    "entryPoint": "twenty-ui/icon/provider",
     "slug": "icon/icon",
     "props": [
       {
@@ -15709,7 +15709,7 @@
   },
   {
     "name": "IconsProvider",
-    "entryPoint": "twenty-ui/icon",
+    "entryPoint": "twenty-ui/icon/provider",
     "slug": "icon/icons-provider",
     "props": [
       {

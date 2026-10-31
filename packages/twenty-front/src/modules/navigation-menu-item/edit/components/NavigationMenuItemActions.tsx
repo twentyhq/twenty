@@ -8,12 +8,12 @@ import {
   IconChevronUp,
   IconChevronDown,
   IconHierarchy2,
-  useIcons,
   IconFolderSymlink,
   IconRowInsertTop,
   IconRowInsertBottom,
   IconTrash,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
