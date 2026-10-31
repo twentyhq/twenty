@@ -557,21 +557,15 @@ export const DefaultGeneralAccess: Story = {
     await expect(
       page.queryByRole('menuitemradio', { name: 'Full access' }),
     ).not.toBeInTheDocument();
+    await expect(
+      page.queryByRole('menuitemradio', { name: 'Viewer' }),
+    ).not.toBeInTheDocument();
     await userEvent.click(
       page.getByRole('menuitemradio', { name: 'Restricted' }),
     );
     await waitFor(() =>
       expect(setGeneralAccess).toHaveBeenLastCalledWith(
         RecordShareAccessLevel.NONE,
-      ),
-    );
-    await userEvent.click(generalAccess);
-    await userEvent.click(
-      await page.findByRole('menuitemradio', { name: 'Viewer' }),
-    );
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenLastCalledWith(
-        RecordShareAccessLevel.READ,
       ),
     );
     await expect(
