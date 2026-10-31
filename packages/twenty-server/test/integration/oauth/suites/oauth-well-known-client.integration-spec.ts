@@ -164,6 +164,68 @@ describe('OAuth well-known clients (integration)', () => {
     });
   });
 
+  describe('Marketplace', () => {
+    it('should list ChatGPT and Claude as soon as their registrations exist', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query FindManyMarketplaceApps {
+            findManyMarketplaceApps {
+              id
+              name
+              isListed
+            }
+          }
+        `,
+      });
+
+      expect(response.body.data.findManyMarketplaceApps).toEqual(
+        expect.arrayContaining([
+          {
+            id: findWellKnownOAuthClientUniversalIdentifier(
+              WellKnownOAuthClient.CHATGPT,
+            ),
+            name: 'ChatGPT',
+            isListed: true,
+          },
+          {
+            id: findWellKnownOAuthClientUniversalIdentifier(
+              WellKnownOAuthClient.CLAUDE,
+            ),
+            name: 'Claude',
+            isListed: true,
+          },
+        ]),
+      );
+    });
+
+    it('should tell the marketplace page that Claude is connected, not installed', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query FindMarketplaceAppDetail($universalIdentifier: String!) {
+            findMarketplaceAppDetail(
+              universalIdentifier: $universalIdentifier
+            ) {
+              name
+              sourceType
+              wellKnownOAuthClient
+            }
+          }
+        `,
+        variables: {
+          universalIdentifier: findWellKnownOAuthClientUniversalIdentifier(
+            WellKnownOAuthClient.CLAUDE,
+          ),
+        },
+      });
+
+      expect(response.body.data.findMarketplaceAppDetail).toEqual({
+        name: 'Claude',
+        sourceType: 'OAUTH_ONLY',
+        wellKnownOAuthClient: 'CLAUDE',
+      });
+    });
+  });
+
   describe('Consent screen', () => {
     it('should identify the seeded client by the server, not by its name', async () => {
       const response = await makeMetadataApiRequest({

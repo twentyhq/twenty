@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -20,6 +21,7 @@ describe('WellKnownOAuthClientRegistrationService', () => {
     createQueryBuilder: jest.Mock;
   };
   let findOneByUniversalIdentifierGlobal: jest.Mock;
+  let invalidate: jest.Mock;
 
   beforeEach(async () => {
     insertedValues = jest.fn();
@@ -33,7 +35,8 @@ describe('WellKnownOAuthClientRegistrationService', () => {
         return insertQueryBuilder;
       },
       orIgnore: () => insertQueryBuilder,
-      execute: jest.fn(),
+      returning: () => insertQueryBuilder,
+      execute: jest.fn().mockResolvedValue({ raw: [{ id: 'inserted-id' }] }),
     };
 
     applicationRegistrationRepository = {
@@ -41,6 +44,7 @@ describe('WellKnownOAuthClientRegistrationService', () => {
       createQueryBuilder: jest.fn(() => insertQueryBuilder),
     };
     findOneByUniversalIdentifierGlobal = jest.fn();
+    invalidate = jest.fn();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -53,6 +57,7 @@ describe('WellKnownOAuthClientRegistrationService', () => {
           provide: ApplicationRegistrationLookupService,
           useValue: { findOneByUniversalIdentifierGlobal },
         },
+        { provide: CoreEntityCacheService, useValue: { invalidate } },
       ],
     }).compile();
 
@@ -87,6 +92,10 @@ describe('WellKnownOAuthClientRegistrationService', () => {
         oAuthRedirectUris: ['https://claude.ai/api/mcp/auth_callback'],
         isListed: true,
       }),
+    );
+    expect(invalidate).toHaveBeenCalledWith(
+      'marketplaceCatalog',
+      expect.any(String),
     );
   });
 

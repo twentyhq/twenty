@@ -6,6 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -37,6 +39,7 @@ export class WellKnownOAuthClientRegistrationService {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async findOrCreateRegistration(
@@ -51,7 +54,7 @@ export class WellKnownOAuthClientRegistrationService {
       return existingRegistration;
     }
 
-    await this.applicationRegistrationRepository
+    const insertResult = await this.applicationRegistrationRepository
       .createQueryBuilder()
       .insert()
       .into(ApplicationRegistrationEntity)
@@ -68,7 +71,16 @@ export class WellKnownOAuthClientRegistrationService {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .orIgnore()
+      .returning('id')
       .execute();
+
+    // Seeded registrations are listed, so the marketplace must pick up one created between catalog syncs
+    if (insertResult.raw.length > 0) {
+      await this.coreEntityCacheService.invalidate(
+        'marketplaceCatalog',
+        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+      );
+    }
 
     const registration =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(

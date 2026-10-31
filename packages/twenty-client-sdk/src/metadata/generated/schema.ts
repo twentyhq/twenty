@@ -2014,6 +2014,7 @@ export interface MarketplaceAppDetail {
     termsUrl?: Scalars['String']
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'MarketplaceAppDetail'
 }
 
@@ -6564,6 +6565,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

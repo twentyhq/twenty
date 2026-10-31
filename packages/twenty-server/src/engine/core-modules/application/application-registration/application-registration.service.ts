@@ -16,6 +16,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  In,
   IsNull,
   type DeepPartial,
   type FindOptionsWhere,
@@ -87,6 +88,7 @@ import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/us
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/oauth-client-registration-resolver.service';
+import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
 import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
@@ -1112,9 +1114,17 @@ export class ApplicationRegistrationService {
         'category',
         'manifest',
       ],
-      where: {
-        sourceType: ApplicationRegistrationSourceType.NPM,
-      },
+      // Well-known OAuth clients have no package, but members can connect them from the marketplace
+      where: [
+        { sourceType: ApplicationRegistrationSourceType.NPM },
+        {
+          universalIdentifier: In(
+            WELL_KNOWN_OAUTH_CLIENTS.map(
+              ({ universalIdentifier }) => universalIdentifier,
+            ),
+          ),
+        },
+      ],
     });
 
     return registrations.map((registration) => ({
