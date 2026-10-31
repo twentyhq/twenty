@@ -1,14 +1,11 @@
 /* @license Enterprise */
 
 import { type ObjectPermissionAction } from 'twenty-shared/application';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
@@ -26,6 +23,7 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
 export type ObjectSharing = {
   isShareable: boolean;
   isShareRequired: boolean;
+  isPrivateByDefault: boolean;
   defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: OperationType[];
@@ -62,18 +60,20 @@ export const resolveObjectSharing = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'disabledObjectPermissionActions'
+    'universalIdentifier' | 'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
-  // Private records are only reached through their shares, whatever the flag
+  const isPrivateByDefault = isPrivateByDefaultObject(flatObjectMetadata);
+  // TODO(@charlesBochet): remove once 2.55 leaves the cross-upgrade window; until its chats are converted, a workspace reaches them through shares only
   const isShareRequired =
-    flatObjectMetadata.readability === MetadataReadability.PRIVATE;
+    isPrivateByDefault &&
+    featureFlagsMap[FeatureFlagKey.IS_PRIVATE_CHAT_THREAD_ENABLED] !== true;
   const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;
-  const isShareable = isShareRequired || canBeShared;
+  const isShareable = isPrivateByDefault || canBeShared;
 
   const operationTypesGrantedBeyondRole = canBeShared
     ? resolveOperationTypesGrantableBeyondRole(flatObjectMetadata)
@@ -82,6 +82,7 @@ export const resolveObjectSharing = ({
   return {
     isShareable,
     isShareRequired,
+    isPrivateByDefault,
     defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel({
       isShareable,
       isShareRequired,

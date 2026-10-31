@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { IS_PRIVATE_COLUMN_DEFINITION } from 'src/engine/permissions/private-record/constants/is-private-column-definition.constant';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { buildPrivateRecordIndexDefinition } from 'src/engine/permissions/private-record/utils/build-private-record-index-definition.util';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 import { type WorkspaceTableSchemaDefinitions } from 'src/engine/permissions/access-group/types/workspace-table-schema-definitions.type';
@@ -21,7 +22,11 @@ export const enrichRecordTableSchemaWithIsPrivate = ({
     ...tableSchema,
     columnDefinitions: [
       ...tableSchema.columnDefinitions,
-      IS_PRIVATE_COLUMN_DEFINITION,
+      // Records are created through raw inserts too, so the default makes them private
+      {
+        ...IS_PRIVATE_COLUMN_DEFINITION,
+        default: isPrivateByDefaultObject(objectMetadata),
+      },
     ],
     indexDefinitions: [
       ...tableSchema.indexDefinitions,
