@@ -1,4 +1,4 @@
-// Columns kept in the database but no longer read or written
+// Only upgrade commands still use these columns; drop them once 2.55 leaves the cross-upgrade window
 export type UnusedObjectMetadataColumnName =
   | 'readability'
   | 'writability'

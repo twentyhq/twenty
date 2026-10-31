@@ -29,8 +29,6 @@ const WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
   LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
 ];
 
-// A workflow agent step now records each execution as a chat thread owned by
-// its run rather than by a member, so threads stop requiring an owner.
 @RegisteredWorkspaceCommand('2.44.0', 1790607161319)
 @Command({
   name: 'upgrade:2-44:add-workflow-run-to-chat-threads',

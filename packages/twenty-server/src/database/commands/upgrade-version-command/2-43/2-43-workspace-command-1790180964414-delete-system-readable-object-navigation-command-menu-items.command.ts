@@ -1,6 +1,8 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -22,24 +24,21 @@ export class DeleteSystemReadableObjectNavigationCommandMenuItemsCommand extends
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({
     workspaceId,
-    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    if (!isDefined(dataSource)) {
-      return;
-    }
-
     const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
       ]);
-    const systemReadableObjects = await dataSource.query<{ id: string }[]>(
+    const systemReadableObjects = await this.coreDataSource.query<{ id: string }[]>(
       `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND readability = 'SYSTEM'`,
       [workspaceId],
     );

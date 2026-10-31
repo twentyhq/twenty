@@ -1,4 +1,7 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,6 +40,8 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -45,11 +50,7 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     await this.up(args);
   }
 
-  async up({
-    workspaceId,
-    dataSource,
-    options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -92,13 +93,11 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     const [legacyThreadAccess]: {
       readability: string;
       readabilityParentFieldUniversalIdentifiers: string[] | null;
-    }[] = isDefined(dataSource)
-      ? await dataSource.query(
-          `SELECT readability, "readabilityParentFieldUniversalIdentifiers" FROM core."objectMetadata"
-            WHERE "workspaceId" = $1 AND id = $2`,
-          [workspaceId, threadObject.id],
-        )
-      : [];
+    }[] = await this.coreDataSource.query(
+      `SELECT readability, "readabilityParentFieldUniversalIdentifiers" FROM core."objectMetadata"
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, threadObject.id],
+    );
     const isPrivate =
       !isDefined(legacyThreadAccess) ||
       (legacyThreadAccess.readability === 'PRIVATE' &&
@@ -135,7 +134,7 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
 
     // Readability names the parent field, so it lets go of it before the field goes
     if (!isPrivate) {
-      await dataSource?.query(
+      await this.coreDataSource.query(
         `UPDATE core."objectMetadata"
           SET readability = 'PRIVATE', "readabilityParentFieldUniversalIdentifiers" = NULL
           WHERE "workspaceId" = $1 AND id = $2`,

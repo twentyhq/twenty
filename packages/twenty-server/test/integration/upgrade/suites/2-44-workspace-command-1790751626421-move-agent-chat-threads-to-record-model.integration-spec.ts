@@ -16,13 +16,12 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
-const getRunOnWorkspaceArgs = () => ({
+const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
-  dataSource: global.testDataSource,
   options: {},
   index: 0,
   total: 1,
-});
+};
 
 const CHAT_FIELDS = STANDARD_OBJECTS.agentChatThread.fields;
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -51,7 +50,7 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
 
   const runCommand = (direction: 'up' | 'down') =>
     workspaceOrmManager.executeInWorkspaceContext(
-      () => command[direction](getRunOnWorkspaceArgs()),
+      () => command[direction](RUN_ON_WORKSPACE_ARGS),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
