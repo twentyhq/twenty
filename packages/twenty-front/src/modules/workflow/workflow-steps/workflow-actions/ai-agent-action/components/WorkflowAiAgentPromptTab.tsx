@@ -209,6 +209,11 @@ export const WorkflowAiAgentPromptTab = ({
         VariablePicker={WorkflowVariablePicker}
         label={t`Input (Prompt)`}
         placeholder={t`Describe what you want the AI to do...`}
+        hint={
+          isAgentBacked
+            ? undefined
+            : t`Required: the message the AI receives on each run.`
+        }
         defaultValue={prompt}
         onChange={onPromptChange}
         readonly={readonly}

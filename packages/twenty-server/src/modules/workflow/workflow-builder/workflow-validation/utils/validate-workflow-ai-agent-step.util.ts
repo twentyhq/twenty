@@ -27,15 +27,15 @@ export const validateWorkflowAiAgentStep = (
     });
   }
 
+  // the prompt is the run's only message, and a model call needs one
   if (
     !isNonEmptyString(input?.agentId) &&
-    !isNonEmptyString(input?.instructions?.trim()) &&
     !isNonEmptyString(input?.prompt?.trim())
   ) {
     issues.push({
       severity: 'error',
-      code: 'AI_AGENT_MISSING_INSTRUCTIONS',
-      message: `Agent step "${stepLabel}" has no instructions or prompt.`,
+      code: 'AI_AGENT_MISSING_PROMPT',
+      message: `Agent step "${stepLabel}" has no prompt.`,
       stepId: step.id,
     });
   }

@@ -1,20 +1,23 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 const ROLE_ID = 'role-id';
 
 const buildService = () => {
-  const flatRoleMaps = createEmptyFlatEntityMaps();
+  const flatRoleMaps: FlatRoleMaps = createEmptyFlatEntityMaps();
 
+  // the flag check reads only these columns of a role
   flatRoleMaps.byUniversalIdentifier.role = {
     id: ROLE_ID,
     universalIdentifier: 'role',
     canUpdateAllSettings: true,
     canAccessAllTools: true,
-  } as never;
+  } as FlatRole;
   flatRoleMaps.universalIdentifierById[ROLE_ID] = 'role';
 
   return new PermissionsService(
