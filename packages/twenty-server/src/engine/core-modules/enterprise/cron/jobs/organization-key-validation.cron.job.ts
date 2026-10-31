@@ -26,7 +26,9 @@ export class EnterpriseKeyValidationCronJob {
       {
         schedule: {
           type: 'crontab',
-          value: getOrganizationKeyValidationCronPattern(serverId),
+          value: getOrganizationKeyValidationCronPattern(serverId, {
+            withSeconds: false,
+          }),
         },
         checkinMargin: 1,
         maxRuntime: 5,

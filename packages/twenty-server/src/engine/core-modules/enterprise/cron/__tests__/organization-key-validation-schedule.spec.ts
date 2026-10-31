@@ -60,12 +60,16 @@ describe('organization key validation schedule', () => {
     job = module.get(EnterpriseKeyValidationCronJob);
   });
 
-  it('uses the same stable schedule for the queue and Sentry', async () => {
+  it('uses the same stable time for the queue and Sentry', async () => {
     await command.run();
     await command.run();
     await job.handle();
 
     const pattern = getOrganizationKeyValidationCronPattern('server-example');
+    const sentryPattern = getOrganizationKeyValidationCronPattern(
+      'server-example',
+      { withSeconds: false },
+    );
 
     for (const registration of messageQueueService.addCron.mock.calls) {
       expect(registration[0]).toEqual({
@@ -80,7 +84,7 @@ describe('organization key validation schedule', () => {
       EnterpriseKeyValidationCronJob.name,
       expect.any(Function),
       expect.objectContaining({
-        schedule: { type: 'crontab', value: pattern },
+        schedule: { type: 'crontab', value: sentryPattern },
         timezone: 'UTC',
       }),
     );
