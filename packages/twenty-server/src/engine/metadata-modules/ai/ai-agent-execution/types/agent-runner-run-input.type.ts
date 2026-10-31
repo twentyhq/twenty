@@ -10,8 +10,10 @@ import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-
 // the outcome to its caller's handler
 export type AgentRunnerRunInput = {
   workspaceId: string;
-  conversation: AgentRunConversation;
-  caller: AgentRunCaller;
+  // null for a one-shot run: no thread, no claim, and nothing to pause on
+  conversation: AgentRunConversation | null;
+  // null for a run answered within its caller's request, which pauses on nothing and is called back by no one
+  caller: AgentRunCaller | null;
   spec: AgentRunSpec;
   persona: ResolvedAgentRunPersona;
   // what the run is asked and who asked it; absent when the run continues its conversation without a new message

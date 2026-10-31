@@ -1,7 +1,4 @@
-import {
-  PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AiRunScope } from 'twenty-shared/ai';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { hasRoleWideAccessToPermissionFlag } from 'src/engine/permissions/role/utils/has-role-wide-access-to-permission-flag.util';
+import { buildIsPermissionFlagGranted } from 'src/engine/permissions/role/utils/build-is-permission-flag-granted.util';
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
 import { computeObjectsPermissionsForRoleDefinition } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-definition.util';
 import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
@@ -34,21 +31,14 @@ export const resolveAiRunPermissionScope = ({
   const findFieldMetadataId = (fieldUniversalIdentifier: string) =>
     flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier]?.id;
 
-  const roleWideAccess = {
-    canUpdateAllSettings: scope.canUpdateAllSettings ?? false,
-    canAccessAllTools: scope.canAccessAllTools ?? false,
-  };
-  const permissionFlagUniversalIdentifiers = new Set(
-    scope.permissionFlagUniversalIdentifiers ?? [],
-  );
-  const isPermissionFlagGranted = (permissionFlag: PermissionFlagType) =>
-    hasRoleWideAccessToPermissionFlag({
-      role: roleWideAccess,
-      permissionFlag,
-    }) ||
-    permissionFlagUniversalIdentifiers.has(
-      SystemPermissionFlag[permissionFlag],
-    );
+  const isPermissionFlagGranted = buildIsPermissionFlagGranted({
+    role: {
+      canUpdateAllSettings: scope.canUpdateAllSettings ?? false,
+      canAccessAllTools: scope.canAccessAllTools ?? false,
+    },
+    permissionFlagUniversalIdentifiers:
+      scope.permissionFlagUniversalIdentifiers ?? [],
+  });
 
   const flatFieldMetadatas = Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
@@ -106,8 +96,11 @@ export const resolveAiRunPermissionScope = ({
 
   return {
     objectsPermissions,
-    grantedPermissionFlags: Object.values(PermissionFlagType).filter(
-      isPermissionFlagGranted,
+    permissionFlags: Object.fromEntries(
+      Object.values(PermissionFlagType).map((permissionFlag) => [
+        permissionFlag,
+        isPermissionFlagGranted(permissionFlag),
+      ]),
     ),
   };
 };

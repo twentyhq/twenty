@@ -16,6 +16,7 @@ export const buildWorkflowManifestExportReferences = ({
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
+  exportedAgentUniversalIdentifiers,
   canReferenceOtherApplicationsWorkflowActions,
 }: {
   applicationAllFlatEntityMaps: Pick<
@@ -31,6 +32,7 @@ export const buildWorkflowManifestExportReferences = ({
   >;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
+  exportedAgentUniversalIdentifiers: ReadonlySet<string>;
   canReferenceOtherApplicationsWorkflowActions: boolean;
 }): WorkflowManifestReferences => {
   const objectByUniversalIdentifier = new Map<
@@ -125,9 +127,14 @@ export const buildWorkflowManifestExportReferences = ({
     }
   }
 
+  // Apply only knows the agents of the manifest, so a step on any other agent can't be exported
   for (const flatAgent of Object.values(
     applicationAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
+  )
+    .filter(isDefined)
+    .filter((flatAgent) =>
+      exportedAgentUniversalIdentifiers.has(flatAgent.universalIdentifier),
+    )) {
     agentIdByUniversalIdentifier.set(
       flatAgent.universalIdentifier,
       flatAgent.id,

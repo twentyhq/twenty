@@ -406,16 +406,16 @@ const { success, text, error } = await ai.generate({
   tools).
 - `scope` (optional) lets the call use the database, as described below.
 
-It resolves to `{ success, text, object, error, turnId, usage }`:
+It resolves to `{ success, text, object, error, runId, usage }`:
 
 - `text` is the reply of a text response, and `null` for a JSON one.
 - `object` is the result of a JSON response, and `null` otherwise.
-- `error` explains a failed run, when `success` is `false`. A failed run
-  resolves this way rather than throwing; invalid input still throws.
-- `turnId` identifies the recorded turn, with its model, usage and credits. It
-  is `null` when the call failed before the turn was recorded.
-- `usage` is `{ inputTokens, outputTokens }`, or `null` when the run failed
-  before its turn completed.
+- `error` explains a failed run, when `success` is `false`. A run that fails
+  resolves this way rather than throwing; a call that cannot start a run, such
+  as one with invalid input, throws.
+- `runId` identifies the recorded run, with its model, usage and credits.
+- `usage` is `{ inputTokens, outputTokens }`: what the run spent, including the
+  steps that finished before a failure.
 
 The call acts as whoever made it: the member a user-scoped token belongs to,
 otherwise your application, otherwise the API key. It never exceeds your

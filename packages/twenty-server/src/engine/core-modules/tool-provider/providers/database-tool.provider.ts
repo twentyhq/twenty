@@ -1,6 +1,7 @@
 import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
+import { type EffectiveObjectPermissions } from 'twenty-shared/application';
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
@@ -28,10 +29,7 @@ import { MERGE_MANY_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-cru
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  buildExplicitObjectPermissionByObjectId,
-  type ExplicitObjectPermission,
-} from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
+import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
@@ -75,10 +73,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps, flatApplicationMaps } =
+    const { rolesPermissions, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
-        'flatObjectPermissionMaps',
         'flatApplicationMaps',
       ]);
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -106,10 +103,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const explicitPermissionByObjectId = requireExplicitObjectGrants
       ? buildExplicitObjectPermissionByObjectId({
           explicitObjectGrants,
-          flatObjectPermissionMaps,
           flatObjectMetadataMaps,
         })
-      : new Map<string, ExplicitObjectPermission>();
+      : new Map<string, EffectiveObjectPermissions>();
 
     if (
       requireExplicitObjectGrants &&

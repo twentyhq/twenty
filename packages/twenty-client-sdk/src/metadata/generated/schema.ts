@@ -250,6 +250,12 @@ export interface AiChatUserCreditsUsage {
 
 export type AiModelTier = 'balanced' | 'extraFast' | 'extraSmart' | 'fast' | 'smart'
 
+export interface AiRunUsage {
+    inputTokens: Scalars['Int']
+    outputTokens: Scalars['Int']
+    __typename: 'AiRunUsage'
+}
+
 export interface AiSystemPromptPreview {
     estimatedTokenCount: Scalars['Int']
     sections: AiSystemPromptSection[]
@@ -1524,7 +1530,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1711,17 +1717,11 @@ export interface FullName {
 export interface GenerateResult {
     error?: Scalars['String']
     object?: Scalars['JSON']
+    runId: Scalars['UUID']
     success: Scalars['Boolean']
     text?: Scalars['String']
-    turnId?: Scalars['UUID']
-    usage?: GenerateUsage
+    usage: AiRunUsage
     __typename: 'GenerateResult'
-}
-
-export interface GenerateUsage {
-    inputTokens: Scalars['Int']
-    outputTokens: Scalars['Int']
-    __typename: 'GenerateUsage'
 }
 
 export interface GetAuthorizationUrlForSSO {
@@ -4512,6 +4512,13 @@ export interface AiChatUserCreditsUsageGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AiRunUsageGenqlSelection{
+    inputTokens?: boolean | number
+    outputTokens?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AiSystemPromptPreviewGenqlSelection{
     estimatedTokenCount?: boolean | number
     sections?: AiSystemPromptSectionGenqlSelection
@@ -6241,17 +6248,10 @@ export interface GenerateInput {input: RunAgentMessageInput[],instructions?: (Sc
 export interface GenerateResultGenqlSelection{
     error?: boolean | number
     object?: boolean | number
+    runId?: boolean | number
     success?: boolean | number
     text?: boolean | number
-    turnId?: boolean | number
-    usage?: GenerateUsageGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface GenerateUsageGenqlSelection{
-    inputTokens?: boolean | number
-    outputTokens?: boolean | number
+    usage?: AiRunUsageGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9341,6 +9341,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AiRunUsage_possibleTypes: string[] = ['AiRunUsage']
+    export const isAiRunUsage = (obj?: { __typename?: any } | null): obj is AiRunUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiRunUsage"')
+      return AiRunUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
     export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
@@ -10489,14 +10497,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isGenerateResult = (obj?: { __typename?: any } | null): obj is GenerateResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateResult"')
       return GenerateResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const GenerateUsage_possibleTypes: string[] = ['GenerateUsage']
-    export const isGenerateUsage = (obj?: { __typename?: any } | null): obj is GenerateUsage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isGenerateUsage"')
-      return GenerateUsage_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12421,11 +12421,13 @@ export const enumEventLogTable = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
+   IS_PRIVATE_RECORD_ENABLED: 'IS_PRIVATE_RECORD_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,

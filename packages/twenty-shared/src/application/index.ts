@@ -15,6 +15,7 @@ export type {
   AgentTrigger,
   AgentTriggerManifest,
 } from './agentTriggerType';
+export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -184,7 +185,12 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
-export type { GenerateInput, GenerateResult } from './generateType';
+export { generateInputSchema } from './generateInputSchema';
+export type {
+  GenerateMutationInput,
+  GenerateInput,
+  GenerateResult,
+} from './generateType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type {
   IdentifyAccountPayload,
@@ -236,6 +242,16 @@ export type {
   RowLevelPermissionPredicateManifest,
   RoleManifest,
 } from './roleManifestType';
+export type {
+  ObjectPermissionGrant,
+  FieldPermissionGrant,
+  RolePermissionGrants,
+} from './rolePermissionGrantsSchema';
+export {
+  objectPermissionGrantSchema,
+  fieldPermissionGrantSchema,
+  rolePermissionGrantsSchema,
+} from './rolePermissionGrantsSchema';
 export type { RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 export type {
   RunAgentMessageRole,
@@ -288,7 +304,10 @@ export {
 } from './utils/applicationVariableValueSerialization';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
-export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export type {
+  EffectiveObjectPermissions,
+  ObjectRecordsPermissionGrants,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
@@ -302,6 +321,7 @@ export {
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

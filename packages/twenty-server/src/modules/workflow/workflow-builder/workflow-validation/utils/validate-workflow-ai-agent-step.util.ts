@@ -1,42 +1,41 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  hasWorkflowAiAgentConversationConfig,
-  hasWorkflowAiAgentInlineConfig,
-  isWorkflowAiAgentGenerateStep,
+  getWorkflowAiAgentStepConfigIssues,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
+  type WorkflowAiAgentStepKind,
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
 
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const validateWorkflowAiAgentStep = (
-  step: WorkflowAiAgentAction,
-): WorkflowValidationIssue[] => {
+export const validateWorkflowAiAgentStep = ({
+  step,
+  stepKind,
+}: {
+  step: Pick<WorkflowAiAgentAction, 'id' | 'name'> & {
+    settings: Pick<WorkflowAiAgentAction['settings'], 'input' | 'outputSchema'>;
+  };
+  stepKind: WorkflowAiAgentStepKind;
+}): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
 
   const input = step.settings?.input;
   const stepLabel = step.name ?? step.id;
-  const isGenerateStep = isWorkflowAiAgentGenerateStep(input ?? {});
 
-  if (!isGenerateStep && hasWorkflowAiAgentInlineConfig(input)) {
+  for (const issueCode of getWorkflowAiAgentStepConfigIssues({
+    stepKind,
+    input: input ?? {},
+  })) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_CONFLICTING_CONFIG',
-      message: `Agent step "${stepLabel}" runs an agent, so its instructions, model and permissions come from the agent.`,
+      message: `Agent step "${stepLabel}": ${WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode]}`,
       stepId: step.id,
     });
   }
 
-  if (isGenerateStep && hasWorkflowAiAgentConversationConfig(input ?? {})) {
-    issues.push({
-      severity: 'error',
-      code: 'AI_AGENT_CONFLICTING_CONFIG',
-      message: `Agent step "${stepLabel}" has no agent, so it cannot ask humans or keep a conversation. Use an agent for this step, or remove its human input instructions and conversation setting.`,
-      stepId: step.id,
-    });
-  }
-
-  if (isGenerateStep && !isNonEmptyString(input?.prompt?.trim())) {
+  if (stepKind === 'generate' && !isNonEmptyString(input?.prompt?.trim())) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_MISSING_PROMPT',

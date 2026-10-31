@@ -164,16 +164,6 @@ export class ApplicationManifestExportService {
       await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
         { workspaceId },
       );
-    const { workflows, coverage: workflowsCoverage } =
-      reconstructWorkflowsManifest({
-        applicationAllFlatEntityMaps,
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers,
-        resolvableFieldUniversalIdentifiers,
-        isWorkspaceCustomApplication:
-          flatApplication.id === workspaceCustomFlatApplication.id,
-        connectedAccounts,
-      });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
@@ -183,6 +173,19 @@ export class ApplicationManifestExportService {
           metadataName: 'role',
         }),
     });
+    const { workflows, coverage: workflowsCoverage } =
+      reconstructWorkflowsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+        exportedAgentUniversalIdentifiers: new Set(
+          agents.map(({ universalIdentifier }) => universalIdentifier),
+        ),
+        isWorkspaceCustomApplication:
+          flatApplication.id === workspaceCustomFlatApplication.id,
+        connectedAccounts,
+      });
     const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
       applicationAllFlatEntityMaps,
     });

@@ -77,9 +77,9 @@ export const parseFrontComponentSharedDependencies = (
   return isNonEmptyArray(errors)
     ? { errors }
     : {
-        dependencies: normalizeFrontComponentSharedDependencies([
-          ...seenDependencies,
-        ]),
+        dependencies: normalizeFrontComponentSharedDependencies({
+          dependencies: [...seenDependencies],
+        }),
         errors: [],
       };
 };

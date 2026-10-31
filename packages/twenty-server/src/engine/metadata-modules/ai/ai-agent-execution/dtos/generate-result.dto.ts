@@ -4,7 +4,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { type GenerateResult } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { GenerateUsageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate-usage.dto';
+import { AiRunUsageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/ai-run-usage.dto';
 
 @ObjectType('GenerateResult')
 export class GenerateResultDTO implements GenerateResult {
@@ -20,9 +20,9 @@ export class GenerateResultDTO implements GenerateResult {
   @Field(() => String, { nullable: true })
   error: string | null;
 
-  @Field(() => UUIDScalarType, { nullable: true })
-  turnId: string | null;
+  @Field(() => UUIDScalarType)
+  runId: string;
 
-  @Field(() => GenerateUsageDTO, { nullable: true })
-  usage: GenerateUsageDTO | null;
+  @Field(() => AiRunUsageDTO)
+  usage: AiRunUsageDTO;
 }

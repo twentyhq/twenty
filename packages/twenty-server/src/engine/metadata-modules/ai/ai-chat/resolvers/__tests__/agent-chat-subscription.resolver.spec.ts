@@ -1,5 +1,6 @@
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   AiException,
   AiExceptionCode,
@@ -10,6 +11,15 @@ import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
 const VIEWER_ID = 'viewer';
+const WORKSPACE = {
+  id: WORKSPACE_ID,
+  workspaceCustomApplicationId: 'workspace-custom-application-id',
+};
+const APPLICATION = {
+  id: 'application',
+  universalIdentifier: 'application-universal-identifier',
+  sourceType: ApplicationRegistrationSourceType.NPM,
+};
 
 type AgentChatEventPayload = {
   onAgentChatEvent: { threadId: string; event: AgentChatSubscriptionEvent };
@@ -55,7 +65,9 @@ const buildResolver = () => {
   };
   const conversationAccessService = {
     resolveReadableThreadIdOrThrow: jest.fn().mockResolvedValue(THREAD_ID),
-    isLatestTurnOpenedByOtherMember: jest.fn().mockResolvedValue(false),
+    createLiveEventFilter: jest
+      .fn()
+      .mockResolvedValue(async (event: AgentChatSubscriptionEvent) => event),
   };
   const subscriptionService = {
     subscribeToAgentChat: jest.fn().mockResolvedValue(iterator),
@@ -89,7 +101,7 @@ describe('Shared conversation subscriptions', () => {
     await expect(
       resolver.onAgentChatEvent(
         { threadId: THREAD_ID },
-        { id: WORKSPACE_ID } as never,
+        WORKSPACE,
         undefined,
         VIEWER_ID,
       ),
@@ -101,7 +113,7 @@ describe('Shared conversation subscriptions', () => {
     const context = buildResolver();
     const subscription = await context.resolver.onAgentChatEvent(
       { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
+      WORKSPACE,
       undefined,
       VIEWER_ID,
     );
@@ -112,7 +124,7 @@ describe('Shared conversation subscriptions', () => {
     expect(
       context.conversationAccessService.resolveReadableThreadIdOrThrow,
     ).toHaveBeenLastCalledWith({
-      workspace: { id: WORKSPACE_ID },
+      workspace: WORKSPACE,
       callerApplication: undefined,
       workspaceMemberId: VIEWER_ID,
       conversation: { threadId: THREAD_ID },
@@ -130,8 +142,8 @@ describe('Shared conversation subscriptions', () => {
     };
     const subscription = await context.resolver.onAgentChatEvent(
       conversation,
-      { id: WORKSPACE_ID } as never,
-      { id: 'application' } as never,
+      WORKSPACE,
+      APPLICATION,
       undefined,
     );
 
@@ -150,50 +162,37 @@ describe('Shared conversation subscriptions', () => {
     await subscription.return?.();
   });
 
-  it('shows only the text of a reply streamed for another member', async () => {
+  it('passes every event through the visibility filter for the viewer', async () => {
     const context = buildResolver();
-    const textChunk = toChunkPayload({
-      type: 'text-delta',
-      id: 'text-1',
-      delta: 'Acme renews in May',
-    });
+    const maskedChunk = { type: 'message-metadata', messageMetadata: {} };
 
-    context.conversationAccessService.isLatestTurnOpenedByOtherMember.mockResolvedValue(
-      true,
+    context.conversationAccessService.createLiveEventFilter.mockResolvedValue(
+      async (event: AgentChatSubscriptionEvent) =>
+        event.type === 'stream-chunk'
+          ? { ...event, chunk: maskedChunk }
+          : event,
     );
 
     const subscription = await context.resolver.onAgentChatEvent(
       { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
+      WORKSPACE,
       undefined,
       VIEWER_ID,
     );
 
     await subscription.next();
 
-    const toolChunk = subscription.next();
+    const pending = subscription.next();
 
     context.deliver(
-      toChunkPayload({
-        type: 'tool-output-available',
-        toolCallId: 'call-1',
-        output: { email: 'ceo@acme.com' },
-      }),
+      toChunkPayload({ type: 'reasoning-delta', delta: 'Notes' }),
     );
-    await expect(toolChunk).resolves.toEqual({
+    await expect(pending).resolves.toEqual({
       done: false,
-      value: toChunkPayload({ type: 'message-metadata', messageMetadata: {} }),
-    });
-
-    const shownChunk = subscription.next();
-
-    context.deliver(textChunk);
-    await expect(shownChunk).resolves.toEqual({
-      done: false,
-      value: textChunk,
+      value: toChunkPayload(maskedChunk),
     });
     expect(
-      context.conversationAccessService.isLatestTurnOpenedByOtherMember,
+      context.conversationAccessService.createLiveEventFilter,
     ).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       threadId: THREAD_ID,
@@ -202,54 +201,11 @@ describe('Shared conversation subscriptions', () => {
     await subscription.return?.();
   });
 
-  it('checks again who opened the turn when a new reply starts', async () => {
-    const context = buildResolver();
-    const reasoningChunk = toChunkPayload({
-      type: 'reasoning-delta',
-      id: 'reasoning-1',
-      delta: 'Their notes',
-    });
-    const subscription = await context.resolver.onAgentChatEvent(
-      { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
-      undefined,
-      VIEWER_ID,
-    );
-
-    await subscription.next();
-
-    const ownReasoning = subscription.next();
-
-    context.deliver(reasoningChunk);
-    await expect(ownReasoning).resolves.toEqual({
-      done: false,
-      value: reasoningChunk,
-    });
-
-    context.conversationAccessService.isLatestTurnOpenedByOtherMember.mockResolvedValue(
-      true,
-    );
-
-    const start = subscription.next();
-
-    context.deliver(toChunkPayload({ type: 'start', messageId: 'reply-id' }));
-    await start;
-
-    const othersReasoning = subscription.next();
-
-    context.deliver(reasoningChunk);
-    await expect(othersReasoning).resolves.toEqual({
-      done: false,
-      value: toChunkPayload({ type: 'message-metadata', messageMetadata: {} }),
-    });
-    await subscription.return?.();
-  });
-
   it('rejects an already pending event when its authorization expires', async () => {
     const context = buildResolver();
     const subscription = await context.resolver.onAgentChatEvent(
       { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
+      WORKSPACE,
       undefined,
       VIEWER_ID,
     );
@@ -271,7 +227,7 @@ describe('Shared conversation subscriptions', () => {
     const context = buildResolver();
     const subscription = await context.resolver.onAgentChatEvent(
       { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
+      WORKSPACE,
       undefined,
       VIEWER_ID,
     );
@@ -291,7 +247,7 @@ describe('Shared conversation subscriptions', () => {
     const context = buildResolver();
     const subscription = await context.resolver.onAgentChatEvent(
       { threadId: THREAD_ID },
-      { id: WORKSPACE_ID } as never,
+      WORKSPACE,
       undefined,
       VIEWER_ID,
     );

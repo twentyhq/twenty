@@ -112,6 +112,16 @@ describe('streamConversation', () => {
     );
   });
 
+  it('fails on a result that is not a chat event', async () => {
+    fetchSpy.mockResolvedValue(
+      mockServerSentEvents([`event: next\ndata: {"data":{"other":1}}\n\n`]),
+    );
+
+    await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
+      'streamConversation() failed: unexpected result',
+    );
+  });
+
   it('fails when the stream closes without completing, so the caller can resume', async () => {
     fetchSpy.mockResolvedValue(
       mockServerSentEvents([toNextEvent(toEventData(KEEPALIVE))]),

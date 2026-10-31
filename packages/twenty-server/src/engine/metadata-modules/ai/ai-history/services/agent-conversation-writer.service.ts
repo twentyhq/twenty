@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { randomUUID } from 'node:crypto';
 
+import { msg } from '@lingui/core/macro';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -32,7 +33,7 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // upgrade fence: drop once 2-55's make-agent-turn-thread-optional has reached every workspace
+  // TODO(@FelixMalfait): drop this upgrade fence once 2-55's make-agent-turn-thread-optional has reached every workspace
   async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -106,6 +107,19 @@ export class AgentConversationWriterService {
     id?: string;
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
+    if (
+      !isDefined(threadId) &&
+      !(await this.canInsertTurnWithoutThread(workspaceId))
+    ) {
+      throw new AiException(
+        'AI runs without a conversation are available once this workspace finishes upgrading',
+        AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+        {
+          userFriendlyMessage: msg`AI runs are not available yet. Try again in a few minutes.`,
+        },
+      );
+    }
+
     const now = new Date().toISOString();
     const values = {
       threadId,

@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/application';
 
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
+import { toRunAgentMessages } from '@/sdk/logic-function/utils/to-run-agent-messages.util';
 
 const GENERATE_MUTATION = `
   mutation Generate($input: GenerateInput!) {
@@ -12,7 +13,7 @@ const GENERATE_MUTATION = `
       text
       object
       error
-      turnId
+      runId
       usage {
         inputTokens
         outputTokens
@@ -27,15 +28,7 @@ export const ai = {
     input,
     ...rest
   }: GenerateInput): Promise<GenerateResult> => {
-    const variables = {
-      input: {
-        ...rest,
-        input:
-          typeof input === 'string'
-            ? [{ role: 'user', content: input }]
-            : input,
-      },
-    };
+    const variables = { input: { ...rest, input: toRunAgentMessages(input) } };
 
     const { generate: result } = await postGraphqlRequest<
       typeof variables,

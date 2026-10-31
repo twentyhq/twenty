@@ -131,7 +131,7 @@ const { object } = await ai.generate({
 - Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach.
 - The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. The app's default role needs the AI permission flag.
 - `modelId` is optional; the workspace default model is used when unset.
-- It returns `{ success, text, object, error, turnId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `turnId` for the recorded turn and `usage` as `{ inputTokens, outputTokens }` (`usage` itself is `null` when the run failed before any usage was recorded). A failed run comes back as `success: false` rather than a throw (invalid input still throws), so check `success`.
+- It returns `{ success, text, object, error, runId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `runId` for the recorded run and `usage` as `{ inputTokens, outputTokens }`, which counts the steps that finished before a failure too. A run that fails comes back as `success: false` rather than a throw (a call that cannot start a run, such as invalid input, still throws), so check `success`.
 
 ## Inbox Messages
 

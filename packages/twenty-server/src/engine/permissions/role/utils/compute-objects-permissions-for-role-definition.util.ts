@@ -1,3 +1,4 @@
+import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -8,6 +9,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { mergeRestrictedFieldPermissions } from 'src/engine/metadata-modules/role/utils/merge-restricted-field-permissions.util';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
@@ -16,38 +21,156 @@ const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ];
 
-export type RoleObjectPermissionOverride = {
-  objectMetadataId: string;
-  canReadObjectRecords?: boolean | null;
-  canUpdateObjectRecords?: boolean | null;
-  canSoftDeleteObjectRecords?: boolean | null;
-  canDestroyObjectRecords?: boolean | null;
-};
-
-export type RoleFieldPermissionOverride = {
-  objectMetadataId: string;
-  fieldMetadataId: string;
-  canReadFieldValue?: boolean | null;
-  canUpdateFieldValue?: boolean | null;
-};
-
-export type RoleDefinitionForObjectsPermissions = {
-  canReadAllObjectRecords: boolean;
-  canUpdateAllObjectRecords: boolean;
-  canSoftDeleteAllObjectRecords: boolean;
-  canDestroyAllObjectRecords: boolean;
+type RoleDefinitionForObjectsPermissions = Pick<
+  FlatRole,
+  | 'canReadAllObjectRecords'
+  | 'canUpdateAllObjectRecords'
+  | 'canSoftDeleteAllObjectRecords'
+  | 'canDestroyAllObjectRecords'
+> & {
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
-  objectPermissions: RoleObjectPermissionOverride[];
-  fieldPermissions: RoleFieldPermissionOverride[];
+  objectPermissions: Pick<
+    ObjectPermissionEntity,
+    | 'objectMetadataId'
+    | 'canReadObjectRecords'
+    | 'canUpdateObjectRecords'
+    | 'canSoftDeleteObjectRecords'
+    | 'canDestroyObjectRecords'
+  >[];
+  fieldPermissions: Pick<
+    FieldPermissionEntity,
+    | 'objectMetadataId'
+    | 'fieldMetadataId'
+    | 'canReadFieldValue'
+    | 'canUpdateFieldValue'
+  >[];
   rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
   rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
 };
 
-export type ObjectMetadataForObjectsPermissions = {
-  id: string;
-  isSystem: boolean;
-  universalIdentifier: string;
-  labelIdentifierFieldMetadataId: string | null;
+type ObjectRecordsAccess = {
+  canRead: boolean;
+  canUpdate: boolean;
+  canSoftDelete: boolean;
+  canDestroy: boolean;
+};
+
+const grantAllObjectRecordsAccess = (
+  isGranted: boolean,
+): ObjectRecordsAccess => ({
+  canRead: isGranted,
+  canUpdate: isGranted,
+  canSoftDelete: isGranted,
+  canDestroy: isGranted,
+});
+
+const resolveObjectRecordsAccess = ({
+  objectMetadata: { id: objectMetadataId, isSystem, universalIdentifier },
+  roleDefinition,
+}: {
+  objectMetadata: Pick<
+    ObjectMetadataEntity,
+    'id' | 'isSystem' | 'universalIdentifier'
+  >;
+  roleDefinition: RoleDefinitionForObjectsPermissions;
+}): ObjectRecordsAccess => {
+  const { isPermissionFlagGranted, objectPermissions } = roleDefinition;
+
+  if (
+    WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(universalIdentifier)
+  ) {
+    return grantAllObjectRecordsAccess(
+      isPermissionFlagGranted(PermissionFlagType.WORKFLOWS),
+    );
+  }
+
+  if (
+    universalIdentifier === STANDARD_OBJECTS.workspaceMember.universalIdentifier
+  ) {
+    return {
+      ...grantAllObjectRecordsAccess(
+        isPermissionFlagGranted(PermissionFlagType.WORKSPACE_MEMBERS),
+      ),
+      canRead: true,
+    };
+  }
+
+  const objectPermissionOverride = objectPermissions.find(
+    (objectPermission) =>
+      objectPermission.objectMetadataId === objectMetadataId,
+  );
+
+  return {
+    canRead: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canReadObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
+      isSystemObject: isSystem,
+    }),
+    canUpdate: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canUpdateObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canUpdateAllObjectRecords,
+      isSystemObject: isSystem,
+    }),
+    canSoftDelete: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canSoftDeleteAllObjectRecords,
+      isSystemObject: isSystem,
+    }),
+    canDestroy: resolveObjectPermissionValue({
+      objectValue: objectPermissionOverride?.canDestroyObjectRecords,
+      hasAllObjectsPermission: roleDefinition.canDestroyAllObjectRecords,
+      isSystemObject: isSystem,
+    }),
+  };
+};
+
+const buildRestrictedFields = ({
+  objectMetadata,
+  fieldPermissions,
+  resolveMorphRelationPermissionFieldIds,
+}: {
+  objectMetadata: Pick<
+    ObjectMetadataEntity,
+    'id' | 'labelIdentifierFieldMetadataId'
+  >;
+  fieldPermissions: RoleDefinitionForObjectsPermissions['fieldPermissions'];
+  resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
+}): RestrictedFieldsPermissions => {
+  const restrictedFields: RestrictedFieldsPermissions = {};
+
+  for (const fieldPermission of fieldPermissions) {
+    if (fieldPermission.objectMetadataId !== objectMetadata.id) {
+      continue;
+    }
+
+    if (
+      !isDefined(fieldPermission.canReadFieldValue) &&
+      !isDefined(fieldPermission.canUpdateFieldValue)
+    ) {
+      continue;
+    }
+
+    const isFieldLabelIdentifier =
+      fieldPermission.fieldMetadataId ===
+      objectMetadata.labelIdentifierFieldMetadataId;
+    const fieldRestriction = {
+      canRead: isFieldLabelIdentifier
+        ? true
+        : fieldPermission.canReadFieldValue,
+      canUpdate: fieldPermission.canUpdateFieldValue,
+    };
+
+    for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
+      fieldPermission.fieldMetadataId,
+    )) {
+      restrictedFields[restrictedFieldId] = mergeRestrictedFieldPermissions({
+        existing: restrictedFields[restrictedFieldId],
+        incoming: fieldRestriction,
+      });
+    }
+  }
+
+  return restrictedFields;
 };
 
 export const computeObjectsPermissionsForRoleDefinition = ({
@@ -56,12 +179,14 @@ export const computeObjectsPermissionsForRoleDefinition = ({
   resolveMorphRelationPermissionFieldIds,
 }: {
   roleDefinition: RoleDefinitionForObjectsPermissions;
-  objectMetadataCollection: ObjectMetadataForObjectsPermissions[];
+  objectMetadataCollection: Pick<
+    ObjectMetadataEntity,
+    'id' | 'isSystem' | 'universalIdentifier' | 'labelIdentifierFieldMetadataId'
+  >[];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
 }): ObjectsPermissions => {
   const {
     isPermissionFlagGranted,
-    objectPermissions,
     fieldPermissions,
     rowLevelPermissionPredicates,
     rowLevelPermissionPredicateGroups,
@@ -69,128 +194,34 @@ export const computeObjectsPermissionsForRoleDefinition = ({
   const objectsPermissions: ObjectsPermissions = {};
 
   for (const objectMetadata of objectMetadataCollection) {
-    const {
-      id: objectMetadataId,
-      isSystem,
-      universalIdentifier,
-    } = objectMetadata;
+    const { id: objectMetadataId, universalIdentifier } = objectMetadata;
 
-    let canRead = roleDefinition.canReadAllObjectRecords;
-    let canUpdate = roleDefinition.canUpdateAllObjectRecords;
-    let canSoftDelete = roleDefinition.canSoftDeleteAllObjectRecords;
-    let canDestroy = roleDefinition.canDestroyAllObjectRecords;
-    const restrictedFields: RestrictedFieldsPermissions = {};
-
-    if (
+    const isWorkflowObject =
       WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
         universalIdentifier,
-      )
-    ) {
-      const hasWorkflowsPermissions = isPermissionFlagGranted(
-        PermissionFlagType.WORKFLOWS,
       );
-
-      canRead = hasWorkflowsPermissions;
-      canUpdate = hasWorkflowsPermissions;
-      canSoftDelete = hasWorkflowsPermissions;
-      canDestroy = hasWorkflowsPermissions;
-    } else {
-      if (
-        universalIdentifier ===
-        STANDARD_OBJECTS.workspaceMember.universalIdentifier
-      ) {
-        const hasWorkspaceMembersPermissions = isPermissionFlagGranted(
-          PermissionFlagType.WORKSPACE_MEMBERS,
-        );
-
-        canRead = true;
-        canUpdate = hasWorkspaceMembersPermissions;
-        canSoftDelete = hasWorkspaceMembersPermissions;
-        canDestroy = hasWorkspaceMembersPermissions;
-      } else {
-        const objectPermissionOverride = objectPermissions.find(
-          (objectPermission) =>
-            objectPermission.objectMetadataId === objectMetadataId,
-        );
-
-        const getPermissionValue = ({
-          overrideValue,
-          defaultValue,
-        }: {
-          overrideValue: boolean | null | undefined;
-          defaultValue: boolean;
-        }) => overrideValue ?? (isSystem ? true : defaultValue);
-
-        canRead = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canReadObjectRecords,
-          defaultValue: canRead,
+    const objectRecordsAccess = resolveObjectRecordsAccess({
+      objectMetadata,
+      roleDefinition,
+    });
+    const restrictedFields = isWorkflowObject
+      ? {}
+      : buildRestrictedFields({
+          objectMetadata,
+          fieldPermissions,
+          resolveMorphRelationPermissionFieldIds,
         });
-        canUpdate = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canUpdateObjectRecords,
-          defaultValue: canUpdate,
-        });
-        canSoftDelete = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
-          defaultValue: canSoftDelete,
-        });
-        canDestroy = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canDestroyObjectRecords,
-          defaultValue: canDestroy,
-        });
-      }
-
-      for (const fieldPermission of fieldPermissions) {
-        if (fieldPermission.objectMetadataId !== objectMetadataId) {
-          continue;
-        }
-
-        if (
-          !isDefined(fieldPermission.canReadFieldValue) &&
-          !isDefined(fieldPermission.canUpdateFieldValue)
-        ) {
-          continue;
-        }
-
-        const isFieldLabelIdentifier =
-          fieldPermission.fieldMetadataId ===
-          objectMetadata.labelIdentifierFieldMetadataId;
-        const fieldRestriction = {
-          canRead: isFieldLabelIdentifier
-            ? true
-            : fieldPermission.canReadFieldValue,
-          canUpdate: fieldPermission.canUpdateFieldValue,
-        };
-
-        for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
-          fieldPermission.fieldMetadataId,
-        )) {
-          restrictedFields[restrictedFieldId] = mergeRestrictedFieldPermissions(
-            {
-              existing: restrictedFields[restrictedFieldId],
-              incoming: fieldRestriction,
-            },
-          );
-        }
-      }
-    }
-
-    if (
-      universalIdentifier ===
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier
-    ) {
-      const hasAiPermission = isPermissionFlagGranted(PermissionFlagType.AI);
-
-      canRead = canRead && hasAiPermission;
-      canUpdate = canUpdate && hasAiPermission;
-      canSoftDelete = canSoftDelete && hasAiPermission;
-      canDestroy = canDestroy && hasAiPermission;
-    }
+    const hasAiAccess =
+      universalIdentifier !==
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
+      isPermissionFlagGranted(PermissionFlagType.AI);
 
     objectsPermissions[objectMetadataId] = {
-      canReadObjectRecords: canRead,
-      canUpdateObjectRecords: canUpdate,
-      canSoftDeleteObjectRecords: canSoftDelete,
-      canDestroyObjectRecords: canDestroy,
+      canReadObjectRecords: objectRecordsAccess.canRead && hasAiAccess,
+      canUpdateObjectRecords: objectRecordsAccess.canUpdate && hasAiAccess,
+      canSoftDeleteObjectRecords:
+        objectRecordsAccess.canSoftDelete && hasAiAccess,
+      canDestroyObjectRecords: objectRecordsAccess.canDestroy && hasAiAccess,
       restrictedFields,
       rowLevelPermissionPredicates: rowLevelPermissionPredicates.filter(
         (rowLevelPermissionPredicate) =>

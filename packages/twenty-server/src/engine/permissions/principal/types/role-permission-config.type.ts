@@ -10,4 +10,7 @@ export type RoleIdsBySource = {
 
 export type RolePermissionConfig =
   | { shouldBypassPermissionChecks: true }
-  | { intersectionOf: RoleIdsBySource; scope?: PermissionScope };
+  | {
+      intersectionOf: RoleIdsBySource;
+      scope?: PermissionScope;
+    };

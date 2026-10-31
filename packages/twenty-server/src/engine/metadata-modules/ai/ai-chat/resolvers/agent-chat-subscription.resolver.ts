@@ -1,7 +1,6 @@
 import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
 import { AgentChatConversationAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-conversation-access.service';
-import { maskStreamChunkOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/mask-stream-chunk-of-turn-acted-by-others.util';
 import { filterMapAsyncIterator } from 'src/engine/subscriptions/utils/filter-map-async-iterator';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -14,7 +13,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -63,9 +62,10 @@ export class AgentChatSubscriptionResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async onAgentChatEvent(
     @Args() conversation: AgentChatConversationInput,
-    @AuthWorkspace() workspace: FlatWorkspace,
+    @AuthWorkspace()
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>,
     @AuthApplication({ allowUndefined: true })
-    callerApplication: FlatApplication | undefined,
+    callerApplication: ApplicationCallerOperation['callingApplication'],
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ) {
     // resolving the conversation is its access check, and names the same thread each time
@@ -86,44 +86,23 @@ export class AgentChatSubscriptionResolver {
 
     await authorize();
 
-    const isLatestTurnOpenedByOtherMember = () =>
-      this.conversationAccessService.isLatestTurnOpenedByOtherMember({
+    const filterVisibleEvent =
+      await this.conversationAccessService.createLiveEventFilter({
         workspaceId: workspace.id,
         threadId,
         workspaceMemberId,
       });
-    let isStreamingTurnHidden = await isLatestTurnOpenedByOtherMember();
 
     const iterator = filterMapAsyncIterator(
       await this.subscriptionService.subscribeToAgentChat<AgentChatEventPayload>(
         { workspaceId: workspace.id, threadId },
       ),
-      async (payload) => {
-        const { event } = payload.onAgentChatEvent;
-
-        if (event.type !== 'stream-chunk') {
-          return payload;
-        }
-
-        // every reply opens with a start chunk, so the turn it streams is known by then
-        if (event.chunk.type === 'start') {
-          isStreamingTurnHidden = await isLatestTurnOpenedByOtherMember();
-        }
-
-        if (!isStreamingTurnHidden) {
-          return payload;
-        }
-
-        return {
-          onAgentChatEvent: {
-            threadId,
-            event: {
-              ...event,
-              chunk: maskStreamChunkOfTurnActedByOthers(event.chunk),
-            },
-          },
-        };
-      },
+      async ({ onAgentChatEvent }) => ({
+        onAgentChatEvent: {
+          ...onAgentChatEvent,
+          event: await filterVisibleEvent(onAgentChatEvent.event),
+        },
+      }),
     );
 
     const keepalivePayload: AgentChatEventPayload = {

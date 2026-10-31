@@ -25,7 +25,6 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { maskStreamChunkOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/mask-stream-chunk-of-turn-acted-by-others.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -134,14 +133,8 @@ export class AgentChatHistoryResolver {
       await this.streamRecoveryService.reapDeadStream({ thread, workspaceId });
     }
 
-    const [{ chunks, maxSeq }, isStreamingTurnHidden] = await Promise.all([
-      this.eventPublisherService.getAccumulatedChunks(threadId),
-      this.conversationAccessService.isLatestTurnOpenedByOtherMember({
-        workspaceId,
-        threadId,
-        workspaceMemberId,
-      }),
-    ]);
+    const { chunks, maxSeq } =
+      await this.eventPublisherService.getAccumulatedChunks(threadId);
 
     const turnError = await this.turnRecorderService.findLatestTurnError({
       workspaceId,
@@ -149,9 +142,12 @@ export class AgentChatHistoryResolver {
     });
 
     return {
-      chunks: isStreamingTurnHidden
-        ? chunks.map(maskStreamChunkOfTurnActedByOthers)
-        : chunks,
+      chunks: await this.conversationAccessService.getVisibleCatchupChunks({
+        workspaceId,
+        threadId,
+        workspaceMemberId,
+        chunks,
+      }),
       maxSeq,
       error: turnError
         ? { code: turnError.code, message: turnError.message }

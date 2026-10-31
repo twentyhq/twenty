@@ -1,5 +1,5 @@
 import { type z } from 'zod';
 
-import { type modelConfigurationSchema } from '@/workflow/schemas/model-configuration-schema';
+import { type modelConfigurationSchema } from '@/ai/schemas/internal/model-configuration-schema';
 
 export type ModelConfiguration = z.infer<typeof modelConfigurationSchema>;

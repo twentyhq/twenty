@@ -51,7 +51,7 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
   const result: unknown = JSON.parse(data);
 
   if (!isRecord(result)) {
-    return null;
+    throw new Error(`streamConversation() failed: unexpected result ${data}`);
   }
 
   // isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
@@ -61,22 +61,20 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
       messages: result.errors.map((error) =>
         isRecord(error) && isString(error.message)
           ? error.message
-          : 'Unknown error',
+          : JSON.stringify(error),
       ),
     };
   }
 
-  if (!isRecord(result.data) || !isRecord(result.data.onAgentChatEvent)) {
-    return null;
+  if (
+    !isRecord(result.data) ||
+    !isRecord(result.data.onAgentChatEvent) ||
+    !isAgentChatSubscriptionEvent(result.data.onAgentChatEvent.event)
+  ) {
+    throw new Error(`streamConversation() failed: unexpected result ${data}`);
   }
 
-  const { event } = result.data.onAgentChatEvent;
-
-  if (!isAgentChatSubscriptionEvent(event)) {
-    return null;
-  }
-
-  return { type: 'event', event };
+  return { type: 'event', event: result.data.onAgentChatEvent.event };
 };
 
 export async function* streamConversation({

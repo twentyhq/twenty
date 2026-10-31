@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import gql from 'graphql-tag';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -9,6 +8,8 @@ import {
   type ApplicationWithResources,
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
+import { agentConversationHistoryQueryFactory } from 'test/integration/ai/utils/agent-conversation-history-query-factory.util';
+import { runAgentInConversationQueryFactory } from 'test/integration/ai/utils/run-agent-in-conversation-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import {
@@ -30,12 +31,6 @@ const REPLYING_RESULT = buildAgentExecutionResult({
   ] as AgentExecutionResult['steps'],
 });
 
-type ConversationVariables = {
-  threadId?: string;
-  agentUniversalIdentifier?: string;
-  threadKey?: string;
-};
-
 const findAgentUniversalIdentifier = async (agentId: string) => {
   const [agent] = await globalThis.testDataSource.query(
     `SELECT "universalIdentifier" FROM core."agent" WHERE id = $1`,
@@ -44,39 +39,6 @@ const findAgentUniversalIdentifier = async (agentId: string) => {
 
   return agent.universalIdentifier;
 };
-
-const conversationHistoryQuery = (variables: ConversationVariables) => ({
-  query: gql`
-    query ConversationHistory(
-      $threadId: UUID
-      $agentUniversalIdentifier: UUID
-      $threadKey: String
-    ) {
-      chatMessages(
-        threadId: $threadId
-        agentUniversalIdentifier: $agentUniversalIdentifier
-        threadKey: $threadKey
-      ) {
-        threadId
-        turnId
-        role
-        parts {
-          type
-          textContent
-        }
-      }
-      chatStreamCatchupChunks(
-        threadId: $threadId
-        agentUniversalIdentifier: $agentUniversalIdentifier
-        threadKey: $threadKey
-      ) {
-        chunks
-        maxSeq
-      }
-    }
-  `,
-  variables,
-});
 
 describe('Agent conversations read by their application (integration)', () => {
   let application: ApplicationWithResources;
@@ -145,24 +107,11 @@ describe('Agent conversations read by their application (integration)', () => {
     mockAgentRunTurns(REPLYING_RESULT);
 
     const runResponse = await makeMetadataApiRequest(
-      {
-        query: gql`
-          mutation RunAgent($input: RunAgentInput!) {
-            runAgent(input: $input) {
-              threadId
-              runId
-              status
-            }
-          }
-        `,
-        variables: {
-          input: {
-            agentUniversalIdentifier,
-            input: [{ role: 'user', content: 'When does Acme renew?' }],
-            thread: { key: threadKey },
-          },
-        },
-      },
+      runAgentInConversationQueryFactory({
+        agentUniversalIdentifier,
+        content: 'When does Acme renew?',
+        threadKey,
+      }),
       applicationToken,
     );
 
@@ -174,7 +123,10 @@ describe('Agent conversations read by their application (integration)', () => {
     threadIds.push(threadId);
 
     const historyResponse = await makeMetadataApiRequest(
-      conversationHistoryQuery({ agentUniversalIdentifier, threadKey }),
+      agentConversationHistoryQueryFactory({
+        agentUniversalIdentifier,
+        threadKey,
+      }),
       applicationToken,
     );
 
@@ -204,7 +156,7 @@ describe('Agent conversations read by their application (integration)', () => {
 
   it('reads a conversation before its first run as empty', async () => {
     const response = await makeMetadataApiRequest(
-      conversationHistoryQuery({
+      agentConversationHistoryQueryFactory({
         agentUniversalIdentifier,
         threadKey: randomUUID(),
       }),
@@ -217,7 +169,7 @@ describe('Agent conversations read by their application (integration)', () => {
 
   it('refuses the conversations of an agent of another application', async () => {
     const response = await makeMetadataApiRequest(
-      conversationHistoryQuery({
+      agentConversationHistoryQueryFactory({
         agentUniversalIdentifier: otherApplicationAgentUniversalIdentifier,
         threadKey: randomUUID(),
       }),
@@ -229,7 +181,7 @@ describe('Agent conversations read by their application (integration)', () => {
 
   it('refuses a thread id together with a key', async () => {
     const response = await makeMetadataApiRequest(
-      conversationHistoryQuery({
+      agentConversationHistoryQueryFactory({
         threadId: randomUUID(),
         agentUniversalIdentifier,
         threadKey: randomUUID(),
@@ -242,7 +194,7 @@ describe('Agent conversations read by their application (integration)', () => {
 
   it('refuses a thread id from an application without a member', async () => {
     const response = await makeMetadataApiRequest(
-      conversationHistoryQuery({ threadId: randomUUID() }),
+      agentConversationHistoryQueryFactory({ threadId: randomUUID() }),
       applicationToken,
     );
 
@@ -251,7 +203,7 @@ describe('Agent conversations read by their application (integration)', () => {
 
   it('refuses a conversation named by key from a member session', async () => {
     const response = await makeMetadataApiRequest(
-      conversationHistoryQuery({
+      agentConversationHistoryQueryFactory({
         agentUniversalIdentifier,
         threadKey: randomUUID(),
       }),

@@ -280,6 +280,11 @@ enum AiModelTier {
   smart
 }
 
+type AiRunUsage {
+  inputTokens: Int!
+  outputTokens: Int!
+}
+
 type AiSystemPromptPreview {
   estimatedTokenCount: Int!
   sections: [AiSystemPromptSection!]!
@@ -2312,11 +2317,13 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_MCP_SERVERS_ENABLED
+  IS_PRIVATE_RECORD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
@@ -2578,15 +2585,10 @@ input GenerateInput {
 type GenerateResult {
   error: String
   object: JSON
+  runId: UUID!
   success: Boolean!
   text: String
-  turnId: UUID
-  usage: GenerateUsage
-}
-
-type GenerateUsage {
-  inputTokens: Int!
-  outputTokens: Int!
+  usage: AiRunUsage!
 }
 
 input GetApiKeyInput {

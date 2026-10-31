@@ -36,7 +36,7 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
   flatApplicationMaps,
 }: {
   intersectionOf: RoleIdsBySource;
-  scope?: PermissionScope;
+  scope?: Pick<PermissionScope, 'objectsPermissions'>;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
