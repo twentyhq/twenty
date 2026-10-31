@@ -1060,10 +1060,13 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    it('should let the user authorize again after revoking', async () => {
+    it('should let the user authorize again after revoking, without reviving the revoked refresh token', async () => {
       const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
 
       await revokeRefreshToken(revokedRefreshToken);
+
+      // Token issue times have second precision
+      await new Promise((resolve) => setTimeout(resolve, 1100));
 
       const { refreshToken } = await exchangeForTokens();
 
@@ -1075,6 +1078,15 @@ describe('OAuth (integration)', () => {
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);
+
+      const revokedRefresh = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: revokedRefreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(revokedRefresh.body.error).toBe('invalid_grant');
     });
 
     // Deleting the row recreates the state of tokens minted before this table existed.

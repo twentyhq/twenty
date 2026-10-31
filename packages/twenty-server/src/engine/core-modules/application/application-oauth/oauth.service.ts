@@ -13,6 +13,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
+import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
@@ -404,6 +405,7 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
+          refreshTokenIssuedAt: payload.iat,
         });
 
         if (authorizationError) {
@@ -560,9 +562,10 @@ export class OAuthService {
 
       if (
         isDefined(decoded.userId) &&
-        (await this.isAuthorizationRevoked({
+        !(await this.isRefreshTokenAuthorized({
           userId: decoded.userId,
           applicationId: decoded.applicationId,
+          refreshTokenIssuedAt: decoded.iat,
         }))
       ) {
         return { active: false };
@@ -652,10 +655,12 @@ export class OAuthService {
     userId,
     workspaceId,
     applicationId,
+    refreshTokenIssuedAt,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
+    refreshTokenIssuedAt: number | undefined;
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -663,10 +668,18 @@ export class OAuthService {
         applicationId,
       });
 
-    if (isDefined(authorization?.revokedAt)) {
+    if (
+      isDefined(authorization) &&
+      !isRefreshTokenCoveredByAuthorization({
+        authorization,
+        refreshTokenIssuedAt,
+      })
+    ) {
       return this.errorResponse(
         'invalid_grant',
-        'The user revoked this application access',
+        isDefined(authorization.revokedAt)
+          ? 'The user revoked this application access'
+          : 'Refresh token was issued before the latest authorization',
       );
     }
 
@@ -735,12 +748,14 @@ export class OAuthService {
     );
   }
 
-  private async isAuthorizationRevoked({
+  private async isRefreshTokenAuthorized({
     userId,
     applicationId,
+    refreshTokenIssuedAt,
   }: {
     userId: string;
     applicationId: string;
+    refreshTokenIssuedAt: number | undefined;
   }): Promise<boolean> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -748,7 +763,13 @@ export class OAuthService {
         applicationId,
       });
 
-    return isDefined(authorization?.revokedAt);
+    return (
+      !isDefined(authorization) ||
+      isRefreshTokenCoveredByAuthorization({
+        authorization,
+        refreshTokenIssuedAt,
+      })
+    );
   }
 
   // RFC 6749 §3.3: an empty scope means no scopes, not one blank one
