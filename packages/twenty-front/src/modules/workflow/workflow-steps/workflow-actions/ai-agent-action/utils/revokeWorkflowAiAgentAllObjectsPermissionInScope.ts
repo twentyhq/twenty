@@ -2,7 +2,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentAllObjectsPermissionKeys';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 
 export const revokeWorkflowAiAgentAllObjectsPermissionInScope = ({
   scope,
@@ -14,7 +14,9 @@ export const revokeWorkflowAiAgentAllObjectsPermissionInScope = ({
   if (permissionKey !== 'canReadObjectRecords') {
     return {
       ...scope,
-      [WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS[permissionKey]]: false,
+      [SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING[
+        permissionKey
+      ]]: false,
     };
   }
 

@@ -1,6 +1,6 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentAllObjectsPermissionKeys';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { t } from '@lingui/core/macro';
 import { type AiRunScope } from 'twenty-shared/ai';
@@ -25,7 +25,9 @@ export const WorkflowAiAgentAllObjectsPermissionList = ({
     items: CRUD_PERMISSIONS.filter(
       (permission) =>
         scope?.[
-          WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS[permission.key]
+          SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING[
+            permission.key
+          ]
         ] ?? false,
     ).map((permission) => ({
       key: permission.key,

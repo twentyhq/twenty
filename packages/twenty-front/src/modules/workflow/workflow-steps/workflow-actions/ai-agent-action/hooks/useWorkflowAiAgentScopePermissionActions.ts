@@ -47,45 +47,45 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     objectMetadataItems.find((item) => item.id === objectMetadataId)
       ?.universalIdentifier;
 
-  const handleAddPermission = ({
+  const updateObjectPermissionInScope = ({
     objectMetadataId,
     permissionKey,
-  }: WorkflowAiAgentObjectPermissionChange) => {
+    update,
+  }: WorkflowAiAgentObjectPermissionChange & {
+    update: typeof grantWorkflowAiAgentObjectPermissionInScope;
+  }): boolean => {
     const objectUniversalIdentifier =
       findObjectUniversalIdentifier(objectMetadataId);
 
     if (readonly || !isDefined(objectUniversalIdentifier)) {
-      return;
+      return false;
     }
 
-    onScopeChange(
-      grantWorkflowAiAgentObjectPermissionInScope({
-        scope,
-        objectUniversalIdentifier,
-        permissionKey,
-      }),
-    );
-    closeAddPermission();
+    onScopeChange(update({ scope, objectUniversalIdentifier, permissionKey }));
+
+    return true;
   };
 
-  const handleDeletePermission = ({
-    objectMetadataId,
-    permissionKey,
-  }: WorkflowAiAgentObjectPermissionChange) => {
-    const objectUniversalIdentifier =
-      findObjectUniversalIdentifier(objectMetadataId);
-
-    if (readonly || !isDefined(objectUniversalIdentifier)) {
-      return;
+  const handleAddPermission = (
+    change: WorkflowAiAgentObjectPermissionChange,
+  ) => {
+    if (
+      updateObjectPermissionInScope({
+        ...change,
+        update: grantWorkflowAiAgentObjectPermissionInScope,
+      })
+    ) {
+      closeAddPermission();
     }
+  };
 
-    onScopeChange(
-      revokeWorkflowAiAgentObjectPermissionInScope({
-        scope,
-        objectUniversalIdentifier,
-        permissionKey,
-      }),
-    );
+  const handleDeletePermission = (
+    change: WorkflowAiAgentObjectPermissionChange,
+  ) => {
+    updateObjectPermissionInScope({
+      ...change,
+      update: revokeWorkflowAiAgentObjectPermissionInScope,
+    });
   };
 
   const handleAddPermissionFlag = (permissionFlagKey: string) => {

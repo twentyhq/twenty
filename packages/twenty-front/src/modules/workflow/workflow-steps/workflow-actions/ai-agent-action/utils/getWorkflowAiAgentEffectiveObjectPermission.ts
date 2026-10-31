@@ -1,7 +1,7 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type AiRunScope } from 'twenty-shared/ai';
 
-import { WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentAllObjectsPermissionKeys';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 
 type AiRunScopeObjectPermission = NonNullable<
   AiRunScope['objectPermissions']
@@ -12,10 +12,22 @@ export const getWorkflowAiAgentEffectiveObjectPermission = ({
   objectPermission,
   permissionKey,
 }: {
-  scope: AiRunScope | undefined;
+  scope:
+    | Pick<
+        AiRunScope,
+        | 'canReadAllObjectRecords'
+        | 'canUpdateAllObjectRecords'
+        | 'canSoftDeleteAllObjectRecords'
+        | 'canDestroyAllObjectRecords'
+      >
+    | undefined;
   objectPermission: AiRunScopeObjectPermission | undefined;
   permissionKey: SettingsRoleObjectPermissionKey;
 }): boolean =>
   objectPermission?.[permissionKey] ??
-  scope?.[WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS[permissionKey]] ??
+  scope?.[
+    SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING[
+      permissionKey
+    ]
+  ] ??
   false;

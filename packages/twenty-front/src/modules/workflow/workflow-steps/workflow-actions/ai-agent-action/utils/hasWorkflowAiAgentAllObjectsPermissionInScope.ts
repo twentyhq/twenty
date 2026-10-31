@@ -1,10 +1,12 @@
 import { type AiRunScope } from 'twenty-shared/ai';
 
-import { WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentAllObjectsPermissionKeys';
+import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 
 export const hasWorkflowAiAgentAllObjectsPermissionInScope = (
   scope: AiRunScope | undefined,
 ): boolean =>
-  Object.values(WORKFLOW_AI_AGENT_ALL_OBJECTS_PERMISSION_KEYS).some(
+  Object.values(
+    SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING,
+  ).some(
     (allObjectsPermissionKey) => scope?.[allObjectsPermissionKey] ?? false,
   );
