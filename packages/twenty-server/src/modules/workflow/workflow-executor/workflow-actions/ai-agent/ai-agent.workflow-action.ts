@@ -100,7 +100,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
-    const stepKind = getWorkflowAiAgentStepKind(step.settings.input);
+    const stepKind = getWorkflowAiAgentStepKind({ input: step.settings.input });
     const [configIssue] = getWorkflowAiAgentStepConfigIssues({
       stepKind,
       input: step.settings.input,

@@ -1,70 +1,63 @@
-import {
-  getWorkflowAiAgentStepKind,
-  WorkflowActionType,
-} from 'twenty-shared/workflow';
+import { getWorkflowAiAgentStepKind } from 'twenty-shared/workflow';
 
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
-import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const errorCodesFor = (
-  input: WorkflowAiAgentActionInput,
-  agent: { isSystem: boolean } = { isSystem: false },
-) => {
-  const step = {
-    id: 'step-1',
-    name: 'Qualify',
-    type: WorkflowActionType.AI_AGENT,
-    valid: true,
-    settings: {
-      outputSchema: {},
-      errorHandlingOptions: {
-        retryOnFailure: { value: 0 },
-        continueOnFailure: { value: false },
-      },
-      input,
+const errorCodesFor = ({
+  input,
+  agent = { isSystem: false },
+}: {
+  input: WorkflowAiAgentActionInput;
+  agent?: { isSystem: boolean };
+}) =>
+  validateWorkflowAiAgentStep({
+    step: {
+      id: 'step-1',
+      name: 'Qualify',
+      settings: { outputSchema: {}, input },
     },
-  } as WorkflowAiAgentAction;
-
-  return validateWorkflowAiAgentStep({
-    step,
-    stepKind: getWorkflowAiAgentStepKind(input, agent),
+    stepKind: getWorkflowAiAgentStepKind({ input, agent }),
   })
     .filter(({ severity }) => severity === 'error')
     .map(({ code }) => code);
-};
 
 describe('validateWorkflowAiAgentStep', () => {
   it('accepts a step running an agent', () => {
-    expect(errorCodesFor({ agentId: 'agent-id' })).toEqual([]);
+    expect(errorCodesFor({ input: { agentId: 'agent-id' } })).toEqual([]);
   });
 
   it('accepts a step with its own instructions and a prompt', () => {
     expect(
       errorCodesFor({
-        instructions: 'Qualify the lead.',
-        prompt: 'Qualify {{trigger.name}}',
+        input: {
+          instructions: 'Qualify the lead.',
+          prompt: 'Qualify {{trigger.name}}',
+        },
       }),
     ).toEqual([]);
   });
 
   it('refuses a step without an agent or a prompt', () => {
     expect(
-      errorCodesFor({ instructions: 'Qualify the lead.', prompt: '  ' }),
+      errorCodesFor({
+        input: { instructions: 'Qualify the lead.', prompt: '  ' },
+      }),
     ).toEqual(['AI_AGENT_MISSING_PROMPT']);
   });
 
   it('refuses a step running an agent with its own config', () => {
-    expect(errorCodesFor({ agentId: 'agent-id', modelId: 'model-id' })).toEqual(
-      ['AI_AGENT_CONFLICTING_CONFIG'],
-    );
+    expect(
+      errorCodesFor({ input: { agentId: 'agent-id', modelId: 'model-id' } }),
+    ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
   });
 
   it('refuses a step without an agent that asks humans for input', () => {
     expect(
       errorCodesFor({
-        prompt: 'Qualify {{trigger.name}}',
-        humanInputInstructions: 'Ask before choosing a plan.',
+        input: {
+          prompt: 'Qualify {{trigger.name}}',
+          humanInputInstructions: 'Ask before choosing a plan.',
+        },
       }),
     ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
   });
@@ -72,8 +65,10 @@ describe('validateWorkflowAiAgentStep', () => {
   it('refuses a step without an agent that keeps a conversation', () => {
     expect(
       errorCodesFor({
-        prompt: 'Qualify {{trigger.name}}',
-        conversation: { scope: 'RUN' },
+        input: {
+          prompt: 'Qualify {{trigger.name}}',
+          conversation: { scope: 'RUN' },
+        },
       }),
     ).toEqual(['AI_AGENT_CONFLICTING_CONFIG']);
   });
@@ -81,8 +76,10 @@ describe('validateWorkflowAiAgentStep', () => {
   it('ignores blank human input instructions on a step without an agent', () => {
     expect(
       errorCodesFor({
-        prompt: 'Qualify {{trigger.name}}',
-        humanInputInstructions: '  ',
+        input: {
+          prompt: 'Qualify {{trigger.name}}',
+          humanInputInstructions: '  ',
+        },
       }),
     ).toEqual([]);
   });
@@ -90,9 +87,11 @@ describe('validateWorkflowAiAgentStep', () => {
   it('accepts human input instructions and a conversation on a step running an agent', () => {
     expect(
       errorCodesFor({
-        agentId: 'agent-id',
-        humanInputInstructions: 'Ask before choosing a plan.',
-        conversation: { scope: 'KEY', key: 'lead' },
+        input: {
+          agentId: 'agent-id',
+          humanInputInstructions: 'Ask before choosing a plan.',
+          conversation: { scope: 'KEY', key: 'lead' },
+        },
       }),
     ).toEqual([]);
   });
@@ -100,18 +99,20 @@ describe('validateWorkflowAiAgentStep', () => {
   it('accepts a response format on a step running a reusable agent', () => {
     expect(
       errorCodesFor({
-        agentId: 'agent-id',
-        responseFormat: { type: 'text' },
+        input: {
+          agentId: 'agent-id',
+          responseFormat: { type: 'text' },
+        },
       }),
     ).toEqual([]);
   });
 
   it('accepts a response format on a step running its hidden agent', () => {
     expect(
-      errorCodesFor(
-        { agentId: 'agent-id', responseFormat: { type: 'text' } },
-        { isSystem: true },
-      ),
+      errorCodesFor({
+        input: { agentId: 'agent-id', responseFormat: { type: 'text' } },
+        agent: { isSystem: true },
+      }),
     ).toEqual([]);
   });
 });
