@@ -7,7 +7,7 @@ import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 const INDEX_NAME = 'IDX_FILE_TEMPORARY_EXPIRES_AT';
 const CREATE_INDEX_QUERY = `CREATE INDEX IF NOT EXISTS "${INDEX_NAME}" ON "core"."file" (("settings"->>'expiresAt')) WHERE "status" = 'UPLOADED' AND "workspaceId" IS NOT NULL AND "deletedAt" IS NULL AND "settings" @> '{"isTemporaryFile":true}'`;
 
-@RegisteredInstanceCommand('2.55.0', 1793406747270, { type: 'slow' })
+@RegisteredInstanceCommand('2.55.0', 1793462047826, { type: 'slow' })
 export class IndexTemporaryFileExpirationSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await createCoreIndexConcurrently({

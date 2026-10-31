@@ -147,23 +147,6 @@ export class AiFrontComponentService {
     userWorkspaceId: string;
     draftId: string;
   }): Promise<FrontComponentDraft> {
-    return this.withDraftLock({
-      workspaceId,
-      draftId,
-      callback: () =>
-        this.readDraftOrThrow({ workspaceId, userWorkspaceId, draftId }),
-    });
-  }
-
-  private async readDraftOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    draftId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    draftId: string;
-  }): Promise<FrontComponentDraft> {
     await this.assertCanAuthorOrThrow({ workspaceId, userWorkspaceId });
     const { workspaceCustomFlatApplication: application } =
       await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -275,7 +258,7 @@ export class AiFrontComponentService {
 
     const saveRevision = async () => {
       if (isDefined(previous)) {
-        previous = await this.readDraftOrThrow({
+        previous = await this.getDraftOrThrow({
           workspaceId: context.workspaceId,
           userWorkspaceId,
           draftId: previous.id,
@@ -389,7 +372,7 @@ export class AiFrontComponentService {
       workspaceId,
       draftId,
       callback: async () => {
-        const draft = await this.readDraftOrThrow({
+        const draft = await this.getDraftOrThrow({
           workspaceId,
           userWorkspaceId,
           draftId,
