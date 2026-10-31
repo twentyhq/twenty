@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
@@ -9,7 +10,10 @@ import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type ApplicationWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -20,11 +24,50 @@ import { type AgentRunCallerRef } from 'src/engine/metadata-modules/ai/ai-agent-
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
+import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
+
+const buildTurnCreatedBy = ({
+  actorContext,
+  callerApplication,
+  authContext,
+}: {
+  actorContext: ActorMetadata | undefined;
+  callerApplication: FlatApplication | undefined;
+  authContext: WorkspaceAuthContext;
+}): ActorMetadata => {
+  if (isDefined(actorContext)) {
+    return actorContext;
+  }
+
+  if (isDefined(callerApplication)) {
+    return buildCreatedByFromApplication({ application: callerApplication });
+  }
+
+  return buildActorMetadataFromAuthContext(authContext);
+};
+
+const buildConversationActor = ({
+  authContext,
+  application,
+}: {
+  authContext: WorkspaceAuthContext;
+  application: FlatApplication | undefined;
+}): AgentConversationActor | undefined => {
+  if (isUserAuthContext(authContext)) {
+    return { type: 'user', workspaceMemberId: authContext.workspaceMemberId };
+  }
+
+  if (isDefined(application)) {
+    return { type: 'application', applicationId: application.id };
+  }
+
+  return undefined;
+};
 
 @Injectable()
 export class AgentRunCallerContextService {
@@ -45,9 +88,8 @@ export class AgentRunCallerContextService {
     workspace: FlatWorkspace;
     callerRef: AgentRunCallerRef;
     requestUserWorkspaceId: string | null;
-    // the run never exceeds its role, and acts as it when the caller names no one
     application: FlatApplication | undefined;
-    // who the turns are recorded as sent by when the run acts as no member
+    // differs from application when an application runs an agent of another one
     callerApplication: FlatApplication | undefined;
     agent?: { roleId: string | undefined };
   }): Promise<AgentRunExecutionContext> {
@@ -66,20 +108,18 @@ export class AgentRunCallerContextService {
         isMissingApplicationRoleTolerated: true,
       }),
     };
-    const memberAuthContext = isUserAuthContext(authContext)
-      ? authContext
-      : null;
 
     return {
       authContext,
       actorContext,
-      turnCreatedBy:
-        actorContext ??
-        (isDefined(callerApplication)
-          ? buildCreatedByFromApplication({ application: callerApplication })
-          : buildActorMetadataFromAuthContext(authContext)),
-      userWorkspaceId:
-        memberAuthContext?.userWorkspaceId ?? requestUserWorkspaceId,
+      turnCreatedBy: buildTurnCreatedBy({
+        actorContext,
+        callerApplication,
+        authContext,
+      }),
+      userWorkspaceId: isUserAuthContext(authContext)
+        ? authContext.userWorkspaceId
+        : requestUserWorkspaceId,
       rolePermissionConfig: isDefined(agent)
         ? buildAgentRolePermissionConfig({
             agentRoleId: agent.roleId,
@@ -87,14 +127,7 @@ export class AgentRunCallerContextService {
           })
         : { intersectionOf: agentRunRoleIds },
       agentRunRoleIds,
-      conversationActor: isDefined(memberAuthContext)
-        ? {
-            type: 'user',
-            workspaceMemberId: memberAuthContext.workspaceMemberId,
-          }
-        : isDefined(application)
-          ? { type: 'application', applicationId: application.id }
-          : undefined,
+      conversationActor: buildConversationActor({ authContext, application }),
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
   }

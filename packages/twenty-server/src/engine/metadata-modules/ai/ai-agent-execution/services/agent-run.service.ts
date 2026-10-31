@@ -427,8 +427,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     };
   }
 
-  // The member a run acts as is looked up again, so a waiting run goes on with their current role.
-  // The request that started it is over, so its turns keep the author it recorded
+  // The member a run acts as is looked up again, so a waiting run goes on with their current role
   async buildExecutionContext({
     workspaceId,
     caller,

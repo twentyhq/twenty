@@ -157,21 +157,21 @@ describe('generate mutation (integration)', () => {
   });
 
   it('reports the usage of the steps that finished before the model failed', async () => {
+    const callMissingTool: ScriptedModelResponse = {
+      content: [
+        {
+          type: 'tool-call',
+          toolCallId: 'missing-1',
+          toolName: 'missing_tool',
+          input: '{}',
+        },
+      ],
+      finishReason: { unified: 'tool-calls', raw: undefined },
+      usage: USAGE,
+    };
+
     mockModel((callIndex) =>
-      callIndex === 0
-        ? {
-            content: [
-              {
-                type: 'tool-call',
-                toolCallId: 'missing-1',
-                toolName: 'missing_tool',
-                input: '{}',
-              },
-            ],
-            finishReason: { unified: 'tool-calls', raw: undefined },
-            usage: USAGE,
-          }
-        : failWith('Invalid request'),
+      callIndex === 0 ? callMissingTool : failWith('Invalid request'),
     );
 
     expect(

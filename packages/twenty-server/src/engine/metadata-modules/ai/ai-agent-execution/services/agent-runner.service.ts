@@ -103,8 +103,7 @@ export class AgentRunnerService {
     );
   }
 
-  // For a caller that waits on a run within its own request, such as ai.generate. Once the turn is
-  // recorded a failure comes back as the outcome, so the caller still gets the run; before, it throws
+  // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
   async runInRequest(
     input: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'>,
   ): Promise<InRequestAgentRun> {
