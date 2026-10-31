@@ -1,7 +1,7 @@
 import { build, transform } from 'esbuild';
 import { PageLayoutType } from 'twenty-shared/types';
 
-import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
+import { FRONT_COMPONENT_UI_IMPORTS } from 'twenty-shared/front-component-build';
 import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';

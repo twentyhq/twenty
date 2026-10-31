@@ -1,4 +1,4 @@
-import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
+import { FRONT_COMPONENT_UI_IMPORTS } from 'twenty-shared/front-component-build';
 
 export const FRONT_COMPONENT_ALLOWED_IMPORTS = [
   'react',
