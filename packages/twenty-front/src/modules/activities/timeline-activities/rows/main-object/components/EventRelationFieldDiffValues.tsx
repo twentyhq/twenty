@@ -19,6 +19,7 @@ type EventRelationFieldDiffValuesProps = {
 
 const StyledRelationValue = styled.div`
   color: ${themeCssVariables.font.color.primary};
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
