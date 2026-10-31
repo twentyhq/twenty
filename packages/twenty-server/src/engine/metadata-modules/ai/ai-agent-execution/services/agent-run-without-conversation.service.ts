@@ -29,8 +29,7 @@ const NO_USAGE: AgentTurnUsage = {
   outputCredits: 0,
 };
 
-// A one-shot run: one turn on record and its outcome handed to the caller. Without a conversation
-// nothing else writes to it and nothing can answer it, so it neither claims a thread nor pauses
+// A one-shot run records one turn and hands its outcome to the caller, with no thread and no pause
 @Injectable()
 export class AgentRunWithoutConversationService {
   private readonly logger = new Logger(AgentRunWithoutConversationService.name);
@@ -49,7 +48,10 @@ export class AgentRunWithoutConversationService {
     caller,
     spec,
     prompt,
-  }: Omit<RunAgentJobData, 'conversation'>): Promise<void> {
+  }: Pick<
+    RunAgentJobData,
+    'workspaceId' | 'caller' | 'spec' | 'prompt'
+  >): Promise<void> {
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
     if ((await handler.getWaitingState({ workspaceId, caller })) === 'GONE') {
