@@ -10,8 +10,8 @@ import { ConnectedAccountResolver } from 'src/engine/metadata-modules/connected-
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';

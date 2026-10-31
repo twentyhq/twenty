@@ -2,7 +2,7 @@ import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/engine/metadata-modules/permission-flag/constants/standard-permission-flag-definitions.constant';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const getPermissionFlagNotFoundError = (

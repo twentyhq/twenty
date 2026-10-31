@@ -218,6 +218,16 @@ const STEP_INPUTS = {
     recipients: { to: 'jane@example.com', cc: '', bcc: '' },
     files: [],
   },
+  SEND_CHAT_MESSAGE: {
+    workspaceMemberId: WORKSPACE_MEMBER_ID,
+    title: 'Approve the ticket',
+    text: '{{trigger.properties.after.summary}}',
+    toolCall: {
+      toolName: 'update_one_ticket',
+      arguments: { id: '{{trigger.recordId}}', status: 'APPROVED' },
+    },
+    conversation: { key: 'ticket:{{trigger.recordId}}', scope: 'KEY' },
+  },
   CREATE_CALENDAR_EVENT: {
     connectedAccountHandle: SALES_HANDLE,
     title: 'Kick-off',
@@ -467,6 +477,45 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       );
     });
 
+    it.each([
+      {
+        type: 'DRAFT_EMAIL' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          recipients: { to: 'jane@example.com' },
+        },
+      },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        input: {
+          connectedAccountId: '{{trigger.properties.after.assigneeId}}',
+          title: 'Kick-off',
+          startsAt: '2026-11-02T09:00:00.000Z',
+          endsAt: '2026-11-02T09:30:00.000Z',
+          isFullDay: false,
+          sendInvitations: true,
+          addConferencing: false,
+        },
+      },
+    ])(
+      'stores a $type step with only the values it declares',
+      ({ type, input }) => {
+        const manifest = buildWorkflow({
+          steps: [
+            buildStep({
+              type,
+              overrides: { input } as Partial<WorkflowStepManifest>,
+            }),
+          ],
+        });
+
+        expect(
+          syncWorkflow(manifest).flatWorkflowVersion.steps?.[0]?.settings.input,
+        ).toEqual(input);
+        expectRoundTrip(manifest);
+      },
+    );
+
     it('omits values the sync derives', () => {
       const result = exportWorkflow(
         syncWorkflow(
@@ -589,19 +638,16 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
   });
 
   describe('unsupported workflows', () => {
-    it.each([WorkflowActionType.CODE, WorkflowActionType.SEND_CHAT_MESSAGE])(
-      'reports a %s step',
-      (type) => {
-        const synced = syncWorkflow(buildWorkflow({}));
-        const [step] = synced.flatWorkflowVersion.steps ?? [];
+    it('reports a CODE step', () => {
+      const synced = syncWorkflow(buildWorkflow({}));
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
 
-        Object.assign(step, { type });
+      Object.assign(step, { type: WorkflowActionType.CODE });
 
-        expect(exportWorkflow(synced)).toEqual({
-          reason: `${type} steps are not supported in application workflows`,
-        });
-      },
-    );
+      expect(exportWorkflow(synced)).toEqual({
+        reason: 'CODE steps are not supported in application workflows',
+      });
+    });
 
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
@@ -1059,6 +1105,65 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
       type: 'AI_AGENT',
       input: { ...input, agentUniversalIdentifier: AGENT_ID },
     });
+  });
+
+  it('exports an email step written without files', () => {
+    const input = {
+      connectedAccountId: '{{trigger.properties.after.accountId}}',
+      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+      subject: 'Hello',
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Draft Email',
+          type: 'DRAFT_EMAIL',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: BUILDER_ERROR_HANDLING_OPTIONS,
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'DRAFT_EMAIL', input });
+  });
+
+  it('exports a chat message step that waits for an approval', () => {
+    const input = {
+      text: '{{trigger.properties.after.summary}}',
+      title: 'Approve the ticket',
+      toolCall: {
+        toolName: 'update_one_ticket',
+        arguments: { id: '{{trigger.properties.after.id}}' },
+      },
+      conversation: {
+        key: 'ticket:{{trigger.properties.after.id}}',
+        scope: 'KEY',
+      },
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+    };
+    const [step] = exportBuilderVersion({
+      triggers: [recordCreatedTrigger()],
+      steps: [
+        createRecordStep({
+          name: 'Send to Inbox',
+          type: 'SEND_CHAT_MESSAGE',
+          settings: {
+            outputSchema: {},
+            errorHandlingOptions: {
+              retryOnFailure: { value: 0 },
+              continueOnFailure: { value: true },
+            },
+            input,
+          },
+        }),
+      ],
+    }).steps;
+
+    expect(step).toMatchObject({ type: 'SEND_CHAT_MESSAGE', input });
   });
 
   it('exports a step without a position as null', () => {

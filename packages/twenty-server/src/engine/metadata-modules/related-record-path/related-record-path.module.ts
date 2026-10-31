@@ -6,7 +6,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RelatedRecordPathResolver } from 'src/engine/metadata-modules/related-record-path/related-record-path.resolver';
 import { RelatedRecordPathService } from 'src/engine/metadata-modules/related-record-path/related-record-path.service';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';

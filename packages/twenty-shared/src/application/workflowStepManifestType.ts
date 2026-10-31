@@ -20,6 +20,7 @@ import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-a
 import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
 import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
 import { workflowAiAgentActionSettingsSchema } from '@/workflow/schemas/ai-agent-action-settings-schema';
+import { workflowSendChatMessageActionSettingsSchema } from '@/workflow/schemas/send-chat-message-action-settings-schema';
 import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
@@ -246,6 +247,10 @@ const workflowStepManifestOptions = [
     workflowCreateCalendarEventActionSettingsSchema.shape.input
       .extend(connectedAccountReferenceShape)
       .superRefine(refineConnectedAccountReference),
+  ),
+  stepSchema(
+    'SEND_CHAT_MESSAGE',
+    workflowSendChatMessageActionSettingsSchema.shape.input,
   ),
   stepSchema(
     'AI_AGENT',

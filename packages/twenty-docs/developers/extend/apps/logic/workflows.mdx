@@ -99,7 +99,7 @@ A webhook workflow listens on `https://<your-twenty-domain>/webhooks/workflows/<
 
 ## Steps
 
-Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT` and `EMPTY`.
+Application workflows support these step types: `LOGIC_FUNCTION`, `AI_AGENT`, `HTTP_REQUEST`, `CLASSIFY`, `CREATE_RECORD`, `UPDATE_RECORD`, `UPSERT_RECORD`, `DELETE_RECORD`, `FIND_RECORDS`, `PICK_RECORD`, `FILTER`, `IF_ELSE`, `ITERATOR`, `FORM`, `DELAY`, `WAIT_FOR_EVENT`, `SEND_EMAIL`, `DRAFT_EMAIL`, `CREATE_CALENDAR_EVENT`, `SEND_CHAT_MESSAGE` and `EMPTY`.
 
 Their inputs match the steps of the [workflow builder](/user-guide/workflows/capabilities/workflow-actions), with universal identifiers in place of names:
 - Record steps take `objectUniversalIdentifier` instead of an object name.
@@ -114,6 +114,7 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
   - `connectedAccountId`: a variable, such as `{{trigger.properties.after.connectedAccountId}}`. Email steps also take a workspace member id, such as `{{trigger.properties.after.assigneeId}}`, which resolves to that member's first account able to send.
 
   Set exactly one of the two.
+- `SEND_CHAT_MESSAGE` posts to a workspace member's inbox, set with `workspaceMemberId`. Member ids are local to each workspace too, so an app passes a variable, such as `{{trigger.properties.after.assigneeId}}`.
 
 ## After install
 
