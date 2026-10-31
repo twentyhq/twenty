@@ -109,6 +109,20 @@ describe('2-55 workspace command - add private record column (integration)', () 
         ['recordShare', 'accessGroup'].includes(tableName),
       ),
     ).toEqual([]);
+
+    const [{ definition }] = await global.testDataSource.query(
+      `SELECT pg_get_indexdef(i.indexrelid) AS definition
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = $2`,
+      [
+        SCHEMA,
+        `IDX_PRIVATE_RECORD_${personObjectMetadataId.replace(/-/g, '')}`,
+      ],
+    );
+
+    expect(definition).toContain('WHERE "_isPrivate"');
   });
 
   it('adds a missing column back, but not on a dry run', async () => {

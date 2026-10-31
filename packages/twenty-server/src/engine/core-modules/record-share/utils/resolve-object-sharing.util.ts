@@ -46,6 +46,17 @@ const resolveDefaultGeneralAccessLevel = ({
   return isShareable ? RecordShareAccessLevel.READ_WRITE : null;
 };
 
+const resolveOperationTypesGrantableBeyondRole = ({
+  disabledObjectPermissionActions,
+}: Pick<
+  FlatObjectMetadata,
+  'disabledObjectPermissionActions'
+>): OperationType[] =>
+  OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
+    ({ objectPermissionAction }) =>
+      !disabledObjectPermissionActions?.includes(objectPermissionAction),
+  ).map(({ operationType }) => operationType);
+
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
@@ -67,12 +78,7 @@ export const resolveObjectSharing = ({
   const isShareable = isShareRequired || canBeShared;
 
   const operationTypesGrantedBeyondRole = canBeShared
-    ? OPERATIONS_GRANTABLE_BEYOND_ROLE.filter(
-        ({ objectPermissionAction }) =>
-          !flatObjectMetadata.disabledObjectPermissionActions?.includes(
-            objectPermissionAction,
-          ),
-      ).map(({ operationType }) => operationType)
+    ? resolveOperationTypesGrantableBeyondRole(flatObjectMetadata)
     : [];
 
   return {

@@ -538,7 +538,6 @@ export class RecordSharingService {
       recordShares: shares,
       isPrivate,
     });
-    // Managers of all records keep managing public records, never private ones
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
       principalIds,

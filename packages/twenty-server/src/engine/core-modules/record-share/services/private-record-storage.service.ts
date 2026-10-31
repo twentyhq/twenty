@@ -2,14 +2,14 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
   CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME,
   IS_PRIVATE_COLUMN_NAME,
 } from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
 import { type PrivateRecordState } from 'src/engine/core-modules/record-share/types/private-record-state.type';
-import { buildSelectPrivateRecordStatesSql } from 'src/engine/core-modules/record-share/utils/build-select-private-record-states-sql.util';
+import { findPrivateRecordStates } from 'src/engine/core-modules/record-share/utils/find-private-record-states.util';
 import { hasCreatedByField } from 'src/engine/core-modules/record-share/utils/has-created-by-field.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -41,41 +41,27 @@ export class PrivateRecordStorageService {
     recordIds: string[];
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<Map<string, PrivateRecordState>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
 
-    const rows = await this.withRepository({
+    return this.withRepository({
       workspaceId,
       flatObjectMetadata,
       transactionScope,
       work: (repository) =>
-        repository.executeRaw<{ id: string } & PrivateRecordState>(
-          buildSelectPrivateRecordStatesSql({
-            tableExpression: buildTableExpression({
-              workspaceId,
-              flatObjectMetadata,
-            }),
-            hasCreatedByField: hasCreatedByField({
-              flatObjectMetadata,
-              flatFieldMetadataMaps,
-            }),
+        findPrivateRecordStates({
+          repository,
+          tableExpression: buildTableExpression({
+            workspaceId,
+            flatObjectMetadata,
           }),
-          { recordIds },
-        ),
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          recordIds,
+        }),
     });
-
-    return new Map(
-      rows.map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
-        id,
-        { isPrivate, createdByWorkspaceMemberId },
-      ]),
-    );
   }
 
   async grantPrivateRecordsCreatedBy({
@@ -117,7 +103,7 @@ export class PrivateRecordStorageService {
           ) && hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
       );
 
-      if (objectsWithCreator.length === 0) {
+      if (!isNonEmptyArray(objectsWithCreator)) {
         return;
       }
 
@@ -168,7 +154,6 @@ export class PrivateRecordStorageService {
     );
   }
 
-  // Must share the caller's transaction so the records and their privacy change together
   async setPrivate({
     workspaceId,
     flatObjectMetadata,
@@ -182,7 +167,7 @@ export class PrivateRecordStorageService {
     isPrivate: boolean;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    if (recordIds.length === 0) {
+    if (!isNonEmptyArray(recordIds)) {
       return;
     }
 

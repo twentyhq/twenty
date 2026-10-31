@@ -870,7 +870,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      // The creator keeps a private record through createdBy, not a share row
       expect(await findRecordShares(recordId)).toEqual([]);
 
       const jonyRead = await makeGraphqlApiRequestWithMemberRole(

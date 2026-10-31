@@ -8,6 +8,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { IS_PRIVATE_COLUMN_DEFINITION } from 'src/engine/core-modules/record-share/constants/is-private-column-definition.constant';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/core-modules/record-share/constants/private-record-column-names.constant';
+import { buildPrivateRecordIndexDefinition } from 'src/engine/core-modules/record-share/utils/build-private-record-index-definition.util';
 import { hasIsPrivateColumn } from 'src/engine/core-modules/record-share/utils/has-is-private-column.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -28,7 +29,7 @@ const isRestrictableObject = (
 @Command({
   name: 'upgrade:2-55:add-private-record-column',
   description:
-    'Add the _isPrivate column to every object table except recordShare and accessGroup, then turn records restricted to the people with access into private records',
+    'Add the _isPrivate column and its partial index to every object table except recordShare and accessGroup, then turn records restricted to the people with access into private records',
 })
 export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -60,6 +61,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     let isQueryRunnerConnected = false;
     let dryRunColumnCount = 0;
     let dryRunPrivateRecordCount = 0;
+    let dryRunViewOnlyRecordCount = 0;
 
     try {
       await queryRunner.connect();
@@ -100,11 +102,16 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
 
         if (options.dryRun) {
           dryRunColumnCount += hasColumn ? 0 : 1;
-          dryRunPrivateRecordCount += isRestrictableObject(flatObjectMetadata)
-            ? (restrictedRecordCountsByObjectMetadataId?.get(
+          const restrictedRecordCounts = isRestrictableObject(
+            flatObjectMetadata,
+          )
+            ? restrictedRecordCountsByObjectMetadataId?.get(
                 flatObjectMetadata.id,
-              ) ?? 0)
-            : 0;
+              )
+            : undefined;
+
+          dryRunPrivateRecordCount += restrictedRecordCounts?.NONE ?? 0;
+          dryRunViewOnlyRecordCount += restrictedRecordCounts?.READ ?? 0;
 
           continue;
         }
@@ -116,6 +123,16 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
             tableName,
           });
         }
+
+        await this.workspaceSchemaManagerService.indexManager.createIndex({
+          queryRunner,
+          schemaName,
+          tableName,
+          index: buildPrivateRecordIndexDefinition({
+            objectMetadataId: flatObjectMetadata.id,
+          }),
+          concurrently: true,
+        });
 
         if (isRestrictableObject(flatObjectMetadata)) {
           await this.convertRestrictionsToPrivateRecords({
@@ -134,7 +151,7 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would add ${dryRunColumnCount} column(s) and make ${dryRunPrivateRecordCount} record(s) private for workspace ${workspaceId}`,
+        `[DRY RUN] Would add ${dryRunColumnCount} column(s) and make ${dryRunPrivateRecordCount} record(s) private and return ${dryRunViewOnlyRecordCount} view-only record(s) to their roles for workspace ${workspaceId}`,
       );
     }
   }
@@ -200,21 +217,30 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
-  }): Promise<Map<string, number>> {
-    const counts: { objectMetadataId: string; count: string }[] =
-      await queryRunner.query(
-        `SELECT "objectMetadataId", COUNT(*) AS count FROM ${escapeIdentifier(schemaName)}."recordShare"
-           WHERE "principalType" = 'EVERYONE' AND "rowCause" = 'MANUAL'
-             AND "accessLevel" = 'NONE' AND "deletedAt" IS NULL
-           GROUP BY "objectMetadataId"`,
-      );
-
-    return new Map(
-      counts.map(({ objectMetadataId, count }) => [
-        objectMetadataId,
-        Number(count),
-      ]),
+  }): Promise<Map<string, { NONE?: number; READ?: number }>> {
+    const counts: {
+      objectMetadataId: string;
+      accessLevel: 'NONE' | 'READ';
+      count: string;
+    }[] = await queryRunner.query(
+      `SELECT "objectMetadataId", "accessLevel", COUNT(*) AS count FROM ${escapeIdentifier(schemaName)}."recordShare"
+         WHERE "principalType" = 'EVERYONE' AND "rowCause" = 'MANUAL'
+           AND "accessLevel" IN ('NONE', 'READ') AND "deletedAt" IS NULL
+         GROUP BY "objectMetadataId", "accessLevel"`,
     );
+    const countsByObjectMetadataId = new Map<
+      string,
+      { NONE?: number; READ?: number }
+    >();
+
+    for (const { objectMetadataId, accessLevel, count } of counts) {
+      countsByObjectMetadataId.set(objectMetadataId, {
+        ...countsByObjectMetadataId.get(objectMetadataId),
+        [accessLevel]: Number(count),
+      });
+    }
+
+    return countsByObjectMetadataId;
   }
 
   // "Anyone can view" has no private equivalent, so those records follow their roles again

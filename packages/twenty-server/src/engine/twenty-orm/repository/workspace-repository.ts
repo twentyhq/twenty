@@ -19,8 +19,7 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type PrivateRecordState } from 'src/engine/core-modules/record-share/types/private-record-state.type';
-import { buildSelectPrivateRecordStatesSql } from 'src/engine/core-modules/record-share/utils/build-select-private-record-states-sql.util';
-import { hasCreatedByField } from 'src/engine/core-modules/record-share/utils/has-created-by-field.util';
+import { findPrivateRecordStates } from 'src/engine/core-modules/record-share/utils/find-private-record-states.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
@@ -1840,30 +1839,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private async selectPrivateRecordStates(
     recordIds: string[],
   ): Promise<Map<string, PrivateRecordState>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
-    const rows = await this.executeRaw<{ id: string } & PrivateRecordState>(
-      buildSelectPrivateRecordStatesSql({
-        tableExpression: this.getTableExpression(
-          this.options.flatObjectMetadata.id,
-        ),
-        hasCreatedByField: hasCreatedByField({
-          flatObjectMetadata: this.options.flatObjectMetadata,
-          flatFieldMetadataMaps:
-            this.options.internalContext.flatFieldMetadataMaps,
-        }),
-      }),
-      { recordIds },
-    );
-
-    return new Map(
-      rows.map(({ id, isPrivate, createdByWorkspaceMemberId }) => [
-        id,
-        { isPrivate, createdByWorkspaceMemberId },
-      ]),
-    );
+    return findPrivateRecordStates({
+      repository: this,
+      tableExpression: this.getTableExpression(
+        this.options.flatObjectMetadata.id,
+      ),
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      recordIds,
+    });
   }
 
   private async findRecordShareGrants({
