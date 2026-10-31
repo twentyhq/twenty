@@ -1,16 +1,9 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-
+import { PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/access-group/constants/permission-storage-object-universal-identifiers.constant';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-// These objects store the permissions themselves, so access groups never apply to their records
-const OBJECT_UNIVERSAL_IDENTIFIERS_WITHOUT_ACCESS_GROUP_IDS: string[] = [
-  STANDARD_OBJECTS.accessGroup.universalIdentifier,
-  STANDARD_OBJECTS.recordShare.universalIdentifier,
-];
 
 export const hasAccessGroupIds = (
   objectMetadata: Pick<FlatObjectMetadata, 'universalIdentifier'>,
 ): boolean =>
-  !OBJECT_UNIVERSAL_IDENTIFIERS_WITHOUT_ACCESS_GROUP_IDS.includes(
+  !PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
     objectMetadata.universalIdentifier,
   );
