@@ -106,6 +106,16 @@ export class AgentConversationWriterService {
     id?: string;
     scope?: AgentHistoryTransactionScope;
   }): Promise<string> {
+    if (
+      !isDefined(threadId) &&
+      !(await this.canInsertTurnWithoutThread(workspaceId))
+    ) {
+      throw new AiException(
+        'AI runs without a conversation are available once this workspace finishes upgrading',
+        AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      );
+    }
+
     const now = new Date().toISOString();
     const values = {
       threadId,

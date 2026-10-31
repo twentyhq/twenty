@@ -15,10 +15,9 @@ import {
 } from 'twenty-shared/application';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { agentResponseFormatSchema } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
-import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
-import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -26,9 +25,7 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
@@ -38,20 +35,17 @@ import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
-import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
-import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
-import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
+import { agentRunCallerRefSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-ref.schema';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
-import { parseAgentResponseFormatOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-response-format-or-throw.util';
+import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-input-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
@@ -77,14 +71,11 @@ type RunAgentServiceInput = {
   waitForCompletion?: boolean | null;
 };
 
-const agentApiRunCallerRefSchema = z.object({
+const agentApiRunCallerRefSchema = agentRunCallerRefSchema.extend({
   // what a call waiting on the run listens to; absent on runs suspended before calls could wait
   runId: z.string().optional(),
   agentId: z.string(),
   runAsWorkspaceMemberId: z.string().nullable(),
-  // who a run that names no member acts as, when it is not the agent's application
-  callerWorkspaceMemberId: z.string().optional(),
-  callerApiKeyId: z.string().optional(),
   requestUserWorkspaceId: z.string().nullable(),
   // the request's own actor cannot be read back once it is over
   createdBy: z.custom<ActorMetadata>(isPlainObject),
@@ -166,9 +157,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       );
     }
 
-    const responseFormat = parseAgentResponseFormatOrThrow(
-      input.responseFormat,
-    );
+    const responseFormat = parseAgentInputOrThrow({
+      schema: agentResponseFormatSchema.nullish(),
+      input: input.responseFormat,
+    });
 
     const agentRow = await this.agentRepository.findOne(workspace.id, {
       where: {
@@ -251,6 +243,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     const executionContext = await this.buildRunExecutionContext({
       workspaceId: workspace.id,
       ref: callerRef,
+      callerApplication,
     });
 
     const memberUserWorkspaceId = isUserAuthContext(
@@ -258,10 +251,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     )
       ? executionContext.authContext.userWorkspaceId
       : null;
-
-    const createdBy =
-      executionContext.actorContext ??
-      this.buildRunCreator({ callerApplication, application });
 
     const isContinuingConversation = isDefined(thread);
 
@@ -297,7 +286,11 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       conversation: { threadId, isCreated: !isContinuingConversation },
       caller: {
         type: 'AGENT_API_RUN',
-        ref: { ...callerRef, runId, createdBy },
+        ref: {
+          ...callerRef,
+          runId,
+          createdBy: executionContext.turnCreatedBy,
+        },
       },
       spec: {
         agentId: agent.id,
@@ -434,7 +427,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     };
   }
 
-  // The member a run acts as is looked up again, so a waiting run goes on with their current role
+  // The member a run acts as is looked up again, so a waiting run goes on with their current role.
+  // The request that started it is over, so its turns keep the author it recorded
   async buildExecutionContext({
     workspaceId,
     caller,
@@ -442,19 +436,24 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     const ref = agentApiRunCallerRefSchema.parse(caller.ref);
 
     return {
-      ...(await this.buildRunExecutionContext({ workspaceId, ref })),
+      ...(await this.buildRunExecutionContext({
+        workspaceId,
+        ref,
+        callerApplication: undefined,
+      })),
       turnCreatedBy: ref.createdBy,
     };
   }
 
-  // run() builds the context before its caller, whose turn author depends on it
   private async buildRunExecutionContext({
     workspaceId,
     ref,
+    callerApplication,
   }: {
     workspaceId: string;
     ref: AgentApiRunCallerRef;
-  }): Promise<Omit<AgentRunExecutionContext, 'turnCreatedBy'>> {
+    callerApplication: FlatApplication | undefined;
+  }): Promise<AgentRunExecutionContext> {
     const agent = await this.agentRepository.findOne(workspaceId, {
       where: { id: ref.agentId },
     });
@@ -472,55 +471,16 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       );
     }
 
-    const runAsContext = isDefined(ref.runAsWorkspaceMemberId)
-      ? await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
-          workspaceMemberId: ref.runAsWorkspaceMemberId,
-          workspaceId,
-          viaApplication: agentContext.application,
-        })
-      : undefined;
-
-    const { authContext, actorContext, callerRoleIds }: AgentRunCallerContext =
-      isDefined(runAsContext)
-        ? {
-            authContext: runAsContext.authContext,
-            actorContext: runAsContext.actorContext,
-            callerRoleIds: { userWorkspaceRoleId: runAsContext.roleId },
-          }
-        : await this.agentRunCallerContextService.buildCallerContext({
-            workspace: agentContext.authContext.workspace,
-            callerRef: ref,
-            applicationAuthContext: agentContext.authContext,
-          });
-
-    const memberWorkspaceMemberId = isUserAuthContext(authContext)
-      ? authContext.workspaceMemberId
-      : null;
-
-    // a run never exceeds the agent's application, whoever calls it
-    const agentRunRoleIds: AgentRunRoleIds = {
-      ...callerRoleIds,
-      ...resolveApplicationRoleId({
-        application: agentContext.application,
-        isMissingApplicationRoleTolerated: true,
-      }),
-    };
-
-    return {
-      authContext,
-      actorContext,
-      userWorkspaceId:
-        runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: agentContext.agentRoleId,
-        agentRunRoleIds,
-      }),
-      agentRunRoleIds,
-      conversationActor: isDefined(memberWorkspaceMemberId)
-        ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }
-        : { type: 'application', applicationId: agentContext.application.id },
-      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-    };
+    return this.agentRunCallerContextService.buildExecutionContext({
+      workspace: agentContext.authContext.workspace,
+      callerRef: isDefined(ref.runAsWorkspaceMemberId)
+        ? { callerWorkspaceMemberId: ref.runAsWorkspaceMemberId }
+        : ref,
+      requestUserWorkspaceId: ref.requestUserWorkspaceId,
+      application: agentContext.application,
+      callerApplication,
+      agent: { roleId: agentContext.agentRoleId },
+    });
   }
 
   async getWaitingState({
@@ -580,24 +540,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
       throw error;
     }
-  }
-
-  private buildRunCreator({
-    callerApplication,
-    application,
-  }: {
-    callerApplication?: FlatApplication;
-    application: FlatApplication;
-  }): ActorMetadata {
-    if (isDefined(callerApplication)) {
-      return buildCreatedByFromApplication({ application: callerApplication });
-    }
-
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
-
-    return isDefined(requestAuthContext)
-      ? buildActorMetadataFromAuthContext(requestAuthContext)
-      : buildCreatedByFromApplication({ application });
   }
 
   private async resolveRunAsContext({

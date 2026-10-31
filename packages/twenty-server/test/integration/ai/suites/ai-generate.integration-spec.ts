@@ -5,7 +5,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import { type ScriptedModelResponse } from 'test/utils/scripted-model-response.type';
-import { type GenerateInput } from 'twenty-shared/application';
+import { type GenerateMutationInput } from 'twenty-shared/application';
 
 import {
   type AiModelRegistryService,
@@ -65,7 +65,7 @@ const mockModel = (respond: (callIndex: number) => ScriptedModelResponse) => {
   return offeredToolNamesByCall;
 };
 
-const generate = async (input: Omit<GenerateInput, 'modelId'>) => {
+const generate = async (input: Omit<GenerateMutationInput, 'modelId'>) => {
   const response = await makeMetadataApiRequest({
     query: gql`
       mutation Generate($input: GenerateInput!) {
@@ -74,7 +74,7 @@ const generate = async (input: Omit<GenerateInput, 'modelId'>) => {
           text
           object
           error
-          turnId
+          runId
           usage {
             inputTokens
             outputTokens
@@ -93,7 +93,7 @@ const generate = async (input: Omit<GenerateInput, 'modelId'>) => {
 describe('generate mutation (integration)', () => {
   afterEach(() => jest.restoreAllMocks());
 
-  it('returns the text of the reply with its turn and usage', async () => {
+  it('returns the text of the reply with its run and usage', async () => {
     mockModel(() => answerWith('Acme looks like a fit'));
 
     expect(
@@ -103,7 +103,7 @@ describe('generate mutation (integration)', () => {
       text: 'Acme looks like a fit',
       object: null,
       error: null,
-      turnId: expect.any(String),
+      runId: expect.any(String),
       usage: { inputTokens: 12, outputTokens: 3 },
     });
   });
@@ -151,7 +151,8 @@ describe('generate mutation (integration)', () => {
       text: null,
       object: null,
       error: expect.stringContaining('Invalid request'),
-      usage: null,
+      runId: expect.any(String),
+      usage: { inputTokens: 0, outputTokens: 0 },
     });
   });
 
@@ -178,7 +179,7 @@ describe('generate mutation (integration)', () => {
     ).toMatchObject({
       success: false,
       error: expect.stringContaining('Invalid request'),
-      turnId: expect.any(String),
+      runId: expect.any(String),
       usage: { inputTokens: 12, outputTokens: 3 },
     });
   });

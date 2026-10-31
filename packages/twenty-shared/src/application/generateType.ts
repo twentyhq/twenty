@@ -1,16 +1,14 @@
-import { type AgentResponseFormat } from '@/ai/types/AgentResponseFormat';
-import { type AiRunScope } from '@/ai/types/AiRunScope';
+import { type z } from 'zod';
 
+import { type AiRunUsage } from './aiRunUsageType';
+import { type generateInputSchema } from './generateInputSchema';
 import { type RunAgentMessage } from './runAgentType';
 
-export type GenerateInput = {
+export type GenerateMutationInput = z.infer<typeof generateInputSchema>;
+
+// a string input is sent as one user message
+export type GenerateInput = Omit<GenerateMutationInput, 'input'> & {
   input: string | RunAgentMessage[];
-  instructions?: string;
-  // the workspace default model when unset
-  modelId?: string;
-  responseFormat?: AgentResponseFormat;
-  // no data tools when unset
-  scope?: AiRunScope;
 };
 
 export type GenerateResult = {
@@ -18,7 +16,8 @@ export type GenerateResult = {
   text: string | null;
   object: Record<string, unknown> | null;
   error: string | null;
-  // the recorded turn, with its model, usage and credits; null when the call failed before it
-  turnId: string | null;
-  usage: { inputTokens: number; outputTokens: number } | null;
+  // the run's recorded turn, with its model, usage and credits
+  runId: string;
+  // what the run spent, including the steps that finished before a failure
+  usage: AiRunUsage;
 };

@@ -314,6 +314,12 @@ export enum AiModelTier {
   smart = 'smart'
 }
 
+export type AiRunUsage = {
+  __typename?: 'AiRunUsage';
+  inputTokens: Scalars['Int']['output'];
+  outputTokens: Scalars['Int']['output'];
+};
+
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
   estimatedTokenCount: Scalars['Int']['output'];
@@ -2728,16 +2734,10 @@ export type GenerateResult = {
   __typename?: 'GenerateResult';
   error?: Maybe<Scalars['String']['output']>;
   object?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
   success: Scalars['Boolean']['output'];
   text?: Maybe<Scalars['String']['output']>;
-  turnId?: Maybe<Scalars['UUID']['output']>;
-  usage?: Maybe<GenerateUsage>;
-};
-
-export type GenerateUsage = {
-  __typename?: 'GenerateUsage';
-  inputTokens: Scalars['Int']['output'];
-  outputTokens: Scalars['Int']['output'];
+  usage: AiRunUsage;
 };
 
 export type GetApiKeyInput = {

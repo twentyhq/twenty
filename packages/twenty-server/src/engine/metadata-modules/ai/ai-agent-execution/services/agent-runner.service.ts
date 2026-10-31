@@ -46,6 +46,7 @@ import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
@@ -91,6 +92,7 @@ export class AgentRunnerService {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async start(input: RunAgentJobData): Promise<void> {
@@ -127,31 +129,35 @@ export class AgentRunnerService {
           input: runInput,
           suspension: null,
         });
+        const { turnId } = openedTurn;
+        const outcome = await this.runOpenedTurn({
+          input: runInput,
+          suspension: null,
+          stream: null,
+          openedTurn,
+        }).then(
+          (result): AgentRunnerOutcome => result.outcome,
+          (error: unknown): AgentRunnerOutcome => {
+            this.logger.error(
+              `Agent run ${turnId} of workspace ${input.workspaceId} failed`,
+              error instanceof Error ? error.stack : error,
+            );
 
-        try {
-          const { outcome, summary } = await this.runOpenedTurn({
-            input: runInput,
-            suspension: null,
-            stream: null,
-            openedTurn,
-          });
-
-          return { runId: openedTurn.turnId, outcome, summary };
-        } catch (error) {
-          this.logger.error(
-            `Agent run ${openedTurn.turnId} of workspace ${input.workspaceId} failed`,
-            error instanceof Error ? error.stack : error,
-          );
-
-          return {
-            runId: openedTurn.turnId,
-            outcome: {
+            return {
               status: 'FAILED',
               error: error instanceof Error ? error.message : String(error),
-            },
-            summary: null,
-          };
-        }
+            };
+          },
+        );
+
+        return {
+          runId: turnId,
+          outcome,
+          usage: await this.turnRecorderService.findUsage({
+            workspaceId: input.workspaceId,
+            turnId,
+          }),
+        };
       },
     );
   }

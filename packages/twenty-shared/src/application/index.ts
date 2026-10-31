@@ -15,6 +15,7 @@ export type {
   AgentTrigger,
   AgentTriggerManifest,
 } from './agentTriggerType';
+export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
@@ -184,7 +185,12 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
-export type { GenerateInput, GenerateResult } from './generateType';
+export { generateInputSchema } from './generateInputSchema';
+export type {
+  GenerateMutationInput,
+  GenerateInput,
+  GenerateResult,
+} from './generateType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type {
   IdentifyAccountPayload,

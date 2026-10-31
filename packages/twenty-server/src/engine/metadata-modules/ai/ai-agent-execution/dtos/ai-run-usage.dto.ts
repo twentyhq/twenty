@@ -1,7 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('GenerateUsage')
-export class GenerateUsageDTO {
+import { type AiRunUsage } from 'twenty-shared/application';
+
+@ObjectType('AiRunUsage')
+export class AiRunUsageDTO implements AiRunUsage {
   @Field(() => Int)
   inputTokens: number;
 

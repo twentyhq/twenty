@@ -46,7 +46,6 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       case AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE:
       case AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS:
-      case AiExceptionCode.GENERATE_UPGRADE_IN_PROGRESS:
       case AiExceptionCode.THREAD_AWAITING_ANSWER:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:

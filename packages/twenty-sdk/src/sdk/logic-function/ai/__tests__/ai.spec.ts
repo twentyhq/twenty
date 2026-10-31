@@ -15,7 +15,7 @@ const RESULT = {
   text: 'Acme is a good fit.',
   object: null,
   error: null,
-  turnId: 'turn-id',
+  runId: 'run-id',
   usage: { inputTokens: 12, outputTokens: 7 },
 };
 

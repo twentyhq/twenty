@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { type AiRunUsage } from 'twenty-shared/application';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -246,6 +247,24 @@ export class AgentTurnRecorderService {
         return releasedThreads.length > 0;
       },
     );
+  }
+
+  async findUsage({
+    workspaceId,
+    turnId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+  }): Promise<AiRunUsage> {
+    const turn = await this.turnRepository.findOne(workspaceId, {
+      where: { id: turnId },
+      select: ['inputTokens', 'outputTokens'],
+    });
+
+    return {
+      inputTokens: turn?.inputTokens ?? 0,
+      outputTokens: turn?.outputTokens ?? 0,
+    };
   }
 
   async findLatestTurn({

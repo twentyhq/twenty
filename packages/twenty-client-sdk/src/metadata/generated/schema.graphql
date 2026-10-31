@@ -280,6 +280,11 @@ enum AiModelTier {
   smart
 }
 
+type AiRunUsage {
+  inputTokens: Int!
+  outputTokens: Int!
+}
+
 type AiSystemPromptPreview {
   estimatedTokenCount: Int!
   sections: [AiSystemPromptSection!]!
@@ -2578,15 +2583,10 @@ input GenerateInput {
 type GenerateResult {
   error: String
   object: JSON
+  runId: UUID!
   success: Boolean!
   text: String
-  turnId: UUID
-  usage: GenerateUsage
-}
-
-type GenerateUsage {
-  inputTokens: Int!
-  outputTokens: Int!
+  usage: AiRunUsage!
 }
 
 input GetApiKeyInput {

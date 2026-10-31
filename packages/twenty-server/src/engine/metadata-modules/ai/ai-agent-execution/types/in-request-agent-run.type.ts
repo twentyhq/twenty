@@ -1,4 +1,4 @@
-import { type AgentRunSummary } from 'twenty-shared/ai';
+import { type AiRunUsage } from 'twenty-shared/application';
 
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 
@@ -6,6 +6,6 @@ export type InRequestAgentRun = {
   // the run's recorded turn, with its model, usage and credits
   runId: string;
   outcome: AgentRunnerOutcome;
-  // null when the run failed before its turn completed
-  summary: AgentRunSummary | null;
+  // read back from the turn, which records what a failed run spent too
+  usage: AiRunUsage;
 };
