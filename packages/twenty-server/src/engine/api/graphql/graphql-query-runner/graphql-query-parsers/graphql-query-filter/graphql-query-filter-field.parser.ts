@@ -38,7 +38,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';

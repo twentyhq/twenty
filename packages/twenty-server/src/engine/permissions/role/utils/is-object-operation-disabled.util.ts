@@ -2,7 +2,7 @@ import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const getObjectPermissionAction = (
   operationType: OperationType,

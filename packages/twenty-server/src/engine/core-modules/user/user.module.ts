@@ -19,8 +19,8 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { RecordShareOwnershipTransferModule } from 'src/engine/permissions/record-share/record-share-ownership-transfer.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { UserService } from './services/user.service';

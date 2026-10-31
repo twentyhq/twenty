@@ -14,7 +14,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
-import { RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
+import { RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 
 registerEnumType(RecordShareAccessLevel, { name: 'RecordShareAccessLevel' });
 registerEnumType(RecordSharePrincipalType, {

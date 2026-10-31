@@ -9,7 +9,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 describe('destroyManyObjectRecordsPermissions', () => {
