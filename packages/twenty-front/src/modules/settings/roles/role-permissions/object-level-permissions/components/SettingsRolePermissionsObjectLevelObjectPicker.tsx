@@ -58,6 +58,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
+  const fromApplicationId = searchParams.get('fromApplication');
   const [searchFilter, setSearchFilter] = useState('');
 
   const { objectMetadataItemsThatCanHavePermission } =
@@ -71,7 +72,11 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     navigate(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+      fromApplicationId
+        ? { fromApplication: fromApplicationId }
+        : fromAgentId
+          ? { fromAgent: fromAgentId }
+          : undefined,
     );
   };
 

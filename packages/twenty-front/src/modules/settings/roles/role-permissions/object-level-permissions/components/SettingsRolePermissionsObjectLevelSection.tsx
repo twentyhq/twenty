@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
+import { isRolePermissionsEditable } from '@/settings/roles/utils/isRolePermissionsEditable';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
@@ -57,11 +60,17 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     objectMetadataItemsWithPermissionOverride.length ===
     objectMetadataItemsThatCanHavePermission.length;
 
+  const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
+
   const handleAddRule = () => {
     navigateSettings(
       SettingsPath.RoleAddObjectLevel,
       { roleId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+      isDefined(applicationGrantEditor)
+        ? { fromApplication: applicationGrantEditor.applicationId }
+        : fromAgentId
+          ? { fromAgent: fromAgentId }
+          : undefined,
     );
   };
 
@@ -101,7 +110,8 @@ export const SettingsRolePermissionsObjectLevelSection = ({
             startIcon={<IconPlus />}
             size="sm"
             disabled={
-              !settingsDraftRole.isEditable || allObjectsHaveSetPermission
+              !isRolePermissionsEditable(settingsDraftRole) ||
+              allObjectsHaveSetPermission
             }
             onClick={handleAddRule}
             variant="outline"

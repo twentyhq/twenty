@@ -1,3 +1,4 @@
+import { type GrantObjectScope } from '@/marketplace/types/GrantObjectScope';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
@@ -140,14 +141,16 @@ export const useInstallMarketplaceApp = ({
     fetchJobStatus: fetchInstallJobStatus,
   });
 
-  const install = async (): Promise<void> => {
+  const install = async (
+    grantObjectScopes?: GrantObjectScope[],
+  ): Promise<void> => {
     if (!isDefined(universalIdentifier)) {
       return;
     }
 
     try {
       const { data } = await triggerInstallApplication({
-        variables: { input: { universalIdentifier } },
+        variables: { input: { universalIdentifier, grantObjectScopes } },
       });
 
       const jobId = data?.triggerInstallApplication.jobId;

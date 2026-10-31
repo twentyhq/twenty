@@ -40,11 +40,15 @@ const StyledTableRowContainer = styled.div`
 
 type SettingsRolesTableRowProps = {
   role: RoleWithPartialMembers;
+  to?: string;
 };
 
 const MAX_VISIBLE_ROLE_MEMBER_AVATARS = 5;
 
-export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
+export const SettingsRolesTableRow = ({
+  role,
+  to,
+}: SettingsRolesTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(role.icon ?? 'IconUser');
@@ -66,7 +70,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
         key={role.id}
         gridAutoColumns="332px 3fr 3fr 1fr"
         mobileGridAutoColumns="3fr 2fr 2fr 35px"
-        to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
+        to={to ?? getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
       >
         <TableCell>
           <StyledNameCell>

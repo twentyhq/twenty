@@ -1,3 +1,4 @@
+import { isRolePermissionsEditable } from '@/settings/roles/utils/isRolePermissionsEditable';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow';
@@ -76,7 +77,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
             <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow
               key={permission.key}
               permission={permission}
-              isEditable={settingsDraftRole.isEditable}
+              isEditable={isRolePermissionsEditable(settingsDraftRole)}
               settingsDraftRoleObjectPermissions={
                 settingsDraftRoleObjectPermissions
               }

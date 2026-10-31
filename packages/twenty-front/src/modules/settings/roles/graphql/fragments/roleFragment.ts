@@ -17,6 +17,8 @@ export const ROLE_FRAGMENT = gql`
     canBeAssignedToUsers
     canBeAssignedToAgents
     canBeAssignedToApiKeys
+    canBeAssignedToApplications
+    grantedToApplicationId
     applicationId
     universalIdentifier
   }

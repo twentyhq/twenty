@@ -1,3 +1,4 @@
+import { APPLICATION_ACCESS_TAB_ID } from '@/settings/applications/grant/constants/ApplicationAccessTabId';
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
@@ -17,7 +18,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
@@ -80,15 +81,40 @@ export const SettingsRolesList = () => {
       .map((application) => [application.defaultRoleId, application]),
   );
 
+  const installedApplicationById = new Map(
+    installedApplications.map((application) => [application.id, application]),
+  );
+
+  const grantedApplicationIds = new Set(
+    settingsAllRoles
+      .map((role) => role.grantedToApplicationId)
+      .filter(isDefined),
+  );
+
+  // A confined app's requested role is never used for permissions: its grant is listed instead
+  const isRequestedRole = (role: RoleWithPartialMembers) => {
+    const application = installedApplicationByDefaultRoleId.get(role.id);
+
+    return isDefined(application) && grantedApplicationIds.has(application.id);
+  };
+
   // Admin is the standard application's default role but stays a member role
   const isApplicationRole = (role: RoleWithPartialMembers) =>
-    !role.canBeAssignedToUsers &&
-    installedApplicationByDefaultRoleId.has(role.id);
+    isDefined(role.grantedToApplicationId) ||
+    (!role.canBeAssignedToUsers &&
+      installedApplicationByDefaultRoleId.has(role.id));
 
-  const getApplicationName = (role: RoleWithPartialMembers) =>
-    isApplicationRole(role)
+  const getApplicationName = (role: RoleWithPartialMembers) => {
+    if (isDefined(role.grantedToApplicationId)) {
+      return (
+        installedApplicationById.get(role.grantedToApplicationId)?.name ?? ''
+      );
+    }
+
+    return isApplicationRole(role)
       ? (installedApplicationByDefaultRoleId.get(role.id)?.name ?? '')
       : '';
+  };
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort(
     (a, b) =>
@@ -97,6 +123,10 @@ export const SettingsRolesList = () => {
   );
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
+    if (isRequestedRole(role)) {
+      return false;
+    }
+
     const matchesType = isApplicationRole(role)
       ? showApplicationRoles
       : role.canBeAssignedToUsers ||
@@ -171,7 +201,20 @@ export const SettingsRolesList = () => {
             </TableCell>
           ) : (
             filteredRoles.map((role) => (
-              <SettingsRolesTableRow key={role.id} role={role} />
+              <SettingsRolesTableRow
+                key={role.id}
+                role={role}
+                to={
+                  isDefined(role.grantedToApplicationId)
+                    ? getSettingsPath(
+                        SettingsPath.ApplicationDetail,
+                        { applicationId: role.grantedToApplicationId },
+                        undefined,
+                        APPLICATION_ACCESS_TAB_ID,
+                      )
+                    : undefined
+                }
+              />
             ))
           )}
         </StyledTableRows>

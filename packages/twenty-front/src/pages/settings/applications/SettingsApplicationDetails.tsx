@@ -1,3 +1,8 @@
+import { APPLICATION_ACCESS_TAB_ID } from '@/settings/applications/grant/constants/ApplicationAccessTabId';
+import { SettingsApplicationDetailAccessTab } from '@/settings/applications/grant/components/SettingsApplicationDetailAccessTab';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -24,6 +29,7 @@ import {
 import {
   IconApps,
   IconDeviceFloppy,
+  IconLock,
   IconSettings,
   IconVariable,
   useIcons,
@@ -190,8 +196,20 @@ export const SettingsApplicationDetails = () => {
     await runHealthCheck();
   };
 
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  // The Twenty standard and workspace custom applications run with their own role, not a grant
+  const hasAccessTab =
+    isDefined(application) &&
+    application.universalIdentifier !==
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER &&
+    application.id !== currentWorkspace?.workspaceCustomApplication?.id;
+
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
+    ...(hasAccessTab
+      ? [{ id: APPLICATION_ACCESS_TAB_ID, title: t`Access`, Icon: IconLock }]
+      : []),
     ...(hasVariablesTab
       ? [
           {
@@ -298,6 +316,10 @@ export const SettingsApplicationDetails = () => {
             isUninstalling={isUninstalling}
             uninstallProgress={uninstallProgress}
           />
+        );
+      case APPLICATION_ACCESS_TAB_ID:
+        return (
+          <SettingsApplicationDetailAccessTab applicationId={application.id} />
         );
       case APPLICATION_VARIABLES_TAB_ID:
         return (

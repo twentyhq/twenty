@@ -32,6 +32,7 @@ const ROLE_BASIC_FIELDS_INPUT = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  canBeAssignedToApplications: false,
 };
 
 const PERSISTED_ROLE: RoleWithPartialMembers = {
@@ -50,6 +51,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  canBeAssignedToApplications: false,
   applicationId: 'application-id',
   isEditable: true,
   workspaceMembers: [],

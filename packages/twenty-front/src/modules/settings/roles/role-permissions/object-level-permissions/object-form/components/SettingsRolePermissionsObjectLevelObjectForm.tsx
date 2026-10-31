@@ -1,3 +1,4 @@
+import { APPLICATION_ACCESS_TAB_ID } from '@/settings/applications/grant/constants/ApplicationAccessTabId';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -41,6 +42,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
+  const fromApplicationId = searchParams.get('fromApplication');
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -101,14 +103,20 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           },
         ];
 
-  const finishButtonPath =
-    fromAgentId && isDefined(agent)
+  const finishButtonPath = fromApplicationId
+    ? getSettingsPath(
+        SettingsPath.ApplicationDetail,
+        { applicationId: fromApplicationId },
+        undefined,
+        APPLICATION_ACCESS_TAB_ID,
+      )
+    : fromAgentId && isDefined(agent)
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
   const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
     roleId,
-  })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
+  })}${fromApplicationId ? `?fromApplication=${fromApplicationId}` : fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
 
   const headerTitle =
     fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
