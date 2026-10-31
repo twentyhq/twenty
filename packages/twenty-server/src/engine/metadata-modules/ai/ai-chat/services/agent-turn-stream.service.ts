@@ -237,12 +237,19 @@ export class AgentTurnStreamService {
     return this.streamAndFinishTurn(input).catch(async (error: unknown) => {
       // a claimed turn's failure is recorded when its claim is released
       if (!isDefined(claim)) {
-        await this.turnRecorderService.finish({
-          workspaceId,
-          turnId,
-          status: AgentTurnStatus.FAILED,
-          error: mapErrorToStreamError(error),
-        });
+        // a failure to record it must not hide why the turn failed
+        await this.turnRecorderService
+          .finish({
+            workspaceId,
+            turnId,
+            status: AgentTurnStatus.FAILED,
+            error: mapErrorToStreamError(error),
+          })
+          .catch((finishError: unknown) =>
+            this.logger.warn(
+              `Could not record the failure of turn ${turnId}: ${formatErrorWithCause(finishError)}`,
+            ),
+          );
       }
 
       throw error;

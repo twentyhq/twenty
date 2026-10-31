@@ -32,7 +32,7 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // upgrade fence: drop once 2-55's make-agent-turn-thread-optional has reached every workspace
+  // TODO(@FelixMalfait): drop this upgrade fence once 2-55's make-agent-turn-thread-optional has reached every workspace
   async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

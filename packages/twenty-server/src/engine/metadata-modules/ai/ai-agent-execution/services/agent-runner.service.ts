@@ -686,7 +686,10 @@ export class AgentRunnerService {
     input: { workspaceId, conversation, persona, prompt, executionContext },
     suspension,
   }: {
-    input: AgentRunnerRunInput;
+    input: Pick<
+      AgentRunnerRunInput,
+      'workspaceId' | 'conversation' | 'persona' | 'prompt' | 'executionContext'
+    >;
     suspension: AgentRunSuspension | null;
   }): Promise<OpenedAgentRunTurn> {
     if (!isDefined(conversation)) {
