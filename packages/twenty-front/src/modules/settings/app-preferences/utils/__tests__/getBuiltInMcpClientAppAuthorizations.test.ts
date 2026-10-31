@@ -9,10 +9,14 @@ const AUTHORIZATIONS = [
   { id: 'chatgpt', redirectUriHostnames: ['chatgpt.com'] },
   { id: 'cursor', redirectUriHostnames: ['localhost'] },
   { id: 'no-redirect', redirectUriHostnames: [] },
+  {
+    id: 'claims-claude',
+    redirectUriHostnames: ['claude.ai', 'third-party.example'],
+  },
 ];
 
 describe('getBuiltInMcpClientAppAuthorizations', () => {
-  it('keeps the authorizations whose callback host belongs to Claude', () => {
+  it('keeps the authorizations whose callback hosts all belong to Claude', () => {
     expect(
       getBuiltInMcpClientAppAuthorizations({
         authorizations: AUTHORIZATIONS,
@@ -21,7 +25,7 @@ describe('getBuiltInMcpClientAppAuthorizations', () => {
     ).toEqual(['claude-ai', 'claude-com']);
   });
 
-  it('keeps the authorizations whose callback host belongs to ChatGPT', () => {
+  it('keeps the authorizations whose callback hosts all belong to ChatGPT', () => {
     expect(
       getBuiltInMcpClientAppAuthorizations({
         authorizations: AUTHORIZATIONS,

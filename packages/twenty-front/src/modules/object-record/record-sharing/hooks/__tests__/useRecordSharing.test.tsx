@@ -12,7 +12,7 @@ import { type ReactNode } from 'react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RecordSharingPermissionsEffect } from '@/object-record/record-sharing/components/RecordSharingPermissionsEffect';
-import { RecordSharingRefreshEffect } from '@/object-record/record-sharing/components/RecordSharingRefreshEffect';
+import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
@@ -210,7 +210,7 @@ describe('useRecordSharing', () => {
             recordTarget={RECORD_TARGET}
             permissions={sharing?.permissions}
           />
-          <RecordSharingRefreshEffect refetch={refetch} />
+          <RefetchOnWindowFocusEffect refetch={refetch} />
         </>
       );
     };
@@ -267,7 +267,7 @@ describe('useRecordSharing', () => {
     const { request, wrapper } = createHarness();
     const TestSharingRefresh = () => {
       const { refetch } = useRecordSharing({ recordTarget: RECORD_TARGET });
-      return <RecordSharingRefreshEffect refetch={refetch} />;
+      return <RefetchOnWindowFocusEffect refetch={refetch} />;
     };
     const { unmount } = render(<TestSharingRefresh />, { wrapper });
     await waitFor(() => expect(request).toHaveBeenCalledTimes(1));
