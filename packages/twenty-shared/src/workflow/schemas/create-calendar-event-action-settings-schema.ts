@@ -12,7 +12,7 @@ export const workflowCreateCalendarEventActionSettingsSchema =
       endsAt: z.string(),
       isFullDay: z.boolean(),
       timeZone: z.string().optional(),
-      attendees: z.string().optional().default(''),
+      attendees: z.string().optional(),
       sendInvitations: z.boolean(),
       addConferencing: z.boolean(),
     }),

@@ -9,7 +9,7 @@ import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manage
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckPublicDomainsValidRecordsCronJob } from 'src/engine/core-modules/public-domain/crons/jobs/check-public-domains-valid-records.cron.job';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';

@@ -1,0 +1,22 @@
+/* @license Enterprise */
+
+import { assertUnreachable } from 'twenty-shared/utils';
+
+import { type RowAccessExpression } from 'src/engine/permissions/combine/types/row-access-policy.type';
+
+export const isRowAccessExpressionReadingRoleFilter = (
+  expression: RowAccessExpression,
+): boolean => {
+  switch (expression.kind) {
+    case 'and':
+    case 'or':
+      return expression.operands.some(isRowAccessExpressionReadingRoleFilter);
+    case 'roleFilter':
+      return true;
+    case 'recordShared':
+    case 'recordNotRestricted':
+      return false;
+    default:
+      return assertUnreachable(expression);
+  }
+};

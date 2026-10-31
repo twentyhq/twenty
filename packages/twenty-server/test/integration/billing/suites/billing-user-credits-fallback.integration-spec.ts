@@ -3,7 +3,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 const buildUpdateUserCreditsFallbackOperation = (
   userCreditsFallback: UserCreditsFallback,
