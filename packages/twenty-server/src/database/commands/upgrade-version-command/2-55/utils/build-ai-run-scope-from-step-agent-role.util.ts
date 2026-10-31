@@ -1,5 +1,5 @@
 import { type AiRunScope } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type StepAgentRoleObjectPermission = {
   objectUniversalIdentifier: string;
@@ -77,9 +77,9 @@ export const buildAiRunScopeFromStepAgentRole = (
   return {
     ...(role.canUpdateAllSettings ? { canUpdateAllSettings: true } : {}),
     ...(role.canAccessAllTools ? { canAccessAllTools: true } : {}),
-    ...(objectPermissions.length > 0 ? { objectPermissions } : {}),
-    ...(fieldPermissions.length > 0 ? { fieldPermissions } : {}),
-    ...(role.permissionFlagUniversalIdentifiers.length > 0
+    ...(isNonEmptyArray(objectPermissions) ? { objectPermissions } : {}),
+    ...(isNonEmptyArray(fieldPermissions) ? { fieldPermissions } : {}),
+    ...(isNonEmptyArray(role.permissionFlagUniversalIdentifiers)
       ? {
           permissionFlagUniversalIdentifiers: [
             ...role.permissionFlagUniversalIdentifiers,

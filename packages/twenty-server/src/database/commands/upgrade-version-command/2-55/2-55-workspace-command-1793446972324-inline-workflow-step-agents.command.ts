@@ -181,22 +181,23 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       return { value: result.steps, hasChanged: result.hasChanged };
     };
 
-    const coreWorkflowVersionCount =
-      await rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
-        dataSource,
-        isDryRun,
-        tableName: 'core."workflowVersion"',
-        columnName: 'steps',
-        whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"AI_AGENT"}]'`,
-        whereParameters: [workspaceId],
-        mapRow: ({ id, value }) =>
-          inlineSteps({
-            tableName: 'core workflow version',
-            sourceTable: 'coreWorkflowVersion',
-            rowId: id,
-            steps: value,
-          }),
-      });
+    const coreWorkflowVersionCount = await rewriteJsonbRowsWithCompareAndSet<
+      StoredWorkflowStep[]
+    >({
+      dataSource,
+      isDryRun,
+      tableName: 'core."workflowVersion"',
+      columnName: 'steps',
+      whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"AI_AGENT"}]'`,
+      whereParameters: [workspaceId],
+      mapRow: ({ id, value }) =>
+        inlineSteps({
+          tableName: 'core workflow version',
+          sourceTable: 'coreWorkflowVersion',
+          rowId: id,
+          steps: value,
+        }),
+    });
 
     const workflowVersionCount = isDefined(workflowTables.workflowVersion)
       ? await rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
@@ -277,10 +278,9 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
 
           if (!hasChanged && !conversationalSourceByAgentId.has(agentId)) {
             conversationalSourceByAgentId.set(agentId, {
-              stepName:
-                typeof payload.runSpec.title === 'string'
-                  ? payload.runSpec.title
-                  : null,
+              stepName: isString(payload.runSpec.title)
+                ? payload.runSpec.title
+                : null,
               table: 'workflowRun',
               rowId: workflowRunId,
             });
@@ -615,7 +615,8 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         tableName: 'workflow',
       }),
       workflowVersion: await findTable({
-        universalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+        universalIdentifier:
+          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
         tableName: 'workflowVersion',
       }),
       workflowRun: await findTable({
