@@ -38,7 +38,12 @@ describe('isRowAccessExpressionReadingRoleFilter', () => {
         kind: 'and',
         operands: [
           recordShared,
-          { ...recordShared, kind: 'recordNotRestricted' },
+          {
+            kind: 'recordPrivacy',
+            isPrivate: false,
+            tableAlias: 'company',
+            objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+          },
         ],
       }),
     ).toBe(false);

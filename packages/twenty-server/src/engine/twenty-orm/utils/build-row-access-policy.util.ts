@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { isOperationGrantedBeyondRole } from 'src/engine/core-modules/record-share/utils/is-operation-granted-beyond-role.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type RowAccessExpression,
@@ -40,10 +40,11 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const canGrantOperationBeyondRole = resolveObjectSharing({
+  const canGrantOperationBeyondRole = isOperationGrantedBeyondRole({
     flatObjectMetadata: target.flatObjectMetadata,
     featureFlagsMap: environment.featureFlagsMap,
-  }).operationTypesGrantedBeyondRole.includes(target.operationType);
+    operationType: target.operationType,
+  });
   const hasHypotheticalRecordShare =
     isDefined(hypotheticalRecordShareAccessLevel) &&
     resolveRequiredRecordShareAccessLevels(target.operationType).includes(
@@ -52,7 +53,7 @@ export const buildRowAccessPolicy = ({
   const isHypotheticalRecordShareBeyondRole =
     hasHypotheticalRecordShare && canGrantOperationBeyondRole;
   const namedRecordGrant = canGrantOperationBeyondRole
-    ? buildNamedRecordGrantExpression(context, target)
+    ? buildNamedRecordGrantExpression({ ...context, ...target })
     : undefined;
 
   if (

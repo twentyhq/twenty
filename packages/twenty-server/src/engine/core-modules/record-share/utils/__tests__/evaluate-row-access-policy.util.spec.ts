@@ -3,6 +3,7 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { FieldMetadataType, RecordShareAccessLevel } from 'twenty-shared/types';
 
+import { type PrivateRecordState } from 'src/engine/core-modules/record-share/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import {
   evaluateRowAccessPolicy,
@@ -82,6 +83,19 @@ const recordShares: RecordShareGrant[] = [
   },
 ];
 
+const privateRecordStates = new Map<string, PrivateRecordState>([
+  ['active-shared', { isPrivate: false, createdByWorkspaceMemberId: null }],
+  [
+    'active-private',
+    { isPrivate: true, createdByWorkspaceMemberId: MEMBER_ID },
+  ],
+]);
+
+const privateTarget = {
+  tableAlias: 'company',
+  objectMetadataId: flatObjectMetadata.id,
+};
+
 const buildContext = (
   overrides: Partial<RowAccessEvaluationContext> = {},
 ): RowAccessEvaluationContext => ({
@@ -92,6 +106,7 @@ const buildContext = (
       recordIds.includes(recordShare.recordId),
     ),
   ),
+  findPrivateRecordStates: jest.fn(async () => privateRecordStates),
   ...overrides,
 });
 
@@ -134,10 +149,31 @@ describe('evaluateRowAccessPolicy', () => {
     );
   });
 
-  it('keeps out records restricted for everyone', async () => {
+  it('reads privacy, treating a record it cannot find as public', async () => {
     expect(
-      await evaluate({ kind: 'recordNotRestricted', ...shareTarget }),
+      await evaluate({
+        kind: 'recordPrivacy',
+        isPrivate: false,
+        ...privateTarget,
+      }),
     ).toEqual(new Set(['active-shared', 'archived-shared']));
+    expect(
+      await evaluate({
+        kind: 'recordPrivacy',
+        isPrivate: true,
+        ...privateTarget,
+      }),
+    ).toEqual(new Set(['active-private']));
+  });
+
+  it('admits records created by the member', async () => {
+    expect(
+      await evaluate({
+        kind: 'recordCreatedBy',
+        workspaceMemberId: MEMBER_ID,
+        ...privateTarget,
+      }),
+    ).toEqual(new Set(['active-private']));
   });
 
   it('only fetches shares for records still in play after an and', async () => {
@@ -170,7 +206,7 @@ describe('evaluateRowAccessPolicy', () => {
               kind: 'and',
               operands: [
                 activeFilter,
-                { kind: 'recordNotRestricted', ...shareTarget },
+                { kind: 'recordPrivacy', isPrivate: false, ...privateTarget },
               ],
             },
             { kind: 'recordShared', ...shareTarget },

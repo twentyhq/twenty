@@ -2,11 +2,14 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -15,6 +18,7 @@ export class RecordShareOwnershipTransferService {
   constructor(
     private readonly userRoleService: UserRoleService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -31,10 +35,9 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
-    const objectMetadataIds =
-      await this.findTransferableObjectMetadataIds(workspaceId);
+    const transferableObjects = await this.findTransferableObjects(workspaceId);
 
-    if (objectMetadataIds.length === 0) {
+    if (transferableObjects.length === 0) {
       return;
     }
 
@@ -45,25 +48,45 @@ export class RecordShareOwnershipTransferService {
 
     await this.recordShareStorageService.transferMemberGrants({
       workspaceId,
-      objectMetadataIds,
+      objectMetadataIds: transferableObjects.map(({ id }) => id),
       fromWorkspaceMemberId: removedWorkspaceMemberId,
       toWorkspaceMemberId,
     });
+
+    if (isDefined(toWorkspaceMemberId)) {
+      // Nobody passes the creator check of a removed member's private records, admins included
+      await this.privateRecordStorageService.grantPrivateRecordsCreatedBy({
+        workspaceId,
+        flatObjectMetadatas: transferableObjects,
+        creatorWorkspaceMemberId: removedWorkspaceMemberId,
+        granteeWorkspaceMemberId: toWorkspaceMemberId,
+      });
+    }
   }
 
-  // Private objects such as chats and workflow runs stay with their creator
-  private async findTransferableObjectMetadataIds(
+  private async findTransferableObjects(
     workspaceId: string,
-  ): Promise<string[]> {
+  ): Promise<FlatObjectMetadata[]> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
 
-    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter(isRecordShareExceptionObject)
-      .map((flatObjectMetadata) => flatObjectMetadata.id);
+    return (
+      Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        // Rows written while sharing was enabled still need a custodian
+        .filter((flatObjectMetadata) => {
+          const { isShareable, isShareRequired } = resolveObjectSharing({
+            flatObjectMetadata,
+            featureFlagsMap: {
+              [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+            },
+          });
+
+          return isShareable && !isShareRequired;
+        })
+    );
   }
 
   private async resolveCustodianWorkspaceMemberId({

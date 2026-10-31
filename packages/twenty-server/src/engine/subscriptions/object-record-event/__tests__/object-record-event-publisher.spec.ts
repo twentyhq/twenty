@@ -24,6 +24,8 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK } from 'src/engine/core-modules/record-share/__mocks__/public-private-record-storage-service.mock';
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/services/private-record-storage.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -354,6 +356,12 @@ describe('ObjectRecordEventPublisher', () => {
         {
           provide: RecordShareStorageService,
           useValue: mockRecordShareStorageService,
+        },
+
+        {
+          provide: PrivateRecordStorageService,
+
+          useValue: PUBLIC_PRIVATE_RECORD_STORAGE_SERVICE_MOCK,
         },
 
         RecordAccessPolicyService,

@@ -1,7 +1,8 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
-import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
+import { buildRecordCreatedByCondition } from 'src/engine/core-modules/record-share/utils/build-record-created-by-condition.util';
+import { buildRecordPrivacyCondition } from 'src/engine/core-modules/record-share/utils/build-record-privacy-condition.util';
 import {
   type CompiledRowAccessPolicy,
   type RowAccessExpression,
@@ -51,11 +52,10 @@ export const compileRowAccessExpression = ({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
       });
-    case 'recordNotRestricted':
-      return buildRecordShareExceptionCondition({
-        ...expression,
-        recordShareTableExpression: environment.recordShareTableExpression,
-      });
+    case 'recordPrivacy':
+      return buildRecordPrivacyCondition(expression);
+    case 'recordCreatedBy':
+      return buildRecordCreatedByCondition(expression);
     default:
       return assertUnreachable(expression);
   }

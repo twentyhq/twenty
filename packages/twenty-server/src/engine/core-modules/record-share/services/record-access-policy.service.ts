@@ -5,6 +5,8 @@ import { Injectable } from '@nestjs/common';
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { PrivateRecordStorageService } from 'src/engine/core-modules/record-share/services/private-record-storage.service';
+import { type PrivateRecordState } from 'src/engine/core-modules/record-share/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
@@ -19,6 +21,7 @@ export class RecordAccessPolicyService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
   ) {}
 
   // A subject receives the records a query would return it: the event
@@ -85,6 +88,18 @@ export class RecordAccessPolicyService {
       return recordSharesPerRecord.flat();
     };
 
+    let privateRecordStates:
+      | Promise<Map<string, PrivateRecordState>>
+      | undefined;
+    const findPrivateRecordStates = () =>
+      (privateRecordStates ??= this.privateRecordStorageService.findStates({
+        workspaceId,
+        flatObjectMetadata: objectMetadata,
+        recordIds: resolveEventRecordSnapshots(events).map(
+          (record) => record.id,
+        ),
+      }));
+
     return {
       resolveAdmittedRecordIds: async (subject) => {
         const {
@@ -113,6 +128,7 @@ export class RecordAccessPolicyService {
             flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
             shouldIgnoreSoftDeleteDefaultFilter: true,
             fetchRecordShares,
+            findPrivateRecordStates,
           },
         });
       },

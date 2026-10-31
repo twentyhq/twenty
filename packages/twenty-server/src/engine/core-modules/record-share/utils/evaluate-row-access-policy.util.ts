@@ -2,8 +2,8 @@
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type PrivateRecordState } from 'src/engine/core-modules/record-share/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
-import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -22,6 +22,16 @@ export type RowAccessEvaluationContext = {
     objectMetadataId: string;
     recordIds: string[];
   }) => Promise<RecordShareGrant[]>;
+  findPrivateRecordStates: (args: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }) => Promise<Map<string, PrivateRecordState>>;
+};
+
+// A destroyed record is gone when its events are delivered and its snapshot carries no privacy
+const UNKNOWN_PRIVATE_RECORD_STATE: PrivateRecordState = {
+  isPrivate: false,
+  createdByWorkspaceMemberId: null,
 };
 
 // The in-memory counterpart of compileRowAccessPolicy: both read the same
@@ -136,19 +146,21 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
 
       return new Set(admittedRecordIds);
     }
-    case 'recordNotRestricted': {
-      const restrictedRecordIds = resolveRecordIdsRestrictedForPrincipals({
-        recordShares: await context.fetchRecordShares({
-          objectMetadataId: expression.objectMetadataId,
-          recordIds,
-        }),
-        principalIds: expression.principalIds,
-        accessLevels: expression.accessLevels,
+    case 'recordPrivacy':
+    case 'recordCreatedBy': {
+      const privateRecordStates = await context.findPrivateRecordStates({
+        objectMetadataId: expression.objectMetadataId,
+        recordIds,
       });
 
-      const admittedRecordIds = recordIds.filter(
-        (id) => !restrictedRecordIds.has(id),
-      );
+      const admittedRecordIds = recordIds.filter((id) => {
+        const { isPrivate, createdByWorkspaceMemberId } =
+          privateRecordStates.get(id) ?? UNKNOWN_PRIVATE_RECORD_STATE;
+
+        return expression.kind === 'recordPrivacy'
+          ? isPrivate === expression.isPrivate
+          : createdByWorkspaceMemberId === expression.workspaceMemberId;
+      });
 
       return new Set(admittedRecordIds);
     }

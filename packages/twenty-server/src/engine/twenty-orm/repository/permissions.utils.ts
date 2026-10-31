@@ -18,7 +18,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
-import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
+import { isOperationGrantedBeyondRole } from 'src/engine/core-modules/record-share/utils/is-operation-granted-beyond-role.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export type OperationType =
@@ -89,10 +89,11 @@ export const validateOperationIsPermittedOrThrow = ({
         operationType,
         objectsPermissions,
       })) &&
-    !resolveObjectSharing({
+    !isOperationGrantedBeyondRole({
       flatObjectMetadata: objectMetadata,
       featureFlagsMap,
-    }).operationTypesGrantedBeyondRole.includes(operationType)
+      operationType,
+    })
   ) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
