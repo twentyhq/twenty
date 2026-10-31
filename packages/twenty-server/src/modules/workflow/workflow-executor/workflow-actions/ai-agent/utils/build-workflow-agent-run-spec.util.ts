@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { isWorkflowAiAgentGenerateStep } from 'twenty-shared/workflow';
 
 import {
   type AgentRunPersonaSpec,
@@ -50,7 +51,9 @@ export const buildWorkflowAgentRunSpec = ({
 }): AgentRunSpec => {
   const { humanInputInstructions, responseFormat } = step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();
-  const canAskHumans = isNonEmptyString(trimmedHumanInputInstructions);
+  const canAskHumans =
+    !isWorkflowAiAgentGenerateStep(step.settings.input) &&
+    isNonEmptyString(trimmedHumanInputInstructions);
 
   return {
     ...buildPersonaSpec({ step, applicationId }),
