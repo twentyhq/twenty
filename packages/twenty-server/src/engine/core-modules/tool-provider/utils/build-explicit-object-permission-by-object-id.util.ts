@@ -56,17 +56,17 @@ export const buildExplicitObjectPermissionByObjectId = ({
         );
         const explicitObjectPermission: ExplicitObjectPermission = {
           canReadObjectRecords:
-            scope.canReadAllObjectRecords === true ||
-            objectPermission?.canReadObjectRecords === true,
+            (objectPermission?.canReadObjectRecords ??
+              scope.canReadAllObjectRecords) === true,
           canUpdateObjectRecords:
-            scope.canUpdateAllObjectRecords === true ||
-            objectPermission?.canUpdateObjectRecords === true,
+            (objectPermission?.canUpdateObjectRecords ??
+              scope.canUpdateAllObjectRecords) === true,
           canSoftDeleteObjectRecords:
-            scope.canSoftDeleteAllObjectRecords === true ||
-            objectPermission?.canSoftDeleteObjectRecords === true,
+            (objectPermission?.canSoftDeleteObjectRecords ??
+              scope.canSoftDeleteAllObjectRecords) === true,
           canDestroyObjectRecords:
-            scope.canDestroyAllObjectRecords === true ||
-            objectPermission?.canDestroyObjectRecords === true,
+            (objectPermission?.canDestroyObjectRecords ??
+              scope.canDestroyAllObjectRecords) === true,
         };
 
         return Object.values(explicitObjectPermission).some(
