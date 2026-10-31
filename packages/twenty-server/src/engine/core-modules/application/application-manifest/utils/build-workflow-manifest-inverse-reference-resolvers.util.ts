@@ -96,28 +96,39 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
     reason: string;
   }): string => universalIdentifier ?? markUnsupported(reason);
 
-  const exportedObjectUniversalIdentifier = (
-    universalIdentifier: string | undefined,
-  ): string =>
+  const exportedUniversalIdentifier = ({
+    universalIdentifier,
+    exportedByUniversalIdentifier,
+    reason,
+  }: {
+    universalIdentifier: string | undefined;
+    exportedByUniversalIdentifier: ReadonlyMap<string, unknown> | undefined;
+    reason: string;
+  }): string =>
     resolveOrMarkUnsupported({
       universalIdentifier:
         isDefined(universalIdentifier) &&
-        references.objectByUniversalIdentifier?.has(universalIdentifier) ===
-          true
+        exportedByUniversalIdentifier?.has(universalIdentifier)
           ? universalIdentifier
           : undefined,
+      reason,
+    });
+
+  const exportedObjectUniversalIdentifier = (
+    universalIdentifier: string | undefined,
+  ): string =>
+    exportedUniversalIdentifier({
+      universalIdentifier,
+      exportedByUniversalIdentifier: references.objectByUniversalIdentifier,
       reason: 'workflow referencing an object that is not exported',
     });
 
   const exportedFieldUniversalIdentifier = (
     universalIdentifier: string | undefined,
   ): string =>
-    resolveOrMarkUnsupported({
-      universalIdentifier:
-        isDefined(universalIdentifier) &&
-        references.fieldByUniversalIdentifier?.has(universalIdentifier) === true
-          ? universalIdentifier
-          : undefined,
+    exportedUniversalIdentifier({
+      universalIdentifier,
+      exportedByUniversalIdentifier: references.fieldByUniversalIdentifier,
       reason: 'workflow referencing a field that is not exported',
     });
 
@@ -152,7 +163,10 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
 
   // The scope already names objects and fields by universal identifier, but only exported ones can be applied
   const checkAiRunScopeReferences = (
-    scope: AiRunScope | null | undefined,
+    scope:
+      | Pick<AiRunScope, 'objectPermissions' | 'fieldPermissions'>
+      | null
+      | undefined,
   ): void => {
     for (const { objectUniversalIdentifier } of scope?.objectPermissions ??
       []) {
