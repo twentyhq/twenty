@@ -15,6 +15,7 @@ import {
 
 import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,6 +26,8 @@ import {
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
+import { findWellKnownOAuthClientByRedirectUris } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-redirect-uris.util';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -48,6 +51,7 @@ export class OAuthRegistrationController {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly throttlerService: ThrottlerService,
+    private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
   ) {}
 
   @Post('register')
@@ -139,6 +143,42 @@ export class OAuthRegistrationController {
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))
       : [...ALL_OAUTH_SCOPES];
 
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Pragma', 'no-cache');
+
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
+    // Every connection from a well-known client shares its seeded registration (RFC 7591 §3.2.1 lets the server pick
+    // the client_id), so each workspace installs it once instead of once per connection
+    const wellKnownOAuthClient = findWellKnownOAuthClientByRedirectUris(
+      body.redirect_uris,
+    );
+
+    if (isDefined(wellKnownOAuthClient)) {
+      const wellKnownOAuthClientRegistration =
+        await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
+          wellKnownOAuthClient,
+        );
+
+      return {
+        client_id: wellKnownOAuthClientRegistration.oAuthClientId,
+        client_name: wellKnownOAuthClientRegistration.name,
+        redirect_uris: body.redirect_uris,
+        grant_types: grantTypes,
+        response_types: responseTypes,
+        token_endpoint_auth_method: tokenEndpointAuthMethod,
+        scope: requestedScopes
+          .filter((scope) =>
+            wellKnownOAuthClientRegistration.oAuthScopes.includes(scope),
+          )
+          .join(' '),
+        client_id_issued_at: Math.floor(
+          wellKnownOAuthClientRegistration.createdAt.getTime() / 1000,
+        ),
+        registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${wellKnownOAuthClientRegistration.oAuthClientId}`,
+      };
+    }
+
     const clientId = v4();
 
     const registration = this.applicationRegistrationRepository.create({
@@ -155,11 +195,6 @@ export class OAuthRegistrationController {
     });
 
     await this.applicationRegistrationRepository.save(registration);
-
-    res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Pragma', 'no-cache');
-
-    const issuer = `${req.protocol}://${req.get('host')}`;
 
     return {
       client_id: clientId,

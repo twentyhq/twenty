@@ -53,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -587,9 +588,10 @@ export class AuthService {
 
     if (hasRegisteredRedirectUris) {
       if (
-        !applicationRegistration.oAuthRedirectUris.includes(
-          authorizeAppInput.redirectUrl,
-        )
+        !isRedirectUriRegisteredForApplicationRegistration({
+          applicationRegistration,
+          redirectUri: authorizeAppInput.redirectUrl,
+        })
       ) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
