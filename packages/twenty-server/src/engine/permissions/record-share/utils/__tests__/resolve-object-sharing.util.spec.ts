@@ -1,14 +1,32 @@
 /* @license Enterprise */
 
-import { FeatureFlagKey, MetadataReadability } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  MetadataReadability,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
-import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 
 const OBJECT = {
   readability: MetadataReadability.OPEN,
   isSystem: false,
   disabledObjectPermissionActions: null,
+};
+const OPEN_BY_DEFAULT = {
+  isShareable: true,
+  isShareRequired: false,
+  defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+};
+const ROLE_ONLY = {
+  isShareable: false,
+  isShareRequired: false,
+  defaultGeneralAccessLevel: null,
+};
+const PRIVATE = {
+  isShareable: true,
+  isShareRequired: true,
+  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
 };
 const RECORD_SHARING = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
@@ -22,7 +40,7 @@ describe('resolveObjectSharing', () => {
         featureFlagsMap: RECORD_SHARING,
       }),
     ).toEqual({
-      sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+      ...OPEN_BY_DEFAULT,
       canShareBeyondRole: true,
       operationTypesGrantedBeyondRole: ['select', 'update'],
     });
@@ -40,7 +58,7 @@ describe('resolveObjectSharing', () => {
           featureFlagsMap,
         }),
       ).toEqual({
-        sharingMode: RecordSharingMode.ROLE_ONLY,
+        ...ROLE_ONLY,
         canShareBeyondRole: false,
         operationTypesGrantedBeyondRole: [],
       });
@@ -93,7 +111,7 @@ describe('resolveObjectSharing', () => {
           featureFlagsMap,
         }),
       ).toEqual({
-        sharingMode: RecordSharingMode.PRIVATE,
+        ...PRIVATE,
         canShareBeyondRole: false,
         operationTypesGrantedBeyondRole: [],
       });
@@ -110,7 +128,7 @@ describe('resolveObjectSharing', () => {
         featureFlagsMap: RECORD_SHARING,
       }),
     ).toEqual({
-      sharingMode: RecordSharingMode.PRIVATE,
+      ...PRIVATE,
       canShareBeyondRole: true,
       operationTypesGrantedBeyondRole: ['select', 'update'],
     });

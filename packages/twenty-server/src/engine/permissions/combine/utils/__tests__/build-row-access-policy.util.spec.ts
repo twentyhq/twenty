@@ -1,10 +1,15 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
+  FieldMetadataType,
   MetadataReadability,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -48,7 +53,10 @@ const environment: RowAccessPolicyEnvironment &
 };
 const sharingEnvironment = {
   ...environment,
-  featureFlagsMap: { [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true },
+  featureFlagsMap: {
+    [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+    [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
+  },
 };
 
 const buildCompiledRowAccessPolicy = (
@@ -65,7 +73,7 @@ const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
   objectsPermissions: undefined,
   principalIds: ['member-1'],
-  canAccessAllRecords: false,
+  workspaceMemberId: 'member-1',
   isOwningApplication: () => false,
   resolveRowLevelPermissionRecordFilter: () => null,
 };
@@ -136,7 +144,7 @@ describe('buildRowAccessPolicy', () => {
     expect(build(readEverything, note)).toEqual({ kind: 'open' });
   });
 
-  it('gates an object on its restrictions once record sharing is enabled', () => {
+  it('keeps private records to their creator and shares once record sharing is enabled', () => {
     const company = buildObject({ id: 'company' });
     const policy = buildCompiledRowAccessPolicy({
       subject: readEverything,
@@ -147,28 +155,34 @@ describe('buildRowAccessPolicy', () => {
     });
 
     expect(policy.kind).toBe('gated');
-    if (policy.kind !== 'gated') throw new Error('Expected an exception gate');
-    expect(policy.condition.sql).toMatch(
-      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_[0-9a-f]{10}"/,
+    if (policy.kind !== 'gated') {
+      throw new Error('Expected a privacy gate');
+    }
+    expect(policy.condition.sql).toContain(
+      '("company"."_isPrivate" = FALSE) OR',
     );
+    expect(policy.condition.sql).toContain('"workspace"."recordShare"');
   });
 
-  it('lifts the restrictions of an object for a subject with access to all records', () => {
+  it('leaves records open to their role until private records are enabled', () => {
     expect(
       buildCompiledRowAccessPolicy({
-        subject: { ...readEverything, canAccessAllRecords: true },
-        environment: sharingEnvironment,
-        tableAlias: 'note',
-        flatObjectMetadata: note,
+        subject: readEverything,
+        environment: {
+          ...environment,
+          featureFlagsMap: {
+            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+          },
+        },
+        tableAlias: 'company',
+        flatObjectMetadata: buildObject({ id: 'company' }),
         operationType: 'select',
       }),
     ).toEqual({ kind: 'open' });
   });
 
-  it('keeps PRIVATE records gated for a subject with access to all records', () => {
-    expect(
-      gatedSql({ ...readEverything, canAccessAllRecords: true }, person),
-    ).toContain('recordShare');
+  it('keeps records of a PRIVATE object gated on their shares', () => {
+    expect(gatedSql(readEverything, person)).toContain('recordShare');
   });
 
   it('keeps a system object open when record sharing is enabled', () => {
@@ -276,7 +290,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
+        /^\(\(\("company"."title" = :restricted\) AND \(\(\("company"."_isPrivate" = FALSE\) OR .*\)\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
     });
   });
@@ -431,6 +445,66 @@ describe('buildRowAccessPolicy', () => {
           subject: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'open' });
+    });
+  });
+
+  describe('with private records created by members', () => {
+    const createdByField = getFlatFieldMetadataMock({
+      objectMetadataId: 'company',
+      type: FieldMetadataType.ACTOR,
+      name: 'createdBy',
+      universalIdentifier: 'company-created-by-field-universal-id',
+    });
+    const company = {
+      ...buildObject({ id: 'company' }),
+      fieldIds: [createdByField.id],
+    };
+    const emptyFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+      byUniversalIdentifier: {},
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    };
+    const creatorEnvironment = {
+      ...sharingEnvironment,
+      flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: createdByField,
+        flatEntityMaps: emptyFlatFieldMetadataMaps,
+      }),
+    };
+    const buildForCreator = (subject: RowAccessPolicySubject) =>
+      buildCompiledRowAccessPolicy({
+        subject,
+        environment: creatorEnvironment,
+        tableAlias: 'company',
+        flatObjectMetadata: company,
+        operationType: 'select',
+      });
+
+    it('admits a private record to its creator next to its shares', () => {
+      const policy = buildForCreator(readEverything);
+
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a privacy gate');
+      }
+      expect(policy.condition.sql).toMatch(
+        /^\(\(\("company"."_isPrivate" = FALSE\) OR \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\) OR \(EXISTS/,
+      );
+      expect(Object.values(policy.condition.parameters)).toContain('member-1');
+    });
+
+    it('lets the creator of a private record in whatever their role', () => {
+      const policy = buildForCreator({
+        ...readEverything,
+        objectsPermissions: {},
+        principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
+      });
+
+      if (policy.kind !== 'gated') {
+        throw new Error('Expected a grant gate');
+      }
+      expect(policy.condition.sql).toContain(
+        '("company"."_isPrivate" = TRUE) AND ("company"."createdByWorkspaceMemberId" = :',
+      );
     });
   });
 });

@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  type ObjectRecord,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -21,33 +20,32 @@ import {
   type RecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
 import {
   RecordShareException,
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
+import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
-import { resolveDefaultGeneralAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-default-general-access-level.util';
 import { resolveRecordGeneralAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-record-general-access-level.util';
 import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { resolveRecordSharingMode } from 'src/engine/permissions/record-share/utils/resolve-record-sharing-mode.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { type RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/permissions/principal/utils/get-role-ids-from-role-permission-config.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
@@ -71,15 +69,13 @@ type RecordSharingChange = {
   creatorWorkspaceMemberId: string | undefined;
 };
 
-const CREATED_BY_FIELD_NAME = 'createdBy';
-const CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME = 'createdByWorkspaceMemberId';
-
 @Injectable()
 export class RecordSharingService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
     private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
@@ -182,10 +178,10 @@ export class RecordSharingService {
     write: (change: RecordSharingChange) => Promise<void>,
   ): Promise<RecordSharingDTO> {
     const sharingObject = await this.getSharingObject(args);
-    const { flatObjectMetadata, sharingMode } = sharingObject;
+    const { flatObjectMetadata } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (sharingMode === RecordSharingMode.ROLE_ONLY) {
+    if (!sharingObject.isShareable) {
       throw new NotFoundError('Record not found');
     }
 
@@ -252,12 +248,11 @@ export class RecordSharingService {
     // A writer may revoke their own access; the mutation must still succeed with a redacted state.
     if (!permissions.canRead) {
       return {
-        sharingMode,
+        sharingMode: resolveRecordSharingMode(sharingObject),
         canManageSharing: false,
         permissions,
         generalAccessLevel: null,
-        defaultGeneralAccessLevel:
-          resolveDefaultGeneralAccessLevel(sharingMode),
+        defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
         hasManagedGeneralAccess: false,
         roles: [],
         shares: [],
@@ -267,68 +262,57 @@ export class RecordSharingService {
     return this.buildSharingResponse({ args, sharingObject, permissions });
   }
 
-  // Everyone keeps the general access of a record open by default unless a
-  // row lowers it, so restricting writes a row and editing for everyone
-  // removes it. The creator owns the record implicitly, and gets a grant once
-  // a restriction would otherwise lock them out.
   private async writeGeneralAccess({
     workspaceId,
     transactionScope,
-    sharingObject: { sharingMode },
+    sharingObject: {
+      flatObjectMetadata,
+      isShareRequired,
+      defaultGeneralAccessLevel,
+    },
     creatorWorkspaceMemberId,
     args,
   }: RecordSharingChange & {
     args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel };
   }): Promise<void> {
-    const isDefaultAccess =
-      args.accessLevel === resolveDefaultGeneralAccessLevel(sharingMode);
-
-    if (sharingMode === RecordSharingMode.OPEN_BY_DEFAULT) {
-      await this.writeOwnersOfRecordOpenByDefault({
+    if (isShareRequired) {
+      await this.recordShareStorageService.setManualShare({
         workspaceId,
         transactionScope,
-        args,
-        isDefaultAccess,
-        ownerWorkspaceMemberIds: [
-          creatorWorkspaceMemberId,
-          args.authContext.workspaceMemberId,
-        ],
+        enabled: args.accessLevel !== defaultGeneralAccessLevel,
+        share: {
+          principalId: EVERYONE_PRINCIPAL_ID,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          accessLevel: args.accessLevel,
+          objectMetadataId: args.objectMetadataId,
+          recordId: args.recordId,
+          sourceId: args.recordId,
+        },
       });
+
+      return;
     }
 
-    await this.recordShareStorageService.setManualShare({
-      workspaceId,
-      transactionScope,
-      enabled: !isDefaultAccess,
-      share: {
-        principalId: EVERYONE_PRINCIPAL_ID,
-        principalType: RecordSharePrincipalType.EVERYONE,
-        accessLevel: args.accessLevel,
-        objectMetadataId: args.objectMetadataId,
-        recordId: args.recordId,
-        sourceId: args.recordId,
-      },
-    });
-  }
+    if (args.accessLevel === RecordShareAccessLevel.READ) {
+      throw new RecordShareException(
+        'A record is either private or follows the roles of its object',
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
+        { userFriendlyMessage: msg`Invalid access level.` },
+      );
+    }
 
-  // Whoever restricts may only manage the record through the general access
-  // they are lowering, so they keep a grant alongside the creator. Owner rows
-  // only exist to keep a restriction manageable, so they go once the record
-  // follows the default again.
-  private async writeOwnersOfRecordOpenByDefault({
-    workspaceId,
-    transactionScope,
-    args,
-    isDefaultAccess,
-    ownerWorkspaceMemberIds,
-  }: {
-    workspaceId: string;
-    transactionScope: WorkspaceTransactionScope;
-    args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel };
-    isDefaultAccess: boolean;
-    ownerWorkspaceMemberIds: (string | undefined)[];
-  }): Promise<void> {
-    if (isDefaultAccess) {
+    const isPrivate = args.accessLevel === RecordShareAccessLevel.NONE;
+
+    await this.privateRecordStorageService.setPrivate({
+      workspaceId,
+      flatObjectMetadata,
+      recordIds: [args.recordId],
+      isPrivate,
+      transactionScope,
+    });
+
+    // An owner row, unlike a share, survives the share removals of whoever made the record private
+    if (!isPrivate) {
       await this.recordShareStorageService.deleteMatching({
         workspaceId,
         transactionScope,
@@ -344,28 +328,24 @@ export class RecordSharingService {
       return;
     }
 
-    const isRestriction =
-      args.accessLevel === RecordShareAccessLevel.NONE ||
-      args.accessLevel === RecordShareAccessLevel.READ;
-
-    if (!isRestriction) {
+    if (args.authContext.workspaceMemberId === creatorWorkspaceMemberId) {
       return;
     }
 
     await this.recordShareStorageService.insertMany({
       workspaceId,
       transactionScope,
-      recordShares: [...new Set(ownerWorkspaceMemberIds)]
-        .filter(isDefined)
-        .map((ownerWorkspaceMemberId) => ({
+      recordShares: [
+        {
           recordId: args.recordId,
           objectMetadataId: args.objectMetadataId,
-          principalId: ownerWorkspaceMemberId,
+          principalId: args.authContext.workspaceMemberId,
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           accessLevel: RecordShareAccessLevel.FULL,
           rowCause: RecordShareRowCause.OWNER,
           sourceId: args.recordId,
-        })),
+        },
+      ],
     });
   }
 
@@ -378,11 +358,11 @@ export class RecordSharingService {
     sharingObject: RecordSharingObject;
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
-    const { flatObjectMetadata, sharingMode } = sharingObject;
+    const { flatObjectMetadata } = sharingObject;
     const { shares, viewerAccessLevel, generalAccessLevel } =
       await this.getRecordShares({ ...args, sharingObject });
     const canManageSharing =
-      sharingMode !== RecordSharingMode.ROLE_ONLY &&
+      sharingObject.isShareable &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
       (await this.isUpdatePermittedByRole({
@@ -396,11 +376,11 @@ export class RecordSharingService {
     );
 
     return {
-      sharingMode,
+      sharingMode: resolveRecordSharingMode(sharingObject),
       canManageSharing,
       permissions,
       generalAccessLevel,
-      defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel(sharingMode),
+      defaultGeneralAccessLevel: sharingObject.defaultGeneralAccessLevel,
       hasManagedGeneralAccess: shares.some(
         (share) =>
           share.principalType === RecordSharePrincipalType.EVERYONE &&
@@ -503,8 +483,13 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const isOpenByDefault =
-      sharingObject.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT;
+    const {
+      flatObjectMetadata,
+      isShareable,
+      isShareRequired,
+      defaultGeneralAccessLevel,
+    } = sharingObject;
+    const canBePrivate = isShareable && !isShareRequired;
     const {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -536,25 +521,31 @@ export class RecordSharingService {
       recordIds: [recordId],
       transactionScope,
     });
-    const generalAccessLevel = resolveRecordGeneralAccessLevel({
-      sharingMode: sharingObject.sharingMode,
-      recordShares: shares,
-    });
-    const creatorWorkspaceMemberId = isOpenByDefault
-      ? await this.findCreatorWorkspaceMemberId({
+    const privateRecordState = canBePrivate
+      ? await this.findPrivateRecordState({
           workspaceId,
-          flatObjectMetadata: sharingObject.flatObjectMetadata,
+          flatObjectMetadata,
           recordId,
+          transactionScope,
         })
       : undefined;
+
+    const isPrivate = privateRecordState?.isPrivate ?? false;
+    const creatorWorkspaceMemberId =
+      privateRecordState?.createdByWorkspaceMemberId ?? undefined;
+    const generalAccessLevel = resolveRecordGeneralAccessLevel({
+      defaultGeneralAccessLevel,
+      recordShares: shares,
+      isPrivate,
+    });
     const viewerAccessLevel = resolveViewerRecordShareAccessLevel({
       recordShares: shares,
       principalIds,
-      implicitAccessLevels: isOpenByDefault
+      implicitAccessLevels: canBePrivate
         ? [
             generalAccessLevel,
             creatorWorkspaceMemberId === authContext.workspaceMemberId ||
-            canAccessAllRecords
+            (canAccessAllRecords && !isPrivate)
               ? RecordShareAccessLevel.FULL
               : null,
           ]
@@ -569,47 +560,26 @@ export class RecordSharingService {
     };
   }
 
-  private async findCreatorWorkspaceMemberId({
+  private async findPrivateRecordState({
     workspaceId,
     flatObjectMetadata,
     recordId,
+    transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordId: string;
-  }): Promise<string | undefined> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<PrivateRecordState | undefined> {
+    const privateRecordStates =
+      await this.privateRecordStorageService.findStates({
+        workspaceId,
+        flatObjectMetadata,
+        recordIds: [recordId],
+        transactionScope,
+      });
 
-    if (!isDefined(fieldIdByName[CREATED_BY_FIELD_NAME])) {
-      return undefined;
-    }
-
-    const [record] = await this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepository(flatObjectMetadata.nameSingular, {
-            shouldBypassPermissionChecks: true,
-          })
-          .createQueryBuilder()
-          .select(['id', CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME])
-          .where({ id: recordId })
-          .withDeleted()
-          .getMany<ObjectRecord>({ noFormatting: true }),
-      buildSystemAuthContext(workspaceId),
-    );
-    const creatorWorkspaceMemberId =
-      record?.[CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME];
-
-    return typeof creatorWorkspaceMemberId === 'string'
-      ? creatorWorkspaceMemberId
-      : undefined;
+    return privateRecordStates.get(recordId);
   }
 
   private async getPermissions({
