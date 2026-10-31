@@ -205,7 +205,7 @@ describe('Access to all records and ownership transfer', () => {
 
   afterAll(async () => {
     await makeRecordsPublic();
-    await setRecordSharingEnabled(true);
+    await setRecordSharingEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -296,12 +296,12 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
-  it('should lift restrictions for everyone while record sharing is off', async () => {
+  it('should keep private records private while record sharing is off', async () => {
     await setRecordSharingEnabled(false);
 
     try {
-      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
-        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
+        RESTRICTED_RECORD_ID,
       );
     } finally {
       await setRecordSharingEnabled(true);

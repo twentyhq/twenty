@@ -172,7 +172,7 @@ describe('Record-level sharing on an object open by default', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(true);
+    await setRecordSharingEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -357,18 +357,16 @@ describe('Record-level sharing on an object open by default', () => {
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
   });
 
-  it('should leave open objects untouched while the flag is off', async () => {
+  it('should keep a private record private while record sharing is off', async () => {
     await setPrivate({ isPrivate: true });
     await setRecordSharingEnabled(false);
 
     try {
-      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
-        RECORD_ID,
-      ]);
+      expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([]);
       expect((await readSharing()).body.data.recordSharing).toMatchObject({
         isShareable: false,
         canManageSharing: false,
-        isPrivate: false,
+        isPrivate: true,
       });
       expect((await setPrivate({ isPrivate: true })).body.errors).toBeDefined();
     } finally {

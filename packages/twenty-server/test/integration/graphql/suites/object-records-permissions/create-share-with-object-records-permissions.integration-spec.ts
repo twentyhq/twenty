@@ -173,22 +173,9 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe('OPEN readability without record-level sharing', () => {
+  describe('OPEN readability', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    });
-
-    afterAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
     });
 
     it('should ignore shareWith and write no row', async () => {
@@ -222,7 +209,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
 
     afterAll(async () => {
-      await setRecordSharingEnabled(true);
+      await setRecordSharingEnabled(false);
     });
 
     it('should write the named grants without an owner row when everyone keeps the default access', async () => {

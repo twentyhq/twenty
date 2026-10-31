@@ -197,7 +197,7 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(true);
+    await setRecordSharingEnabled(false);
     await setMemberObjectAccess(true);
     await shares.deleteByRecordIds({
       workspaceId,
