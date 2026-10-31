@@ -253,7 +253,7 @@ export class AgentTurnRecorderService {
     );
   }
 
-  async findUsage({
+  async findUsageOrThrow({
     workspaceId,
     turnId,
   }: {

@@ -149,7 +149,7 @@ export class AgentRunnerService {
         return {
           runId: turnId,
           outcome,
-          usage: await this.turnRecorderService.findUsage({
+          usage: await this.turnRecorderService.findUsageOrThrow({
             workspaceId: input.workspaceId,
             turnId,
           }),

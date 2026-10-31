@@ -14,7 +14,7 @@ import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-input-or-throw.util';
-import { readGeneratedOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output.util';
+import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 
@@ -90,7 +90,7 @@ export class AiGenerateService {
         },
       });
 
-    const output = readGeneratedOutput({
+    const output = readGeneratedOutputOrThrow({
       outcome,
       isJsonResponse: responseFormat?.type === 'json',
     });

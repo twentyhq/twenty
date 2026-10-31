@@ -1,19 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
-import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import {
-  type ApplicationWorkspaceAuthContext,
-  type WorkspaceAuthContext,
-} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -24,50 +18,13 @@ import { type AgentRunCallerRef } from 'src/engine/metadata-modules/ai/ai-agent-
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
-import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
+import { buildAgentRunConversationActor } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-conversation-actor.util';
+import { buildAgentRunTurnCreatedBy } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-turn-created-by.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
-
-const buildTurnCreatedBy = ({
-  actorContext,
-  callerApplication,
-  authContext,
-}: {
-  actorContext: ActorMetadata | undefined;
-  callerApplication: FlatApplication | undefined;
-  authContext: WorkspaceAuthContext;
-}): ActorMetadata => {
-  if (isDefined(actorContext)) {
-    return actorContext;
-  }
-
-  if (isDefined(callerApplication)) {
-    return buildCreatedByFromApplication({ application: callerApplication });
-  }
-
-  return buildActorMetadataFromAuthContext(authContext);
-};
-
-const buildConversationActor = ({
-  authContext,
-  application,
-}: {
-  authContext: WorkspaceAuthContext;
-  application: FlatApplication | undefined;
-}): AgentConversationActor | undefined => {
-  if (isUserAuthContext(authContext)) {
-    return { type: 'user', workspaceMemberId: authContext.workspaceMemberId };
-  }
-
-  if (isDefined(application)) {
-    return { type: 'application', applicationId: application.id };
-  }
-
-  return undefined;
-};
 
 @Injectable()
 export class AgentRunCallerContextService {
@@ -112,7 +69,7 @@ export class AgentRunCallerContextService {
     return {
       authContext,
       actorContext,
-      turnCreatedBy: buildTurnCreatedBy({
+      turnCreatedBy: buildAgentRunTurnCreatedBy({
         actorContext,
         callerApplication,
         authContext,
@@ -127,7 +84,10 @@ export class AgentRunCallerContextService {
           })
         : { intersectionOf: agentRunRoleIds },
       agentRunRoleIds,
-      conversationActor: buildConversationActor({ authContext, application }),
+      conversationActor: buildAgentRunConversationActor({
+        authContext,
+        application,
+      }),
       usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     };
   }
