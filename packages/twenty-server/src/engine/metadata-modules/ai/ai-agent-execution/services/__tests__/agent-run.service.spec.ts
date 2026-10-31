@@ -110,6 +110,18 @@ describe('AgentRunService', () => {
       );
     });
 
+    it('returns the id of the turn the run opens, so the caller can follow it', async () => {
+      const { service, agentRunnerService } = buildService({});
+
+      const { runId } = await runAgent(service);
+
+      expect(agentRunnerService.start).toHaveBeenCalledWith(
+        expect.objectContaining({
+          prompt: expect.objectContaining({ turnId: runId }),
+        }),
+      );
+    });
+
     it('rejects an overridden response format without output fields', async () => {
       const { service, agentRunnerService } = buildService({
         responseFormat: { type: 'json', schema: { type: 'object' } },

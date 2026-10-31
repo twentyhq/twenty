@@ -146,7 +146,7 @@ to `defineAgent()`, and pass what you want it to work on as `input`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { threadId, status, result, error, success } = await runAgent({
+const { threadId, runId, status, result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   input: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -328,6 +328,51 @@ name a member at all.
   agent's own role, since that would grant more access than the caller asked
   for.
 </Warning>
+
+### Following a run
+
+`runId` names the run. `listRunEvents()` lists what it did, and `streamRun()`
+yields the same events as they happen, then ends with the run:
+
+```ts src/logic-functions/follow-run.ts
+import { listRunEvents, runAgent, streamRun } from 'twenty-sdk/logic-function';
+
+const { runId } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  input: 'Enrich Acme',
+  waitForCompletion: false,
+});
+
+for await (const event of streamRun({ runId })) {
+  if (event.type === 'TOOL_CALL') {
+    console.log(`Calling ${event.toolName}`);
+  }
+}
+```
+
+| Event | Carries |
+| --- | --- |
+| `RUN_STARTED` | — |
+| `MESSAGE` | `role` (`user` or `assistant`), `text` |
+| `TOOL_CALL` | `toolCallId`, `toolName`, `input` |
+| `TOOL_RESULT` | `toolCallId`, `output`, `isError` |
+| `INTERACTION` | `toolCallId`, `toolName`, `input`: the agent waits on a person or an event; the answer comes as its `TOOL_RESULT` |
+| `RUN_COMPLETED` | `usage` |
+| `RUN_FAILED` | `error`, `usage` |
+
+Every event has an `id`, the `runId` and a `createdAt`.
+
+- Pass `{ agentUniversalIdentifier, threadKey }` instead of `runId` to follow
+  every run of a conversation. That stream stays open until you `break` or
+  abort the `signal` you pass.
+- Pass an event's `id` as `after` to resume: both functions return only the
+  events after it, so a stream that reconnects misses and repeats nothing.
+- A run that waits and goes on later continues in a new run of its
+  conversation; follow the conversation to see it through.
+- `ai.generate()` runs have no conversation: their `turnId` lists as
+  `RUN_STARTED` then `RUN_COMPLETED` or `RUN_FAILED`, with usage.
+- An app reaches the runs of its own agents and the runs it started. Tool calls
+  of a run someone else started are left out, as in the conversation itself.
 
 </Accordion>
 <Accordion title="ai.generate" description="Call a model from a logic function, without an agent">

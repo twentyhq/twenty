@@ -10,6 +10,7 @@ const RUN_AGENT_MUTATION = `
   mutation RunAgent($input: RunAgentInput!) {
     runAgent(input: $input) {
       threadId
+      runId
       status
       result
       error

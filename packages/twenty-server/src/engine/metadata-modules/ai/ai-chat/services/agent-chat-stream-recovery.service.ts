@@ -11,6 +11,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
@@ -123,6 +124,43 @@ export class AgentChatStreamRecoveryService {
     }
 
     return true;
+  }
+
+  // a subscriber reaps a stream whose worker died, and pings the conversation to keep its transport open
+  createSubscriberHeartbeat({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): () => Promise<void> {
+    let lastReapCheckAt = 0;
+
+    return async () => {
+      if (
+        Date.now() - lastReapCheckAt >=
+        AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
+      ) {
+        lastReapCheckAt = Date.now();
+
+        const thread = await this.threadRepository
+          .findOne(workspaceId, {
+            where: { id: threadId },
+            select: ['id', 'activeStreamId'],
+          })
+          .catch(() => null);
+
+        if (isDefined(thread)) {
+          await this.reapDeadStream({ thread, workspaceId }).catch(() => {});
+        }
+      }
+
+      await this.eventPublisherService.publish({
+        workspaceId,
+        threadId,
+        event: { type: 'keepalive' },
+      });
+    };
   }
 
   async reapDeadStream({

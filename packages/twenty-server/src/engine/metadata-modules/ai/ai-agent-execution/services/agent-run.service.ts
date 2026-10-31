@@ -316,11 +316,12 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         messages,
         senderUserWorkspaceId: memberUserWorkspaceId,
         senderApplicationId: callerApplication?.id ?? null,
+        turnId: runId,
       },
     });
 
     if (input.waitForCompletion === false) {
-      return this.buildRunAgentResult({ threadId, status: 'RUNNING' });
+      return this.buildRunAgentResult({ threadId, runId, status: 'RUNNING' });
     }
 
     const settledRun = await this.agentRunSettlementService.waitFor({
@@ -330,6 +331,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     return this.buildRunAgentResult({
       threadId,
+      runId,
       ...(settledRun ?? { status: 'RUNNING' }),
     });
   }
@@ -420,13 +422,15 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
   private buildRunAgentResult({
     threadId,
+    runId,
     status,
     result = null,
     error = null,
-  }: Pick<RunAgentResult, 'threadId' | 'status'> &
+  }: Pick<RunAgentResult, 'threadId' | 'runId' | 'status'> &
     Partial<Pick<RunAgentResult, 'result' | 'error'>>): RunAgentResult {
     return {
       threadId,
+      runId,
       status,
       result,
       error,

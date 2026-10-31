@@ -45,6 +45,8 @@ export type RunAgentInput = {
 
 export type RunAgentResult = {
   threadId: string;
+  // the run's first turn, which listRunEvents and streamRun follow
+  runId: string;
   // SUSPENDED: the agent paused on a wait and goes on by itself; its reply lands in the thread
   // RUNNING: the call did not wait for the run, or the run outlasted the wait; its reply lands in the thread
   status: 'COMPLETED' | 'SUSPENDED' | 'FAILED' | 'RUNNING';

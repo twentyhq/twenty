@@ -15,6 +15,12 @@ export type {
   AgentTrigger,
   AgentTriggerManifest,
 } from './agentTriggerType';
+export type {
+  AiRunEventType,
+  AiRunUsage,
+  AiRunEvent,
+  AiRunEventsInput,
+} from './aiRunEventType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';

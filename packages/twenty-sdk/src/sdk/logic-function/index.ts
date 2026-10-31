@@ -86,6 +86,15 @@ export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
 export { ai } from '@/sdk/logic-function/ai/ai';
 export type { GenerateInput, GenerateResult } from 'twenty-shared/application';
+export { listRunEvents } from '@/sdk/logic-function/ai/list-run-events';
+export { streamRun } from '@/sdk/logic-function/ai/stream-run';
+export type { StreamRunInput } from '@/sdk/logic-function/ai/stream-run';
+export type {
+  AiRunEvent,
+  AiRunEventType,
+  AiRunEventsInput,
+  AiRunUsage,
+} from 'twenty-shared/application';
 export type { AiRunScope } from 'twenty-shared/ai';
 
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
