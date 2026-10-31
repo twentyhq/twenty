@@ -116,13 +116,14 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           continue;
         }
 
-        if (!hasColumn) {
-          await this.addColumnWithLockTimeout({
-            queryRunner,
-            schemaName,
-            tableName,
-          });
-        }
+        await this.addColumnAndConvertRestrictions({
+          queryRunner,
+          schemaName,
+          tableName,
+          objectMetadataId: flatObjectMetadata.id,
+          shouldAddColumn: !hasColumn,
+          shouldConvertRestrictions: isRestrictableObject(flatObjectMetadata),
+        });
 
         await this.workspaceSchemaManagerService.indexManager.createIndex({
           queryRunner,
@@ -133,15 +134,6 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           }),
           concurrently: true,
         });
-
-        if (isRestrictableObject(flatObjectMetadata)) {
-          await this.convertRestrictionsToPrivateRecords({
-            queryRunner,
-            schemaName,
-            tableName,
-            objectMetadataId: flatObjectMetadata.id,
-          });
-        }
       }
     } finally {
       if (isQueryRunnerConnected) {
@@ -187,29 +179,6 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     return new Set(columns.map(({ tableName }) => tableName));
   }
 
-  // Metadata-only, but the exclusive lock must not queue every query on the table
-  private async addColumnWithLockTimeout({
-    queryRunner,
-    schemaName,
-    tableName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableName: string;
-  }): Promise<void> {
-    await queryRunner.query(`SET lock_timeout = '8s'`);
-
-    try {
-      await this.workspaceSchemaManagerService.columnManager.addColumns({
-        queryRunner,
-        schemaName,
-        tableName,
-        columnDefinitions: [IS_PRIVATE_COLUMN_DEFINITION],
-      });
-    } finally {
-      await queryRunner.query('RESET lock_timeout');
-    }
-  }
 
   private async countRestrictedRecordsByObjectMetadataId({
     queryRunner,
@@ -243,39 +212,62 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
     return countsByObjectMetadataId;
   }
 
-  // "Anyone can view" has no private equivalent, so those records follow their roles again
-  private async convertRestrictionsToPrivateRecords({
+  // One transaction, so a restricted record never reads as public before it becomes private
+  private async addColumnAndConvertRestrictions({
     queryRunner,
     schemaName,
     tableName,
     objectMetadataId,
+    shouldAddColumn,
+    shouldConvertRestrictions,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     objectMetadataId: string;
+    shouldAddColumn: boolean;
+    shouldConvertRestrictions: boolean;
   }): Promise<void> {
+    if (!shouldAddColumn && !shouldConvertRestrictions) {
+      return;
+    }
+
     const recordShareTable = `${escapeIdentifier(schemaName)}."recordShare"`;
 
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.query(
-        `UPDATE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}
-           SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = true
-           WHERE id IN (
-             SELECT "recordId" FROM ${recordShareTable}
+      // The exclusive lock must not queue every query on the table
+      await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+
+      if (shouldAddColumn) {
+        await this.workspaceSchemaManagerService.columnManager.addColumns({
+          queryRunner,
+          schemaName,
+          tableName,
+          columnDefinitions: [IS_PRIVATE_COLUMN_DEFINITION],
+        });
+      }
+
+      if (shouldConvertRestrictions) {
+        await queryRunner.query(
+          `UPDATE ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}
+             SET ${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = true
+             WHERE id IN (
+               SELECT "recordId" FROM ${recordShareTable}
+               WHERE "objectMetadataId" = $1 AND "principalType" = 'EVERYONE'
+                 AND "rowCause" = 'MANUAL' AND "accessLevel" = 'NONE' AND "deletedAt" IS NULL
+             )`,
+          [objectMetadataId],
+        );
+        await queryRunner.query(
+          `DELETE FROM ${recordShareTable}
              WHERE "objectMetadataId" = $1 AND "principalType" = 'EVERYONE'
-               AND "rowCause" = 'MANUAL' AND "accessLevel" = 'NONE' AND "deletedAt" IS NULL
-           )`,
-        [objectMetadataId],
-      );
-      await queryRunner.query(
-        `DELETE FROM ${recordShareTable}
-           WHERE "objectMetadataId" = $1 AND "principalType" = 'EVERYONE'
-             AND "rowCause" = 'MANUAL' AND "accessLevel" IN ('NONE', 'READ')`,
-        [objectMetadataId],
-      );
+               AND "rowCause" = 'MANUAL' AND "accessLevel" IN ('NONE', 'READ')`,
+          [objectMetadataId],
+        );
+      }
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
